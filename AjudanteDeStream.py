@@ -209,7 +209,7 @@ class Window(QWidget):
         # Inputs do jogador 1 na vertical
         p1 = PlayerColumn(self)
         self.player_layouts.append(p1)
-        base_layout.addLayout(p1.layout_grid)
+        base_layout.addWidget(p1.group_box)
     
         # Botoes no meio
         layout_middle = QGridLayout()
@@ -237,20 +237,28 @@ class Window(QWidget):
         # Inputs do jogador 2 na vertical
         p2 = PlayerColumn(self, True)
         self.player_layouts.append(p2)
-        base_layout.addLayout(p2.layout_grid)
+        base_layout.addWidget(p2.group_box)
 
         # Botoes no final
         layout_end = QGridLayout()
         base_layout.addLayout(layout_end)
 
         self.optionsBt = QToolButton()
+        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
+        self.optionsBt.setText("Opções")
+        self.optionsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
         layout_end.addWidget(self.optionsBt)
         self.optionsBt.setMenu(QMenu())
         self.optionsBt.menu().addAction("Sempre no topo")
 
-        self.downloadBt = QPushButton("Baixar/atualizar dados")
+        self.downloadBt = QPushButton("Baixar dados do PowerRankings")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
+        layout_end.addWidget(self.downloadBt)
+        self.downloadBt.clicked.connect(self.DownloadButtonClicked)
+
+        self.downloadBt = QPushButton("Baixar dados de um torneio do SmashGG")
+        self.downloadBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.downloadBt)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
 
@@ -273,7 +281,7 @@ class Window(QWidget):
     
     def DownloadButtonComplete(self):
         self.downloadBt.setEnabled(True)
-        self.downloadBt.setText("Baixar/atualizar dados")
+        self.downloadBt.setText("Baixar dados do PowerRankings")
     
     def SetupAutocomplete(self):
         # auto complete options
@@ -378,7 +386,10 @@ class PlayerColumn():
 
         self.parent = parent
 
+        self.group_box = QGroupBox("Player")
+
         self.layout_grid = QGridLayout()
+        self.group_box.setLayout(self.layout_grid)
 
         pos_labels = 0
         pos_forms = 1
