@@ -8,6 +8,7 @@ import requests
 import json
 import traceback, sys
 import time
+import os
 
 CHARACTER_TO_CODENAME = {
     "Mario": "mario",
@@ -170,6 +171,9 @@ class Window(QWidget):
 
         self.setWindowIcon(QIcon('icons/icon.png'))
 
+        if not os.path.exists("out/"):
+            os.mkdir("out/")
+
         try:
             f = open('estados.json')
             estados_json = json.load(f)
@@ -213,7 +217,11 @@ class Window(QWidget):
     
         # Botoes no meio
         layout_middle = QGridLayout()
-        base_layout.addLayout(layout_middle)
+
+        group_box = QGroupBox("Score")
+        group_box.setLayout(layout_middle)
+
+        base_layout.addWidget(group_box)
 
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setMinimumSize(48, 64)
@@ -285,20 +293,20 @@ class Window(QWidget):
     
     def SetupAutocomplete(self):
         # auto complete options
-        names = [QStandardItem(p["name"]) for i, p in enumerate(self.allplayers["players"])]
-
-        print(names[0].data())
+        names = [p["name"] for i, p in enumerate(self.allplayers["players"])]
 
         model = QStandardItemModel()
 
-        for n in names:
-            model.appendRow(n)
+        for i, n in enumerate(names):
+            model.appendRow(QStandardItem(n))
 
         for p in self.player_layouts:
             completer = QCompleter(completionColumn=0, caseSensitivity=Qt.CaseInsensitive)
+            completer.setFilterMode(Qt.MatchFlag.MatchContains)
             completer.setModel(model)
+            p.player_name.setModel(model)
             p.player_name.setCompleter(completer)
-            completer.activated.connect(p.AutocompleteSelected)
+            p.player_name.activated.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
     
     def LoadData(self):
@@ -337,7 +345,10 @@ class Window(QWidget):
             with open('out/p'+str(i+1)+'_name.txt', 'w') as outfile:
                 outfile.write(pl.player_name.currentText())
             with open('out/p'+str(i+1)+'_name+prefix.txt', 'w') as outfile:
-                outfile.write(pl.player_org.text()+" | "+pl.player_name.currentText())
+                if len(pl.player_org.text()) > 0:
+                    outfile.write(pl.player_org.text()+" | "+pl.player_name.currentText())
+                else:
+                    outfile.write(pl.player_name.currentText())
             with open('out/p'+str(i+1)+'_prefix.txt', 'w') as outfile:
                 outfile.write(pl.player_org.text())
             with open('out/p'+str(i+1)+'_twitter.txt', 'w') as outfile:
@@ -370,6 +381,10 @@ class Window(QWidget):
                 )
                 shutil.copy(
                     "character_icon/chara_1_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
+                    "out/p"+str(i+1)+"_character_big.png"
+                )
+                shutil.copy(
+                    "character_icon/chara_3_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
                     "out/p"+str(i+1)+"_character_full.png"
                 )
                 shutil.copy(
@@ -444,19 +459,25 @@ class PlayerColumn():
         for c in self.parent.portraits[self.player_character.currentText()]:
             self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
     
-    def AutocompleteSelected(self, selection):
-        names = [p["name"] for p in self.parent.allplayers["players"]]
-        index = names.index(selection)
-
+    def AutocompleteSelected(self, index):
         if index is not None:
             player = self.parent.allplayers["players"][index]
             
-            self.player_org.setText(player["org"])
-            self.player_real_name.setText(player["full_name"])
-            self.player_twitter.setText(player["twitter"])
-            self.player_state.setCurrentIndex(list(self.parent.estados.keys()).index(player["state"])+1)
-            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player["mains"][0])+1)
-            self.player_character_color.setCurrentIndex(player["skins"][0])
+            self.player_name.setCurrentText(player["name"])
+            self.player_org.setText(player.get("org", ""))
+            self.player_real_name.setText(player.get("full_name", ""))
+            self.player_twitter.setText(player.get("twitter", ""))
+
+            if player.get("state") is not None:
+                self.player_state.setCurrentIndex(list(self.parent.estados.keys()).index(player.get("state"))+1)
+            else:
+                self.player_state.setCurrentIndex(0)
+            
+            if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
+                self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
+                self.player_character_color.setCurrentIndex(player.get("skins", [""])[0])
+            else:
+                self.player_character.setCurrentIndex(0)
         
         self.parent.ExportData()
 

@@ -2373,7 +2373,7 @@
                 "Chrom",
                 "Roy"
             ],
-            "name": "2cae19",
+            "name": "2cae20",
             "org": "",
             "rank": {
                 "prbth": {
@@ -2454,7 +2454,7 @@
                     "rank": "A"
                 }
             ],
-            "twitter": "2cae19ssb"
+            "twitter": "2cae20"
         },
         {
             "braacket_links": [
@@ -2846,6 +2846,12 @@
             "twitter": ""
         },
         {
+            "bestPlayerCharacter": {
+                "teamdashsp": [
+                    "Palutena",
+                    "Palutena"
+                ]
+            },
             "braacket_links": [
                 "teamdashsp:01AD2037-E1C5-4CF3-BD19-FE81BA81AF10",
                 "prbth:5D8B86C3-08DA-4CAB-9039-DD8B64F38027",
@@ -9772,7 +9778,6 @@
                 0
             ],
             "smashgg_id": 518032,
-            "smashgg_image": "https://images.smash.gg/images/user/518032/image-b61f07383f7d453234581a5be6887c91.jpg",
             "smashgg_slug": "user/c227bc45",
             "state": "RJ",
             "tournament_points": [
@@ -11448,7 +11453,8 @@
                 "homeonline:D63AB5BE-90AA-49C2-9B62-12047EA15AF6"
             ],
             "city": "Porto Alegre",
-            "full_name": null,
+            "discord": "Delong#1889",
+            "full_name": "Henrique Ara\u00fajo",
             "mains": [
                 "Jigglypuff"
             ],
@@ -11465,6 +11471,7 @@
                 0
             ],
             "smashgg_id": 1015580,
+            "smashgg_image": "https://images.smash.gg/images/user/1015580/image-3bb3e707684fcaa693529fd0243a0b8f.png",
             "smashgg_slug": "user/a4da16d5",
             "state": "RS",
             "twitch": "RyuJr",
@@ -13274,12 +13281,6 @@
             "twitter": "Pietro349"
         },
         {
-            "bestPlayerCharacter": {
-                "teamdashsp": [
-                    "Incineroar",
-                    "Incineroar"
-                ]
-            },
             "braacket_links": [
                 "homeonline:1587FAE0-E2BE-452F-B742-093A31878BD3",
                 "teamdashsp:2A79B1C0-8E12-4487-A615-CED1D57869EE"
@@ -13292,12 +13293,6 @@
             ],
             "name": "Ed",
             "org": "",
-            "rank": {
-                "teamdashsp": {
-                    "rank": "75",
-                    "score": "1450"
-                }
-            },
             "skins": [
                 0,
                 0
@@ -16589,15 +16584,11 @@
             ],
             "city": "S\u00e3o Paulo",
             "full_name": "Gian Luigi Menegazzo",
-            "mains": [],
+            "mains": [
+                ""
+            ],
             "name": "Gionmaru",
             "org": "",
-            "rank": {
-                "teamdashsp": {
-                    "rank": "87",
-                    "score": "1439"
-                }
-            },
             "skins": [
                 0
             ],
@@ -17159,7 +17150,7 @@
                 "Lucina"
             ],
             "name": "GotM",
-            "org": "",
+            "org": "SPDQ",
             "rank": {
                 "homeonline": {
                     "rank": "4",
@@ -19401,6 +19392,7 @@
                 "homeonline:EC5E13C8-1F95-441D-9BB9-0EC62EED6E31"
             ],
             "city": "Belo Horizonte",
+            "discord": "Hikky#3042",
             "full_name": null,
             "mains": [
                 "Robin"
@@ -20520,6 +20512,7 @@
                 "homeonline:19B8E6A2-32BD-4513-ACC3-2DD555268989"
             ],
             "city": "Belo Horizonte",
+            "discord": "Itto_Gabriel#2433",
             "full_name": "Gabriel Oliveira",
             "mains": [
                 "Bayonetta"
@@ -20530,6 +20523,7 @@
                 0
             ],
             "smashgg_id": 1193946,
+            "smashgg_image": "https://images.smash.gg/images/user/1193946/image-b0147c424580d207dbc88a7feceaa558.jpg",
             "smashgg_slug": "user/720feceb",
             "state": "SP",
             "twitch": "itto_gabs",
@@ -33350,6 +33344,12 @@
             "twitter": ""
         },
         {
+            "bestPlayerCharacter": {
+                "teamdashsp": [
+                    "Banjo & Kazooie",
+                    "Banjo-Kazooie"
+                ]
+            },
             "braacket_links": [
                 "homeonline:86B3DEE6-2994-4922-8056-D0162DEEB90F",
                 "teamdashsp:32BD0418-E0F1-4B91-A342-C88C06C6F924",
@@ -35943,6 +35943,12 @@
             "twitter": "d0perrr"
         },
         {
+            "bestPlayerCharacter": {
+                "teamdashsp": [
+                    "Incineroar",
+                    "Incineroar"
+                ]
+            },
             "braacket_links": [
                 "teamdashsp:2726918D-1ABA-43BB-9317-CCDD1E7D4DED",
                 "prbth:F9ACE32A-7370-4D1A-B0F1-57C5344CB77A"
@@ -41084,7 +41090,7 @@
                 "homeonline:063FA2F9-412F-427F-BFC7-B1D23B8E8FB0"
             ],
             "city": "S\u00e3o Paulo",
-            "full_name": null,
+            "full_name": "Matheus Borges Rodrigues",
             "mains": [
                 "Young Link"
             ],
@@ -41917,12 +41923,6 @@
             "twitter": "https://twitter.com/strogonf"
         },
         {
-            "bestPlayerCharacter": {
-                "teamdashsp": [
-                    "Palutena",
-                    "Palutena"
-                ]
-            },
             "braacket_links": [
                 "homeonline:5B3F0BE2-0DFF-47AA-907C-6DF208391899",
                 "prbth:14CD3AB3-CAA1-4FDC-9856-D15C8B7A26A3",
@@ -41939,10 +41939,6 @@
                 "prbth": {
                     "rank": 112,
                     "score": 35
-                },
-                "teamdashsp": {
-                    "rank": "18",
-                    "score": "1656"
                 }
             },
             "skins": [
@@ -44912,15 +44908,11 @@
             ],
             "city": "S\u00e3o Paulo",
             "full_name": "Luiz Lima",
-            "mains": [],
+            "mains": [
+                ""
+            ],
             "name": "Velvet",
             "org": "",
-            "rank": {
-                "teamdashsp": {
-                    "rank": "56",
-                    "score": "1500"
-                }
-            },
             "skins": [
                 0
             ],
@@ -47149,10 +47141,6 @@
                 "ssbudf": [
                     "Banjo & Kazooie",
                     "Banjo-Kazooie"
-                ],
-                "teamdashsp": [
-                    "Banjo & Kazooie",
-                    "Banjo-Kazooie"
                 ]
             },
             "braacket_links": [
@@ -47169,10 +47157,6 @@
                 "ssbudf": {
                     "rank": "20",
                     "score": "19"
-                },
-                "teamdashsp": {
-                    "rank": "13",
-                    "score": "1700"
                 }
             },
             "skins": [
@@ -47728,12 +47712,6 @@
             "unlinked": true
         },
         {
-            "bestPlayerCharacter": {
-                "homeonline": [
-                    "Steve",
-                    "Steve"
-                ]
-            },
             "braacket_links": [
                 "homeonline:60A1DFA9-A59A-4723-B73A-A176DF04D3BF"
             ],
@@ -47741,7 +47719,6 @@
             "discord": "Typhlosion2006#1897",
             "full_name": "Leonardo Rubim de Toledo",
             "mains": [
-                "Steve",
                 "Piranha Plant"
             ],
             "name": "Typhlosion2006",
