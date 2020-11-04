@@ -182,6 +182,8 @@ class Window(QWidget):
         except Exception as e:
             print(e)
             exit()
+
+        self.font_small = QFont("font/RobotoCondensed-Regular.ttf", pointSize=8)
         
         self.stockIcons = {}
         
@@ -220,27 +222,28 @@ class Window(QWidget):
 
         group_box = QGroupBox("Score")
         group_box.setLayout(layout_middle)
+        group_box.setFont(self.font_small)
 
         base_layout.addWidget(group_box)
 
         self.scoreLeft = QSpinBox()
-        self.scoreLeft.setMinimumSize(48, 64)
-        fnt = self.scoreLeft.font()
-        fnt.setPointSize(20)
-        self.scoreLeft.setFont(fnt)
-        layout_middle.addWidget(self.scoreLeft, 0, 0)
+        self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
+        layout_middle.addWidget(self.scoreLeft, 0, 0, 2, 1)
         self.scoreRight = QSpinBox()
-        self.scoreRight.setMinimumSize(48, 64)
-        self.scoreRight.setFont(fnt)
-        layout_middle.addWidget(self.scoreRight, 0, 1)
+        self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
+        layout_middle.addWidget(self.scoreRight, 0, 1, 2, 1)
 
-        self.invert_bt = QToolButton()
-        layout_middle.addWidget(self.invert_bt, 1, 0, 1, 2, Qt.AlignCenter)
-        #self.invert_bt.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.reset_score_bt = QPushButton()
+        layout_middle.addWidget(self.reset_score_bt, 2, 0, 1, 2, Qt.AlignCenter)
+        self.reset_score_bt.setIcon(QIcon('icons/download.svg'))
+        self.reset_score_bt.setText("Zerar")
+        self.reset_score_bt.setFont(self.font_small)
+
+        self.invert_bt = QPushButton()
+        layout_middle.addWidget(self.invert_bt, 3, 0, 1, 2, Qt.AlignCenter)
         self.invert_bt.setIcon(QIcon('icons/swap.svg'))
         self.invert_bt.setText("Inverter")
-        self.invert_bt.setIconSize(QSize(32, 32))
-        self.invert_bt.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.invert_bt.setFont(self.font_small)
         
         # Inputs do jogador 2 na vertical
         p2 = PlayerColumn(self, True)
@@ -379,14 +382,30 @@ class Window(QWidget):
                     "character_icon/chara_0_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
                     "out/p"+str(i+1)+"_character_portrait.png"
                 )
+            except Exception as e:
+                print(e)
+            try:
                 shutil.copy(
                     "character_icon/chara_1_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
                     "out/p"+str(i+1)+"_character_big.png"
                 )
+            except Exception as e:
+                print(e)
+            try:
                 shutil.copy(
                     "character_icon/chara_3_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
                     "out/p"+str(i+1)+"_character_full.png"
                 )
+            except Exception as e:
+                print(e)
+            try:
+                shutil.copy(
+                    "character_icon/chara_3_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+"-halfres.png",
+                    "out/p"+str(i+1)+"_character_full-halfres.png"
+                )
+            except Exception as e:
+                print(e)
+            try:
                 shutil.copy(
                     "character_icon/chara_2_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
                     "out/p"+str(i+1)+"_character_stockicon.png"
@@ -406,53 +425,89 @@ class PlayerColumn():
         self.layout_grid = QGridLayout()
         self.group_box.setLayout(self.layout_grid)
 
+        self.group_box.setFont(self.parent.font_small)
+
         pos_labels = 0
         pos_forms = 1
+        text_alignment = Qt.AlignRight|Qt.AlignCenter
 
         if inverted:
             pos_labels = 1
             pos_forms = 0
+            text_alignment = Qt.AlignLeft|Qt.AlignCenter
 
-        self.layout_grid.addWidget(QLabel("Nick"), 0, pos_labels)
+        nick_label = QLabel("Nick")
+        nick_label.setFont(self.parent.font_small)
+        nick_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(nick_label, 0, pos_labels)
         self.player_name = QComboBox()
         self.player_name.setEditable(True)
         self.layout_grid.addWidget(self.player_name, 0, pos_forms)
+        self.player_name.setMinimumWidth(128)
+        self.player_name.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Prefixo"), 1, pos_labels)
+        prefix_label = QLabel("Prefixo")
+        prefix_label.setFont(self.parent.font_small)
+        prefix_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(prefix_label, 1, pos_labels)
         self.player_org = QLineEdit()
         self.layout_grid.addWidget(self.player_org, 1, pos_forms)
+        self.player_org.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Nome real"), 2, pos_labels)
+        real_name_label = QLabel("Nome real")
+        real_name_label.setFont(self.parent.font_small)
+        real_name_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(real_name_label, 2, pos_labels)
         self.player_real_name = QLineEdit()
         self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
+        self.player_real_name.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Twitter"), 3, pos_labels)
+        player_twitter_label = QLabel("Twitter")
+        player_twitter_label.setFont(self.parent.font_small)
+        player_twitter_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(player_twitter_label, 3, pos_labels)
         self.player_twitter = QLineEdit()
         self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
+        self.player_twitter.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Estado"), 4, pos_labels)
+        player_state_label = QLabel("Estado")
+        player_state_label.setFont(self.parent.font_small)
+        player_state_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(player_state_label, 0, pos_labels+2)
         self.player_state = QComboBox()
         self.player_state.addItem("")
         for i, estado in enumerate(self.parent.estados):
             item = self.player_state.addItem(QIcon("state_icon/"+estado+".png"), estado + " " + self.parent.estados[estado])
             self.player_state.setItemData(i+1, estado)
         self.player_state.setEditable(True)
-        self.layout_grid.addWidget(self.player_state, 4, pos_forms)
+        self.layout_grid.addWidget(self.player_state, 0, pos_forms+2)
+        self.player_state.setMinimumWidth(128)
+        self.player_state.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Personagem"), 5, pos_labels)
+        player_character_label = QLabel("Personagem")
+        player_character_label.setFont(self.parent.font_small)
+        player_character_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(player_character_label, 1, pos_labels+2)
         self.player_character = QComboBox()
         self.player_character.addItem("")
         for c in self.parent.stockIcons:
             self.player_character.addItem(self.parent.stockIcons[c][0], c)
         self.player_character.setEditable(True)
-        self.layout_grid.addWidget(self.player_character, 5, pos_forms)
+        self.layout_grid.addWidget(self.player_character, 1, pos_forms+2)
         self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
+        self.player_character.setMinimumWidth(128)
+        self.player_character.setFont(self.parent.font_small)
 
-        self.layout_grid.addWidget(QLabel("Cor"), 6, pos_labels)
+        player_character_color_label = QLabel("Cor")
+        player_character_color_label.setFont(self.parent.font_small)
+        player_character_color_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(player_character_color_label, 2, pos_labels+2)
         self.player_character_color = QComboBox()
-        self.layout_grid.addWidget(self.player_character_color, 6, pos_forms)
+        self.layout_grid.addWidget(self.player_character_color, 2, pos_forms+2, 2, 1)
         self.player_character_color.setIconSize(QSize(64, 64))
         self.player_character_color.setMinimumHeight(64)
+        self.player_character_color.setMinimumWidth(128)
+        self.player_character_color.setFont(self.parent.font_small)
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
