@@ -99,6 +99,15 @@ class Window(QWidget):
         except Exception as e:
             print(e)
             exit()
+        
+        try:
+            f = open('settings.json')
+            self.settings = json.load(f)
+            print("Settings loaded")
+        except Exception as e:
+            self.settings = {}
+            self.SaveSettings()
+            print("Settings created")
 
         self.font_small = QFont("font/RobotoCondensed-Regular.ttf", pointSize=8)
         
@@ -182,21 +191,48 @@ class Window(QWidget):
         self.optionsBt.setText("Opções")
         self.optionsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
-        layout_end.addWidget(self.optionsBt)
+        layout_end.addWidget(self.optionsBt, 0, 0, 1, 2)
+        self.optionsBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.optionsBt.setMenu(QMenu())
         action = self.optionsBt.menu().addAction("Sempre no topo")
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
+        action = self.optionsBt.menu().addAction("Exportar dados automaticamente")
+        action.setCheckable(True)
+        #action.toggled.connect(self.ToggleAlwaysOnTop)
 
         self.downloadBt = QPushButton("Baixar dados do PowerRankings")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
-        layout_end.addWidget(self.downloadBt)
+        layout_end.addWidget(self.downloadBt, 1, 0, 1, 2)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
 
-        self.downloadBt = QPushButton("Baixar dados de um torneio do SmashGG")
+        self.downloadBt = QPushButton("Baixar dados de um torneio")
         self.downloadBt.setIcon(QIcon('icons/smashgg.png'))
-        layout_end.addWidget(self.downloadBt)
+        layout_end.addWidget(self.downloadBt, 2, 0, 1, 2)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
+
+        # save button
+        self.saveBt = QToolButton()
+        self.saveBt.setText("Salvar e exportar")
+        self.saveBt.setIcon(QIcon('icons/save.svg'))
+        self.saveBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        pal = self.saveBt.palette()
+        pal.setColor(QPalette.Button, QColor(Qt.green))
+        self.saveBt.setPalette(pal)
+        layout_end.addWidget(self.saveBt, 3, 0, 2, 2)
+        self.saveBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        self.saveBt.setPopupMode(QToolButton.MenuButtonPopup)
+        self.saveBt.clicked.connect(self.SaveButtonClicked)
+        
+        self.saveBt.setMenu(QMenu())
+        action = self.saveBt.menu().addAction("Automático")
+        action.setCheckable(True)
+
+        if "autosave" in self.settings:
+            if self.settings["autosave"] == True:
+                action.setChecked(True)
+        
+        action.toggled.connect(self.ToggleAutosave)
 
         self.LoadData()
 
@@ -288,6 +324,21 @@ class Window(QWidget):
         else:
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
+    
+    def ToggleAutosave(self, checked):
+        if checked:
+            self.settings["autosave"] = True
+        else:
+            self.settings["autosave"] = False
+        self.SaveSettings()
+    
+    def SaveButtonClicked(self):
+        for p in self.player_layouts:
+            p.ExportName()
+            p.ExportRealName()
+            p.ExportTwitter()
+            p.ExportState()
+            p.ExportCharacter()
 
     def DownloadData(self, progress_callback):
         with open('powerrankings_player_data.json', 'wb') as f:
@@ -311,6 +362,10 @@ class Window(QWidget):
                 f.close()
 
             print("Download successful")
+    
+    def SaveSettings(self):
+        with open('settings.json', 'w') as outfile:
+            json.dump(self.settings, outfile, indent=4, sort_keys=True)
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
@@ -343,7 +398,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_name, 0, pos_forms)
         self.player_name.setMinimumWidth(128)
         self.player_name.setFont(self.parent.font_small)
-        self.player_name.textChanged.connect(self.ExportName)
+        self.player_name.textChanged.connect(self.AutoExportName)
 
         prefix_label = QLabel("Prefixo")
         prefix_label.setFont(self.parent.font_small)
@@ -352,16 +407,16 @@ class PlayerColumn():
         self.player_org = QLineEdit()
         self.layout_grid.addWidget(self.player_org, 1, pos_forms)
         self.player_org.setFont(self.parent.font_small)
-        self.player_org.textChanged.connect(self.ExportName)
+        self.player_org.textChanged.connect(self.AutoExportName)
 
-        real_name_label = QLabel("Nome real")
+        real_name_label = QLabel("Nome")
         real_name_label.setFont(self.parent.font_small)
         real_name_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(real_name_label, 2, pos_labels)
         self.player_real_name = QLineEdit()
         self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
-        #self.player_real_name.textChanged.connect(self.ExportRealName)
+        self.player_real_name.textChanged.connect(self.AutoExportRealName)
 
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
@@ -370,7 +425,7 @@ class PlayerColumn():
         self.player_twitter = QLineEdit()
         self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
-        self.player_twitter.editingFinished.connect(self.ExportTwitter)
+        self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
 
         player_state_label = QLabel("Estado")
         player_state_label.setFont(self.parent.font_small)
@@ -385,9 +440,9 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_state, 0, pos_forms+2)
         self.player_state.setMinimumWidth(128)
         self.player_state.setFont(self.parent.font_small)
-        self.player_state.currentIndexChanged.connect(self.ExportState)
+        self.player_state.currentIndexChanged.connect(self.AutoExportState)
 
-        player_character_label = QLabel("Personagem")
+        player_character_label = QLabel("Char")
         player_character_label.setFont(self.parent.font_small)
         player_character_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(player_character_label, 1, pos_labels+2)
@@ -400,7 +455,7 @@ class PlayerColumn():
         self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
         self.player_character.setMinimumWidth(128)
         self.player_character.setFont(self.parent.font_small)
-        self.player_character.currentIndexChanged.connect(self.ExportCharacter)
+        self.player_character.currentIndexChanged.connect(self.AutoExportCharacter)
 
         player_character_color_label = QLabel("Cor")
         player_character_color_label.setFont(self.parent.font_small)
@@ -412,13 +467,25 @@ class PlayerColumn():
         self.player_character_color.setMinimumHeight(64)
         self.player_character_color.setMinimumWidth(128)
         self.player_character_color.setFont(self.parent.font_small)
-        self.player_character_color.currentIndexChanged.connect(self.ExportCharacter)
+        self.player_character_color.currentIndexChanged.connect(self.AutoExportCharacter)
+
+        self.optionsBt = QToolButton()
+        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
+        self.optionsBt.setPopupMode(QToolButton.InstantPopup)
+        self.layout_grid.addWidget(self.optionsBt, 0, 5)
+        self.optionsBt.setMenu(QMenu())
+        action = self.optionsBt.menu().addAction("Salvar como novo jogador")
+        action.setIcon(QIcon('icons/add_user.svg'))
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
         for c in self.parent.portraits[self.player_character.currentText()]:
             self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
     
+    def AutoExportName(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportName()
+
     def ExportName(self):
         with open('out/p'+str(self.id)+'_name.txt', 'w') as outfile:
             outfile.write(self.player_name.text())
@@ -434,6 +501,18 @@ class PlayerColumn():
         with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
             outfile.write(self.player_state.currentText())
     
+    def AutoExportRealName(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportRealName()
+    
+    def ExportRealName(self):
+        with open('out/p'+str(self.id)+'_real_name.txt', 'w') as outfile:
+            outfile.write(self.player_real_name.text())
+    
+    def AutoExportTwitter(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportTwitter()
+    
     def ExportTwitter(self):
         try:
             if(self.player_twitter.displayText() != None):
@@ -445,6 +524,10 @@ class PlayerColumn():
         except Exception as e:
             print(e)
     
+    def AutoExportState(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportState()
+
     def ExportState(self):
         try:
             shutil.copy(
@@ -453,6 +536,10 @@ class PlayerColumn():
             )
         except Exception as e:
             print(e)
+    
+    def AutoExportCharacter(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportCharacter()
             
     def ExportCharacter(self):
         try:
@@ -520,7 +607,7 @@ class PlayerColumn():
             else:
                 self.player_character.setCurrentIndex(0)
             
-            self.ExportTwitter()
+            self.AutoExportTwitter()
 
 
 App = QApplication(sys.argv)
