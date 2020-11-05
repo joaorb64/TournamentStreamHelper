@@ -156,7 +156,7 @@ class Window(QWidget):
 
         self.reset_score_bt = QPushButton()
         layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
-        self.reset_score_bt.setIcon(QIcon('icons/download.svg'))
+        self.reset_score_bt.setIcon(QIcon('icons/undo.svg'))
         self.reset_score_bt.setText("Zerar")
         self.reset_score_bt.setFont(self.font_small)
         self.reset_score_bt.clicked.connect(self.ResetScoreButtonClicked)
@@ -169,7 +169,7 @@ class Window(QWidget):
         self.invert_bt.clicked.connect(self.InvertButtonClicked)
         
         # Inputs do jogador 2 na vertical
-        p2 = PlayerColumn(self, 2, True)
+        p2 = PlayerColumn(self, 2)
         self.player_layouts.append(p2)
         base_layout.addWidget(p2.group_box)
 
@@ -328,12 +328,12 @@ class PlayerColumn():
 
         pos_labels = 0
         pos_forms = 1
-        text_alignment = Qt.AlignRight|Qt.AlignCenter
+        text_alignment = Qt.AlignRight|Qt.AlignVCenter
 
         if inverted:
             pos_labels = 1
             pos_forms = 0
-            text_alignment = Qt.AlignLeft|Qt.AlignCenter
+            text_alignment = Qt.AlignLeft|Qt.AlignVCenter
 
         nick_label = QLabel("Nick")
         nick_label.setFont(self.parent.font_small)

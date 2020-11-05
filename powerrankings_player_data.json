@@ -10937,7 +10937,7 @@
             "mains": [
                 "Ice Climbers"
             ],
-            "name": "D\u00e9co",
+            "name": "Coquinha",
             "org": "CH",
             "rank": {
                 "prbth": {
@@ -21937,7 +21937,7 @@
                 }
             ],
             "twitch": "the_kovac",
-            "twitter": "KovacSSBU"
+            "twitter": "the_kovac"
         },
         {
             "bestPlayerCharacter": {
@@ -23938,7 +23938,7 @@
                 "Wolf"
             ],
             "name": "DollyHunter",
-            "org": "SmashRS",
+            "org": "Mr.Zitu",
             "rank": {
                 "prbth": {
                     "rank": 33,
@@ -35826,7 +35826,8 @@
                 "prbth:85A025B6-B357-451C-A9A7-E6F864BE5D33"
             ],
             "city": "Recife",
-            "full_name": "Gabriel Torres",
+            "discord": "Saybot#4601",
+            "full_name": null,
             "mains": [
                 "Inkling",
                 "Joker"
@@ -40114,6 +40115,7 @@
             "braacket_links": [
                 "homeonline:AEF7C042-8372-46D0-A087-05A5B3EB01D0"
             ],
+            "city": "Vit\u00f3ria",
             "discord": "Ugiete#9709",
             "full_name": "Leandro Ugiete",
             "mains": [
@@ -42417,7 +42419,7 @@
                 0
             ],
             "smashgg_id": 726567,
-            "smashgg_image": "https://images.smash.gg/images/user/726567/image-281c4310e736bcd88d8035a8360e2991.png",
+            "smashgg_image": "https://images.smash.gg/images/user/726567/image-355956e49a14959d5124e489d97b068c.png",
             "smashgg_slug": "user/8af81b72",
             "state": "SP",
             "twitch": "mhomegavitor",
@@ -48514,8 +48516,8 @@
             "city": "Bras\u00edlia",
             "full_name": "Francisco Fialho",
             "mains": [
-                "Steve",
-                "King Dedede"
+                "King Dedede",
+                "Pokemon Trainer"
             ],
             "mixer": "fialhodonga2004",
             "name": "Doffy",
@@ -48891,7 +48893,7 @@
             "full_name": "Caetano Ventura Coutinho",
             "mains": [
                 "Kirby",
-                "Cloud"
+                "Ike"
             ],
             "name": "Kenan e Kel",
             "org": "SH",
@@ -52549,6 +52551,9 @@
                 "homeonline:35510405-5954-4A07-A575-E7B526470B3D"
             ],
             "full_name": "Jo\u00e3o Reis",
+            "mains": [
+                "Mr Game And Watch"
+            ],
             "name": "Joper200",
             "org": "P7",
             "smashgg_id": 1332102,
