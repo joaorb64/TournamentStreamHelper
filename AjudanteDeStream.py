@@ -10,92 +10,6 @@ import traceback, sys
 import time
 import os
 
-CHARACTER_TO_CODENAME = {
-    "Mario": "mario",
-    "Donkey Kong": "donkey",
-    "Link": "link",
-    "Samus": "samus",
-    "Dark Samus": "samusd",
-    "Yoshi": "yoshi",
-    "Kirby": "kirby",
-    "Fox": "fox",
-    "Pikachu": "pikachu",
-    "Luigi": "luigi",
-    "Ness": "ness",
-    "Captain Falcon": "captain",
-    "Jigglypuff": "purin",
-    "Peach": "peach",
-    "Daisy": "daisy",
-    "Bowser": "koopa",
-    "Ice Climbers": "ice_climber",
-    "Sheik": "sheik",
-    "Zelda": "zelda",
-    "Dr Mario": "mariod",
-    "Pichu": "pichu",
-    "Falco": "falco",
-    "Marth": "marth",
-    "Lucina": "lucina",
-    "Young Link": "younglink",
-    "Ganondorf": "ganon",
-    "Mewtwo": "mewtwo",
-    "Roy": "roy",
-    "Chrom": "chrom",
-    "Mr Game And Watch": "gamewatch",
-    "Meta Knight": "metaknight",
-    "Pit": "pit",
-    "Dark Pit": "pitb",
-    "Zero Suit Samus": "szerosuit",
-    "Wario": "wario",
-    "Snake": "snake",
-    "Ike": "ike",
-    "Pokemon Trainer": "ptrainer",
-    "Diddy Kong": "diddy",
-    "Lucas": "lucas",
-    "Sonic": "sonic",
-    "King Dedede": "dedede",
-    "Olimar": "pikmin",
-    "Lucario": "lucario",
-    "Rob": "robot",
-    "Toon Link": "toonlink",
-    "Wolf": "wolf",
-    "Villager": "murabito",
-    "Mega Man": "rockman",
-    "Wii Fit Trainer": "wiifit",
-    "Rosalina And Luma": "rosetta",
-    "Little Mac": "littlemac",
-    "Greninja": "gekkouga",
-    "Mii Brawler": "miifighter",
-    "Mii Swordfighter": "miiswordsman",
-    "Mii Gunner": "miigunner",
-    "Palutena": "palutena",
-    "Pac Man": "pacman",
-    "Robin": "reflet",
-    "Shulk": "shulk",
-    "Bowser Jr": "koopajr",
-    "Duck Hunt": "duckhunt",
-    "Ryu": "ryu",
-    "Ken": "ken",
-    "Cloud": "cloud",
-    "Corrin": "kamui",
-    "Bayonetta": "bayonetta",
-    "Inkling": "inkling",
-    "Ridley": "ridley",
-    "Simon": "simon",
-    "Richter": "richter",
-    "King K Rool": "krool",
-    "Isabelle": "shizue",
-    "Incineroar": "gaogaen",
-    "Piranha Plant": "packun",
-    "Joker": "jack",
-    "Hero": "brave",
-    "Banjo-Kazooie": "buddy",
-    "Terry": "dolly",
-    "Byleth": "master",
-    "Min Min": "tantan",
-    "Steve": "pickel",
-    "Random": "random"
-}
-
 class WorkerSignals(QObject):
     '''
     Defines the signals available from a running worker thread.
@@ -173,6 +87,9 @@ class Window(QWidget):
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
+        
+        f = open('character_name_to_codename.json')
+        self.character_to_codename = json.load(f)
 
         try:
             f = open('estados.json')
@@ -187,17 +104,17 @@ class Window(QWidget):
         
         self.stockIcons = {}
         
-        for c in CHARACTER_TO_CODENAME.keys():
+        for c in self.character_to_codename.keys():
             self.stockIcons[c] = {}
             for i in range(0, 8):
-                self.stockIcons[c][i] = QIcon('character_icon/chara_2_'+CHARACTER_TO_CODENAME[c]+'_0'+str(i)+'.png')
+                self.stockIcons[c][i] = QIcon('character_icon/chara_2_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
 
         self.portraits = {}
 
-        for c in CHARACTER_TO_CODENAME.keys():
+        for c in self.character_to_codename.keys():
             self.portraits[c] = {}
             for i in range(0, 8):
-                self.portraits[c][i] = QIcon('character_icon/chara_0_'+CHARACTER_TO_CODENAME[c]+'_0'+str(i)+'.png')
+                self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
 
         self.threadpool = QThreadPool()
 
@@ -213,7 +130,7 @@ class Window(QWidget):
         self.setLayout(base_layout)
 
         # Inputs do jogador 1 na vertical
-        p1 = PlayerColumn(self)
+        p1 = PlayerColumn(self, 1)
         self.player_layouts.append(p1)
         base_layout.addWidget(p1.group_box)
     
@@ -246,7 +163,7 @@ class Window(QWidget):
         self.invert_bt.setFont(self.font_small)
         
         # Inputs do jogador 2 na vertical
-        p2 = PlayerColumn(self, True)
+        p2 = PlayerColumn(self, 2, True)
         self.player_layouts.append(p2)
         base_layout.addWidget(p2.group_box)
 
@@ -261,7 +178,9 @@ class Window(QWidget):
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
         layout_end.addWidget(self.optionsBt)
         self.optionsBt.setMenu(QMenu())
-        self.optionsBt.menu().addAction("Sempre no topo")
+        action = self.optionsBt.menu().addAction("Sempre no topo")
+        action.setCheckable(True)
+        action.toggled.connect(self.ToggleAlwaysOnTop)
 
         self.downloadBt = QPushButton("Baixar dados do PowerRankings")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
@@ -293,6 +212,7 @@ class Window(QWidget):
     def DownloadButtonComplete(self):
         self.downloadBt.setEnabled(True)
         self.downloadBt.setText("Baixar dados do PowerRankings")
+        self.LoadData()
     
     def SetupAutocomplete(self):
         # auto complete options
@@ -300,16 +220,19 @@ class Window(QWidget):
 
         model = QStandardItemModel()
 
+        model.appendRow([QStandardItem(""), QStandardItem("")])
+
         for i, n in enumerate(names):
-            model.appendRow(QStandardItem(n))
+            model.appendRow([QStandardItem(n), QStandardItem(str(i))])
 
         for p in self.player_layouts:
             completer = QCompleter(completionColumn=0, caseSensitivity=Qt.CaseInsensitive)
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
             completer.setModel(model)
-            p.player_name.setModel(model)
+            #p.player_name.setModel(model)
             p.player_name.setCompleter(completer)
-            p.player_name.activated.connect(p.AutocompleteSelected)
+            completer.activated[QModelIndex].connect(p.AutocompleteSelected)
+            #p.player_name.currentIndexChanged.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
     
     def LoadData(self):
@@ -320,6 +243,13 @@ class Window(QWidget):
             self.SetupAutocomplete()
         except Exception as e:
             print(e)
+    
+    def ToggleAlwaysOnTop(self, checked):
+        if checked:
+            self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        else:
+            self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
+        self.show()
 
     def DownloadData(self, progress_callback):
         with open('powerrankings_player_data.json', 'wb') as f:
@@ -339,86 +269,18 @@ class Window(QWidget):
                     done = [dl, total_length]
                     progress_callback.emit(done)
                     sys.stdout.flush()
+                sys.stdout.flush()
+                f.close()
 
             print("Download successful")
-            self.LoadData()
-        
-    def ExportData(self):
-        for i, pl in enumerate(self.player_layouts):
-            with open('out/p'+str(i+1)+'_name.txt', 'w') as outfile:
-                outfile.write(pl.player_name.currentText())
-            with open('out/p'+str(i+1)+'_name+prefix.txt', 'w') as outfile:
-                if len(pl.player_org.text()) > 0:
-                    outfile.write(pl.player_org.text()+" | "+pl.player_name.currentText())
-                else:
-                    outfile.write(pl.player_name.currentText())
-            with open('out/p'+str(i+1)+'_prefix.txt', 'w') as outfile:
-                outfile.write(pl.player_org.text())
-            with open('out/p'+str(i+1)+'_twitter.txt', 'w') as outfile:
-                outfile.write(pl.player_twitter.text())
-            with open('out/p'+str(i+1)+'_state.txt', 'w') as outfile:
-                outfile.write(pl.player_state.currentText())
-            
-            try:
-                if(pl.player_twitter.text() != None):
-                    r = requests.get("http://twitter-avatar.now.sh/"+pl.player_twitter.text().split("/")[-1], stream=True)
-                    if r.status_code == 200:
-                        with open('out/p'+str(i+1)+'_picture.png', 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-            except Exception as e:
-                print(e)
-            
-            try:
-                shutil.copy(
-                    "state_icon/"+pl.player_state.currentData()+".png",
-                    "out/p"+str(i+1)+"_flag.png"
-                )
-            except Exception as e:
-                print(e)
-            
-            try:
-                shutil.copy(
-                    "character_icon/chara_0_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
-                    "out/p"+str(i+1)+"_character_portrait.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                shutil.copy(
-                    "character_icon/chara_1_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
-                    "out/p"+str(i+1)+"_character_big.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                shutil.copy(
-                    "character_icon/chara_3_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
-                    "out/p"+str(i+1)+"_character_full.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                shutil.copy(
-                    "character_icon/chara_3_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+"-halfres.png",
-                    "out/p"+str(i+1)+"_character_full-halfres.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                shutil.copy(
-                    "character_icon/chara_2_"+CHARACTER_TO_CODENAME[pl.player_character.currentText()]+"_0"+str(pl.player_character_color.currentIndex())+".png",
-                    "out/p"+str(i+1)+"_character_stockicon.png"
-                )
-            except Exception as e:
-                print(e)
             
 
 class PlayerColumn():
-    def __init__(self, parent, inverted=False):
+    def __init__(self, parent, id, inverted=False):
         super().__init__()
 
         self.parent = parent
+        self.id = id
 
         self.group_box = QGroupBox("Player")
 
@@ -440,11 +302,11 @@ class PlayerColumn():
         nick_label.setFont(self.parent.font_small)
         nick_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(nick_label, 0, pos_labels)
-        self.player_name = QComboBox()
-        self.player_name.setEditable(True)
+        self.player_name = QLineEdit()
         self.layout_grid.addWidget(self.player_name, 0, pos_forms)
         self.player_name.setMinimumWidth(128)
         self.player_name.setFont(self.parent.font_small)
+        self.player_name.textChanged.connect(self.ExportName)
 
         prefix_label = QLabel("Prefixo")
         prefix_label.setFont(self.parent.font_small)
@@ -453,6 +315,7 @@ class PlayerColumn():
         self.player_org = QLineEdit()
         self.layout_grid.addWidget(self.player_org, 1, pos_forms)
         self.player_org.setFont(self.parent.font_small)
+        self.player_org.textChanged.connect(self.ExportName)
 
         real_name_label = QLabel("Nome real")
         real_name_label.setFont(self.parent.font_small)
@@ -461,6 +324,7 @@ class PlayerColumn():
         self.player_real_name = QLineEdit()
         self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
+        #self.player_real_name.textChanged.connect(self.ExportRealName)
 
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
@@ -469,6 +333,7 @@ class PlayerColumn():
         self.player_twitter = QLineEdit()
         self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
+        self.player_twitter.editingFinished.connect(self.ExportTwitter)
 
         player_state_label = QLabel("Estado")
         player_state_label.setFont(self.parent.font_small)
@@ -483,6 +348,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_state, 0, pos_forms+2)
         self.player_state.setMinimumWidth(128)
         self.player_state.setFont(self.parent.font_small)
+        self.player_state.currentIndexChanged.connect(self.ExportState)
 
         player_character_label = QLabel("Personagem")
         player_character_label.setFont(self.parent.font_small)
@@ -497,6 +363,7 @@ class PlayerColumn():
         self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
         self.player_character.setMinimumWidth(128)
         self.player_character.setFont(self.parent.font_small)
+        self.player_character.currentIndexChanged.connect(self.ExportCharacter)
 
         player_character_color_label = QLabel("Cor")
         player_character_color_label.setFont(self.parent.font_small)
@@ -508,17 +375,99 @@ class PlayerColumn():
         self.player_character_color.setMinimumHeight(64)
         self.player_character_color.setMinimumWidth(128)
         self.player_character_color.setFont(self.parent.font_small)
+        self.player_character_color.currentIndexChanged.connect(self.ExportCharacter)
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
         for c in self.parent.portraits[self.player_character.currentText()]:
             self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
     
-    def AutocompleteSelected(self, index):
+    def ExportName(self):
+        with open('out/p'+str(self.id)+'_name.txt', 'w') as outfile:
+            outfile.write(self.player_name.text())
+        with open('out/p'+str(self.id)+'_name+prefix.txt', 'w') as outfile:
+            if len(self.player_org.text()) > 0:
+                outfile.write(self.player_org.text()+" | "+self.player_name.text())
+            else:
+                outfile.write(self.player_name.text())
+        with open('out/p'+str(self.id)+'_prefix.txt', 'w') as outfile:
+            outfile.write(self.player_org.text())
+        with open('out/p'+str(self.id)+'_twitter.txt', 'w') as outfile:
+            outfile.write(self.player_twitter.text())
+        with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+            outfile.write(self.player_state.currentText())
+    
+    def ExportTwitter(self):
+        try:
+            if(self.player_twitter.displayText() != None):
+                r = requests.get("http://twitter-avatar.now.sh/"+self.player_twitter.text().split("/")[-1], stream=True)
+                if r.status_code == 200:
+                    with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+        except Exception as e:
+            print(e)
+    
+    def ExportState(self):
+        try:
+            shutil.copy(
+                "state_icon/"+self.player_state.currentData()+".png",
+                "out/p"+str(self.id)+"_flag.png"
+            )
+        except Exception as e:
+            print(e)
+            
+    def ExportCharacter(self):
+        try:
+            shutil.copy(
+                "character_icon/chara_0_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                "out/p"+str(self.id)+"_character_portrait.png"
+            )
+        except Exception as e:
+            print(e)
+        try:
+            shutil.copy(
+                "character_icon/chara_1_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                "out/p"+str(self.id)+"_character_big.png"
+            )
+        except Exception as e:
+            print(e)
+        try:
+            shutil.copy(
+                "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                "out/p"+str(self.id)+"_character_full.png"
+            )
+        except Exception as e:
+            print(e)
+        try:
+            shutil.copy(
+                "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
+                "out/p"+str(self.id)+"_character_full-halfres.png"
+            )
+        except Exception as e:
+            print(e)
+        try:
+            shutil.copy(
+                "character_icon/chara_2_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                "out/p"+str(self.id)+"_character_stockicon.png"
+            )
+        except Exception as e:
+            print(e)
+    
+    def AutocompleteSelected(self, selected):
+        if type(selected) == QModelIndex:
+            index = int(selected.sibling(selected.row(), 1).data())
+        elif type(selected) == int:
+            index = selected-1
+            if index < 0:
+                index = None
+        else:
+            index = None
+
         if index is not None:
             player = self.parent.allplayers["players"][index]
             
-            self.player_name.setCurrentText(player["name"])
+            self.player_name.setText(player["name"])
             self.player_org.setText(player.get("org", ""))
             self.player_real_name.setText(player.get("full_name", ""))
             self.player_twitter.setText(player.get("twitter", ""))
@@ -533,8 +482,8 @@ class PlayerColumn():
                 self.player_character_color.setCurrentIndex(player.get("skins", [""])[0])
             else:
                 self.player_character.setCurrentIndex(0)
-        
-        self.parent.ExportData()
+            
+            self.ExportTwitter()
 
 
 App = QApplication(sys.argv)
