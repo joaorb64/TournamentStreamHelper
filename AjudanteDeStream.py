@@ -143,24 +143,30 @@ class Window(QWidget):
 
         base_layout.addWidget(group_box)
 
+        self.tournament_phase = QComboBox()
+        self.tournament_phase.setEditable(True)
+        layout_middle.addWidget(self.tournament_phase, 0, 0, 1, 2)
+
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
-        layout_middle.addWidget(self.scoreLeft, 0, 0, 2, 1)
+        layout_middle.addWidget(self.scoreLeft, 1, 0, 2, 1)
         self.scoreRight = QSpinBox()
         self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
-        layout_middle.addWidget(self.scoreRight, 0, 1, 2, 1)
+        layout_middle.addWidget(self.scoreRight, 1, 1, 2, 1)
 
         self.reset_score_bt = QPushButton()
-        layout_middle.addWidget(self.reset_score_bt, 2, 0, 1, 2, Qt.AlignCenter)
+        layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
         self.reset_score_bt.setIcon(QIcon('icons/download.svg'))
         self.reset_score_bt.setText("Zerar")
         self.reset_score_bt.setFont(self.font_small)
+        self.reset_score_bt.clicked.connect(self.ResetScoreButtonClicked)
 
         self.invert_bt = QPushButton()
-        layout_middle.addWidget(self.invert_bt, 3, 0, 1, 2, Qt.AlignCenter)
+        layout_middle.addWidget(self.invert_bt, 4, 0, 1, 2)
         self.invert_bt.setIcon(QIcon('icons/swap.svg'))
         self.invert_bt.setText("Inverter")
         self.invert_bt.setFont(self.font_small)
+        self.invert_bt.clicked.connect(self.InvertButtonClicked)
         
         # Inputs do jogador 2 na vertical
         p2 = PlayerColumn(self, 2, True)
@@ -195,6 +201,38 @@ class Window(QWidget):
         self.LoadData()
 
         self.show()
+    
+    def ResetScoreButtonClicked(self):
+        self.scoreLeft.setValue(0)
+        self.scoreRight.setValue(0)
+    
+    def InvertButtonClicked(self):
+        nick = self.player_layouts[0].player_name.text()
+        prefix = self.player_layouts[0].player_org.text()
+        name = self.player_layouts[0].player_real_name.text()
+        twitter = self.player_layouts[0].player_twitter.text()
+        state = self.player_layouts[0].player_state.currentIndex()
+        character = self.player_layouts[0].player_character.currentIndex()
+        color = self.player_layouts[0].player_character_color.currentIndex()
+        score = self.scoreLeft.value()
+
+        self.player_layouts[0].player_name.setText(self.player_layouts[1].player_name.text())
+        self.player_layouts[0].player_org.setText(self.player_layouts[1].player_org.text())
+        self.player_layouts[0].player_real_name.setText(self.player_layouts[1].player_real_name.text())
+        self.player_layouts[0].player_twitter.setText(self.player_layouts[1].player_twitter.text())
+        self.player_layouts[0].player_state.setCurrentIndex(self.player_layouts[1].player_state.currentIndex())
+        self.player_layouts[0].player_character.setCurrentIndex(self.player_layouts[1].player_character.currentIndex())
+        self.player_layouts[0].player_character_color.setCurrentIndex(self.player_layouts[1].player_character_color.currentIndex())
+        self.scoreLeft.setValue(self.scoreRight.value())
+
+        self.player_layouts[1].player_name.setText(nick)
+        self.player_layouts[1].player_org.setText(prefix)
+        self.player_layouts[1].player_real_name.setText(name)
+        self.player_layouts[1].player_twitter.setText(twitter)
+        self.player_layouts[1].player_state.setCurrentIndex(state)
+        self.player_layouts[1].player_character.setCurrentIndex(character)
+        self.player_layouts[1].player_character_color.setCurrentIndex(color)
+        self.scoreRight.setValue(score)
     
     def DownloadButtonClicked(self):
         self.downloadBt.setEnabled(False)
@@ -273,7 +311,6 @@ class Window(QWidget):
                 f.close()
 
             print("Download successful")
-            
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
