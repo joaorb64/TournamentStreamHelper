@@ -199,9 +199,9 @@ class Window(QWidget):
         action = self.optionsBt.menu().addAction("Sempre no topo")
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction("Exportar dados automaticamente")
-        action.setCheckable(True)
-        #action.toggled.connect(self.ToggleAlwaysOnTop)
+        action = self.optionsBt.menu().addAction("Baixar ícones de personagens")
+        action.setIcon(QIcon('icons/download.svg'))
+        action.triggered.connect(self.DownloadAssets)
 
         self.downloadBt = QPushButton("Baixar dados do PowerRankings")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
@@ -271,6 +271,42 @@ class Window(QWidget):
         self.player_layouts[1].player_character.setCurrentIndex(character)
         self.player_layouts[1].player_character_color.setCurrentIndex(color)
         self.scoreRight.setValue(score)
+    
+    def DownloadAssets(self):
+        response = requests.get("https://api.github.com/repos/joaorb64/AjudanteDeStream/releases/latest")
+        release = json.loads(response.text)
+
+        files = release["assets"]
+
+        totalSize = 0
+        for f in files:
+            totalSize += f["size"]
+
+        self.downloadDialogue = QProgressDialog("Baixando imagens...", "Cancelar", 0, totalSize, self)
+        self.downloadDialogue.setWindowTitle("Download de imagens")
+        self.downloadDialogue.setWindowModality(Qt.WindowModal)
+        self.downloadDialogue.show()
+
+        downloaded = 0
+
+        for f in files:
+            with open(f["name"], 'wb') as downloadFile:
+                print("Downloading "+str(f["name"]))
+                self.downloadDialogue.setLabelText("Baixando "+str(f["name"])+"...")
+
+                response = requests.get(f["browser_download_url"], stream=True)
+
+                for data in response.iter_content(chunk_size=8192):
+                    downloaded += len(data)
+                    downloadFile.write(data)
+
+                    self.downloadDialogue.setValue(downloaded)
+
+                    if self.downloadDialogue.wasCanceled():
+                        break
+                f.close()
+
+                print("Downloaded "+str(f["name"]))
     
     def DownloadButtonClicked(self):
         self.downloadBt.setEnabled(False)
