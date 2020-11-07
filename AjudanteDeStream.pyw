@@ -5,8 +5,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import shutil
+import tarfile
 
 import requests
+import urllib
 import json
 import traceback, sys
 import time
@@ -79,7 +81,8 @@ class Worker(QRunnable):
         else:
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
-            self.signals.finished.emit()  # Done
+            if self.signals.finished:
+                self.signals.finished.emit()  # Done
 
 class Window(QWidget):
     def __init__(self):
@@ -89,6 +92,9 @@ class Window(QWidget):
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
+
+        if not os.path.exists("character_icon/"):
+            os.mkdir("character_icon/")
         
         f = open('character_name_to_codename.json')
         self.character_to_codename = json.load(f)
@@ -273,6 +279,18 @@ class Window(QWidget):
         self.scoreRight.setValue(score)
     
     def DownloadAssets(self):
+        self.downloadDialogue = QProgressDialog("Baixando imagens...", "Cancelar", 0, 100, self)
+        self.downloadDialogue.setAutoClose(False)
+        self.downloadDialogue.setWindowTitle("Download de imagens")
+        self.downloadDialogue.setWindowModality(Qt.WindowModal)
+        self.downloadDialogue.show()
+
+        worker = Worker(self.DownloadAssetsWorker)
+        worker.signals.progress.connect(self.DownloadAssetsProgress)
+        worker.signals.finished.connect(self.DownloadAssetsFinished)
+        self.threadpool.start(worker)
+    
+    def DownloadAssetsWorker(self, progress_callback):
         response = requests.get("https://api.github.com/repos/joaorb64/AjudanteDeStream/releases/latest")
         release = json.loads(response.text)
 
@@ -282,31 +300,57 @@ class Window(QWidget):
         for f in files:
             totalSize += f["size"]
 
-        self.downloadDialogue = QProgressDialog("Baixando imagens...", "Cancelar", 0, totalSize, self)
-        self.downloadDialogue.setWindowTitle("Download de imagens")
-        self.downloadDialogue.setWindowModality(Qt.WindowModal)
-        self.downloadDialogue.show()
-
         downloaded = 0
 
         for f in files:
-            with open(f["name"], 'wb') as downloadFile:
+            with open("character_icon/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+str(f["name"]))
-                self.downloadDialogue.setLabelText("Baixando "+str(f["name"])+"...")
+                progress_callback.emit("Baixando "+str(f["name"])+"...")
 
-                response = requests.get(f["browser_download_url"], stream=True)
+                response = urllib.request.urlopen(f["browser_download_url"])
 
-                for data in response.iter_content(chunk_size=8192):
-                    downloaded += len(data)
-                    downloadFile.write(data)
+                while(True):
+                    chunk = response.read(1024*1024)
 
-                    self.downloadDialogue.setValue(downloaded)
+                    if not chunk:
+                        break
+
+                    downloaded += len(chunk)
+                    downloadFile.write(chunk)
 
                     if self.downloadDialogue.wasCanceled():
-                        break
-                f.close()
+                        return
+                    
+                    progress_callback.emit(int(downloaded/totalSize*100))
+                downloadFile.close()
 
-                print("Downloaded "+str(f["name"]))
+                print("OK")
+        
+        progress_callback.emit(100)
+
+        for f in files:
+            print("Extracting "+f["name"])
+            progress_callback.emit("Extraindo "+f["name"])
+            
+            tar = tarfile.open("character_icon/"+f["name"])
+            tar.extractall("character_icon/")
+            tar.close()
+            os.remove("character_icon/"+f["name"])
+
+            print("OK")
+    
+    def DownloadAssetsProgress(self, n):
+        if type(n) == int:
+            self.downloadDialogue.setValue(n)
+
+            if n == 100:
+                self.downloadDialogue.setMaximum(0)
+                self.downloadDialogue.setValue(0)
+        else:
+            self.downloadDialogue.setLabelText(n)
+    
+    def DownloadAssetsFinished(self):
+        self.downloadDialogue.close()
     
     def DownloadButtonClicked(self):
         self.downloadBt.setEnabled(False)
