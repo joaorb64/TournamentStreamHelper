@@ -153,23 +153,38 @@ class Window(QWidget):
     
         # Botoes no meio
         layout_middle = QGridLayout()
+        layout_middle.setVerticalSpacing(0)
 
-        group_box = QGroupBox("Score")
+        group_box = QGroupBox()
+        group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
         group_box.setLayout(layout_middle)
         group_box.setFont(self.font_small)
+        group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         base_layout.addWidget(group_box)
 
+        tournament_phase_label = QLabel("Fase")
+        tournament_phase_label.setFont(self.font_small)
+        layout_middle.addWidget(tournament_phase_label, 0, 0, 1, 2)
+
         self.tournament_phase = QComboBox()
         self.tournament_phase.setEditable(True)
-        layout_middle.addWidget(self.tournament_phase, 0, 0, 1, 2)
+        self.tournament_phase.setFont(self.font_small)
+        layout_middle.addWidget(self.tournament_phase, 1, 0, 1, 2)
+
+        self.tournament_phase.addItems([
+            "", "Friendlies", "Winners Bracket", "Losers Bracket",
+            "Winners Finals", "Losers Finals", "Grand Finals"
+        ])
 
         self.scoreLeft = QSpinBox()
-        self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
-        layout_middle.addWidget(self.scoreLeft, 1, 0, 2, 1)
+        self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
+        self.scoreLeft.setAlignment(Qt.AlignHCenter)
+        layout_middle.addWidget(self.scoreLeft, 2, 0, 1, 1)
         self.scoreRight = QSpinBox()
-        self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=20))
-        layout_middle.addWidget(self.scoreRight, 1, 1, 2, 1)
+        self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
+        self.scoreRight.setAlignment(Qt.AlignHCenter)
+        layout_middle.addWidget(self.scoreRight, 2, 1, 1, 1)
 
         self.reset_score_bt = QPushButton()
         layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
@@ -456,10 +471,13 @@ class PlayerColumn():
         self.parent = parent
         self.id = id
 
-        self.group_box = QGroupBox("Player")
+        self.group_box = QGroupBox()
+        self.group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
+        self.group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         self.layout_grid = QGridLayout()
         self.group_box.setLayout(self.layout_grid)
+        self.layout_grid.setVerticalSpacing(0)
 
         self.group_box.setFont(self.parent.font_small)
 
@@ -478,7 +496,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(nick_label, 0, pos_labels)
         self.player_name = QLineEdit()
         self.layout_grid.addWidget(self.player_name, 0, pos_forms)
-        self.player_name.setMinimumWidth(128)
+        self.player_name.setMinimumWidth(120)
         self.player_name.setFont(self.parent.font_small)
         self.player_name.textChanged.connect(self.AutoExportName)
 
@@ -490,6 +508,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_org, 1, pos_forms)
         self.player_org.setFont(self.parent.font_small)
         self.player_org.textChanged.connect(self.AutoExportName)
+        self.player_org.setMinimumWidth(120)
 
         real_name_label = QLabel("Nome")
         real_name_label.setFont(self.parent.font_small)
@@ -499,6 +518,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
         self.player_real_name.textChanged.connect(self.AutoExportRealName)
+        self.player_real_name.setMinimumWidth(120)
 
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
@@ -508,6 +528,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
         self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
+        self.player_twitter.setMinimumWidth(120)
 
         player_state_label = QLabel("Estado")
         player_state_label.setFont(self.parent.font_small)
@@ -520,9 +541,11 @@ class PlayerColumn():
             self.player_state.setItemData(i+1, estado)
         self.player_state.setEditable(True)
         self.layout_grid.addWidget(self.player_state, 0, pos_forms+2)
-        self.player_state.setMinimumWidth(128)
+        self.player_state.setMinimumWidth(120)
         self.player_state.setFont(self.parent.font_small)
+        self.player_state.lineEdit().setFont(self.parent.font_small)
         self.player_state.currentIndexChanged.connect(self.AutoExportState)
+        self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_label = QLabel("Char")
         player_character_label.setFont(self.parent.font_small)
@@ -535,9 +558,11 @@ class PlayerColumn():
         self.player_character.setEditable(True)
         self.layout_grid.addWidget(self.player_character, 1, pos_forms+2)
         self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
-        self.player_character.setMinimumWidth(128)
+        self.player_character.setMinimumWidth(120)
         self.player_character.setFont(self.parent.font_small)
+        self.player_character.lineEdit().setFont(self.parent.font_small)
         self.player_character.currentIndexChanged.connect(self.AutoExportCharacter)
+        self.player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_color_label = QLabel("Cor")
         player_character_color_label.setFont(self.parent.font_small)
@@ -545,9 +570,9 @@ class PlayerColumn():
         self.layout_grid.addWidget(player_character_color_label, 2, pos_labels+2)
         self.player_character_color = QComboBox()
         self.layout_grid.addWidget(self.player_character_color, 2, pos_forms+2, 2, 1)
-        self.player_character_color.setIconSize(QSize(64, 64))
-        self.player_character_color.setMinimumHeight(64)
-        self.player_character_color.setMinimumWidth(128)
+        self.player_character_color.setIconSize(QSize(48, 48))
+        self.player_character_color.setMinimumHeight(48)
+        self.player_character_color.setMinimumWidth(120)
         self.player_character_color.setFont(self.parent.font_small)
         self.player_character_color.currentIndexChanged.connect(self.AutoExportCharacter)
 
