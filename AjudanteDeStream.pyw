@@ -177,13 +177,17 @@ class Window(QWidget):
             "Winners Finals", "Losers Finals", "Grand Finals"
         ])
 
+        self.tournament_phase.currentTextChanged.connect(self.AutoExportScore)
+
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreLeft.setAlignment(Qt.AlignHCenter)
         layout_middle.addWidget(self.scoreLeft, 2, 0, 1, 1)
+        self.scoreLeft.valueChanged.connect(self.AutoExportScore)
         self.scoreRight = QSpinBox()
         self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreRight.setAlignment(Qt.AlignHCenter)
+        self.scoreRight.valueChanged.connect(self.AutoExportScore)
         layout_middle.addWidget(self.scoreRight, 2, 1, 1, 1)
 
         self.reset_score_bt = QPushButton()
@@ -260,6 +264,18 @@ class Window(QWidget):
         self.LoadData()
 
         self.show()
+    
+    def AutoExportScore(self):
+        if self.settings.get("autosave") == True:
+            self.ExportScore()
+    
+    def ExportScore(self):
+        with open('out/p1_score.txt', 'w') as outfile:
+            outfile.write(str(self.scoreLeft.value()))
+        with open('out/p2_score.txt', 'w') as outfile:
+            outfile.write(str(self.scoreRight.value()))
+        with open('out/match_phase.txt', 'w') as outfile:
+            outfile.write(self.tournament_phase.currentText())
     
     def ResetScoreButtonClicked(self):
         self.scoreLeft.setValue(0)
@@ -436,6 +452,7 @@ class Window(QWidget):
             p.ExportTwitter()
             p.ExportState()
             p.ExportCharacter()
+        self.ExportScore()
 
     def DownloadData(self, progress_callback):
         with open('powerrankings_player_data.json', 'wb') as f:
