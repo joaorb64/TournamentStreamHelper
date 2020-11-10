@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#-*- coding: utf-8 -*-
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -736,4 +737,4 @@ class PlayerColumn():
 
 App = QApplication(sys.argv)
 window = Window()
-sys.exit(App.exec())
+sys.exit(App.exec_())
