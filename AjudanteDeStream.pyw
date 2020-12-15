@@ -101,10 +101,10 @@ class Window(QWidget):
         self.character_to_codename = json.load(f)
 
         try:
-            f = open('estados.json')
-            estados_json = json.load(f)
+            f = open('countries+states.json')
+            countries_json = json.load(f)
             print("States loaded")
-            self.estados = {e["uf"]: "("+e["nome"]+")" for e in estados_json}
+            self.countries = {c["iso2"]: [s["state_code"] for s in c["states"]] for c in countries_json}
         except Exception as e:
             print(e)
             exit()
@@ -234,10 +234,15 @@ class Window(QWidget):
         layout_end.addWidget(self.downloadBt, 1, 0, 1, 2)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
 
-        self.downloadBt = QPushButton("Baixar dados de um torneio")
-        self.downloadBt.setIcon(QIcon('icons/smashgg.png'))
-        layout_end.addWidget(self.downloadBt, 2, 0, 1, 2)
-        self.downloadBt.clicked.connect(self.DownloadButtonClicked)
+        self.smashggConnectBt = QPushButton("Baixar jogadores")
+        self.smashggConnectBt.setIcon(QIcon('icons/smashgg.png'))
+        layout_end.addWidget(self.smashggConnectBt, 2, 0, 1, 1)
+        self.smashggConnectBt.clicked.connect(self.LoadSetsFromSmashGGTournament)
+
+        self.smashggSelectSetBt = QPushButton("Selecionar set")
+        self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.png'))
+        layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
+        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournament)
 
         # save button
         self.saveBt = QToolButton()
@@ -287,6 +292,7 @@ class Window(QWidget):
         prefix = self.player_layouts[0].player_org.text()
         name = self.player_layouts[0].player_real_name.text()
         twitter = self.player_layouts[0].player_twitter.text()
+        country = self.player_layouts[0].player_country.currentIndex()
         state = self.player_layouts[0].player_state.currentIndex()
         character = self.player_layouts[0].player_character.currentIndex()
         color = self.player_layouts[0].player_character_color.currentIndex()
@@ -296,6 +302,7 @@ class Window(QWidget):
         self.player_layouts[0].player_org.setText(self.player_layouts[1].player_org.text())
         self.player_layouts[0].player_real_name.setText(self.player_layouts[1].player_real_name.text())
         self.player_layouts[0].player_twitter.setText(self.player_layouts[1].player_twitter.text())
+        self.player_layouts[0].player_country.setCurrentIndex(self.player_layouts[1].player_country.currentIndex())
         self.player_layouts[0].player_state.setCurrentIndex(self.player_layouts[1].player_state.currentIndex())
         self.player_layouts[0].player_character.setCurrentIndex(self.player_layouts[1].player_character.currentIndex())
         self.player_layouts[0].player_character_color.setCurrentIndex(self.player_layouts[1].player_character_color.currentIndex())
@@ -305,6 +312,7 @@ class Window(QWidget):
         self.player_layouts[1].player_org.setText(prefix)
         self.player_layouts[1].player_real_name.setText(name)
         self.player_layouts[1].player_twitter.setText(twitter)
+        self.player_layouts[1].player_country.setCurrentIndex(country)
         self.player_layouts[1].player_state.setCurrentIndex(state)
         self.player_layouts[1].player_character.setCurrentIndex(character)
         self.player_layouts[1].player_character_color.setCurrentIndex(color)
@@ -404,14 +412,39 @@ class Window(QWidget):
     
     def SetupAutocomplete(self):
         # auto complete options
-        names = [p["name"] for i, p in enumerate(self.allplayers["players"])]
+        names = []
+        autocompleter_names = []
+        autocompleter_mains = []
+        for i, p in enumerate(self.allplayers["players"]):
+            name = ""
+            if("org" in p.keys() and p["org"] != None):
+                name += p["org"] + " "
+            name += p["name"]
+            if("country_code" in p.keys() and p["country_code"] != None):
+                name += " ("+p["country_code"]+")"
+            autocompleter_names.append(name)
+            names.append(p["name"])
+
+            if("mains" in p.keys() and p["mains"] != None and len(p["mains"]) > 0):
+                autocompleter_mains.append(p["mains"][0])
+            else:
+                autocompleter_mains.append("Random")
 
         model = QStandardItemModel()
 
-        model.appendRow([QStandardItem(""), QStandardItem("")])
+        model.appendRow([QStandardItem(""), QStandardItem(""), QStandardItem("")])
 
         for i, n in enumerate(names):
-            model.appendRow([QStandardItem(n), QStandardItem(str(i))])
+            item = QStandardItem(autocompleter_names[i])
+            item.setIcon(QIcon(
+                'character_icon/chara_2_'+
+                self.character_to_codename[autocompleter_mains[i]]+
+                '_00.png'))
+            model.appendRow([
+                item,
+                QStandardItem(n),
+                QStandardItem(str(i))]
+            )
 
         for p in self.player_layouts:
             completer = QCompleter(completionColumn=0, caseSensitivity=Qt.CaseInsensitive)
@@ -419,7 +452,8 @@ class Window(QWidget):
             completer.setModel(model)
             #p.player_name.setModel(model)
             p.player_name.setCompleter(completer)
-            completer.activated[QModelIndex].connect(p.AutocompleteSelected)
+            completer.activated[QModelIndex].connect(p.AutocompleteSelected, Qt.QueuedConnection)
+            completer.popup().setMinimumWidth(500)
             #p.player_name.currentIndexChanged.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
     
@@ -451,6 +485,7 @@ class Window(QWidget):
             p.ExportName()
             p.ExportRealName()
             p.ExportTwitter()
+            p.ExportCountry()
             p.ExportState()
             p.ExportCharacter()
         self.ExportScore()
@@ -459,7 +494,7 @@ class Window(QWidget):
         with open('powerrankings_player_data.json', 'wb') as f:
             print("Download start")
 
-            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/master/allplayers.json', stream=True)
+            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/out/allplayers.json', stream=True)
             total_length = response.headers.get('content-length')
 
             if total_length is None: # no content length header
@@ -481,6 +516,191 @@ class Window(QWidget):
     def SaveSettings(self):
         with open('settings.json', 'w') as outfile:
             json.dump(self.settings, outfile, indent=4, sort_keys=True)
+    
+    def LoadPlayersFromSmashGGTournament(self):
+        slug = "tournament/try-hard-coliseum-2-chinelus-maximus/event/thcoliseum"
+
+        r = requests.post(
+            'https://api.smash.gg/gql/alpha',
+            headers={
+                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+            },
+            json={
+                'query': '''
+                query evento($eventSlug: String!) {
+                    event(slug: $eventSlug) {
+                        entrants(query: {page: '''+str(1)+''', perPage: 64}) {
+                            nodes{
+                                name
+                                participants {
+                                    user {
+                                        id
+                                        slug
+                                        name
+                                        authorizations(types: [TWITTER]) {
+                                            type
+                                            externalUsername
+                                        }
+                                    }
+                                    player {
+                                        gamerTag
+                                        prefix
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }''',
+                'variables': {
+                    "eventSlug": slug
+                },
+            }
+        )
+        resp = json.loads(r.text)
+
+        if resp is None or \
+        resp.get("data") is None or \
+        resp["data"].get("event") is None or \
+        resp["data"]["event"].get("entrants") is None:
+            print(resp)
+            return
+
+        data_entrants = resp["data"]["event"]["entrants"]["nodes"]
+        self.ggEntrants = data_entrants
+
+        self.LoadPlayersFromSmashGGTournament()
+    
+    def LoadSetsFromSmashGGTournament(self):
+        slug = "tournament/try-hard-coliseum-2-chinelus-maximus/event/thcoliseum"
+
+        r = requests.post(
+            'https://api.smash.gg/gql/alpha',
+            headers={
+                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+            },
+            json={
+                'query': '''
+                query evento($eventSlug: String!) {
+                    event(slug: $eventSlug) {
+                        tournament {
+                            streamQueue {
+                                sets {
+                                    fullRoundText
+                                    slots {
+                                        entrant {
+                                            participants {
+                                                gamerTag
+                                                user {
+                                                    id
+                                                }
+                                            }                                        
+                                        }
+                                    }
+                                }
+                                stream {
+                                    streamName
+                                    streamSource
+                                }
+                            }
+                        }
+                        sets(page: 1, perPage: 32, sortType: MAGIC, filters: {state: 3}) {
+                            nodes {
+                                fullRoundText
+                                slots {
+                                    entrant {
+                                        participants {
+                                            gamerTag
+                                            user {
+                                                id
+                                            }
+                                        }                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }''',
+                'variables': {
+                    "eventSlug": slug
+                },
+            }
+        )
+        resp = json.loads(r.text)
+
+        if resp is None or \
+        resp.get("data") is None or \
+        resp["data"].get("event") is None or \
+        resp["data"]["event"].get("sets") is None:
+            print(resp)
+        
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(["Stream", "Set", "Player 1", "Player 2", "sggid1", "sggid2"])
+
+        streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
+        sets = resp["data"]["event"]["sets"]["nodes"]
+
+        print(streamSets)
+
+        if streamSets is not None:
+            for s in streamSets:
+                model.appendRow([
+                    QStandardItem(s["stream"]["streamName"]),
+                    QStandardItem(s["sets"][0]["fullRoundText"]),
+                    QStandardItem(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
+                    QStandardItem(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
+                    QStandardItem(str(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["user"]["id"])),
+                    QStandardItem(str(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["user"]["id"]))
+                ])
+
+        for s in sets:
+            model.appendRow([
+                QStandardItem(""),
+                QStandardItem(s["fullRoundText"]),
+                QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
+                QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
+                QStandardItem(str(s["slots"][0]["entrant"]["participants"][0]["user"]["id"])),
+                QStandardItem(str(s["slots"][1]["entrant"]["participants"][0]["user"]["id"]))
+            ])
+
+        self.smashGGSetSelecDialog = QDialog(self)
+        self.smashGGSetSelecDialog.setWindowTitle("Selecione um set")
+        self.smashGGSetSelecDialog.setWindowModality(Qt.WindowModal)
+
+        layout = QVBoxLayout()
+        self.smashGGSetSelecDialog.setLayout(layout)
+
+        self.smashggSetSelectionItemList = QTableView()
+        layout.addWidget(self.smashggSetSelectionItemList)
+        self.smashggSetSelectionItemList.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.smashggSetSelectionItemList.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.smashggSetSelectionItemList.setModel(model)
+        self.smashggSetSelectionItemList.setColumnHidden(4, True)
+        self.smashggSetSelectionItemList.setColumnHidden(5, True)
+        self.smashggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
+        self.smashggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.smashggSetSelectionItemList.resizeColumnsToContents()
+
+        btOk = QPushButton("OK")
+        layout.addWidget(btOk)
+        btOk.clicked.connect(self.LoadPlayersFromSmashGGSet)
+
+        self.smashGGSetSelecDialog.show()
+    
+    def LoadPlayersFromSmashGGSet(self):
+        row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
+
+        # Set phase name
+        self.tournament_phase.setCurrentText(self.smashggSetSelectionItemList.model().index(row, 1).data())
+
+        # P1
+        sggid1 = self.smashggSetSelectionItemList.model().index(row, 4).data()
+        self.player_layouts[0].selectPRPlayerBySmashGGId(sggid1)
+
+        # P2
+        sggid2 = self.smashggSetSelectionItemList.model().index(row, 5).data()
+        self.player_layouts[1].selectPRPlayerBySmashGGId(sggid2)
+
+        self.smashGGSetSelecDialog.close()
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
@@ -548,21 +768,34 @@ class PlayerColumn():
         self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
         self.player_twitter.setMinimumWidth(120)
 
-        player_state_label = QLabel("Estado")
-        player_state_label.setFont(self.parent.font_small)
-        player_state_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_state_label, 0, pos_labels+2)
+        location_layout = QHBoxLayout()
+        self.layout_grid.addLayout(location_layout, 0, pos_forms+2)
+
+        player_country_label = QLabel("Location")
+        player_country_label.setFont(self.parent.font_small)
+        player_country_label.setAlignment(text_alignment)
+        self.layout_grid.addWidget(player_country_label, 0, pos_labels+2)
+        self.player_country = QComboBox()
+        self.player_country.addItem("")
+        for i, country in enumerate(self.parent.countries):
+            item = self.player_country.addItem(QIcon("country_icon/"+country.lower()+".png"), country)
+            self.player_country.setItemData(i+1, country)
+        self.player_country.setEditable(True)
+        location_layout.addWidget(self.player_country)
+        self.player_country.setMinimumWidth(75)
+        self.player_country.setFont(self.parent.font_small)
+        self.player_country.lineEdit().setFont(self.parent.font_small)
+        self.player_country.currentIndexChanged.connect(self.AutoExportCountry)
+        self.player_country.currentTextChanged.connect(self.LoadStateOptions)
+        self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+
         self.player_state = QComboBox()
-        self.player_state.addItem("")
-        for i, estado in enumerate(self.parent.estados):
-            item = self.player_state.addItem(QIcon("state_icon/"+estado+".png"), estado + " " + self.parent.estados[estado])
-            self.player_state.setItemData(i+1, estado)
         self.player_state.setEditable(True)
-        self.layout_grid.addWidget(self.player_state, 0, pos_forms+2)
-        self.player_state.setMinimumWidth(120)
+        location_layout.addWidget(self.player_state)
+        self.player_state.setMinimumWidth(60)
         self.player_state.setFont(self.parent.font_small)
         self.player_state.lineEdit().setFont(self.parent.font_small)
-        self.player_state.currentIndexChanged.connect(self.AutoExportState)
+        self.player_state.currentIndexChanged.connect(self.AutoExportCountry)
         self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_label = QLabel("Char")
@@ -607,6 +840,12 @@ class PlayerColumn():
         for c in self.parent.portraits[self.player_character.currentText()]:
             self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
     
+    def LoadStateOptions(self, text):
+        self.player_state.clear()
+        self.player_state.addItem("")
+        for s in self.parent.countries[self.player_country.currentText()]:
+            self.player_state.addItem(str(s))
+    
     def AutoExportName(self):
         if self.parent.settings.get("autosave") == True:
             self.ExportName()
@@ -623,8 +862,6 @@ class PlayerColumn():
             outfile.write(self.player_org.text())
         with open('out/p'+str(self.id)+'_twitter.txt', 'w') as outfile:
             outfile.write(self.player_twitter.text())
-        with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
-            outfile.write(self.player_state.currentText())
     
     def AutoExportRealName(self):
         if self.parent.settings.get("autosave") == True:
@@ -641,9 +878,35 @@ class PlayerColumn():
     def ExportTwitter(self):
         try:
             if(self.player_twitter.displayText() != None):
-                r = requests.get("http://twitter-avatar.now.sh/"+self.player_twitter.text().split("/")[-1], stream=True)
+                r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
                 if r.status_code == 200:
                     with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+        except Exception as e:
+            print(e)
+    
+    def AutoExportCountry(self):
+        if self.parent.settings.get("autosave") == True:
+            self.ExportCountry()
+
+    def ExportCountry(self):
+        try:
+            with open('out/p'+str(self.id)+'_country.txt', 'w') as outfile:
+                outfile.write(self.player_country.currentText())
+            shutil.copy(
+                "country_icon/"+self.player_country.currentText().lower()+".png",
+                "out/p"+str(self.id)+"_country_flag.png"
+            )
+            
+            with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+                outfile.write(self.player_state.currentText())
+            if(self.player_state.currentText() != None):
+                r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
+                    self.player_country.currentText().upper()+"/"+
+                    self.player_state.currentText().upper()+".png", stream=True)
+                if r.status_code == 200:
+                    with open('out/p'+str(self.id)+'_state.png', 'wb') as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
         except Exception as e:
@@ -655,6 +918,8 @@ class PlayerColumn():
 
     def ExportState(self):
         try:
+            with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+                outfile.write(self.player_state.currentText())
             shutil.copy(
                 "state_icon/"+self.player_state.currentData()+".png",
                 "out/p"+str(self.id)+"_flag.png"
@@ -705,7 +970,7 @@ class PlayerColumn():
     
     def AutocompleteSelected(self, selected):
         if type(selected) == QModelIndex:
-            index = int(selected.sibling(selected.row(), 1).data())
+            index = int(selected.sibling(selected.row(), 2).data())
         elif type(selected) == int:
             index = selected-1
             if index < 0:
@@ -714,25 +979,37 @@ class PlayerColumn():
             index = None
 
         if index is not None:
-            player = self.parent.allplayers["players"][index]
+            self.selectPRPlayer(index)
+    
+    def selectPRPlayer(self, index):
+        player = self.parent.allplayers["players"][index]
             
-            self.player_name.setText(player["name"])
-            self.player_org.setText(player.get("org", ""))
-            self.player_real_name.setText(player.get("full_name", ""))
-            self.player_twitter.setText(player.get("twitter", ""))
+        self.player_name.setText(player["name"])
+        self.player_org.setText(player.get("org", ""))
+        self.player_real_name.setText(player.get("full_name", ""))
+        self.player_twitter.setText(player.get("twitter", ""))
 
-            if player.get("state") is not None:
-                self.player_state.setCurrentIndex(list(self.parent.estados.keys()).index(player.get("state"))+1)
+        if player.get("country_code") is not None and player.get("country_code")!="null":
+            self.player_country.setCurrentIndex(list(self.parent.countries.keys()).index(player.get("country_code"))+1)
+            if player.get("state") is not None and player.get("state")!="null":
+                self.player_state.setCurrentIndex(list(self.parent.countries[player.get("country_code")]).index(player.get("state"))+1)
             else:
                 self.player_state.setCurrentIndex(0)
-            
-            if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
-                self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
-                self.player_character_color.setCurrentIndex(player.get("skins", [""])[0])
-            else:
-                self.player_character.setCurrentIndex(0)
-            
-            self.AutoExportTwitter()
+        else:
+            self.player_country.setCurrentIndex(0)
+        
+        if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
+            self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
+        else:
+            self.player_character.setCurrentIndex(0)
+        
+        self.AutoExportTwitter()
+    
+    def selectPRPlayerBySmashGGId(self, smashgg_id):
+        index = next((i for i, p in enumerate(self.parent.allplayers["players"]) if str(p.get("smashgg_id", None)) == smashgg_id), None)
+        if index is not None:
+            self.selectPRPlayer(index)
 
 
 App = QApplication(sys.argv)
