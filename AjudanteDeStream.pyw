@@ -1266,8 +1266,14 @@ class PlayerColumn():
     
     def ExportTwitter(self):
         try:
-            if(self.player_twitter.displayText() != None):
+            if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
                 r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
+                if r.status_code == 200:
+                    with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+            elif self.player_obj.get("smashgg_image", None) is not None:
+                r = requests.get(self.player_obj["smashgg_image"], stream=True)
                 if r.status_code == 200:
                     with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
                         r.raw.decode_content = True
@@ -1379,6 +1385,8 @@ class PlayerColumn():
         self.player_org.setText(player.get("org", ""))
         self.player_real_name.setText(player.get("full_name", ""))
         self.player_twitter.setText(player.get("twitter", ""))
+
+        self.player_obj = player
 
         if player.get("country_code") is not None and player.get("country_code")!="null":
             self.player_country.setCurrentIndex(list(self.parent.countries.keys()).index(player.get("country_code"))+1)
