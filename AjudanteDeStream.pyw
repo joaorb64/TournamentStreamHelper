@@ -1266,18 +1266,22 @@ class PlayerColumn():
     
     def ExportTwitter(self):
         try:
-            if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
-                r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
-                if r.status_code == 200:
-                    with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
-                        r.raw.decode_content = True
-                        shutil.copyfileobj(r.raw, f)
-            elif self.player_obj.get("smashgg_image", None) is not None:
-                r = requests.get(self.player_obj["smashgg_image"], stream=True)
-                if r.status_code == 200:
-                    with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
-                        r.raw.decode_content = True
-                        shutil.copyfileobj(r.raw, f)
+            def myFun(self, progress_callback):
+                if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
+                    r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
+                    if r.status_code == 200:
+                        with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
+                elif self.player_obj.get("smashgg_image", None) is not None:
+                    r = requests.get(self.player_obj["smashgg_image"], stream=True)
+                    if r.status_code == 200:
+                        with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
+            
+            worker = Worker(myFun, *{self})
+            self.parent.threadpool.start(worker)
         except Exception as e:
             print(e)
     
@@ -1287,23 +1291,27 @@ class PlayerColumn():
 
     def ExportCountry(self):
         try:
-            with open('out/p'+str(self.id)+'_country.txt', 'w') as outfile:
-                outfile.write(self.player_country.currentText())
-            shutil.copy(
-                "country_icon/"+self.player_country.currentText().lower()+".png",
-                "out/p"+str(self.id)+"_country_flag.png"
-            )
+            def myFun(self, progress_callback):
+                with open('out/p'+str(self.id)+'_country.txt', 'w') as outfile:
+                    outfile.write(self.player_country.currentText())
+                shutil.copy(
+                    "country_icon/"+self.player_country.currentText().lower()+".png",
+                    "out/p"+str(self.id)+"_country_flag.png"
+                )
+                
+                with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+                    outfile.write(self.player_state.currentText())
+                if(self.player_state.currentText() != None):
+                    r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
+                        self.player_country.currentText().upper()+"/"+
+                        self.player_state.currentText().upper()+".png", stream=True)
+                    if r.status_code == 200:
+                        with open('out/p'+str(self.id)+'_state.png', 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
             
-            with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
-                outfile.write(self.player_state.currentText())
-            if(self.player_state.currentText() != None):
-                r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
-                    self.player_country.currentText().upper()+"/"+
-                    self.player_state.currentText().upper()+".png", stream=True)
-                if r.status_code == 200:
-                    with open('out/p'+str(self.id)+'_state.png', 'wb') as f:
-                        r.raw.decode_content = True
-                        shutil.copyfileobj(r.raw, f)
+            worker = Worker(myFun, *{self})
+            self.parent.threadpool.start(worker)
         except Exception as e:
             print(e)
     
