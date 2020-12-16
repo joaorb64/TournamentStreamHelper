@@ -15,6 +15,100 @@ import traceback, sys
 import time
 import os
 
+from collections import Counter
+
+import unicodedata
+
+def remove_accents_lower(input_str):
+    nfkd_form = unicodedata.normalize('NFKD', input_str)
+    return u"".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
+
+characters = {
+    "Mario": "Mario",
+    "Donkey Kong": "Donkey Kong",
+    "Link": "Link",
+    "Samus": "Samus",
+    "Dark Samus": "Dark Samus",
+    "Yoshi": "Yoshi",
+    "Kirby": "Kirby",
+    "Fox": "Fox",
+    "Pikachu": "Pikachu",
+    "Luigi": "Luigi",
+    "Ness": "Ness",
+    "Captain Falcon": "Captain Falcon",
+    "Jigglypuff": "Jigglypuff",
+    "Peach": "Peach",
+    "Daisy": "Daisy",
+    "Bowser": "Bowser",
+    "Ice Climbers": "Ice Climbers",
+    "Sheik": "Sheik",
+    "Zelda": "Zelda",
+    "Dr. Mario": "Dr Mario",
+    "Pichu": "Pichu",
+    "Falco": "Falco",
+    "Marth": "Marth",
+    "Lucina": "Lucina",
+    "Young Link": "Young Link",
+    "Ganondorf": "Ganondorf",
+    "Mewtwo": "Mewtwo",
+    "Roy": "Roy",
+    "Chrom": "Chrom",
+    "Mr. Game & Watch": "Mr Game And Watch",
+    "Meta Knight": "Meta Knight",
+    "Pit": "Pit",
+    "Dark Pit": "Dark Pit",
+    "Zero Suit Samus": "Zero Suit Samus",
+    "Wario": "Wario",
+    "Snake": "Snake",
+    "Ike": "Ike",
+    "Pokemon Trainer": "Pokemon Trainer",
+    "Diddy Kong": "Diddy Kong",
+    "Lucas": "Lucas",
+    "Sonic": "Sonic",
+    "King Dedede": "King Dedede",
+    "Olimar": "Olimar",
+    "Lucario": "Lucario",
+    "R.O.B.": "Rob",
+    "Toon Link": "Toon Link",
+    "Wolf": "Wolf",
+    "Villager": "Villager",
+    "Mega Man": "Mega Man",
+    "Wii Fit Trainer": "Wii Fit Trainer",
+    "Rosalina": "Rosalina And Luma",
+    "Little Mac": "Little Mac",
+    "Greninja": "Greninja",
+    "Mii Brawler": "Mii Brawler",
+    "Mii Swordfighter": "Mii Swordfighter",
+    "Mii Gunner": "Mii Gunner",
+    "Palutena": "Palutena",
+    "Pac-Man": "Pac Man",
+    "Robin": "Robin",
+    "Shulk": "Shulk",
+    "Bowser Jr.": "Bowser Jr",
+    "Duck Hunt": "Duck Hunt",
+    "Ryu": "Ryu",
+    "Ken": "Ken",
+    "Cloud": "Cloud",
+    "Corrin": "Corrin",
+    "Bayonetta": "Bayonetta",
+    "Inkling": "Inkling",
+    "Ridley": "Ridley",
+    "Simon Belmont": "Simon",
+    "Richter": "Richter",
+    "King K. Rool": "King K Rool",
+    "Isabelle": "Isabelle",
+    "Incineroar": "Incineroar",
+    "Piranha Plant": "Piranha Plant",
+    "Joker": "Joker",
+    "Hero": "Hero",
+    "Banjo-Kazooie": "Banjo-Kazooie",
+    "Terry": "Terry",
+    "Byleth": "Byleth",
+    "Min Min": "Min Min",
+    "Steve": "Steve",
+    "Random Character": "Random"
+}
+
 class WorkerSignals(QObject):
     '''
     Defines the signals available from a running worker thread.
@@ -100,11 +194,17 @@ class Window(QWidget):
         f = open('character_name_to_codename.json')
         self.character_to_codename = json.load(f)
 
+        f = open('ultimate.json')
+        self.smashgg_character_data = json.load(f)
+
+        f = open('cities.json')
+        self.cities_json = json.load(f)
+
         try:
             f = open('countries+states.json')
-            countries_json = json.load(f)
+            self.countries_json = json.load(f)
             print("States loaded")
-            self.countries = {c["iso2"]: [s["state_code"] for s in c["states"]] for c in countries_json}
+            self.countries = {c["iso2"]: [s["state_code"] for s in c["states"]] for c in self.countries_json}
         except Exception as e:
             print(e)
             exit()
@@ -139,6 +239,7 @@ class Window(QWidget):
         self.player_layouts = []
 
         self.allplayers = None
+        self.smashgg_players = None
 
         self.setGeometry(300, 300, 800, 100)
         self.setWindowTitle("Ajudante de Stream")
@@ -237,12 +338,12 @@ class Window(QWidget):
         self.smashggConnectBt = QPushButton("Baixar jogadores")
         self.smashggConnectBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.smashggConnectBt, 2, 0, 1, 1)
-        self.smashggConnectBt.clicked.connect(self.LoadSetsFromSmashGGTournament)
+        self.smashggConnectBt.clicked.connect(self.LoadPlayersFromSmashGGTournamentClicked)
 
         self.smashggSelectSetBt = QPushButton("Selecionar set")
         self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
-        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournament)
+        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentClicked)
 
         # save button
         self.saveBt = QToolButton()
@@ -415,7 +516,23 @@ class Window(QWidget):
         names = []
         autocompleter_names = []
         autocompleter_mains = []
-        for i, p in enumerate(self.allplayers["players"]):
+        autocompleter_players = []
+
+        ap = self.allplayers["players"]
+        
+        for p in self.smashgg_players:
+            found = next(
+                (a for a in ap if a.get("smashgg_id", None) != None and a.get("smashgg_id", None) == p["smashgg_id"]),
+                None
+            )
+
+            if found is None:
+                p["from_smashgg"] = True
+                ap.append(p)
+
+        self.mergedPlayers = ap
+
+        for i, p in enumerate(ap):
             name = ""
             if("org" in p.keys() and p["org"] != None):
                 name += p["org"] + " "
@@ -429,6 +546,8 @@ class Window(QWidget):
                 autocompleter_mains.append(p["mains"][0])
             else:
                 autocompleter_mains.append("Random")
+            
+            autocompleter_players.append(p)
 
         model = QStandardItemModel()
 
@@ -440,6 +559,17 @@ class Window(QWidget):
                 'character_icon/chara_2_'+
                 self.character_to_codename[autocompleter_mains[i]]+
                 '_00.png'))
+            if "from_smashgg" in self.mergedPlayers[i]:
+                pix = QPixmap(
+                    'character_icon/chara_2_'+
+                    self.character_to_codename[autocompleter_mains[i]]+
+                    '_00.png'
+                )
+                p = QPainter(pix)
+                p.drawImage(QPoint(32, 32), QImage("icons/smashgg.png"))
+                p.end()
+                item.setIcon(QIcon(pix))
+            item.setData(autocompleter_players[i])
             model.appendRow([
                 item,
                 QStandardItem(n),
@@ -461,7 +591,15 @@ class Window(QWidget):
         try:
             f = open('powerrankings_player_data.json')
             self.allplayers = json.load(f)
-            print("Data loaded")
+            print("Powerrankings data loaded")
+            self.SetupAutocomplete()
+        except Exception as e:
+            print(e)
+        
+        try:
+            f = open('tournament_players.json')
+            self.smashgg_players = json.load(f)
+            print("Smashgg data loaded")
             self.SetupAutocomplete()
         except Exception as e:
             print(e)
@@ -517,61 +655,250 @@ class Window(QWidget):
         with open('settings.json', 'w') as outfile:
             json.dump(self.settings, outfile, indent=4, sort_keys=True)
     
-    def LoadPlayersFromSmashGGTournament(self):
-        slug = "tournament/try-hard-coliseum-2-chinelus-maximus/event/thcoliseum"
+    def LoadPlayersFromSmashGGTournamentClicked(self):
+        text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+        if okPressed:
+            self.LoadPlayersFromSmashGGTournamentStart(text)
+    
+    def LoadPlayersFromSmashGGTournamentStart(self, slug):
+        if slug is None or slug=="":
+            slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
 
-        r = requests.post(
-            'https://api.smash.gg/gql/alpha',
-            headers={
-                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-            },
-            json={
-                'query': '''
-                query evento($eventSlug: String!) {
-                    event(slug: $eventSlug) {
-                        entrants(query: {page: '''+str(1)+''', perPage: 64}) {
-                            nodes{
-                                name
-                                participants {
-                                    user {
-                                        id
-                                        slug
-                                        name
-                                        authorizations(types: [TWITTER]) {
-                                            type
-                                            externalUsername
+        self.downloadDialogue = QProgressDialog("Fetching players...", "Cancel", 0, 100, self)
+        self.downloadDialogue.setAutoClose(True)
+        self.downloadDialogue.setWindowTitle("Download de imagens")
+        self.downloadDialogue.setWindowModality(Qt.WindowModal)
+        self.downloadDialogue.show()
+
+        worker = Worker(self.LoadPlayersFromSmashGGTournamentWorker, **{"slug": slug})
+        worker.signals.progress.connect(self.LoadPlayersFromSmashGGTournamentProgress)
+        worker.signals.finished.connect(self.LoadPlayersFromSmashGGTournamentFinished)
+        self.threadpool.start(worker)
+    
+    def LoadPlayersFromSmashGGTournamentWorker(self, progress_callback, slug):
+        page = 1
+        players = []
+
+        while True:
+            if self.downloadDialogue.wasCanceled():
+                return
+
+            r = requests.post(
+                'https://api.smash.gg/gql/alpha',
+                headers={
+                    'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                },
+                json={
+                    'query': '''
+                    query evento($eventSlug: String!) {
+                        event(slug: $eventSlug) {
+                            entrants(query: {page: '''+str(page)+''', perPage: 10}) {
+                                pageInfo {
+                                    totalPages
+                                }
+                                nodes{
+                                    name
+                                    participants {
+                                        user {
+                                            id
+                                            slug
+                                            name
+                                            authorizations(types: [TWITTER]) {
+                                                type
+                                                externalUsername
+                                            }
+                                            location {
+                                                city
+                                                country
+                                            }
+                                            images(type: "profile") {
+                                                url
+                                            }
                                         }
-                                    }
-                                    player {
-                                        gamerTag
-                                        prefix
+                                        player {
+                                            id
+                                            gamerTag
+                                            prefix
+                                            sets(page: 1, perPage: 3) {
+                                                nodes {
+                                                    games {
+                                                        selections {
+                                                            entrant {
+                                                                participants {
+                                                                    player {
+                                                                        id
+                                                                    }
+                                                                }
+                                                            }
+                                                            selectionValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }''',
-                'variables': {
-                    "eventSlug": slug
-                },
-            }
-        )
-        resp = json.loads(r.text)
+                    }''',
+                    'variables': {
+                        "eventSlug": slug
+                    },
+                }
+            )
+            resp = json.loads(r.text)
 
-        if resp is None or \
-        resp.get("data") is None or \
-        resp["data"].get("event") is None or \
-        resp["data"]["event"].get("entrants") is None:
-            print(resp)
-            return
+            totalPages = resp["data"]["event"]["entrants"]["pageInfo"]["totalPages"]
 
-        data_entrants = resp["data"]["event"]["entrants"]["nodes"]
-        self.ggEntrants = data_entrants
+            if resp is None or \
+            resp.get("data") is None or \
+            resp["data"].get("event") is None or \
+            resp["data"]["event"].get("entrants") is None:
+                print(resp)
+                return
 
-        self.LoadPlayersFromSmashGGTournament()
+            data_entrants = resp["data"]["event"]["entrants"]["nodes"]
+            
+            for entrant in data_entrants:
+                user = entrant["participants"][0]["user"]
+                player = entrant["participants"][0]["player"]
+
+                player_obj = self.LoadSmashGGPlayer(user, player)
+                
+                players.append(player_obj)
+            
+            page += 1
+
+            progress_callback.emit(page/totalPages*100)
+
+            if page >= totalPages:
+                break
+        
+        with open('tournament_players.json', 'w') as outfile:
+            json.dump(players, outfile, indent=4, sort_keys=True)
     
-    def LoadSetsFromSmashGGTournament(self):
-        slug = "tournament/try-hard-coliseum-2-chinelus-maximus/event/thcoliseum"
+    def LoadSmashGGPlayer(self, user, player):
+        player_obj = {}
+
+        if user is not None:
+            player_obj["smashgg_id"] = user["id"]
+            player_obj["smashgg_slug"] = user["slug"]
+            player_obj["full_name"] = user["name"]
+
+            if user["authorizations"] is not None:
+                for authorization in user["authorizations"]:
+                    player_obj[authorization["type"].lower()] = authorization["externalUsername"]
+            
+            if user["location"] is not None:
+                if user["location"]["city"] is not None:
+                    player_obj["city"] = user["location"]["city"]
+                if user["location"]["country"] is not None:
+                    player_obj["country"] = user["location"]["country"]
+
+            if user["images"] is not None:
+                if len(user["images"]) > 0:
+                    player_obj["smashgg_image"] = user["images"][0]["url"]
+
+        if player is not None:
+            player_obj["name"] = player["gamerTag"]
+            player_obj["org"] = player["prefix"]
+
+            # character usage, mains
+            if player["sets"] is not None and \
+            player["sets"]["nodes"] is not None:
+                selections = Counter()
+
+                for set_ in player["sets"]["nodes"]:
+                    if set_["games"] is None:
+                        continue
+                    for game in set_["games"]:
+                        if game["selections"] is None:
+                            continue
+                        for selection in game["selections"]:
+                            if selection.get("entrant"):
+                                if selection.get("entrant").get("participants"):
+                                    if len(selection.get("entrant").get("participants")) > 0:
+                                        if selection.get("entrant").get("participants") is None:
+                                            continue
+                                        if selection.get("entrant").get("participants")[0] is None:
+                                            continue
+                                        if selection.get("entrant").get("participants")[0]["player"] is None:
+                                            continue
+                                        participant_id = selection.get("entrant").get("participants")[0]["player"]["id"]
+                                        if player["id"] == participant_id:
+                                            if selection["selectionValue"] is not None:
+                                                selections[selection["selectionValue"]] += 1
+                
+                mains = []
+                
+                most_common = selections.most_common(1)
+
+                for character in selections.most_common(2):
+                    if(character[1] > most_common[0][1]/3.0):
+                        found = next((c for c in self.smashgg_character_data["character"] if c["id"] == character[0]), None)
+                        if found:
+                            mains.append(characters[found["name"]])
+                
+                if len(mains) > 0:
+                    player_obj["mains"] = mains
+        
+        countries = self.countries_json
+        cities = self.cities_json
+
+        # match state
+        if "country" in player_obj.keys() and player_obj["country"] is not None:
+            country = next(
+                (c for c in countries if remove_accents_lower(c["name"]) == remove_accents_lower(player_obj["country"])),
+                None
+            )
+
+            if country is not None:
+                player_obj["country_code"] = country["iso2"]
+
+                if "city" in player_obj.keys() and player_obj["city"] is not None:
+                    # State explicit?
+                    split = player_obj["city"].split(" ")
+
+                    for part in split:
+                        state = next(
+                            (st for st in country["states"] if remove_accents_lower(st["state_code"]) == remove_accents_lower(part)),
+                            None
+                        )
+                        if state is not None:
+                            player_obj["state"] = state["state_code"]
+                            break
+
+                    if "state" not in player_obj.keys() or player_obj["state"] is None:
+                        # no, so get by City
+                        city = next(
+                            (c for c in cities if remove_accents_lower(c["name"]) == remove_accents_lower(player_obj["city"])
+                            and c["country_code"] == player_obj["country_code"]),
+                            None
+                        )
+
+                        if city is not None:
+                            player_obj["state"] = city["state_code"]
+        
+        return player_obj
+    
+    def LoadPlayersFromSmashGGTournamentProgress(self, n):
+        self.downloadDialogue.setValue(int(n))
+
+        if n == 100:
+            self.downloadDialogue.setMaximum(0)
+            self.downloadDialogue.setValue(0)
+    
+    def LoadPlayersFromSmashGGTournamentFinished(self):
+        self.downloadDialogue.close()
+    
+    def LoadSetsFromSmashGGTournamentClicked(self):
+        text, okPressed = QInputDialog.getText(self, "Get sets","Tournament slug:", QLineEdit.Normal, "")
+        if okPressed:
+            self.LoadSetsFromSmashGGTournament(text)
+    
+    def LoadSetsFromSmashGGTournament(self, slug):
+        if slug is None or slug == "":
+            slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -585,14 +912,12 @@ class Window(QWidget):
                         tournament {
                             streamQueue {
                                 sets {
+                                    id
                                     fullRoundText
                                     slots {
                                         entrant {
                                             participants {
                                                 gamerTag
-                                                user {
-                                                    id
-                                                }
                                             }                                        
                                         }
                                     }
@@ -603,16 +928,14 @@ class Window(QWidget):
                                 }
                             }
                         }
-                        sets(page: 1, perPage: 32, sortType: MAGIC, filters: {state: 3}) {
+                        sets(page: 1, perPage: 32, sortType: MAGIC, filters: {state: 2}) {
                             nodes {
+                                id
                                 fullRoundText
                                 slots {
                                     entrant {
                                         participants {
                                             gamerTag
-                                            user {
-                                                id
-                                            }
                                         }                                        
                                     }
                                 }
@@ -634,7 +957,7 @@ class Window(QWidget):
             print(resp)
         
         model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Stream", "Set", "Player 1", "Player 2", "sggid1", "sggid2"])
+        model.setHorizontalHeaderLabels(["Stream", "Set", "Player 1", "Player 2"])
 
         streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
         sets = resp["data"]["event"]["sets"]["nodes"]
@@ -648,8 +971,7 @@ class Window(QWidget):
                     QStandardItem(s["sets"][0]["fullRoundText"]),
                     QStandardItem(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
                     QStandardItem(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                    QStandardItem(str(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["user"]["id"])),
-                    QStandardItem(str(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["user"]["id"]))
+                    QStandardItem(str(s["sets"][0]["id"]))
                 ])
 
         for s in sets:
@@ -658,8 +980,7 @@ class Window(QWidget):
                 QStandardItem(s["fullRoundText"]),
                 QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
                 QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                QStandardItem(str(s["slots"][0]["entrant"]["participants"][0]["user"]["id"])),
-                QStandardItem(str(s["slots"][1]["entrant"]["participants"][0]["user"]["id"]))
+                QStandardItem(str(s["id"]))
             ])
 
         self.smashGGSetSelecDialog = QDialog(self)
@@ -692,13 +1013,81 @@ class Window(QWidget):
         # Set phase name
         self.tournament_phase.setCurrentText(self.smashggSetSelectionItemList.model().index(row, 1).data())
 
-        # P1
-        sggid1 = self.smashggSetSelectionItemList.model().index(row, 4).data()
-        self.player_layouts[0].selectPRPlayerBySmashGGId(sggid1)
+        # Fetch set players
+        setId = self.smashggSetSelectionItemList.model().index(row, 4).data()
 
-        # P2
-        sggid2 = self.smashggSetSelectionItemList.model().index(row, 5).data()
-        self.player_layouts[1].selectPRPlayerBySmashGGId(sggid2)
+        r = requests.post(
+            'https://api.smash.gg/gql/alpha',
+            headers={
+                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+            },
+            json={
+                'query': '''
+                query set($setId: ID!) {
+                    set(id: $setId) {
+                        slots {
+                            entrant {
+                                participants {
+                                    user {
+                                        id
+                                        slug
+                                        name
+                                        authorizations(types: [TWITTER]) {
+                                            type
+                                            externalUsername
+                                        }
+                                        location {
+                                            city
+                                            country
+                                        }
+                                        images(type: "profile") {
+                                            url
+                                        }
+                                    }
+                                    player {
+                                        id
+                                        gamerTag
+                                        prefix
+                                        sets(page: 1, perPage: 3) {
+                                            nodes {
+                                                games {
+                                                    selections {
+                                                        entrant {
+                                                            participants {
+                                                                player {
+                                                                    id
+                                                                }
+                                                            }
+                                                        }
+                                                        selectionValue
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }''',
+                'variables': {
+                    "setId": setId
+                },
+            }
+        )
+        resp = json.loads(r.text)
+
+        user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+        player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
+        player_obj = self.LoadSmashGGPlayer(user, player)
+
+        self.player_layouts[0].SetFromPlayerObj(player_obj)
+
+        user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+        player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
+        player_obj = self.LoadSmashGGPlayer(user, player)
+
+        self.player_layouts[1].SetFromPlayerObj(player_obj)
 
         self.smashGGSetSelecDialog.close()
 
@@ -982,8 +1371,10 @@ class PlayerColumn():
             self.selectPRPlayer(index)
     
     def selectPRPlayer(self, index):
-        player = self.parent.allplayers["players"][index]
-            
+        player = self.parent.mergedPlayers[index]
+        self.SetFromPlayerObj(player)
+    
+    def SetFromPlayerObj(self, player):
         self.player_name.setText(player["name"])
         self.player_org.setText(player.get("org", ""))
         self.player_real_name.setText(player.get("full_name", ""))
