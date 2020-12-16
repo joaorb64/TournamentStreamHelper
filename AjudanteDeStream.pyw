@@ -179,6 +179,10 @@ class Worker(QRunnable):
             if self.signals.finished:
                 self.signals.finished.emit()  # Done
 
+def removeFileIfExists(file):
+    if os.path.exists(file):
+        os.remove(file)
+
 class Window(QWidget):
     def __init__(self):
         super().__init__()
@@ -1267,6 +1271,8 @@ class PlayerColumn():
     def ExportTwitter(self):
         try:
             def myFun(self, progress_callback):
+                removeFileIfExists('out/p'+str(self.id)+'_picture.png')
+
                 if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
                     r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
                     if r.status_code == 200:
@@ -1292,16 +1298,22 @@ class PlayerColumn():
     def ExportCountry(self):
         try:
             def myFun(self, progress_callback):
+                removeFileIfExists("out/p"+str(self.id)+"_country_flag.png")
+                removeFileIfExists("out/p"+str(self.id)+"_country.txt")
+                removeFileIfExists("out/p"+str(self.id)+"_state.png")
+
                 with open('out/p'+str(self.id)+'_country.txt', 'w') as outfile:
                     outfile.write(self.player_country.currentText())
-                shutil.copy(
-                    "country_icon/"+self.player_country.currentText().lower()+".png",
-                    "out/p"+str(self.id)+"_country_flag.png"
-                )
+                
+                if self.player_country.currentText().lower() != "":
+                    shutil.copy(
+                        "country_icon/"+self.player_country.currentText().lower()+".png",
+                        "out/p"+str(self.id)+"_country_flag.png"
+                    )
                 
                 with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
                     outfile.write(self.player_state.currentText())
-                if(self.player_state.currentText() != None):
+                if(self.player_state.currentText() != ""):
                     r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
                         self.player_country.currentText().upper()+"/"+
                         self.player_state.currentText().upper()+".png", stream=True)
@@ -1336,6 +1348,7 @@ class PlayerColumn():
             
     def ExportCharacter(self):
         try:
+            removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
             shutil.copy(
                 "character_icon/chara_0_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                 "out/p"+str(self.id)+"_character_portrait.png"
@@ -1343,6 +1356,7 @@ class PlayerColumn():
         except Exception as e:
             print(e)
         try:
+            removeFileIfExists("out/p"+str(self.id)+"_character_big.png")
             shutil.copy(
                 "character_icon/chara_1_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                 "out/p"+str(self.id)+"_character_big.png"
@@ -1350,6 +1364,7 @@ class PlayerColumn():
         except Exception as e:
             print(e)
         try:
+            removeFileIfExists("out/p"+str(self.id)+"_character_full.png")
             shutil.copy(
                 "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                 "out/p"+str(self.id)+"_character_full.png"
@@ -1357,6 +1372,7 @@ class PlayerColumn():
         except Exception as e:
             print(e)
         try:
+            removeFileIfExists("out/p"+str(self.id)+"_character_full-halfres.png")
             shutil.copy(
                 "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
                 "out/p"+str(self.id)+"_character_full-halfres.png"
@@ -1364,6 +1380,7 @@ class PlayerColumn():
         except Exception as e:
             print(e)
         try:
+            removeFileIfExists("out/p"+str(self.id)+"_character_stockicon.png")
             shutil.copy(
                 "character_icon/chara_2_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                 "out/p"+str(self.id)+"_character_stockicon.png"
@@ -1409,7 +1426,9 @@ class PlayerColumn():
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
             self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
         else:
-            self.player_character.setCurrentIndex(0)
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
+            self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
+            #self.player_character.setCurrentIndex(0)
         
         self.AutoExportTwitter()
     
