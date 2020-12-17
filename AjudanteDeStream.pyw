@@ -524,15 +524,16 @@ class Window(QWidget):
 
         ap = self.allplayers["players"]
         
-        for p in self.smashgg_players:
-            found = next(
-                (a for a in ap if a.get("smashgg_id", None) != None and a.get("smashgg_id", None) == p["smashgg_id"]),
-                None
-            )
+        if self.smashgg_players is not None:
+            for p in self.smashgg_players:
+                found = next(
+                    (a for a in ap if a.get("smashgg_id", None) != None and a.get("smashgg_id", None) == p["smashgg_id"]),
+                    None
+                )
 
-            if found is None:
-                p["from_smashgg"] = True
-                ap.append(p)
+                if found is None:
+                    p["from_smashgg"] = True
+                    ap.append(p)
 
         self.mergedPlayers = ap
 
@@ -633,7 +634,7 @@ class Window(QWidget):
         self.ExportScore()
 
     def DownloadData(self, progress_callback):
-        with open('powerrankings_player_data.json', 'wb', encoding='utf-8') as f:
+        with open('powerrankings_player_data.json', 'wb') as f:
             print("Download start")
 
             response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/out/allplayers.json', stream=True)
