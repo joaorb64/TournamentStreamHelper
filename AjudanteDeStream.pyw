@@ -195,17 +195,17 @@ class Window(QWidget):
         if not os.path.exists("character_icon/"):
             os.mkdir("character_icon/")
         
-        f = open('character_name_to_codename.json')
+        f = open('character_name_to_codename.json', encoding='utf-8')
         self.character_to_codename = json.load(f)
 
-        f = open('ultimate.json')
+        f = open('ultimate.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)
 
-        f = open('cities.json')
+        f = open('cities.json', encoding='utf-8')
         self.cities_json = json.load(f)
 
         try:
-            f = open('countries+states.json')
+            f = open('countries+states.json', encoding='utf-8')
             self.countries_json = json.load(f)
             print("States loaded")
             self.countries = {c["iso2"]: [s["state_code"] for s in c["states"]] for c in self.countries_json}
@@ -214,7 +214,7 @@ class Window(QWidget):
             exit()
         
         try:
-            f = open('settings.json')
+            f = open('settings.json', encoding='utf-8')
             self.settings = json.load(f)
             print("Settings loaded")
         except Exception as e:
@@ -334,17 +334,17 @@ class Window(QWidget):
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
-        self.downloadBt = QPushButton("Baixar dados do PowerRankings")
+        self.downloadBt = QPushButton("Download PowerRankings data")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
         layout_end.addWidget(self.downloadBt, 1, 0, 1, 2)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
 
-        self.smashggConnectBt = QPushButton("Baixar jogadores")
+        self.smashggConnectBt = QPushButton("Download players")
         self.smashggConnectBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.smashggConnectBt, 2, 0, 1, 1)
         self.smashggConnectBt.clicked.connect(self.LoadPlayersFromSmashGGTournamentClicked)
 
-        self.smashggSelectSetBt = QPushButton("Selecionar set")
+        self.smashggSelectSetBt = QPushButton("Select set")
         self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
         self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentClicked)
@@ -381,11 +381,11 @@ class Window(QWidget):
             self.ExportScore()
     
     def ExportScore(self):
-        with open('out/p1_score.txt', 'w') as outfile:
+        with open('out/p1_score.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(str(self.scoreLeft.value()))
-        with open('out/p2_score.txt', 'w') as outfile:
+        with open('out/p2_score.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(str(self.scoreRight.value()))
-        with open('out/match_phase.txt', 'w') as outfile:
+        with open('out/match_phase.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.tournament_phase.currentText())
     
     def ResetScoreButtonClicked(self):
@@ -593,7 +593,7 @@ class Window(QWidget):
     
     def LoadData(self):
         try:
-            f = open('powerrankings_player_data.json')
+            f = open('powerrankings_player_data.json', encoding='utf-8')
             self.allplayers = json.load(f)
             print("Powerrankings data loaded")
             self.SetupAutocomplete()
@@ -601,7 +601,7 @@ class Window(QWidget):
             print(e)
         
         try:
-            f = open('tournament_players.json')
+            f = open('tournament_players.json', encoding='utf-8')
             self.smashgg_players = json.load(f)
             print("Smashgg data loaded")
             self.SetupAutocomplete()
@@ -633,7 +633,7 @@ class Window(QWidget):
         self.ExportScore()
 
     def DownloadData(self, progress_callback):
-        with open('powerrankings_player_data.json', 'wb') as f:
+        with open('powerrankings_player_data.json', 'wb', encoding='utf-8') as f:
             print("Download start")
 
             response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/out/allplayers.json', stream=True)
@@ -656,7 +656,7 @@ class Window(QWidget):
             print("Download successful")
     
     def SaveSettings(self):
-        with open('settings.json', 'w') as outfile:
+        with open('settings.json', 'w', encoding='utf-8') as outfile:
             json.dump(self.settings, outfile, indent=4, sort_keys=True)
     
     def LoadPlayersFromSmashGGTournamentClicked(self):
@@ -778,7 +778,7 @@ class Window(QWidget):
             if page >= totalPages:
                 break
         
-        with open('tournament_players.json', 'w') as outfile:
+        with open('tournament_players.json', 'w', encoding='utf-8') as outfile:
             json.dump(players, outfile, indent=4, sort_keys=True)
     
     def LoadSmashGGPlayer(self, user, player):
@@ -1121,17 +1121,17 @@ class PlayerColumn():
             pos_forms = 0
             text_alignment = Qt.AlignLeft|Qt.AlignVCenter
 
-        nick_label = QLabel("Nick")
+        nick_label = QLabel("Player")
         nick_label.setFont(self.parent.font_small)
         nick_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(nick_label, 0, pos_labels)
         self.player_name = QLineEdit()
         self.layout_grid.addWidget(self.player_name, 0, pos_forms)
-        self.player_name.setMinimumWidth(120)
+        self.player_name.setMinimumWidth(100)
         self.player_name.setFont(self.parent.font_small)
         self.player_name.textChanged.connect(self.AutoExportName)
 
-        prefix_label = QLabel("Prefixo")
+        prefix_label = QLabel("Prefix")
         prefix_label.setFont(self.parent.font_small)
         prefix_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(prefix_label, 1, pos_labels)
@@ -1139,9 +1139,9 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_org, 1, pos_forms)
         self.player_org.setFont(self.parent.font_small)
         self.player_org.textChanged.connect(self.AutoExportName)
-        self.player_org.setMinimumWidth(120)
+        self.player_org.setMinimumWidth(100)
 
-        real_name_label = QLabel("Nome")
+        real_name_label = QLabel("Name")
         real_name_label.setFont(self.parent.font_small)
         real_name_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(real_name_label, 2, pos_labels)
@@ -1149,7 +1149,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
         self.player_real_name.textChanged.connect(self.AutoExportRealName)
-        self.player_real_name.setMinimumWidth(120)
+        self.player_real_name.setMinimumWidth(100)
 
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
@@ -1159,7 +1159,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
         self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
-        self.player_twitter.setMinimumWidth(120)
+        self.player_twitter.setMinimumWidth(100)
 
         location_layout = QHBoxLayout()
         self.layout_grid.addLayout(location_layout, 0, pos_forms+2)
@@ -1191,7 +1191,7 @@ class PlayerColumn():
         self.player_state.currentIndexChanged.connect(self.AutoExportCountry)
         self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
-        player_character_label = QLabel("Char")
+        player_character_label = QLabel("Character")
         player_character_label.setFont(self.parent.font_small)
         player_character_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(player_character_label, 1, pos_labels+2)
@@ -1208,7 +1208,7 @@ class PlayerColumn():
         self.player_character.currentIndexChanged.connect(self.AutoExportCharacter)
         self.player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
-        player_character_color_label = QLabel("Cor")
+        player_character_color_label = QLabel("Skin")
         player_character_color_label.setFont(self.parent.font_small)
         player_character_color_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(player_character_color_label, 2, pos_labels+2)
@@ -1244,16 +1244,16 @@ class PlayerColumn():
             self.ExportName()
 
     def ExportName(self):
-        with open('out/p'+str(self.id)+'_name.txt', 'w') as outfile:
+        with open('out/p'+str(self.id)+'_name.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.player_name.text())
-        with open('out/p'+str(self.id)+'_name+prefix.txt', 'w') as outfile:
+        with open('out/p'+str(self.id)+'_name+prefix.txt', 'w', encoding='utf-8') as outfile:
             if len(self.player_org.text()) > 0:
                 outfile.write(self.player_org.text()+" | "+self.player_name.text())
             else:
                 outfile.write(self.player_name.text())
-        with open('out/p'+str(self.id)+'_prefix.txt', 'w') as outfile:
+        with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.player_org.text())
-        with open('out/p'+str(self.id)+'_twitter.txt', 'w') as outfile:
+        with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.player_twitter.text())
     
     def AutoExportRealName(self):
@@ -1261,7 +1261,7 @@ class PlayerColumn():
             self.ExportRealName()
     
     def ExportRealName(self):
-        with open('out/p'+str(self.id)+'_real_name.txt', 'w') as outfile:
+        with open('out/p'+str(self.id)+'_real_name.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.player_real_name.text())
     
     def AutoExportTwitter(self):
@@ -1276,13 +1276,14 @@ class PlayerColumn():
                 if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
                     r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
                     if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                        with open('out/p'+str(self.id)+'_twitter_picture.png', 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
-                elif self.player_obj.get("smashgg_image", None) is not None:
+                
+                if self.player_obj.get("smashgg_image", None) is not None:
                     r = requests.get(self.player_obj["smashgg_image"], stream=True)
                     if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_picture.png', 'wb') as f:
+                        with open('out/p'+str(self.id)+'_smashgg_picture.png', 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
             
@@ -1302,7 +1303,7 @@ class PlayerColumn():
                 removeFileIfExists("out/p"+str(self.id)+"_country.txt")
                 removeFileIfExists("out/p"+str(self.id)+"_state.png")
 
-                with open('out/p'+str(self.id)+'_country.txt', 'w') as outfile:
+                with open('out/p'+str(self.id)+'_country.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_country.currentText())
                 
                 if self.player_country.currentText().lower() != "":
@@ -1311,7 +1312,7 @@ class PlayerColumn():
                         "out/p"+str(self.id)+"_country_flag.png"
                     )
                 
-                with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+                with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_state.currentText())
                 if(self.player_state.currentText() != ""):
                     r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
@@ -1333,7 +1334,7 @@ class PlayerColumn():
 
     def ExportState(self):
         try:
-            with open('out/p'+str(self.id)+'_state.txt', 'w') as outfile:
+            with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_state.currentText())
             shutil.copy(
                 "state_icon/"+self.player_state.currentData()+".png",
