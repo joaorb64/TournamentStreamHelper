@@ -106,6 +106,7 @@ characters = {
     "Byleth": "Byleth",
     "Min Min": "Min Min",
     "Steve": "Steve",
+    "Sephiroth": "Sephiroth",
     "Random Character": "Random"
 }
 
@@ -199,7 +200,7 @@ class Window(QWidget):
         self.character_to_codename = json.load(f)
 
         f = open('ultimate.json', encoding='utf-8')
-        self.smashgg_character_data = json.load(f)
+        self.smashgg_character_data = json.load(f)["entities"]
 
         f = open('cities.json', encoding='utf-8')
         self.cities_json = json.load(f)
