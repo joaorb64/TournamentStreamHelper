@@ -321,9 +321,10 @@ class Window(QWidget):
         layout_end = QGridLayout()
         base_layout.addLayout(layout_end)
 
+        # Settings
         self.optionsBt = QToolButton()
         self.optionsBt.setIcon(QIcon('icons/menu.svg'))
-        self.optionsBt.setText("Options")
+        self.optionsBt.setText("Settings")
         self.optionsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
         layout_end.addWidget(self.optionsBt, 0, 0, 1, 2)
@@ -336,6 +337,7 @@ class Window(QWidget):
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
+        # Downloads
         self.downloadsBt = QToolButton()
         self.downloadsBt.setIcon(QIcon('icons/download.svg'))
         self.downloadsBt.setText("Download data")
@@ -347,19 +349,40 @@ class Window(QWidget):
         action = self.downloadsBt.menu().addAction("Autocomplete data from PowerRankings")
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadDataFromPowerRankingsClicked)
-        action = self.downloadsBt.menu().addAction("Autocomplete data from SmashGG tournament")
+        action = self.downloadsBt.menu().addAction("Autocomplete data from a SmashGG tournament")
         action.setIcon(QIcon('icons/smashgg.svg'))
         action.triggered.connect(self.LoadPlayersFromSmashGGTournamentClicked)
 
-        self.smashggSelectSetBt = QPushButton("Set from queue")
-        self.smashggSelectSetBt.setIcon(QIcon('icons/twitch.svg'))
-        layout_end.addWidget(self.smashggSelectSetBt, 2, 0, 1, 1)
-        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentQueueClicked)
+        # Set from stream queue
+        self.getFromStreamQueueBt = QToolButton()
+        self.getFromStreamQueueBt.setText("Get from queue")
+        self.getFromStreamQueueBt.setIcon(QIcon('icons/twitch.svg'))
+        self.getFromStreamQueueBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        layout_end.addWidget(self.getFromStreamQueueBt, 2, 0, 1, 1)
+        self.getFromStreamQueueBt.clicked.connect(self.LoadSetsFromSmashGGTournamentQueueClicked)
+        self.getFromStreamQueueBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+        self.getFromStreamQueueBt.setPopupMode(QToolButton.MenuButtonPopup)
+        self.getFromStreamQueueBt.setMenu(QMenu())
 
-        self.smashggSelectSetBt = QPushButton("Select set")
+        action = self.getFromStreamQueueBt.menu().addAction("Set Twitch username")
+        action.triggered.connect(self.SetTwitchUsername)
+
+        # Load set from SmashGG tournament
+        self.smashggSelectSetBt = QToolButton()
+        self.smashggSelectSetBt.setText("Select set")
         self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.svg'))
+        self.smashggSelectSetBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
-        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentClicked)
+        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournament)
+        self.smashggSelectSetBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+        self.smashggSelectSetBt.setPopupMode(QToolButton.MenuButtonPopup)
+        self.smashggSelectSetBt.setMenu(QMenu())
+
+        action = self.smashggSelectSetBt.menu().addAction("Set SmashGG key")
+        action.triggered.connect(self.SetSmashggKey)
+
+        action = self.smashggSelectSetBt.menu().addAction("Set tournament slug")
+        action.triggered.connect(self.SetSmashggEventSlug)
 
         # save button
         self.saveBt = QToolButton()
@@ -676,6 +699,24 @@ class Window(QWidget):
         with open('settings.json', 'w', encoding='utf-8') as outfile:
             json.dump(self.settings, outfile, indent=4, sort_keys=True)
     
+    def SetTwitchUsername(self):
+        text, okPressed = QInputDialog.getText(self, "Set Twitch username","Username: ", QLineEdit.Normal, "")
+        if okPressed:
+            self.settings["twitch_username"] = text
+            self.SaveSettings()
+    
+    def SetSmashggKey(self):
+        text, okPressed = QInputDialog.getText(self, "Set SmashGG key","Key: ", QLineEdit.Normal, "")
+        if okPressed:
+            self.settings["SMASHGG_KEY"] = text
+            self.SaveSettings()
+    
+    def SetSmashggEventSlug(self):
+        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Slug: ", QLineEdit.Normal, "")
+        if okPressed:
+            self.settings["SMASHGG_TOURNAMENT_SLUG"] = text
+            self.SaveSettings()
+    
     def LoadPlayersFromSmashGGTournamentClicked(self):
         text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
         if okPressed:
@@ -912,14 +953,11 @@ class Window(QWidget):
     def LoadPlayersFromSmashGGTournamentFinished(self):
         self.downloadDialogue.close()
     
-    def LoadSetsFromSmashGGTournamentClicked(self):
-        text, okPressed = QInputDialog.getText(self, "Get sets","Tournament slug:", QLineEdit.Normal, "")
-        if okPressed:
-            self.LoadSetsFromSmashGGTournament(text)
-    
-    def LoadSetsFromSmashGGTournament(self, slug):
-        if slug is None or slug == "":
-            slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
+    def LoadSetsFromSmashGGTournament(self):
+        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
+            self.SetSmashggEventSlug()
+
+        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -987,13 +1025,14 @@ class Window(QWidget):
 
         if streamSets is not None:
             for s in streamSets:
-                model.appendRow([
-                    QStandardItem(s["stream"]["streamName"]),
-                    QStandardItem(s["sets"][0]["fullRoundText"]),
-                    QStandardItem(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
-                    QStandardItem(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                    QStandardItem(str(s["sets"][0]["id"]))
-                ])
+                if s["sets"][0]["slots"][0].get("entrant", None) and s["sets"][0]["slots"][1].get("entrant", None):
+                    model.appendRow([
+                        QStandardItem(s["stream"]["streamName"]),
+                        QStandardItem(s["sets"][0]["fullRoundText"]),
+                        QStandardItem(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
+                        QStandardItem(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
+                        QStandardItem(str(s["sets"][0]["id"]))
+                    ])
 
         for s in sets:
             model.appendRow([
@@ -1035,7 +1074,18 @@ class Window(QWidget):
         self.smashGGSetSelecDialog.close()
     
     def LoadSetsFromSmashGGTournamentQueueClicked(self):
-        slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
+        if self.settings.get("twitch_username", None) == None:
+            self.SetTwitchUsername()
+        
+        twitch_username = self.settings["twitch_username"]
+        
+        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
+            self.SetSmashggEventSlug()
+
+        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
+
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -1077,7 +1127,11 @@ class Window(QWidget):
         streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
 
         if streamSets is not None:
-            self.LoadPlayersFromSmashGGSet(s[0]["sets"][0]["id"])
+            for s in streamSets:
+                if s["stream"]["streamName"] == twitch_username:
+                    if s["sets"][0]["slots"][0].get("entrant", None) is not None and \
+                    s["sets"][0]["slots"][1].get("entrant", None) is not None:
+                        self.LoadPlayersFromSmashGGSet(s["sets"][0]["id"])
     
     def LoadPlayersFromSmashGGSet(self, setId):
         r = requests.post(
