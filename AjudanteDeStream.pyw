@@ -205,6 +205,21 @@ class Window(QWidget):
         f = open('cities.json', encoding='utf-8')
         self.cities_json = json.load(f)
 
+        self.stockIcons = {}
+        
+        for c in self.character_to_codename.keys():
+            self.stockIcons[c] = {}
+            for i in range(0, 8):
+                self.stockIcons[c][i] = QIcon('character_icon/chara_2_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+
+        self.portraits = {}
+
+        for c in self.character_to_codename.keys():
+            self.portraits[c] = {}
+            for i in range(0, 8):
+                self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+
+
         try:
             f = open('countries+states.json', encoding='utf-8')
             self.countries_json = json.load(f)
@@ -225,20 +240,6 @@ class Window(QWidget):
 
         self.font_small = QFont("font/RobotoCondensed-Regular.ttf", pointSize=8)
         
-        self.stockIcons = {}
-        
-        for c in self.character_to_codename.keys():
-            self.stockIcons[c] = {}
-            for i in range(0, 8):
-                self.stockIcons[c][i] = QIcon('character_icon/chara_2_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
-
-        self.portraits = {}
-
-        for c in self.character_to_codename.keys():
-            self.portraits[c] = {}
-            for i in range(0, 8):
-                self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
-
         self.threadpool = QThreadPool()
 
         self.player_layouts = []
@@ -322,7 +323,7 @@ class Window(QWidget):
 
         self.optionsBt = QToolButton()
         self.optionsBt.setIcon(QIcon('icons/menu.svg'))
-        self.optionsBt.setText("Opções")
+        self.optionsBt.setText("Options")
         self.optionsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
         layout_end.addWidget(self.optionsBt, 0, 0, 1, 2)
@@ -335,18 +336,28 @@ class Window(QWidget):
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
-        self.downloadBt = QPushButton("Get PowerRankings data")
-        self.downloadBt.setIcon(QIcon('icons/download.svg'))
-        layout_end.addWidget(self.downloadBt, 1, 0, 1, 2)
-        self.downloadBt.clicked.connect(self.DownloadButtonClicked)
+        self.downloadsBt = QToolButton()
+        self.downloadsBt.setIcon(QIcon('icons/download.svg'))
+        self.downloadsBt.setText("Download data")
+        self.downloadsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.downloadsBt.setPopupMode(QToolButton.InstantPopup)
+        layout_end.addWidget(self.downloadsBt, 1, 0, 1, 2)
+        self.downloadsBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        self.downloadsBt.setMenu(QMenu())
+        action = self.downloadsBt.menu().addAction("Autocomplete data from PowerRankings")
+        action.setIcon(QIcon('icons/download.svg'))
+        action.triggered.connect(self.DownloadDataFromPowerRankingsClicked)
+        action = self.downloadsBt.menu().addAction("Autocomplete data from SmashGG tournament")
+        action.setIcon(QIcon('icons/smashgg.svg'))
+        action.triggered.connect(self.LoadPlayersFromSmashGGTournamentClicked)
 
-        self.smashggConnectBt = QPushButton("Get players")
-        self.smashggConnectBt.setIcon(QIcon('icons/smashgg.png'))
-        layout_end.addWidget(self.smashggConnectBt, 2, 0, 1, 1)
-        self.smashggConnectBt.clicked.connect(self.LoadPlayersFromSmashGGTournamentClicked)
+        self.smashggSelectSetBt = QPushButton("Set from queue")
+        self.smashggSelectSetBt.setIcon(QIcon('icons/twitch.svg'))
+        layout_end.addWidget(self.smashggSelectSetBt, 2, 0, 1, 1)
+        self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentQueueClicked)
 
         self.smashggSelectSetBt = QPushButton("Select set")
-        self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.png'))
+        self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.svg'))
         layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
         self.smashggSelectSetBt.clicked.connect(self.LoadSetsFromSmashGGTournamentClicked)
 
@@ -504,22 +515,18 @@ class Window(QWidget):
     def DownloadAssetsFinished(self):
         self.downloadDialogue.close()
     
-    def DownloadButtonClicked(self):
-        self.downloadBt.setEnabled(False)
-        self.downloadBt.setText("Baixando...")
-
-        worker = Worker(self.DownloadData)
+    def DownloadDataFromPowerRankingsClicked(self):
+        worker = Worker(self.DownloadDataFromPowerRankings)
         worker.signals.finished.connect(self.DownloadButtonComplete)
         worker.signals.progress.connect(self.DownloadButtonProgress)
         
         self.threadpool.start(worker)
     
     def DownloadButtonProgress(self, n):
-        self.downloadBt.setText("Baixando..."+str(n[0])+"/"+str(n[1]))
+        pass
+        #self.downloadBt.setText("Baixando..."+str(n[0])+"/"+str(n[1]))
     
     def DownloadButtonComplete(self):
-        self.downloadBt.setEnabled(True)
-        self.downloadBt.setText("Baixar dados do PowerRankings")
         self.LoadData()
     
     def SetupAutocomplete(self):
@@ -564,21 +571,16 @@ class Window(QWidget):
         model = QStandardItemModel()
 
         model.appendRow([QStandardItem(""), QStandardItem(""), QStandardItem("")])
+        smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
-            item.setIcon(QIcon(
-                'character_icon/chara_2_'+
-                self.character_to_codename[autocompleter_mains[i]]+
-                '_00.png'))
+            item.setIcon(self.stockIcons[autocompleter_mains[i]][0])
+            
             if "from_smashgg" in self.mergedPlayers[i]:
-                pix = QPixmap(
-                    'character_icon/chara_2_'+
-                    self.character_to_codename[autocompleter_mains[i]]+
-                    '_00.png'
-                )
+                pix = QPixmap(self.stockIcons[autocompleter_mains[i]][0].pixmap(32, 32))
                 p = QPainter(pix)
-                p.drawImage(QPoint(32, 32), QImage("icons/smashgg.png"))
+                p.drawImage(QPoint(16, 16), smashggLogo)
                 p.end()
                 item.setIcon(QIcon(pix))
             item.setData(autocompleter_players[i])
@@ -604,7 +606,6 @@ class Window(QWidget):
             f = open('powerrankings_player_data.json', encoding='utf-8')
             self.allplayers = json.load(f)
             print("Powerrankings data loaded")
-            self.SetupAutocomplete()
         except Exception as e:
             print(e)
         
@@ -612,9 +613,10 @@ class Window(QWidget):
             f = open('tournament_players.json', encoding='utf-8')
             self.smashgg_players = json.load(f)
             print("Smashgg data loaded")
-            self.SetupAutocomplete()
         except Exception as e:
             print(e)
+        
+        self.SetupAutocomplete()
     
     def ToggleAlwaysOnTop(self, checked):
         if checked:
@@ -647,7 +649,7 @@ class Window(QWidget):
             p.ExportCharacter()
         self.ExportScore()
 
-    def DownloadData(self, progress_callback):
+    def DownloadDataFromPowerRankings(self, progress_callback):
         with open('powerrankings_player_data.json', 'wb') as f:
             print("Download start")
 
@@ -1022,19 +1024,62 @@ class Window(QWidget):
 
         btOk = QPushButton("OK")
         layout.addWidget(btOk)
-        btOk.clicked.connect(self.LoadPlayersFromSmashGGSet)
+        btOk.clicked.connect(self.SetFromSmashGGSelected)
 
         self.smashGGSetSelecDialog.show()
     
-    def LoadPlayersFromSmashGGSet(self):
+    def SetFromSmashGGSelected(self):
         row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
-
-        # Set phase name
-        self.tournament_phase.setCurrentText(self.smashggSetSelectionItemList.model().index(row, 1).data())
-
-        # Fetch set players
         setId = self.smashggSetSelectionItemList.model().index(row, 4).data()
+        self.LoadPlayersFromSmashGGSet(setId)
+        self.smashGGSetSelecDialog.close()
+    
+    def LoadSetsFromSmashGGTournamentQueueClicked(self):
+        slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
 
+        r = requests.post(
+            'https://api.smash.gg/gql/alpha',
+            headers={
+                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+            },
+            json={
+                'query': '''
+                query evento($eventSlug: String!) {
+                    event(slug: $eventSlug) {
+                        tournament {
+                            streamQueue {
+                                sets {
+                                    id
+                                    fullRoundText
+                                    slots {
+                                        entrant {
+                                            participants {
+                                                gamerTag
+                                            }                                        
+                                        }
+                                    }
+                                }
+                                stream {
+                                    streamName
+                                    streamSource
+                                }
+                            }
+                        }
+                    }
+                }''',
+                'variables': {
+                    "eventSlug": slug
+                },
+            }
+        )
+        resp = json.loads(r.text)
+
+        streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
+
+        if streamSets is not None:
+            self.LoadPlayersFromSmashGGSet(s[0]["sets"][0]["id"])
+    
+    def LoadPlayersFromSmashGGSet(self, setId):
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
             headers={
@@ -1044,6 +1089,7 @@ class Window(QWidget):
                 'query': '''
                 query set($setId: ID!) {
                     set(id: $setId) {
+                        fullRoundText
                         slots {
                             entrant {
                                 participants {
@@ -1096,19 +1142,22 @@ class Window(QWidget):
         )
         resp = json.loads(r.text)
 
+        # Set phase name
+        self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+
+        # Get first player
         user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
         player_obj = self.LoadSmashGGPlayer(user, player)
 
         self.player_layouts[0].SetFromPlayerObj(player_obj)
 
+        # Get second player
         user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
         player_obj = self.LoadSmashGGPlayer(user, player)
 
         self.player_layouts[1].SetFromPlayerObj(player_obj)
-
-        self.smashGGSetSelecDialog.close()
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="400"
+   height="400"
+   viewBox="0 0 400 400"
+   version="1.1"
+   preserveAspectRatio="xMidYMid"
+   id="svg6"
+   sodipodi:docname="twitch.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1297"
+     inkscape:window-height="704"
+     id="namedview8"
+     showgrid="false"
+     inkscape:snap-page="true"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:zoom="0.62267612"
+     inkscape:cx="130.82008"
+     inkscape:cy="232.22775"
+     inkscape:window-x="69"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6"
+     inkscape:document-rotation="0" />
+  <rect
+     style="color:#000000;overflow:visible;fill:#9146ff;fill-opacity:1;fill-rule:evenodd;stroke-width:30.2362;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+     id="rect837"
+     width="400"
+     height="400"
+     x="0"
+     y="0" />
+  <g
+     id="g17"
+     transform="matrix(0.09848096,0,0,0.09848096,81.822847,62.126657)">
+    <polygon
+       class="st0"
+       points="1050,2050 1050,1700 600,1700 600,200 2200,200 2200,1300 1800,1700 1400,1700 "
+       id="polygon6"
+       style="fill:#ffffff;fill-opacity:1" />
+    <g
+       id="g15">
+      <g
+         id="Layer_1-2">
+        <path
+           inkscape:connector-curvature="0"
+           d="M 500,0 0,500 v 1800 h 600 v 500 l 500,-500 h 400 l 900,-900 V 0 Z m 1700,1300 -400,400 h -400 l -350,350 V 1700 H 600 V 200 h 1600 z"
+           id="path8" />
+        <rect
+           x="1700"
+           y="550"
+           width="200"
+           height="600"
+           id="rect10" />
+        <rect
+           x="1150"
+           y="550"
+           width="200"
+           height="600"
+           id="rect12" />
+      </g>
+    </g>
+  </g>
+</svg>
