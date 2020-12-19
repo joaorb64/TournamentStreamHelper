@@ -182,7 +182,10 @@ class Worker(QRunnable):
 
 def removeFileIfExists(file):
     if os.path.exists(file):
-        os.remove(file)
+        try:
+            os.remove(file)
+        except Exception as e:
+            print(e)
 
 class Window(QWidget):
     def __init__(self):
@@ -559,7 +562,13 @@ class Window(QWidget):
         autocompleter_mains = []
         autocompleter_players = []
 
-        ap = self.allplayers["players"]
+        if self.allplayers == None:
+            return
+        
+        ap = self.allplayers.get("players", None)
+
+        if ap == None or len(ap) == 0:
+            return
         
         if self.smashgg_players is not None:
             for p in self.smashgg_players:
@@ -630,6 +639,7 @@ class Window(QWidget):
             self.allplayers = json.load(f)
             print("Powerrankings data loaded")
         except Exception as e:
+            self.allplayers = {}
             print(e)
         
         try:
@@ -1034,14 +1044,15 @@ class Window(QWidget):
                         QStandardItem(str(s["sets"][0]["id"]))
                     ])
 
-        for s in sets:
-            model.appendRow([
-                QStandardItem(""),
-                QStandardItem(s["fullRoundText"]),
-                QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
-                QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                QStandardItem(str(s["id"]))
-            ])
+        if sets is not None:
+            for s in sets:
+                model.appendRow([
+                    QStandardItem(""),
+                    QStandardItem(s["fullRoundText"]),
+                    QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
+                    QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
+                    QStandardItem(str(s["id"]))
+                ])
 
         self.smashGGSetSelecDialog = QDialog(self)
         self.smashGGSetSelecDialog.setWindowTitle("Selecione um set")
@@ -1354,7 +1365,7 @@ class PlayerColumn():
     def LoadStateOptions(self, text):
         self.player_state.clear()
         self.player_state.addItem("")
-        for s in self.parent.countries[self.player_country.currentText()]:
+        for s in self.parent.countries.get(self.player_country.currentText(), {}):
             self.player_state.addItem(str(s))
     
     def AutoExportName(self):
