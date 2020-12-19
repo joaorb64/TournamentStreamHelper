@@ -335,12 +335,12 @@ class Window(QWidget):
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
-        self.downloadBt = QPushButton("Download PowerRankings data")
+        self.downloadBt = QPushButton("Get PowerRankings data")
         self.downloadBt.setIcon(QIcon('icons/download.svg'))
         layout_end.addWidget(self.downloadBt, 1, 0, 1, 2)
         self.downloadBt.clicked.connect(self.DownloadButtonClicked)
 
-        self.smashggConnectBt = QPushButton("Download players")
+        self.smashggConnectBt = QPushButton("Get players")
         self.smashggConnectBt.setIcon(QIcon('icons/smashgg.png'))
         layout_end.addWidget(self.smashggConnectBt, 2, 0, 1, 1)
         self.smashggConnectBt.clicked.connect(self.LoadPlayersFromSmashGGTournamentClicked)
@@ -364,14 +364,20 @@ class Window(QWidget):
         self.saveBt.clicked.connect(self.SaveButtonClicked)
         
         self.saveBt.setMenu(QMenu())
-        action = self.saveBt.menu().addAction("Automático")
-        action.setCheckable(True)
 
+        action = self.saveBt.menu().addAction("Auto")
+        action.setCheckable(True)
         if "autosave" in self.settings:
             if self.settings["autosave"] == True:
                 action.setChecked(True)
-        
         action.toggled.connect(self.ToggleAutosave)
+
+        action = self.saveBt.menu().addAction("Add @ to twitter")
+        action.setCheckable(True)
+        if "twitter_add_at" in self.settings:
+            if self.settings["twitter_add_at"] == True:
+                action.setChecked(True)
+        action.toggled.connect(self.ToggleTwitterAddAt)
 
         self.LoadData()
 
@@ -622,6 +628,13 @@ class Window(QWidget):
             self.settings["autosave"] = True
         else:
             self.settings["autosave"] = False
+        self.SaveSettings()
+    
+    def ToggleTwitterAddAt(self, checked):
+        if checked:
+            self.settings["twitter_add_at"] = True
+        else:
+            self.settings["twitter_add_at"] = False
         self.SaveSettings()
     
     def SaveButtonClicked(self):
@@ -1255,8 +1268,6 @@ class PlayerColumn():
                 outfile.write(self.player_name.text())
         with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
             outfile.write(self.player_org.text())
-        with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(self.player_twitter.text())
     
     def AutoExportRealName(self):
         if self.parent.settings.get("autosave") == True:
@@ -1273,6 +1284,14 @@ class PlayerColumn():
     def ExportTwitter(self):
         try:
             def myFun(self, progress_callback):
+                removeFileIfExists('out/p'+str(self.id)+'_twitter.png')
+
+                with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
+                    prefix = ""
+                    if self.parent.settings.get("twitter_add_at") == True:
+                        prefix = "@"
+                    outfile.write(prefix+self.player_twitter.text())
+
                 removeFileIfExists('out/p'+str(self.id)+'_picture.png')
 
                 if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
