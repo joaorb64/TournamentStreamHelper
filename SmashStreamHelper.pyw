@@ -610,14 +610,12 @@ class Window(QWidget):
         autocompleter_names = []
         autocompleter_mains = []
         autocompleter_players = []
-
-        if self.allplayers == None:
-            return
         
-        ap = self.allplayers.get("players", None)
+        ap = []
 
-        if ap == None or len(ap) == 0:
-            return
+        if self.allplayers is not None and self.allplayers.get("players") is not None:
+            for p in self.allplayers["players"]:
+                ap.append(p)
         
         if self.smashgg_players is not None:
             for p in self.smashgg_players:
@@ -688,7 +686,7 @@ class Window(QWidget):
             self.allplayers = json.load(f)
             print("Powerrankings data loaded")
         except Exception as e:
-            self.allplayers = {}
+            self.allplayers = None
             print(e)
         
         try:
@@ -696,6 +694,7 @@ class Window(QWidget):
             self.smashgg_players = json.load(f)
             print("Smashgg data loaded")
         except Exception as e:
+            self.smashgg_players = None
             print(e)
         
         self.SetupAutocomplete()
