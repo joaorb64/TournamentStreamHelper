@@ -304,14 +304,14 @@ class Window(QWidget):
         self.reset_score_bt = QPushButton()
         layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
         self.reset_score_bt.setIcon(QIcon('icons/undo.svg'))
-        self.reset_score_bt.setText("Zerar")
+        self.reset_score_bt.setText("Reset score")
         self.reset_score_bt.setFont(self.font_small)
         self.reset_score_bt.clicked.connect(self.ResetScoreButtonClicked)
 
         self.invert_bt = QPushButton()
         layout_middle.addWidget(self.invert_bt, 4, 0, 1, 2)
         self.invert_bt.setIcon(QIcon('icons/swap.svg'))
-        self.invert_bt.setText("Inverter")
+        self.invert_bt.setText("Swap players")
         self.invert_bt.setFont(self.font_small)
         self.invert_bt.clicked.connect(self.InvertButtonClicked)
         
