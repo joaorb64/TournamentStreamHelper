@@ -371,7 +371,7 @@ class Window(QWidget):
         self.getFromStreamQueueBt.setMenu(QMenu())
 
         self.setTwitchUsernameAction = QAction(
-            "Set Twitch username (" + self.settings.get("twitch_username", None) + ")"
+            "Set Twitch username (" + str(self.settings.get("twitch_username", None)) + ")"
         )
         self.getFromStreamQueueBt.menu().addAction(self.setTwitchUsernameAction)
         self.setTwitchUsernameAction.triggered.connect(self.SetTwitchUsername)
@@ -391,7 +391,7 @@ class Window(QWidget):
         action.triggered.connect(self.SetSmashggKey)
 
         self.smashggTournamentSlug = QAction(
-            "Set tournament slug (" + self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) + ")"
+            "Set tournament slug (" + str(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)) + ")"
         )
         self.smashggSelectSetBt.menu().addAction(self.smashggTournamentSlug)
         self.smashggTournamentSlug.triggered.connect(self.SetSmashggEventSlug)
