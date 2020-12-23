@@ -254,7 +254,7 @@ class Window(QWidget):
         self.setWindowTitle("Ajudante de Stream")
 
         # Layout base
-        base_layout = QHBoxLayout()
+        base_layout = QBoxLayout(QBoxLayout.LeftToRight)
         self.setLayout(base_layout)
 
         # Inputs do jogador 1 na vertical
@@ -333,17 +333,20 @@ class Window(QWidget):
         layout_end.addWidget(self.optionsBt, 0, 0, 1, 2)
         self.optionsBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction("Sempre no topo")
+        action = self.optionsBt.menu().addAction("Always on top")
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction("Baixar ícones de personagens")
+        action = self.optionsBt.menu().addAction("Download assets")
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
+        action = self.optionsBt.menu().addAction("Change layout orientation")
+        action.setIcon(QIcon('icons/swap.svg'))
+        action.triggered.connect(self.ChangeLayoutOrientation)
 
         # Downloads
         self.downloadsBt = QToolButton()
         self.downloadsBt.setIcon(QIcon('icons/download.svg'))
-        self.downloadsBt.setText("Download data")
+        self.downloadsBt.setText("Download autocomplete data")
         self.downloadsBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.downloadsBt.setPopupMode(QToolButton.InstantPopup)
         layout_end.addWidget(self.downloadsBt, 1, 0, 1, 2)
@@ -367,8 +370,11 @@ class Window(QWidget):
         self.getFromStreamQueueBt.setPopupMode(QToolButton.MenuButtonPopup)
         self.getFromStreamQueueBt.setMenu(QMenu())
 
-        action = self.getFromStreamQueueBt.menu().addAction("Set Twitch username")
-        action.triggered.connect(self.SetTwitchUsername)
+        self.setTwitchUsernameAction = QAction(
+            "Set Twitch username (" + self.settings.get("twitch_username", None) + ")"
+        )
+        self.getFromStreamQueueBt.menu().addAction(self.setTwitchUsernameAction)
+        self.setTwitchUsernameAction.triggered.connect(self.SetTwitchUsername)
 
         # Load set from SmashGG tournament
         self.smashggSelectSetBt = QToolButton()
@@ -384,12 +390,15 @@ class Window(QWidget):
         action = self.smashggSelectSetBt.menu().addAction("Set SmashGG key")
         action.triggered.connect(self.SetSmashggKey)
 
-        action = self.smashggSelectSetBt.menu().addAction("Set tournament slug")
-        action.triggered.connect(self.SetSmashggEventSlug)
+        self.smashggTournamentSlug = QAction(
+            "Set tournament slug (" + self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) + ")"
+        )
+        self.smashggSelectSetBt.menu().addAction(self.smashggTournamentSlug)
+        self.smashggTournamentSlug.triggered.connect(self.SetSmashggEventSlug)
 
         # save button
         self.saveBt = QToolButton()
-        self.saveBt.setText("Salvar e exportar")
+        self.saveBt.setText("Save and export")
         self.saveBt.setIcon(QIcon('icons/save.svg'))
         self.saveBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         pal = self.saveBt.palette()
@@ -419,6 +428,14 @@ class Window(QWidget):
         self.LoadData()
 
         self.show()
+    
+    def ChangeLayoutOrientation(self):
+        if self.layout().direction() == QBoxLayout.TopToBottom:
+            self.layout().setDirection(QBoxLayout.LeftToRight)
+        else:
+            self.layout().setDirection(QBoxLayout.TopToBottom)
+        self.resize(0, 0)
+        self.adjustSize()
     
     def AutoExportScore(self):
         if self.settings.get("autosave") == True:
@@ -482,7 +499,7 @@ class Window(QWidget):
             checkboxes = []
 
             for f in release["assets"]:
-                checkbox = QCheckBox(f["name"] + " (" + "{:.2f}".format(f["size"]/1024/1024) + "mb)")
+                checkbox = QCheckBox(f["name"] + " (" + "{:.2f}".format(f["size"]/1024/1024) + " MB)")
                 self.preDownloadDialogue.layout().addWidget(checkbox)
                 checkboxes.append(checkbox)
             
@@ -746,6 +763,9 @@ class Window(QWidget):
         if okPressed:
             self.settings["twitch_username"] = text
             self.SaveSettings()
+            self.setTwitchUsernameAction.setText(
+                "Set Twitch username (" + self.settings.get("twitch_username", None) + ")"
+            )
     
     def SetSmashggKey(self):
         text, okPressed = QInputDialog.getText(self, "Set SmashGG key","Key: ", QLineEdit.Normal, "")
@@ -758,9 +778,13 @@ class Window(QWidget):
         if okPressed:
             self.settings["SMASHGG_TOURNAMENT_SLUG"] = text
             self.SaveSettings()
+            self.smashggTournamentSlug.setText(
+                "Set tournament slug (" + self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) + ")"
+            )
+            
     
     def LoadPlayersFromSmashGGTournamentClicked(self):
-        text, okPressed = QInputDialog.getText(self, "Get text","Your name:", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(self, "Get players from tournament","Tournament slug:", QLineEdit.Normal, "")
         if okPressed:
             self.LoadPlayersFromSmashGGTournamentStart(text)
     
@@ -1109,6 +1133,7 @@ class Window(QWidget):
         btOk.clicked.connect(self.SetFromSmashGGSelected)
 
         self.smashGGSetSelecDialog.show()
+        self.smashGGSetSelecDialog.adjustSize()
     
     def SetFromSmashGGSelected(self):
         row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
@@ -1380,14 +1405,6 @@ class PlayerColumn():
         self.player_character_color.setMinimumWidth(120)
         self.player_character_color.setFont(self.parent.font_small)
         self.player_character_color.currentIndexChanged.connect(self.AutoExportCharacter)
-
-        self.optionsBt = QToolButton()
-        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
-        self.optionsBt.setPopupMode(QToolButton.InstantPopup)
-        self.layout_grid.addWidget(self.optionsBt, 0, 5)
-        self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction("Salvar como novo jogador")
-        action.setIcon(QIcon('icons/add_user.svg'))
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
