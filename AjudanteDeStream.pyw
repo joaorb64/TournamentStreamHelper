@@ -468,23 +468,55 @@ class Window(QWidget):
         self.scoreRight.setValue(score)
     
     def DownloadAssets(self):
-        self.downloadDialogue = QProgressDialog("Baixando imagens...", "Cancelar", 0, 100, self)
-        self.downloadDialogue.setAutoClose(False)
-        self.downloadDialogue.setWindowTitle("Download de imagens")
-        self.downloadDialogue.setWindowModality(Qt.WindowModal)
-        self.downloadDialogue.show()
+        release = self.DownloadAssetsFetch()
 
-        worker = Worker(self.DownloadAssetsWorker)
-        worker.signals.progress.connect(self.DownloadAssetsProgress)
-        worker.signals.finished.connect(self.DownloadAssetsFinished)
-        self.threadpool.start(worker)
+        if release is not None:
+            self.preDownloadDialogue = QDialog(self)
+            self.preDownloadDialogue.setWindowTitle("Download assets")
+            self.preDownloadDialogue.setWindowModality(Qt.WindowModal)
+            self.preDownloadDialogue.setLayout(QVBoxLayout())
+            self.preDownloadDialogue.show()
+
+            label = self.preDownloadDialogue.layout().addWidget(QLabel(release["body"]))
+
+            checkboxes = []
+
+            for f in release["assets"]:
+                checkbox = QCheckBox(f["name"] + " (" + "{:.2f}".format(f["size"]/1024/1024) + "mb)")
+                self.preDownloadDialogue.layout().addWidget(checkbox)
+                checkboxes.append(checkbox)
+            
+            btOk = QPushButton("Download")
+            self.preDownloadDialogue.layout().addWidget(btOk)
+
+            def DownloadStart():
+                nonlocal self
+                filesToDownload = []
+                for i, c in enumerate(checkboxes):
+                    if c.isChecked():
+                        filesToDownload.append(release["assets"][i])
+                self.preDownloadDialogue.close()
+                self.downloadDialogue = QProgressDialog("Downloading assets", "Cancel", 0, 100, self)
+                self.downloadDialogue.show()
+                worker = Worker(self.DownloadAssetsWorker, *[filesToDownload])
+                worker.signals.progress.connect(self.DownloadAssetsProgress)
+                worker.signals.finished.connect(self.DownloadAssetsFinished)
+                self.threadpool.start(worker)
+
+            btOk.clicked.connect(DownloadStart)
     
-    def DownloadAssetsWorker(self, progress_callback):
-        response = requests.get("https://api.github.com/repos/joaorb64/AjudanteDeStream/releases/latest")
-        release = json.loads(response.text)
-
-        files = release["assets"]
-
+    def DownloadAssetsFetch(self):
+        release = None
+        try:
+            response = requests.get("https://api.github.com/repos/joaorb64/SmashStreamHelper/releases/latest")
+            release = json.loads(response.text)
+        except Exception as e:
+            messagebox = QMessageBox()
+            messagebox.setText("Failed to fetch github:\n"+str(e))
+            messagebox.exec()
+        return release
+    
+    def DownloadAssetsWorker(self, files, progress_callback):
         totalSize = 0
         for f in files:
             totalSize += f["size"]
@@ -494,7 +526,7 @@ class Window(QWidget):
         for f in files:
             with open("character_icon/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+str(f["name"]))
-                progress_callback.emit("Baixando "+str(f["name"])+"...")
+                progress_callback.emit("Downloading "+str(f["name"])+"...")
 
                 response = urllib.request.urlopen(f["browser_download_url"])
 
