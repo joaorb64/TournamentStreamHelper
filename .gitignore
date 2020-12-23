@@ -1,5 +1,8 @@
 out/
-character_icon/
+character_icon/chara_0*
+character_icon/chara_1*
+character_icon/chara_3*
+character_icon/*.tar.xz
 powerrankings_player_data.json
 tournament_players.json
 settings.json
