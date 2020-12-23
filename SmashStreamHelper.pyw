@@ -274,7 +274,7 @@ class Window(QWidget):
 
         base_layout.addWidget(group_box)
 
-        tournament_phase_label = QLabel("Fase")
+        tournament_phase_label = QLabel("Tournament phase")
         tournament_phase_label.setFont(self.font_small)
         layout_middle.addWidget(tournament_phase_label, 0, 0, 1, 2)
 
