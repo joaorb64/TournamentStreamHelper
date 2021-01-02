@@ -353,7 +353,7 @@ class Window(QWidget):
         self.downloadsBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.downloadsBt.setMenu(QMenu())
         action = self.downloadsBt.menu().addAction("Autocomplete data from PowerRankings")
-        action.setIcon(QIcon('icons/download.svg'))
+        action.setIcon(QIcon('icons/pr.svg'))
         action.triggered.connect(self.DownloadDataFromPowerRankingsClicked)
         action = self.downloadsBt.menu().addAction("Autocomplete data from a SmashGG tournament")
         action.setIcon(QIcon('icons/smashgg.svg'))
@@ -651,17 +651,23 @@ class Window(QWidget):
 
         model.appendRow([QStandardItem(""), QStandardItem(""), QStandardItem("")])
         smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
+        prLogo = QImage("icons/pr.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
             item.setIcon(self.stockIcons[autocompleter_mains[i]][0])
             
+            pix = QPixmap(self.stockIcons[autocompleter_mains[i]][0].pixmap(32, 32))
+            p = QPainter(pix)
+
             if "from_smashgg" in self.mergedPlayers[i]:
-                pix = QPixmap(self.stockIcons[autocompleter_mains[i]][0].pixmap(32, 32))
-                p = QPainter(pix)
                 p.drawImage(QPoint(16, 16), smashggLogo)
-                p.end()
-                item.setIcon(QIcon(pix))
+            else:
+                p.drawImage(QPoint(16, 16), prLogo)
+
+            p.end()
+            item.setIcon(QIcon(pix))
+
             item.setData(autocompleter_players[i])
             model.appendRow([
                 item,
@@ -1022,7 +1028,10 @@ class Window(QWidget):
         if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
             self.SetSmashggEventSlug()
 
-        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
+        slug = self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)
+
+        if slug == None:
+            return
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -1407,7 +1416,7 @@ class PlayerColumn():
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
-        for c in self.parent.portraits[self.player_character.currentText()]:
+        for c in self.parent.portraits.get(self.player_character.currentText(), []):
             self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
     
     def LoadStateOptions(self, text):
