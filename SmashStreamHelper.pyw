@@ -336,6 +336,12 @@ class Window(QWidget):
         action = self.optionsBt.menu().addAction("Always on top")
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
+        action = self.optionsBt.menu().addAction("Competitor mode")
+        action.toggled.connect(self.ToggleCompetitorMode)
+        action.setCheckable(True)
+        if self.settings.get("competitor_mode", False):
+            action.setChecked(True)
+            self.player_layouts[0].group_box.hide()
         action = self.optionsBt.menu().addAction("Download assets")
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
@@ -375,6 +381,12 @@ class Window(QWidget):
         )
         self.getFromStreamQueueBt.menu().addAction(self.setTwitchUsernameAction)
         self.setTwitchUsernameAction.triggered.connect(self.SetTwitchUsername)
+        
+        action = self.getFromStreamQueueBt.menu().addAction("Auto")
+        action.toggled.connect(self.ToggleAutoTwitchQueueMode)
+        action.setCheckable(True)
+        if self.settings.get("twitch_auto_mode", False):
+            action.setChecked(True)
 
         # Load set from SmashGG tournament
         self.smashggSelectSetBt = QToolButton()
@@ -395,6 +407,33 @@ class Window(QWidget):
         )
         self.smashggSelectSetBt.menu().addAction(self.smashggTournamentSlug)
         self.smashggTournamentSlug.triggered.connect(self.SetSmashggEventSlug)
+
+        if self.settings.get("competitor_mode", False):
+            self.getFromStreamQueueBt.hide()
+            self.smashggSelectSetBt.hide()
+
+        # Competitor mode smashgg button
+        self.competitorModeSmashggBt = QToolButton()
+        self.competitorModeSmashggBt.setText("Update from SmashGG set")
+        self.competitorModeSmashggBt.setIcon(QIcon('icons/smashgg.svg'))
+        self.competitorModeSmashggBt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        layout_end.addWidget(self.competitorModeSmashggBt, 2, 0, 1, 2)
+        self.competitorModeSmashggBt.clicked.connect(self.LoadUserSetFromSmashGGTournament)
+        self.competitorModeSmashggBt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+        self.competitorModeSmashggBt.setPopupMode(QToolButton.MenuButtonPopup)
+        self.competitorModeSmashggBt.setMenu(QMenu())
+
+        action = self.competitorModeSmashggBt.menu().addAction("Set SmashGG key")
+        action.triggered.connect(self.SetSmashggKey)
+
+        self.smashggUserId = QAction(
+            "Set user id (" + str(self.settings.get("smashgg_user_id", None)) + ")"
+        )
+        self.competitorModeSmashggBt.menu().addAction(self.smashggUserId)
+        self.smashggUserId.triggered.connect(self.SetSmashggUserId)
+
+        if self.settings.get("competitor_mode", False) == False:
+            self.competitorModeSmashggBt.hide()
 
         # save button
         self.saveBt = QToolButton()
@@ -712,6 +751,22 @@ class Window(QWidget):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
     
+    def ToggleCompetitorMode(self, checked):
+        if checked:
+            self.settings["competitor_mode"] = True
+            self.player_layouts[0].group_box.hide()
+        else:
+            self.settings["competitor_mode"] = False
+            self.player_layouts[0].group_box.show()
+        self.SaveSettings()
+    
+    def ToggleAutoTwitchQueueMode(self, checked):
+        if checked:
+            self.settings["twitch_auto_mode"] = True
+        else:
+            self.settings["twitch_auto_mode"] = False
+        self.SaveSettings()
+    
     def ToggleAutosave(self, checked):
         if checked:
             self.settings["autosave"] = True
@@ -779,14 +834,22 @@ class Window(QWidget):
             self.SaveSettings()
     
     def SetSmashggEventSlug(self):
-        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Slug: ", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Slug [tournament/***/event/***]: ", QLineEdit.Normal, "")
         if okPressed:
             self.settings["SMASHGG_TOURNAMENT_SLUG"] = text
             self.SaveSettings()
             self.smashggTournamentSlug.setText(
                 "Set tournament slug (" + self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) + ")"
             )
-            
+    
+    def SetSmashggUserId(self):
+        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Id [user/***]: ", QLineEdit.Normal, "")
+        if okPressed:
+            self.settings["smashgg_user_id"] = text
+            self.SaveSettings()
+            self.smashggUserId.setText(
+                "Set user id (" + str(self.settings.get("smashgg_user_id", None)) + ")"
+            )
     
     def LoadPlayersFromSmashGGTournamentClicked(self):
         text, okPressed = QInputDialog.getText(self, "Get players from tournament","Tournament slug:", QLineEdit.Normal, "")
@@ -1208,6 +1271,147 @@ class Window(QWidget):
                     if s["sets"][0]["slots"][0].get("entrant", None) is not None and \
                     s["sets"][0]["slots"][1].get("entrant", None) is not None:
                         self.LoadPlayersFromSmashGGSet(s["sets"][0]["id"])
+
+    def LoadUserSetFromSmashGGTournament(self):
+        if self.settings.get("smashgg_user_id", None) == None:
+            self.SetSmashggUserId()
+        
+        smashgg_username = self.settings["smashgg_user_id"]
+        
+        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
+            self.SetSmashggEventSlug()
+
+        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
+
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+
+        r = requests.post(
+            'https://api.smash.gg/gql/alpha',
+            headers={
+                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+            },
+            json={
+                'query': '''
+                query user($playerSlug: String!) {
+                    user(slug: $playerSlug) {
+                        player {
+                            sets(page: 1, perPage: 1) {
+                                nodes {
+                                    fullRoundText
+                                    slots {
+                                        entrant {
+                                            id
+                                            participants {
+                                                id
+                                                user {
+                                                    id
+                                                    slug
+                                                    name
+                                                    authorizations(types: [TWITTER]) {
+                                                        type
+                                                        externalUsername
+                                                    }
+                                                    location {
+                                                        city
+                                                        country
+                                                    }
+                                                    images(type: "profile") {
+                                                        url
+                                                    }
+                                                }
+                                                player {
+                                                    id
+                                                    gamerTag
+                                                    prefix
+                                                    sets(page: 1, perPage: 1) {
+                                                        nodes {
+                                                            games {
+                                                                selections {
+                                                                    entrant {
+                                                                        participants {
+                                                                            player {
+                                                                                id
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    selectionValue
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    games {
+                                        selections {
+                                            entrant {
+                                                id
+                                                participants {
+                                                    player {
+                                                        id
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        winnerId
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }''',
+                'variables': {
+                    "playerSlug": smashgg_username
+                },
+            }
+        )
+        resp = json.loads(r.text)
+
+        sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
+
+        if len(resp) == 0:
+            return
+        
+        mySet = sets[0]
+
+        print(mySet)
+
+        # Set phase name
+        self.tournament_phase.setCurrentText(mySet.get("fullRoundText", ""))
+
+        # Get first player (user)
+        entrant = next(
+            (u["entrant"] for u in mySet.get("slots", []) if u.get("entrant", {}).get("participants", {})[0].get("user", {}).get("slug", "") == smashgg_username),
+            None
+        )
+        participant = entrant["participants"][0]
+        player = participant.get("player", None)
+        user = participant.get("user", None)
+        player_obj = self.LoadSmashGGPlayer(user, player)
+
+        self.player_layouts[0].SetFromPlayerObj(player_obj)
+
+        # Update score
+        score = len([game for game in mySet.get("games") if game.get("winnerId", -1) == entrant.get("id", None)])
+        self.scoreLeft.setValue(score)
+
+        # Get second player
+        entrant = next(
+            (u["entrant"] for u in mySet.get("slots", []) if u.get("entrant", {}).get("participants", {})[0].get("user", {}).get("slug", "") != smashgg_username),
+            None
+        )
+        participant = entrant["participants"][0]
+        player = participant.get("player", None)
+        user = participant.get("user", None)
+        player_obj = self.LoadSmashGGPlayer(user, player)
+
+        self.player_layouts[1].SetFromPlayerObj(player_obj)
+
+        # Update score
+        score = len([game for game in mySet.get("games") if game.get("winnerId", -1) == entrant.get("id", None)])
+        self.scoreRight.setValue(score)
     
     def LoadPlayersFromSmashGGSet(self, setId):
         r = requests.post(
