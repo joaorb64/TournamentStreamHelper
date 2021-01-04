@@ -257,6 +257,10 @@ class Window(QWidget):
         base_layout = QBoxLayout(QBoxLayout.LeftToRight)
         self.setLayout(base_layout)
 
+        self.setStyleSheet("QBoxLayout{padding:0px; margin:0px}")
+        base_layout.setSpacing(0)
+        base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
+
         # Inputs do jogador 1 na vertical
         p1 = PlayerColumn(self, 1)
         self.player_layouts.append(p1)
@@ -341,7 +345,7 @@ class Window(QWidget):
         action.setCheckable(True)
         if self.settings.get("competitor_mode", False):
             action.setChecked(True)
-            self.player_layouts[0].group_box.hide()
+            #self.player_layouts[0].group_box.hide()
         action = self.optionsBt.menu().addAction("Download assets")
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
@@ -385,8 +389,11 @@ class Window(QWidget):
         action = self.getFromStreamQueueBt.menu().addAction("Auto")
         action.toggled.connect(self.ToggleAutoTwitchQueueMode)
         action.setCheckable(True)
+        self.getFromStreamQueueAutoUpdateTimer = QTimer()
+        self.getFromStreamQueueAutoUpdateTimer.timeout.connect(self.LoadSetsFromSmashGGTournamentQueueClicked)
         if self.settings.get("twitch_auto_mode", False):
             action.setChecked(True)
+            self.getFromStreamQueueAutoUpdateTimer.start(10000)
 
         # Load set from SmashGG tournament
         self.smashggSelectSetBt = QToolButton()
@@ -431,6 +438,15 @@ class Window(QWidget):
         )
         self.competitorModeSmashggBt.menu().addAction(self.smashggUserId)
         self.smashggUserId.triggered.connect(self.SetSmashggUserId)
+
+        action = self.competitorModeSmashggBt.menu().addAction("Auto")
+        action.toggled.connect(self.ToggleAutoCompetitorSmashGGMode)
+        action.setCheckable(True)
+        self.competitorModeSmashGGAutoUpdateTimer = QTimer()
+        self.competitorModeSmashGGAutoUpdateTimer.timeout.connect(self.LoadUserSetFromSmashGGTournament)
+        if self.settings.get("competitor_smashgg_auto_mode", False):
+            action.setChecked(True)
+            self.competitorModeSmashGGAutoUpdateTimer.start(10000)
 
         if self.settings.get("competitor_mode", False) == False:
             self.competitorModeSmashggBt.hide()
@@ -754,17 +770,40 @@ class Window(QWidget):
     def ToggleCompetitorMode(self, checked):
         if checked:
             self.settings["competitor_mode"] = True
-            self.player_layouts[0].group_box.hide()
+            try:
+                #self.player_layouts[0].group_box.hide()
+                self.getFromStreamQueueBt.hide()
+                self.smashggSelectSetBt.hide()
+                self.competitorModeSmashggBt.show()
+            except Exception as e:
+                print(e)
         else:
-            self.settings["competitor_mode"] = False
-            self.player_layouts[0].group_box.show()
+            try:
+                #self.settings["competitor_mode"] = False
+                self.player_layouts[0].group_box.show()
+                self.getFromStreamQueueBt.show()
+                self.smashggSelectSetBt.show()
+                self.competitorModeSmashggBt.hide()
+            except Exception as e:
+                print(e)
         self.SaveSettings()
     
     def ToggleAutoTwitchQueueMode(self, checked):
         if checked:
             self.settings["twitch_auto_mode"] = True
+            self.getFromStreamQueueAutoUpdateTimer.start(10000)
         else:
             self.settings["twitch_auto_mode"] = False
+            self.getFromStreamQueueAutoUpdateTimer.stop(10000)
+        self.SaveSettings()
+    
+    def ToggleAutoCompetitorSmashGGMode(self, checked):
+        if checked:
+            self.settings["competitor_smashgg_auto_mode"] = True
+            self.competitorModeSmashGGAutoUpdateTimer.start(10000)
+        else:
+            self.settings["competitor_smashgg_auto_mode"] = False
+            self.competitorModeSmashGGAutoUpdateTimer.stop()
         self.SaveSettings()
     
     def ToggleAutosave(self, checked):
@@ -976,6 +1015,9 @@ class Window(QWidget):
     def LoadSmashGGPlayer(self, user, player):
         player_obj = {}
 
+        if user is None and player is None:
+            return {}
+
         if user is not None:
             player_obj["smashgg_id"] = user["id"]
             player_obj["smashgg_slug"] = user["slug"]
@@ -1037,6 +1079,13 @@ class Window(QWidget):
                 
                 if len(mains) > 0:
                     player_obj["mains"] = mains
+                elif self.allplayers is not None and user is not None:
+                    found = next(
+                        (p for p in self.allplayers.get("players", []) if p.get("smashgg_id") == user.get("id")),
+                        None
+                    )
+                    if found and len(found.get("mains"))>0:
+                        player_obj["mains"] = found["mains"]
         
         countries = self.countries_json
         cities = self.cities_json
@@ -1213,6 +1262,9 @@ class Window(QWidget):
         self.smashGGSetSelecDialog.close()
     
     def LoadSetsFromSmashGGTournamentQueueClicked(self):
+        if self.getFromStreamQueueBt.isHidden():
+            return
+
         if self.settings.get("twitch_username", None) == None:
             self.SetTwitchUsername()
         
@@ -1273,6 +1325,9 @@ class Window(QWidget):
                         self.LoadPlayersFromSmashGGSet(s["sets"][0]["id"])
 
     def LoadUserSetFromSmashGGTournament(self):
+        if self.competitorModeSmashggBt.isHidden():
+            return
+
         if self.settings.get("smashgg_user_id", None) == None:
             self.SetSmashggUserId()
         
@@ -1298,6 +1353,7 @@ class Window(QWidget):
                         player {
                             sets(page: 1, perPage: 1) {
                                 nodes {
+                                    displayScore
                                     fullRoundText
                                     slots {
                                         entrant {
@@ -1324,7 +1380,7 @@ class Window(QWidget):
                                                     id
                                                     gamerTag
                                                     prefix
-                                                    sets(page: 1, perPage: 1) {
+                                                    sets(page: 1, perPage: 3) {
                                                         nodes {
                                                             games {
                                                                 selections {
@@ -1354,6 +1410,7 @@ class Window(QWidget):
                                                     }
                                                 }
                                             }
+                                            selectionValue
                                         }
                                         winnerId
                                     }
@@ -1376,8 +1433,6 @@ class Window(QWidget):
         
         mySet = sets[0]
 
-        print(mySet)
-
         # Set phase name
         self.tournament_phase.setCurrentText(mySet.get("fullRoundText", ""))
 
@@ -1388,13 +1443,17 @@ class Window(QWidget):
         )
         participant = entrant["participants"][0]
         player = participant.get("player", None)
+        if mySet.get("games", None):
+            player["sets"] = {"nodes": [mySet]}
         user = participant.get("user", None)
         player_obj = self.LoadSmashGGPlayer(user, player)
 
         self.player_layouts[0].SetFromPlayerObj(player_obj)
 
         # Update score
-        score = len([game for game in mySet.get("games") if game.get("winnerId", -1) == entrant.get("id", None)])
+        score = 0
+        if mySet.get("games", None) != None:
+            score = len([game for game in mySet.get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
         self.scoreLeft.setValue(score)
 
         # Get second player
@@ -1404,13 +1463,17 @@ class Window(QWidget):
         )
         participant = entrant["participants"][0]
         player = participant.get("player", None)
+        if mySet.get("games", None):
+            player["sets"] = {"nodes": [mySet]}
         user = participant.get("user", None)
         player_obj = self.LoadSmashGGPlayer(user, player)
 
         self.player_layouts[1].SetFromPlayerObj(player_obj)
 
         # Update score
-        score = len([game for game in mySet.get("games") if game.get("winnerId", -1) == entrant.get("id", None)])
+        score = 0
+        if mySet.get("games", None) != None:
+            score = len([game for game in mySet.get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
         self.scoreRight.setValue(score)
     
     def LoadPlayersFromSmashGGSet(self, setId):
@@ -1501,14 +1564,19 @@ class PlayerColumn():
         self.id = id
 
         self.group_box = QGroupBox()
-        self.group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
+        self.group_box.setStyleSheet("QGroupBox{padding:0px;}")
         self.group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.group_box.setContentsMargins(QMargins(0, 0, 0, 0))
 
         self.layout_grid = QGridLayout()
         self.group_box.setLayout(self.layout_grid)
         self.layout_grid.setVerticalSpacing(0)
 
         self.group_box.setFont(self.parent.font_small)
+
+        self.titleLabel = QLabel("Player "+str(self.id))
+        self.titleLabel.setFont(self.parent.font_small)
+        self.layout_grid.addWidget(self.titleLabel, 0, 0, 1, 2)
 
         pos_labels = 0
         pos_forms = 1
@@ -1522,9 +1590,9 @@ class PlayerColumn():
         nick_label = QLabel("Player")
         nick_label.setFont(self.parent.font_small)
         nick_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(nick_label, 0, pos_labels)
+        self.layout_grid.addWidget(nick_label, 1, pos_labels)
         self.player_name = QLineEdit()
-        self.layout_grid.addWidget(self.player_name, 0, pos_forms)
+        self.layout_grid.addWidget(self.player_name, 1, pos_forms)
         self.player_name.setMinimumWidth(100)
         self.player_name.setFont(self.parent.font_small)
         self.player_name.textChanged.connect(self.AutoExportName)
@@ -1532,9 +1600,9 @@ class PlayerColumn():
         prefix_label = QLabel("Prefix")
         prefix_label.setFont(self.parent.font_small)
         prefix_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(prefix_label, 1, pos_labels)
+        self.layout_grid.addWidget(prefix_label, 2, pos_labels)
         self.player_org = QLineEdit()
-        self.layout_grid.addWidget(self.player_org, 1, pos_forms)
+        self.layout_grid.addWidget(self.player_org, 2, pos_forms)
         self.player_org.setFont(self.parent.font_small)
         self.player_org.textChanged.connect(self.AutoExportName)
         self.player_org.setMinimumWidth(100)
@@ -1542,9 +1610,9 @@ class PlayerColumn():
         real_name_label = QLabel("Name")
         real_name_label.setFont(self.parent.font_small)
         real_name_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(real_name_label, 2, pos_labels)
+        self.layout_grid.addWidget(real_name_label, 3, pos_labels)
         self.player_real_name = QLineEdit()
-        self.layout_grid.addWidget(self.player_real_name, 2, pos_forms)
+        self.layout_grid.addWidget(self.player_real_name, 3, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
         self.player_real_name.textChanged.connect(self.AutoExportRealName)
         self.player_real_name.setMinimumWidth(100)
@@ -1552,20 +1620,20 @@ class PlayerColumn():
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
         player_twitter_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_twitter_label, 3, pos_labels)
+        self.layout_grid.addWidget(player_twitter_label, 4, pos_labels)
         self.player_twitter = QLineEdit()
-        self.layout_grid.addWidget(self.player_twitter, 3, pos_forms)
+        self.layout_grid.addWidget(self.player_twitter, 4, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
         self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
         self.player_twitter.setMinimumWidth(100)
 
         location_layout = QHBoxLayout()
-        self.layout_grid.addLayout(location_layout, 0, pos_forms+2)
+        self.layout_grid.addLayout(location_layout, 1, pos_forms+2)
 
         player_country_label = QLabel("Location")
         player_country_label.setFont(self.parent.font_small)
         player_country_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_country_label, 0, pos_labels+2)
+        self.layout_grid.addWidget(player_country_label, 1, pos_labels+2)
         self.player_country = QComboBox()
         self.player_country.addItem("")
         for i, country in enumerate(self.parent.countries):
@@ -1592,13 +1660,13 @@ class PlayerColumn():
         player_character_label = QLabel("Character")
         player_character_label.setFont(self.parent.font_small)
         player_character_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_character_label, 1, pos_labels+2)
+        self.layout_grid.addWidget(player_character_label, 2, pos_labels+2)
         self.player_character = QComboBox()
         self.player_character.addItem("")
         for c in self.parent.stockIcons:
             self.player_character.addItem(self.parent.stockIcons[c][0], c)
         self.player_character.setEditable(True)
-        self.layout_grid.addWidget(self.player_character, 1, pos_forms+2)
+        self.layout_grid.addWidget(self.player_character, 2, pos_forms+2)
         self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
         self.player_character.setMinimumWidth(120)
         self.player_character.setFont(self.parent.font_small)
@@ -1609,9 +1677,9 @@ class PlayerColumn():
         player_character_color_label = QLabel("Skin")
         player_character_color_label.setFont(self.parent.font_small)
         player_character_color_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_character_color_label, 2, pos_labels+2)
+        self.layout_grid.addWidget(player_character_color_label, 3, pos_labels+2)
         self.player_character_color = QComboBox()
-        self.layout_grid.addWidget(self.player_character_color, 2, pos_forms+2, 2, 1)
+        self.layout_grid.addWidget(self.player_character_color, 3, pos_forms+2, 2, 1)
         self.player_character_color.setIconSize(QSize(48, 48))
         self.player_character_color.setMinimumHeight(48)
         self.player_character_color.setMinimumWidth(120)
