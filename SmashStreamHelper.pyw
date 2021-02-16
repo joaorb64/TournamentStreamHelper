@@ -779,7 +779,7 @@ class Window(QWidget):
                 print(e)
         else:
             try:
-                #self.settings["competitor_mode"] = False
+                self.settings["competitor_mode"] = False
                 self.player_layouts[0].group_box.show()
                 self.getFromStreamQueueBt.show()
                 self.smashggSelectSetBt.show()
@@ -867,28 +867,88 @@ class Window(QWidget):
             )
     
     def SetSmashggKey(self):
-        text, okPressed = QInputDialog.getText(self, "Set SmashGG key","Key: ", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(
+            self,
+            "Set SmashGG key",
+            '''
+            - Go over to smash.gg, login;
+            - Click on your profile image > Developer settings;
+            - Click on "Create new token";
+            - Paste the code you obtained here.
+            ''',
+            QLineEdit.Normal,
+            ""
+        )
         if okPressed:
             self.settings["SMASHGG_KEY"] = text
             self.SaveSettings()
-    
+
     def SetSmashggEventSlug(self):
-        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Slug [tournament/***/event/***]: ", QLineEdit.Normal, "")
-        if okPressed:
-            self.settings["SMASHGG_TOURNAMENT_SLUG"] = text
+        inp = QDialog(self)
+
+        layout = QVBoxLayout()
+        inp.setLayout(layout)
+
+        inp.layout().addWidget(QLabel(
+            "Paste the URL to an event on SmashGG (must contain the /event/ part)"
+        ))
+
+        lineEdit = QLineEdit()
+        okButton = QPushButton("OK")
+        validator = QRegularExpression("tournament/[^/]*/event/[^/]*")
+
+        def validateText():
+            match = validator.match(lineEdit.text()).capturedTexts()
+            if len(match) > 0:
+                okButton.setDisabled(False)
+            else:
+                okButton.setDisabled(True)
+
+        lineEdit.textEdited.connect(validateText)
+
+        inp.layout().addWidget(lineEdit)
+
+        okButton.clicked.connect(inp.accept)
+        okButton.setDisabled(True)
+        inp.layout().addWidget(okButton)
+
+        inp.setWindowTitle('Set SmashGG tournament slug')
+        inp.resize(600, 10)
+
+        if inp.exec_() == QDialog.Accepted:
+            match = validator.match(lineEdit.text()).capturedTexts()
+            self.settings["SMASHGG_TOURNAMENT_SLUG"] = match[0]
             self.SaveSettings()
-            self.smashggTournamentSlug.setText(
-                "Set tournament slug (" + self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) + ")"
+            self.smashggUserId.setText(
+                "Set user id (" + str(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)) + ")"
             )
-    
+
+        inp.deleteLater()
+
     def SetSmashggUserId(self):
-        text, okPressed = QInputDialog.getText(self, "Set SmashGG event slug","Id [user/***]: ", QLineEdit.Normal, "")
-        if okPressed:
-            self.settings["smashgg_user_id"] = text
+        inp = QDialog(self)
+
+        inp.setLayout(QVBoxLayout())
+
+        lineEdit = QLineEdit()
+        lineEdit.setInputMask("user/HHHHHHHH;_")
+
+        inp.layout().addWidget(lineEdit)
+
+        okButton = QPushButton("OK")
+        okButton.clicked.connect(inp.accept)
+        inp.layout().addWidget(okButton)
+
+        inp.setWindowTitle('Set SmashGG user id')
+
+        if inp.exec_() == QDialog.Accepted:
+            self.settings["smashgg_user_id"] = lineEdit.text()
             self.SaveSettings()
             self.smashggUserId.setText(
                 "Set user id (" + str(self.settings.get("smashgg_user_id", None)) + ")"
             )
+
+        inp.deleteLater()
     
     def LoadPlayersFromSmashGGTournamentClicked(self):
         text, okPressed = QInputDialog.getText(self, "Get players from tournament","Tournament slug:", QLineEdit.Normal, "")
@@ -944,6 +1004,7 @@ class Window(QWidget):
                                             }
                                             location {
                                                 city
+                                                state
                                                 country
                                             }
                                             images(type: "profile") {
@@ -1100,7 +1161,9 @@ class Window(QWidget):
             if country is not None:
                 player_obj["country_code"] = country["iso2"]
 
-                if "city" in player_obj.keys() and player_obj["city"] is not None:
+                if "state" in user.keys() and len(user["state"]) > 0:
+                    player_obj["state"] = user["state"]
+                elif "city" in player_obj.keys() and player_obj["city"] is not None:
                     # State explicit?
                     split = player_obj["city"].split(" ")
 
@@ -1332,9 +1395,6 @@ class Window(QWidget):
             self.SetSmashggUserId()
         
         smashgg_username = self.settings["smashgg_user_id"]
-        
-        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
-            self.SetSmashggEventSlug()
 
         slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
 
@@ -1370,6 +1430,7 @@ class Window(QWidget):
                                                     }
                                                     location {
                                                         city
+                                                        state
                                                         country
                                                     }
                                                     images(type: "profile") {
@@ -1425,6 +1486,9 @@ class Window(QWidget):
             }
         )
         resp = json.loads(r.text)
+
+        print(smashgg_username)
+        print(resp)
 
         sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
 
