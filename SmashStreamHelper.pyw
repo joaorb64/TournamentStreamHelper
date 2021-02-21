@@ -834,7 +834,7 @@ class Window(QWidget):
         with open('powerrankings_player_data.json', 'wb') as f:
             print("Download start")
 
-            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/out/allplayers.json', stream=True)
+            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/out/ssbu/allplayers.json', stream=True)
             total_length = response.headers.get('content-length')
 
             if total_length is None: # no content length header
