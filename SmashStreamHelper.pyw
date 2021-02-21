@@ -834,7 +834,7 @@ class Window(QWidget):
         with open('powerrankings_player_data.json', 'wb') as f:
             print("Download start")
 
-            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/out/allplayers.json', stream=True)
+            response = requests.get('https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/out/allplayers.json', stream=True)
             total_length = response.headers.get('content-length')
 
             if total_length is None: # no content length header
@@ -1843,7 +1843,7 @@ class PlayerColumn():
                 with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_state.currentText())
                 if(self.player_state.currentText() != ""):
-                    r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/sudamerica/state_flag/"+
+                    r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
                         self.player_country.currentText().upper()+"/"+
                         self.player_state.currentText().upper()+".png", stream=True)
                     if r.status_code == 200:
