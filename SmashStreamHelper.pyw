@@ -794,7 +794,7 @@ class Window(QWidget):
             self.getFromStreamQueueAutoUpdateTimer.start(10000)
         else:
             self.settings["twitch_auto_mode"] = False
-            self.getFromStreamQueueAutoUpdateTimer.stop(10000)
+            self.getFromStreamQueueAutoUpdateTimer.stop()
         self.SaveSettings()
     
     def ToggleAutoCompetitorSmashGGMode(self, checked):
@@ -1328,7 +1328,7 @@ class Window(QWidget):
         btOk.clicked.connect(self.SetFromSmashGGSelected)
 
         self.smashGGSetSelecDialog.show()
-        self.smashGGSetSelecDialog.adjustSize()
+        self.smashGGSetSelecDialog.resize(800, 400)
     
     def SetFromSmashGGSelected(self):
         row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
@@ -1568,7 +1568,9 @@ class Window(QWidget):
                         fullRoundText
                         slots {
                             entrant {
+                                id
                                 participants {
+                                    id
                                     user {
                                         id
                                         slug
@@ -1609,6 +1611,20 @@ class Window(QWidget):
                                 }
                             }
                         }
+                        games {
+                            selections {
+                                entrant {
+                                    id
+                                    participants {
+                                        player {
+                                            id
+                                        }
+                                    }
+                                }
+                                selectionValue
+                            }
+                            winnerId
+                        }
                     }
                 }''',
                 'variables': {
@@ -1625,15 +1641,33 @@ class Window(QWidget):
         user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
         player_obj = self.LoadSmashGGPlayer(user, player)
+        entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
         self.player_layouts[0].SetFromPlayerObj(player_obj)
+
+        print("--------")
+        print(entrant["id"])
+        print(resp["data"]["set"].get("games", None))
+
+        # Update score
+        score = 0
+        if resp["data"]["set"].get("games", None) != None:
+            score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+        self.scoreLeft.setValue(score)
 
         # Get second player
         user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
         player_obj = self.LoadSmashGGPlayer(user, player)
+        entrant = resp["data"]["set"]["slots"][1]["entrant"]
 
         self.player_layouts[1].SetFromPlayerObj(player_obj)
+
+        # Update score
+        score = 0
+        if resp["data"]["set"].get("games", None) != None:
+            score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+        self.scoreRight.setValue(score)
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
