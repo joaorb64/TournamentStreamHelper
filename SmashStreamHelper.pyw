@@ -971,6 +971,9 @@ class Window(QWidget):
         self.threadpool.start(worker)
     
     def LoadPlayersFromSmashGGTournamentWorker(self, progress_callback, slug):
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+            
         page = 1
         players = []
 
@@ -1200,6 +1203,11 @@ class Window(QWidget):
         self.downloadDialogue.close()
     
     def LoadSetsFromSmashGGTournament(self):
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+
+        key = self.settings.get("SMASHGG_KEY", None)
+
         if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
             self.SetSmashggEventSlug()
 
@@ -1211,7 +1219,7 @@ class Window(QWidget):
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
             headers={
-                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                'Authorization': 'Bearer'+key,
             },
             json={
                 'query': '''
@@ -1541,6 +1549,9 @@ class Window(QWidget):
         self.scoreRight.setValue(score)
     
     def LoadPlayersFromSmashGGSet(self, setId):
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
             headers={
