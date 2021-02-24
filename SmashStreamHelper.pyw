@@ -951,13 +951,17 @@ class Window(QWidget):
         inp.deleteLater()
     
     def LoadPlayersFromSmashGGTournamentClicked(self):
-        text, okPressed = QInputDialog.getText(self, "Get players from tournament","Tournament slug:", QLineEdit.Normal, "")
-        if okPressed:
-            self.LoadPlayersFromSmashGGTournamentStart(text)
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+        
+        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
+            self.SetSmashggEventSlug()
+
+        self.LoadPlayersFromSmashGGTournamentStart(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None))
     
     def LoadPlayersFromSmashGGTournamentStart(self, slug):
         if slug is None or slug=="":
-            slug = "tournament/ultimate-xanadu-online-384/event/ultimate-singles"
+            return
 
         self.downloadDialogue = QProgressDialog("Fetching players...", "Cancel", 0, 100, self)
         self.downloadDialogue.setAutoClose(True)
@@ -973,7 +977,7 @@ class Window(QWidget):
     def LoadPlayersFromSmashGGTournamentWorker(self, progress_callback, slug):
         if self.settings.get("SMASHGG_KEY", None) is None:
             self.SetSmashggKey()
-            
+
         page = 1
         players = []
 
