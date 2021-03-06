@@ -346,9 +346,6 @@ class Window(QWidget):
         if self.settings.get("competitor_mode", False):
             action.setChecked(True)
             #self.player_layouts[0].group_box.hide()
-        action = self.optionsBt.menu().addAction("Check for updates")
-        action.setIcon(QIcon('icons/undo.svg'))
-        action.triggered.connect(self.CheckForUpdates)
         action = self.optionsBt.menu().addAction("Download assets")
         action.setIcon(QIcon('icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
@@ -486,39 +483,6 @@ class Window(QWidget):
         self.LoadData()
 
         self.show()
-    
-    def CheckForUpdates(self):
-        myVersion = None
-        version = None
-
-        try:
-            response = requests.get("https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/version.txt")
-            version = float(response.text)
-        except Exception as e:
-            messagebox = QMessageBox()
-            messagebox.setText("Failed to fetch version from github:\n"+str(e))
-            messagebox.exec()
-        
-        try:
-            myVersion = float(open('version.txt', 'r').read())
-        except Exception as e:
-            print("Local version file not found")
-        
-        if version and myVersion:
-            if myVersion < version:
-                buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+str(myVersion)+" → "+str(version)+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
-                if buttonReply == QMessageBox.Yes:
-                    r = requests.get('https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/SmashStreamHelper.pyw', allow_redirects=True)
-                    open('SmashStreamHelperNew.pyw', 'wb').write(r.content)
-                    open('version.txt', 'w').write(str(version))
-                    messagebox = QMessageBox()
-                    messagebox.setText("Update complete. The program will now close.")
-                    messagebox.finished.connect(QApplication.exit)
-                    messagebox.exec()
-            else:
-                messagebox = QMessageBox()
-                messagebox.setText("You're already using the latest version")
-                messagebox.exec()
     
     def ChangeLayoutOrientation(self):
         if self.layout().direction() == QBoxLayout.TopToBottom:
