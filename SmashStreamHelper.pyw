@@ -509,7 +509,7 @@ class Window(QWidget):
                 buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+str(myVersion)+" → "+str(version)+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
                 if buttonReply == QMessageBox.Yes:
                     r = requests.get('https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/SmashStreamHelper.pyw', allow_redirects=True)
-                    open('SmashStreamHelperNew.pyw', 'wb').write(r.content)
+                    open('SmashStreamHelper.pyw', 'wb').write(r.content)
                     open('version.txt', 'w').write(str(version))
                     messagebox = QMessageBox()
                     messagebox.setText("Update complete. The program will now close.")
