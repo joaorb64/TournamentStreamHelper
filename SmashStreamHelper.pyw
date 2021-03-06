@@ -544,10 +544,10 @@ class Window(QWidget):
                         tar = tarfile.open("update.tar.gz")
                         print(tar.getmembers())
                         for m in tar.getmembers():
-                            print(m.name)
                             if "/" in m.name:
                                 m.name = m.name.split("/", 1)[1]
-                                tar.extractall("./", members=m)
+                                print(m.name)
+                                tar.extract(m)
                         tar.close()
                         os.remove("update.tar.gz")
 
