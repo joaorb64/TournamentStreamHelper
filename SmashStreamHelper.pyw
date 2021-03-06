@@ -252,7 +252,7 @@ class Window(QWidget):
         self.smashgg_players = None
 
         self.setGeometry(300, 300, 800, 100)
-        self.setWindowTitle("Ajudante de Stream")
+        self.setWindowTitle("SmashStreamHelper")
 
         # Layout base
         base_layout = QBoxLayout(QBoxLayout.LeftToRight)
