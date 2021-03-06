@@ -547,7 +547,7 @@ class Window(QWidget):
                             print(m.name)
                             if "/" in m.name:
                                 m.name = m.name.split("/", 1)[1]
-                                tar.extract("./", member=m)
+                                tar.extractall("./", members=m)
                         tar.close()
                         os.remove("update.tar.gz")
 
