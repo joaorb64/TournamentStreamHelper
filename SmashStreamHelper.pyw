@@ -107,6 +107,7 @@ characters = {
     "Min Min": "Min Min",
     "Steve": "Steve",
     "Sephiroth": "Sephiroth",
+    "Pyra & Mythra": "Pyra & Mythra",
     "Random Character": "Random"
 }
 
@@ -488,25 +489,28 @@ class Window(QWidget):
         self.show()
     
     def CheckForUpdates(self):
-        myVersion = None
-        version = None
+        release = None
+        versions = None
 
         try:
-            response = requests.get("https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/version.txt")
-            version = float(response.text)
+            response = requests.get("https://api.github.com/repos/joaorb64/SmashStreamHelper/releases/latest")
+            release = json.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
             messagebox.setText("Failed to fetch version from github:\n"+str(e))
             messagebox.exec()
         
         try:
-            myVersion = float(open('version.txt', 'r').read())
+            versions = json.load(open('versions.json', encoding='utf-8'))
         except Exception as e:
             print("Local version file not found")
         
-        if version and myVersion:
-            if myVersion < version:
-                buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+str(myVersion)+" → "+str(version)+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
+        if versions and release:
+            myVersion = versions.get("program", "0.0")
+            currVersion = release.get("tag_name", "0.0")
+
+            if myVersion < currVersion:
+                buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
                 if buttonReply == QMessageBox.Yes:
                     r = requests.get('https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/SmashStreamHelper.pyw', allow_redirects=True)
                     open('SmashStreamHelper.pyw', 'wb').write(r.content)
@@ -616,7 +620,7 @@ class Window(QWidget):
     def DownloadAssetsFetch(self):
         release = None
         try:
-            response = requests.get("https://api.github.com/repos/joaorb64/SmashStreamHelper/releases/latest")
+            response = requests.get("https://api.github.com/repos/joaorb64/SmashUltimateAssets/releases/latest")
             release = json.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
