@@ -542,7 +542,12 @@ class Window(QWidget):
                     def finished():
                         self.downloadDialogue.close()
                         tar = tarfile.open("update.tar.gz")
-                        tar.extractall("./")
+                        print(tar.getmembers())
+                        for m in tar.getmembers():
+                            print(m.name)
+                            if "/" in m.name:
+                                m.name = m.name.split("/", 1)[1]
+                                tar.extract("./", member=m)
                         tar.close()
                         os.remove("update.tar.gz")
 
