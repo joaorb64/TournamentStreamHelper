@@ -512,9 +512,13 @@ class Window(QWidget):
             if myVersion < currVersion:
                 buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
                 if buttonReply == QMessageBox.Yes:
-                    r = requests.get('https://raw.githubusercontent.com/joaorb64/SmashStreamHelper/main/SmashStreamHelper.pyw', allow_redirects=True)
-                    open('SmashStreamHelper.pyw', 'wb').write(r.content)
-                    open('version.txt', 'w').write(str(version))
+                    r = requests.get(release["tarball_url"], allow_redirects=True)
+                    open('update.tar.gz', 'wb').write(r.content)
+
+                    open('versions.json', 'w') as outfile:
+                        versions["program"] = currVersion
+                        json.dump(versions, outfile)
+                    
                     messagebox = QMessageBox()
                     messagebox.setText("Update complete. The program will now close.")
                     messagebox.finished.connect(QApplication.exit)
