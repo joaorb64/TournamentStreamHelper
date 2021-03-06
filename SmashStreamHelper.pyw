@@ -512,17 +512,53 @@ class Window(QWidget):
             if myVersion < currVersion:
                 buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
                 if buttonReply == QMessageBox.Yes:
-                    r = requests.get(release["tarball_url"], allow_redirects=True)
-                    open('update.tar.gz', 'wb').write(r.content)
+                    self.downloadDialogue = QProgressDialog("Downloading update... ", "Cancel", 0, 0, self)
+                    self.downloadDialogue.show()
 
-                    open('versions.json', 'w') as outfile:
-                        versions["program"] = currVersion
-                        json.dump(versions, outfile)
-                    
-                    messagebox = QMessageBox()
-                    messagebox.setText("Update complete. The program will now close.")
-                    messagebox.finished.connect(QApplication.exit)
-                    messagebox.exec()
+                    def worker(progress_callback):
+                        with open("update.tar.gz", 'wb') as downloadFile:
+                            downloaded = 0
+                            
+                            response = urllib.request.urlopen(release["tarball_url"])
+
+                            while(True):
+                                chunk = response.read(1024*1024)
+
+                                if not chunk:
+                                    break
+
+                                downloaded += len(chunk)
+                                downloadFile.write(chunk)
+
+                                if self.downloadDialogue.wasCanceled():
+                                    return
+                                
+                                progress_callback.emit(int(downloaded))
+                            downloadFile.close()
+
+                    def progress(downloaded):
+                        self.downloadDialogue.setLabelText("Downloading update... "+str(downloaded/1024/1024)+" MB")
+
+                    def finished():
+                        self.downloadDialogue.close()
+                        tar = tarfile.open("update.tar.gz")
+                        tar.extractall("./")
+                        tar.close()
+                        os.remove("update.tar.gz")
+
+                        with open('versions.json', 'w') as outfile:
+                            versions["program"] = currVersion
+                            json.dump(versions, outfile)
+                        
+                        messagebox = QMessageBox()
+                        messagebox.setText("Update complete. The program will now close.")
+                        messagebox.finished.connect(QApplication.exit)
+                        messagebox.exec()
+
+                    worker = Worker(worker)
+                    worker.signals.progress.connect(progress)
+                    worker.signals.finished.connect(finished)
+                    self.threadpool.start(worker)
             else:
                 messagebox = QMessageBox()
                 messagebox.setText("You're already using the latest version")
