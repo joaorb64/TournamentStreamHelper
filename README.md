@@ -23,6 +23,10 @@ Linux:
 - `pip3 install -r requirements.txt`
 - `python3 AjudanteDeStream.pyw`
 
+# Usage with OBS
+
+When you click save (or edit anything when auto save is on) a directory named `out` is created in the program's directory, containing the players' data. In OBS, when you create a `Text` element, in its `properties`, there is an option to load the text from a text file. Redirect Text elements to the text files and the images from `out` to have your overlay synced with the program's output.
+
 ## Feed me
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W22YK26)
