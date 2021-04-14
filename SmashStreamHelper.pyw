@@ -221,7 +221,10 @@ class Window(QWidget):
         for c in self.character_to_codename.keys():
             self.portraits[c] = {}
             for i in range(0, 8):
-                self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+                if QFile.exists('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png'):
+                    self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+                else:
+                    self.portraits[c][i] = None
 
 
         try:
@@ -254,18 +257,56 @@ class Window(QWidget):
         self.setGeometry(300, 300, 800, 100)
         self.setWindowTitle("SmashStreamHelper")
 
+        # Layout base com status no topo
+        pre_base_layout = QBoxLayout(QBoxLayout.TopToBottom)
+        self.setLayout(pre_base_layout)
+
+        pre_base_layout.setSpacing(0)
+        pre_base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
+
+        # Status
+        group_box = QGroupBox()
+        group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
+        group_box.setFont(self.font_small)
+        group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        group_box.setLayout(QHBoxLayout())
+        
+        self.statusLabel = QLabel("Manual")
+        self.statusLabel.setFont(self.font_small)
+        group_box.layout().addWidget(self.statusLabel)
+
+        self.statusLabelTime = QLabel("")
+        self.statusLabelTime.setFont(self.font_small)
+        self.statusLabelTime.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        group_box.layout().addWidget(self.statusLabelTime)
+
+        self.statusLabelTimeCancel = QPushButton()
+        self.statusLabelTimeCancel.setIcon(QIcon('icons/cancel.svg'))
+        self.statusLabelTimeCancel.setIconSize(QSize(12, 12))
+        self.statusLabelTimeCancel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        group_box.layout().addWidget(self.statusLabelTimeCancel)
+        self.statusLabelTimeCancel.hide()
+        self.statusLabelTimeCancel.clicked.connect(self.StopTimer)
+
+        self.timeLeftTimer = None
+        self.autoTimer = None
+        self.smashggSetAutoUpdateId = None
+
+        pre_base_layout.addWidget(group_box)
+
         # Layout base
-        base_layout = QBoxLayout(QBoxLayout.LeftToRight)
-        self.setLayout(base_layout)
+        self.base_layout = QBoxLayout(QBoxLayout.LeftToRight)
+
+        pre_base_layout.addLayout(self.base_layout)
 
         self.setStyleSheet("QBoxLayout{padding:0px; margin:0px}")
-        base_layout.setSpacing(0)
-        base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
+        self.base_layout.setSpacing(0)
+        self.base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
 
         # Inputs do jogador 1 na vertical
         p1 = PlayerColumn(self, 1)
         self.player_layouts.append(p1)
-        base_layout.addWidget(p1.group_box)
+        self.base_layout.addWidget(p1.group_box)
     
         # Botoes no meio
         layout_middle = QGridLayout()
@@ -277,7 +318,7 @@ class Window(QWidget):
         group_box.setFont(self.font_small)
         group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
-        base_layout.addWidget(group_box)
+        self.base_layout.addWidget(group_box)
 
         tournament_phase_label = QLabel("Tournament phase")
         tournament_phase_label.setFont(self.font_small)
@@ -323,11 +364,11 @@ class Window(QWidget):
         # Inputs do jogador 2 na vertical
         p2 = PlayerColumn(self, 2)
         self.player_layouts.append(p2)
-        base_layout.addWidget(p2.group_box)
+        self.base_layout.addWidget(p2.group_box)
 
         # Botoes no final
         layout_end = QGridLayout()
-        base_layout.addLayout(layout_end)
+        self.base_layout.addLayout(layout_end)
 
         # Settings
         self.optionsBt = QToolButton()
@@ -348,6 +389,7 @@ class Window(QWidget):
             action.setChecked(True)
             #self.player_layouts[0].group_box.hide()
         action = self.optionsBt.menu().addAction("Check for updates")
+        self.updateAction = action
         action.setIcon(QIcon('icons/undo.svg'))
         action.triggered.connect(self.CheckForUpdates)
         action = self.optionsBt.menu().addAction("Download assets")
@@ -393,11 +435,9 @@ class Window(QWidget):
         action = self.getFromStreamQueueBt.menu().addAction("Auto")
         action.toggled.connect(self.ToggleAutoTwitchQueueMode)
         action.setCheckable(True)
-        self.getFromStreamQueueAutoUpdateTimer = QTimer()
-        self.getFromStreamQueueAutoUpdateTimer.timeout.connect(self.LoadSetsFromSmashGGTournamentQueueClicked)
         if self.settings.get("twitch_auto_mode", False):
             action.setChecked(True)
-            self.getFromStreamQueueAutoUpdateTimer.start(10000)
+            self.SetTimer("Auto (StreamQueue)", self.LoadSetsFromSmashGGTournamentQueueClicked)
 
         # Load set from SmashGG tournament
         self.smashggSelectSetBt = QToolButton()
@@ -446,11 +486,9 @@ class Window(QWidget):
         action = self.competitorModeSmashggBt.menu().addAction("Auto")
         action.toggled.connect(self.ToggleAutoCompetitorSmashGGMode)
         action.setCheckable(True)
-        self.competitorModeSmashGGAutoUpdateTimer = QTimer()
-        self.competitorModeSmashGGAutoUpdateTimer.timeout.connect(self.LoadUserSetFromSmashGGTournament)
-        if self.settings.get("competitor_smashgg_auto_mode", False):
+        if self.settings.get("competitor_smashgg_auto_mode", False) and self.settings.get("competitor_mode", False):
             action.setChecked(True)
-            self.competitorModeSmashGGAutoUpdateTimer.start(10000)
+            self.SetTimer("Auto (Competitor)", self.LoadUserSetFromSmashGGTournament)
 
         if self.settings.get("competitor_mode", False) == False:
             self.competitorModeSmashggBt.hide()
@@ -487,8 +525,10 @@ class Window(QWidget):
         self.LoadData()
 
         self.show()
+
+        self.CheckForUpdates(True)
     
-    def CheckForUpdates(self):
+    def CheckForUpdates(self, silent=False):
         release = None
         versions = None
 
@@ -496,9 +536,10 @@ class Window(QWidget):
             response = requests.get("https://api.github.com/repos/joaorb64/SmashStreamHelper/releases/latest")
             release = json.loads(response.text)
         except Exception as e:
-            messagebox = QMessageBox()
-            messagebox.setText("Failed to fetch version from github:\n"+str(e))
-            messagebox.exec()
+            if silent == False:
+                messagebox = QMessageBox()
+                messagebox.setText("Failed to fetch version from github:\n"+str(e))
+                messagebox.exec()
         
         try:
             versions = json.load(open('versions.json', encoding='utf-8'))
@@ -509,64 +550,68 @@ class Window(QWidget):
             myVersion = versions.get("program", "0.0")
             currVersion = release.get("tag_name", "0.0")
 
-            if myVersion < currVersion:
-                buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
-                if buttonReply == QMessageBox.Yes:
-                    self.downloadDialogue = QProgressDialog("Downloading update... ", "Cancel", 0, 0, self)
-                    self.downloadDialogue.show()
+            if silent == False:
+                if myVersion < currVersion:
+                    buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
+                    if buttonReply == QMessageBox.Yes:
+                        self.downloadDialogue = QProgressDialog("Downloading update... ", "Cancel", 0, 0, self)
+                        self.downloadDialogue.show()
 
-                    def worker(progress_callback):
-                        with open("update.tar.gz", 'wb') as downloadFile:
-                            downloaded = 0
-                            
-                            response = urllib.request.urlopen(release["tarball_url"])
-
-                            while(True):
-                                chunk = response.read(1024*1024)
-
-                                if not chunk:
-                                    break
-
-                                downloaded += len(chunk)
-                                downloadFile.write(chunk)
-
-                                if self.downloadDialogue.wasCanceled():
-                                    return
+                        def worker(progress_callback):
+                            with open("update.tar.gz", 'wb') as downloadFile:
+                                downloaded = 0
                                 
-                                progress_callback.emit(int(downloaded))
-                            downloadFile.close()
+                                response = urllib.request.urlopen(release["tarball_url"])
 
-                    def progress(downloaded):
-                        self.downloadDialogue.setLabelText("Downloading update... "+str(downloaded/1024/1024)+" MB")
+                                while(True):
+                                    chunk = response.read(1024*1024)
 
-                    def finished():
-                        self.downloadDialogue.close()
-                        tar = tarfile.open("update.tar.gz")
-                        print(tar.getmembers())
-                        for m in tar.getmembers():
-                            if "/" in m.name:
-                                m.name = m.name.split("/", 1)[1]
-                                tar.extract(m)
-                        tar.close()
-                        os.remove("update.tar.gz")
+                                    if not chunk:
+                                        break
 
-                        with open('versions.json', 'w') as outfile:
-                            versions["program"] = currVersion
-                            json.dump(versions, outfile)
-                        
-                        messagebox = QMessageBox()
-                        messagebox.setText("Update complete. The program will now close.")
-                        messagebox.finished.connect(QApplication.exit)
-                        messagebox.exec()
+                                    downloaded += len(chunk)
+                                    downloadFile.write(chunk)
 
-                    worker = Worker(worker)
-                    worker.signals.progress.connect(progress)
-                    worker.signals.finished.connect(finished)
-                    self.threadpool.start(worker)
+                                    if self.downloadDialogue.wasCanceled():
+                                        return
+                                    
+                                    progress_callback.emit(int(downloaded))
+                                downloadFile.close()
+
+                        def progress(downloaded):
+                            self.downloadDialogue.setLabelText("Downloading update... "+str(downloaded/1024/1024)+" MB")
+
+                        def finished():
+                            self.downloadDialogue.close()
+                            tar = tarfile.open("update.tar.gz")
+                            print(tar.getmembers())
+                            for m in tar.getmembers():
+                                if "/" in m.name:
+                                    m.name = m.name.split("/", 1)[1]
+                                    tar.extract(m)
+                            tar.close()
+                            os.remove("update.tar.gz")
+
+                            with open('versions.json', 'w') as outfile:
+                                versions["program"] = currVersion
+                                json.dump(versions, outfile)
+                            
+                            messagebox = QMessageBox()
+                            messagebox.setText("Update complete. The program will now close.")
+                            messagebox.finished.connect(QApplication.exit)
+                            messagebox.exec()
+
+                        worker = Worker(worker)
+                        worker.signals.progress.connect(progress)
+                        worker.signals.finished.connect(finished)
+                        self.threadpool.start(worker)
+                else:
+                    messagebox = QMessageBox()
+                    messagebox.setText("You're already using the latest version")
+                    messagebox.exec()
             else:
-                messagebox = QMessageBox()
-                messagebox.setText("You're already using the latest version")
-                messagebox.exec()
+                if myVersion < currVersion:
+                    self.updateAction.setText("Check for updates [Update available!]")
     
     def ChangeLayoutOrientation(self):
         if self.layout().direction() == QBoxLayout.TopToBottom:
@@ -575,6 +620,32 @@ class Window(QWidget):
             self.layout().setDirection(QBoxLayout.TopToBottom)
         self.resize(0, 0)
         self.adjustSize()
+    
+    def SetTimer(self, name, function):
+        self.timeLeftTimer = QTimer()
+        self.timeLeftTimer.timeout.connect(self.updateTimerLabel)
+        self.timeLeftTimer.start(100)
+        self.autoTimer = QTimer()
+        self.autoTimer.start(10000)
+        self.autoTimer.timeout.connect(function)
+        self.statusLabel.setText(name)
+        self.statusLabelTimeCancel.show()
+    
+    def StopTimer(self):
+        if self.timeLeftTimer is not None:
+            self.timeLeftTimer.stop()
+            self.timeLeftTimer = None
+        if self.autoTimer:
+            self.autoTimer.stop()
+            self.autoTimer = None
+        self.smashggSetAutoUpdateId = None
+        self.statusLabelTime.setText("")
+        self.statusLabelTimeCancel.hide()
+        self.statusLabel.setText("Manual")
+    
+    def updateTimerLabel(self):
+        if self.autoTimer:
+            self.statusLabelTime.setText(str(int(self.autoTimer.remainingTime()/1000)+1))
     
     def AutoExportScore(self):
         if self.settings.get("autosave") == True:
@@ -870,24 +941,25 @@ class Window(QWidget):
                 self.competitorModeSmashggBt.hide()
             except Exception as e:
                 print(e)
+        self.StopTimer()
         self.SaveSettings()
     
     def ToggleAutoTwitchQueueMode(self, checked):
         if checked:
             self.settings["twitch_auto_mode"] = True
-            self.getFromStreamQueueAutoUpdateTimer.start(10000)
+            self.SetTimer("Auto (StreamQueue)", self.LoadSetsFromSmashGGTournamentQueueClicked)
         else:
             self.settings["twitch_auto_mode"] = False
-            self.getFromStreamQueueAutoUpdateTimer.stop()
+            self.StopTimer()
         self.SaveSettings()
     
     def ToggleAutoCompetitorSmashGGMode(self, checked):
         if checked:
             self.settings["competitor_smashgg_auto_mode"] = True
-            self.competitorModeSmashGGAutoUpdateTimer.start(10000)
+            self.SetTimer("Competitor: Auto (SmashGG)", self.LoadUserSetFromSmashGGTournament)
         else:
             self.settings["competitor_smashgg_auto_mode"] = False
-            self.competitorModeSmashGGAutoUpdateTimer.stop()
+            self.StopTimer()
         self.SaveSettings()
     
     def ToggleAutosave(self, checked):
@@ -1164,7 +1236,7 @@ class Window(QWidget):
         with open('tournament_players.json', 'w', encoding='utf-8') as outfile:
             json.dump(players, outfile, indent=4, sort_keys=True)
     
-    def LoadSmashGGPlayer(self, user, player):
+    def LoadSmashGGPlayer(self, user, player, entrantId = None, selectedChars = {}):
         player_obj = {}
 
         if user is None and player is None:
@@ -1193,51 +1265,58 @@ class Window(QWidget):
             player_obj["name"] = player["gamerTag"]
             player_obj["org"] = player["prefix"]
 
-            # character usage, mains
-            if player["sets"] is not None and \
-            player["sets"]["nodes"] is not None:
-                selections = Counter()
+            if str(entrantId) in selectedChars:
+                found = None
+                if len(selectedChars[str(entrantId)]) > 0:
+                    found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrantId)][0]), None)
+                if found:
+                    player_obj["mains"] = [characters[found["name"]]]
+            else:
+                # character usage, mains
+                if player["sets"] is not None and \
+                player["sets"]["nodes"] is not None:
+                    selections = Counter()
 
-                for set_ in player["sets"]["nodes"]:
-                    if set_["games"] is None:
-                        continue
-                    for game in set_["games"]:
-                        if game["selections"] is None:
+                    for set_ in player["sets"]["nodes"]:
+                        if set_["games"] is None:
                             continue
-                        for selection in game["selections"]:
-                            if selection.get("entrant"):
-                                if selection.get("entrant").get("participants"):
-                                    if len(selection.get("entrant").get("participants")) > 0:
-                                        if selection.get("entrant").get("participants") is None:
-                                            continue
-                                        if selection.get("entrant").get("participants")[0] is None:
-                                            continue
-                                        if selection.get("entrant").get("participants")[0]["player"] is None:
-                                            continue
-                                        participant_id = selection.get("entrant").get("participants")[0]["player"]["id"]
-                                        if player["id"] == participant_id:
-                                            if selection["selectionValue"] is not None:
-                                                selections[selection["selectionValue"]] += 1
-                
-                mains = []
-                
-                most_common = selections.most_common(1)
+                        for game in set_["games"]:
+                            if game["selections"] is None:
+                                continue
+                            for selection in game["selections"]:
+                                if selection.get("entrant"):
+                                    if selection.get("entrant").get("participants"):
+                                        if len(selection.get("entrant").get("participants")) > 0:
+                                            if selection.get("entrant").get("participants") is None:
+                                                continue
+                                            if selection.get("entrant").get("participants")[0] is None:
+                                                continue
+                                            if selection.get("entrant").get("participants")[0]["player"] is None:
+                                                continue
+                                            participant_id = selection.get("entrant").get("participants")[0]["player"]["id"]
+                                            if player["id"] == participant_id:
+                                                if selection["selectionValue"] is not None:
+                                                    selections[selection["selectionValue"]] += 1
+                    
+                    mains = []
+                    
+                    most_common = selections.most_common(1)
 
-                for character in selections.most_common(2):
-                    if(character[1] > most_common[0][1]/3.0):
-                        found = next((c for c in self.smashgg_character_data["character"] if c["id"] == character[0]), None)
-                        if found:
-                            mains.append(characters[found["name"]])
-                
-                if len(mains) > 0:
-                    player_obj["mains"] = mains
-                elif self.allplayers is not None and user is not None:
-                    found = next(
-                        (p for p in self.allplayers.get("players", []) if p.get("smashgg_id") == user.get("id")),
-                        None
-                    )
-                    if found and len(found.get("mains"))>0:
-                        player_obj["mains"] = found["mains"]
+                    for character in selections.most_common(2):
+                        if(character[1] > most_common[0][1]/3.0):
+                            found = next((c for c in self.smashgg_character_data["character"] if c["id"] == character[0]), None)
+                            if found:
+                                mains.append(characters[found["name"]])
+                    
+                    if len(mains) > 0:
+                        player_obj["mains"] = mains
+                    elif self.allplayers is not None and user is not None:
+                        found = next(
+                            (p for p in self.allplayers.get("players", []) if p.get("smashgg_id") == user.get("id")),
+                            None
+                        )
+                        if found and len(found.get("mains"))>0:
+                            player_obj["mains"] = found["mains"]
         
         countries = self.countries_json
         cities = self.cities_json
@@ -1332,7 +1411,7 @@ class Window(QWidget):
                                 }
                             }
                         }
-                        sets(page: 1, perPage: 32, sortType: MAGIC, filters: {state: 2}) {
+                        sets(page: 1, perPage: 128, sortType: MAGIC, filters: {state: 2}) {
                             nodes {
                                 id
                                 fullRoundText
@@ -1419,6 +1498,9 @@ class Window(QWidget):
         setId = self.smashggSetSelectionItemList.model().index(row, 4).data()
         self.LoadPlayersFromSmashGGSet(setId)
         self.smashGGSetSelecDialog.close()
+        
+        self.smashggSetAutoUpdateId = setId
+        self.SetTimer("Auto (SmashGG Set: "+setId+")", self.LoadPlayersFromSmashGGSet)
     
     def LoadSetsFromSmashGGTournamentQueueClicked(self):
         if self.getFromStreamQueueBt.isHidden():
@@ -1478,7 +1560,7 @@ class Window(QWidget):
 
         if streamSets is not None:
             for s in streamSets:
-                if s["stream"]["streamName"] == twitch_username:
+                if s["stream"]["streamName"].lower() == twitch_username.lower():
                     if s["sets"][0]["slots"][0].get("entrant", None) is not None and \
                     s["sets"][0]["slots"][1].get("entrant", None) is not None:
                         self.LoadPlayersFromSmashGGSet(s["sets"][0]["id"])
@@ -1636,9 +1718,26 @@ class Window(QWidget):
             score = len([game for game in mySet.get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
         self.scoreRight.setValue(score)
     
-    def LoadPlayersFromSmashGGSet(self, setId):
+    def LoadPlayersFromSmashGGSet(self, setId=None):
+        if setId == None:
+            setId = self.smashggSetAutoUpdateId
+        
+        if setId == None:
+            return
+
         if self.settings.get("SMASHGG_KEY", None) is None:
             self.SetSmashggKey()
+        
+        r = requests.get("https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask")
+        respTasks = json.loads(r.text)
+
+        tasks = respTasks.get("entities", {}).get("setTask", [])
+        selectedChars = {}
+
+        for task in reversed(tasks):
+            if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                selectedChars = task.get("metadata", {}).get("charSelections", {})
+                break
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -1650,6 +1749,7 @@ class Window(QWidget):
                 query set($setId: ID!) {
                     set(id: $setId) {
                         fullRoundText
+                        state
                         slots {
                             entrant {
                                 id
@@ -1675,7 +1775,7 @@ class Window(QWidget):
                                         id
                                         gamerTag
                                         prefix
-                                        sets(page: 1, perPage: 3) {
+                                        sets(page: 1, perPage: 1) {
                                             nodes {
                                                 games {
                                                     selections {
@@ -1718,14 +1818,19 @@ class Window(QWidget):
         )
         resp = json.loads(r.text)
 
+        if resp["data"]["set"].get("state", 0) == 3:
+            if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                print("Set ended")
+                self.StopTimer()
+
         # Set phase name
         self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
 
         # Get first player
         user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
-        player_obj = self.LoadSmashGGPlayer(user, player)
         entrant = resp["data"]["set"]["slots"][0]["entrant"]
+        player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
         self.player_layouts[0].SetFromPlayerObj(player_obj)
 
@@ -1742,8 +1847,8 @@ class Window(QWidget):
         # Get second player
         user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
-        player_obj = self.LoadSmashGGPlayer(user, player)
         entrant = resp["data"]["set"]["slots"][1]["entrant"]
+        player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
         self.player_layouts[1].SetFromPlayerObj(player_obj)
 
@@ -1886,7 +1991,10 @@ class PlayerColumn():
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
         for c in self.parent.portraits.get(self.player_character.currentText(), []):
-            self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
+            if self.parent.portraits[text][c] is not None:
+                self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
+            else:
+                self.player_character_color.addItem(self.parent.stockIcons[text][c], str(c))
     
     def LoadStateOptions(self, text):
         self.player_state.clear()
@@ -1928,8 +2036,11 @@ class PlayerColumn():
 
                 with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
                     prefix = ""
-                    if self.parent.settings.get("twitter_add_at") == True:
-                        prefix = "@"
+
+                    if self.player_twitter.text() != "":
+                        if self.parent.settings.get("twitter_add_at") == True:
+                            prefix = "@"
+                    
                     outfile.write(prefix+self.player_twitter.text())
 
                 removeFileIfExists('out/p'+str(self.id)+'_picture.png')
