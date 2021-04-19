@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+try:
+    from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
+    from PyQt5.QtCore import *
 
-import shutil
-import tarfile
+    import shutil
+    import tarfile
 
-import requests
-import urllib
-import json
-import traceback, sys
-import time
-import os
+    import requests
+    import urllib
+    import json
+    import traceback, sys
+    import time
+    import os
 
-from collections import Counter
+    from PIL import Image, ImageDraw, ImageFont
 
-import unicodedata
+    from collections import Counter
+
+    import unicodedata
+except ImportError as error:
+    print(error)
+    print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
+    exit()
 
 def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -110,6 +117,9 @@ characters = {
     "Pyra & Mythra": "Pyra & Mythra",
     "Random Character": "Random"
 }
+
+f = open('stage_mapping.json', encoding='utf-8')
+stages = json.load(f)
 
 class WorkerSignals(QObject):
     '''
@@ -1411,7 +1421,7 @@ class Window(QWidget):
                                 }
                             }
                         }
-                        sets(page: 1, perPage: 128, sortType: MAGIC, filters: {state: 2}) {
+                        sets(page: 1, perPage: 128, sortType: MAGIC, filters: {hideEmpty: true}) {
                             nodes {
                                 id
                                 fullRoundText
@@ -1590,69 +1600,8 @@ class Window(QWidget):
                     user(slug: $playerSlug) {
                         player {
                             sets(page: 1, perPage: 1) {
-                                nodes {
-                                    displayScore
-                                    fullRoundText
-                                    slots {
-                                        entrant {
-                                            id
-                                            participants {
-                                                id
-                                                user {
-                                                    id
-                                                    slug
-                                                    name
-                                                    authorizations(types: [TWITTER]) {
-                                                        type
-                                                        externalUsername
-                                                    }
-                                                    location {
-                                                        city
-                                                        state
-                                                        country
-                                                    }
-                                                    images(type: "profile") {
-                                                        url
-                                                    }
-                                                }
-                                                player {
-                                                    id
-                                                    gamerTag
-                                                    prefix
-                                                    sets(page: 1, perPage: 3) {
-                                                        nodes {
-                                                            games {
-                                                                selections {
-                                                                    entrant {
-                                                                        participants {
-                                                                            player {
-                                                                                id
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    selectionValue
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    games {
-                                        selections {
-                                            entrant {
-                                                id
-                                                participants {
-                                                    player {
-                                                        id
-                                                    }
-                                                }
-                                            }
-                                            selectionValue
-                                        }
-                                        winnerId
-                                    }
+                                nodes{
+                                    id
                                 }
                             }
                         }
@@ -1670,53 +1619,10 @@ class Window(QWidget):
 
         sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
 
-        if len(resp) == 0:
+        if len(sets) == 0:
             return
         
-        mySet = sets[0]
-
-        # Set phase name
-        self.tournament_phase.setCurrentText(mySet.get("fullRoundText", ""))
-
-        # Get first player (user)
-        entrant = next(
-            (u["entrant"] for u in mySet.get("slots", []) if u.get("entrant", {}).get("participants", {})[0].get("user", {}).get("slug", "") == smashgg_username),
-            None
-        )
-        participant = entrant["participants"][0]
-        player = participant.get("player", None)
-        if mySet.get("games", None):
-            player["sets"] = {"nodes": [mySet]}
-        user = participant.get("user", None)
-        player_obj = self.LoadSmashGGPlayer(user, player)
-
-        self.player_layouts[0].SetFromPlayerObj(player_obj)
-
-        # Update score
-        score = 0
-        if mySet.get("games", None) != None:
-            score = len([game for game in mySet.get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        self.scoreLeft.setValue(score)
-
-        # Get second player
-        entrant = next(
-            (u["entrant"] for u in mySet.get("slots", []) if u.get("entrant", {}).get("participants", {})[0].get("user", {}).get("slug", "") != smashgg_username),
-            None
-        )
-        participant = entrant["participants"][0]
-        player = participant.get("player", None)
-        if mySet.get("games", None):
-            player["sets"] = {"nodes": [mySet]}
-        user = participant.get("user", None)
-        player_obj = self.LoadSmashGGPlayer(user, player)
-
-        self.player_layouts[1].SetFromPlayerObj(player_obj)
-
-        # Update score
-        score = 0
-        if mySet.get("games", None) != None:
-            score = len([game for game in mySet.get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        self.scoreRight.setValue(score)
+        self.LoadPlayersFromSmashGGSet(setId=sets[0]["id"])
     
     def LoadPlayersFromSmashGGSet(self, setId=None):
         if setId == None:
@@ -1738,6 +1644,85 @@ class Window(QWidget):
             if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
                 selectedChars = task.get("metadata", {}).get("charSelections", {})
                 break
+        
+        allStages = None
+        strikedStages = None
+        selectedStage = None
+
+        for task in reversed(tasks):
+            if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                if len(task.get("metadata", [])) == 0:
+                    continue
+
+                base = task.get("metadata", {})
+
+                if task.get("action") == "report":
+                    base = base.get("report", {})
+
+                print(base)
+
+                if base.get("strikeStages", None) is not None:
+                    allStages = base.get("strikeStages")
+                elif base.get("banStages", None) is not None:
+                    allStages = base.get("banStages")
+        
+                if base.get("strikeList", None) is not None:
+                    strikedStages = base.get("strikeList")
+                elif base.get("banList", None) is not None:
+                    strikedStages = base.get("banList")
+        
+                if base.get("stageSelection", None) is not None:
+                    selectedStage = base.get("stageSelection")
+                elif base.get("stageId", None) is not None:
+                    selectedStage = base.get("stageId")
+
+                if allStages == None and strikedStages == None and selectedStage == None:
+                    continue
+
+                if allStages == None:
+                    continue
+
+                break
+        
+        if allStages is not None:
+            img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
+            img.fill(qRgba(0, 0, 0, 0))
+            painter = QPainter(img)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+
+            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+
+            perLine = 5
+
+            for i,stage in enumerate(allStages):
+                x = 0
+                y = 0
+
+                y = int(i/perLine)*(128+16)
+
+                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
+
+                margin = (perLine - elementsInRow) * (256+16) / 2
+                
+                x = (i%5)*(256+16) + margin
+
+                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage))+'.png')
+                painter.drawImage(QPoint(x, y), stage_image)
+
+                if str(stage) in strikedStages or int(stage) in strikedStages:
+                    painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+
+                if str(stage) == str(selectedStage):
+                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+        
+            img.save("./out/stage_strike.png")
+            painter.end()
+        else:
+            img = QImage(QSize(256, 256), QImage.Format_RGBA64)
+            img.fill(qRgba(0, 0, 0, 0))
+            img.save("./out/stage_strike.png")
 
         r = requests.post(
             'https://api.smash.gg/gql/alpha',
@@ -1766,6 +1751,7 @@ class Window(QWidget):
                                         location {
                                             city
                                             country
+                                            state
                                         }
                                         images(type: "profile") {
                                             url
@@ -1826,13 +1812,22 @@ class Window(QWidget):
         # Set phase name
         self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
 
+        id0 = 0
+        id1 = 1
+
         # Get first player
         user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
         player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
         entrant = resp["data"]["set"]["slots"][0]["entrant"]
         player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-        self.player_layouts[0].SetFromPlayerObj(player_obj)
+        if self.settings.get("competitor_mode", False) and \
+           len(self.settings.get("smashgg_user_id", "")) > 0:
+            if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
+                id0 = 1
+                id1 = 0
+
+        self.player_layouts[id0].SetFromPlayerObj(player_obj)
 
         print("--------")
         print(entrant["id"])
@@ -1842,7 +1837,7 @@ class Window(QWidget):
         score = 0
         if resp["data"]["set"].get("games", None) != None:
             score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        self.scoreLeft.setValue(score)
+        [self.scoreLeft, self.scoreRight][id0].setValue(score)
 
         # Get second player
         user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
@@ -1850,13 +1845,13 @@ class Window(QWidget):
         entrant = resp["data"]["set"]["slots"][1]["entrant"]
         player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-        self.player_layouts[1].SetFromPlayerObj(player_obj)
+        self.player_layouts[id1].SetFromPlayerObj(player_obj)
 
         # Update score
         score = 0
         if resp["data"]["set"].get("games", None) != None:
             score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        self.scoreRight.setValue(score)
+        [self.scoreLeft, self.scoreRight][id1].setValue(score)
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
@@ -2043,19 +2038,12 @@ class PlayerColumn():
                     
                     outfile.write(prefix+self.player_twitter.text())
 
-                removeFileIfExists('out/p'+str(self.id)+'_picture.png')
-
-                if(self.player_twitter.displayText() != None and self.player_twitter.displayText() != ""):
-                    r = requests.get("http://unavatar.now.sh/twitter/"+self.player_twitter.text().split("/")[-1], stream=True)
-                    if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_twitter_picture.png', 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
+                removeFileIfExists('out/p'+str(self.id)+'_smashgg_avatar.png')
                 
                 if self.player_obj.get("smashgg_image", None) is not None:
                     r = requests.get(self.player_obj["smashgg_image"], stream=True)
                     if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_smashgg_picture.png', 'wb') as f:
+                        with open('out/p'+str(self.id)+'_smashgg_avatar.png', 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
             
