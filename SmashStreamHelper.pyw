@@ -1085,8 +1085,8 @@ class Window(QWidget):
             match = validator.match(lineEdit.text()).capturedTexts()
             self.settings["SMASHGG_TOURNAMENT_SLUG"] = match[0]
             self.SaveSettings()
-            self.smashggUserId.setText(
-                "Set user id (" + str(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)) + ")"
+            self.smashggTournamentSlug.setText(
+                "Set tournament slug (" + str(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)) + ")"
             )
 
         inp.deleteLater()
