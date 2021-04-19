@@ -1612,9 +1612,6 @@ class Window(QWidget):
         )
         resp = json.loads(r.text)
 
-        print(smashgg_username)
-        print(resp)
-
         sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
 
         if len(sets) == 0:
