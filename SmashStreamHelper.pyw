@@ -16,8 +16,6 @@ try:
     import time
     import os
 
-    from PIL import Image, ImageDraw, ImageFont
-
     from collections import Counter
 
     import unicodedata
