@@ -1586,56 +1586,164 @@ class Window(QWidget):
             self.SetSmashggKey()
         
         def myFun(self, progress_callback):
-            r = requests.post(
-                'https://api.smash.gg/gql/alpha',
-                headers={
-                    'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-                },
-                json={
-                    'query': '''
-                    query user($playerSlug: String!) {
-                        user(slug: $playerSlug) {
-                            player {
-                                sets(page: 1, perPage: 1) {
-                                    nodes{
-                                        id
+            if self.smashggSetAutoUpdateId is None:
+                r = requests.post(
+                    'https://api.smash.gg/gql/alpha',
+                    headers={
+                        'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                    },
+                    json={
+                        'query': '''
+                        query user($playerSlug: String!) {
+                            user(slug: $playerSlug) {
+                                player {
+                                    sets(page: 1, perPage: 1) {
+                                        nodes{
+                                            id
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }''',
-                    'variables': {
-                        "playerSlug": smashgg_username
-                    },
-                }
-            )
-            resp = json.loads(r.text)
+                        }''',
+                        'variables': {
+                            "playerSlug": smashgg_username
+                        },
+                    }
+                )
+                resp = json.loads(r.text)
 
-            sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
+                sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
 
-            if len(sets) == 0:
-                return
-            
-            self.LoadPlayersFromSmashGGSet(setId=sets[0]["id"])
+                if len(sets) == 0:
+                    return
+                
+                self.LoadPlayersFromSmashGGSet(setId=sets[0]["id"])
+            else:
+                self.LoadPlayersFromSmashGGSet()
         
         worker = Worker(myFun, *{self})
         self.threadpool.start(worker)
     
     def LoadPlayersFromSmashGGSet(self, setId=None):
+        if setId == None:
+            setId = self.smashggSetAutoUpdateId
+        
+        if setId == None:
+            return
+
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+
         def myFun(self, progress_callback, setId):
-            if setId == None:
-                setId = self.smashggSetAutoUpdateId
-            
-            if setId == None:
-                return
+            pool = QThreadPool()
 
-            if self.settings.get("SMASHGG_KEY", None) is None:
-                self.SetSmashggKey()
+            def fun1(self, progress_callback):
+                print("Try old smashgg api")
+                r = requests.get(
+                    "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
+                    {
+                        "Cache-Control": "no-cache",
+                        "Pragma": "no-cache"
+                    }
+                )
+                self.respTasks = json.loads(r.text)
+                print("Got response from old smashgg api")
+            def fun2(self, progress_callback):
+                print("Try new smashgg api")
+                r = requests.post(
+                    'https://api.smash.gg/gql/alpha',
+                    headers={
+                        'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                    },
+                    json={
+                        'query': '''
+                        query set($setId: ID!) {
+                            set(id: $setId) {
+                                fullRoundText
+                                state
+                                slots {
+                                    entrant {
+                                        id
+                                        participants {
+                                            id
+                                            user {
+                                                id
+                                                slug
+                                                name
+                                                authorizations(types: [TWITTER]) {
+                                                    type
+                                                    externalUsername
+                                                }
+                                                location {
+                                                    city
+                                                    country
+                                                    state
+                                                }
+                                                images(type: "profile") {
+                                                    url
+                                                }
+                                            }
+                                            player {
+                                                id
+                                                gamerTag
+                                                prefix
+                                                sets(page: 1, perPage: 1) {
+                                                    nodes {
+                                                        games {
+                                                            selections {
+                                                                entrant {
+                                                                    participants {
+                                                                        player {
+                                                                            id
+                                                                        }
+                                                                    }
+                                                                }
+                                                                selectionValue
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                games {
+                                    selections {
+                                        entrant {
+                                            id
+                                            participants {
+                                                player {
+                                                    id
+                                                }
+                                            }
+                                        }
+                                        selectionValue
+                                    }
+                                    winnerId
+                                }
+                            }
+                        }''',
+                        'variables': {
+                            "setId": setId
+                        },
+                    }
+                )
+                self.setData = json.loads(r.text)
+                print("Got new smashgg api")
             
-            r = requests.get("https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask")
-            respTasks = json.loads(r.text)
+            worker1 = Worker(fun1, *{self})
+            pool.start(worker1)
+            worker2 = Worker(fun2, *{self})
+            pool.start(worker2)
 
-            tasks = respTasks.get("entities", {}).get("setTask", [])
+            res = pool.waitForDone(5000)
+
+            if res == False:
+                pool.cancel(worker1)
+                pool.cancel(worker2)
+
+            tasks = self.respTasks.get("entities", {}).get("setTask", [])
+
             selectedChars = {}
 
             for task in reversed(tasks):
@@ -1643,9 +1751,20 @@ class Window(QWidget):
                     selectedChars = task.get("metadata", {}).get("charSelections", {})
                     break
             
+            latestWinner = None
+
+            for task in reversed(tasks):
+                if len(task.get("metadata", [])) == 0:
+                    continue
+                if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                    latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
+                    break
+            
             allStages = None
             strikedStages = None
             selectedStage = None
+            dsrStages = None
+            playerTurn = None
 
             for task in reversed(tasks):
                 if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
@@ -1674,6 +1793,17 @@ class Window(QWidget):
                     elif base.get("stageId", None) is not None:
                         selectedStage = base.get("stageId")
 
+                    if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+
+                        loser = next(
+                            (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
+                            None
+                        )
+
+                        if loser is not None:
+                            dsrStages = []
+                            dsrStages = [int(s) for s in base.get("stageWins")[loser]]
+
                     if allStages == None and strikedStages == None and selectedStage == None:
                         continue
 
@@ -1690,6 +1820,7 @@ class Window(QWidget):
                 painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
                 iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
                 iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
 
                 perLine = 5
@@ -1710,7 +1841,10 @@ class Window(QWidget):
                     painter.drawImage(QPoint(x, y), stage_image)
 
                     if str(stage) in strikedStages or int(stage) in strikedStages:
-                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+                        if dsrStages is not None and int(stage) in dsrStages:
+                            painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
+                        else:
+                            painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
 
                     if str(stage) == str(selectedStage):
                         painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
@@ -1722,85 +1856,7 @@ class Window(QWidget):
                 img.fill(qRgba(0, 0, 0, 0))
                 img.save("./out/stage_strike.png")
 
-            r = requests.post(
-                'https://api.smash.gg/gql/alpha',
-                headers={
-                    'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-                },
-                json={
-                    'query': '''
-                    query set($setId: ID!) {
-                        set(id: $setId) {
-                            fullRoundText
-                            state
-                            slots {
-                                entrant {
-                                    id
-                                    participants {
-                                        id
-                                        user {
-                                            id
-                                            slug
-                                            name
-                                            authorizations(types: [TWITTER]) {
-                                                type
-                                                externalUsername
-                                            }
-                                            location {
-                                                city
-                                                country
-                                                state
-                                            }
-                                            images(type: "profile") {
-                                                url
-                                            }
-                                        }
-                                        player {
-                                            id
-                                            gamerTag
-                                            prefix
-                                            sets(page: 1, perPage: 1) {
-                                                nodes {
-                                                    games {
-                                                        selections {
-                                                            entrant {
-                                                                participants {
-                                                                    player {
-                                                                        id
-                                                                    }
-                                                                }
-                                                            }
-                                                            selectionValue
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            games {
-                                selections {
-                                    entrant {
-                                        id
-                                        participants {
-                                            player {
-                                                id
-                                            }
-                                        }
-                                    }
-                                    selectionValue
-                                }
-                                winnerId
-                            }
-                        }
-                    }''',
-                    'variables': {
-                        "setId": setId
-                    },
-                }
-            )
-            resp = json.loads(r.text)
+            resp = self.setData
 
             if resp["data"]["set"].get("state", 0) == 3:
                 if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
