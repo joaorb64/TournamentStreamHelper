@@ -270,29 +270,27 @@ class Window(QWidget):
         self.setLayout(pre_base_layout)
 
         pre_base_layout.setSpacing(0)
-        pre_base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
+        pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
 
         # Status
-        group_box = QGroupBox()
-        group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
-        group_box.setFont(self.font_small)
-        group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        group_box.setLayout(QHBoxLayout())
+        group_box = QHBoxLayout()
+        group_box.setSpacing(8)
+        group_box.setContentsMargins(4,4,4,4)
         
         self.statusLabel = QLabel("Manual")
         self.statusLabel.setFont(self.font_small)
-        group_box.layout().addWidget(self.statusLabel)
+        group_box.addWidget(self.statusLabel)
 
         self.statusLabelTime = QLabel("")
         self.statusLabelTime.setFont(self.font_small)
         self.statusLabelTime.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        group_box.layout().addWidget(self.statusLabelTime)
+        group_box.addWidget(self.statusLabelTime)
 
         self.statusLabelTimeCancel = QPushButton()
         self.statusLabelTimeCancel.setIcon(QIcon('icons/cancel.svg'))
         self.statusLabelTimeCancel.setIconSize(QSize(12, 12))
         self.statusLabelTimeCancel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        group_box.layout().addWidget(self.statusLabelTimeCancel)
+        group_box.addWidget(self.statusLabelTimeCancel)
         self.statusLabelTimeCancel.hide()
         self.statusLabelTimeCancel.clicked.connect(self.StopTimer)
 
@@ -300,7 +298,7 @@ class Window(QWidget):
         self.autoTimer = None
         self.smashggSetAutoUpdateId = None
 
-        pre_base_layout.addWidget(group_box)
+        pre_base_layout.addLayout(group_box)
 
         # Layout base
         self.base_layout = QBoxLayout(QBoxLayout.LeftToRight)
@@ -309,7 +307,7 @@ class Window(QWidget):
 
         self.setStyleSheet("QBoxLayout{padding:0px; margin:0px}")
         self.base_layout.setSpacing(0)
-        self.base_layout.setContentsMargins(QMargins(2, 2, 2, 2))
+        self.base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
 
         # Inputs do jogador 1 na vertical
         p1 = PlayerColumn(self, 1)
@@ -622,10 +620,10 @@ class Window(QWidget):
                     self.updateAction.setText("Check for updates [Update available!]")
     
     def ChangeLayoutOrientation(self):
-        if self.layout().direction() == QBoxLayout.TopToBottom:
-            self.layout().setDirection(QBoxLayout.LeftToRight)
+        if self.base_layout.direction() == QBoxLayout.TopToBottom:
+            self.base_layout.setDirection(QBoxLayout.LeftToRight)
         else:
-            self.layout().setDirection(QBoxLayout.TopToBottom)
+            self.base_layout.setDirection(QBoxLayout.TopToBottom)
         self.resize(0, 0)
         self.adjustSize()
     
@@ -1586,188 +1584,194 @@ class Window(QWidget):
 
         if self.settings.get("SMASHGG_KEY", None) is None:
             self.SetSmashggKey()
-
-        r = requests.post(
-            'https://api.smash.gg/gql/alpha',
-            headers={
-                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-            },
-            json={
-                'query': '''
-                query user($playerSlug: String!) {
-                    user(slug: $playerSlug) {
-                        player {
-                            sets(page: 1, perPage: 1) {
-                                nodes{
-                                    id
+        
+        def myFun(self, progress_callback):
+            r = requests.post(
+                'https://api.smash.gg/gql/alpha',
+                headers={
+                    'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                },
+                json={
+                    'query': '''
+                    query user($playerSlug: String!) {
+                        user(slug: $playerSlug) {
+                            player {
+                                sets(page: 1, perPage: 1) {
+                                    nodes{
+                                        id
+                                    }
                                 }
                             }
                         }
-                    }
-                }''',
-                'variables': {
-                    "playerSlug": smashgg_username
-                },
-            }
-        )
-        resp = json.loads(r.text)
+                    }''',
+                    'variables': {
+                        "playerSlug": smashgg_username
+                    },
+                }
+            )
+            resp = json.loads(r.text)
 
-        sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
+            sets = resp.get("data", {}).get("user", {}).get("player", {}).get("sets", {}).get("nodes", [])
 
-        if len(sets) == 0:
-            return
+            if len(sets) == 0:
+                return
+            
+            self.LoadPlayersFromSmashGGSet(setId=sets[0]["id"])
         
-        self.LoadPlayersFromSmashGGSet(setId=sets[0]["id"])
+        worker = Worker(myFun, *{self})
+        self.threadpool.start(worker)
     
     def LoadPlayersFromSmashGGSet(self, setId=None):
-        if setId == None:
-            setId = self.smashggSetAutoUpdateId
-        
-        if setId == None:
-            return
+        def myFun(self, progress_callback, setId):
+            if setId == None:
+                setId = self.smashggSetAutoUpdateId
+            
+            if setId == None:
+                return
 
-        if self.settings.get("SMASHGG_KEY", None) is None:
-            self.SetSmashggKey()
-        
-        r = requests.get("https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask")
-        respTasks = json.loads(r.text)
+            if self.settings.get("SMASHGG_KEY", None) is None:
+                self.SetSmashggKey()
+            
+            r = requests.get("https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask")
+            respTasks = json.loads(r.text)
 
-        tasks = respTasks.get("entities", {}).get("setTask", [])
-        selectedChars = {}
+            tasks = respTasks.get("entities", {}).get("setTask", [])
+            selectedChars = {}
 
-        for task in reversed(tasks):
-            if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
-                selectedChars = task.get("metadata", {}).get("charSelections", {})
-                break
-        
-        allStages = None
-        strikedStages = None
-        selectedStage = None
+            for task in reversed(tasks):
+                if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                    selectedChars = task.get("metadata", {}).get("charSelections", {})
+                    break
+            
+            allStages = None
+            strikedStages = None
+            selectedStage = None
 
-        for task in reversed(tasks):
-            if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
-                if len(task.get("metadata", [])) == 0:
-                    continue
+            for task in reversed(tasks):
+                if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                    if len(task.get("metadata", [])) == 0:
+                        continue
 
-                base = task.get("metadata", {})
+                    base = task.get("metadata", {})
 
-                if task.get("action") == "report":
-                    base = base.get("report", {})
+                    if task.get("action") == "report":
+                        base = base.get("report", {})
 
-                print(base)
+                    print(base)
 
-                if base.get("strikeStages", None) is not None:
-                    allStages = base.get("strikeStages")
-                elif base.get("banStages", None) is not None:
-                    allStages = base.get("banStages")
-        
-                if base.get("strikeList", None) is not None:
-                    strikedStages = base.get("strikeList")
-                elif base.get("banList", None) is not None:
-                    strikedStages = base.get("banList")
-        
-                if base.get("stageSelection", None) is not None:
-                    selectedStage = base.get("stageSelection")
-                elif base.get("stageId", None) is not None:
-                    selectedStage = base.get("stageId")
+                    if base.get("strikeStages", None) is not None:
+                        allStages = base.get("strikeStages")
+                    elif base.get("banStages", None) is not None:
+                        allStages = base.get("banStages")
+            
+                    if base.get("strikeList", None) is not None:
+                        strikedStages = base.get("strikeList")
+                    elif base.get("banList", None) is not None:
+                        strikedStages = base.get("banList")
+            
+                    if base.get("stageSelection", None) is not None:
+                        selectedStage = base.get("stageSelection")
+                    elif base.get("stageId", None) is not None:
+                        selectedStage = base.get("stageId")
 
-                if allStages == None and strikedStages == None and selectedStage == None:
-                    continue
+                    if allStages == None and strikedStages == None and selectedStage == None:
+                        continue
 
-                if allStages == None:
-                    continue
+                    if allStages == None:
+                        continue
 
-                break
-        
-        if allStages is not None:
-            img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
-            img.fill(qRgba(0, 0, 0, 0))
-            painter = QPainter(img)
-            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+                    break
+            
+            if allStages is not None:
+                img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
+                img.fill(qRgba(0, 0, 0, 0))
+                painter = QPainter(img)
+                painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+                painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
-            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
-            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+                iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
 
-            perLine = 5
+                perLine = 5
 
-            for i,stage in enumerate(allStages):
-                x = 0
-                y = 0
+                for i,stage in enumerate(allStages):
+                    x = 0
+                    y = 0
 
-                y = int(i/perLine)*(128+16)
+                    y = int(i/perLine)*(128+16)
 
-                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
+                    elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
 
-                margin = (perLine - elementsInRow) * (256+16) / 2
-                
-                x = (i%5)*(256+16) + margin
+                    margin = (perLine - elementsInRow) * (256+16) / 2
+                    
+                    x = (i%5)*(256+16) + margin
 
-                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage))+'.png')
-                painter.drawImage(QPoint(x, y), stage_image)
+                    stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage))+'.png')
+                    painter.drawImage(QPoint(x, y), stage_image)
 
-                if str(stage) in strikedStages or int(stage) in strikedStages:
-                    painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+                    if str(stage) in strikedStages or int(stage) in strikedStages:
+                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
 
-                if str(stage) == str(selectedStage):
-                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
-        
-            img.save("./out/stage_strike.png")
-            painter.end()
-        else:
-            img = QImage(QSize(256, 256), QImage.Format_RGBA64)
-            img.fill(qRgba(0, 0, 0, 0))
-            img.save("./out/stage_strike.png")
+                    if str(stage) == str(selectedStage):
+                        painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+            
+                img.save("./out/stage_strike.png")
+                painter.end()
+            else:
+                img = QImage(QSize(256, 256), QImage.Format_RGBA64)
+                img.fill(qRgba(0, 0, 0, 0))
+                img.save("./out/stage_strike.png")
 
-        r = requests.post(
-            'https://api.smash.gg/gql/alpha',
-            headers={
-                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-            },
-            json={
-                'query': '''
-                query set($setId: ID!) {
-                    set(id: $setId) {
-                        fullRoundText
-                        state
-                        slots {
-                            entrant {
-                                id
-                                participants {
+            r = requests.post(
+                'https://api.smash.gg/gql/alpha',
+                headers={
+                    'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                },
+                json={
+                    'query': '''
+                    query set($setId: ID!) {
+                        set(id: $setId) {
+                            fullRoundText
+                            state
+                            slots {
+                                entrant {
                                     id
-                                    user {
+                                    participants {
                                         id
-                                        slug
-                                        name
-                                        authorizations(types: [TWITTER]) {
-                                            type
-                                            externalUsername
+                                        user {
+                                            id
+                                            slug
+                                            name
+                                            authorizations(types: [TWITTER]) {
+                                                type
+                                                externalUsername
+                                            }
+                                            location {
+                                                city
+                                                country
+                                                state
+                                            }
+                                            images(type: "profile") {
+                                                url
+                                            }
                                         }
-                                        location {
-                                            city
-                                            country
-                                            state
-                                        }
-                                        images(type: "profile") {
-                                            url
-                                        }
-                                    }
-                                    player {
-                                        id
-                                        gamerTag
-                                        prefix
-                                        sets(page: 1, perPage: 1) {
-                                            nodes {
-                                                games {
-                                                    selections {
-                                                        entrant {
-                                                            participants {
-                                                                player {
-                                                                    id
+                                        player {
+                                            id
+                                            gamerTag
+                                            prefix
+                                            sets(page: 1, perPage: 1) {
+                                                nodes {
+                                                    games {
+                                                        selections {
+                                                            entrant {
+                                                                participants {
+                                                                    player {
+                                                                        id
+                                                                    }
                                                                 }
                                                             }
+                                                            selectionValue
                                                         }
-                                                        selectionValue
                                                     }
                                                 }
                                             }
@@ -1775,78 +1779,80 @@ class Window(QWidget):
                                     }
                                 }
                             }
-                        }
-                        games {
-                            selections {
-                                entrant {
-                                    id
-                                    participants {
-                                        player {
-                                            id
+                            games {
+                                selections {
+                                    entrant {
+                                        id
+                                        participants {
+                                            player {
+                                                id
+                                            }
                                         }
                                     }
+                                    selectionValue
                                 }
-                                selectionValue
+                                winnerId
                             }
-                            winnerId
                         }
-                    }
-                }''',
-                'variables': {
-                    "setId": setId
-                },
-            }
-        )
-        resp = json.loads(r.text)
+                    }''',
+                    'variables': {
+                        "setId": setId
+                    },
+                }
+            )
+            resp = json.loads(r.text)
 
-        if resp["data"]["set"].get("state", 0) == 3:
-            if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                print("Set ended")
-                self.StopTimer()
+            if resp["data"]["set"].get("state", 0) == 3:
+                if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                    print("Set ended")
+                    self.StopTimer()
 
-        # Set phase name
-        self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+            # Set phase name
+            self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
 
-        id0 = 0
-        id1 = 1
+            id0 = 0
+            id1 = 1
 
-        # Get first player
-        user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
-        player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
-        entrant = resp["data"]["set"]["slots"][0]["entrant"]
-        player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+            # Get first player
+            user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+            player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
+            entrant = resp["data"]["set"]["slots"][0]["entrant"]
+            player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-        if self.settings.get("competitor_mode", False) and \
-           len(self.settings.get("smashgg_user_id", "")) > 0:
-            if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
-                id0 = 1
-                id1 = 0
+            if self.settings.get("competitor_mode", False) and \
+            len(self.settings.get("smashgg_user_id", "")) > 0:
+                if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
+                    id0 = 1
+                    id1 = 0
 
-        self.player_layouts[id0].SetFromPlayerObj(player_obj)
+            self.player_layouts[id0].SetFromPlayerObj(player_obj)
 
-        print("--------")
-        print(entrant["id"])
-        print(resp["data"]["set"].get("games", None))
+            print("--------")
+            print(entrant["id"])
+            print(resp["data"]["set"].get("games", None))
 
-        # Update score
-        score = 0
-        if resp["data"]["set"].get("games", None) != None:
-            score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        [self.scoreLeft, self.scoreRight][id0].setValue(score)
+            # Update score
+            score = 0
+            if resp["data"]["set"].get("games", None) != None:
+                score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+            [self.scoreLeft, self.scoreRight][id0].setValue(score)
 
-        # Get second player
-        user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
-        player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
-        entrant = resp["data"]["set"]["slots"][1]["entrant"]
-        player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+            # Get second player
+            user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+            player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
+            entrant = resp["data"]["set"]["slots"][1]["entrant"]
+            player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-        self.player_layouts[id1].SetFromPlayerObj(player_obj)
+            self.player_layouts[id1].SetFromPlayerObj(player_obj)
 
-        # Update score
-        score = 0
-        if resp["data"]["set"].get("games", None) != None:
-            score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-        [self.scoreLeft, self.scoreRight][id1].setValue(score)
+            # Update score
+            score = 0
+            if resp["data"]["set"].get("games", None) != None:
+                score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+            [self.scoreLeft, self.scoreRight][id1].setValue(score)
+        
+        worker = Worker(myFun, *{self}, **{"setId": setId})
+        self.threadpool.start(worker)
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
@@ -1937,7 +1943,7 @@ class PlayerColumn():
         self.player_country.setFont(self.parent.font_small)
         self.player_country.lineEdit().setFont(self.parent.font_small)
         self.player_country.currentIndexChanged.connect(self.AutoExportCountry)
-        self.player_country.currentTextChanged.connect(self.LoadStateOptions)
+        self.player_country.textActivated.connect(self.LoadStateOptions)
         self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         self.player_state = QComboBox()
@@ -1989,7 +1995,7 @@ class PlayerColumn():
     def LoadStateOptions(self, text):
         self.player_state.clear()
         self.player_state.addItem("")
-        for s in self.parent.countries.get(self.player_country.currentText(), {}):
+        for s in self.parent.countries.get(text, {}):
             self.player_state.addItem(str(s))
     
     def AutoExportName(self):
@@ -2171,6 +2177,7 @@ class PlayerColumn():
 
         if player.get("country_code") is not None and player.get("country_code")!="null":
             self.player_country.setCurrentIndex(list(self.parent.countries.keys()).index(player.get("country_code"))+1)
+            self.LoadStateOptions(player.get("country_code"))
             if player.get("state") is not None and player.get("state")!="null":
                 self.player_state.setCurrentIndex(list(self.parent.countries[player.get("country_code")]).index(player.get("state"))+1)
             else:
