@@ -200,6 +200,13 @@ class Window(QWidget):
     def __init__(self):
         super().__init__()
 
+        splash = QSplashScreen(self, QPixmap('icons/icon.png').scaled(128, 128))
+        splash.show()
+
+        time.sleep(0.1)
+
+        App.processEvents()
+
         self.setWindowIcon(QIcon('icons/icon.png'))
 
         if not os.path.exists("out/"):
@@ -256,6 +263,7 @@ class Window(QWidget):
         self.font_small = QFont("font/RobotoCondensed-Regular.ttf", pointSize=8)
         
         self.threadpool = QThreadPool()
+        self.saveMutex = QMutex()
 
         self.player_layouts = []
 
@@ -533,6 +541,8 @@ class Window(QWidget):
         self.show()
 
         self.CheckForUpdates(True)
+
+        splash.finish(self)
     
     def CheckForUpdates(self, silent=False):
         release = None
@@ -2083,6 +2093,7 @@ class PlayerColumn():
     
     def ExportTwitter(self):
         try:
+            self.parent.saveMutex.lock()
             def myFun(self, progress_callback):
                 removeFileIfExists('out/p'+str(self.id)+'_twitter.png')
 
@@ -2108,6 +2119,8 @@ class PlayerColumn():
             self.parent.threadpool.start(worker)
         except Exception as e:
             print(e)
+        finally:
+            self.parent.saveMutex.unlock()
     
     def AutoExportCountry(self):
         if self.parent.settings.get("autosave") == True:
@@ -2115,6 +2128,7 @@ class PlayerColumn():
 
     def ExportCountry(self):
         try:
+            self.parent.saveMutex.lock()
             def myFun(self, progress_callback):
                 removeFileIfExists("out/p"+str(self.id)+"_country_flag.png")
                 removeFileIfExists("out/p"+str(self.id)+"_country.txt")
@@ -2144,6 +2158,8 @@ class PlayerColumn():
             self.parent.threadpool.start(worker)
         except Exception as e:
             print(e)
+        finally:
+            self.parent.saveMutex.unlock()
     
     def AutoExportState(self):
         if self.parent.settings.get("autosave") == True:
@@ -2165,6 +2181,7 @@ class PlayerColumn():
             self.ExportCharacter()
             
     def ExportCharacter(self):
+        self.parent.saveMutex.lock()
         try:
             removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
             shutil.copy(
@@ -2205,6 +2222,7 @@ class PlayerColumn():
             )
         except Exception as e:
             print(e)
+        self.parent.saveMutex.unlock()
     
     def AutocompleteSelected(self, selected):
         if type(selected) == QModelIndex:
