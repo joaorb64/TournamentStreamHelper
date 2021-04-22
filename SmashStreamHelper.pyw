@@ -642,7 +642,7 @@ class Window(QWidget):
         self.timeLeftTimer.timeout.connect(self.updateTimerLabel)
         self.timeLeftTimer.start(100)
         self.autoTimer = QTimer()
-        self.autoTimer.start(10000)
+        self.autoTimer.start(5000)
         self.autoTimer.timeout.connect(function)
         self.statusLabel.setText(name)
         self.statusLabelTimeCancel.show()
@@ -661,7 +661,7 @@ class Window(QWidget):
     
     def updateTimerLabel(self):
         if self.autoTimer:
-            self.statusLabelTime.setText(str(int(self.autoTimer.remainingTime()/1000)+1))
+            self.statusLabelTime.setText(str(int(self.autoTimer.remainingTime()/1000)))
     
     def AutoExportScore(self):
         if self.settings.get("autosave") == True:
