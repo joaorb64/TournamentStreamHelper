@@ -570,8 +570,27 @@ class Window(QWidget):
 
             if silent == False:
                 if myVersion < currVersion:
-                    buttonReply = QMessageBox.question(self, 'Updater', "New update available: "+myVersion+" → "+currVersion+"\nDo you wish to update?", QMessageBox.Yes | QMessageBox.No)
-                    if buttonReply == QMessageBox.Yes:
+                    buttonReply = QDialog(self)
+                    buttonReply.setWindowTitle("Updater")
+                    buttonReply.setWindowModality(Qt.WindowModal)
+                    vbox = QVBoxLayout()
+                    buttonReply.setLayout(vbox)
+
+                    buttonReply.layout().addWidget(QLabel("New update available: "+myVersion+" → "+currVersion))
+                    buttonReply.layout().addWidget(QLabel(release["body"]))
+                    buttonReply.layout().addWidget(QLabel("Update to latest version?"))
+
+                    hbox = QHBoxLayout()
+                    vbox.addLayout(hbox)
+
+                    btUpdate = QPushButton("Update")
+                    hbox.addWidget(btUpdate)
+                    btCancel = QPushButton("Cancel")
+                    hbox.addWidget(btCancel)
+                    
+                    buttonReply.show()
+                    
+                    def Update(self):
                         self.downloadDialogue = QProgressDialog("Downloading update... ", "Cancel", 0, 0, self)
                         self.downloadDialogue.show()
 
@@ -623,6 +642,9 @@ class Window(QWidget):
                         worker.signals.progress.connect(progress)
                         worker.signals.finished.connect(finished)
                         self.threadpool.start(worker)
+                    
+                    btUpdate.clicked.connect(Update)
+                    btCancel.clicked.connect(lambda: buttonReply.close())
                 else:
                     messagebox = QMessageBox()
                     messagebox.setText("You're already using the latest version")
