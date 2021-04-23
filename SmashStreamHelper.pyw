@@ -536,6 +536,8 @@ class Window(QWidget):
                 action.setChecked(True)
         action.toggled.connect(self.ToggleTwitterAddAt)
 
+        self.playersInverted = False
+
         self.LoadData()
 
         self.show()
@@ -709,6 +711,8 @@ class Window(QWidget):
         self.player_layouts[1].player_character.setCurrentIndex(character)
         self.player_layouts[1].player_character_color.setCurrentIndex(color)
         self.scoreRight.setValue(score)
+
+        self.playersInverted = not self.playersInverted
     
     def DownloadAssets(self):
         release = self.DownloadAssetsFetch()
@@ -1890,6 +1894,10 @@ class Window(QWidget):
                 if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
                     id0 = 1
                     id1 = 0
+            
+            if self.playersInverted:
+                id0 = 1
+                id1 = 0
 
             self.player_layouts[id0].SetFromPlayerObj(player_obj)
 
