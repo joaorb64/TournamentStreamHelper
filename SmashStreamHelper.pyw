@@ -1893,7 +1893,11 @@ class Window(QWidget):
                         if str(stage) == str(selectedStage):
                             painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
                 
-                    img.save("./out/stage_strike.png")
+                    img.save("./out/stage_strike_temp.png")
+                    shutil.copy(
+                        "./out/stage_strike_temp.png",
+                        "./out/stage_strike.png"
+                    )
                     painter.end()
                 except:
                     pass
@@ -1902,7 +1906,11 @@ class Window(QWidget):
             else:
                 img = QImage(QSize(256, 256), QImage.Format_RGBA64)
                 img.fill(qRgba(0, 0, 0, 0))
-                img.save("./out/stage_strike.png")
+                img.save("./out/stage_strike_temp.png")
+                shutil.copy(
+                    "./out/stage_strike_temp.png",
+                    "./out/stage_strike.png"
+                )
 
             resp = self.setData
 
