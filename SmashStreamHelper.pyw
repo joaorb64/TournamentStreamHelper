@@ -1508,14 +1508,14 @@ class Window(QWidget):
 
         if sets is not None:
             for s in sets:
-                print(s["state"])
-                model.appendRow([
-                    QStandardItem(""),
-                    QStandardItem(s["fullRoundText"]),
-                    QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
-                    QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                    QStandardItem(str(s["id"]))
-                ])
+                if s["slots"][0].get("entrant", None) and s["slots"][1].get("entrant", None):
+                    model.appendRow([
+                        QStandardItem(""),
+                        QStandardItem(s["fullRoundText"]),
+                        QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
+                        QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
+                        QStandardItem(str(s["id"]))
+                    ])
 
         self.smashGGSetSelecDialog = QDialog(self)
         self.smashGGSetSelecDialog.setWindowTitle("Selecione um set")
