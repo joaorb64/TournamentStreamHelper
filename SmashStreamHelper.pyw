@@ -18,6 +18,8 @@ try:
 
     from collections import Counter
 
+    import webserver
+
     import unicodedata
 except ImportError as error:
     print(error)
@@ -1456,6 +1458,7 @@ class Window(QWidget):
                         sets(page: 1, perPage: 128, sortType: MAGIC, filters: {hideEmpty: true}) {
                             nodes {
                                 id
+                                state
                                 fullRoundText
                                 slots {
                                     entrant {
@@ -1487,7 +1490,10 @@ class Window(QWidget):
         streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
         sets = resp["data"]["event"]["sets"]["nodes"]
 
-        print(streamSets)
+        streamSetIds = []
+        if streamSets is not None:
+            streamSetIds = [s.get("sets", [{}])[0].get("id", None) for s in streamSets]
+        sets = [s for s in sets if s.get("state") != 3 and s.get("id") not in streamSetIds]
 
         if streamSets is not None:
             for s in streamSets:
@@ -1502,6 +1508,7 @@ class Window(QWidget):
 
         if sets is not None:
             for s in sets:
+                print(s["state"])
                 model.appendRow([
                     QStandardItem(""),
                     QStandardItem(s["fullRoundText"]),
@@ -1852,41 +1859,46 @@ class Window(QWidget):
                 img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
                 img.fill(qRgba(0, 0, 0, 0))
                 painter = QPainter(img)
-                painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-                painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+                try:
+                    painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+                    painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
-                iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
-                iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
-                iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+                    iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                    iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
+                    iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
 
-                perLine = 5
+                    perLine = 5
 
-                for i,stage in enumerate(allStages):
-                    x = 0
-                    y = 0
+                    for i,stage in enumerate(allStages):
+                        x = 0
+                        y = 0
 
-                    y = int(i/perLine)*(128+16)
+                        y = int(i/perLine)*(128+16)
 
-                    elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
+                        elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
 
-                    margin = (perLine - elementsInRow) * (256+16) / 2
-                    
-                    x = (i%5)*(256+16) + margin
+                        margin = (perLine - elementsInRow) * (256+16) / 2
+                        
+                        x = (i%5)*(256+16) + margin
 
-                    stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage))+'.png')
-                    painter.drawImage(QPoint(x, y), stage_image)
+                        stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
+                        painter.drawImage(QPoint(x, y), stage_image)
 
-                    if str(stage) in strikedStages or int(stage) in strikedStages:
-                        if dsrStages is not None and int(stage) in dsrStages:
-                            painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
-                        else:
-                            painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+                        if str(stage) in strikedStages or int(stage) in strikedStages:
+                            if dsrStages is not None and int(stage) in dsrStages:
+                                painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
+                            else:
+                                painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
 
-                    if str(stage) == str(selectedStage):
-                        painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
-            
-                img.save("./out/stage_strike.png")
-                painter.end()
+                        if str(stage) == str(selectedStage):
+                            painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+                
+                    img.save("./out/stage_strike.png")
+                    painter.end()
+                except:
+                    pass
+                finally:
+                    painter.end()
             else:
                 img = QImage(QSize(256, 256), QImage.Format_RGBA64)
                 img.fill(qRgba(0, 0, 0, 0))
