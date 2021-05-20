@@ -2315,7 +2315,7 @@ class PlayerColumn():
             if player.get("skins") is not None and player["mains"][0] in player.get("skins"):
                 self.player_character_color.setCurrentIndex(player["skins"][player["mains"][0]])
             else:
-                self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
+                self.player_character_color.setCurrentIndex(0)
         else:
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
             self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
