@@ -9,3 +9,4 @@ settings.json
 update.tar.gz
 __pycache__/
 .vscode/
+log_error.txt

@@ -26,7 +26,7 @@ except ImportError as error:
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
     exit()
 
-sys.stderr = open('./error_log.txt', 'wb')
+sys.stderr = open('./log_error.txt', 'w')
 
 def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
