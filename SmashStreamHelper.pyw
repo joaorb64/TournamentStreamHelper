@@ -1805,12 +1805,16 @@ class Window(QWidget):
                 
                 latestWinner = None
 
+                print("a")
+
                 for task in reversed(tasks):
                     if len(task.get("metadata", [])) == 0:
                         continue
                     if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
                         latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
                         break
+                
+                print("b")
                 
                 allStages = None
                 strikedStages = None
@@ -1863,6 +1867,8 @@ class Window(QWidget):
                             continue
 
                         break
+                
+                print("c")
                 
                 if allStages is not None:
                     img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
@@ -1920,6 +1926,8 @@ class Window(QWidget):
                         "./out/stage_strike_temp.png",
                         "./out/stage_strike.png"
                     )
+                
+                print("d")
 
                 resp = self.setData
 
@@ -1927,6 +1935,8 @@ class Window(QWidget):
                     if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
                         print("Set ended")
                         self.StopTimer()
+                
+                print("e")
 
                 # Set phase name
                 self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
@@ -1975,6 +1985,8 @@ class Window(QWidget):
                 if resp["data"]["set"].get("games", None) != None:
                     score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
                 [self.scoreLeft, self.scoreRight][id1].setValue(score)
+
+                print("f")
         
         worker = Worker(myFun, *{self}, **{"setId": setId})
         self.threadpool.start(worker)
