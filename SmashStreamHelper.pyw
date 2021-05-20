@@ -27,6 +27,12 @@ except ImportError as error:
     exit()
 
 #sys.stderr = open('./log_error.txt', 'w')
+sys._excepthook = sys.excepthook 
+def exception_hook(exctype, value, traceback):
+    print(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback) 
+    sys.exit(1) 
+sys.excepthook = exception_hook 
 
 def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -1520,7 +1526,7 @@ class Window(QWidget):
                     ])
 
         self.smashGGSetSelecDialog = QDialog(self)
-        self.smashGGSetSelecDialog.setWindowTitle("Selecione um set")
+        self.smashGGSetSelecDialog.setWindowTitle("Select a set")
         self.smashGGSetSelecDialog.setWindowModality(Qt.WindowModal)
 
         layout = QVBoxLayout()
