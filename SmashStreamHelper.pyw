@@ -1793,7 +1793,6 @@ class Window(QWidget):
                 pool.cancel(worker1)
                 pool.cancel(worker2)
             else:
-                print("Entered post-threaded requests")
                 tasks = self.respTasks.get("entities", {}).get("setTask", [])
 
                 selectedChars = {}
@@ -1805,16 +1804,12 @@ class Window(QWidget):
                 
                 latestWinner = None
 
-                print("a")
-
                 for task in reversed(tasks):
                     if len(task.get("metadata", [])) == 0:
                         continue
                     if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
                         latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
                         break
-                
-                print("b")
                 
                 allStages = None
                 strikedStages = None
@@ -1867,8 +1862,6 @@ class Window(QWidget):
                             continue
 
                         break
-                
-                print("c")
                 
                 if allStages is not None:
                     img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
@@ -1926,8 +1919,6 @@ class Window(QWidget):
                         "./out/stage_strike_temp.png",
                         "./out/stage_strike.png"
                     )
-                
-                print("d")
 
                 resp = self.setData
 
@@ -1936,7 +1927,7 @@ class Window(QWidget):
                         print("Set ended")
                         self.StopTimer()
                 
-                print("e")
+                print("a")
 
                 # Set phase name
                 self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
@@ -1944,17 +1935,26 @@ class Window(QWidget):
                 id0 = 0
                 id1 = 1
 
+                print("b")
+
                 # Get first player
                 user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
                 player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
                 entrant = resp["data"]["set"]["slots"][0]["entrant"]
+
+                print("c")
+
                 player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+
+                print("d")
 
                 if self.settings.get("competitor_mode", False) and \
                 len(self.settings.get("smashgg_user_id", "")) > 0:
                     if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
                         id0 = 1
                         id1 = 0
+                
+                print("e")
                 
                 if self.playersInverted:
                     id0 = 1
