@@ -1926,8 +1926,6 @@ class Window(QWidget):
                     if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
                         print("Set ended")
                         self.StopTimer()
-                
-                print("a")
 
                 # Set phase name
                 self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
@@ -1935,26 +1933,18 @@ class Window(QWidget):
                 id0 = 0
                 id1 = 1
 
-                print("b")
-
                 # Get first player
                 user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
                 player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
                 entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                print("c")
-
                 player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
-
-                print("d")
 
                 if self.settings.get("competitor_mode", False) and \
                 len(self.settings.get("smashgg_user_id", "")) > 0:
                     if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
                         id0 = 1
                         id1 = 0
-                
-                print("e")
                 
                 if self.playersInverted:
                     id0 = 1
@@ -1985,8 +1975,6 @@ class Window(QWidget):
                 if resp["data"]["set"].get("games", None) != None:
                     score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
                 [self.scoreLeft, self.scoreRight][id1].setValue(score)
-
-                print("f")
         
         worker = Worker(myFun, *{self}, **{"setId": setId})
         self.threadpool.start(worker)
@@ -2313,6 +2301,7 @@ class PlayerColumn():
         self.SetFromPlayerObj(player)
     
     def SetFromPlayerObj(self, player):
+        print("Set from player obj")
         self.player_name.setText(player["name"])
         self.player_org.setText(player.get("org", ""))
         self.player_real_name.setText(player.get("full_name", ""))
@@ -2320,6 +2309,7 @@ class PlayerColumn():
 
         self.player_obj = player
 
+        print("Set country")
         if player.get("country_code") is not None and player.get("country_code")!="null":
             self.player_country.setCurrentIndex(list(self.parent.countries.keys()).index(player.get("country_code"))+1)
             self.LoadStateOptions(player.get("country_code"))
@@ -2330,9 +2320,11 @@ class PlayerColumn():
         else:
             self.player_country.setCurrentIndex(0)
         
+        print("Set main")
         if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
             
+            print("Set skin")
             if player.get("skins") is not None and player["mains"][0] in player.get("skins"):
                 self.player_character_color.setCurrentIndex(player["skins"][player["mains"][0]])
             else:
