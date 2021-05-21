@@ -2167,8 +2167,6 @@ class PlayerColumn():
                             prefix = "@"
                     
                     outfile.write(prefix+self.player_twitter.text())
-
-                removeFileIfExists('out/p'+str(self.id)+'_smashgg_avatar.png')
                 
                 if self.player_obj.get("smashgg_image", None) is not None:
                     r = requests.get(self.player_obj["smashgg_image"], stream=True)
@@ -2176,6 +2174,9 @@ class PlayerColumn():
                         with open('out/p'+str(self.id)+'_smashgg_avatar.png', 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
+                            f.flush()
+                else:
+                    removeFileIfExists('out/p'+str(self.id)+'_smashgg_avatar.png')
             
             worker = Worker(myFun, *{self})
             self.parent.threadpool.start(worker)
@@ -2194,7 +2195,6 @@ class PlayerColumn():
             def myFun(self, progress_callback):
                 removeFileIfExists("out/p"+str(self.id)+"_country_flag.png")
                 removeFileIfExists("out/p"+str(self.id)+"_country.txt")
-                removeFileIfExists("out/p"+str(self.id)+"_state.png")
 
                 with open('out/p'+str(self.id)+'_country.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_country.currentText())
@@ -2207,6 +2207,7 @@ class PlayerColumn():
                 
                 with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_state.currentText())
+
                 if(self.player_state.currentText() != ""):
                     r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
                         self.player_country.currentText().upper()+"/"+
@@ -2215,6 +2216,8 @@ class PlayerColumn():
                         with open('out/p'+str(self.id)+'_state.png', 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
+                else:
+                    removeFileIfExists("out/p"+str(self.id)+"_state.png")
             
             worker = Worker(myFun, *{self})
             self.parent.threadpool.start(worker)
@@ -2314,10 +2317,17 @@ class PlayerColumn():
 
         print("Set country")
         if player.get("country_code") is not None and player.get("country_code")!="null":
-            self.player_country.setCurrentIndex(list(self.parent.countries.keys()).index(player.get("country_code"))+1)
+            index = 0
+            if player.get("country_code") in list(self.parent.countries.keys()):
+                index = list(self.parent.countries.keys()).index(player.get("country_code"))+1
+            self.player_country.setCurrentIndex(index)
             self.LoadStateOptions(player.get("country_code"))
             if player.get("state") is not None and player.get("state")!="null":
-                self.player_state.setCurrentIndex(list(self.parent.countries[player.get("country_code")]).index(player.get("state"))+1)
+                index = 0
+                if player.get("state") in list(self.parent.countries[player.get("country_code")]):
+                    index = list(self.parent.countries[player.get("country_code")]).index(player.get("state"))+1
+
+                self.player_state.setCurrentIndex(index)
             else:
                 self.player_state.setCurrentIndex(0)
         else:
