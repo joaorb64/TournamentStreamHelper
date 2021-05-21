@@ -1780,7 +1780,7 @@ class Window(QWidget):
                     }
                 )
                 self.setData = json.loads(r.text)
-                print("Got new smashgg api")
+                print("Got response from new smashgg api")
             
             worker1 = Worker(fun1, *{self})
             pool.start(worker1)
@@ -1793,188 +1793,191 @@ class Window(QWidget):
                 pool.cancel(worker1)
                 pool.cancel(worker2)
             else:
-                tasks = self.respTasks.get("entities", {}).get("setTask", [])
+                try:
+                    tasks = self.respTasks.get("entities", {}).get("setTask", [])
 
-                selectedChars = {}
+                    selectedChars = {}
 
-                for task in reversed(tasks):
-                    if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
-                        selectedChars = task.get("metadata", {}).get("charSelections", {})
-                        break
-                
-                latestWinner = None
+                    for task in reversed(tasks):
+                        if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                            selectedChars = task.get("metadata", {}).get("charSelections", {})
+                            break
+                    
+                    latestWinner = None
 
-                for task in reversed(tasks):
-                    if len(task.get("metadata", [])) == 0:
-                        continue
-                    if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
-                        latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
-                        break
-                
-                allStages = None
-                strikedStages = None
-                selectedStage = None
-                dsrStages = None
-                playerTurn = None
-
-                for task in reversed(tasks):
-                    if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                    for task in reversed(tasks):
                         if len(task.get("metadata", [])) == 0:
                             continue
-
-                        base = task.get("metadata", {})
-
-                        if task.get("action") == "report":
-                            base = base.get("report", {})
-
-                        print(base)
-
-                        if base.get("strikeStages", None) is not None:
-                            allStages = base.get("strikeStages")
-                        elif base.get("banStages", None) is not None:
-                            allStages = base.get("banStages")
-                
-                        if base.get("strikeList", None) is not None:
-                            strikedStages = base.get("strikeList")
-                        elif base.get("banList", None) is not None:
-                            strikedStages = base.get("banList")
-                
-                        if base.get("stageSelection", None) is not None:
-                            selectedStage = base.get("stageSelection")
-                        elif base.get("stageId", None) is not None:
-                            selectedStage = base.get("stageId")
-
-                        if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
-
-                            loser = next(
-                                (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
-                                None
-                            )
-
-                            if loser is not None:
-                                dsrStages = []
-                                dsrStages = [int(s) for s in base.get("stageWins")[loser]]
-
-                        if allStages == None and strikedStages == None and selectedStage == None:
-                            continue
-
-                        if allStages == None:
-                            continue
-
-                        break
-                
-                if allStages is not None:
-                    img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
-                    img.fill(qRgba(0, 0, 0, 0))
-                    painter = QPainter(img)
-                    try:
-                        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-                        painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
-
-                        iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
-                        iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
-                        iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
-
-                        perLine = 5
-
-                        for i,stage in enumerate(allStages):
-                            x = 0
-                            y = 0
-
-                            y = int(i/perLine)*(128+16)
-
-                            elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
-
-                            margin = (perLine - elementsInRow) * (256+16) / 2
-                            
-                            x = (i%5)*(256+16) + margin
-
-                            stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
-                            painter.drawImage(QPoint(x, y), stage_image)
-
-                            if str(stage) in strikedStages or int(stage) in strikedStages:
-                                if dsrStages is not None and int(stage) in dsrStages:
-                                    painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
-                                else:
-                                    painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
-
-                            if str(stage) == str(selectedStage):
-                                painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+                        if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                            latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
+                            break
                     
+                    allStages = None
+                    strikedStages = None
+                    selectedStage = None
+                    dsrStages = None
+                    playerTurn = None
+
+                    for task in reversed(tasks):
+                        if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                            if len(task.get("metadata", [])) == 0:
+                                continue
+
+                            base = task.get("metadata", {})
+
+                            if task.get("action") == "report":
+                                base = base.get("report", {})
+
+                            print(base)
+
+                            if base.get("strikeStages", None) is not None:
+                                allStages = base.get("strikeStages")
+                            elif base.get("banStages", None) is not None:
+                                allStages = base.get("banStages")
+                    
+                            if base.get("strikeList", None) is not None:
+                                strikedStages = base.get("strikeList")
+                            elif base.get("banList", None) is not None:
+                                strikedStages = base.get("banList")
+                    
+                            if base.get("stageSelection", None) is not None:
+                                selectedStage = base.get("stageSelection")
+                            elif base.get("stageId", None) is not None:
+                                selectedStage = base.get("stageId")
+
+                            if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+
+                                loser = next(
+                                    (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
+                                    None
+                                )
+
+                                if loser is not None:
+                                    dsrStages = []
+                                    dsrStages = [int(s) for s in base.get("stageWins")[loser]]
+
+                            if allStages == None and strikedStages == None and selectedStage == None:
+                                continue
+
+                            if allStages == None:
+                                continue
+
+                            break
+                    
+                    if allStages is not None:
+                        img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
+                        img.fill(qRgba(0, 0, 0, 0))
+                        painter = QPainter(img)
+                        try:
+                            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+                            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+
+                            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                            iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
+                            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+
+                            perLine = 5
+
+                            for i,stage in enumerate(allStages):
+                                x = 0
+                                y = 0
+
+                                y = int(i/perLine)*(128+16)
+
+                                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
+
+                                margin = (perLine - elementsInRow) * (256+16) / 2
+                                
+                                x = (i%5)*(256+16) + margin
+
+                                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
+                                painter.drawImage(QPoint(x, y), stage_image)
+
+                                if str(stage) in strikedStages or int(stage) in strikedStages:
+                                    if dsrStages is not None and int(stage) in dsrStages:
+                                        painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
+                                    else:
+                                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+
+                                if str(stage) == str(selectedStage):
+                                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+                        
+                            img.save("./out/stage_strike_temp.png")
+                            shutil.copy(
+                                "./out/stage_strike_temp.png",
+                                "./out/stage_strike.png"
+                            )
+                            painter.end()
+                        except:
+                            pass
+                        finally:
+                            painter.end()
+                    else:
+                        img = QImage(QSize(256, 256), QImage.Format_RGBA64)
+                        img.fill(qRgba(0, 0, 0, 0))
                         img.save("./out/stage_strike_temp.png")
                         shutil.copy(
                             "./out/stage_strike_temp.png",
                             "./out/stage_strike.png"
                         )
-                        painter.end()
-                    except:
-                        pass
-                    finally:
-                        painter.end()
-                else:
-                    img = QImage(QSize(256, 256), QImage.Format_RGBA64)
-                    img.fill(qRgba(0, 0, 0, 0))
-                    img.save("./out/stage_strike_temp.png")
-                    shutil.copy(
-                        "./out/stage_strike_temp.png",
-                        "./out/stage_strike.png"
-                    )
 
-                resp = self.setData
+                    resp = self.setData
 
-                if resp["data"]["set"].get("state", 0) == 3:
-                    if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                        print("Set ended")
-                        self.StopTimer()
+                    if resp["data"]["set"].get("state", 0) == 3:
+                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                            print("Set ended")
+                            self.StopTimer()
 
-                # Set phase name
-                self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+                    # Set phase name
+                    self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
 
-                id0 = 0
-                id1 = 1
+                    id0 = 0
+                    id1 = 1
 
-                # Get first player
-                user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
-                player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
-                entrant = resp["data"]["set"]["slots"][0]["entrant"]
+                    # Get first player
+                    user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+                    player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
+                    entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-                if self.settings.get("competitor_mode", False) and \
-                len(self.settings.get("smashgg_user_id", "")) > 0:
-                    if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
+                    if self.settings.get("competitor_mode", False) and \
+                    len(self.settings.get("smashgg_user_id", "")) > 0:
+                        if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
+                            id0 = 1
+                            id1 = 0
+                    
+                    if self.playersInverted:
                         id0 = 1
                         id1 = 0
-                
-                if self.playersInverted:
-                    id0 = 1
-                    id1 = 0
 
-                self.player_layouts[id0].SetFromPlayerObj(player_obj)
+                    self.player_layouts[id0].SetFromPlayerObj(player_obj)
 
-                print("--------")
-                print(entrant["id"])
-                print(resp["data"]["set"].get("games", None))
+                    print("--------")
+                    print(entrant["id"])
+                    print(resp["data"]["set"].get("games", None))
 
-                # Update score
-                score = 0
-                if resp["data"]["set"].get("games", None) != None:
-                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                [self.scoreLeft, self.scoreRight][id0].setValue(score)
+                    # Update score
+                    score = 0
+                    if resp["data"]["set"].get("games", None) != None:
+                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                    [self.scoreLeft, self.scoreRight][id0].setValue(score)
 
-                # Get second player
-                user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
-                player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
-                entrant = resp["data"]["set"]["slots"][1]["entrant"]
-                player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                    # Get second player
+                    user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+                    player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
+                    entrant = resp["data"]["set"]["slots"][1]["entrant"]
+                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-                self.player_layouts[id1].SetFromPlayerObj(player_obj)
+                    self.player_layouts[id1].SetFromPlayerObj(player_obj)
 
-                # Update score
-                score = 0
-                if resp["data"]["set"].get("games", None) != None:
-                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                [self.scoreLeft, self.scoreRight][id1].setValue(score)
+                    # Update score
+                    score = 0
+                    if resp["data"]["set"].get("games", None) != None:
+                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                    [self.scoreLeft, self.scoreRight][id1].setValue(score)
+                except Exception as e:
+                    print(traceback.format_exc())
         
         worker = Worker(myFun, *{self}, **{"setId": setId})
         self.threadpool.start(worker)
