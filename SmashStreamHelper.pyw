@@ -896,7 +896,7 @@ class Window(QWidget):
             name = ""
             if("org" in p.keys() and p["org"] != None):
                 name += p["org"] + " "
-            name += p["name"]
+            name += str(p["name"])
             if("country_code" in p.keys() and p["country_code"] != None):
                 name += " ("+p["country_code"]+")"
             autocompleter_names.append(name)
