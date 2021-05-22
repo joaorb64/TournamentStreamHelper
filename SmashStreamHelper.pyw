@@ -895,12 +895,12 @@ class Window(QWidget):
         for i, p in enumerate(ap):
             name = ""
             if("org" in p.keys() and p["org"] != None):
-                name += p["org"] + " "
+                name += str(p["org"]) + " "
             name += str(p["name"])
             if("country_code" in p.keys() and p["country_code"] != None):
                 name += " ("+p["country_code"]+")"
             autocompleter_names.append(name)
-            names.append(p["name"])
+            names.append(str(p["name"]))
 
             if("mains" in p.keys() and p["mains"] != None and len(p["mains"]) > 0):
                 autocompleter_mains.append(p["mains"][0])
