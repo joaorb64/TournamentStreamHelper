@@ -548,6 +548,8 @@ class Window(QWidget):
 
         self.playersInverted = False
 
+        self.lastStageStrikeState = None
+
         self.LoadData()
 
         self.show()
@@ -1864,7 +1866,23 @@ class Window(QWidget):
 
                             break
                     
-                    if allStages is not None:
+                    changed = False
+
+                    stageStrikeState = [
+                        allStages,
+                        strikedStages,
+                        selectedStage,
+                        dsrStages,
+                        playerTurn
+                    ]
+
+                    if self.lastStageStrikeState != None:
+                        if str(stageStrikeState) != str(self.lastStageStrikeState):
+                            changed = True
+                    else:
+                        changed = True
+
+                    if allStages is not None and changed:
                         img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
                         img.fill(qRgba(0, 0, 0, 0))
                         painter = QPainter(img)
@@ -1903,16 +1921,17 @@ class Window(QWidget):
                                     painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
                         
                             img.save("./out/stage_strike_temp.png")
+                            painter.end()
+
                             shutil.copy(
                                 "./out/stage_strike_temp.png",
                                 "./out/stage_strike.png"
                             )
-                            painter.end()
                         except:
                             pass
                         finally:
                             painter.end()
-                    else:
+                    elif changed:
                         img = QImage(QSize(256, 256), QImage.Format_RGBA64)
                         img.fill(qRgba(0, 0, 0, 0))
                         img.save("./out/stage_strike_temp.png")
@@ -1920,6 +1939,8 @@ class Window(QWidget):
                             "./out/stage_strike_temp.png",
                             "./out/stage_strike.png"
                         )
+                    
+                    self.lastStageStrikeState = stageStrikeState
 
                     resp = self.setData
 
