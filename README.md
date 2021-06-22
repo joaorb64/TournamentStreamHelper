@@ -21,7 +21,7 @@ Windows:
 Linux:
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - `pip3 install -r requirements.txt`
-- `python3 AjudanteDeStream.pyw`
+- `python3 SmashStreamHelper.pyw`
 
 # Usage with OBS
 
