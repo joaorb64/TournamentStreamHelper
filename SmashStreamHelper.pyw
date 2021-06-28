@@ -18,15 +18,13 @@ try:
 
     from collections import Counter
 
-    import webserver
-
     import unicodedata
 except ImportError as error:
     print(error)
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
     exit()
 
-#sys.stderr = open('./log_error.txt', 'w')
+sys.stderr = open('./log_error.txt', 'w')
 sys._excepthook = sys.excepthook 
 def exception_hook(exctype, value, traceback):
     print(exctype, value, traceback)
@@ -859,15 +857,24 @@ class Window(QWidget):
         worker = Worker(self.DownloadDataFromPowerRankings)
         worker.signals.finished.connect(self.DownloadButtonComplete)
         worker.signals.progress.connect(self.DownloadButtonProgress)
+
+        self.downloadDialogue = QProgressDialog("Downloading PowerRankings data", "Cancel", 0, 100, self)
+        self.downloadDialogue.show()
         
         self.threadpool.start(worker)
     
     def DownloadButtonProgress(self, n):
-        pass
-        #self.downloadBt.setText("Baixando..."+str(n[0])+"/"+str(n[1]))
+        progress = n[0]/n[1]*100
+
+        self.downloadDialogue.setValue(progress)
+
+        if progress == 100:
+            self.downloadDialogue.setMaximum(0)
+            self.downloadDialogue.setValue(0)
     
     def DownloadButtonComplete(self):
         self.LoadData()
+        self.downloadDialogue.close()
     
     def SetupAutocomplete(self):
         # auto complete options
