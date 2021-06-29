@@ -2117,7 +2117,7 @@ class PlayerColumn():
         self.player_twitter = QLineEdit()
         self.layout_grid.addWidget(self.player_twitter, 4, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
-        self.player_twitter.editingFinished.connect(self.TwitterChanged)
+        self.player_twitter.textChanged.connect(self.TwitterChanged)
         self.player_twitter.setMinimumWidth(100)
 
         location_layout = QHBoxLayout()
@@ -2236,7 +2236,7 @@ class PlayerColumn():
                 tt = "@"
         tt+=self.player_twitter.text()
 
-        self.parent.programState['p'+str(self.id)+'_twitter'] = self.player_twitter.text()
+        self.parent.programState['p'+str(self.id)+'_twitter'] = tt
 
         if self.parent.settings.get("autosave") == True:
             self.parent.ExportProgramState()
@@ -2327,6 +2327,7 @@ class PlayerColumn():
     
     def AutoExportCharacter(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
+        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.character_to_codename.get(self.player_character.currentText())
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
