@@ -17,7 +17,7 @@
         }
     }
 
-    function SetInnerHtml(element, html){
+    function SetInnerHtml(element, html, force=false){
         let fadeOutTime = 0.5;
         let fadeInTime = 0.5;
 
@@ -31,7 +31,7 @@
 
         html = html.replaceAll("'", '"');
 
-        if(element.find(".text").html() != html){
+        if(force || element.find(".text").html() != html){
             gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{
                 element.find(".text").html(html);
                 FitText(element);
@@ -49,8 +49,12 @@
         startingAnimation.restart();
     }
 
+    var data = {}
+    var oldData = {}
+
     async function Update(){
-        let data = await getData();
+        oldData = data;
+        data = await getData();
 
         SetInnerHtml($(".p1 .name"), `
             <span>
@@ -79,7 +83,7 @@
 
         SetInnerHtml($(".p1 .flagstate"), `
             <div class='flag' style='background-image: url(../../out/p1_state_flag.png)'></div>
-        `);
+        `, oldData.p1_state != data.p1_state);
 
         SetInnerHtml($(".p2 .flagcountry"), `
             <div class='flag' style='background-image: url(../../country_icon/${data.p2_country.toLowerCase()}.png)'></div>
@@ -87,7 +91,7 @@
 
         SetInnerHtml($(".p2 .flagstate"), `
             <div class='flag' style='background-image: url(../../out/p2_state_flag.png)'></div>
-        `);
+        `, oldData.p2_state != data.p2_state);
 
         SetInnerHtml($(".p1 .stockicon"), `
             <div class="icon" style='background-image: url(../../character_icon/chara_2_${data.p1_character_codename}_0${data.p1_character_color}.png)'></div>
