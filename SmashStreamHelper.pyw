@@ -16,6 +16,8 @@ try:
     import time
     import os
 
+    import copy
+
     from collections import Counter
 
     import unicodedata
@@ -216,6 +218,10 @@ class Window(QWidget):
 
         App.processEvents()
 
+        self.programState = {}
+        self.savedProgramState = {}
+        self.programStateDiff = {}
+
         self.setWindowIcon(QIcon('icons/icon.png'))
 
         if not os.path.exists("out/"):
@@ -357,17 +363,17 @@ class Window(QWidget):
             "Winners Finals", "Losers Finals", "Grand Finals"
         ])
 
-        self.tournament_phase.currentTextChanged.connect(self.AutoExportScore)
+        self.tournament_phase.currentTextChanged.connect(self.ScoreChanged)
 
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreLeft.setAlignment(Qt.AlignHCenter)
         layout_middle.addWidget(self.scoreLeft, 2, 0, 1, 1)
-        self.scoreLeft.valueChanged.connect(self.AutoExportScore)
+        self.scoreLeft.valueChanged.connect(self.ScoreChanged)
         self.scoreRight = QSpinBox()
         self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreRight.setAlignment(Qt.AlignHCenter)
-        self.scoreRight.valueChanged.connect(self.AutoExportScore)
+        self.scoreRight.valueChanged.connect(self.ScoreChanged)
         layout_middle.addWidget(self.scoreRight, 2, 1, 1, 1)
 
         self.reset_score_bt = QPushButton()
@@ -662,6 +668,12 @@ class Window(QWidget):
                     messagebox.exec()
             else:
                 if myVersion < currVersion:
+                    baseIcon = QPixmap(QImage("icons/menu.svg").scaled(32, 32))
+                    updateIcon = QImage("./icons/update_circle.svg").scaled(12, 12)
+                    p = QPainter(baseIcon)
+                    p.drawImage(QPoint(20, 0), updateIcon)
+                    p.end()
+                    self.optionsBt.setIcon(QIcon(baseIcon))
                     self.updateAction.setText("Check for updates [Update available!]")
     
     def ChangeLayoutOrientation(self):
@@ -698,17 +710,25 @@ class Window(QWidget):
         if self.autoTimer:
             self.statusLabelTime.setText(str(int(self.autoTimer.remainingTime()/1000)))
     
-    def AutoExportScore(self):
+    def ScoreChanged(self):
+        self.programState["score_left"] = self.scoreLeft.value()
+        self.programState["score_right"] = self.scoreRight.value()
+        self.programState["tournament_phase"] = self.tournament_phase.currentText()
+
         if self.settings.get("autosave") == True:
+            self.ExportProgramState()
             self.ExportScore()
     
     def ExportScore(self):
-        with open('out/p1_score.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(str(self.scoreLeft.value()))
-        with open('out/p2_score.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(str(self.scoreRight.value()))
-        with open('out/match_phase.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(self.tournament_phase.currentText())
+        if "score_left" in self.programStateDiff:
+            with open('out/p1_score.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(str(self.scoreLeft.value()))
+        if "score_right" in self.programStateDiff:
+            with open('out/p2_score.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(str(self.scoreRight.value()))
+        if "match_phase" in self.programStateDiff:
+            with open('out/match_phase.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(self.tournament_phase.currentText())
     
     def ResetScoreButtonClicked(self):
         self.scoreLeft.setValue(0)
@@ -1038,7 +1058,19 @@ class Window(QWidget):
             self.settings["twitter_add_at"] = False
         self.SaveSettings()
     
+    def ExportProgramState(self):
+        diff = [k for k in self.programState.keys() if self.programState[k] != self.savedProgramState.get(k, None)]
+
+        print(diff)
+
+        if len(diff) > 0:
+            with open('./out/program_state.json', 'w') as outfile:
+                json.dump(self.programState, outfile, indent=4)
+                self.savedProgramState = copy.deepcopy(self.programState)
+                self.programStateDiff = diff
+    
     def SaveButtonClicked(self):
+        self.ExportProgramState()
         for p in self.player_layouts:
             p.ExportName()
             p.ExportRealName()
@@ -2050,7 +2082,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_name, 1, pos_forms)
         self.player_name.setMinimumWidth(100)
         self.player_name.setFont(self.parent.font_small)
-        self.player_name.textChanged.connect(self.AutoExportName)
+        self.player_name.textChanged.connect(self.NameChanged)
 
         prefix_label = QLabel("Prefix")
         prefix_label.setFont(self.parent.font_small)
@@ -2059,7 +2091,7 @@ class PlayerColumn():
         self.player_org = QLineEdit()
         self.layout_grid.addWidget(self.player_org, 2, pos_forms)
         self.player_org.setFont(self.parent.font_small)
-        self.player_org.textChanged.connect(self.AutoExportName)
+        self.player_org.textChanged.connect(self.NameChanged)
         self.player_org.setMinimumWidth(100)
 
         real_name_label = QLabel("Name")
@@ -2069,7 +2101,7 @@ class PlayerColumn():
         self.player_real_name = QLineEdit()
         self.layout_grid.addWidget(self.player_real_name, 3, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
-        self.player_real_name.textChanged.connect(self.AutoExportRealName)
+        self.player_real_name.textChanged.connect(self.RealNameChanged)
         self.player_real_name.setMinimumWidth(100)
 
         player_twitter_label = QLabel("Twitter")
@@ -2079,7 +2111,7 @@ class PlayerColumn():
         self.player_twitter = QLineEdit()
         self.layout_grid.addWidget(self.player_twitter, 4, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
-        self.player_twitter.editingFinished.connect(self.AutoExportTwitter)
+        self.player_twitter.editingFinished.connect(self.TwitterChanged)
         self.player_twitter.setMinimumWidth(100)
 
         location_layout = QHBoxLayout()
@@ -2099,7 +2131,7 @@ class PlayerColumn():
         self.player_country.setMinimumWidth(75)
         self.player_country.setFont(self.parent.font_small)
         self.player_country.lineEdit().setFont(self.parent.font_small)
-        self.player_country.currentIndexChanged.connect(self.AutoExportCountry)
+        self.player_country.currentIndexChanged.connect(self.CountryChanged)
         self.player_country.textActivated.connect(self.LoadStateOptions)
         self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
@@ -2109,7 +2141,7 @@ class PlayerColumn():
         self.player_state.setMinimumWidth(60)
         self.player_state.setFont(self.parent.font_small)
         self.player_state.lineEdit().setFont(self.parent.font_small)
-        self.player_state.currentIndexChanged.connect(self.AutoExportCountry)
+        self.player_state.activated.connect(self.StateChanged)
         self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_label = QLabel("Character")
@@ -2122,11 +2154,11 @@ class PlayerColumn():
             self.player_character.addItem(self.parent.stockIcons[c][0], c)
         self.player_character.setEditable(True)
         self.layout_grid.addWidget(self.player_character, 2, pos_forms+2)
-        self.player_character.currentTextChanged.connect(self.LoadSkinOptions)
+        self.player_character.activated.connect(self.LoadSkinOptions)
         self.player_character.setMinimumWidth(120)
         self.player_character.setFont(self.parent.font_small)
         self.player_character.lineEdit().setFont(self.parent.font_small)
-        self.player_character.currentIndexChanged.connect(self.AutoExportCharacter)
+        self.player_character.activated.connect(self.AutoExportCharacter)
         self.player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_color_label = QLabel("Skin")
@@ -2139,64 +2171,80 @@ class PlayerColumn():
         self.player_character_color.setMinimumHeight(48)
         self.player_character_color.setMinimumWidth(120)
         self.player_character_color.setFont(self.parent.font_small)
-        self.player_character_color.currentIndexChanged.connect(self.AutoExportCharacter)
+        self.player_character_color.activated.connect(self.AutoExportCharacter)
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
         for c in self.parent.portraits.get(self.player_character.currentText(), []):
-            if self.parent.portraits[text][c] is not None:
-                self.player_character_color.addItem(self.parent.portraits[text][c], str(c))
+            if self.parent.portraits[self.player_character.currentText()][c] is not None:
+                self.player_character_color.addItem(self.parent.portraits[self.player_character.currentText()][c], str(c))
             else:
-                self.player_character_color.addItem(self.parent.stockIcons[text][c], str(c))
+                self.player_character_color.addItem(self.parent.stockIcons[self.player_character.currentText()][c], str(c))
     
     def LoadStateOptions(self, text):
         self.player_state.clear()
         self.player_state.addItem("")
-        for s in self.parent.countries.get(text, {}):
+        for s in self.parent.countries.get(self.player_country.currentText(), {}):
             self.player_state.addItem(str(s))
     
-    def AutoExportName(self):
+    def NameChanged(self):
+        self.parent.programState['p'+str(self.id)+'_name'] = self.player_name.text()
+        self.parent.programState['p'+str(self.id)+'_name_org'] = \
+            (self.player_org.text()+" | "+self.player_name.text()) if len(self.player_org.text()) > 0 else \
+            (self.player_name.text())
+        self.parent.programState['p'+str(self.id)+'_org'] = self.player_org.text()
+
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportName()
 
     def ExportName(self):
-        with open('out/p'+str(self.id)+'_name.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(self.player_name.text())
-        with open('out/p'+str(self.id)+'_name+prefix.txt', 'w', encoding='utf-8') as outfile:
-            if len(self.player_org.text()) > 0:
-                outfile.write(self.player_org.text()+" | "+self.player_name.text())
-            else:
+        if 'p'+str(self.id)+'_name' in self.parent.programStateDiff:
+            with open('out/p'+str(self.id)+'_name.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_name.text())
-        with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(self.player_org.text())
+        if 'p'+str(self.id)+'_name_org' in self.parent.programStateDiff:
+            with open('out/p'+str(self.id)+'_name+prefix.txt', 'w', encoding='utf-8') as outfile:
+                if len(self.player_org.text()) > 0:
+                    outfile.write(self.player_org.text()+" | "+self.player_name.text())
+                else:
+                    outfile.write(self.player_name.text())
+        if 'p'+str(self.id)+'_org' in self.parent.programStateDiff:
+            with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(self.player_org.text())
     
-    def AutoExportRealName(self):
+    def RealNameChanged(self):
+        self.parent.programState['p'+str(self.id)+'_real_name'] = self.player_real_name.text()
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportRealName()
     
     def ExportRealName(self):
-        with open('out/p'+str(self.id)+'_real_name.txt', 'w', encoding='utf-8') as outfile:
-            outfile.write(self.player_real_name.text())
+        if 'p'+str(self.id)+'_real_name' in self.parent.programStateDiff:
+            with open('out/p'+str(self.id)+'_real_name.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(self.player_real_name.text())
     
-    def AutoExportTwitter(self):
+    def TwitterChanged(self):
+        tt = ""
+        if self.player_twitter.text() != "":
+            if self.parent.settings.get("twitter_add_at") == True:
+                tt = "@"
+        tt+=self.player_twitter.text()
+
+        self.parent.programState['p'+str(self.id)+'_twitter'] = self.player_twitter.text()
+
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportTwitter()
     
     def ExportTwitter(self):
+        if 'p'+str(self.id)+'_twitter' in self.parent.programStateDiff:
+            with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(self.parent.programState['p'+str(self.id)+'_twitter'])
+    
+    def ExportSmashGGAvatar(self):
         try:
             self.parent.saveMutex.lock()
             def myFun(self, progress_callback):
-                removeFileIfExists('out/p'+str(self.id)+'_twitter.png')
-
-                with open('out/p'+str(self.id)+'_twitter.txt', 'w', encoding='utf-8') as outfile:
-                    prefix = ""
-
-                    if self.player_twitter.text() != "":
-                        if self.parent.settings.get("twitter_add_at") == True:
-                            prefix = "@"
-                    
-                    outfile.write(prefix+self.player_twitter.text())
-                
                 if self.player_obj.get("smashgg_image", None) is not None:
                     r = requests.get(self.player_obj["smashgg_image"], stream=True)
                     if r.status_code == 200:
@@ -2214,109 +2262,116 @@ class PlayerColumn():
         finally:
             self.parent.saveMutex.unlock()
     
-    def AutoExportCountry(self):
+    def CountryChanged(self):
+        self.parent.programState['p'+str(self.id)+'_country'] = self.player_country.currentText()
+
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportCountry()
 
     def ExportCountry(self):
-        try:
-            self.parent.saveMutex.lock()
-            def myFun(self, progress_callback):
+        if 'p'+str(self.id)+'_country' in self.parent.programStateDiff:
+            try:
                 removeFileIfExists("out/p"+str(self.id)+"_country_flag.png")
                 removeFileIfExists("out/p"+str(self.id)+"_country.txt")
 
                 with open('out/p'+str(self.id)+'_country.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(self.player_country.currentText())
-                
+                    
                 if self.player_country.currentText().lower() != "":
                     shutil.copy(
                         "country_icon/"+self.player_country.currentText().lower()+".png",
                         "out/p"+str(self.id)+"_country_flag.png"
                     )
-                
-                with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
-                    outfile.write(self.player_state.currentText())
-
-                if(self.player_state.currentText() != ""):
-                    r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
-                        self.player_country.currentText().upper()+"/"+
-                        self.player_state.currentText().upper()+".png", stream=True)
-                    if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_state.png', 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-                else:
-                    removeFileIfExists("out/p"+str(self.id)+"_state.png")
-            
-            worker = Worker(myFun, *{self})
-            self.parent.threadpool.start(worker)
-        except Exception as e:
-            print(e)
-        finally:
-            self.parent.saveMutex.unlock()
+            except Exception as e:
+                print(e)
     
-    def AutoExportState(self):
+    def StateChanged(self):
+        self.parent.programState['p'+str(self.id)+'_state'] = self.player_state.currentText()
+
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportState()
 
     def ExportState(self):
-        try:
-            with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
-                outfile.write(self.player_state.currentText())
-            shutil.copy(
-                "state_icon/"+self.player_state.currentData()+".png",
-                "out/p"+str(self.id)+"_flag.png"
-            )
-        except Exception as e:
-            print(e)
+        if 'p'+str(self.id)+'_state' in self.parent.programStateDiff:
+            try:
+                self.parent.saveMutex.lock()
+                def myFun(self, progress_callback):
+                    with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
+                        outfile.write(self.player_state.currentText())
+
+                    if(self.player_state.currentText() != ""):
+                        r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
+                            self.player_country.currentText().upper()+"/"+
+                            self.player_state.currentText().upper()+".png", stream=True)
+                        if r.status_code == 200:
+                            with open('out/p'+str(self.id)+'_state_flag.png', 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                    else:
+                        removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
+                
+                worker = Worker(myFun, *{self})
+                self.parent.threadpool.start(worker)
+            except Exception as e:
+                print(e)
+            finally:
+                self.parent.saveMutex.unlock()
     
     def AutoExportCharacter(self):
+        self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
+        self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
+
         if self.parent.settings.get("autosave") == True:
+            self.parent.ExportProgramState()
             self.ExportCharacter()
             
     def ExportCharacter(self):
-        self.parent.saveMutex.lock()
-        try:
-            removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
-            shutil.copy(
-                "character_icon/chara_0_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                "out/p"+str(self.id)+"_character_portrait.png"
-            )
-        except Exception as e:
-            print(e)
-        try:
-            removeFileIfExists("out/p"+str(self.id)+"_character_big.png")
-            shutil.copy(
-                "character_icon/chara_1_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                "out/p"+str(self.id)+"_character_big.png"
-            )
-        except Exception as e:
-            print(e)
-        try:
-            removeFileIfExists("out/p"+str(self.id)+"_character_full.png")
-            shutil.copy(
-                "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                "out/p"+str(self.id)+"_character_full.png"
-            )
-        except Exception as e:
-            print(e)
-        try:
-            removeFileIfExists("out/p"+str(self.id)+"_character_full-halfres.png")
-            shutil.copy(
-                "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
-                "out/p"+str(self.id)+"_character_full-halfres.png"
-            )
-        except Exception as e:
-            print(e)
-        try:
-            removeFileIfExists("out/p"+str(self.id)+"_character_stockicon.png")
-            shutil.copy(
-                "character_icon/chara_2_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                "out/p"+str(self.id)+"_character_stockicon.png"
-            )
-        except Exception as e:
-            print(e)
-        self.parent.saveMutex.unlock()
+        if 'p'+str(self.id)+'_character' in self.parent.programStateDiff or \
+        'p'+str(self.id)+'_character_color' in self.parent.programStateDiff:
+            self.parent.saveMutex.lock()
+            try:
+                removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
+                shutil.copy(
+                    "character_icon/chara_0_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "out/p"+str(self.id)+"_character_portrait.png"
+                )
+            except Exception as e:
+                print(e)
+            try:
+                removeFileIfExists("out/p"+str(self.id)+"_character_big.png")
+                shutil.copy(
+                    "character_icon/chara_1_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "out/p"+str(self.id)+"_character_big.png"
+                )
+            except Exception as e:
+                print(e)
+            try:
+                removeFileIfExists("out/p"+str(self.id)+"_character_full.png")
+                shutil.copy(
+                    "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "out/p"+str(self.id)+"_character_full.png"
+                )
+            except Exception as e:
+                print(e)
+            try:
+                removeFileIfExists("out/p"+str(self.id)+"_character_full-halfres.png")
+                shutil.copy(
+                    "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
+                    "out/p"+str(self.id)+"_character_full-halfres.png"
+                )
+            except Exception as e:
+                print(e)
+            try:
+                removeFileIfExists("out/p"+str(self.id)+"_character_stockicon.png")
+                shutil.copy(
+                    "character_icon/chara_2_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "out/p"+str(self.id)+"_character_stockicon.png"
+                )
+            except Exception as e:
+                print(e)
+            self.parent.saveMutex.unlock()
     
     def AutocompleteSelected(self, selected):
         if type(selected) == QModelIndex:
@@ -2362,10 +2417,14 @@ class PlayerColumn():
         else:
             self.player_country.setCurrentIndex(0)
         
+        self.StateChanged()
+        
         print("Set main")
         if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
             
+            self.LoadSkinOptions(player.get("mains", [""])[0])
+
             print("Set skin")
             if player.get("skins") is not None and player["mains"][0] in player.get("skins"):
                 self.player_character_color.setCurrentIndex(player["skins"][player["mains"][0]])
@@ -2373,10 +2432,10 @@ class PlayerColumn():
                 self.player_character_color.setCurrentIndex(0)
         else:
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
-            self.player_character_color.setCurrentIndex(player.get("skins", [0])[0])
-            #self.player_character.setCurrentIndex(0)
+            self.LoadSkinOptions("Random")
+            self.player_character_color.setCurrentIndex(0)
         
-        self.AutoExportTwitter()
+        self.AutoExportCharacter()
     
     def selectPRPlayerBySmashGGId(self, smashgg_id):
         index = next((i for i, p in enumerate(self.parent.allplayers["players"]) if str(p.get("smashgg_id", None)) == smashgg_id), None)

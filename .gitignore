@@ -10,3 +10,4 @@ update.tar.gz
 __pycache__/
 .vscode/
 log_error.txt
+log.txt
