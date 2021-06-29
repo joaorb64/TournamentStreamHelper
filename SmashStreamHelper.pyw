@@ -175,7 +175,7 @@ class Worker(QRunnable):
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignals()    
+        self.signals = WorkerSignals()
 
         # Add the callback to our kwargs
         self.kwargs['progress_callback'] = self.signals.progress        
@@ -2012,7 +2012,7 @@ class Window(QWidget):
                         id0 = 1
                         id1 = 0
 
-                    self.player_layouts[id0].SetFromPlayerObj(player_obj)
+                    self.player_layouts[id0].signals.UpdatePlayer.emit(player_obj)
 
                     print("--------")
                     print(entrant["id"])
@@ -2030,7 +2030,7 @@ class Window(QWidget):
                     entrant = resp["data"]["set"]["slots"][1]["entrant"]
                     player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-                    self.player_layouts[id1].SetFromPlayerObj(player_obj)
+                    self.player_layouts[id1].signals.UpdatePlayer.emit(player_obj)
 
                     # Update score
                     score = 0
@@ -2043,9 +2043,15 @@ class Window(QWidget):
         worker = Worker(myFun, *{self}, **{"setId": setId})
         self.threadpool.start(worker)
 
+class PlayerColumnSignals(QObject):
+    UpdatePlayer = pyqtSignal(object)
+
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
         super().__init__()
+
+        self.signals = PlayerColumnSignals()
+        self.signals.UpdatePlayer.connect(self.SetFromPlayerObj)
 
         self.parent = parent
         self.id = id
