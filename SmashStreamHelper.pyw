@@ -553,8 +553,6 @@ class Window(QWidget):
 
         self.playersInverted = False
 
-        self.lastStageStrikeState = None
-
         self.LoadData()
 
         self.show()
@@ -1908,16 +1906,16 @@ class Window(QWidget):
                     
                     changed = False
 
-                    stageStrikeState = [
-                        allStages,
-                        strikedStages,
-                        selectedStage,
-                        dsrStages,
-                        playerTurn
-                    ]
+                    stageStrikeState = {
+                        "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
+                        "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
+                        "selected": stages.get(str(selectedStage), ""),
+                        "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                        "playerTurn": playerTurn
+                    }
 
-                    if self.lastStageStrikeState != None:
-                        if str(stageStrikeState) != str(self.lastStageStrikeState):
+                    if "stage_strike" in self.programState:
+                        if str(stageStrikeState) != str(self.programState):
                             changed = True
                     else:
                         changed = True
@@ -1980,7 +1978,8 @@ class Window(QWidget):
                             "./out/stage_strike.png"
                         )
                     
-                    self.lastStageStrikeState = stageStrikeState
+                    self.programState["stage_strike"] = stageStrikeState
+                    self.ExportProgramState()
 
                     resp = self.setData
 

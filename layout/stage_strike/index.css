@@ -1,0 +1,57 @@
+@font-face {
+    font-family: "Roboto";
+    src: url("../include/Roboto-Regular.ttf") format("truetype");
+}
+
+.text {
+    white-space: nowrap;
+    display: flex;
+    min-width: 100%;
+    width: fit-content;
+    place-items: center;
+    place-content: center;
+    height: 100%;
+}
+
+body {
+    font-family: Roboto;
+    font-weight: bold;
+    display: none;
+    overflow: hidden;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.stage-icon {
+    width: 256px;
+    height: 128px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.stage-container {
+    margin: 10px;
+}
+
+.stamp {
+    position: relative;
+    top: 58px;
+    left: 185px;
+    width: 64px;
+    height: 64px;
+}
+.stamp.stage-striked {
+    background-image: url(../../icons/stage_strike.svg);
+}
+.stamp.stage-dsr {
+    background-image: url(../../icons/stage_dsr.svg);
+}
+.stamp.stage-selected {
+    background-image: url(../../icons/stage_select.svg);
+}
