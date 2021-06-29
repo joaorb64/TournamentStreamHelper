@@ -29,7 +29,7 @@
             fadeOutTime = 0;
         };
 
-        html = html.replaceAll("'", '"');
+        html = html.replace(/'/g, '"');
 
         if(force || element.find(".text").html() != html){
             gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{

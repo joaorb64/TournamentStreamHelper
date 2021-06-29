@@ -29,7 +29,7 @@
             fadeOutTime = 0;
         };
 
-        html = html.replaceAll("'", '"');
+        html = html.replace(/'/g, '"');
 
         if(force || element.find(".text").html() != html){
             gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{
@@ -43,7 +43,6 @@
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.container'], { duration: 1, width: '0', ease: "power2.inOut" }, 0)
         .from(['.phase'], { duration: 1, opacity: '0', ease: "power2.inOut" }, 0)
-    startingAnimation.eventCallback("onComplete", Update)
             
     function Start(){
         startingAnimation.restart();
