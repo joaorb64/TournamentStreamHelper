@@ -6,9 +6,11 @@ Program itself
 
 ![screenshot](./media/screenshot1.png)
 
-Animated scoreboard sample -- included in the program
+Scoreboard samples -- included in the program
 
 ![screenshot](./media/scoreboard.gif)
+
+![screenshot](./media/scoreboard2.png)
 
 Stage Striking output
 
