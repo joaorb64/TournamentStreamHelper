@@ -1135,7 +1135,7 @@ class Window(QWidget):
             ""
         )
         if okPressed:
-            self.settings["SMASHGG_KEY"] = text
+            self.settings["SMASHGG_KEY"] = text.strip()
             self.SaveSettings()
 
     def SetSmashggEventSlug(self):
