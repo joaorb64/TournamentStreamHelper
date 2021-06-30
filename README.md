@@ -2,7 +2,17 @@
 
 A Stream helper for Super Smash Bros Ultimate
 
+Program itself
+
 ![screenshot](./media/screenshot1.png)
+
+Animated scoreboard sample -- included in the program
+
+![screenshot](./media/scoreboard.gif)
+
+Stage Striking output
+
+![screenshot](./media/stage_strike.png)
 
 Features:
 - Update stream information without messing up your OBS setup
