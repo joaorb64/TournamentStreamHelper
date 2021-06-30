@@ -52,6 +52,8 @@ Linux:
 
 ## I'm streaming my own run in an online tournament
 
+- Activate **Settings** > **Competitor Mode**
+
 - Click on the SmashGG button's arrow, configure your SmashGG Key as prompted (only needs to be done once)
 - Click on the SmashGG button's arrow, configure your SmashGG user id as prompted (only needs to be done once)
 
