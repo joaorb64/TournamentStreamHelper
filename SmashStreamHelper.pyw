@@ -123,6 +123,7 @@ characters = {
     "Steve": "Steve",
     "Sephiroth": "Sephiroth",
     "Pyra & Mythra": "Pyra & Mythra",
+    "Kazuya": "Kazuya",
     "Random Character": "Random"
 }
 
