@@ -702,15 +702,9 @@ class Window(QWidget):
         self.smashggSetAutoUpdateId = None
         self.programState["smashgg_set_id"] = None
         self.ExportProgramState()
-        self.ExportSmashGGAvatar()
         self.statusLabelTime.setText("")
         self.statusLabelTimeCancel.hide()
         self.statusLabel.setText("Manual")
-    
-    def ExportSmashGGAvatar(self):
-        if "smashgg_set_id" in self.programStateDiff:
-            for p in self.player_layouts:
-                p.ExportSmashGGAvatar()
     
     def updateTimerLabel(self):
         if self.autoTimer:
@@ -1065,15 +1059,20 @@ class Window(QWidget):
         self.SaveSettings()
     
     def ExportProgramState(self):
+        self.saveMutex.lock()
+
         diff = [k for k in self.programState.keys() if self.programState[k] != self.savedProgramState.get(k, None)]
 
         print(diff)
 
-        if len(diff) > 0:
-            with open('./out/program_state.json', 'w') as outfile:
-                json.dump(self.programState, outfile, indent=4)
-                self.savedProgramState = copy.deepcopy(self.programState)
-                self.programStateDiff = diff
+        for k in diff:
+            print("["+k+"] "+str(self.savedProgramState.get(k))+" → "+str(self.programState.get(k)))
+
+        with open('./out/program_state.json', 'w') as outfile:
+            json.dump(self.programState, outfile, indent=4)
+            self.savedProgramState = copy.deepcopy(self.programState)
+            self.programStateDiff = diff
+        self.saveMutex.unlock()
     
     def SaveButtonClicked(self):
         self.ExportProgramState()
@@ -1729,10 +1728,6 @@ class Window(QWidget):
         
         if setId == None:
             return
-        
-        self.programState["smashgg_set_id"] = setId
-        self.ExportProgramState()
-        self.ExportSmashGGAvatar()
 
         if self.settings.get("SMASHGG_KEY", None) is None:
             self.SetSmashggKey()
@@ -1764,6 +1759,7 @@ class Window(QWidget):
                             set(id: $setId) {
                                 fullRoundText
                                 state
+                                totalGames
                                 slots {
                                     entrant {
                                         id
@@ -1832,6 +1828,7 @@ class Window(QWidget):
                     }
                 )
                 self.setData = json.loads(r.text)
+                print(self.setData)
                 print("Got response from new smashgg api")
             
             worker1 = Worker(fun1, *{self})
@@ -2197,12 +2194,14 @@ class PlayerColumn():
                 self.player_character_color.addItem(self.parent.portraits[self.player_character.currentText()][c], str(c))
             else:
                 self.player_character_color.addItem(self.parent.stockIcons[self.player_character.currentText()][c], str(c))
-    
+        self.player_character_color.repaint()
+
     def LoadStateOptions(self, text):
         self.player_state.clear()
         self.player_state.addItem("")
         for s in self.parent.countries.get(self.player_country.currentText(), {}):
             self.player_state.addItem(str(s))
+        self.player_state.repaint()
     
     def NameChanged(self):
         self.parent.programState['p'+str(self.id)+'_name'] = self.player_name.text()
@@ -2259,25 +2258,26 @@ class PlayerColumn():
                 outfile.write(self.parent.programState['p'+str(self.id)+'_twitter'])
     
     def ExportSmashGGAvatar(self):
-        try:
-            self.parent.saveMutex.lock()
-            def myFun(self, progress_callback):
-                if self.player_obj.get("smashgg_image", None) is not None:
-                    r = requests.get(self.player_obj["smashgg_image"], stream=True)
-                    if r.status_code == 200:
-                        with open('out/p'+str(self.id)+'_smashgg_avatar.png', 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-                            f.flush()
-                else:
-                    removeFileIfExists('out/p'+str(self.id)+'_smashgg_avatar.png')
-            
-            worker = Worker(myFun, *{self})
-            self.parent.threadpool.start(worker)
-        except Exception as e:
-            print(e)
-        finally:
-            self.parent.saveMutex.unlock()
+        if "p"+str(self.id)+"_smashgg_id" in self.parent.programStateDiff:
+            try:
+                self.parent.saveMutex.lock()
+                def myFun(self, progress_callback):
+                    if self.player_obj.get("smashgg_image", None) is not None:
+                        r = requests.get(self.player_obj["smashgg_image"], stream=True)
+                        if r.status_code == 200:
+                            with open('out/p'+str(self.id)+'_smashgg_avatar.png', 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                                f.flush()
+                    else:
+                        removeFileIfExists('out/p'+str(self.id)+'_smashgg_avatar.png')
+                
+                worker = Worker(myFun, *{self})
+                self.parent.threadpool.start(worker)
+            except Exception as e:
+                print(e)
+            finally:
+                self.parent.saveMutex.unlock()
     
     def CountryChanged(self):
         self.parent.programState['p'+str(self.id)+'_country'] = self.player_country.currentText()
@@ -2346,8 +2346,8 @@ class PlayerColumn():
             self.ExportCharacter()
             
     def ExportCharacter(self):
-        if 'p'+str(self.id)+'_character' in self.parent.programStateDiff or \
-        'p'+str(self.id)+'_character_color' in self.parent.programStateDiff:
+        print(self.parent.programStateDiff)
+        if 'p'+str(self.id)+'_character' in self.parent.programStateDiff or 'p'+str(self.id)+'_character_color' in self.parent.programStateDiff:
             self.parent.saveMutex.lock()
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
@@ -2454,6 +2454,11 @@ class PlayerColumn():
             self.player_character_color.setCurrentIndex(0)
         
         self.AutoExportCharacter()
+        
+        print("Update Smashgg Avatar")
+        self.parent.programState["p"+str(self.id)+"_smashgg_id"] = player.get("smashgg_id", None)
+        self.parent.ExportProgramState()
+        self.ExportSmashGGAvatar()
     
     def selectPRPlayerBySmashGGId(self, smashgg_id):
         index = next((i for i, p in enumerate(self.parent.allplayers["players"]) if str(p.get("smashgg_id", None)) == smashgg_id), None)
