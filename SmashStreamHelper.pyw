@@ -700,9 +700,17 @@ class Window(QWidget):
             self.autoTimer.stop()
             self.autoTimer = None
         self.smashggSetAutoUpdateId = None
+        self.programState["smashgg_set_id"] = None
+        self.ExportProgramState()
+        self.ExportSmashGGAvatar()
         self.statusLabelTime.setText("")
         self.statusLabelTimeCancel.hide()
         self.statusLabel.setText("Manual")
+    
+    def ExportSmashGGAvatar(self):
+        if "smashgg_set_id" in self.programStateDiff:
+            for p in self.player_layouts:
+                p.ExportSmashGGAvatar()
     
     def updateTimerLabel(self):
         if self.autoTimer:
@@ -1721,6 +1729,10 @@ class Window(QWidget):
         
         if setId == None:
             return
+        
+        self.programState["smashgg_set_id"] = setId
+        self.ExportProgramState()
+        self.ExportSmashGGAvatar()
 
         if self.settings.get("SMASHGG_KEY", None) is None:
             self.SetSmashggKey()
@@ -1915,7 +1927,7 @@ class Window(QWidget):
                     }
 
                     if "stage_strike" in self.programState:
-                        if str(stageStrikeState) != str(self.programState):
+                        if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
                             changed = True
                     else:
                         changed = True
