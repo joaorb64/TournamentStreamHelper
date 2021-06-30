@@ -1,0 +1,104 @@
+(($) => {
+    function getData() {
+        return $.ajax({
+            dataType: 'json',
+            url: '../../out/program_state.json',
+            cache: false,
+        });
+    }
+
+    function FitText(target) {
+        let fontSize = parseInt(target.css("font-size").split('px')[0]);
+        let textElement = target.find(".text");
+
+        while(textElement.width() > parseInt(target.css("width").split('px')[0]) && fontSize > 0) {
+            fontSize--
+            textElement.css("font-size", fontSize+"px");
+        }
+    }
+
+    function SetInnerHtml(element, html, force=false){
+        let fadeOutTime = 0.5;
+        let fadeInTime = 0.5;
+
+        if(html == null) html = "";
+
+        // First run, no need of smooth fade out
+        if(element.find(".text").length == 0){
+            element.html("<div class='text'></div>");
+            fadeOutTime = 0;
+        };
+
+        html = html.replace(/'/g, '"');
+
+        if(force || element.find(".text").html() != html){
+            gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{
+                element.find(".text").html(html);
+                FitText(element);
+                gsap.to(element.find(".text"), { autoAlpha: 1, duration: fadeInTime });
+            } });
+        }
+    }
+    
+    let startingAnimation = gsap.timeline({ paused: true })
+        .from(['.phase'], { duration: .8, opacity: '0', y: "-20px", ease: "power2.inOut" }, 0)
+            
+    function Start(){
+        startingAnimation.restart();
+    }
+
+    var data = {}
+    var oldData = {}
+
+    async function Update(){
+        oldData = data;
+        data = await getData();
+
+        SetInnerHtml($(".p1 .name"), `
+            <span>
+                <span class='sponsor'>
+                    ${data.p1_org ? (data.p1_org+"&nbsp;") : ""}
+                </span>
+                ${data.p1_name}
+            </span>
+        `);
+
+        SetInnerHtml($(".p2 .name"), `
+            <span>
+                <span class='sponsor'>
+                    ${data.p2_org ? (data.p2_org+"&nbsp;") : ""}
+                </span>
+                ${data.p2_name}
+            </span>
+        `);
+
+        SetInnerHtml($(".p1 .flagcountry"), `
+            <div class='flag' style='background-image: url(../../country_icon/${data.p1_country.toLowerCase()}.png)'></div>
+        `);
+
+        SetInnerHtml($(".p1 .flagstate"), `
+            <div class='flag' style='background-image: url(../../out/p1_state_flag.png)'></div>
+        `, oldData.p1_state != data.p1_state);
+
+        SetInnerHtml($(".p2 .flagcountry"), `
+            <div class='flag' style='background-image: url(../../country_icon/${data.p2_country.toLowerCase()}.png)'></div>
+        `);
+
+        SetInnerHtml($(".p2 .flagstate"), `
+            <div class='flag' style='background-image: url(../../out/p2_state_flag.png)'></div>
+        `, oldData.p2_state != data.p2_state);
+
+        SetInnerHtml($(".p1 .score"), String(data.score_left));
+        SetInnerHtml($(".p2 .score"), String(data.score_right));
+
+        SetInnerHtml($(".phase"), data.tournament_phase);
+    }
+
+    $(document).ready(() => {
+        Update();
+        $('body').fadeIn(500, async () => {
+            Start();
+            setInterval(Update, 1000);
+        });
+    });
+})(jQuery);

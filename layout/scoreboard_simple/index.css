@@ -1,0 +1,143 @@
+@font-face {
+    font-family: "Roboto";
+    src: url("../include/Roboto-Regular.ttf") format("truetype");
+}
+
+.text {
+    white-space: nowrap;
+    display: flex;
+    min-width: 100%;
+    width: fit-content;
+    place-items: center;
+    place-content: inherit;
+    height: 100%;
+}
+
+body {
+    font-family: Roboto;
+    letter-spacing: 1.2px;
+    font-weight: bold;
+    display: none;
+    overflow: hidden;
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+}
+
+.container {
+    width: 243px;
+    height: 33px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: absolute;
+    color: white;
+}
+
+.p1.container {
+    background-position: 100% 0;
+    right: 1207px;
+    top: 998px;
+    background-image: url("./p1-container.png");
+}
+
+.p2.container {
+    background-position: 0 0;
+    left: 1212px;
+    top: 998px;
+    background-image: url("./p2-container.png");
+}
+
+.container .name {
+    position: absolute;
+    left: 60px;
+    top: 8px;
+    width: 140px;
+    height: 24px;
+    font-size: 20px;
+}
+
+.logo {
+    position: absolute;
+    top: 900px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
+    background-image: url("./logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sponsor {
+    color: yellow;
+}
+
+.phase {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 472px;
+    height: 46px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("./phase-container.png");
+    color: white;
+    font-size: 34px;
+    place-content: center;
+}
+
+.flag {
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 28px;
+    height: 20px;
+}
+
+.flagcountry {
+    position: absolute;
+    top: 10px;
+    left: 212px;
+}
+
+.flagstate {
+    position: absolute;
+    top: 10px;
+    left: 180px;
+}
+
+.score_container {
+    width: 103px;
+    height: 133px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: absolute;
+    color: white;
+}
+
+.p1.score_container {
+    background-position: 100% 0;
+    right: 1479px;
+    top: 938px;
+    background-image: url("./p1-score.png");
+}
+
+.p2.score_container {
+    background-position: 0 0;
+    right: 734px;
+    top: 938px;
+    background-image: url("./p2-score.png");
+}
+
+.score {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    font-size: 48px;
+}
