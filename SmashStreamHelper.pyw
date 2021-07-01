@@ -606,7 +606,7 @@ class Window(QWidget):
                     
                     buttonReply.show()
                     
-                    def Update(self):
+                    def Update():
                         self.downloadDialogue = QProgressDialog("Downloading update... ", "Cancel", 0, 0, self)
                         self.downloadDialogue.show()
 
@@ -638,7 +638,7 @@ class Window(QWidget):
                             self.downloadDialogue.close()
                             tar = tarfile.open("update.tar.gz")
                             print(tar.getmembers())
-                            os.rename("./layout", "./layout_backup_"+time.time())
+                            os.rename("./layout", "./layout_backup_"+str(time.time()))
                             for m in tar.getmembers():
                                 if "/" in m.name:
                                     m.name = m.name.split("/", 1)[1]
