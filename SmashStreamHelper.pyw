@@ -730,7 +730,7 @@ class Window(QWidget):
             with open('out/p2_score.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(str(self.scoreRight.value()))
         if "tournament_phase" in self.programStateDiff:
-            with open('out/tournament_phase.txt', 'w', encoding='utf-8') as outfile:
+            with open('out/match_phase.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.tournament_phase.currentText())
     
     def ResetScoreButtonClicked(self):
