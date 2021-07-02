@@ -1601,7 +1601,7 @@ class Window(QWidget):
     
     def SetFromSmashGGSelected(self):
         row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
-        setId = self.smashggSetSelectionItemList.model().index(row, 4).data()
+        setId = self.smashggSetSelectionItemList.model().index(row, 5).data()
         self.LoadPlayersFromSmashGGSet(setId)
         self.smashGGSetSelecDialog.close()
         
