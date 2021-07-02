@@ -1485,19 +1485,23 @@ class Window(QWidget):
         if slug == None:
             return
 
-        r = requests.post(
-            'https://api.smash.gg/gql/alpha',
-            headers={
-                'Authorization': 'Bearer'+key,
-            },
-            json={
-                'query': '''
-                query evento($eventSlug: String!) {
-                    event(slug: $eventSlug) {
-                        tournament {
-                            streamQueue {
-                                sets {
+        sets = []
+        page = 1
+
+        while(True):
+            r = requests.post(
+                'https://api.smash.gg/gql/alpha',
+                headers={
+                    'Authorization': 'Bearer'+key,
+                },
+                json={
+                    'query': '''
+                    query evento($eventSlug: String!) {
+                        event(slug: $eventSlug) {
+                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
+                                nodes {
                                     id
+                                    state
                                     fullRoundText
                                     slots {
                                         entrant {
@@ -1506,69 +1510,51 @@ class Window(QWidget):
                                             }                                        
                                         }
                                     }
-                                }
-                                stream {
-                                    streamName
-                                    streamSource
-                                }
-                            }
-                        }
-                        sets(page: 1, perPage: 128, sortType: MAGIC, filters: {hideEmpty: true}) {
-                            nodes {
-                                id
-                                state
-                                fullRoundText
-                                slots {
-                                    entrant {
-                                        participants {
-                                            gamerTag
-                                        }                                        
+                                    phaseGroup {
+                                        phase {
+                                            name
+                                        }
+                                    }
+                                    stream {
+                                        streamName
+                                        streamSource
                                     }
                                 }
+                                pageInfo {
+                                    totalPages
+                                }
                             }
                         }
-                    }
-                }''',
-                'variables': {
-                    "eventSlug": slug
-                },
-            }
-        )
-        resp = json.loads(r.text)
+                    }''',
+                    'variables': {
+                        "eventSlug": slug
+                    },
+                }
+            )
+            resp = json.loads(r.text)
 
-        if resp is None or \
-        resp.get("data") is None or \
-        resp["data"].get("event") is None or \
-        resp["data"]["event"].get("sets") is None:
-            print(resp)
+            if resp is None or \
+            resp.get("data") is None or \
+            resp["data"].get("event") is None or \
+            resp["data"]["event"].get("sets") is None:
+                print(resp)
+            
+            sets += resp["data"]["event"]["sets"]["nodes"]
+
+            if page >= resp["data"]["event"]["sets"]["pageInfo"]["totalPages"]:
+                break
+
+            page += 1
         
         model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Stream", "Set", "Player 1", "Player 2"])
-
-        streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
-        sets = resp["data"]["event"]["sets"]["nodes"]
-
-        streamSetIds = []
-        if streamSets is not None:
-            streamSetIds = [s.get("sets", [{}])[0].get("id", None) for s in streamSets]
-        sets = [s for s in sets if s.get("state") != 3 and s.get("id") not in streamSetIds]
-
-        if streamSets is not None:
-            for s in streamSets:
-                if s["sets"][0]["slots"][0].get("entrant", None) and s["sets"][0]["slots"][1].get("entrant", None):
-                    model.appendRow([
-                        QStandardItem(s["stream"]["streamName"]),
-                        QStandardItem(s["sets"][0]["fullRoundText"]),
-                        QStandardItem(s["sets"][0]["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
-                        QStandardItem(s["sets"][0]["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
-                        QStandardItem(str(s["sets"][0]["id"]))
-                    ])
+        model.setHorizontalHeaderLabels(["Stream", "Wave", "Set", "Player 1", "Player 2"])
 
         if sets is not None:
             for s in sets:
                 if s["slots"][0].get("entrant", None) and s["slots"][1].get("entrant", None):
                     model.appendRow([
-                        QStandardItem(""),
+                        QStandardItem(s.get("stream", {}).get("streamName", "") if s.get("stream") != None else ""),
+                        QStandardItem(s.get("phaseGroup", {}).get("phase", {}).get("name", "")),
                         QStandardItem(s["fullRoundText"]),
                         QStandardItem(s["slots"][0]["entrant"]["participants"][0]["gamerTag"]),
                         QStandardItem(s["slots"][1]["entrant"]["participants"][0]["gamerTag"]),
@@ -1582,12 +1568,25 @@ class Window(QWidget):
         layout = QVBoxLayout()
         self.smashGGSetSelecDialog.setLayout(layout)
 
+        proxyModel = QSortFilterProxyModel()
+        proxyModel.setSourceModel(model)
+        proxyModel.setFilterKeyColumn(-1)
+        proxyModel.setFilterCaseSensitivity(False)
+
+        def filterList(text):
+            proxyModel.setFilterFixedString(text)
+
+        searchBar = QLineEdit()
+        searchBar.setPlaceholderText("Filter...")
+        layout.addWidget(searchBar)
+        searchBar.textEdited.connect(filterList)
+
         self.smashggSetSelectionItemList = QTableView()
         layout.addWidget(self.smashggSetSelectionItemList)
+        self.smashggSetSelectionItemList.setSortingEnabled(True)
         self.smashggSetSelectionItemList.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.smashggSetSelectionItemList.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.smashggSetSelectionItemList.setModel(model)
-        self.smashggSetSelectionItemList.setColumnHidden(4, True)
+        self.smashggSetSelectionItemList.setModel(proxyModel)
         self.smashggSetSelectionItemList.setColumnHidden(5, True)
         self.smashggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
         self.smashggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -1598,7 +1597,7 @@ class Window(QWidget):
         btOk.clicked.connect(self.SetFromSmashGGSelected)
 
         self.smashGGSetSelecDialog.show()
-        self.smashGGSetSelecDialog.resize(800, 400)
+        self.smashGGSetSelecDialog.resize(1200, 500)
     
     def SetFromSmashGGSelected(self):
         row = self.smashggSetSelectionItemList.selectionModel().selectedRows()[0].row()
