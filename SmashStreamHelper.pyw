@@ -376,6 +376,7 @@ class Window(QWidget):
         self.scoreRight.setAlignment(Qt.AlignHCenter)
         self.scoreRight.valueChanged.connect(self.ScoreChanged)
         layout_middle.addWidget(self.scoreRight, 2, 1, 1, 1)
+        self.ScoreChanged()
 
         self.reset_score_bt = QPushButton()
         layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
@@ -2109,6 +2110,7 @@ class PlayerColumn():
         self.player_org.setFont(self.parent.font_small)
         self.player_org.textChanged.connect(self.NameChanged)
         self.player_org.setMinimumWidth(100)
+        self.NameChanged()
 
         real_name_label = QLabel("Name")
         real_name_label.setFont(self.parent.font_small)
@@ -2118,6 +2120,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_real_name, 3, pos_forms)
         self.player_real_name.setFont(self.parent.font_small)
         self.player_real_name.textChanged.connect(self.RealNameChanged)
+        self.RealNameChanged()
         self.player_real_name.setMinimumWidth(100)
 
         player_twitter_label = QLabel("Twitter")
@@ -2128,6 +2131,7 @@ class PlayerColumn():
         self.layout_grid.addWidget(self.player_twitter, 4, pos_forms)
         self.player_twitter.setFont(self.parent.font_small)
         self.player_twitter.textChanged.connect(self.TwitterChanged)
+        self.TwitterChanged()
         self.player_twitter.setMinimumWidth(100)
 
         location_layout = QHBoxLayout()
@@ -2149,6 +2153,7 @@ class PlayerColumn():
         self.player_country.lineEdit().setFont(self.parent.font_small)
         self.player_country.currentIndexChanged.connect(self.CountryChanged)
         self.player_country.textActivated.connect(self.LoadStateOptions)
+        self.CountryChanged()
         self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         self.player_state = QComboBox()
@@ -2158,6 +2163,7 @@ class PlayerColumn():
         self.player_state.setFont(self.parent.font_small)
         self.player_state.lineEdit().setFont(self.parent.font_small)
         self.player_state.activated.connect(self.StateChanged)
+        self.StateChanged()
         self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_label = QLabel("Character")
@@ -2174,7 +2180,7 @@ class PlayerColumn():
         self.player_character.setMinimumWidth(120)
         self.player_character.setFont(self.parent.font_small)
         self.player_character.lineEdit().setFont(self.parent.font_small)
-        self.player_character.activated.connect(self.AutoExportCharacter)
+        self.player_character.activated.connect(self.CharacterChanged)
         self.player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
 
         player_character_color_label = QLabel("Skin")
@@ -2187,7 +2193,8 @@ class PlayerColumn():
         self.player_character_color.setMinimumHeight(48)
         self.player_character_color.setMinimumWidth(120)
         self.player_character_color.setFont(self.parent.font_small)
-        self.player_character_color.activated.connect(self.AutoExportCharacter)
+        self.player_character_color.activated.connect(self.CharacterChanged)
+        self.CharacterChanged()
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
@@ -2338,9 +2345,9 @@ class PlayerColumn():
             finally:
                 self.parent.saveMutex.unlock()
     
-    def AutoExportCharacter(self):
+    def CharacterChanged(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
-        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.character_to_codename.get(self.player_character.currentText())
+        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.character_to_codename.get(self.player_character.currentText(), "")
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
@@ -2455,7 +2462,7 @@ class PlayerColumn():
             self.LoadSkinOptions("Random")
             self.player_character_color.setCurrentIndex(0)
         
-        self.AutoExportCharacter()
+        self.CharacterChanged()
         
         print("Update Smashgg Avatar")
         self.parent.programState["p"+str(self.id)+"_smashgg_id"] = player.get("smashgg_id", None)
