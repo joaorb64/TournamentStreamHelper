@@ -2256,13 +2256,36 @@ class PlayerColumn():
         self.player_character_color.activated.connect(self.CharacterChanged)
         self.CharacterChanged()
 
-        self.save_bt = QPushButton("Save to localdb")
-        self.layout_grid.addWidget(self.save_bt, 5, 1, 1, 1)
+        bottom_buttons_layout = QHBoxLayout()
+        self.layout_grid.addLayout(bottom_buttons_layout, 5, 0, 1, -1)
+
+        self.save_bt = QPushButton("Save to local DB")
+        self.save_bt.setIcon(QIcon('icons/save.svg'))
+        bottom_buttons_layout.addWidget(self.save_bt)
         self.save_bt.clicked.connect(self.SavePlayerToDB)
 
-        self.delete_bt = QPushButton("Delete from localdb")
-        self.layout_grid.addWidget(self.delete_bt, 5, 3, 1, 1)
+        self.delete_bt = QPushButton("Delete from local DB")
+        self.delete_bt.setIcon(QIcon('icons/cancel.svg'))
+        bottom_buttons_layout.addWidget(self.delete_bt)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
+
+        self.clear_bt = QPushButton("Clear")
+        self.clear_bt.setIcon(QIcon('icons/undo.svg'))
+        bottom_buttons_layout.addWidget(self.clear_bt)
+        self.clear_bt.clicked.connect(self.Clear)
+    
+    def Clear(self):
+        self.player_name.clear()
+        self.player_org.clear()
+        self.player_country.clear()
+        self.player_state.clear()
+        self.player_character.clear()
+        self.player_character_color.clear()
+        self.player_twitter.clear()
+        self.player_real_name.clear()
+        self.StateChanged()
+        self.CharacterChanged()
+        self.ExportState()
     
     def SavePlayerToDB(self):
         key = (self.player_org.text()+" " if self.player_org.text() != "" else "") + self.player_name.text()
