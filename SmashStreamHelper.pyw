@@ -16,6 +16,8 @@ try:
     import time
     import os
 
+    import csv
+
     import copy
 
     from collections import Counter
@@ -276,7 +278,7 @@ class Window(QWidget):
             self.SaveSettings()
             print("Settings created")
 
-        self.font_small = QFont("font/RobotoCondensed-Regular.ttf", pointSize=8)
+        self.font_small = QFont("font/RobotoCondensed.ttf", pointSize=8)
         
         self.threadpool = QThreadPool()
         self.saveMutex = QMutex()
@@ -366,27 +368,36 @@ class Window(QWidget):
 
         self.tournament_phase.currentTextChanged.connect(self.ScoreChanged)
 
+        best_of_label = QLabel("Best of")
+        best_of_label.setFont(self.font_small)
+        layout_middle.addWidget(best_of_label, 2, 0, 1, 2)
+
+        self.bestOf = QSpinBox()
+        self.bestOf.setFont(self.font_small)
+        layout_middle.addWidget(self.bestOf, 2, 1, 1, 2)
+        self.bestOf.valueChanged.connect(self.ScoreChanged)
+
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreLeft.setAlignment(Qt.AlignHCenter)
-        layout_middle.addWidget(self.scoreLeft, 2, 0, 1, 1)
+        layout_middle.addWidget(self.scoreLeft, 3, 0, 1, 1)
         self.scoreLeft.valueChanged.connect(self.ScoreChanged)
         self.scoreRight = QSpinBox()
         self.scoreRight.setFont(QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
         self.scoreRight.setAlignment(Qt.AlignHCenter)
         self.scoreRight.valueChanged.connect(self.ScoreChanged)
-        layout_middle.addWidget(self.scoreRight, 2, 1, 1, 1)
+        layout_middle.addWidget(self.scoreRight, 3, 1, 1, 1)
         self.ScoreChanged()
 
         self.reset_score_bt = QPushButton()
-        layout_middle.addWidget(self.reset_score_bt, 3, 0, 1, 2)
+        layout_middle.addWidget(self.reset_score_bt, 4, 0, 1, 2)
         self.reset_score_bt.setIcon(QIcon('icons/undo.svg'))
         self.reset_score_bt.setText("Reset score")
         self.reset_score_bt.setFont(self.font_small)
         self.reset_score_bt.clicked.connect(self.ResetScoreButtonClicked)
 
         self.invert_bt = QPushButton()
-        layout_middle.addWidget(self.invert_bt, 4, 0, 1, 2)
+        layout_middle.addWidget(self.invert_bt, 5, 0, 1, 2)
         self.invert_bt.setIcon(QIcon('icons/swap.svg'))
         self.invert_bt.setText("Swap players")
         self.invert_bt.setFont(self.font_small)
@@ -717,6 +728,7 @@ class Window(QWidget):
         self.programState["score_left"] = self.scoreLeft.value()
         self.programState["score_right"] = self.scoreRight.value()
         self.programState["tournament_phase"] = self.tournament_phase.currentText()
+        self.programState["best_of"] = self.bestOf.value()
 
         if self.settings.get("autosave") == True:
             self.ExportProgramState()
@@ -732,6 +744,9 @@ class Window(QWidget):
         if "tournament_phase" in self.programStateDiff:
             with open('out/match_phase.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.tournament_phase.currentText())
+        if "best_of" in self.programStateDiff:
+            with open('out/best_of.txt', 'w', encoding='utf-8') as outfile:
+                outfile.write(str(self.bestOf.value()))
     
     def ResetScoreButtonClicked(self):
         self.scoreLeft.setValue(0)
@@ -922,6 +937,11 @@ class Window(QWidget):
                 if found is None:
                     p["from_smashgg"] = True
                     ap.append(p)
+        
+        if self.local_players is not None:
+            for p in self.local_players.values():
+                p["from_local"] = True
+                ap.append(p)
 
         self.mergedPlayers = ap
 
@@ -947,6 +967,7 @@ class Window(QWidget):
         model.appendRow([QStandardItem(""), QStandardItem(""), QStandardItem("")])
         smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
         prLogo = QImage("icons/pr.svg").scaled(16, 16)
+        localLogo = QImage("icons/db.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
@@ -957,6 +978,8 @@ class Window(QWidget):
 
             if "from_smashgg" in self.mergedPlayers[i]:
                 p.drawImage(QPoint(16, 16), smashggLogo)
+            elif "from_local" in self.mergedPlayers[i]:
+                p.drawImage(QPoint(16, 16), localLogo)
             else:
                 p.drawImage(QPoint(16, 16), prLogo)
 
@@ -998,7 +1021,42 @@ class Window(QWidget):
             self.smashgg_players = None
             print(e)
         
+        self.LoadLocalPlayers()
+        
         self.SetupAutocomplete()
+    
+    def LoadLocalPlayers(self):
+        try:
+            self.local_players = {}
+
+            if os.path.exists("./local_players.csv") == False:
+                with open('./local_players.csv', 'w', encoding='utf-8') as outfile:
+                    spamwriter = csv.writer(outfile)
+                    spamwriter.writerow(["org","name","full_name","country_code","state",
+                                        "twitter","main","color (0-7)"])
+            
+            with open('local_players.csv', 'r', encoding='utf-8') as csvfile:
+                reader = csv.reader(csvfile)
+                next(reader, None)  # skip header
+                for row in reader:
+                    print(row)
+                    # 0 org,1 name,2 full_name,3 country_code,4 state,5 twitter,6 main,7 color
+                    key = row[0]+" "+row[1] if row[0] != "" else row[1]
+                    print(key)
+                    self.local_players[key] = {
+                        "org": row[0],
+                        "name": row[1],
+                        "full_name": row[2],
+                        "country_code": row[3],
+                        "state": row[4],
+                        "twitter": row[5],
+                        "mains": [row[6]],
+                        "skins": {
+                            row[6]: int(row[7])
+                        }
+                    }
+        except Exception as e:
+            print(e)
     
     def ToggleAlwaysOnTop(self, checked):
         if checked:
@@ -2047,6 +2105,9 @@ class Window(QWidget):
                     if resp["data"]["set"].get("games", None) != None:
                         score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
                     [self.scoreLeft, self.scoreRight][id1].setValue(score)
+
+                    # Update bestOf
+                    self.bestOf.setValue(resp["data"]["set"].get("totalGames"))
                 except Exception as e:
                     print(traceback.format_exc())
         
@@ -2194,6 +2255,49 @@ class PlayerColumn():
         self.player_character_color.setFont(self.parent.font_small)
         self.player_character_color.activated.connect(self.CharacterChanged)
         self.CharacterChanged()
+
+        self.save_bt = QPushButton("Save to localdb")
+        self.layout_grid.addWidget(self.save_bt, 5, 1, 1, 1)
+        self.save_bt.clicked.connect(self.SavePlayerToDB)
+
+        self.delete_bt = QPushButton("Delete from localdb")
+        self.layout_grid.addWidget(self.delete_bt, 5, 3, 1, 1)
+        self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
+    
+    def SavePlayerToDB(self):
+        key = (self.player_org.text()+" " if self.player_org.text() != "" else "") + self.player_name.text()
+        self.parent.local_players[key] = {
+            "country_code": self.player_country.currentText(),
+            "full_name": self.player_real_name.text(),
+            "mains": [self.player_character.currentText()],
+            "name": self.player_name.text(),
+            "org": self.player_org.text(),
+            "state": self.player_state.currentText(),
+            "twitter": self.player_twitter.text(),
+            "skins": {
+                self.player_character.currentText(): int(self.player_character_color.currentText())
+            }
+        }
+        self.SaveDB()
+    
+    def DeletePlayerFromDB(self):
+        key = (self.player_org.text()+" " if self.player_org.text() != "" else "") + self.player_name.text()
+        if key in self.parent.local_players:
+            del self.parent.local_players[key]
+        self.SaveDB()
+    
+    def SaveDB(self):
+        with open('local_players.csv', 'w', encoding="utf-8") as outfile:
+            # 0 org,1 name,2 full_name,3 country_code,4 state,5 twitter,6 main,7 color
+            spamwriter = csv.writer(outfile)
+            spamwriter.writerow(["org","name","full_name","country_code","state",
+                                "twitter","main","color (0-7)"])
+            for player in self.parent.local_players.values():
+                spamwriter.writerow([
+                    player["org"], player["name"], player["full_name"], player["country_code"],
+                    player["state"], player["twitter"], player["mains"][0], str(list(player["skins"].values())[0])
+                ])
+        self.parent.SetupAutocomplete()
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
@@ -2426,7 +2530,9 @@ class PlayerColumn():
         self.player_obj = player
 
         print("Set country")
-        if player.get("country_code") is not None and player.get("country_code")!="null":
+        if player.get("country_code") is not None and \
+        player.get("country_code")!="null" and \
+        player.get("country_code")!="":
             index = 0
             if player.get("country_code") in list(self.parent.countries.keys()):
                 index = list(self.parent.countries.keys()).index(player.get("country_code"))+1
