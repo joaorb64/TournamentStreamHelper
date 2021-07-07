@@ -7,6 +7,10 @@ function getData() {
 }
 
 function FitText(target) {
+    if (target == null) return;
+    if (target.css("font-size") == null) return;
+    if (target.css("width") == null) return;
+
     let textElement = target.find(".text");
     textElement.css("font-size", "");
     let fontSize = parseInt(target.css("font-size").split('px')[0]);
@@ -18,6 +22,8 @@ function FitText(target) {
 }
 
 function SetInnerHtml(element, html, force=false){
+    if(element == null) return;
+
     let fadeOutTime = 0.5;
     let fadeInTime = 0.5;
 
