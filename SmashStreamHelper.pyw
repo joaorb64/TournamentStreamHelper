@@ -956,7 +956,10 @@ class Window(QWidget):
 
             if "skins" in p.keys():
                 if "mains" in p.keys() and p["mains"] != None and len(p["mains"]) > 0:
-                    skin = p["skins"].get(p["mains"][0])
+                    skin = p["skins"].get(p["mains"][0], 0)
+                    if type(skin) != int:
+                        skin = 0
+                    print(skin)
 
             autocompleter_skins.append(skin)
             
