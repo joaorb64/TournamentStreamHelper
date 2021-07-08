@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
+from os import set_blocking
+
+
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
@@ -919,6 +922,7 @@ class Window(QWidget):
         autocompleter_names = []
         autocompleter_mains = []
         autocompleter_players = []
+        autocompleter_skins = []
         
         ap = []
 
@@ -948,6 +952,14 @@ class Window(QWidget):
             else:
                 autocompleter_mains.append("Random")
             
+            skin = 0
+
+            if "skins" in p.keys():
+                if "mains" in p.keys() and p["mains"] != None and len(p["mains"]) > 0:
+                    skin = p["skins"].get(p["mains"][0])
+
+            autocompleter_skins.append(skin)
+            
             autocompleter_players.append(p)
 
         model = QStandardItemModel()
@@ -959,9 +971,9 @@ class Window(QWidget):
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
-            item.setIcon(self.stockIcons[autocompleter_mains[i]][0])
+            item.setIcon(self.stockIcons[autocompleter_mains[i]][autocompleter_skins[i]])
             
-            pix = QPixmap(self.stockIcons[autocompleter_mains[i]][0].pixmap(32, 32))
+            pix = QPixmap(self.stockIcons[autocompleter_mains[i]][autocompleter_skins[i]].pixmap(32, 32))
             p = QPainter(pix)
 
             if "from_smashgg" in self.mergedPlayers[i]:
@@ -1390,7 +1402,12 @@ class Window(QWidget):
         
         for p in players:
             key = (p["org"]+" " if (p["org"] != "" and p["org"] != None) else "") + p["name"]
+            if self.local_players[key].get("mains", [""])[0] != p.get("mains", [""])[0]:
+                p["mains"][0] = self.local_players[key]["mains"][0]
+            else:
+                p["skins"] = self.local_players[key]["skins"]
             self.local_players[key] = p
+        self.SetupAutocomplete()
         self.SaveDB()
     
     def LoadSmashGGPlayer(self, user, player, entrantId = None, selectedChars = {}):
