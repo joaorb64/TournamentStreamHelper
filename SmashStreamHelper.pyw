@@ -286,7 +286,6 @@ class Window(QWidget):
         self.player_layouts = []
 
         self.allplayers = None
-        self.smashgg_players = None
 
         self.setGeometry(300, 300, 800, 100)
         self.setWindowTitle("SmashStreamHelper")
@@ -453,7 +452,7 @@ class Window(QWidget):
         action = self.downloadsBt.menu().addAction("Autocomplete data from PowerRankings")
         action.setIcon(QIcon('icons/pr.svg'))
         action.triggered.connect(self.DownloadDataFromPowerRankingsClicked)
-        action = self.downloadsBt.menu().addAction("Autocomplete data from a SmashGG tournament")
+        action = self.downloadsBt.menu().addAction("Autocomplete data from current SmashGG tournament")
         action.setIcon(QIcon('icons/smashgg.svg'))
         action.triggered.connect(self.LoadPlayersFromSmashGGTournamentClicked)
 
@@ -927,17 +926,6 @@ class Window(QWidget):
             for p in self.allplayers["players"]:
                 ap.append(p)
         
-        if self.smashgg_players is not None:
-            for p in self.smashgg_players:
-                found = next(
-                    (a for a in ap if a.get("smashgg_id", None) != None and a.get("smashgg_id", None) == p["smashgg_id"]),
-                    None
-                )
-
-                if found is None:
-                    p["from_smashgg"] = True
-                    ap.append(p)
-        
         if self.local_players is not None:
             for p in self.local_players.values():
                 p["from_local"] = True
@@ -1013,14 +1001,6 @@ class Window(QWidget):
             self.allplayers = None
             print(e)
         
-        try:
-            f = open('tournament_players.json', encoding='utf-8')
-            self.smashgg_players = json.load(f)
-            print("Smashgg data loaded")
-        except Exception as e:
-            self.smashgg_players = None
-            print(e)
-        
         self.LoadLocalPlayers()
         
         self.SetupAutocomplete()
@@ -1050,13 +1030,28 @@ class Window(QWidget):
                         "country_code": row[3],
                         "state": row[4],
                         "twitter": row[5],
-                        "mains": [row[6]],
+                        "mains": [row[6]] if row[6] != "" else [],
                         "skins": {
                             row[6]: int(row[7])
                         }
                     }
         except Exception as e:
             print(e)
+    
+    def SaveDB(self):
+        with open('local_players.csv', 'w', encoding="utf-8") as outfile:
+            # 0 org,1 name,2 full_name,3 country_code,4 state,5 twitter,6 main,7 color
+            spamwriter = csv.writer(outfile)
+            spamwriter.writerow(["org","name","full_name","country_code","state",
+                                "twitter","main","color (0-7)"])
+            for player in self.local_players.values():
+                main = player.get("mains", [""])[0] if len(player.get("mains", [""])) > 0 else ""
+                skin = 0 if ("skins" not in player or len(player["skins"]) == 0) else str(list(player["skins"].values())[0])
+                spamwriter.writerow([
+                    player.get("org",""), player.get("name",""), player.get("full_name",""), player.get("country_code", ""),
+                    player.get("state", ""), player.get("twitter", ""), main, skin
+                ])
+        self.SetupAutocomplete()
     
     def ToggleAlwaysOnTop(self, checked):
         if checked:
@@ -1281,7 +1276,7 @@ class Window(QWidget):
 
         self.downloadDialogue = QProgressDialog("Fetching players...", "Cancel", 0, 100, self)
         self.downloadDialogue.setAutoClose(True)
-        self.downloadDialogue.setWindowTitle("Download de imagens")
+        self.downloadDialogue.setWindowTitle("Download SmashGG players for autocomplete")
         self.downloadDialogue.setWindowModality(Qt.WindowModal)
         self.downloadDialogue.show()
 
@@ -1310,7 +1305,7 @@ class Window(QWidget):
                     'query': '''
                     query evento($eventSlug: String!) {
                         event(slug: $eventSlug) {
-                            entrants(query: {page: '''+str(page)+''', perPage: 10}) {
+                            entrants(query: {page: '''+str(page)+''', perPage: 15}) {
                                 pageInfo {
                                     totalPages
                                 }
@@ -1338,7 +1333,7 @@ class Window(QWidget):
                                             id
                                             gamerTag
                                             prefix
-                                            sets(page: 1, perPage: 3) {
+                                            sets(page: 1, perPage: 2) {
                                                 nodes {
                                                     games {
                                                         selections {
@@ -1393,8 +1388,10 @@ class Window(QWidget):
             if page >= totalPages:
                 break
         
-        with open('tournament_players.json', 'w', encoding='utf-8') as outfile:
-            json.dump(players, outfile, indent=4, sort_keys=True)
+        for p in players:
+            key = (p["org"]+" " if (p["org"] != "" and p["org"] != None) else "") + p["name"]
+            self.local_players[key] = p
+        self.SaveDB()
     
     def LoadSmashGGPlayer(self, user, player, entrantId = None, selectedChars = {}):
         player_obj = {}
@@ -2289,6 +2286,9 @@ class PlayerColumn():
     
     def SavePlayerToDB(self):
         key = (self.player_org.text()+" " if self.player_org.text() != "" else "") + self.player_name.text()
+        if key == "":
+            return
+        skin = int(self.player_character_color.currentText()) if self.player_character_color.currentText() != "" else 0
         self.parent.local_players[key] = {
             "country_code": self.player_country.currentText(),
             "full_name": self.player_real_name.text(),
@@ -2298,29 +2298,16 @@ class PlayerColumn():
             "state": self.player_state.currentText(),
             "twitter": self.player_twitter.text(),
             "skins": {
-                self.player_character.currentText(): int(self.player_character_color.currentText())
+                self.player_character.currentText(): skin
             }
         }
-        self.SaveDB()
+        self.parent.SaveDB()
     
     def DeletePlayerFromDB(self):
         key = (self.player_org.text()+" " if self.player_org.text() != "" else "") + self.player_name.text()
         if key in self.parent.local_players:
             del self.parent.local_players[key]
-        self.SaveDB()
-    
-    def SaveDB(self):
-        with open('local_players.csv', 'w', encoding="utf-8") as outfile:
-            # 0 org,1 name,2 full_name,3 country_code,4 state,5 twitter,6 main,7 color
-            spamwriter = csv.writer(outfile)
-            spamwriter.writerow(["org","name","full_name","country_code","state",
-                                "twitter","main","color (0-7)"])
-            for player in self.parent.local_players.values():
-                spamwriter.writerow([
-                    player["org"], player["name"], player["full_name"], player["country_code"],
-                    player["state"], player["twitter"], player["mains"][0], str(list(player["skins"].values())[0])
-                ])
-        self.parent.SetupAutocomplete()
+        self.parent.SaveDB()
     
     def LoadSkinOptions(self, text):
         self.player_character_color.clear()
