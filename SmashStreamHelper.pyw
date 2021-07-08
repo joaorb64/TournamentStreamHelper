@@ -959,7 +959,6 @@ class Window(QWidget):
                     skin = p["skins"].get(p["mains"][0], 0)
                     if type(skin) != int:
                         skin = 0
-                    print(skin)
 
             autocompleter_skins.append(skin)
             
@@ -2369,6 +2368,12 @@ class PlayerColumn():
         if 'p'+str(self.id)+'_org' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_org.text())
+            removeFileIfExists('out/p'+str(self.id)+'_sponsor.png')
+            if os.path.exists("./sponsor_logos/"+self.player_org.text().lower()+".png"):
+                shutil.copy(
+                    "./sponsor_logos/"+self.player_org.text().lower()+".png",
+                    "out/p"+str(self.id)+"_sponsor.png"
+                )
     
     def RealNameChanged(self):
         self.parent.programState['p'+str(self.id)+'_real_name'] = self.player_real_name.text()

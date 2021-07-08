@@ -12,3 +12,5 @@ __pycache__/
 .vscode/
 log_error.txt
 log.txt
+sponsor_logos/*
+!sponsor_logos/*.txt
