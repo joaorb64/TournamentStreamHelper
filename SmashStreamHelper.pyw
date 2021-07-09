@@ -213,9 +213,15 @@ def removeFileIfExists(file):
         except Exception as e:
             print(e)
 
+class WindowSignals(QObject):
+    StopTimer = pyqtSignal()
+
 class Window(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.signals = WindowSignals()
+        self.signals.StopTimer.connect(self.StopTimer)
 
         splash = QSplashScreen(self, QPixmap('icons/icon.png').scaled(128, 128))
         splash.show()
@@ -1153,6 +1159,7 @@ class Window(QWidget):
             p.ExportCountry()
             p.ExportState()
             p.ExportCharacter()
+            p.ExportLosers()
         self.ExportScore()
 
     def DownloadDataFromPowerRankings(self, progress_callback):
@@ -1412,7 +1419,7 @@ class Window(QWidget):
         self.SetupAutocomplete()
         self.SaveDB()
     
-    def LoadSmashGGPlayer(self, user, player, entrantId = None, selectedChars = {}):
+    def LoadSmashGGPlayer(self, user, player, entrantId = None, selectedChars = None):
         player_obj = {}
 
         if user is None and player is None:
@@ -1572,7 +1579,7 @@ class Window(QWidget):
                     'query': '''
                     query evento($eventSlug: String!) {
                         event(slug: $eventSlug) {
-                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
+                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
                                 nodes {
                                     id
                                     state
@@ -1680,7 +1687,7 @@ class Window(QWidget):
         self.smashGGSetSelecDialog.close()
         
         self.smashggSetAutoUpdateId = setId
-        self.SetTimer("Auto (SmashGG Set: "+setId+")", self.LoadPlayersFromSmashGGSet)
+        self.SetTimer("Auto (SmashGG Set: "+setId+")", self.UpdateDataFromSmashGGSet)
     
     def LoadSetsFromSmashGGTournamentQueueClicked(self):
         if self.getFromStreamQueueBt.isHidden():
@@ -1833,6 +1840,9 @@ class Window(QWidget):
                         'query': '''
                         query set($setId: ID!) {
                             set(id: $setId) {
+                                event {
+                                    hasTasks
+                                }
                                 fullRoundText
                                 state
                                 totalGames
@@ -1878,6 +1888,324 @@ class Window(QWidget):
                                                         }
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                                games {
+                                    selections {
+                                        entrant {
+                                            id
+                                            participants {
+                                                player {
+                                                    id
+                                                }
+                                            }
+                                        }
+                                        selectionValue
+                                    }
+                                    winnerId
+                                }
+                            }
+                        }''',
+                        'variables': {
+                            "setId": setId
+                        },
+                    }
+                )
+                self.setData = json.loads(r.text)
+                print(self.setData)
+                print("Got response from new smashgg api")
+            
+            worker1 = Worker(fun1, *{self})
+            pool.start(worker1)
+            worker2 = Worker(fun2, *{self})
+            pool.start(worker2)
+
+            res = pool.waitForDone(8000)
+
+            if res == False:
+                pool.cancel(worker1)
+                pool.cancel(worker2)
+            else:
+                try:
+                    tasks = self.respTasks.get("entities", {}).get("setTask", [])
+                    setData = self.respTasks.get("entities", {}).get("sets", {})
+
+                    selectedChars = {}
+
+                    for task in reversed(tasks):
+                        if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                            selectedChars = task.get("metadata", {}).get("charSelections", {})
+                            break
+                    
+                    latestWinner = None
+
+                    for task in reversed(tasks):
+                        if len(task.get("metadata", [])) == 0:
+                            continue
+                        if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                            latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
+                            break
+                    
+                    allStages = None
+                    strikedStages = None
+                    selectedStage = None
+                    dsrStages = None
+                    playerTurn = None
+
+                    for task in reversed(tasks):
+                        if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                            if len(task.get("metadata", [])) == 0:
+                                continue
+
+                            base = task.get("metadata", {})
+
+                            if task.get("action") == "report":
+                                base = base.get("report", {})
+
+                            print(base)
+
+                            if base.get("strikeStages", None) is not None:
+                                allStages = base.get("strikeStages")
+                            elif base.get("banStages", None) is not None:
+                                allStages = base.get("banStages")
+                    
+                            if base.get("strikeList", None) is not None:
+                                strikedStages = base.get("strikeList")
+                            elif base.get("banList", None) is not None:
+                                strikedStages = base.get("banList")
+                    
+                            if base.get("stageSelection", None) is not None:
+                                selectedStage = base.get("stageSelection")
+                            elif base.get("stageId", None) is not None:
+                                selectedStage = base.get("stageId")
+
+                            if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+
+                                loser = next(
+                                    (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
+                                    None
+                                )
+
+                                if loser is not None:
+                                    dsrStages = []
+                                    dsrStages = [int(s) for s in base.get("stageWins")[loser]]
+
+                            if allStages == None and strikedStages == None and selectedStage == None:
+                                continue
+
+                            if allStages == None:
+                                continue
+
+                            break
+                    
+                    changed = False
+
+                    stageStrikeState = {
+                        "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
+                        "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
+                        "selected": stages.get(str(selectedStage), ""),
+                        "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                        "playerTurn": playerTurn
+                    }
+
+                    if "stage_strike" in self.programState:
+                        if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
+                            changed = True
+                    else:
+                        changed = True
+
+                    if allStages is not None and changed:
+                        img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
+                        img.fill(qRgba(0, 0, 0, 0))
+                        painter = QPainter(img)
+                        try:
+                            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+                            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+
+                            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                            iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
+                            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+
+                            perLine = 5
+
+                            for i,stage in enumerate(allStages):
+                                x = 0
+                                y = 0
+
+                                y = int(i/perLine)*(128+16)
+
+                                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
+
+                                margin = (perLine - elementsInRow) * (256+16) / 2
+                                
+                                x = (i%5)*(256+16) + margin
+
+                                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
+                                painter.drawImage(QPoint(x, y), stage_image)
+
+                                if str(stage) in strikedStages or int(stage) in strikedStages:
+                                    if dsrStages is not None and int(stage) in dsrStages:
+                                        painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
+                                    else:
+                                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+
+                                if str(stage) == str(selectedStage):
+                                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+                        
+                            img.save("./out/stage_strike_temp.png")
+                            painter.end()
+
+                            shutil.copy(
+                                "./out/stage_strike_temp.png",
+                                "./out/stage_strike.png"
+                            )
+                        except:
+                            pass
+                        finally:
+                            painter.end()
+                    elif changed:
+                        img = QImage(QSize(256, 256), QImage.Format_RGBA64)
+                        img.fill(qRgba(0, 0, 0, 0))
+                        img.save("./out/stage_strike_temp.png")
+                        shutil.copy(
+                            "./out/stage_strike_temp.png",
+                            "./out/stage_strike.png"
+                        )
+                    
+                    self.programState["stage_strike"] = stageStrikeState
+                    self.ExportProgramState()
+
+                    resp = self.setData
+
+                    if resp["data"]["set"].get("state", 0) == 3:
+                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                            print("Set ended")
+                            self.signals.StopTimer.emit()
+                    
+                    if resp["data"]["set"]["event"]["hasTasks"] == False:
+                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                            print("Event has no tasks")
+                            self.signals.StopTimer.emit()
+
+                    # Set phase name
+                    self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+
+                    id0 = 0
+                    id1 = 1
+
+                    # Get first player
+                    user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+                    player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
+                    entrant = resp["data"]["set"]["slots"][0]["entrant"]
+
+                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+
+                    if self.settings.get("competitor_mode", False) and \
+                    len(self.settings.get("smashgg_user_id", "")) > 0:
+                        if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
+                            id0 = 1
+                            id1 = 0
+                    
+                    if self.playersInverted:
+                        id0 = 1
+                        id1 = 0
+
+                    self.player_layouts[id0].signals.UpdatePlayer.emit(player_obj)
+
+                    print("--------")
+                    print(entrant["id"])
+                    print(resp["data"]["set"].get("games", None))
+
+                    # Update score
+                    score = 0
+                    if resp["data"]["set"].get("games", None) != None:
+                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                    [self.scoreLeft, self.scoreRight][id0].setValue(score)
+
+                    # Get second player
+                    user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+                    player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
+                    entrant = resp["data"]["set"]["slots"][1]["entrant"]
+                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+
+                    self.player_layouts[id1].signals.UpdatePlayer.emit(player_obj)
+
+                    # Update score
+                    score = 0
+                    if resp["data"]["set"].get("games", None) != None:
+                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                    [self.scoreLeft, self.scoreRight][id1].setValue(score)
+
+                    # Update bestOf
+                    self.bestOf.setValue(setData.get("bestOf", 0))
+
+                    # Update losers
+                    if setData.get("isGF", False) == True:
+                        # :P
+                        if "Reset" not in setData.get("fullRoundText", ""):
+                            self.player_layouts[id0].losersCheckbox.setCheckState(0)
+                            self.player_layouts[id1].losersCheckbox.setCheckState(2)
+                        else:
+                            self.player_layouts[id0].losersCheckbox.setCheckState(2)
+                            self.player_layouts[id1].losersCheckbox.setCheckState(2)
+                    else:
+                        self.player_layouts[id0].losersCheckbox.setCheckState(0)
+                        self.player_layouts[id1].losersCheckbox.setCheckState(0)
+
+                except Exception as e:
+                    print(traceback.format_exc())
+        
+        worker = Worker(myFun, *{self}, **{"setId": setId})
+        self.threadpool.start(worker)
+
+    def UpdateDataFromSmashGGSet(self, setId=None):
+        if setId == None:
+            setId = self.smashggSetAutoUpdateId
+        
+        if setId == None:
+            return
+
+        if self.settings.get("SMASHGG_KEY", None) is None:
+            self.SetSmashggKey()
+
+        def myFun(self, progress_callback, setId):
+            pool = QThreadPool()
+
+            def fun1(self, progress_callback):
+                print("Try old smashgg api")
+                r = requests.get(
+                    "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
+                    {
+                        "Cache-Control": "no-cache",
+                        "Pragma": "no-cache"
+                    }
+                )
+                self.respTasks = json.loads(r.text)
+                print("Got response from old smashgg api")
+            def fun2(self, progress_callback):
+                print("Try new smashgg api")
+                r = requests.post(
+                    'https://api.smash.gg/gql/alpha',
+                    headers={
+                        'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
+                    },
+                    json={
+                        'query': '''
+                        query set($setId: ID!) {
+                            set(id: $setId) {
+                                event {
+                                    hasTasks
+                                }
+                                state
+                                slots {
+                                    entrant {
+                                        id
+                                        participants {
+                                            id
+                                            user {
+                                                id
                                             }
                                         }
                                     }
@@ -2071,20 +2399,28 @@ class Window(QWidget):
                     if resp["data"]["set"].get("state", 0) == 3:
                         if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
                             print("Set ended")
-                            self.StopTimer()
-
-                    # Set phase name
-                    self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+                            self.signals.StopTimer.emit()
+                    
+                    if resp["data"]["set"]["event"]["hasTasks"] == False:
+                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                            print("Event has no tasks")
+                            self.signals.StopTimer.emit()
 
                     id0 = 0
                     id1 = 1
 
                     # Get first player
                     user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
-                    player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
                     entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                    character = "Random"
+
+                    if str(entrant.get("id", None)) in selectedChars:
+                        found = None
+                        if len(selectedChars[str(entrant["id"])]) > 0:
+                            found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
+                        if found:
+                            character = characters[found["name"]]
 
                     if self.settings.get("competitor_mode", False) and \
                     len(self.settings.get("smashgg_user_id", "")) > 0:
@@ -2096,7 +2432,8 @@ class Window(QWidget):
                         id0 = 1
                         id1 = 0
 
-                    self.player_layouts[id0].signals.UpdatePlayer.emit(player_obj)
+                    if self.player_layouts[id0].player_character.currentText() != character:
+                        self.player_layouts[id0].signals.UpdateCharacter.emit(character)
 
                     print("--------")
                     print(entrant["id"])
@@ -2110,20 +2447,25 @@ class Window(QWidget):
 
                     # Get second player
                     user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
-                    player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
                     entrant = resp["data"]["set"]["slots"][1]["entrant"]
-                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                    
+                    character = "Random"
 
-                    self.player_layouts[id1].signals.UpdatePlayer.emit(player_obj)
+                    if str(entrant.get("id", None)) in selectedChars:
+                        found = None
+                        if len(selectedChars[str(entrant["id"])]) > 0:
+                            found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
+                        if found:
+                            character = characters[found["name"]]
+                    
+                    if self.player_layouts[id1].player_character.currentText() != character:
+                        self.player_layouts[id1].signals.UpdateCharacter.emit(character)
 
                     # Update score
                     score = 0
                     if resp["data"]["set"].get("games", None) != None:
                         score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
                     [self.scoreLeft, self.scoreRight][id1].setValue(score)
-
-                    # Update bestOf
-                    self.bestOf.setValue(resp["data"]["set"].get("totalGames"))
                 except Exception as e:
                     print(traceback.format_exc())
         
@@ -2132,6 +2474,7 @@ class Window(QWidget):
 
 class PlayerColumnSignals(QObject):
     UpdatePlayer = pyqtSignal(object)
+    UpdateCharacter = pyqtSignal(object)
 
 class PlayerColumn():
     def __init__(self, parent, id, inverted=False):
@@ -2139,6 +2482,7 @@ class PlayerColumn():
 
         self.signals = PlayerColumnSignals()
         self.signals.UpdatePlayer.connect(self.SetFromPlayerObj)
+        self.signals.UpdateCharacter.connect(self.UpdateCharacterFromSetData)
 
         self.parent = parent
         self.id = id
@@ -2157,6 +2501,11 @@ class PlayerColumn():
         self.titleLabel = QLabel("Player "+str(self.id))
         self.titleLabel.setFont(self.parent.font_small)
         self.layout_grid.addWidget(self.titleLabel, 0, 0, 1, 2)
+
+        self.losersCheckbox = QCheckBox("Losers")
+        self.losersCheckbox.setFont(self.parent.font_small)
+        self.layout_grid.addWidget(self.losersCheckbox, 0, 3, 1, 2, Qt.AlignmentFlag.AlignRight)
+        self.losersCheckbox.stateChanged.connect(self.NameChanged)
 
         pos_labels = 0
         pos_forms = 1
@@ -2345,6 +2694,7 @@ class PlayerColumn():
         self.player_state.repaint()
     
     def NameChanged(self):
+        self.parent.programState['p'+str(self.id)+'_losers'] = self.losersCheckbox.isChecked()
         self.parent.programState['p'+str(self.id)+'_name'] = self.player_name.text()
         self.parent.programState['p'+str(self.id)+'_name_org'] = \
             (self.player_org.text()+" | "+self.player_name.text()) if len(self.player_org.text()) > 0 else \
@@ -2356,13 +2706,17 @@ class PlayerColumn():
             self.ExportName()
 
     def ExportName(self):
-        if 'p'+str(self.id)+'_name' in self.parent.programStateDiff:
+        losers = " [L]" if self.losersCheckbox.isChecked() else ""
+
+        if 'p'+str(self.id)+'_name' in self.parent.programStateDiff or \
+        'p'+str(self.id)+'_losers' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_name.txt', 'w', encoding='utf-8') as outfile:
-                outfile.write(self.player_name.text())
-        if 'p'+str(self.id)+'_name_org' in self.parent.programStateDiff:
+                outfile.write(self.player_name.text()+losers)
+        if 'p'+str(self.id)+'_name_org' in self.parent.programStateDiff or \
+        'p'+str(self.id)+'_losers' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_name+prefix.txt', 'w', encoding='utf-8') as outfile:
                 if len(self.player_org.text()) > 0:
-                    outfile.write(self.player_org.text()+" | "+self.player_name.text())
+                    outfile.write(self.player_org.text()+" | "+self.player_name.text()+losers)
                 else:
                     outfile.write(self.player_name.text())
         if 'p'+str(self.id)+'_org' in self.parent.programStateDiff:
@@ -2608,6 +2962,19 @@ class PlayerColumn():
         self.parent.programState["p"+str(self.id)+"_smashgg_id"] = player.get("smashgg_id", None)
         self.parent.ExportProgramState()
         self.ExportSmashGGAvatar()
+    
+    def UpdateCharacterFromSetData(self, data):
+        print("Character change")
+        if data in list(self.parent.stockIcons.keys()):
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(data)+1)
+            self.LoadSkinOptions(data)
+            self.player_character_color.setCurrentIndex(0)
+        else:
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
+            self.LoadSkinOptions("Random")
+            self.player_character_color.setCurrentIndex(0)
+        
+        self.CharacterChanged()
     
     def selectPRPlayerBySmashGGId(self, smashgg_id):
         index = next((i for i, p in enumerate(self.parent.allplayers["players"]) if str(p.get("smashgg_id", None)) == smashgg_id), None)
