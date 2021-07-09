@@ -20,6 +20,7 @@
                     ${data.p1_org ? (data.p1_org+"&nbsp;") : ""}
                 </span>
                 ${data.p1_name}
+                ${data.p1_losers ? " [L]" : ""}
             </span>
         `);
 
@@ -29,6 +30,7 @@
                     ${data.p2_org ? (data.p2_org+"&nbsp;") : ""}
                 </span>
                 ${data.p2_name}
+                ${data.p2_losers ? " [L]" : ""}
             </span>
         `);
         
@@ -62,7 +64,7 @@
         SetInnerHtml($(".p1 .score"), String(data.score_left));
         SetInnerHtml($(".p2 .score"), String(data.score_right));
 
-        SetInnerHtml($(".phase"), data.tournament_phase);
+        SetInnerHtml($(".phase"), data.tournament_phase + (data.best_of != 0 ? " - Best of " + data.best_of : ""));
     }
 
     $(document).ready(() => {
