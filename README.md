@@ -28,7 +28,7 @@ Windows:
 
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - Install Python 3.X and be sure to have it added to "Path" when installing (Windows x64: https://www.python.org/ftp/python/3.9.2/python-3.9.2-amd64.exe)
-- Run `install_requirements.bat` (a command prompt window should open, load some bars, then close)
+- Run `install_requirements.bat` (a command prompt window should open, load some bars, then wait for you to press any key)
 - Double click `SmashStreamHelper.pyw`
 
 Linux:
@@ -74,12 +74,12 @@ Linux:
 
 ## Sample overlays
 
-There are sample overlays located in the `/layouts/` directory. In OBS, add a Browser element, select local file, then select one of the `.html` in the subdirectories.
+There are sample overlays located in the `/layout/` directory. In OBS, add a Browser element, select local file, then select one of the `.html` in the subdirectories.
 
 - Make sure to set the window size to 1920x1080 for the overlay samples.
 - For the stage striking sample, experiment with different window sizes as the elements will adapt to it (i.e. 2000x2000, 1000x1000, 500x500, ...)
 
-There's also instructions for editing those layouts in the `/layouts/` directory.
+There's also instructions for editing those layouts in the `/layout/` directory.
 
 ## Using OBS Elements
 
