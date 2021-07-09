@@ -1576,7 +1576,7 @@ class Window(QWidget):
                     'query': '''
                     query evento($eventSlug: String!) {
                         event(slug: $eventSlug) {
-                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
+                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
                                 nodes {
                                     id
                                     state
@@ -2709,13 +2709,15 @@ class PlayerColumn():
         'p'+str(self.id)+'_losers' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_name.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_name.text()+losers)
+
         if 'p'+str(self.id)+'_name_org' in self.parent.programStateDiff or \
         'p'+str(self.id)+'_losers' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_name+prefix.txt', 'w', encoding='utf-8') as outfile:
                 if len(self.player_org.text()) > 0:
                     outfile.write(self.player_org.text()+" | "+self.player_name.text()+losers)
                 else:
-                    outfile.write(self.player_name.text())
+                    outfile.write(self.player_name.text()+losers)
+
         if 'p'+str(self.id)+'_org' in self.parent.programStateDiff:
             with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_org.text())
