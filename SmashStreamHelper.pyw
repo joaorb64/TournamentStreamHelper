@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-from os import set_blocking
-
-
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
