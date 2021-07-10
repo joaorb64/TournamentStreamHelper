@@ -87,6 +87,9 @@ When you click save (or edit anything when auto save is on) a directory named `o
 
 It's not possible to animate these elements unless there's an OBS plugin for that (I'm not aware of one).
 
+### Tips
+- In OBS you can select any element and use `Edit > Transform > Edit Transform (Ctrl+E)`. There you can set up the absolute position and size for your elements. There are alignment options and bounding box options so that when a player's name would overflow your layout the font gets smaller instead. Also works for images, where you can reserve a space and the image will fit that space independent of image size or proportion
+
 ## Feed me
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W22YK26)
