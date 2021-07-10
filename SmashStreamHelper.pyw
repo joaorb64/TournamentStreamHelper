@@ -212,6 +212,7 @@ def removeFileIfExists(file):
 
 class WindowSignals(QObject):
     StopTimer = pyqtSignal()
+    ExportStageStrike = pyqtSignal(object)
 
 class Window(QWidget):
     def __init__(self):
@@ -219,6 +220,7 @@ class Window(QWidget):
 
         self.signals = WindowSignals()
         self.signals.StopTimer.connect(self.StopTimer)
+        self.signals.ExportStageStrike.connect(self.ExportStageStrike)
 
         splash = QSplashScreen(self, QPixmap('icons/icon.png').scaled(128, 128))
         splash.show()
@@ -706,7 +708,7 @@ class Window(QWidget):
         self.timeLeftTimer.timeout.connect(self.updateTimerLabel)
         self.timeLeftTimer.start(100)
         self.autoTimer = QTimer()
-        self.autoTimer.start(8000)
+        self.autoTimer.start(5000)
         self.autoTimer.timeout.connect(function)
         self.statusLabel.setText(name)
         self.statusLabelTimeCancel.show()
@@ -752,6 +754,56 @@ class Window(QWidget):
         if "best_of" in self.programStateDiff:
             with open('out/best_of.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(str(self.bestOf.value()))
+    
+    def ExportStageStrike(self, data):
+        if data["allStages"] is not None:
+            img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
+            img.fill(qRgba(0, 0, 0, 0))
+            painter = QPainter(img)
+            try:
+                painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+                painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
+
+                iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
+                iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
+                iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
+
+                perLine = 5
+
+                for i,stage in enumerate(data["allStages"]):
+                    x = 0
+                    y = 0
+
+                    y = int(i/perLine)*(128+16)
+
+                    elementsInRow = min(len(data["allStages"])-perLine*int(i/perLine), 5)
+
+                    margin = (perLine - elementsInRow) * (256+16) / 2
+                    
+                    x = (i%5)*(256+16) + margin
+
+                    stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
+                    painter.drawImage(QPoint(x, y), stage_image)
+
+                    if str(stage) in data["strikedStages"] or int(stage) in data["strikedStages"]:
+                        if data["dsrStages"] is not None and int(stage) in data["dsrStages"]:
+                            painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
+                        else:
+                            painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
+
+                    if str(stage) == str(data["selectedStage"]):
+                        painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
+            
+                img.save("./out/stage_strike.png")
+                painter.end()
+            except:
+                pass
+            finally:
+                painter.end()
+        else:
+            img = QImage(QSize(256, 256), QImage.Format_RGBA64)
+            img.fill(qRgba(0, 0, 0, 0))
+            img.save("./out/stage_strike.png")
     
     def ResetScoreButtonClicked(self):
         self.scoreLeft.setValue(0)
@@ -1567,62 +1619,66 @@ class Window(QWidget):
         page = 1
 
         while(True):
-            r = requests.post(
-                'https://api.smash.gg/gql/alpha',
-                headers={
-                    'Authorization': 'Bearer'+key,
-                },
-                json={
-                    'query': '''
-                    query evento($eventSlug: String!) {
-                        event(slug: $eventSlug) {
-                            sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
-                                nodes {
-                                    id
-                                    state
-                                    fullRoundText
-                                    slots {
-                                        entrant {
-                                            participants {
-                                                gamerTag
-                                            }                                        
+            try:
+                r = requests.post(
+                    'https://api.smash.gg/gql/alpha',
+                    headers={
+                        'Authorization': 'Bearer'+key,
+                    },
+                    json={
+                        'query': '''
+                        query evento($eventSlug: String!) {
+                            event(slug: $eventSlug) {
+                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
+                                    nodes {
+                                        id
+                                        state
+                                        fullRoundText
+                                        slots {
+                                            entrant {
+                                                participants {
+                                                    gamerTag
+                                                }                                        
+                                            }
+                                        }
+                                        phaseGroup {
+                                            phase {
+                                                name
+                                            }
+                                        }
+                                        stream {
+                                            streamName
+                                            streamSource
                                         }
                                     }
-                                    phaseGroup {
-                                        phase {
-                                            name
-                                        }
+                                    pageInfo {
+                                        totalPages
                                     }
-                                    stream {
-                                        streamName
-                                        streamSource
-                                    }
-                                }
-                                pageInfo {
-                                    totalPages
                                 }
                             }
-                        }
-                    }''',
-                    'variables': {
-                        "eventSlug": slug
-                    },
-                }
-            )
-            resp = json.loads(r.text)
+                        }''',
+                        'variables': {
+                            "eventSlug": slug
+                        },
+                    }
+                )
+                resp = json.loads(r.text)
 
-            if resp is None or \
-            resp.get("data") is None or \
-            resp["data"].get("event") is None or \
-            resp["data"]["event"].get("sets") is None:
-                print(resp)
-            
-            sets += resp["data"]["event"]["sets"]["nodes"]
+                if resp is None or \
+                resp.get("data") is None or \
+                resp["data"].get("event") is None or \
+                resp["data"]["event"].get("sets") is None:
+                    print(resp)
+                
+                sets += resp["data"]["event"]["sets"]["nodes"]
 
-            if page >= resp["data"]["event"]["sets"]["pageInfo"]["totalPages"]:
-                break
+                if page >= resp["data"]["event"]["sets"]["pageInfo"]["totalPages"]:
+                    break
 
-            page += 1
+                page += 1
+            except Exception as e:
+                print(e)
+                return
         
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(["Stream", "Wave", "Set", "Player 1", "Player 2"])
@@ -1919,7 +1975,7 @@ class Window(QWidget):
             worker2 = Worker(fun2, *{self})
             pool.start(worker2)
 
-            res = pool.waitForDone(8000)
+            res = pool.waitForDone(5000)
 
             if res == False:
                 pool.cancel(worker1)
@@ -2013,63 +2069,13 @@ class Window(QWidget):
                     else:
                         changed = True
 
-                    if allStages is not None and changed:
-                        img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
-                        img.fill(qRgba(0, 0, 0, 0))
-                        painter = QPainter(img)
-                        try:
-                            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-                            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
-
-                            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
-                            iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
-                            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
-
-                            perLine = 5
-
-                            for i,stage in enumerate(allStages):
-                                x = 0
-                                y = 0
-
-                                y = int(i/perLine)*(128+16)
-
-                                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
-
-                                margin = (perLine - elementsInRow) * (256+16) / 2
-                                
-                                x = (i%5)*(256+16) + margin
-
-                                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
-                                painter.drawImage(QPoint(x, y), stage_image)
-
-                                if str(stage) in strikedStages or int(stage) in strikedStages:
-                                    if dsrStages is not None and int(stage) in dsrStages:
-                                        painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
-                                    else:
-                                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
-
-                                if str(stage) == str(selectedStage):
-                                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
-                        
-                            img.save("./out/stage_strike_temp.png")
-                            painter.end()
-
-                            shutil.copy(
-                                "./out/stage_strike_temp.png",
-                                "./out/stage_strike.png"
-                            )
-                        except:
-                            pass
-                        finally:
-                            painter.end()
-                    elif changed:
-                        img = QImage(QSize(256, 256), QImage.Format_RGBA64)
-                        img.fill(qRgba(0, 0, 0, 0))
-                        img.save("./out/stage_strike_temp.png")
-                        shutil.copy(
-                            "./out/stage_strike_temp.png",
-                            "./out/stage_strike.png"
-                        )
+                    if changed:
+                        self.signals.ExportStageStrike.emit({
+                            "allStages": allStages,
+                            "strikedStages": strikedStages,
+                            "dsrStages": dsrStages,
+                            "selectedStage": selectedStage
+                        })
                     
                     self.programState["stage_strike"] = stageStrikeState
                     self.ExportProgramState()
@@ -2237,7 +2243,7 @@ class Window(QWidget):
             worker2 = Worker(fun2, *{self})
             pool.start(worker2)
 
-            res = pool.waitForDone(8000)
+            res = pool.waitForDone(5000)
 
             if res == False:
                 pool.cancel(worker1)
@@ -2330,63 +2336,13 @@ class Window(QWidget):
                     else:
                         changed = True
 
-                    if allStages is not None and changed:
-                        img = QImage(QSize((256+16)*5-16, 256+16), QImage.Format_RGBA64)
-                        img.fill(qRgba(0, 0, 0, 0))
-                        painter = QPainter(img)
-                        try:
-                            painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
-                            painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
-
-                            iconStageStrike = QImage('./icons/stage_strike.svg').scaled(QSize(64, 64))
-                            iconStageDSR = QImage('./icons/stage_dsr.svg').scaled(QSize(64, 64))
-                            iconStageSelected = QImage('./icons/stage_select.svg').scaled(QSize(64, 64))
-
-                            perLine = 5
-
-                            for i,stage in enumerate(allStages):
-                                x = 0
-                                y = 0
-
-                                y = int(i/perLine)*(128+16)
-
-                                elementsInRow = min(len(allStages)-perLine*int(i/perLine), 5)
-
-                                margin = (perLine - elementsInRow) * (256+16) / 2
-                                
-                                x = (i%5)*(256+16) + margin
-
-                                stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
-                                painter.drawImage(QPoint(x, y), stage_image)
-
-                                if str(stage) in strikedStages or int(stage) in strikedStages:
-                                    if dsrStages is not None and int(stage) in dsrStages:
-                                        painter.drawImage(QPoint(x+190, y+60), iconStageDSR)
-                                    else:
-                                        painter.drawImage(QPoint(x+190, y+60), iconStageStrike)
-
-                                if str(stage) == str(selectedStage):
-                                    painter.drawImage(QPoint(x+190, y+60), iconStageSelected)
-                        
-                            img.save("./out/stage_strike_temp.png")
-                            painter.end()
-
-                            shutil.copy(
-                                "./out/stage_strike_temp.png",
-                                "./out/stage_strike.png"
-                            )
-                        except:
-                            pass
-                        finally:
-                            painter.end()
-                    elif changed:
-                        img = QImage(QSize(256, 256), QImage.Format_RGBA64)
-                        img.fill(qRgba(0, 0, 0, 0))
-                        img.save("./out/stage_strike_temp.png")
-                        shutil.copy(
-                            "./out/stage_strike_temp.png",
-                            "./out/stage_strike.png"
-                        )
+                    if changed:
+                        self.signals.ExportStageStrike.emit({
+                            "allStages": allStages,
+                            "strikedStages": strikedStages,
+                            "dsrStages": dsrStages,
+                            "selectedStage": selectedStage
+                        })
                     
                     self.programState["stage_strike"] = stageStrikeState
                     self.ExportProgramState()

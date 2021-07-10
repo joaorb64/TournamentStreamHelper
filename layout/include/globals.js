@@ -21,8 +21,9 @@ function FitText(target) {
     }
 }
 
-function SetInnerHtml(element, html, force=false){
+function SetInnerHtml(element, html, force=undefined){
     if(element == null) return;
+    if(force == false) return;
 
     let fadeOutTime = 0.5;
     let fadeInTime = 0.5;
@@ -37,7 +38,7 @@ function SetInnerHtml(element, html, force=false){
 
     html = html.replace(/'/g, '"');
 
-    if(force || element.find(".text").html() != html){
+    if(force == true || element.find(".text").html() != html){
         gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{
             element.find(".text").html(html);
             FitText(element);
