@@ -76,8 +76,8 @@
         SetInnerHtml($(".phase"), data.tournament_phase + (data.best_of != 0 ? " - Best of " + data.best_of : ""));
     }
 
-    $(document).ready(() => {
-        $('body').fadeIn(500, async () => {
+    $(window).on("load", () => {
+        $('body').fadeTo(500, 1, async () => {
             Start();
             setInterval(Update, 1000);
         });

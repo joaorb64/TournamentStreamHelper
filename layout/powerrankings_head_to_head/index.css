@@ -16,7 +16,7 @@
 body {
     font-family: Roboto;
     font-weight: bold;
-    display: none;
+    opacity: 0;
     overflow: hidden;
     margin: 0;
     width: 1280px;
@@ -93,6 +93,9 @@ body {
     background-image: url("./phase-container.png");
     color: white;
     font-size: 34px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-position: center;
 }
 
 .flag {

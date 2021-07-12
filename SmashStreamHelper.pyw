@@ -1208,7 +1208,6 @@ class Window(QWidget):
             p.ExportCountry()
             p.ExportState()
             p.ExportCharacter()
-            p.ExportLosers()
         self.ExportScore()
 
     def DownloadDataFromPowerRankings(self, progress_callback):
@@ -2644,6 +2643,8 @@ class PlayerColumn():
         self.player_state.addItem("")
         for s in self.parent.countries.get(self.player_country.currentText(), {}):
             self.player_state.addItem(str(s))
+        self.player_state.setCurrentIndex(0)
+        self.StateChanged()
         self.player_state.repaint()
     
     def NameChanged(self):

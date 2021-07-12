@@ -16,7 +16,7 @@
 body {
     font-family: Roboto;
     font-weight: bold;
-    display: none;
+    opacity: 0;
     overflow: hidden;
     margin: 0;
 }
@@ -28,21 +28,23 @@ body {
 }
 
 .stage-icon {
-    width: 256px;
+    width: 200px;
     height: 128px;
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .stage-container {
+    flex-shrink: 0;
     margin: 10px;
+    position: relative;
 }
 
 .stamp {
-    position: relative;
-    top: 58px;
-    left: 185px;
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
     width: 64px;
     height: 64px;
 }

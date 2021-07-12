@@ -17,8 +17,8 @@
         }
     }
 
-    $(document).ready(() => {
-        $('body').fadeIn(500, async () => {
+    $(window).on("load", () => {
+        $('body').fadeTo(500, 1, async () => {
             Start();
             setInterval(Update, 1000);
         });

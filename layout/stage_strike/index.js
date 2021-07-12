@@ -39,8 +39,9 @@
         }
     }
 
-    $(document).ready(() => {
-        $('body').fadeIn(500, async () => {
+    Update();
+    $(window).on("load", () => {
+        $('body').fadeTo(500, 1, async () => {
             Start();
             setInterval(Update, 1000);
         });
