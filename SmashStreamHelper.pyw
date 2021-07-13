@@ -1227,8 +1227,6 @@ class Window(QWidget):
                     f.write(data)
                     done = [dl, total_length]
                     progress_callback.emit(done)
-                    sys.stdout.flush()
-                sys.stdout.flush()
                 f.close()
 
             print("Download successful")
