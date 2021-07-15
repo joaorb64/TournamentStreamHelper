@@ -272,7 +272,20 @@ class Window(QWidget):
             f = open('countries+states.json', encoding='utf-8')
             self.countries_json = json.load(f)
             print("States loaded")
-            self.countries = {c["iso2"]: [s["state_code"] for s in c["states"]] for c in self.countries_json}
+
+            self.countries = {}
+
+            for c in self.countries_json:
+                self.countries[c["iso2"]] = {
+                    "name": c["name"],
+                    "states": {}
+                }
+
+                for s in c["states"]:
+                    self.countries[c["iso2"]]["states"][s["state_code"]] = {
+                        "state_code": s["state_code"],
+                        "state_name": s["name"]
+                    }
         except Exception as e:
             print(e)
             exit()
@@ -2518,9 +2531,9 @@ class PlayerColumn():
         self.layout_grid.addWidget(player_country_label, 1, pos_labels+2)
         self.player_country = QComboBox()
         self.player_country.addItem("")
-        for i, country in enumerate(self.parent.countries):
-            item = self.player_country.addItem(QIcon("country_icon/"+country.lower()+".png"), country)
-            self.player_country.setItemData(i+1, country)
+        for i, country_code in enumerate(self.parent.countries.keys()):
+            item = self.player_country.addItem(QIcon("country_icon/"+country_code.lower()+".png"), self.parent.countries[country_code]["name"]+" ("+country_code+")")
+            self.player_country.setItemData(i+1, country_code)
         self.player_country.setEditable(True)
         location_layout.addWidget(self.player_country)
         self.player_country.setMinimumWidth(75)
@@ -2530,6 +2543,9 @@ class PlayerColumn():
         self.player_country.textActivated.connect(self.LoadStateOptions)
         self.CountryChanged()
         self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.player_country.view().setMinimumWidth(300)
+        self.player_country.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.player_country.completer().popup().setMinimumWidth(300)
 
         self.player_state = QComboBox()
         self.player_state.setEditable(True)
@@ -2540,6 +2556,9 @@ class PlayerColumn():
         self.player_state.activated.connect(self.StateChanged)
         self.StateChanged()
         self.player_state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.player_state.view().setMinimumWidth(300)
+        self.player_state.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.player_state.completer().popup().setMinimumWidth(300)
 
         player_character_label = QLabel("Character")
         player_character_label.setFont(self.parent.font_small)
@@ -2557,6 +2576,9 @@ class PlayerColumn():
         self.player_character.lineEdit().setFont(self.parent.font_small)
         self.player_character.activated.connect(self.CharacterChanged)
         self.player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.player_character.view().setMinimumWidth(250)
+        self.player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.player_character.completer().popup().setMinimumWidth(250)
 
         player_character_color_label = QLabel("Skin")
         player_character_color_label.setFont(self.parent.font_small)
@@ -2639,8 +2661,16 @@ class PlayerColumn():
     def LoadStateOptions(self, text):
         self.player_state.clear()
         self.player_state.addItem("")
-        for s in self.parent.countries.get(self.player_country.currentText(), {}):
-            self.player_state.addItem(str(s))
+
+        index = self.player_country.currentIndex()-1
+
+        try:
+            states = list(self.parent.countries.values())[index]["states"]
+            for s in list(states.values()):
+                self.player_state.addItem(str(s["state_name"]+" ("+s["state_code"]+")"))
+        except Exception as e:
+            print(e)
+
         self.player_state.setCurrentIndex(0)
         self.StateChanged()
         self.player_state.repaint()
@@ -2735,7 +2765,17 @@ class PlayerColumn():
                 self.parent.saveMutex.unlock()
     
     def CountryChanged(self):
-        self.parent.programState['p'+str(self.id)+'_country'] = self.player_country.currentText()
+        try:
+            index = self.player_country.currentIndex()-1
+            assert index >= 0
+
+            country = list(self.parent.countries.keys())[index]
+
+            self.parent.programState['p'+str(self.id)+'_country'] = country
+            self.parent.programState['p'+str(self.id)+'_country_name'] = self.parent.countries[country]["name"]
+        except Exception as e:
+            self.parent.programState['p'+str(self.id)+'_country'] = ""
+            self.parent.programState['p'+str(self.id)+'_country_name'] = ""
 
         if self.parent.settings.get("autosave") == True:
             self.parent.ExportProgramState()
@@ -2748,19 +2788,35 @@ class PlayerColumn():
                 removeFileIfExists("out/p"+str(self.id)+"_country.txt")
 
                 with open('out/p'+str(self.id)+'_country.txt', 'w', encoding='utf-8') as outfile:
-                    outfile.write(self.player_country.currentText())
+                    outfile.write(self.parent.programState['p'+str(self.id)+'_country'])
+                
+                with open('out/p'+str(self.id)+'_country_name.txt', 'w', encoding='utf-8') as outfile:
+                    outfile.write(self.parent.programState['p'+str(self.id)+'_country_name'])
                     
                 if self.player_country.currentText().lower() != "":
                     shutil.copy(
-                        "country_icon/"+self.player_country.currentText().lower()+".png",
+                        "country_icon/"+self.parent.programState['p'+str(self.id)+'_country'].lower()+".png",
                         "out/p"+str(self.id)+"_country_flag.png"
                     )
             except Exception as e:
                 print(e)
     
     def StateChanged(self):
-        self.parent.programState['p'+str(self.id)+'_state'] = self.player_state.currentText()
+        try:
+            countryIndex = self.player_country.currentIndex()-1
+            index = self.player_state.currentIndex()-1
 
+            assert index >= 0
+
+            country = list(self.parent.countries.values())[countryIndex]
+            state = list(country["states"].values())[index]
+
+            self.parent.programState['p'+str(self.id)+'_state'] = state["state_code"]
+            self.parent.programState['p'+str(self.id)+'_state_name'] = state["state_name"]
+        except Exception as e:
+            self.parent.programState['p'+str(self.id)+'_state'] = ""
+            self.parent.programState['p'+str(self.id)+'_state_name'] = ""
+        
         if self.parent.settings.get("autosave") == True:
             self.parent.ExportProgramState()
             self.ExportState()
@@ -2771,12 +2827,15 @@ class PlayerColumn():
                 self.parent.saveMutex.lock()
                 def myFun(self, progress_callback):
                     with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
-                        outfile.write(self.player_state.currentText())
+                        outfile.write(self.parent.programState['p'+str(self.id)+'_state'])
 
-                    if(self.player_state.currentText() != ""):
+                    with open('out/p'+str(self.id)+'_state_name.txt', 'w', encoding='utf-8') as outfile:
+                        outfile.write(self.parent.programState['p'+str(self.id)+'_state_name'])
+
+                    if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
                         r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
-                            self.player_country.currentText().upper()+"/"+
-                            self.player_state.currentText().upper()+".png", stream=True)
+                            self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+
+                            self.parent.programState['p'+str(self.id)+'_state'].upper()+".png", stream=True)
                         if r.status_code == 200:
                             with open('out/p'+str(self.id)+'_state_flag.png', 'wb') as f:
                                 r.raw.decode_content = True
@@ -2876,17 +2935,18 @@ class PlayerColumn():
         if player.get("country_code") is not None and \
         player.get("country_code")!="null" and \
         player.get("country_code")!="":
-            index = 0
+            country_index = 0
             if player.get("country_code") in list(self.parent.countries.keys()):
-                index = list(self.parent.countries.keys()).index(player.get("country_code"))+1
-            self.player_country.setCurrentIndex(index)
+                country_index = list(self.parent.countries.keys()).index(player.get("country_code"))+1
+            self.player_country.setCurrentIndex(country_index)
             self.LoadStateOptions(player.get("country_code"))
             if player.get("state") is not None and player.get("state")!="null":
-                index = 0
-                if player.get("state") in list(self.parent.countries[player.get("country_code")]):
-                    index = list(self.parent.countries[player.get("country_code")]).index(player.get("state"))+1
+                state_index = 0
+                states = list(self.parent.countries[player.get("country_code")]["states"].keys())
+                if player.get("state") in states:
+                    state_index = states.index(player.get("state"))+1
 
-                self.player_state.setCurrentIndex(index)
+                self.player_state.setCurrentIndex(state_index)
             else:
                 self.player_state.setCurrentIndex(0)
         else:
