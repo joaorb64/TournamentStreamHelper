@@ -308,8 +308,13 @@ class Window(QWidget):
 
         self.allplayers = None
 
+        try:
+            version = json.load(open('versions.json', encoding='utf-8')).get("program", "?")
+        except Exception as e:
+            version = "?"
+
         self.setGeometry(300, 300, 800, 100)
-        self.setWindowTitle("SmashStreamHelper")
+        self.setWindowTitle("SmashStreamHelper v"+version)
 
         # Layout base com status no topo
         pre_base_layout = QBoxLayout(QBoxLayout.TopToBottom)
