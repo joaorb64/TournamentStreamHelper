@@ -42,7 +42,7 @@
         `);
 
         SetInnerHtml($(".p1 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p1_state_flag.png)'></div>
+            <div class='flag' style='background-image: url(../../out/p1_state_flag.png#${data.p1_state})'></div>
         `, oldData.p1_state != data.p1_state);
 
         SetInnerHtml($(".p2 .flagcountry"), `
@@ -50,7 +50,7 @@
         `);
 
         SetInnerHtml($(".p2 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p2_state_flag.png)'></div>
+            <div class='flag' style='background-image: url(../../out/p2_state_flag.png#${data.p2_state})'></div>
         `, oldData.p2_state != data.p2_state);
 
         SetInnerHtml($(".p1 .stockicon"), `

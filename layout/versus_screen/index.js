@@ -56,7 +56,7 @@
             SetInnerHtml($(`.${p} .flagstate`),
                 data[p+"_state"] ? `
                     <div style="position: relative; margin-left: 8px">
-                        <div class='flag' style='background-image: url(../../out/${p}_state_flag.png)'></div>
+                        <div class='flag' style='background-image: url(../../out/${p}_state_flag.png#${data[p+"_state"]})'></div>
                         <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
                     </div>`
                     :
@@ -92,23 +92,6 @@
 
         SetInnerHtml($(".phase"), data.tournament_phase);
         SetInnerHtml($(".best_of"), data.best_of ? "Best of "+data.best_of : "");
-
-        /*if(oldData.stage_strike == null || oldData.stage_strike.selected != data.stage_strike.selected){
-            $(".selected_stage").css('background-image', `url(../../stage_icon/stage_2_${data.stage_strike.selected}.png)`);
-            gsap.timeline()
-            .from(
-                ".selected_stage",
-                {duration: .5, opacity: 0}
-            )
-            .from(
-                ".selected_stage",
-                { duration: .4, filter: 'brightness(0%)', onUpdate: function(tl) {
-                    var tlp = (this.progress() * 100) >> 0;
-                    TweenMax.set(".selected_stage", {'filter': 'brightness(' + tlp + '%)'});
-                },
-                onUpdateParams: ["{self}"] }
-            )
-        }*/
     }
 
     // Using update here to set images as soon as possible
