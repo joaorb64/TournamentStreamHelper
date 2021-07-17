@@ -1126,7 +1126,7 @@ class Window(QWidget):
             print(e)
     
     def SaveDB(self):
-        with open('local_players.csv', 'w', encoding="utf-8") as outfile:
+        with open('local_players.csv', 'w', encoding="utf-8", newline='') as outfile:
             # 0 org,1 name,2 full_name,3 country_code,4 state,5 twitter,6 main,7 color
             spamwriter = csv.writer(outfile)
             spamwriter.writerow(["org","name","full_name","country_code","state",
