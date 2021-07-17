@@ -2635,12 +2635,12 @@ class PlayerColumn():
             return
         skin = int(self.player_character_color.currentText()) if self.player_character_color.currentText() != "" else 0
         self.parent.local_players[key] = {
-            "country_code": self.player_country.currentText(),
+            "country_code": self.parent.programState['p'+str(self.id)+'_country'],
             "full_name": self.player_real_name.text(),
             "mains": [self.player_character.currentText()],
             "name": self.player_name.text(),
             "org": self.player_org.text(),
-            "state": self.player_state.currentText(),
+            "state": self.parent.programState['p'+str(self.id)+'_state'],
             "twitter": self.player_twitter.text(),
             "skins": {
                 self.player_character.currentText(): skin
