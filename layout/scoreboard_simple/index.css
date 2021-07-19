@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Roboto";
-    src: url("../include/Roboto-Regular.ttf") format("truetype");
+    font-family: "OpenSans";
+    src: url("../include/OpenSans-Regular.ttf") format("truetype");
 }
 
 .text {
@@ -14,7 +14,7 @@
 }
 
 body {
-    font-family: Roboto;
+    font-family: OpenSans;
     letter-spacing: 1.2px;
     font-weight: bold;
     opacity: 0;
@@ -51,9 +51,12 @@ body {
     position: absolute;
     left: 60px;
     top: 8px;
-    width: 140px;
+    width: 168px;
     height: 24px;
-    font-size: 20px;
+    font-size: 22px;
+    padding-left: 6px;
+    padding-right: 6px;
+    justify-content: center;
 }
 
 .logo {
@@ -86,14 +89,14 @@ body {
     color: white;
     font-size: 34px;
     place-content: center;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
     background-position: center;
 }
 
 .flag {
     display: inline-block;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     width: 28px;
@@ -102,13 +105,13 @@ body {
 
 .flagcountry {
     position: absolute;
-    top: 10px;
+    top: 36px;
     left: 212px;
 }
 
 .flagstate {
     position: absolute;
-    top: 10px;
+    top: 36px;
     left: 180px;
 }
 

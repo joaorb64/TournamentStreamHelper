@@ -16,7 +16,8 @@
                 html += `
                     <div class="stage-container">
                         <div class="stage-icon" style="background-image: url('../../stage_icon/stage_2_${stage}.png')">
-                            ${data.stage_strike.striked.includes(stage) ?
+                            ${data.stage_strike.striked.includes(stage) &&
+                            !data.stage_strike.dsr.includes(stage)?
                                 `<div class="stage-striked stamp"></div>`
                                 :
                                 ""

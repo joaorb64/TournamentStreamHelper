@@ -2391,7 +2391,7 @@ class Window(QWidget):
                     user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
                     entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                    character = "Random"
+                    character = None
 
                     if str(entrant.get("id", None)) in selectedChars:
                         found = None
@@ -2410,7 +2410,7 @@ class Window(QWidget):
                         id0 = 1
                         id1 = 0
 
-                    if self.player_layouts[id0].player_character.currentText() != character:
+                    if self.player_layouts[id0].player_character.currentText() != character and character != None:
                         self.player_layouts[id0].signals.UpdateCharacter.emit(character)
 
                     print("--------")
@@ -2427,7 +2427,7 @@ class Window(QWidget):
                     user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
                     entrant = resp["data"]["set"]["slots"][1]["entrant"]
                     
-                    character = "Random"
+                    character = None
 
                     if str(entrant.get("id", None)) in selectedChars:
                         found = None
@@ -2436,7 +2436,7 @@ class Window(QWidget):
                         if found:
                             character = characters[found["name"]]
                     
-                    if self.player_layouts[id1].player_character.currentText() != character:
+                    if self.player_layouts[id1].player_character.currentText() != character and character != None:
                         self.player_layouts[id1].signals.UpdateCharacter.emit(character)
 
                     # Update score
