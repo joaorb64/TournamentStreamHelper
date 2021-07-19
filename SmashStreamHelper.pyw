@@ -247,8 +247,12 @@ class Window(QWidget):
         f = open('ultimate.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
 
-        f = open('cities.json', encoding='utf-8')
-        self.cities_json = json.load(f)
+        try:
+            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+            r = requests.get(url, allow_redirects=True)
+            open('countries+states+cities.json', 'wb').write(r.content)
+        except Exception as e:
+            print("Could not update countries+states+cities.json: "+str(e))
 
         self.stockIcons = {}
         
@@ -269,9 +273,9 @@ class Window(QWidget):
 
 
         try:
-            f = open('countries+states.json', encoding='utf-8')
+            f = open('countries+states+cities.json', encoding='utf-8')
             self.countries_json = json.load(f)
-            print("States loaded")
+            print("countries+states+cities loaded")
 
             self.countries = {}
 
@@ -286,6 +290,17 @@ class Window(QWidget):
                         "state_code": s["state_code"],
                         "state_name": s["name"]
                     }
+
+            self.cities = {}
+            
+            for country in self.countries_json:
+                for state in country["states"]:
+                    for c in state["cities"]:
+                        if country["iso2"] not in self.cities:
+                            self.cities[country["iso2"]] = {}
+                        city_name = remove_accents_lower(c["name"])
+                        if city_name not in self.cities[country["iso2"]]:
+                            self.cities[country["iso2"]][city_name] = state["state_code"]
         except Exception as e:
             print(e)
             exit()
@@ -1566,7 +1581,6 @@ class Window(QWidget):
                             player_obj["mains"] = found["mains"]
         
         countries = self.countries_json
-        cities = self.cities_json
 
         # match state
         if "country" in player_obj.keys() and player_obj["country"] is not None:
@@ -1595,14 +1609,10 @@ class Window(QWidget):
 
                     if "state" not in player_obj.keys() or player_obj["state"] is None:
                         # no, so get by City
-                        city = next(
-                            (c for c in cities if remove_accents_lower(c["name"]) == remove_accents_lower(player_obj["city"])
-                            and c["country_code"] == player_obj["country_code"]),
-                            None
-                        )
+                        state = self.cities.get(player_obj["country_code"], {}).get(remove_accents_lower(player_obj["city"]), None)
 
-                        if city is not None:
-                            player_obj["state"] = city["state_code"]
+                        if state is not None:
+                            player_obj["state"] = state
         
         return player_obj
     
@@ -2837,6 +2847,8 @@ class PlayerColumn():
                     with open('out/p'+str(self.id)+'_state_name.txt', 'w', encoding='utf-8') as outfile:
                         outfile.write(self.parent.programState['p'+str(self.id)+'_state_name'])
 
+                    removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
+
                     if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
                         r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
                             self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+
@@ -2845,8 +2857,6 @@ class PlayerColumn():
                             with open('out/p'+str(self.id)+'_state_flag.png', 'wb') as f:
                                 r.raw.decode_content = True
                                 shutil.copyfileobj(r.raw, f)
-                    else:
-                        removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
                 
                 worker = Worker(myFun, *{self})
                 self.parent.threadpool.start(worker)
