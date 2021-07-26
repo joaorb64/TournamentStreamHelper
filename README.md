@@ -2,29 +2,33 @@
 
 A Stream helper for Super Smash Bros Ultimate
 
-Program itself
+## Program itself
 
 ![screenshot](../media/media/screenshot1.png)
 
-Usage (animated VS layout included)
+## Usage
 
 ![screenshot](../media/media/usage.gif)
 
-Scoreboard samples -- included in the program
+## Scoreboard samples -- included in the program
 
-Animated scoreboard
+### Animated scoreboard
 
 ![screenshot](../media/media/scoreboard.gif)
 
-Simpler scoreboard
+### Simpler scoreboard
 
 ![screenshot](../media/media/scoreboard2.png)
 
-Demo with automatic transcription of Kana to Romaji
+### Demo with automatic transcription of Kana to Romaji
 
 ![screenshot](../media/media/scoreboard_jp.png)
 
-Stage Striking output
+### VS screen
+
+![screenshot](../media/media/vs_screen.gif)
+
+### Stage Striking output
 
 ![screenshot](../media/media/stage_strike.png)
 
