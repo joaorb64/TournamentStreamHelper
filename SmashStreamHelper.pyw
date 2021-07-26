@@ -40,95 +40,6 @@ def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
-characters = {
-    "Mario": "Mario",
-    "Donkey Kong": "Donkey Kong",
-    "Link": "Link",
-    "Samus": "Samus",
-    "Dark Samus": "Dark Samus",
-    "Yoshi": "Yoshi",
-    "Kirby": "Kirby",
-    "Fox": "Fox",
-    "Pikachu": "Pikachu",
-    "Luigi": "Luigi",
-    "Ness": "Ness",
-    "Captain Falcon": "Captain Falcon",
-    "Jigglypuff": "Jigglypuff",
-    "Peach": "Peach",
-    "Daisy": "Daisy",
-    "Bowser": "Bowser",
-    "Ice Climbers": "Ice Climbers",
-    "Sheik": "Sheik",
-    "Zelda": "Zelda",
-    "Dr. Mario": "Dr Mario",
-    "Pichu": "Pichu",
-    "Falco": "Falco",
-    "Marth": "Marth",
-    "Lucina": "Lucina",
-    "Young Link": "Young Link",
-    "Ganondorf": "Ganondorf",
-    "Mewtwo": "Mewtwo",
-    "Roy": "Roy",
-    "Chrom": "Chrom",
-    "Mr. Game & Watch": "Mr Game And Watch",
-    "Meta Knight": "Meta Knight",
-    "Pit": "Pit",
-    "Dark Pit": "Dark Pit",
-    "Zero Suit Samus": "Zero Suit Samus",
-    "Wario": "Wario",
-    "Snake": "Snake",
-    "Ike": "Ike",
-    "Pokemon Trainer": "Pokemon Trainer",
-    "Diddy Kong": "Diddy Kong",
-    "Lucas": "Lucas",
-    "Sonic": "Sonic",
-    "King Dedede": "King Dedede",
-    "Olimar": "Olimar",
-    "Lucario": "Lucario",
-    "R.O.B.": "Rob",
-    "Toon Link": "Toon Link",
-    "Wolf": "Wolf",
-    "Villager": "Villager",
-    "Mega Man": "Mega Man",
-    "Wii Fit Trainer": "Wii Fit Trainer",
-    "Rosalina": "Rosalina And Luma",
-    "Little Mac": "Little Mac",
-    "Greninja": "Greninja",
-    "Mii Brawler": "Mii Brawler",
-    "Mii Swordfighter": "Mii Swordfighter",
-    "Mii Gunner": "Mii Gunner",
-    "Palutena": "Palutena",
-    "Pac-Man": "Pac Man",
-    "Robin": "Robin",
-    "Shulk": "Shulk",
-    "Bowser Jr.": "Bowser Jr",
-    "Duck Hunt": "Duck Hunt",
-    "Ryu": "Ryu",
-    "Ken": "Ken",
-    "Cloud": "Cloud",
-    "Corrin": "Corrin",
-    "Bayonetta": "Bayonetta",
-    "Inkling": "Inkling",
-    "Ridley": "Ridley",
-    "Simon Belmont": "Simon",
-    "Richter": "Richter",
-    "King K. Rool": "King K Rool",
-    "Isabelle": "Isabelle",
-    "Incineroar": "Incineroar",
-    "Piranha Plant": "Piranha Plant",
-    "Joker": "Joker",
-    "Hero": "Hero",
-    "Banjo-Kazooie": "Banjo-Kazooie",
-    "Terry": "Terry",
-    "Byleth": "Byleth",
-    "Min Min": "Min Min",
-    "Steve": "Steve",
-    "Sephiroth": "Sephiroth",
-    "Pyra & Mythra": "Pyra & Mythra",
-    "Kazuya": "Kazuya",
-    "Random Character": "Random"
-}
-
 f = open('stage_mapping.json', encoding='utf-8')
 stages = json.load(f)
 
@@ -241,8 +152,11 @@ class Window(QWidget):
         if not os.path.exists("character_icon/"):
             os.mkdir("character_icon/")
         
-        f = open('character_name_to_codename.json', encoding='utf-8')
-        self.character_to_codename = json.load(f)
+        f = open('powerrankings_to_smashgg.json', encoding='utf-8')
+        self.powerrankings_to_smashgg = json.load(f)
+
+        f = open('smashgg_to_codename.json', encoding='utf-8')
+        self.characters = json.load(f)
 
         f = open('ultimate.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
@@ -256,18 +170,18 @@ class Window(QWidget):
 
         self.stockIcons = {}
         
-        for c in self.character_to_codename.keys():
+        for c in self.characters.keys():
             self.stockIcons[c] = {}
             for i in range(0, 8):
-                self.stockIcons[c][i] = QIcon('character_icon/chara_2_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+                self.stockIcons[c][i] = QIcon('./character_icon/chara_2_'+self.characters[c]+'_0'+str(i)+'.png')
 
         self.portraits = {}
 
-        for c in self.character_to_codename.keys():
+        for c in self.characters.keys():
             self.portraits[c] = {}
             for i in range(0, 8):
-                if QFile.exists('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png'):
-                    self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.character_to_codename[c]+'_0'+str(i)+'.png')
+                if QFile.exists('character_icon/chara_0_'+self.characters[c]+'_0'+str(i)+'.png'):
+                    self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.characters[c]+'_0'+str(i)+'.png')
                 else:
                     self.portraits[c][i] = None
 
@@ -1016,6 +930,11 @@ class Window(QWidget):
 
         if self.allplayers is not None and self.allplayers.get("players") is not None:
             for p in self.allplayers["players"]:
+                if "mains" in p and len(p["mains"]) > 0:
+                    if p["mains"][0] in self.powerrankings_to_smashgg.keys():
+                        p["mains"][0] = self.powerrankings_to_smashgg[p["mains"][0]]
+                    else:
+                        p["mains"][0] = "Random Character"
                 ap.append(p)
         
         if self.local_players is not None:
@@ -1035,10 +954,12 @@ class Window(QWidget):
             autocompleter_names.append(name)
             names.append(str(p["name"]))
 
-            if("mains" in p.keys() and p["mains"] != None and len(p["mains"]) > 0):
+            if("mains" in p.keys() and p["mains"] != None and
+                len(p["mains"]) > 0 and
+                p["mains"][0] in self.characters.keys()):
                 autocompleter_mains.append(p["mains"][0])
             else:
-                autocompleter_mains.append("Random")
+                autocompleter_mains.append("Random Character")
             
             skin = 0
 
@@ -1532,7 +1453,7 @@ class Window(QWidget):
                 if len(selectedChars[str(entrantId)]) > 0:
                     found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrantId)][0]), None)
                 if found:
-                    player_obj["mains"] = [characters[found["name"]]]
+                    player_obj["mains"] = [found["name"]]
             else:
                 # character usage, mains
                 if player["sets"] is not None and \
@@ -1568,7 +1489,7 @@ class Window(QWidget):
                         if(character[1] > most_common[0][1]/3.0):
                             found = next((c for c in self.smashgg_character_data["character"] if c["id"] == character[0]), None)
                             if found:
-                                mains.append(characters[found["name"]])
+                                mains.append(found["name"])
                     
                     if len(mains) > 0:
                         player_obj["mains"] = mains
@@ -2398,7 +2319,7 @@ class Window(QWidget):
                         if len(selectedChars[str(entrant["id"])]) > 0:
                             found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
                         if found:
-                            character = characters[found["name"]]
+                            character = found["name"]
 
                     if self.settings.get("competitor_mode", False) and \
                     len(self.settings.get("smashgg_user_id", "")) > 0:
@@ -2434,7 +2355,7 @@ class Window(QWidget):
                         if len(selectedChars[str(entrant["id"])]) > 0:
                             found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
                         if found:
-                            character = characters[found["name"]]
+                            character = found["name"]
                     
                     if self.player_layouts[id1].player_character.currentText() != character and character != None:
                         self.player_layouts[id1].signals.UpdateCharacter.emit(character)
@@ -2555,7 +2476,7 @@ class PlayerColumn():
         self.player_country.setFont(self.parent.font_small)
         self.player_country.lineEdit().setFont(self.parent.font_small)
         self.player_country.currentIndexChanged.connect(self.CountryChanged)
-        self.player_country.textActivated.connect(self.LoadStateOptions)
+        self.player_country.currentIndexChanged.connect(self.LoadStateOptions)
         self.CountryChanged()
         self.player_country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.player_country.view().setMinimumWidth(300)
@@ -2680,9 +2601,10 @@ class PlayerColumn():
         index = self.player_country.currentIndex()-1
 
         try:
-            states = list(self.parent.countries.values())[index]["states"]
-            for s in list(states.values()):
-                self.player_state.addItem(str(s["state_name"]+" ("+s["state_code"]+")"))
+            if index > 0:
+                states = list(self.parent.countries.values())[index]["states"]
+                for s in list(states.values()):
+                    self.player_state.addItem(str(s["state_name"]+" ("+s["state_code"]+")"))
         except Exception as e:
             print(e)
 
@@ -2789,8 +2711,8 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_country'] = country
             self.parent.programState['p'+str(self.id)+'_country_name'] = self.parent.countries[country]["name"]
         except Exception as e:
-            self.parent.programState['p'+str(self.id)+'_country'] = ""
-            self.parent.programState['p'+str(self.id)+'_country_name'] = ""
+            self.parent.programState['p'+str(self.id)+'_country'] = self.player_country.currentText()
+            self.parent.programState['p'+str(self.id)+'_country_name'] = self.player_country.currentText()
 
         if self.parent.settings.get("autosave") == True:
             self.parent.ExportProgramState()
@@ -2829,8 +2751,8 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_state'] = state["state_code"]
             self.parent.programState['p'+str(self.id)+'_state_name'] = state["state_name"]
         except Exception as e:
-            self.parent.programState['p'+str(self.id)+'_state'] = ""
-            self.parent.programState['p'+str(self.id)+'_state_name'] = ""
+            self.parent.programState['p'+str(self.id)+'_state'] = self.player_state.currentText()
+            self.parent.programState['p'+str(self.id)+'_state_name'] = self.player_state.currentText()
         
         if self.parent.settings.get("autosave") == True:
             self.parent.ExportProgramState()
@@ -2867,7 +2789,7 @@ class PlayerColumn():
     
     def CharacterChanged(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
-        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.character_to_codename.get(self.player_character.currentText(), "")
+        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.characters.get(self.player_character.currentText(), "")
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
@@ -2881,7 +2803,7 @@ class PlayerColumn():
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
                 shutil.copy(
-                    "character_icon/chara_0_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "character_icon/chara_0_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                     "out/p"+str(self.id)+"_character_portrait.png"
                 )
             except Exception as e:
@@ -2889,7 +2811,7 @@ class PlayerColumn():
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_big.png")
                 shutil.copy(
-                    "character_icon/chara_1_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "character_icon/chara_1_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                     "out/p"+str(self.id)+"_character_big.png"
                 )
             except Exception as e:
@@ -2897,7 +2819,7 @@ class PlayerColumn():
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_full.png")
                 shutil.copy(
-                    "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "character_icon/chara_3_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                     "out/p"+str(self.id)+"_character_full.png"
                 )
             except Exception as e:
@@ -2905,7 +2827,7 @@ class PlayerColumn():
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_full-halfres.png")
                 shutil.copy(
-                    "character_icon/chara_3_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
+                    "character_icon/chara_3_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
                     "out/p"+str(self.id)+"_character_full-halfres.png"
                 )
             except Exception as e:
@@ -2913,7 +2835,7 @@ class PlayerColumn():
             try:
                 removeFileIfExists("out/p"+str(self.id)+"_character_stockicon.png")
                 shutil.copy(
-                    "character_icon/chara_2_"+self.parent.character_to_codename[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
+                    "character_icon/chara_2_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
                     "out/p"+str(self.id)+"_character_stockicon.png"
                 )
             except Exception as e:
@@ -2981,8 +2903,8 @@ class PlayerColumn():
             else:
                 self.player_character_color.setCurrentIndex(0)
         else:
-            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
-            self.LoadSkinOptions("Random")
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random Character")+1)
+            self.LoadSkinOptions("Random Character")
             self.player_character_color.setCurrentIndex(0)
         
         self.CharacterChanged()
@@ -2999,8 +2921,8 @@ class PlayerColumn():
             self.LoadSkinOptions(data)
             self.player_character_color.setCurrentIndex(0)
         else:
-            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random")+1)
-            self.LoadSkinOptions("Random")
+            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random Character")+1)
+            self.LoadSkinOptions("Random Character")
             self.player_character_color.setCurrentIndex(0)
         
         self.CharacterChanged()
