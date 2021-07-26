@@ -7,20 +7,25 @@ Program itself
 ![screenshot](../media/media/screenshot1.png)
 
 Usage (animated VS layout included)
+
 ![screenshot](../media/media/usage.gif)
 
 Scoreboard samples -- included in the program
 
 Animated scoreboard
+
 ![screenshot](../media/media/scoreboard.gif)
 
 Simpler scoreboard
+
 ![screenshot](../media/media/scoreboard2.png)
 
 Demo with automatic transcription of Kana to Romaji
+
 ![screenshot](../media/media/scoreboard_jp.png)
 
 Stage Striking output
+
 ![screenshot](../media/media/stage_strike.png)
 
 Features:
