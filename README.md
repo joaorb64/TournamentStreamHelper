@@ -2,19 +2,35 @@
 
 A Stream helper for Super Smash Bros Ultimate
 
-Program itself
+## Program itself
 
-![screenshot](./media/screenshot1.png)
+![screenshot](../media/media/screenshot1.png)
 
-Scoreboard samples -- included in the program
+## Usage
 
-![screenshot](./media/scoreboard.gif)
+![screenshot](../media/media/usage.gif)
 
-![screenshot](./media/scoreboard2.png)
+## Scoreboard samples -- included in the program
 
-Stage Striking output
+### Animated scoreboard
 
-![screenshot](./media/stage_strike.png)
+![screenshot](../media/media/scoreboard.gif)
+
+### Simpler scoreboard
+
+![screenshot](../media/media/scoreboard2.png)
+
+### Demo with automatic transcription of Kana to Romaji
+
+![screenshot](../media/media/scoreboard_jp.png)
+
+### VS screen
+
+![screenshot](../media/media/vs_screen.gif)
+
+### Stage Striking output
+
+![screenshot](../media/media/stage_strike.png)
 
 Features:
 - Update stream information without messing up your OBS setup
