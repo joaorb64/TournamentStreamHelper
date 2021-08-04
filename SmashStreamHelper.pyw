@@ -8,6 +8,7 @@ try:
 
     import shutil
     import tarfile
+    import py7zr
 
     import requests
     import urllib
@@ -124,6 +125,7 @@ def removeFileIfExists(file):
 class WindowSignals(QObject):
     StopTimer = pyqtSignal()
     ExportStageStrike = pyqtSignal(object)
+    DetectGame = pyqtSignal(int)
 
 class Window(QWidget):
     def __init__(self):
@@ -132,6 +134,7 @@ class Window(QWidget):
         self.signals = WindowSignals()
         self.signals.StopTimer.connect(self.StopTimer)
         self.signals.ExportStageStrike.connect(self.ExportStageStrike)
+        self.signals.DetectGame.connect(self.DetectGameFromId)
 
         splash = QSplashScreen(self, QPixmap('icons/icon.png').scaled(128, 128))
         splash.show()
@@ -155,10 +158,7 @@ class Window(QWidget):
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
 
-        f = open('smashgg_to_codename.json', encoding='utf-8')
-        self.characters = json.load(f)
-
-        f = open('ultimate.json', encoding='utf-8')
+        f = open('characters.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
 
         try:
@@ -167,24 +167,6 @@ class Window(QWidget):
             open('countries+states+cities.json', 'wb').write(r.content)
         except Exception as e:
             print("Could not update countries+states+cities.json: "+str(e))
-
-        self.stockIcons = {}
-        
-        for c in self.characters.keys():
-            self.stockIcons[c] = {}
-            for i in range(0, 8):
-                self.stockIcons[c][i] = QIcon('./character_icon/chara_2_'+self.characters[c]+'_0'+str(i)+'.png')
-
-        self.portraits = {}
-
-        for c in self.characters.keys():
-            self.portraits[c] = {}
-            for i in range(0, 8):
-                if QFile.exists('character_icon/chara_0_'+self.characters[c]+'_0'+str(i)+'.png'):
-                    self.portraits[c][i] = QIcon('character_icon/chara_0_'+self.characters[c]+'_0'+str(i)+'.png')
-                else:
-                    self.portraits[c][i] = None
-
 
         try:
             f = open('countries+states+cities.json', encoding='utf-8')
@@ -251,6 +233,27 @@ class Window(QWidget):
 
         pre_base_layout.setSpacing(0)
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
+
+        # Game
+        group_box = QHBoxLayout()
+        group_box.setSpacing(8)
+        group_box.setContentsMargins(4,4,4,4)
+        
+        self.gameSelect = QComboBox()
+        self.gameSelect.activated.connect(self.LoadGameAssets)
+
+        pre_base_layout.addLayout(group_box)
+        group_box.addWidget(self.gameSelect)
+
+        self.games = {}
+
+        self.LoadAssets()
+
+        self.characters = {}
+        self.stockIcons = {}
+        self.portraits = {}
+
+        self.LoadGameAssets()
 
         # Status
         group_box = QHBoxLayout()
@@ -528,6 +531,109 @@ class Window(QWidget):
 
         splash.finish(self)
     
+    def DetectGameFromId(self, id):
+        game = next(
+            (i for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
+            None
+        )
+
+        if game is not None and self.gameSelect.currentIndex() != game:
+            self.gameSelect.setCurrentIndex(game)
+            self.LoadGameAssets(game)
+    
+    def LoadGameAssets(self, game=None):
+        if len(self.games.keys()) == 0:
+            return
+
+        print(game)
+        
+        if not game:
+            game = list(self.games.keys())[0]
+        else:
+            game = list(self.games.keys())[game]
+        
+        gameObj = self.games.get(game)
+
+        if gameObj:
+            self.characters = gameObj.get("character_to_codename")
+
+            assetsKey = list(gameObj["assets"].keys())[0]
+
+            for asset in list(gameObj["assets"].keys()):
+                if gameObj["assets"][asset].get("priority_for_icon", 0) > gameObj["assets"][assetsKey].get("priority_for_portrait", 0):
+                    assetsKey = asset
+
+            assetsObj = gameObj["assets"][assetsKey]
+            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+        
+            self.stockIcons = {}
+
+            for c in self.characters.keys():
+                self.stockIcons[c] = {}
+
+                filteredFiles = \
+                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c]+assetsObj.get("postfix", ""))]
+
+                if len(filteredFiles) == 0:
+                    self.stockIcons[c][0] = QIcon('./icons/cancel.svg')
+
+                for i, f in enumerate(filteredFiles):
+                    self.stockIcons[c][i] = QIcon('./assets/games/'+game+'/'+assetsKey+'/'+f)
+            
+            assetsKey = list(gameObj["assets"].keys())[0]
+
+            for asset in list(gameObj["assets"].keys()):
+                if gameObj["assets"][asset].get("priority_for_portrait", 0) > gameObj["assets"][assetsKey].get("priority_for_portrait", 0):
+                    assetsKey = asset
+            
+            assetsObj = gameObj["assets"][assetsKey]
+            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+
+            self.portraits = {}
+
+            for c in self.characters.keys():
+                self.portraits[c] = {}
+
+                filteredFiles = \
+                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c]+assetsObj.get("postfix", ""))]
+
+                if len(filteredFiles) == 0:
+                    self.portraits[c][0] = QIcon('./icons/cancel.svg')
+
+                for i, f in enumerate(filteredFiles):
+                    self.portraits[c][i] = QIcon('./assets/games/'+game+'/'+assetsKey+'/'+f)
+            
+            for p in self.player_layouts:
+                p.LoadCharacters()
+    
+    def LoadAssets(self):
+        self.games = {}
+        
+        gameDirs = os.listdir("./assets/games/")
+
+        for game in gameDirs:
+            if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
+                f = open("./assets/games/"+game+"/config.json", encoding='utf-8')
+                self.games[game] = json.load(f)
+
+                self.games[game]["assets"] = {}
+                
+                assetDirs = os.listdir("./assets/games/"+game)
+
+                for dir in assetDirs:
+                    if os.path.isdir("./assets/games/"+game+"/"+dir):
+                        if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
+                            print("Found asset config for ["+game+"]["+dir+"]")
+                            f = open("./assets/games/"+game+"/"+dir+"/config.json", encoding='utf-8')
+                            self.games[game]["assets"][dir] = json.load(f)
+                        else:
+                            print("No config file for "+game+" - "+dir)
+            else:
+                print("Game config for "+game+" doesn't exist.")
+        
+        for game in self.games:
+            self.gameSelect.addItem(self.games[game]["name"])
+    
     def CheckForUpdates(self, silent=False):
         release = None
         versions = None
@@ -790,67 +896,143 @@ class Window(QWidget):
         self.playersInverted = not self.playersInverted
     
     def DownloadAssets(self):
-        release = self.DownloadAssetsFetch()
+        assets = self.DownloadAssetsFetch()
 
-        if release is not None:
-            self.preDownloadDialogue = QDialog(self)
-            self.preDownloadDialogue.setWindowTitle("Download assets")
-            self.preDownloadDialogue.setWindowModality(Qt.WindowModal)
-            self.preDownloadDialogue.setLayout(QVBoxLayout())
-            self.preDownloadDialogue.show()
+        if assets is None:
+            return
+        
+        self.preDownloadDialogue = QDialog(self)
+        self.preDownloadDialogue.setWindowTitle("Download assets")
+        self.preDownloadDialogue.setWindowModality(Qt.WindowModal)
+        self.preDownloadDialogue.setLayout(QVBoxLayout())
+        self.preDownloadDialogue.show()
 
-            label = self.preDownloadDialogue.layout().addWidget(QLabel(release["body"]))
+        select = QComboBox()
+        self.preDownloadDialogue.layout().addWidget(select)
 
-            checkboxes = []
+        model = QStandardItemModel()
 
-            for f in release["assets"]:
-                checkbox = QCheckBox(f["name"] + " (" + "{:.2f}".format(f["size"]/1024/1024) + " MB)")
-                self.preDownloadDialogue.layout().addWidget(checkbox)
-                checkboxes.append(checkbox)
+        proxyModel = QSortFilterProxyModel()
+        proxyModel.setSourceModel(model)
+        proxyModel.setFilterKeyColumn(-1)
+        proxyModel.setFilterCaseSensitivity(False)
+
+        def filterList(text):
+            proxyModel.setFilterFixedString(text)
+
+        searchBar = QLineEdit()
+        searchBar.setPlaceholderText("Filter...")
+        self.preDownloadDialogue.layout().addWidget(searchBar)
+        searchBar.textEdited.connect(filterList)
+
+        downloadList = QTableView()
+        self.preDownloadDialogue.layout().addWidget(downloadList)
+        downloadList.setSortingEnabled(True)
+        downloadList.setSelectionBehavior(QAbstractItemView.SelectRows)
+        downloadList.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        downloadList.setModel(proxyModel)
+        downloadList.verticalHeader().hide()
+        self.preDownloadDialogue.resize(1200, 500)
+        downloadList.horizontalHeader().setStretchLastSection(True)
+        downloadList.resizeColumnsToContents()
+
+        for game in assets:
+            select.addItem(assets[game]["name"])
+        
+        def LoadGameAssets(index=None):
+            nonlocal self
+
+            if index == None:
+                index = select.currentIndex()
+
+            model.clear()
+            model.setHorizontalHeaderLabels([
+                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size"
+            ])
+            downloadList.hideColumn(0)
+            downloadList.hideColumn(1)
+            downloadList.horizontalHeader().setStretchLastSection(True)
+            downloadList.resizeColumnsToContents()
+
+            key = list(assets.keys())[index]
+
+            for asset in assets[key]["assets"]:
+                dlSize = "{:.2f}".format(sum(
+                    [f.get("size", 0) for f in list(assets[key]["assets"][asset]["files"].values())]
+                )/1024/1024) + " MB"
+
+                currVersion = str(self.games.get(key, {}).get("assets", {}).get(asset, {}).get("version", ""))
+                version = str(assets[key]["assets"][asset].get("version"))
+
+                if currVersion != version:
+                    version += " [!]"
+
+                model.appendRow([
+                    QStandardItem(key),
+                    QStandardItem(asset),
+                    QStandardItem(assets[key]["assets"][asset].get("name")),
+                    QStandardItem(assets[key]["assets"][asset].get("description")),
+                    QStandardItem(assets[key]["assets"][asset].get("credits")),
+                    QStandardItem(currVersion),
+                    QStandardItem(version),
+                    QStandardItem(dlSize)
+                ])
             
-            btOk = QPushButton("Download")
-            self.preDownloadDialogue.layout().addWidget(btOk)
+            downloadList.resizeColumnsToContents()
+        
+        self.reloadDownloadsList = LoadGameAssets
+        select.activated.connect(LoadGameAssets)
+        LoadGameAssets(0)
 
-            def DownloadStart():
-                nonlocal self
-                filesToDownload = []
-                for i, c in enumerate(checkboxes):
-                    if c.isChecked():
-                        filesToDownload.append(release["assets"][i])
-                self.preDownloadDialogue.close()
-                self.downloadDialogue = QProgressDialog("Downloading assets", "Cancel", 0, 100, self)
-                self.downloadDialogue.show()
-                worker = Worker(self.DownloadAssetsWorker, *[filesToDownload])
-                worker.signals.progress.connect(self.DownloadAssetsProgress)
-                worker.signals.finished.connect(self.DownloadAssetsFinished)
-                self.threadpool.start(worker)
+        btOk = QPushButton("Download")
+        self.preDownloadDialogue.layout().addWidget(btOk)
 
-            btOk.clicked.connect(DownloadStart)
+        def DownloadStart():
+            nonlocal self
+            row = downloadList.selectionModel().selectedRows()[0].row()
+            game = downloadList.model().index(row, 0).data()
+            key = downloadList.model().index(row, 1).data()
+
+            filesToDownload = assets[game]["assets"][key]["files"]
+
+            for f in filesToDownload:
+                filesToDownload[f]["path"] = \
+                    "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/"+ \
+                    game+"/"+filesToDownload[f]["name"]
+                filesToDownload[f]["extractpath"] = "./assets/games/"+game
+            
+            print(filesToDownload)
+
+            self.downloadDialogue = QProgressDialog("Downloading assets", "Cancel", 0, 100, self)
+            self.downloadDialogue.show()
+            worker = Worker(self.DownloadAssetsWorker, *[list(filesToDownload.values())])
+            worker.signals.progress.connect(self.DownloadAssetsProgress)
+            worker.signals.finished.connect(self.DownloadAssetsFinished)
+            self.threadpool.start(worker)
+
+        btOk.clicked.connect(DownloadStart)
     
     def DownloadAssetsFetch(self):
-        release = None
+        assets = None
         try:
-            response = requests.get("https://api.github.com/repos/joaorb64/SmashUltimateAssets/releases/latest")
-            release = json.loads(response.text)
+            response = requests.get("https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/assets.json")
+            assets = json.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
             messagebox.setText("Failed to fetch github:\n"+str(e))
             messagebox.exec()
-        return release
+        return assets
     
     def DownloadAssetsWorker(self, files, progress_callback):
-        totalSize = 0
-        for f in files:
-            totalSize += f["size"]
-
+        totalSize = sum(f["size"] for f in files)
         downloaded = 0
 
         for f in files:
-            with open("character_icon/"+f["name"], 'wb') as downloadFile:
-                print("Downloading "+str(f["name"]))
-                progress_callback.emit("Downloading "+str(f["name"])+"...")
+            with open("assets/games/"+f["name"], 'wb') as downloadFile:
+                print("Downloading "+f["name"])
+                progress_callback.emit("Downloading "+f["name"]+"...")
 
-                response = urllib.request.urlopen(f["browser_download_url"])
+                response = urllib.request.urlopen(f["path"])
 
                 while(True):
                     chunk = response.read(1024*1024)
@@ -871,16 +1053,34 @@ class Window(QWidget):
         
         progress_callback.emit(100)
 
-        for f in files:
-            print("Extracting "+f["name"])
-            progress_callback.emit("Extraindo "+f["name"])
-            
-            tar = tarfile.open("character_icon/"+f["name"])
-            tar.extractall("character_icon/")
-            tar.close()
-            os.remove("character_icon/"+f["name"])
+        filenames = ["./assets/games/"+f["name"] for f in files]
+        mergedFile = "./assets/games/"+files[0]["name"].split(".")[0]+'.7z'
 
-            print("OK")
+        is7z = next((f for f in files if ".7z" in f["name"]), None)
+
+        if is7z:
+            with open(mergedFile, 'ab') as outfile:
+                for fname in filenames:
+                    with open(fname, 'rb') as infile:
+                        outfile.write(infile.read())
+
+            print("Extracting "+mergedFile)
+            progress_callback.emit("Extracting "+mergedFile)
+
+            with py7zr.SevenZipFile(mergedFile, 'r') as parent_zip:
+                parent_zip.extractall(files[0]["extractpath"])
+
+            for f in files:
+                os.remove("./assets/games/"+f["name"])
+            
+            os.remove(mergedFile)
+        else:
+            for f in files:
+                if os.path.isfile(f["extractpath"]+"/"+f["name"]):
+                    os.remove(f["extractpath"]+"/"+f["name"])
+                shutil.move("./assets/games/"+f["name"], f["extractpath"])
+
+        print("OK")
     
     def DownloadAssetsProgress(self, n):
         if type(n) == int:
@@ -893,7 +1093,9 @@ class Window(QWidget):
             self.downloadDialogue.setLabelText(n)
     
     def DownloadAssetsFinished(self):
+        self.LoadAssets()
         self.downloadDialogue.close()
+        self.reloadDownloadsList()
     
     def DownloadDataFromPowerRankingsClicked(self):
         worker = Worker(self.DownloadDataFromPowerRankings)
@@ -982,9 +1184,9 @@ class Window(QWidget):
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
-            item.setIcon(self.stockIcons[autocompleter_mains[i]][autocompleter_skins[i]])
+            item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')))
             
-            pix = QPixmap(self.stockIcons[autocompleter_mains[i]][autocompleter_skins[i]].pixmap(32, 32))
+            pix = QPixmap(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')).pixmap(32, 32))
             p = QPainter(pix)
 
             if "from_smashgg" in self.mergedPlayers[i]:
@@ -1326,6 +1528,9 @@ class Window(QWidget):
                     'query': '''
                     query evento($eventSlug: String!) {
                         event(slug: $eventSlug) {
+                            videogame {
+                                id
+                            }
                             entrants(query: {page: '''+str(page)+''', perPage: 15}) {
                                 pageInfo {
                                     totalPages
@@ -1382,6 +1587,10 @@ class Window(QWidget):
                 }
             )
             resp = json.loads(r.text)
+
+            gameId = resp.get("data", {}).get("event", {}).get("videogame", {}).get("id", None)
+            if resp is not None and gameId:
+                self.signals.DetectGame.emit(gameId)
 
             totalPages = resp["data"]["event"]["entrants"]["pageInfo"]["totalPages"]
 
@@ -1453,6 +1662,7 @@ class Window(QWidget):
                 if len(selectedChars[str(entrantId)]) > 0:
                     found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrantId)][0]), None)
                 if found:
+                    print(found["name"])
                     player_obj["mains"] = [found["name"]]
             else:
                 # character usage, mains
@@ -1575,7 +1785,10 @@ class Window(QWidget):
                         'query': '''
                         query evento($eventSlug: String!) {
                             event(slug: $eventSlug) {
-                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
+                                videogame {
+                                    id
+                                }
+                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
                                     nodes {
                                         id
                                         state
@@ -1609,6 +1822,10 @@ class Window(QWidget):
                     }
                 )
                 resp = json.loads(r.text)
+
+                gameId = resp.get("data", {}).get("event", {}).get("videogame", {}).get("id", None)
+                if resp is not None and gameId:
+                    self.signals.DetectGame.emit(gameId)
 
                 if resp is None or \
                 resp.get("data") is None or \
@@ -1714,6 +1931,9 @@ class Window(QWidget):
                 'query': '''
                 query evento($eventSlug: String!) {
                     event(slug: $eventSlug) {
+                        videogame {
+                            id
+                        }
                         tournament {
                             streamQueue {
                                 sets {
@@ -1741,6 +1961,10 @@ class Window(QWidget):
             }
         )
         resp = json.loads(r.text)
+
+        gameId = resp.get("data", {}).get("event", {}).get("videogame", {}).get("id", None)
+        if resp is not None and gameId:
+            self.signals.DetectGame.emit(gameId)
 
         streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
 
@@ -1841,6 +2065,9 @@ class Window(QWidget):
                             set(id: $setId) {
                                 event {
                                     hasTasks
+                                    videogame {
+                                        id
+                                    }
                                 }
                                 fullRoundText
                                 state
@@ -1913,6 +2140,9 @@ class Window(QWidget):
                     }
                 )
                 self.setData = json.loads(r.text)
+                gameId = resp.get("data", {}).get("set", {}).get("event", {}).get("videogame", {}).get("id", None)
+                if resp is not None and gameId:
+                    self.signals.DetectGame.emit(gameId)
                 print(self.setData)
                 print("Got response from new smashgg api")
             
@@ -2146,6 +2376,9 @@ class Window(QWidget):
                             set(id: $setId) {
                                 event {
                                     hasTasks
+                                    videogame {
+                                        id
+                                    }
                                 }
                                 state
                                 slots {
@@ -2183,6 +2416,9 @@ class Window(QWidget):
                 self.setData = json.loads(r.text)
                 print(self.setData)
                 print("Got response from new smashgg api")
+                gameId = resp.get("data", {}).get("set", {}).get("event", {}).get("videogame", {}).get("id", None)
+                if resp is not None and gameId:
+                    self.signals.DetectGame.emit(gameId)
             
             worker1 = Worker(fun1, *{self})
             pool.start(worker1)
@@ -2501,9 +2737,7 @@ class PlayerColumn():
         player_character_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(player_character_label, 2, pos_labels+2)
         self.player_character = QComboBox()
-        self.player_character.addItem("")
-        for c in self.parent.stockIcons:
-            self.player_character.addItem(self.parent.stockIcons[c][0], c)
+        self.LoadCharacters()
         self.player_character.setEditable(True)
         self.layout_grid.addWidget(self.player_character, 2, pos_forms+2)
         self.player_character.activated.connect(self.LoadSkinOptions)
@@ -2546,6 +2780,13 @@ class PlayerColumn():
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
         self.clear_bt.clicked.connect(self.Clear)
+    
+    def LoadCharacters(self):
+        self.player_character.clear()
+        self.player_character.addItem("")
+        for c in self.parent.stockIcons:
+            self.player_character.addItem(self.parent.stockIcons[c][0], c)
+        self.player_character.setCurrentIndex(0)
     
     def Clear(self):
         self.player_name.clear()
@@ -2934,5 +3175,13 @@ class PlayerColumn():
 
 
 App = QApplication(sys.argv)
+
+if os.path.isfile("./program_assets/style.qss"):
+    pass
+    #with open("./program_assets/style.qss", "r") as f:
+    #    App.setStyleSheet(f.read())
+else:
+    print("Stylesheet file not found\n")
+
 window = Window()
 sys.exit(App.exec_())
