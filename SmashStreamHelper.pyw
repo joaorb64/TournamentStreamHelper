@@ -105,7 +105,7 @@ class Worker(QRunnable):
         try:
             result = self.fn(*self.args, **self.kwargs)
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
@@ -120,7 +120,7 @@ def removeFileIfExists(file):
         try:
             os.remove(file)
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
 
 class WindowSignals(QObject):
     StopTimer = pyqtSignal()
@@ -161,12 +161,12 @@ class Window(QWidget):
         f = open('characters.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
 
-        try:
-            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
-            r = requests.get(url, allow_redirects=True)
-            open('countries+states+cities.json', 'wb').write(r.content)
-        except Exception as e:
-            print("Could not update countries+states+cities.json: "+str(e))
+        # try:
+        #     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+        #     r = requests.get(url, allow_redirects=True)
+        #     open('countries+states+cities.json', 'wb').write(r.content)
+        # except Exception as e:
+        #     print("Could not update countries+states+cities.json: "+str(e))
 
         try:
             f = open('countries+states+cities.json', encoding='utf-8')
@@ -198,7 +198,7 @@ class Window(QWidget):
                         if city_name not in self.cities[country["iso2"]]:
                             self.cities[country["iso2"]][city_name] = state["state_code"]
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             exit()
         
         try:
@@ -532,6 +532,8 @@ class Window(QWidget):
         splash.finish(self)
     
     def DetectGameFromId(self, id):
+        print("Change game to "+str(id))
+
         game = next(
             (i for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
             None
@@ -613,12 +615,13 @@ class Window(QWidget):
 
         for game in gameDirs:
             if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
-                f = open("./assets/games/"+game+"/config.json", encoding='utf-8')
+                f = open("./assets/games/"+game+"/base_files/config.json", encoding='utf-8')
                 self.games[game] = json.load(f)
 
                 self.games[game]["assets"] = {}
                 
                 assetDirs = os.listdir("./assets/games/"+game)
+                assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
 
                 for dir in assetDirs:
                     if os.path.isdir("./assets/games/"+game+"/"+dir):
@@ -1224,7 +1227,7 @@ class Window(QWidget):
             print("Powerrankings data loaded")
         except Exception as e:
             self.allplayers = None
-            print(e)
+            print(traceback.format_exc())
         
         self.LoadLocalPlayers()
         
@@ -1261,7 +1264,7 @@ class Window(QWidget):
                         }
                     }
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
     
     def SaveDB(self):
         with open('local_players.csv', 'w', encoding="utf-8", newline='') as outfile:
@@ -1294,7 +1297,7 @@ class Window(QWidget):
                 self.smashggSelectSetBt.hide()
                 self.competitorModeSmashggBt.show()
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
         else:
             try:
                 self.settings["competitor_mode"] = False
@@ -1303,7 +1306,7 @@ class Window(QWidget):
                 self.smashggSelectSetBt.show()
                 self.competitorModeSmashggBt.hide()
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
         self.StopTimer()
         self.SaveSettings()
     
@@ -1338,6 +1341,10 @@ class Window(QWidget):
         else:
             self.settings["twitter_add_at"] = False
         self.SaveSettings()
+    
+    def CalculateProgramStateDiff(self):
+        diff = [k for k in self.programState.keys() if self.programState[k] != self.savedProgramState.get(k, None)]
+        self.programStateDiff = diff
     
     def ExportProgramState(self):
         self.saveMutex.lock()
@@ -1788,7 +1795,7 @@ class Window(QWidget):
                                 videogame {
                                     id
                                 }
-                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
+                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
                                     nodes {
                                         id
                                         state
@@ -1840,7 +1847,7 @@ class Window(QWidget):
 
                 page += 1
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
                 return
         
         model = QStandardItemModel()
@@ -2140,8 +2147,8 @@ class Window(QWidget):
                     }
                 )
                 self.setData = json.loads(r.text)
-                gameId = resp.get("data", {}).get("set", {}).get("event", {}).get("videogame", {}).get("id", None)
-                if resp is not None and gameId:
+                gameId = self.setData("data", {}).get("set", {}).get("event", {}).get("videogame", {}).get("id", None)
+                if self.setData is not None and gameId:
                     self.signals.DetectGame.emit(gameId)
                 print(self.setData)
                 print("Got response from new smashgg api")
@@ -2847,7 +2854,7 @@ class PlayerColumn():
                 for s in list(states.values()):
                     self.player_state.addItem(str(s["state_name"]+" ("+s["state_code"]+")"))
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
 
         self.player_state.setCurrentIndex(0)
         self.StateChanged()
@@ -2938,7 +2945,7 @@ class PlayerColumn():
                 worker = Worker(myFun, *{self})
                 self.parent.threadpool.start(worker)
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
             finally:
                 self.parent.saveMutex.unlock()
     
@@ -2977,7 +2984,7 @@ class PlayerColumn():
                         "out/p"+str(self.id)+"_country_flag.png"
                     )
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
     
     def StateChanged(self):
         try:
@@ -2996,7 +3003,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_state_name'] = self.player_state.currentText()
         
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportProgramState()
+            self.parent.CalculateProgramStateDiff()
             self.ExportState()
 
     def ExportState(self):
@@ -3012,6 +3019,10 @@ class PlayerColumn():
 
                     removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
 
+                    self.parent.programState['p'+str(self.id)+'_state_flag_url'] = "https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+\
+                        self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+\
+                        self.parent.programState['p'+str(self.id)+'_state'].upper()+".png"
+
                     if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
                         r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
                             self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+
@@ -3020,11 +3031,13 @@ class PlayerColumn():
                             with open('out/p'+str(self.id)+'_state_flag.png', 'wb') as f:
                                 r.raw.decode_content = True
                                 shutil.copyfileobj(r.raw, f)
+                    
+                    self.parent.ExportProgramState()
                 
                 worker = Worker(myFun, *{self})
                 self.parent.threadpool.start(worker)
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
             finally:
                 self.parent.saveMutex.unlock()
     
@@ -3034,54 +3047,44 @@ class PlayerColumn():
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportProgramState()
+            self.parent.CalculateProgramStateDiff()
             self.ExportCharacter()
             
     def ExportCharacter(self):
         print(self.parent.programStateDiff)
         if 'p'+str(self.id)+'_character' in self.parent.programStateDiff or 'p'+str(self.id)+'_character_color' in self.parent.programStateDiff:
             self.parent.saveMutex.lock()
-            try:
-                removeFileIfExists("out/p"+str(self.id)+"_character_portrait.png")
-                shutil.copy(
-                    "character_icon/chara_0_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                    "out/p"+str(self.id)+"_character_portrait.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                removeFileIfExists("out/p"+str(self.id)+"_character_big.png")
-                shutil.copy(
-                    "character_icon/chara_1_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                    "out/p"+str(self.id)+"_character_big.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                removeFileIfExists("out/p"+str(self.id)+"_character_full.png")
-                shutil.copy(
-                    "character_icon/chara_3_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                    "out/p"+str(self.id)+"_character_full.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                removeFileIfExists("out/p"+str(self.id)+"_character_full-halfres.png")
-                shutil.copy(
-                    "character_icon/chara_3_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+"-halfres.png",
-                    "out/p"+str(self.id)+"_character_full-halfres.png"
-                )
-            except Exception as e:
-                print(e)
-            try:
-                removeFileIfExists("out/p"+str(self.id)+"_character_stockicon.png")
-                shutil.copy(
-                    "character_icon/chara_2_"+self.parent.characters[self.player_character.currentText()]+"_0"+str(self.player_character_color.currentIndex())+".png",
-                    "out/p"+str(self.id)+"_character_stockicon.png"
-                )
-            except Exception as e:
-                print(e)
-            self.parent.saveMutex.unlock()
+
+            gameId = list(self.parent.games.keys())[self.parent.gameSelect.currentIndex()]
+
+            oldCharacterAssets = [f for f in os.listdir("./out") if f.startswith("p"+str(self.id)+"_character_")]
+            for f in oldCharacterAssets:
+                removeFileIfExists("out/"+f)
+
+            self.parent.programState['p'+str(self.id)+'_assets_path'] = {}
+
+            for assetKey in list(self.parent.games.values())[self.parent.gameSelect.currentIndex()]["assets"]:
+                try:
+                    asset = self.parent.games[gameId]["assets"][assetKey]
+                    assetPath = './assets/games/'+gameId+'/'+assetKey+'/'
+
+                    characterAssets = [f for f in os.listdir(assetPath) if f.startswith(asset.get("prefix", "")+self.parent.characters[self.player_character.currentText()]+asset.get("postfix", ""))]
+                    characterAssets.sort()
+
+                    if len(characterAssets) > 0:
+                        color = self.player_character_color.currentIndex() if self.player_character_color.currentIndex() < len(characterAssets) else 0
+                        print(color)
+                        myAssetKey = assetKey.replace("base_files/", "")
+                        shutil.copy(
+                            assetPath+"/"+characterAssets[color],
+                            "./out/p"+str(self.id)+"_character_"+myAssetKey+".png"
+                        )
+                        self.parent.programState['p'+str(self.id)+'_assets_path'][assetKey] = assetPath+"/"+characterAssets[color]
+                except Exception as e:
+                    print(traceback.format_exc())
+                self.parent.saveMutex.unlock()
+            
+            self.parent.ExportProgramState()
     
     def AutocompleteSelected(self, selected):
         if type(selected) == QModelIndex:
