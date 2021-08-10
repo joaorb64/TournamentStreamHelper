@@ -151,9 +151,6 @@ class Window(QWidget):
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
-
-        if not os.path.exists("character_icon/"):
-            os.mkdir("character_icon/")
         
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
