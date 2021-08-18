@@ -3070,12 +3070,14 @@ class PlayerColumn():
                     asset = self.parent.games[gameId]["assets"][assetKey]
                     assetPath = './assets/games/'+gameId+'/'+assetKey+'/'
 
-                    characterAssets = [f for f in os.listdir(assetPath) if f.startswith(asset.get("prefix", "")+self.parent.characters[self.player_character.currentText()]+asset.get("postfix", ""))]
-                    characterAssets.sort()
+                    characterAssets = []
+
+                    if self.parent.characters.get(self.player_character.currentText(), None):
+                        characterAssets = [f for f in os.listdir(assetPath) if f.startswith(asset.get("prefix", "")+self.parent.characters.get(self.player_character.currentText(), "")+asset.get("postfix", ""))]
+                        characterAssets.sort()
 
                     if len(characterAssets) > 0:
                         color = self.player_character_color.currentIndex() if self.player_character_color.currentIndex() < len(characterAssets) else 0
-                        print(color)
                         myAssetKey = assetKey.replace("base_files/", "")
                         shutil.copy(
                             assetPath+"/"+characterAssets[color],
