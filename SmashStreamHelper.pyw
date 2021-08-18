@@ -554,6 +554,20 @@ class Window(QWidget):
         gameObj = self.games.get(game)
 
         if gameObj:
+            self.games[game]["assets"] = {}
+                
+            assetDirs = os.listdir("./assets/games/"+game)
+            assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
+
+            for dir in assetDirs:
+                if os.path.isdir("./assets/games/"+game+"/"+dir):
+                    if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
+                        print("Found asset config for ["+game+"]["+dir+"]")
+                        f = open("./assets/games/"+game+"/"+dir+"/config.json", encoding='utf-8')
+                        self.games[game]["assets"][dir] = json.load(f)
+                    else:
+                        print("No config file for "+game+" - "+dir)
+            
             self.characters = gameObj.get("character_to_codename")
 
             assetsKey = list(gameObj["assets"].keys())[0]
@@ -614,20 +628,6 @@ class Window(QWidget):
             if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
                 f = open("./assets/games/"+game+"/base_files/config.json", encoding='utf-8')
                 self.games[game] = json.load(f)
-
-                self.games[game]["assets"] = {}
-                
-                assetDirs = os.listdir("./assets/games/"+game)
-                assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
-
-                for dir in assetDirs:
-                    if os.path.isdir("./assets/games/"+game+"/"+dir):
-                        if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
-                            print("Found asset config for ["+game+"]["+dir+"]")
-                            f = open("./assets/games/"+game+"/"+dir+"/config.json", encoding='utf-8')
-                            self.games[game]["assets"][dir] = json.load(f)
-                        else:
-                            print("No config file for "+game+" - "+dir)
             else:
                 print("Game config for "+game+" doesn't exist.")
         
@@ -2741,7 +2741,6 @@ class PlayerColumn():
         player_character_label.setAlignment(text_alignment)
         self.layout_grid.addWidget(player_character_label, 2, pos_labels+2)
         self.player_character = QComboBox()
-        self.LoadCharacters()
         self.player_character.setEditable(True)
         self.layout_grid.addWidget(self.player_character, 2, pos_forms+2)
         self.player_character.activated.connect(self.LoadSkinOptions)
@@ -2784,6 +2783,8 @@ class PlayerColumn():
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
         self.clear_bt.clicked.connect(self.Clear)
+
+        self.LoadCharacters()
     
     def LoadCharacters(self):
         self.player_character.clear()
@@ -2791,6 +2792,7 @@ class PlayerColumn():
         for c in self.parent.stockIcons:
             self.player_character.addItem(self.parent.stockIcons[c][0], c)
         self.player_character.setCurrentIndex(0)
+        self.player_character_color.clear()
     
     def Clear(self):
         self.player_name.clear()
@@ -3016,9 +3018,12 @@ class PlayerColumn():
 
                     removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
 
-                    self.parent.programState['p'+str(self.id)+'_state_flag_url'] = "https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+\
-                        self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+\
-                        self.parent.programState['p'+str(self.id)+'_state'].upper()+".png"
+                    if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
+                        self.parent.programState['p'+str(self.id)+'_state_flag_url'] = "https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+\
+                            self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+\
+                            self.parent.programState['p'+str(self.id)+'_state'].upper()+".png"
+                    else:
+                        self.parent.programState['p'+str(self.id)+'_state_flag_url'] = ""
 
                     if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
                         r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
