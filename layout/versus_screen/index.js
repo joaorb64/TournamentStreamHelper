@@ -46,7 +46,7 @@
             SetInnerHtml($(`.${p} .flagcountry`),
                 data[p+"_country"] ? `
                     <div style="position: relative; margin-left: 8px">
-                        <div class='flag' style='background-image: url(../../country_icon/${data[p+"_country"].toLowerCase()}.png)'></div>
+                        <div class='flag' style='background-image: url(../../assets/country_flag/${data[p+"_country"].toLowerCase()}.png)'></div>
                         <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
                     </div>`
                     :
@@ -67,7 +67,7 @@
             oldData[p+"_character_color"] != data[p+"_character_color"]){
                 $(`.${p}.character`).html(`
                     <div class="bg">
-                        <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"]["base_files/full"]})'></div>
+                        <div class="portrait" style='background-image: url(../../out/${p}_character_full.png#${Date.now()})'></div>
                     </div>
                 `)
                 gsap.timeline()

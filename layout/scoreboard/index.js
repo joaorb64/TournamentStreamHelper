@@ -38,7 +38,7 @@
         SetInnerHtml($(".p2 .twitter"), data.p2_twitter);
 
         SetInnerHtml($(".p1 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../country_icon/${data.p1_country.toLowerCase()}.png)'></div>
+            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p1_country.toLowerCase()}.png)'></div>
         `);
 
         SetInnerHtml($(".p1 .flagstate"), `
@@ -46,7 +46,7 @@
         `, oldData.p1_state != data.p1_state);
 
         SetInnerHtml($(".p2 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../country_icon/${data.p2_country.toLowerCase()}.png)'></div>
+            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
         `);
 
         SetInnerHtml($(".p2 .flagstate"), `
