@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-from os import system
-
-
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
@@ -83,18 +80,18 @@ class Window(QWidget):
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
 
-        f = open('characters.json', encoding='utf-8')
+        f = open('assets/characters.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
 
         # try:
         #     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
         #     r = requests.get(url, allow_redirects=True)
-        #     open('countries+states+cities.json', 'wb').write(r.content)
+        #     open('./assets/countries+states+cities.json', 'wb').write(r.content)
         # except Exception as e:
-        #     print("Could not update countries+states+cities.json: "+str(e))
+        #     print("Could not update /assets/countries+states+cities.json: "+str(e))
 
         try:
-            f = open('countries+states+cities.json', encoding='utf-8')
+            f = open('./assets/countries+states+cities.json', encoding='utf-8')
             self.countries_json = json.load(f)
             print("countries+states+cities loaded")
 
@@ -1412,7 +1409,7 @@ class Window(QWidget):
         inp.setWindowTitle('Set SmashGG user id')
 
         if inp.exec_() == QDialog.Accepted:
-            self.settings["smashgg_user_id"] = lineEdit.text()
+            self.settings["smashgg_user_id"] = lineEdit.text().strip()
             self.SaveSettings()
             self.smashggUserId.setText(
                 "Set user id (" + str(self.settings.get("smashgg_user_id", None)) + ")"
@@ -2331,6 +2328,7 @@ class Window(QWidget):
                                             id
                                             user {
                                                 id
+                                                slug
                                             }
                                         }
                                     }
