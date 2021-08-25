@@ -67,7 +67,10 @@
             oldData[p+"_character_color"] != data[p+"_character_color"]){
                 $(`.${p}.character`).html(`
                     <div class="bg">
-                        <div class="portrait" style='background-image: url(../../out/${p}_character_full.png#${Date.now()})'></div>
+                        <!--<div class="portrait" style='background-image: url(../../out/${p}_character_portrait.png)'></div>-->
+                        <video id="video${p}" class="video" width="auto" height="100%" autoplay muted>
+                            <source src="../../out/${p}_character_webm.webm">
+                        </video>
                     </div>
                 `)
                 gsap.timeline()
@@ -83,6 +86,16 @@
                         },
                         onUpdateParams: ["{self}"] }
                     )
+                
+                    let vid = document.getElementById(`video${p}`);
+                    vid.addEventListener("timeupdate", function(){
+                        // Check you time here and
+                        if(t >= 5) //Where t = CurrentTime
+                        {
+                            this.pause();// Stop the Video
+                            this.currentTime = 5;
+                        }
+                    })
             }
     
         })

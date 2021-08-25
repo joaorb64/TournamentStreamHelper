@@ -1,6 +1,6 @@
-# SmashStreamHelper
+# TournamentStreamHelper
 
-A Stream helper for Super Smash Bros Ultimate
+A Stream helper for fighting game tournaments!
 
 ## Program itself
 

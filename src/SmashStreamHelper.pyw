@@ -147,7 +147,7 @@ class Window(QWidget):
             version = "?"
 
         self.setGeometry(300, 300, 800, 100)
-        self.setWindowTitle("SmashStreamHelper v"+version)
+        self.setWindowTitle("TournamentStreamHelper v"+version)
 
         # Layout base com status no topo
         pre_base_layout = QBoxLayout(QBoxLayout.TopToBottom)
@@ -498,8 +498,9 @@ class Window(QWidget):
             assetsKey = list(gameObj["assets"].keys())[0]
 
             for asset in list(gameObj["assets"].keys()):
-                if gameObj["assets"][asset].get("priority_for_icon", 0) > gameObj["assets"][assetsKey].get("priority_for_portrait", 0):
+                if "icon" in gameObj["assets"][asset].get("type", ""):
                     assetsKey = asset
+                    break
 
             assetsObj = gameObj["assets"][assetsKey]
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
@@ -521,7 +522,10 @@ class Window(QWidget):
             assetsKey = list(gameObj["assets"].keys())[0]
 
             for asset in list(gameObj["assets"].keys()):
-                if gameObj["assets"][asset].get("priority_for_portrait", 0) > gameObj["assets"][assetsKey].get("priority_for_portrait", 0):
+                if "portrait" in gameObj["assets"][asset].get("type", []):
+                    assetsKey = asset
+                    break
+                if "icon" in gameObj["assets"][asset].get("type", []):
                     assetsKey = asset
             
             assetsObj = gameObj["assets"][assetsKey]
@@ -556,6 +560,8 @@ class Window(QWidget):
             else:
                 print("Game config for "+game+" doesn't exist.")
         
+        self.gameSelect.clear()
+
         for game in self.games:
             self.gameSelect.addItem(self.games[game]["name"])
     
@@ -926,8 +932,8 @@ class Window(QWidget):
 
             for f in filesToDownload:
                 filesToDownload[f]["path"] = \
-                    "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/"+ \
-                    game+"/"+filesToDownload[f]["name"]
+                    "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/"+ \
+                    filesToDownload[f]["name"]
                 filesToDownload[f]["extractpath"] = "./assets/games/"+game
             
             print(filesToDownload)

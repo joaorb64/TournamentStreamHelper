@@ -476,7 +476,10 @@ class PlayerColumn():
         if 'p'+str(self.id)+'_character' in self.parent.programStateDiff or 'p'+str(self.id)+'_character_color' in self.parent.programStateDiff:
             self.parent.saveMutex.lock()
 
-            gameId = list(self.parent.games.keys())[self.parent.gameSelect.currentIndex()]
+            gameId = None
+
+            if self.parent.games is not None and len(self.parent.games) > 0:
+                gameId = list(self.parent.games.keys())[self.parent.gameSelect.currentIndex()]
 
             oldCharacterAssets = [f for f in os.listdir("./out") if f.startswith("p"+str(self.id)+"_character_")]
             for f in oldCharacterAssets:
@@ -484,28 +487,44 @@ class PlayerColumn():
 
             self.parent.programState['p'+str(self.id)+'_assets_path'] = {}
 
-            for assetKey in list(self.parent.games.values())[self.parent.gameSelect.currentIndex()]["assets"]:
-                try:
-                    asset = self.parent.games[gameId]["assets"][assetKey]
-                    assetPath = './assets/games/'+gameId+'/'+assetKey+'/'
+            if gameId is not None:
+                for assetKey in list(self.parent.games.values())[self.parent.gameSelect.currentIndex()]["assets"]:
+                    try:
+                        asset = self.parent.games[gameId]["assets"][assetKey]
+                        assetPath = './assets/games/'+gameId+'/'+assetKey+'/'
 
-                    characterAssets = []
+                        characterAssets = []
 
-                    if self.parent.characters.get(self.player_character.currentText(), None):
-                        characterAssets = [f for f in os.listdir(assetPath) if f.startswith(asset.get("prefix", "")+self.parent.characters.get(self.player_character.currentText(), "")+asset.get("postfix", ""))]
-                        characterAssets.sort()
+                        if self.parent.characters.get(self.player_character.currentText(), None):
+                            baseName = asset.get("prefix", "")+self.parent.characters.get(self.player_character.currentText(), "")+asset.get("postfix", "")
+                            charFiles = [f for f in os.listdir(assetPath) if f.startswith(baseName)]
+                            characterAssets = {}
+                            for f in charFiles:
+                                skin = f[len(baseName):]
+                                skin = skin.rsplit(".", 1)[0]
+                                skin = int(skin)
+                                characterAssets[str(skin)] = f
+                            print(characterAssets)
 
-                    if len(characterAssets) > 0:
-                        color = self.player_character_color.currentIndex() if self.player_character_color.currentIndex() < len(characterAssets) else 0
-                        myAssetKey = assetKey.replace("base_files/", "")
-                        shutil.copy(
-                            assetPath+"/"+characterAssets[color],
-                            "./out/p"+str(self.id)+"_character_"+myAssetKey+".png"
-                        )
-                        self.parent.programState['p'+str(self.id)+'_assets_path'][assetKey] = assetPath+"/"+characterAssets[color]
-                except Exception as e:
-                    print(traceback.format_exc())
-                self.parent.saveMutex.unlock()
+                        if len(characterAssets) > 0:
+                            color = "0"
+                            if str(self.player_character_color.currentIndex()) in characterAssets:
+                                color = str(self.player_character_color.currentIndex())
+                            else:
+                                remap = asset.get("skin_mapping", {}).get(self.parent.characters.get(self.player_character.currentText(), ""), None)
+                                if remap and str(self.player_character_color.currentIndex()) in remap:
+                                    color = str(remap[str(self.player_character_color.currentIndex())])
+                            
+                            myAssetKey = assetKey.replace("base_files/", "")
+                            
+                            shutil.copy(
+                                assetPath+"/"+characterAssets[str(color)],
+                                "./out/p"+str(self.id)+"_character_"+myAssetKey+"."+characterAssets[str(color)].rsplit(".", 1)[1]
+                            )
+                            self.parent.programState['p'+str(self.id)+'_assets_path'][assetKey] = assetPath+"/"+characterAssets[color]
+                    except Exception as e:
+                        print(traceback.format_exc())
+            self.parent.saveMutex.unlock()
             
             self.parent.ExportProgramState()
     
@@ -559,7 +578,8 @@ class PlayerColumn():
         self.StateChanged()
         
         print("Set main")
-        if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "":
+        if player.get("mains") is not None and len(player["mains"]) > 0 and player["mains"][0] != "" and \
+            player.get("mains", [""])[0] in self.parent.stockIcons:
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index(player.get("mains", [""])[0])+1)
             
             self.LoadSkinOptions(player.get("mains", [""])[0])
@@ -569,7 +589,7 @@ class PlayerColumn():
                 self.player_character_color.setCurrentIndex(player["skins"][player["mains"][0]])
             else:
                 self.player_character_color.setCurrentIndex(0)
-        else:
+        elif "Random Character" in self.parent.stockIcons:
             self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random Character")+1)
             self.LoadSkinOptions("Random Character")
             self.player_character_color.setCurrentIndex(0)

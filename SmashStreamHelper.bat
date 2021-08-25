@@ -1,1 +1,1 @@
-python src/SmashStreamHelper.pyw
+python src/TournamentStreamHelper.pyw

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 SmashStreamHelper.pyw
+python3 ./src/TournamentStreamHelper.pyw
