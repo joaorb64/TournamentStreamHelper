@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Roboto";
-    src: url("../include/Roboto-Regular.ttf") format("truetype");
+    font-family: "Roboto Condensed";
+    src: url("../include/Roboto-Condensed.ttf") format("truetype");
 }
 
 .text {
@@ -14,7 +14,7 @@
 }
 
 body {
-    font-family: Roboto;
+    font-family: "Roboto Condensed";
     letter-spacing: 1.2px;
     font-weight: bold;
     opacity: 0;
@@ -40,7 +40,7 @@ body {
     color: white;
     z-index: 9;
     width: 500px;
-    height: 120px;
+    height: 130px;
     background-color: #000000DF;
     display: flex;
     flex-direction: column;
@@ -75,14 +75,14 @@ body {
 }
 
 .container .name {
-    width: 300px;
-    font-size: 42px;
+    width: 380px;
+    font-size: 50px;
     flex-shrink: 1;
 }
 
 .container .real_name {
-    width: 300px;
-    font-size: 24px;
+    width: 380px;
+    font-size: 32px;
 }
 
 .logo {
@@ -104,7 +104,7 @@ body {
 
 .phase {
     position: absolute;
-    top: 80px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     width: 600px;
@@ -112,7 +112,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     color: white;
-    font-size: 100px;
+    font-size: 120px;
     place-content: center;
     padding-left: 20px;
     padding-right: 20px;
@@ -125,11 +125,11 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: 600px;
-    height: 46px;
+    height: 80px;
     background-size: cover;
     background-repeat: no-repeat;
     color: white;
-    font-size: 50px;
+    font-size: 60px;
     place-content: center;
     padding-left: 20px;
     padding-right: 20px;
@@ -147,8 +147,8 @@ body {
 }
 
 .twitter {
-    font-size: 24px;
-    width: 300px;
+    font-size: 32px;
+    width: 380px;
 }
 
 .flagscontainer {

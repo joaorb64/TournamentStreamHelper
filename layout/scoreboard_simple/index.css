@@ -25,7 +25,7 @@ body {
 }
 
 .container {
-    width: 265px;
+    width: 300px;
     height: 67px;
     background-size: cover;
     background-repeat: no-repeat;
@@ -35,7 +35,7 @@ body {
 
 .p1.container {
     background-position: 100% 0;
-    right: 1190px;
+    right: 1158px;
     top: 998px;
     background-image: url("./p1-container.png");
 }
@@ -51,11 +51,11 @@ body {
     position: absolute;
     left: 44px;
     top: 5px;
-    width: 168px;
+    width: 208px;
     height: 32px;
-    font-size: 24px;
-    padding-left: 6px;
-    padding-right: 6px;
+    font-size: 26px;
+    padding-left: 4px;
+    padding-right: 4px;
     justify-content: center;
     text-transform: uppercase;
 }
@@ -64,11 +64,11 @@ body {
     position: absolute;
     left: 105px;
     top: 40px;
-    width: 140px;
+    width: 180px;
     height: 24px;
-    font-size: 28px;
-    padding-left: 6px;
-    padding-right: 6px;
+    font-size: 24px;
+    padding-left: 4px;
+    padding-right: 4px;
     justify-content: center;
 }
 
