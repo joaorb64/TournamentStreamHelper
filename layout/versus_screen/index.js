@@ -30,6 +30,15 @@
                     ${data[p+"_losers"] ? " [L]" : ""}
                 </span>
             `);
+
+            SetInnerHtml($(`.${p} .sponsor_logo`),
+                data[p+"_org"] ? `
+                    <div>
+                        <div class='sponsor_logo' style='background-image: url(../../sponsor_logos/${data[p+"_org"].toUpperCase()}.png)'></div>
+                    </div>`
+                    :
+                    ""
+            , oldData[p+"_state_flag_url"] != data[p+"_state_flag_url"]);
     
             SetInnerHtml($(`.${p} .real_name`), `${data[p+"_real_name"]}`);
     
@@ -45,7 +54,7 @@
     
             SetInnerHtml($(`.${p} .flagcountry`),
                 data[p+"_country"] ? `
-                    <div style="position: relative; margin-left: 8px">
+                    <div>
                         <div class='flag' style='background-image: url(../../assets/country_flag/${data[p+"_country"].toLowerCase()}.png)'></div>
                         <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
                     </div>`
@@ -54,23 +63,23 @@
             );
     
             SetInnerHtml($(`.${p} .flagstate`),
-                data[p+"_state"] ? `
-                    <div style="position: relative; margin-left: 8px">
+                data[p+"_state_flag_url"] ? `
+                    <div>
                         <div class='flag' style='background-image: url(${data[p+"_state_flag_url"]})'></div>
                         <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
                     </div>`
                     :
                     ""
-            , oldData[p+"_state"] != data[p+"_state"]);
+            , oldData[p+"_state_flag_url"] != data[p+"_state_flag_url"]);
     
             if(oldData[p+"_character_codename"] != data[p+"_character_codename"] ||
             oldData[p+"_character_color"] != data[p+"_character_color"]){
                 $(`.${p}.character`).html(`
                     <div class="bg">
-                        <div class="portrait" style='background-image: url(../../out/${p}_character_portrait.png)'></div>
-                        <!--<video id="video${p}" class="video" width="auto" height="100%" autoplay muted>
-                            <source src="../../out/${p}_character_webm.webm">
-                        </video>-->
+                        <!--<div class="portrait" style='background-image: url(../../out/${p}_character_portrait.png)'></div>-->
+                        <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
+                            <source src="../../${data[p+"_assets_path"]["webm"]}">
+                        </video>
                     </div>
                 `)
                 gsap.timeline()
@@ -87,11 +96,11 @@
                         onUpdateParams: ["{self}"] }
                     )
                 
-                    let vid = document.getElementById(`video${p}`);
+                    let vid = document.getElementById(`video_${p}`);
                     if(vid){
                         vid.addEventListener("timeupdate", function(){
                             // Check you time here and
-                            if(t >= 5) //Where t = CurrentTime
+                            if(this.currentTime >= 5) //Where t = CurrentTime
                             {
                                 this.pause();// Stop the Video
                                 this.currentTime = 5;

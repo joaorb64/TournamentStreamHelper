@@ -153,9 +153,10 @@ body {
 
 .flagscontainer {
     position: absolute;
-    top: 30px;
+    top: 32px;
     right: 48px;
     display: flex;
+    flex-direction: column;
 }
 
 .flag {
@@ -163,34 +164,24 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    width: 48px;
-    height: 30px;
+    width: 56px;
+    height: 36px;
     display: flex;
     justify-content: center;
     border: 2px solid white;
-    margin-bottom: 22px;
+    margin-bottom: 32px;
 }
 
 .flagname {
     font-size: 20px;
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 1px 8px;
+    border-radius: 2px;
     background-color: #000000FF;
     position: absolute;
-    top: 100%;
+    bottom: 10px;
     left: 50%;
-    transform: translateX(-50%) translateY(-32px);
+    transform: translateX(-50%);
     border: 2px white solid;
-}
-
-.flagcountry {
-    top: 10px;
-    left: 212px;
-}
-
-.flagstate {
-    top: 10px;
-    left: 180px;
 }
 
 .score_container {
@@ -235,6 +226,7 @@ body {
     height: 900px;
     perspective: 300px;
     perspective-origin: left;
+    z-index: -1;
 }
 
 .p1.character .portrait {
@@ -311,4 +303,23 @@ body {
     height: 320px;
     background-size: cover;
     background-position: center;
+}
+
+.sponsor_logo {
+    overflow: visible;
+    position: fixed;
+    width: 180px;
+    height: 180px;
+    top: -185px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.p1 .sponsor_logo {
+    left: 5px;
+}
+
+.p2 .sponsor_logo {
+    right: 5px;
 }

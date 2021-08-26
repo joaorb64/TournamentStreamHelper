@@ -15,6 +15,7 @@
 
 body {
     font-family: "RobotoCondensed";
+    letter-spacing: 1.2px;
     font-weight: bold;
     opacity: 0;
     overflow: hidden;
@@ -42,7 +43,7 @@ body {
     position: absolute;
     align-items: center;
     top: 0;
-    width: 200px;
+    width: 230px;
     height: 100%;
 }
 
@@ -59,6 +60,9 @@ body {
 }
 
 .twitter {
+    top: 0;
+    width: 120px;
+    height: 100%;
     font-size: 20px;
     position: absolute;
     align-items: center;
@@ -66,19 +70,13 @@ body {
 }
 
 .p1 .twitter {
-    left: 270px;
-    top: 0;
-    width: 180px;
-    height: 100%;
+    left: 330px;
     text-align: right;
     justify-content: flex-end;
 }
 
 .p2 .twitter {
-    right: 270px;
-    top: 0;
-    width: 180px;
-    height: 100%;
+    right: 330px;
     text-align: left;
     justify-content: flex-start;
 }
@@ -89,9 +87,9 @@ body {
 
 .phase {
     position: absolute;
-    left: 538px;
+    left: 543px;
     top: 2px;
-    width: 332px;
+    width: 300px;
     height: 34px;
     font-size: 22px;
     padding-left: 10px;
