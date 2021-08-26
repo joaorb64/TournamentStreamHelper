@@ -160,6 +160,7 @@ body {
 }
 
 .flag {
+    position: relative;
     display: inline-block;
     background-size: cover;
     background-repeat: no-repeat;
@@ -173,12 +174,13 @@ body {
 }
 
 .flagname {
+    position: absolute;
+    text-align: center;
     font-size: 20px;
     padding: 1px 8px;
     border-radius: 2px;
     background-color: #000000FF;
-    position: absolute;
-    bottom: 10px;
+    top: 32px;
     left: 50%;
     transform: translateX(-50%);
     border: 2px white solid;

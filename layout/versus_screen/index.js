@@ -55,8 +55,9 @@
             SetInnerHtml($(`.${p} .flagcountry`),
                 data[p+"_country"] ? `
                     <div>
-                        <div class='flag' style='background-image: url(../../assets/country_flag/${data[p+"_country"].toLowerCase()}.png)'></div>
-                        <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
+                        <div class='flag' style='background-image: url(../../assets/country_flag/${data[p+"_country"].toLowerCase()}.png)'>
+                            <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
+                        </div>
                     </div>`
                     :
                     ""
@@ -65,8 +66,9 @@
             SetInnerHtml($(`.${p} .flagstate`),
                 data[p+"_state_flag_url"] ? `
                     <div>
-                        <div class='flag' style='background-image: url(${data[p+"_state_flag_url"]})'></div>
-                        <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
+                        <div class='flag' style='background-image: url(${data[p+"_state_flag_url"]})'>
+                            <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
+                        </div>
                     </div>`
                     :
                     ""
@@ -76,10 +78,10 @@
             oldData[p+"_character_color"] != data[p+"_character_color"]){
                 $(`.${p}.character`).html(`
                     <div class="bg">
-                        <!--<div class="portrait" style='background-image: url(../../out/${p}_character_portrait.png)'></div>-->
-                        <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
+                        <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"]["mural_art"]})'></div>
+                        <!--<video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
                             <source src="../../${data[p+"_assets_path"]["webm"]}">
-                        </video>
+                        </video>-->
                     </div>
                 `)
                 gsap.timeline()
