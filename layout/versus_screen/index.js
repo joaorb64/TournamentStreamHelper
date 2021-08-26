@@ -38,7 +38,7 @@
                     </div>`
                     :
                     ""
-            , oldData[p+"_state_flag_url"] != data[p+"_state_flag_url"]);
+            , oldData[p+"_org"] != data[p+"_org"]);
     
             SetInnerHtml($(`.${p} .real_name`), `${data[p+"_real_name"]}`);
     
