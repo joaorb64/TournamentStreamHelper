@@ -160,8 +160,14 @@ class Window(QWidget):
         group_box = QHBoxLayout()
         group_box.setSpacing(8)
         group_box.setContentsMargins(4,4,4,4)
+
+        gameLabel = QLabel("Game: ")
+        gameLabel.setFont(self.font_small)
+        gameLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        group_box.addWidget(gameLabel)
         
         self.gameSelect = QComboBox()
+        self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(self.LoadGameAssets)
 
         pre_base_layout.addLayout(group_box)
@@ -174,6 +180,7 @@ class Window(QWidget):
         self.characters = {}
         self.stockIcons = {}
         self.portraits = {}
+        self.stages = {}
 
         self.LoadGameAssets()
 
@@ -469,7 +476,7 @@ class Window(QWidget):
         if len(self.games.keys()) == 0:
             return
 
-        print(game)
+        print("Changed to game: "+str(game))
         
         if not game:
             game = list(self.games.keys())[0]
@@ -545,6 +552,23 @@ class Window(QWidget):
                 for i, f in enumerate(filteredFiles):
                     self.portraits[c][i] = QIcon('./assets/games/'+game+'/'+assetsKey+'/'+f)
             
+            assetsKey = list(gameObj["assets"].keys())[0]
+
+            for asset in list(gameObj["assets"].keys()):
+                if "stage_icon" in gameObj["assets"][asset].get("type", ""):
+                    assetsKey = asset
+                    break
+
+            assetsObj = gameObj["assets"][assetsKey]
+            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+        
+            self.stages = {}
+
+            for c, f in gameObj.get("stage_to_codename", {}).items():
+                self.stages[c] = {}
+                self.stages[c] = QImage('./assets/games/'+game+'/'+assetsKey+'/'+
+                    assetsObj.get("prefix", "")+f+assetsObj.get("postfix", "")+".png")
+
             for p in self.player_layouts:
                 p.LoadCharacters()
     
@@ -766,7 +790,7 @@ class Window(QWidget):
                     
                     x = (i%5)*(256+16) + margin
 
-                    stage_image = QImage('./stage_icon/stage_2_'+stages.get(str(stage), "")+'.png')
+                    stage_image = self.stages.get(str(stage), None)
                     painter.drawImage(QPoint(x, y), stage_image)
 
                     if str(stage) in data["strikedStages"] or int(stage) in data["strikedStages"]:
@@ -1113,26 +1137,26 @@ class Window(QWidget):
         model = QStandardItemModel()
 
         model.appendRow([QStandardItem(""), QStandardItem(""), QStandardItem("")])
-        smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
-        prLogo = QImage("icons/pr.svg").scaled(16, 16)
-        localLogo = QImage("icons/db.svg").scaled(16, 16)
+        #smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
+        #prLogo = QImage("icons/pr.svg").scaled(16, 16)
+        #localLogo = QImage("icons/db.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
             item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')))
             
-            pix = QPixmap(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')).pixmap(32, 32))
-            p = QPainter(pix)
+            #pix = QPixmap(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')).pixmap(32, 32))
+            #p = QPainter(pix)
 
-            if "from_smashgg" in self.mergedPlayers[i]:
-                p.drawImage(QPoint(16, 16), smashggLogo)
-            elif "from_local" in self.mergedPlayers[i]:
-                p.drawImage(QPoint(16, 16), localLogo)
-            else:
-                p.drawImage(QPoint(16, 16), prLogo)
+            # if "from_smashgg" in self.mergedPlayers[i]:
+            #     p.drawImage(QPoint(16, 16), smashggLogo)
+            # elif "from_local" in self.mergedPlayers[i]:
+            #     p.drawImage(QPoint(16, 16), localLogo)
+            # else:
+            #     p.drawImage(QPoint(16, 16), prLogo)
 
-            p.end()
-            item.setIcon(QIcon(pix))
+            #p.end()
+            #item.setIcon(QIcon(pix))
 
             item.setData(autocompleter_players[i])
             model.appendRow([

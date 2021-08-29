@@ -189,16 +189,19 @@ class PlayerColumn():
         self.layout_grid.addLayout(bottom_buttons_layout, 5, 0, 1, -1)
 
         self.save_bt = QPushButton("Save to local DB")
+        self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
         self.save_bt.clicked.connect(self.SavePlayerToDB)
 
         self.delete_bt = QPushButton("Delete from local DB")
+        self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
         self.clear_bt = QPushButton("Clear")
+        self.clear_bt.setFont(self.parent.font_small)
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
         self.clear_bt.clicked.connect(self.Clear)
