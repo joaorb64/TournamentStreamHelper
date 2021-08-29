@@ -486,20 +486,6 @@ class Window(QWidget):
         gameObj = self.games.get(game)
 
         if gameObj:
-            self.games[game]["assets"] = {}
-                
-            assetDirs = os.listdir("./assets/games/"+game)
-            assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
-
-            for dir in assetDirs:
-                if os.path.isdir("./assets/games/"+game+"/"+dir):
-                    if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
-                        print("Found asset config for ["+game+"]["+dir+"]")
-                        f = open("./assets/games/"+game+"/"+dir+"/config.json", encoding='utf-8')
-                        self.games[game]["assets"][dir] = json.load(f)
-                    else:
-                        print("No config file for "+game+" - "+dir)
-            
             self.characters = gameObj.get("character_to_codename")
 
             assetsKey = list(gameObj["assets"].keys())[0]
@@ -581,6 +567,20 @@ class Window(QWidget):
             if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
                 f = open("./assets/games/"+game+"/base_files/config.json", encoding='utf-8')
                 self.games[game] = json.load(f)
+
+                self.games[game]["assets"] = {}
+                
+                assetDirs = os.listdir("./assets/games/"+game)
+                assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
+
+                for dir in assetDirs:
+                    if os.path.isdir("./assets/games/"+game+"/"+dir):
+                        if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
+                            print("Found asset config for ["+game+"]["+dir+"]")
+                            f = open("./assets/games/"+game+"/"+dir+"/config.json", encoding='utf-8')
+                            self.games[game]["assets"][dir] = json.load(f)
+                        else:
+                            print("No config file for "+game+" - "+dir)
             else:
                 print("Game config for "+game+" doesn't exist.")
         
@@ -898,7 +898,7 @@ class Window(QWidget):
         for game in assets:
             select.addItem(assets[game]["name"])
         
-        def LoadGameAssets(index=None):
+        def ReloadGameAssets(index=None):
             nonlocal self
 
             if index == None:
@@ -920,7 +920,8 @@ class Window(QWidget):
                     [f.get("size", 0) for f in list(assets[key]["assets"][asset]["files"].values())]
                 )/1024/1024) + " MB"
 
-                currVersion = str(self.games.get(key, {}).get("assets", {}).get(asset, {}).get("version", ""))
+                currVersion = str(self.games.get(key, {}).get("assets", {}).get(asset, {}).get("version"))
+                print(currVersion)
                 version = str(assets[key]["assets"][asset].get("version"))
 
                 if currVersion != version:
@@ -939,9 +940,9 @@ class Window(QWidget):
             
             downloadList.resizeColumnsToContents()
         
-        self.reloadDownloadsList = LoadGameAssets
-        select.activated.connect(LoadGameAssets)
-        LoadGameAssets(0)
+        self.reloadDownloadsList = ReloadGameAssets
+        select.activated.connect(ReloadGameAssets)
+        ReloadGameAssets(0)
 
         btOk = QPushButton("Download")
         self.preDownloadDialogue.layout().addWidget(btOk)
