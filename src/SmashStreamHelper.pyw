@@ -1986,11 +1986,15 @@ class Window(QWidget):
                     return
                 
                 self.smashggSetAutoUpdateId = sets[0]["id"]
-                self.LoadPlayersFromSmashGGSet()
+                progress_callback.emit(0)
             else:
                 self.UpdateDataFromSmashGGSet()
         
+        def myFun2(progress):
+            self.LoadPlayersFromSmashGGSet()
+        
         worker = Worker(myFun, *{self})
+        worker.signals.progress.connect(myFun2)
         self.threadpool.start(worker)
     
     def LoadPlayersFromSmashGGSet(self, setId=None):
@@ -2108,7 +2112,6 @@ class Window(QWidget):
                 gameId = self.setData.get("data", {}).get("set", {}).get("event", {}).get("videogame", {}).get("id", None)
                 if self.setData is not None and gameId:
                     self.signals.DetectGame.emit(gameId)
-                print(self.setData)
                 print("Got response from new smashgg api")
             
             worker1 = Worker(fun1, *{self})
@@ -2122,192 +2125,199 @@ class Window(QWidget):
                 pool.cancel(worker1)
                 pool.cancel(worker2)
             else:
-                try:
-                    tasks = self.respTasks.get("entities", {}).get("setTask", [])
-                    setData = self.respTasks.get("entities", {}).get("sets", {})
+                print("Fini")
+                return
+            
+        def myFun2():
+            print("hey3")
+            nonlocal self
+            try:
+                tasks = self.respTasks.get("entities", {}).get("setTask", [])
+                setData = self.respTasks.get("entities", {}).get("sets", {})
 
-                    selectedChars = {}
+                selectedChars = {}
 
-                    for task in reversed(tasks):
-                        if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
-                            selectedChars = task.get("metadata", {}).get("charSelections", {})
-                            break
-                    
-                    latestWinner = None
+                for task in reversed(tasks):
+                    if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                        selectedChars = task.get("metadata", {}).get("charSelections", {})
+                        break
+                
+                latestWinner = None
 
-                    for task in reversed(tasks):
+                for task in reversed(tasks):
+                    if len(task.get("metadata", [])) == 0:
+                        continue
+                    if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                        latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
+                        break
+                
+                allStages = None
+                strikedStages = None
+                selectedStage = None
+                dsrStages = None
+                playerTurn = None
+
+                for task in reversed(tasks):
+                    if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
                         if len(task.get("metadata", [])) == 0:
                             continue
-                        if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
-                            latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
-                            break
-                    
-                    allStages = None
-                    strikedStages = None
-                    selectedStage = None
-                    dsrStages = None
-                    playerTurn = None
 
-                    for task in reversed(tasks):
-                        if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
-                            if len(task.get("metadata", [])) == 0:
-                                continue
+                        base = task.get("metadata", {})
 
-                            base = task.get("metadata", {})
+                        if task.get("action") == "report":
+                            base = base.get("report", {})
 
-                            if task.get("action") == "report":
-                                base = base.get("report", {})
+                        print(base)
 
-                            print(base)
+                        if base.get("strikeStages", None) is not None:
+                            allStages = base.get("strikeStages")
+                        elif base.get("banStages", None) is not None:
+                            allStages = base.get("banStages")
+                
+                        if base.get("strikeList", None) is not None:
+                            strikedStages = base.get("strikeList")
+                        elif base.get("banList", None) is not None:
+                            strikedStages = base.get("banList")
+                
+                        if base.get("stageSelection", None) is not None:
+                            selectedStage = base.get("stageSelection")
+                        elif base.get("stageId", None) is not None:
+                            selectedStage = base.get("stageId")
 
-                            if base.get("strikeStages", None) is not None:
-                                allStages = base.get("strikeStages")
-                            elif base.get("banStages", None) is not None:
-                                allStages = base.get("banStages")
-                    
-                            if base.get("strikeList", None) is not None:
-                                strikedStages = base.get("strikeList")
-                            elif base.get("banList", None) is not None:
-                                strikedStages = base.get("banList")
-                    
-                            if base.get("stageSelection", None) is not None:
-                                selectedStage = base.get("stageSelection")
-                            elif base.get("stageId", None) is not None:
-                                selectedStage = base.get("stageId")
+                        if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
 
-                            if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+                            loser = next(
+                                (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
+                                None
+                            )
 
-                                loser = next(
-                                    (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
-                                    None
-                                )
+                            if loser is not None:
+                                dsrStages = []
+                                dsrStages = [int(s) for s in base.get("stageWins")[loser]]
 
-                                if loser is not None:
-                                    dsrStages = []
-                                    dsrStages = [int(s) for s in base.get("stageWins")[loser]]
+                        if allStages == None and strikedStages == None and selectedStage == None:
+                            continue
 
-                            if allStages == None and strikedStages == None and selectedStage == None:
-                                continue
+                        if allStages == None:
+                            continue
 
-                            if allStages == None:
-                                continue
+                        break
+                
+                changed = False
 
-                            break
-                    
-                    changed = False
+                stageStrikeState = {
+                    "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
+                    "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
+                    "selected": stages.get(str(selectedStage), ""),
+                    "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                    "playerTurn": playerTurn
+                }
 
-                    stageStrikeState = {
-                        "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
-                        "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
-                        "selected": stages.get(str(selectedStage), ""),
-                        "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
-                        "playerTurn": playerTurn
-                    }
-
-                    if "stage_strike" in self.programState:
-                        if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
-                            changed = True
-                    else:
+                if "stage_strike" in self.programState:
+                    if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
                         changed = True
+                else:
+                    changed = True
 
-                    if changed:
-                        self.signals.ExportStageStrike.emit({
-                            "allStages": allStages,
-                            "strikedStages": strikedStages,
-                            "dsrStages": dsrStages,
-                            "selectedStage": selectedStage
-                        })
-                    
-                    self.programState["stage_strike"] = stageStrikeState
-                    self.ExportProgramState()
+                if changed:
+                    self.signals.ExportStageStrike.emit({
+                        "allStages": allStages,
+                        "strikedStages": strikedStages,
+                        "dsrStages": dsrStages,
+                        "selectedStage": selectedStage
+                    })
+                
+                self.programState["stage_strike"] = stageStrikeState
+                self.ExportProgramState()
 
-                    resp = self.setData
+                resp = self.setData
 
-                    if resp["data"]["set"].get("state", 0) == 3:
-                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                            print("Set ended")
-                            if not self.settings.get("competitor_mode", False):
-                                self.signals.StopTimer.emit()
-                            else:
-                                self.smashggSetAutoUpdateId = None
-                    
-                    if resp["data"]["set"]["event"]["hasTasks"] == False:
-                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                            print("Event has no tasks")
-                            if not self.settings.get("competitor_mode", False):
-                                self.signals.StopTimer.emit()
-                            else:
-                                self.smashggSetAutoUpdateId = None
+                if resp["data"]["set"].get("state", 0) == 3:
+                    if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                        print("Set ended")
+                        if not self.settings.get("competitor_mode", False):
+                            self.signals.StopTimer.emit()
+                        else:
+                            self.smashggSetAutoUpdateId = None
+                
+                if resp["data"]["set"]["event"]["hasTasks"] == False:
+                    if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                        print("Event has no tasks")
+                        if not self.settings.get("competitor_mode", False):
+                            self.signals.StopTimer.emit()
+                        else:
+                            self.smashggSetAutoUpdateId = None
 
-                    # Set phase name
-                    self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
+                # Set phase name
+                self.tournament_phase.setCurrentText(resp["data"]["set"]["fullRoundText"])
 
-                    id0 = 0
-                    id1 = 1
+                id0 = 0
+                id1 = 1
 
-                    # Get first player
-                    user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
-                    player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
-                    entrant = resp["data"]["set"]["slots"][0]["entrant"]
+                # Get first player
+                user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+                player = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["player"]
+                entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-                    if self.settings.get("competitor_mode", False) and \
-                    len(self.settings.get("smashgg_user_id", "")) > 0:
-                        if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
-                            id0 = 1
-                            id1 = 0
-                    
-                    if self.playersInverted:
+                if self.settings.get("competitor_mode", False) and \
+                len(self.settings.get("smashgg_user_id", "")) > 0:
+                    if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
                         id0 = 1
                         id1 = 0
+                
+                if self.playersInverted:
+                    id0 = 1
+                    id1 = 0
 
-                    self.player_layouts[id0].signals.UpdatePlayer.emit(player_obj)
+                self.player_layouts[id0].signals.UpdatePlayer.emit(player_obj)
 
-                    print("--------")
-                    print(entrant["id"])
-                    print(resp["data"]["set"].get("games", None))
+                print("--------")
+                print(entrant["id"])
+                print(resp["data"]["set"].get("games", None))
 
-                    # Update score
-                    score = 0
-                    if resp["data"]["set"].get("games", None) != None:
-                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                    [self.scoreLeft, self.scoreRight][id0].setValue(score)
+                # Update score
+                score = 0
+                if resp["data"]["set"].get("games", None) != None:
+                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                [self.scoreLeft, self.scoreRight][id0].setValue(score)
 
-                    # Get second player
-                    user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
-                    player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
-                    entrant = resp["data"]["set"]["slots"][1]["entrant"]
-                    player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
+                # Get second player
+                user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+                player = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["player"]
+                entrant = resp["data"]["set"]["slots"][1]["entrant"]
+                player_obj = self.LoadSmashGGPlayer(user, player, entrant.get("id", None), selectedChars)
 
-                    self.player_layouts[id1].signals.UpdatePlayer.emit(player_obj)
+                self.player_layouts[id1].signals.UpdatePlayer.emit(player_obj)
 
-                    # Update score
-                    score = 0
-                    if resp["data"]["set"].get("games", None) != None:
-                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                    [self.scoreLeft, self.scoreRight][id1].setValue(score)
+                # Update score
+                score = 0
+                if resp["data"]["set"].get("games", None) != None:
+                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                [self.scoreLeft, self.scoreRight][id1].setValue(score)
 
-                    # Update bestOf
-                    self.bestOf.setValue(setData.get("bestOf", 0))
+                # Update bestOf
+                self.bestOf.setValue(setData.get("bestOf", 0))
 
-                    # Update losers
-                    if setData.get("isGF", False) == True:
-                        # :P
-                        if "Reset" not in setData.get("fullRoundText", ""):
-                            self.player_layouts[id0].losersCheckbox.setCheckState(0)
-                            self.player_layouts[id1].losersCheckbox.setCheckState(2)
-                        else:
-                            self.player_layouts[id0].losersCheckbox.setCheckState(2)
-                            self.player_layouts[id1].losersCheckbox.setCheckState(2)
-                    else:
+                # Update losers
+                if setData.get("isGF", False) == True:
+                    # :P
+                    if "Reset" not in setData.get("fullRoundText", ""):
                         self.player_layouts[id0].losersCheckbox.setCheckState(0)
-                        self.player_layouts[id1].losersCheckbox.setCheckState(0)
+                        self.player_layouts[id1].losersCheckbox.setCheckState(2)
+                    else:
+                        self.player_layouts[id0].losersCheckbox.setCheckState(2)
+                        self.player_layouts[id1].losersCheckbox.setCheckState(2)
+                else:
+                    self.player_layouts[id0].losersCheckbox.setCheckState(0)
+                    self.player_layouts[id1].losersCheckbox.setCheckState(0)
 
-                except Exception as e:
-                    print(traceback.format_exc())
+            except Exception as e:
+                print(traceback.format_exc())
         
         worker = Worker(myFun, *{self}, **{"setId": setId})
+        worker.signals.finished.connect(myFun2)
         self.threadpool.start(worker)
 
     def UpdateDataFromSmashGGSet(self, setId=None):
@@ -2403,186 +2413,192 @@ class Window(QWidget):
                 pool.cancel(worker1)
                 pool.cancel(worker2)
             else:
-                try:
-                    tasks = self.respTasks.get("entities", {}).get("setTask", [])
+                return
+        
+        def myFun2():
+            print("Hey2")
+            nonlocal self
+            try:
+                tasks = self.respTasks.get("entities", {}).get("setTask", [])
 
-                    selectedChars = {}
+                selectedChars = {}
 
-                    for task in reversed(tasks):
-                        if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
-                            selectedChars = task.get("metadata", {}).get("charSelections", {})
-                            break
-                    
-                    latestWinner = None
+                for task in reversed(tasks):
+                    if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                        selectedChars = task.get("metadata", {}).get("charSelections", {})
+                        break
+                
+                latestWinner = None
 
-                    for task in reversed(tasks):
+                for task in reversed(tasks):
+                    if len(task.get("metadata", [])) == 0:
+                        continue
+                    if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                        latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
+                        break
+                
+                allStages = None
+                strikedStages = None
+                selectedStage = None
+                dsrStages = None
+                playerTurn = None
+
+                for task in reversed(tasks):
+                    if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
                         if len(task.get("metadata", [])) == 0:
                             continue
-                        if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
-                            latestWinner = int(task.get("metadata", {}).get("report", {}).get("winnerId"))
-                            break
-                    
-                    allStages = None
-                    strikedStages = None
-                    selectedStage = None
-                    dsrStages = None
-                    playerTurn = None
 
-                    for task in reversed(tasks):
-                        if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
-                            if len(task.get("metadata", [])) == 0:
-                                continue
+                        base = task.get("metadata", {})
 
-                            base = task.get("metadata", {})
+                        if task.get("action") == "report":
+                            base = base.get("report", {})
 
-                            if task.get("action") == "report":
-                                base = base.get("report", {})
+                        print(base)
 
-                            print(base)
+                        if base.get("strikeStages", None) is not None:
+                            allStages = base.get("strikeStages")
+                        elif base.get("banStages", None) is not None:
+                            allStages = base.get("banStages")
+                
+                        if base.get("strikeList", None) is not None:
+                            strikedStages = base.get("strikeList")
+                        elif base.get("banList", None) is not None:
+                            strikedStages = base.get("banList")
+                
+                        if base.get("stageSelection", None) is not None:
+                            selectedStage = base.get("stageSelection")
+                        elif base.get("stageId", None) is not None:
+                            selectedStage = base.get("stageId")
 
-                            if base.get("strikeStages", None) is not None:
-                                allStages = base.get("strikeStages")
-                            elif base.get("banStages", None) is not None:
-                                allStages = base.get("banStages")
-                    
-                            if base.get("strikeList", None) is not None:
-                                strikedStages = base.get("strikeList")
-                            elif base.get("banList", None) is not None:
-                                strikedStages = base.get("banList")
-                    
-                            if base.get("stageSelection", None) is not None:
-                                selectedStage = base.get("stageSelection")
-                            elif base.get("stageId", None) is not None:
-                                selectedStage = base.get("stageId")
+                        if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
 
-                            if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+                            loser = next(
+                                (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
+                                None
+                            )
 
-                                loser = next(
-                                    (p for p in base.get("stageWins").keys() if int(p) != int(latestWinner)),
-                                    None
-                                )
+                            if loser is not None:
+                                dsrStages = []
+                                dsrStages = [int(s) for s in base.get("stageWins")[loser]]
 
-                                if loser is not None:
-                                    dsrStages = []
-                                    dsrStages = [int(s) for s in base.get("stageWins")[loser]]
+                        if allStages == None and strikedStages == None and selectedStage == None:
+                            continue
 
-                            if allStages == None and strikedStages == None and selectedStage == None:
-                                continue
+                        if allStages == None:
+                            continue
 
-                            if allStages == None:
-                                continue
+                        break
+                
+                changed = False
 
-                            break
-                    
-                    changed = False
+                stageStrikeState = {
+                    "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
+                    "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
+                    "selected": stages.get(str(selectedStage), ""),
+                    "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                    "playerTurn": playerTurn
+                }
 
-                    stageStrikeState = {
-                        "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
-                        "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
-                        "selected": stages.get(str(selectedStage), ""),
-                        "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
-                        "playerTurn": playerTurn
-                    }
-
-                    if "stage_strike" in self.programState:
-                        if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
-                            changed = True
-                    else:
+                if "stage_strike" in self.programState:
+                    if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
                         changed = True
+                else:
+                    changed = True
 
-                    if changed:
-                        self.signals.ExportStageStrike.emit({
-                            "allStages": allStages,
-                            "strikedStages": strikedStages,
-                            "dsrStages": dsrStages,
-                            "selectedStage": selectedStage
-                        })
-                    
-                    self.programState["stage_strike"] = stageStrikeState
-                    self.ExportProgramState()
+                if changed:
+                    self.signals.ExportStageStrike.emit({
+                        "allStages": allStages,
+                        "strikedStages": strikedStages,
+                        "dsrStages": dsrStages,
+                        "selectedStage": selectedStage
+                    })
+                
+                self.programState["stage_strike"] = stageStrikeState
+                self.ExportProgramState()
 
-                    resp = self.setData
+                resp = self.setData
 
-                    if resp["data"]["set"].get("state", 0) == 3:
-                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                            print("Set ended")
-                            if not self.settings.get("competitor_mode", False):
-                                self.signals.StopTimer.emit()
-                            else:
-                                self.smashggSetAutoUpdateId = None
-                    
-                    if resp["data"]["set"]["event"]["hasTasks"] == False:
-                        if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
-                            print("Event has no tasks")
-                            if not self.settings.get("competitor_mode", False):
-                                self.signals.StopTimer.emit()
-                            else:
-                                self.smashggSetAutoUpdateId = None
+                if resp["data"]["set"].get("state", 0) == 3:
+                    if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                        print("Set ended")
+                        if not self.settings.get("competitor_mode", False):
+                            self.signals.StopTimer.emit()
+                        else:
+                            self.smashggSetAutoUpdateId = None
+                
+                if resp["data"]["set"]["event"]["hasTasks"] == False:
+                    if self.autoTimer != None and self.smashggSetAutoUpdateId != None:
+                        print("Event has no tasks")
+                        if not self.settings.get("competitor_mode", False):
+                            self.signals.StopTimer.emit()
+                        else:
+                            self.smashggSetAutoUpdateId = None
 
-                    id0 = 0
-                    id1 = 1
+                id0 = 0
+                id1 = 1
 
-                    # Get first player
-                    user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
-                    entrant = resp["data"]["set"]["slots"][0]["entrant"]
+                # Get first player
+                user = resp["data"]["set"]["slots"][0]["entrant"]["participants"][0]["user"]
+                entrant = resp["data"]["set"]["slots"][0]["entrant"]
 
-                    character = None
+                character = None
 
-                    if str(entrant.get("id", None)) in selectedChars:
-                        found = None
-                        if len(selectedChars[str(entrant["id"])]) > 0:
-                            found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
-                        if found:
-                            character = found["name"]
+                if str(entrant.get("id", None)) in selectedChars:
+                    found = None
+                    if len(selectedChars[str(entrant["id"])]) > 0:
+                        found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
+                    if found:
+                        character = found["name"]
 
-                    if self.settings.get("competitor_mode", False) and \
-                    len(self.settings.get("smashgg_user_id", "")) > 0:
-                        if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
-                            id0 = 1
-                            id1 = 0
-                    
-                    if self.playersInverted:
+                if self.settings.get("competitor_mode", False) and \
+                len(self.settings.get("smashgg_user_id", "")) > 0:
+                    if user.get("slug", None) != self.settings.get("smashgg_user_id", ""):
                         id0 = 1
                         id1 = 0
+                
+                if self.playersInverted:
+                    id0 = 1
+                    id1 = 0
 
-                    if self.player_layouts[id0].player_character.currentText() != character and character != None:
-                        self.player_layouts[id0].signals.UpdateCharacter.emit(character)
+                if self.player_layouts[id0].player_character.currentText() != character and character != None:
+                    self.player_layouts[id0].signals.UpdateCharacter.emit(character)
 
-                    print("--------")
-                    print(entrant["id"])
-                    print(resp["data"]["set"].get("games", None))
+                print("--------")
+                print(entrant["id"])
+                print(resp["data"]["set"].get("games", None))
 
-                    # Update score
-                    score = 0
-                    if resp["data"]["set"].get("games", None) != None:
-                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                    [self.scoreLeft, self.scoreRight][id0].setValue(score)
+                # Update score
+                score = 0
+                if resp["data"]["set"].get("games", None) != None:
+                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                [self.scoreLeft, self.scoreRight][id0].setValue(score)
 
-                    # Get second player
-                    user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
-                    entrant = resp["data"]["set"]["slots"][1]["entrant"]
-                    
-                    character = None
+                # Get second player
+                user = resp["data"]["set"]["slots"][1]["entrant"]["participants"][0]["user"]
+                entrant = resp["data"]["set"]["slots"][1]["entrant"]
+                
+                character = None
 
-                    if str(entrant.get("id", None)) in selectedChars:
-                        found = None
-                        if len(selectedChars[str(entrant["id"])]) > 0:
-                            found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
-                        if found:
-                            character = found["name"]
-                    
-                    if self.player_layouts[id1].player_character.currentText() != character and character != None:
-                        self.player_layouts[id1].signals.UpdateCharacter.emit(character)
+                if str(entrant.get("id", None)) in selectedChars:
+                    found = None
+                    if len(selectedChars[str(entrant["id"])]) > 0:
+                        found = next((c for c in self.smashgg_character_data["character"] if c["id"] == selectedChars[str(entrant["id"])][0]), None)
+                    if found:
+                        character = found["name"]
+                
+                if self.player_layouts[id1].player_character.currentText() != character and character != None:
+                    self.player_layouts[id1].signals.UpdateCharacter.emit(character)
 
-                    # Update score
-                    score = 0
-                    if resp["data"]["set"].get("games", None) != None:
-                        score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
-                    [self.scoreLeft, self.scoreRight][id1].setValue(score)
-                except Exception as e:
-                    print(traceback.format_exc())
-        
+                # Update score
+                score = 0
+                if resp["data"]["set"].get("games", None) != None:
+                    score = len([game for game in resp["data"]["set"].get("games", {}) if game.get("winnerId", -1) == entrant.get("id", None)])
+                [self.scoreLeft, self.scoreRight][id1].setValue(score)
+            except Exception as e:
+                print(traceback.format_exc())
+    
         worker = Worker(myFun, *{self}, **{"setId": setId})
+        worker.signals.finished.connect(myFun2)
         self.threadpool.start(worker)
 
 App = QApplication(sys.argv)
