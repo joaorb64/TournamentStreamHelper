@@ -1,4 +1,8 @@
 (($) => {
+    // Change this to the name of the assets pack you want to use
+    // It's basically the folder name: assets/games/game/ASSETPACK
+    var ASSET_TO_USE = "full";
+
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
         .from(['.score_container'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
@@ -76,14 +80,36 @@
     
             if(oldData[p+"_character_codename"] != data[p+"_character_codename"] ||
             oldData[p+"_character_color"] != data[p+"_character_color"]){
-                $(`.${p}.character`).html(`
-                    <div class="bg">
-                        <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"]["mural_art"]})'></div>
-                        <!--<video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
-                            <source src="../../${data[p+"_assets_path"]["webm"]}">
-                        </video>-->
-                    </div>
-                `)
+                if(!data[p+"_assets_path"][ASSET_TO_USE].endsWith(".webm")){
+                    // if asset is a image, add a image element
+                    $(`.${p}.character`).html(`
+                        <div class="bg">
+                            <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"][ASSET_TO_USE]})'></div>
+                        </div>
+                    `)
+                } else {
+                    // if asset is a video, add a video element
+                    $(`.${p}.character`).html(`
+                        <div class="bg">
+                            <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
+                                <source src="../../${data[p+"_assets_path"][ASSET_TO_USE]}">
+                            </video>
+                        </div>
+                    `)
+
+                    // Stop video at 5s, before fade-out
+                    let vid = document.getElementById(`video_${p}`);
+                    if(vid){
+                        vid.addEventListener("timeupdate", function(){
+                            if(this.currentTime >= 5)
+                            {
+                                this.pause();
+                                this.currentTime = 5;
+                            }
+                        })
+                    }
+                }
+                
                 gsap.timeline()
                     .from(
                         `.${p}.character .portrait`,
@@ -97,18 +123,6 @@
                         },
                         onUpdateParams: ["{self}"] }
                     )
-                
-                    let vid = document.getElementById(`video_${p}`);
-                    if(vid){
-                        vid.addEventListener("timeupdate", function(){
-                            // Check you time here and
-                            if(this.currentTime >= 5) //Where t = CurrentTime
-                            {
-                                this.pause();// Stop the Video
-                                this.currentTime = 5;
-                            }
-                        })
-                    }
             }
     
         })
