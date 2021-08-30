@@ -181,6 +181,7 @@ class Window(QWidget):
         self.stockIcons = {}
         self.portraits = {}
         self.stages = {}
+        self.skins = {}
 
         self.LoadGameAssets()
 
@@ -511,6 +512,29 @@ class Window(QWidget):
 
                 for i, f in enumerate(filteredFiles):
                     self.stockIcons[c][i] = QIcon('./assets/games/'+game+'/'+assetsKey+'/'+f)
+            
+            self.skins = {}
+
+            for c in self.characters.keys():
+                self.skins[c] = {}
+                for assetsKey in list(gameObj["assets"].keys()):
+                    asset = gameObj["assets"][assetsKey]
+
+                    files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+
+                    filteredFiles = \
+                        [f for f in files if f.startswith(asset.get("prefix", "")+self.characters[c]+asset.get("postfix", ""))]
+
+                    for f in filteredFiles:
+                        numberStart = f.rfind(asset.get("postfix", "")) + len(asset.get("postfix", ""))
+                        numberEnd = f.rfind(".")
+                        number = 0
+                        try:
+                            number = int(f[numberStart:numberEnd])
+                        except:
+                            pass
+                        self.skins[c][number] = True
+                print("Character "+c+" has "+str(len(self.skins[c]))+" skins")
             
             assetsKey = list(gameObj["assets"].keys())[0]
 

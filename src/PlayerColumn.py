@@ -256,8 +256,8 @@ class PlayerColumn():
     
     def LoadSkinOptions(self, text=None):
         self.player_character_color.clear()
-        for c in self.parent.portraits.get(self.player_character.currentText(), []):
-            if self.parent.portraits[self.player_character.currentText()][c] is not None:
+        for c in self.parent.skins.get(self.player_character.currentText(), []):
+            if self.parent.skins.get(self.player_character.currentText())[c] is not None:
                 self.player_character_color.addItem(self.parent.portraits[self.player_character.currentText()][c], str(c))
             else:
                 self.player_character_color.addItem(self.parent.stockIcons[self.player_character.currentText()][c], str(c))
