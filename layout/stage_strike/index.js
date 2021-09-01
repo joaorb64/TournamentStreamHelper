@@ -12,10 +12,11 @@
 
         if(JSON.stringify(data.stage_strike) != JSON.stringify(oldData.stage_strike)){
             html = "";
-            data.stage_strike.stages.forEach((stage)=>{
+            Object.keys(data.stage_strike.stages).forEach((stage)=>{
+                let filename = data.stage_strike.stages[stage].filename;
                 html += `
                     <div class="stage-container">
-                        <div class="stage-icon" style="background-image: url('../../${data.asset_path}/stage_icon/${stage}.png')">
+                        <div class="stage-icon" style="background-image: url('../../${data.asset_path}/stage_icon/${filename}.png')">
                             ${data.stage_strike.striked.includes(stage) &&
                             !data.stage_strike.dsr.includes(stage)?
                                 `<div class="stage-striked stamp"></div>`
@@ -32,11 +33,17 @@
                                 :
                                 ""
                             }
+                            <div class="stage-name">
+                                <div class="text">
+                                    ${stage}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `
             })
             $('.container').html(html);
+            $('.container').find('.stage-name').each(function(){FitText($(this))});
         }
     }
 

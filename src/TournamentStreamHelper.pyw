@@ -33,12 +33,6 @@ except ImportError as error:
     exit()
 
 sys.stderr = open('./log_error.txt', 'w')
-sys._excepthook = sys.excepthook 
-def exception_hook(exctype, value, traceback):
-    print(exctype, value, traceback)
-    sys._excepthook(exctype, value, traceback) 
-    sys.exit(1) 
-sys.excepthook = exception_hook 
 
 def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -508,7 +502,7 @@ class Window(QWidget):
                 self.stockIcons[c] = {}
 
                 filteredFiles = \
-                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c]+assetsObj.get("postfix", ""))]
+                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c].get("codename")+assetsObj.get("postfix", ""))]
 
                 if len(filteredFiles) == 0:
                     self.stockIcons[c][0] = QIcon('./icons/cancel.svg')
@@ -526,7 +520,7 @@ class Window(QWidget):
                     files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
 
                     filteredFiles = \
-                        [f for f in files if f.startswith(asset.get("prefix", "")+self.characters[c]+asset.get("postfix", ""))]
+                        [f for f in files if f.startswith(asset.get("prefix", "")+self.characters[c].get("codename")+asset.get("postfix", ""))]
 
                     for f in filteredFiles:
                         numberStart = f.rfind(asset.get("postfix", "")) + len(asset.get("postfix", ""))
@@ -557,7 +551,7 @@ class Window(QWidget):
                 self.portraits[c] = {}
 
                 filteredFiles = \
-                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c]+assetsObj.get("postfix", ""))]
+                    [f for f in files if f.startswith(assetsObj.get("prefix", "")+self.characters[c].get("codename")+assetsObj.get("postfix", ""))]
 
                 if len(filteredFiles) == 0:
                     self.portraits[c][0] = QIcon('./icons/cancel.svg')
@@ -575,14 +569,13 @@ class Window(QWidget):
             assetsObj = gameObj["assets"][assetsKey]
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
         
-            self.stages = {}
-            self.stage_images = {}
+            self.stages = gameObj.get("stage_to_codename", {})
 
-            for c, f in gameObj.get("stage_to_codename", {}).items():
-                self.stages[c] = assetsObj.get("prefix", "")+f+assetsObj.get("postfix", "")
-                self.stage_images[c] = {}
-                self.stage_images[c] = QImage('./assets/games/'+game+'/'+assetsKey+'/'+
-                    assetsObj.get("prefix", "")+f+assetsObj.get("postfix", "")+".png")
+            for stage in self.stages:
+                self.stages[stage]["filename"] = assetsObj.get("prefix", "")+self.stages[stage].get("codename", "")+assetsObj.get("postfix", "")
+            
+            for s in self.stages.keys():
+                self.stages[s]["name"] = s
 
             for p in self.player_layouts:
                 p.LoadCharacters()
@@ -2246,10 +2239,10 @@ class Window(QWidget):
                 changed = False
 
                 stageStrikeState = {
-                    "stages": [self.stages.get(str(stage), str(stage)) for stage in allStages] if allStages != None else [],
-                    "striked": [self.stages.get(str(stage), str(stage)) for stage in strikedStages] if strikedStages != None else [],
-                    "selected": self.stages.get(str(selectedStage), str(selectedStage)),
-                    "dsr": [self.stages.get(str(stage), str(stage)) for stage in dsrStages] if dsrStages != None else [],
+                    "stages": {st:self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in allStages]} if allStages != None else {},
+                    "striked": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in strikedStages] if strikedStages != None else [],
+                    "selected": next((s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(selectedStage)), ""),
+                    "dsr": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in dsrStages] if dsrStages != None else [],
                     "playerTurn": playerTurn
                 }
 

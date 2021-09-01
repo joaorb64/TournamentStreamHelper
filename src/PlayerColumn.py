@@ -467,7 +467,7 @@ class PlayerColumn():
     
     def CharacterChanged(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
-        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.characters.get(self.player_character.currentText(), "")
+        self.parent.programState['p'+str(self.id)+'_character_codename'] = self.parent.characters.get(self.player_character.currentText(), {}).get("codename")
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
@@ -498,8 +498,8 @@ class PlayerColumn():
 
                         characterAssets = []
 
-                        if self.parent.characters.get(self.player_character.currentText(), None):
-                            baseName = asset.get("prefix", "")+self.parent.characters.get(self.player_character.currentText(), "")+asset.get("postfix", "")
+                        if self.parent.characters.get(self.player_character.currentText()):
+                            baseName = asset.get("prefix", "")+self.parent.characters.get(self.player_character.currentText(), {}).get("codename")+asset.get("postfix", "")
                             charFiles = [f for f in os.listdir(assetPath) if f.startswith(baseName)]
                             characterAssets = {}
                             for f in charFiles:
