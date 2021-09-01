@@ -15,7 +15,7 @@
             data.stage_strike.stages.forEach((stage)=>{
                 html += `
                     <div class="stage-container">
-                        <div class="stage-icon" style="background-image: url('../../assets/games/ssbu/stage_icon/stage_2_${stage}.png')">
+                        <div class="stage-icon" style="background-image: url('../../${data.asset_path}/stage_icon/${stage}.png')">
                             ${data.stage_strike.striked.includes(stage) &&
                             !data.stage_strike.dsr.includes(stage)?
                                 `<div class="stage-striked stamp"></div>`

@@ -73,6 +73,9 @@ class Window(QWidget):
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
+
+        if not os.path.exists("assets/games"):
+            os.mkdir("assets/games")
         
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
@@ -174,10 +177,12 @@ class Window(QWidget):
 
         self.LoadAssets()
 
+        self.selectedGame = {}
         self.characters = {}
         self.stockIcons = {}
         self.portraits = {}
         self.stages = {}
+        self.stage_images = {}
         self.skins = {}
 
         self.LoadGameAssets()
@@ -482,6 +487,7 @@ class Window(QWidget):
             game = list(self.games.keys())[game]
         
         gameObj = self.games.get(game)
+        self.selectedGame = gameObj
 
         if gameObj:
             self.characters = gameObj.get("character_to_codename")
@@ -570,14 +576,21 @@ class Window(QWidget):
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
         
             self.stages = {}
+            self.stage_images = {}
 
             for c, f in gameObj.get("stage_to_codename", {}).items():
-                self.stages[c] = {}
-                self.stages[c] = QImage('./assets/games/'+game+'/'+assetsKey+'/'+
+                self.stages[c] = assetsObj.get("prefix", "")+f+assetsObj.get("postfix", "")
+                self.stage_images[c] = {}
+                self.stage_images[c] = QImage('./assets/games/'+game+'/'+assetsKey+'/'+
                     assetsObj.get("prefix", "")+f+assetsObj.get("postfix", "")+".png")
 
             for p in self.player_layouts:
                 p.LoadCharacters()
+
+        self.programState["asset_path"] = self.selectedGame.get("path")
+
+        if self.settings.get("autosave") == True:
+            self.ExportProgramState()
     
     def LoadAssets(self):
         self.games = {}
@@ -590,6 +603,7 @@ class Window(QWidget):
                 self.games[game] = json.load(f)
 
                 self.games[game]["assets"] = {}
+                self.games[game]["path"] = "./assets/games/"+game+"/"
                 
                 assetDirs = os.listdir("./assets/games/"+game)
                 assetDirs += ["base_files/"+f for f in os.listdir("./assets/games/"+game+"/base_files/")]
@@ -805,14 +819,17 @@ class Window(QWidget):
 
                     y = int(i/perLine)*(128+16)
 
+                    targetW = 256
+                    targetH = 128
+
                     elementsInRow = min(len(data["allStages"])-perLine*int(i/perLine), 5)
 
                     margin = (perLine - elementsInRow) * (256+16) / 2
                     
                     x = (i%5)*(256+16) + margin
 
-                    stage_image = self.stages.get(str(stage), None)
-                    painter.drawImage(QPoint(x, y), stage_image)
+                    stage_image = self.stage_images.get(str(stage), None)
+                    painter.drawImage(QRect(x, y, 256, 128), stage_image)
 
                     if str(stage) in data["strikedStages"] or int(stage) in data["strikedStages"]:
                         if data["dsrStages"] is not None and int(stage) in data["dsrStages"]:
@@ -1773,7 +1790,7 @@ class Window(QWidget):
                                 videogame {
                                     id
                                 }
-                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
+                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
                                     nodes {
                                         id
                                         state
@@ -2036,6 +2053,8 @@ class Window(QWidget):
                 r = requests.get(
                     "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
                     {
+                        "extensions": { "cacheControl": { "version":1, "noCache":True }},
+                        "cacheControl": { "version":1, "noCache":True },
                         "Cache-Control": "no-cache",
                         "Pragma": "no-cache"
                     }
@@ -2227,10 +2246,10 @@ class Window(QWidget):
                 changed = False
 
                 stageStrikeState = {
-                    "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
-                    "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
-                    "selected": stages.get(str(selectedStage), ""),
-                    "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                    "stages": [self.stages.get(str(stage), str(stage)) for stage in allStages] if allStages != None else [],
+                    "striked": [self.stages.get(str(stage), str(stage)) for stage in strikedStages] if strikedStages != None else [],
+                    "selected": self.stages.get(str(selectedStage), str(selectedStage)),
+                    "dsr": [self.stages.get(str(stage), str(stage)) for stage in dsrStages] if dsrStages != None else [],
                     "playerTurn": playerTurn
                 }
 
@@ -2359,6 +2378,8 @@ class Window(QWidget):
                 r = requests.get(
                     "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
                     {
+                        "extensions": {"cacheControl": { "version":1, "noCache":True }},
+                        "cacheControl": { "version":1, "noCache":True },
                         "Cache-Control": "no-cache",
                         "Pragma": "no-cache"
                     }
@@ -2513,10 +2534,10 @@ class Window(QWidget):
                 changed = False
 
                 stageStrikeState = {
-                    "stages": [stages.get(str(stage), "") for stage in allStages] if allStages != None else [],
-                    "striked": [stages.get(str(stage), "") for stage in strikedStages] if strikedStages != None else [],
-                    "selected": stages.get(str(selectedStage), ""),
-                    "dsr": [stages.get(str(stage), "") for stage in dsrStages] if dsrStages != None else [],
+                    "stages": [self.stages.get(str(stage), str(stage)) for stage in allStages] if allStages != None else [],
+                    "striked": [self.stages.get(str(stage), str(stage)) for stage in strikedStages] if strikedStages != None else [],
+                    "selected": self.stages.get(str(selectedStage), str(selectedStage)),
+                    "dsr": [self.stages.get(str(stage), str(stage)) for stage in dsrStages] if dsrStages != None else [],
                     "playerTurn": playerTurn
                 }
 
