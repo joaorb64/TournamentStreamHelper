@@ -924,7 +924,9 @@ class Window(QWidget):
         downloadList.verticalHeader().hide()
         self.preDownloadDialogue.resize(1200, 500)
         downloadList.horizontalHeader().setStretchLastSection(True)
+        downloadList.setWordWrap(True)
         downloadList.resizeColumnsToContents()
+        downloadList.resizeRowsToContents()
 
         for game in assets:
             select.addItem(assets[game]["name"])
@@ -942,7 +944,9 @@ class Window(QWidget):
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
             downloadList.horizontalHeader().setStretchLastSection(True)
+            downloadList.setWordWrap(True)
             downloadList.resizeColumnsToContents()
+            downloadList.resizeRowsToContents()
 
             key = list(assets.keys())[index]
 
@@ -969,7 +973,9 @@ class Window(QWidget):
                     QStandardItem(dlSize)
                 ])
             
+            downloadList.horizontalHeader().setStretchLastSection(True)
             downloadList.resizeColumnsToContents()
+            downloadList.resizeRowsToContents()
         
         self.reloadDownloadsList = ReloadGameAssets
         select.activated.connect(ReloadGameAssets)
@@ -991,8 +997,6 @@ class Window(QWidget):
                     "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/"+ \
                     filesToDownload[f]["name"]
                 filesToDownload[f]["extractpath"] = "./assets/games/"+game
-            
-            print(filesToDownload)
 
             self.downloadDialogue = QProgressDialog("Downloading assets", "Cancel", 0, 100, self)
             self.downloadDialogue.show()

@@ -219,8 +219,8 @@ class PlayerColumn():
     def Clear(self):
         self.player_name.clear()
         self.player_org.clear()
-        self.player_country.clear()
-        self.player_state.clear()
+        self.player_country.setCurrentIndex(0)
+        self.player_state.setCurrentIndex(0)
         self.player_character.setCurrentIndex(0)
         self.player_character_color.clear()
         self.player_twitter.clear()
