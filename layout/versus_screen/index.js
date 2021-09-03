@@ -1,7 +1,7 @@
 (($) => {
     // Change this to the name of the assets pack you want to use
     // It's basically the folder name: assets/games/game/ASSETPACK
-    var ASSET_TO_USE = "webm";
+    var ASSET_TO_USE = "full";
 
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)

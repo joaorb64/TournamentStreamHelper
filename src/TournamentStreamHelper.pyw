@@ -1787,7 +1787,7 @@ class Window(QWidget):
                                 videogame {
                                     id
                                 }
-                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2, 3]}) {
+                                sets(page: '''+str(page)+''', perPage: 64, sortType: MAGIC, filters: {hideEmpty: true, state: [0, 1, 2]}) {
                                     nodes {
                                         id
                                         state
