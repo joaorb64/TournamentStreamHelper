@@ -384,7 +384,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_country_name'] = self.player_country.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportProgramState()
+            self.parent.CalculateProgramStateDiff()
             self.ExportCountry()
 
     def ExportCountry(self):
@@ -406,6 +406,7 @@ class PlayerColumn():
                     )
             except Exception as e:
                 print(traceback.format_exc())
+        self.parent.ExportProgramState()
     
     def StateChanged(self):
         try:
@@ -430,40 +431,25 @@ class PlayerColumn():
     def ExportState(self):
         if 'p'+str(self.id)+'_state' in self.parent.programStateDiff:
             try:
-                self.parent.saveMutex.lock()
-                def myFun(self, progress_callback):
-                    with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
-                        outfile.write(self.parent.programState['p'+str(self.id)+'_state'])
+                removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
+                removeFileIfExists("out/p"+str(self.id)+"_state.txt")
 
-                    with open('out/p'+str(self.id)+'_state_name.txt', 'w', encoding='utf-8') as outfile:
-                        outfile.write(self.parent.programState['p'+str(self.id)+'_state_name'])
-
-                    removeFileIfExists("out/p"+str(self.id)+"_state_flag.png")
-
-                    if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
-                        self.parent.programState['p'+str(self.id)+'_state_flag_url'] = "https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+\
-                            self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+\
-                            self.parent.programState['p'+str(self.id)+'_state'].upper()+".png"
-                    else:
-                        self.parent.programState['p'+str(self.id)+'_state_flag_url'] = ""
-
-                    if(self.parent.programState['p'+str(self.id)+'_state'] != ""):
-                        r = requests.get("https://raw.githubusercontent.com/joaorb64/tournament_api/multigames/state_flag/"+
-                            self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+
-                            self.parent.programState['p'+str(self.id)+'_state'].upper()+".png", stream=True)
-                        if r.status_code == 200:
-                            with open('out/p'+str(self.id)+'_state_flag.png', 'wb') as f:
-                                r.raw.decode_content = True
-                                shutil.copyfileobj(r.raw, f)
-                    
-                    self.parent.ExportProgramState()
+                with open('out/p'+str(self.id)+'_state.txt', 'w', encoding='utf-8') as outfile:
+                    outfile.write(self.parent.programState['p'+str(self.id)+'_state'])
                 
-                worker = Worker(myFun, *{self})
-                self.parent.threadpool.start(worker)
+                with open('out/p'+str(self.id)+'_state_name.txt', 'w', encoding='utf-8') as outfile:
+                    outfile.write(self.parent.programState['p'+str(self.id)+'_state_name'])
+                    
+                if self.player_country.currentText().lower() != "":
+                    shutil.copy(
+                        "assets/state_flag/"+
+                        self.parent.programState['p'+str(self.id)+'_country'].upper()+"/"+
+                        self.parent.programState['p'+str(self.id)+'_state'].upper()+".png",
+                        "out/p"+str(self.id)+"_state_flag.png"
+                    )
             except Exception as e:
                 print(traceback.format_exc())
-            finally:
-                self.parent.saveMutex.unlock()
+        self.parent.ExportProgramState()
     
     def CharacterChanged(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()

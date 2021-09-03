@@ -1,7 +1,7 @@
 (($) => {
     // Change this to the name of the assets pack you want to use
     // It's basically the folder name: assets/games/game/ASSETPACK
-    var ASSET_TO_USE = "full";
+    var ASSET_TO_USE = "webm";
 
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
@@ -96,18 +96,6 @@
                             </video>
                         </div>
                     `)
-
-                    // Stop video at 5s, before fade-out
-                    let vid = document.getElementById(`video_${p}`);
-                    if(vid){
-                        vid.addEventListener("timeupdate", function(){
-                            if(this.currentTime >= 5)
-                            {
-                                this.pause();
-                                this.currentTime = 5;
-                            }
-                        })
-                    }
                 }
                 
                 gsap.timeline()
