@@ -461,7 +461,7 @@ class Window(QWidget):
         print("Change game to "+str(id))
 
         game = next(
-            (i-1 for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
+            (i+1 for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
             None
         )
 
