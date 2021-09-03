@@ -179,7 +179,7 @@ class Window(QWidget):
         self.stage_images = {}
         self.skins = {}
 
-        self.LoadGameAssets()
+        self.LoadGameAssets(0)
 
         # Status
         group_box = QHBoxLayout()
@@ -461,7 +461,7 @@ class Window(QWidget):
         print("Change game to "+str(id))
 
         game = next(
-            (i for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
+            (i-1 for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
             None
         )
 
@@ -472,15 +472,18 @@ class Window(QWidget):
     def LoadGameAssets(self, game=None):
         if len(self.games.keys()) == 0:
             return
-
-        print("Changed to game: "+str(game))
         
-        if not game:
+        if game == None:
             game = list(self.games.keys())[0]
         else:
-            game = list(self.games.keys())[game]
+            if game != 0:
+                game = list(self.games.keys())[game-1]
+            else:
+                game = ""
         
-        gameObj = self.games.get(game)
+        print("Changed to game: "+game)
+        
+        gameObj = self.games.get(game, {})
         self.selectedGame = gameObj
 
         if gameObj:
@@ -613,6 +616,8 @@ class Window(QWidget):
                 print("Game config for "+game+" doesn't exist.")
         
         self.gameSelect.clear()
+
+        self.gameSelect.addItem("")
 
         for game in self.games:
             self.gameSelect.addItem(self.games[game]["name"])
@@ -2242,13 +2247,16 @@ class Window(QWidget):
                 
                 changed = False
 
-                stageStrikeState = {
-                    "stages": {st:self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in allStages]} if allStages != None else {},
-                    "striked": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in strikedStages] if strikedStages != None else [],
-                    "selected": next((s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(selectedStage)), ""),
-                    "dsr": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in dsrStages] if dsrStages != None else [],
-                    "playerTurn": playerTurn
-                }
+                try:
+                    stageStrikeState = {
+                        "stages": {st:self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in allStages]} if allStages != None else {},
+                        "striked": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in strikedStages] if strikedStages != None else [],
+                        "selected": next((s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(selectedStage)), ""),
+                        "dsr": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in dsrStages] if dsrStages != None else [],
+                        "playerTurn": playerTurn
+                    }
+                except:
+                    stageStrikeState = {}
 
                 if "stage_strike" in self.programState:
                     if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):
@@ -2530,13 +2538,16 @@ class Window(QWidget):
                 
                 changed = False
 
-                stageStrikeState = {
-                    "stages": [self.stages.get(str(stage), str(stage)) for stage in allStages] if allStages != None else [],
-                    "striked": [self.stages.get(str(stage), str(stage)) for stage in strikedStages] if strikedStages != None else [],
-                    "selected": self.stages.get(str(selectedStage), str(selectedStage)),
-                    "dsr": [self.stages.get(str(stage), str(stage)) for stage in dsrStages] if dsrStages != None else [],
-                    "playerTurn": playerTurn
-                }
+                try:
+                    stageStrikeState = {
+                        "stages": {st:self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id"), None) == str(stage)) for stage in allStages]} if allStages != None else {},
+                        "striked": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in strikedStages] if strikedStages != None else [],
+                        "selected": next((s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(selectedStage)), ""),
+                        "dsr": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in dsrStages] if dsrStages != None else [],
+                        "playerTurn": playerTurn
+                    }
+                except:
+                    stageStrikeState = {}
 
                 if "stage_strike" in self.programState:
                     if json.dumps(stageStrikeState) != json.dumps(self.programState["stage_strike"]):

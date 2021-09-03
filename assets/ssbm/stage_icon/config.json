@@ -1,0 +1,8 @@
+{
+    "name": "Stage Icons",
+    "version": 0.8,
+    "description": "Stage icons",
+    "prefix": "",
+    "postfix": "",
+    "type": ["stage_icon"]
+}

@@ -1,0 +1,8 @@
+{
+    "name": "HD Renders",
+    "description": "Character portraits used on the character select screen player slots",
+    "credits": "@MeleeHD",
+    "prefix": "",
+    "postfix": "_",
+    "type": ["full"]
+}

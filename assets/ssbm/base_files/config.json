@@ -1,0 +1,141 @@
+{
+    "name": "Super Smash Bros Melee",
+    "smashgg_game_id": 1,
+    "character_to_codename": {
+        "Mario": {
+            "smashgg_name": "Mario",
+            "codename": "mario"
+        },
+        "Donkey Kong": {
+            "smashgg_name": "Donkey Kong",
+            "codename": "donkey_kong"
+        },
+        "Link": {
+            "smashgg_name": "Link",
+            "codename": "link"
+        },
+        "Samus": {
+            "smashgg_name": "Samus",
+            "codename": "samus"
+        },
+        "Yoshi": {
+            "smashgg_name": "Yoshi",
+            "codename": "yoshi"
+        },
+        "Kirby": {
+            "smashgg_name": "Kirby",
+            "codename": "kirby"
+        },
+        "Fox": {
+            "smashgg_name": "Fox",
+            "codename": "fox"
+        },
+        "Pikachu": {
+            "smashgg_name": "Pikachu",
+            "codename": "pikachu"
+        },
+        "Luigi": {
+            "smashgg_name": "Luigi",
+            "codename": "luigi"
+        },
+        "Ness": {
+            "smashgg_name": "Ness",
+            "codename": "ness"
+        },
+        "Captain Falcon": {
+            "smashgg_name": "Captain Falcon",
+            "codename": "captain_falcon"
+        },
+        "Jigglypuff": {
+            "smashgg_name": "Jigglypuff",
+            "codename": "jigglypuff"
+        },
+        "Peach": {
+            "smashgg_name": "Peach",
+            "codename": "peach"
+        },
+        "Bowser": {
+            "smashgg_name": "Bowser",
+            "codename": "bowser"
+        },
+        "Ice Climbers": {
+            "smashgg_name": "Ice Climbers",
+            "codename": "ice_climbers"
+        },
+        "Sheik": {
+            "smashgg_name": "Sheik",
+            "codename": "sheik"
+        },
+        "Zelda": {
+            "smashgg_name": "Zelda",
+            "codename": "zelda"
+        },
+        "Dr. Mario": {
+            "smashgg_name": "Dr. Mario",
+            "codename": "dr_mario"
+        },
+        "Pichu": {
+            "smashgg_name": "Pichu",
+            "codename": "pichu"
+        },
+        "Falco": {
+            "smashgg_name": "Falco",
+            "codename": "falco"
+        },
+        "Marth": {
+            "smashgg_name": "Marth",
+            "codename": "marth"
+        },
+        "Young Link": {
+            "smashgg_name": "Young Link",
+            "codename": "young_link"
+        },
+        "Ganondorf": {
+            "smashgg_name": "Ganondorf",
+            "codename": "ganondorf"
+        },
+        "Mewtwo": {
+            "smashgg_name": "Mewtwo",
+            "codename": "mewtwo"
+        },
+        "Roy": {
+            "smashgg_name": "Roy",
+            "codename": "roy"
+        },
+        "Mr. Game & Watch": {
+            "smashgg_name": "Mr. Game & Watch",
+            "codename": "game_&_watch"
+        },
+        "Random Character": {
+            "smashgg_name": "Random Character",
+            "codename": "random"
+        }
+    },
+    "stage_to_codename": {
+        "Yoshi's Story": {
+            "smashgg_id": "5",
+            "codename": "yoshis_story"
+        },
+        "Fountain of Dreams": {
+            "smashgg_id": "11",
+            "codename": "fountain_of_dreams"
+        },
+        "Pokémon Stadium": {
+            "smashgg_id": "15",
+            "codename": "pokemon_stadium"
+        },
+        "Battlefield": {
+            "smashgg_id": "19",
+            "codename": "battlefield"
+        },
+        "Final Destination": {
+            "smashgg_id": "20",
+            "codename": "final_destination"
+        },
+        "Dream Land": {
+            "smashgg_id": "25",
+            "codename": "dream_land"
+        }
+    },
+    "version": "0.9"
+}

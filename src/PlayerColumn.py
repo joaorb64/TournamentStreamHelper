@@ -597,8 +597,8 @@ class PlayerColumn():
             self.LoadSkinOptions(data)
             self.player_character_color.setCurrentIndex(0)
         else:
-            self.player_character.setCurrentIndex(list(self.parent.stockIcons.keys()).index("Random Character")+1)
-            self.LoadSkinOptions("Random Character")
+            self.player_character.setCurrentText(data)
+            self.LoadSkinOptions()
             self.player_character_color.setCurrentIndex(0)
         
         self.CharacterChanged()
