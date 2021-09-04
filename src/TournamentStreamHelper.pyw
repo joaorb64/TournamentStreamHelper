@@ -458,8 +458,6 @@ class Window(QWidget):
         splash.finish(self)
     
     def DetectGameFromId(self, id):
-        print("Change game to "+str(id))
-
         game = next(
             (i+1 for i, game in enumerate(self.games) if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
             None
@@ -486,17 +484,20 @@ class Window(QWidget):
         gameObj = self.games.get(game, {})
         self.selectedGame = gameObj
 
-        if gameObj:
-            self.characters = gameObj.get("character_to_codename")
+        if gameObj != None:
+            print("Yo")
+            self.characters = gameObj.get("character_to_codename", {})
 
-            assetsKey = list(gameObj["assets"].keys())[0]
+            assetsKey = ""
+            if len(list(gameObj.get("assets", {}).keys())) > 0:
+                assetsKey = list(gameObj.get("assets", {}).keys())[0]
 
-            for asset in list(gameObj["assets"].keys()):
+            for asset in list(gameObj.get("assets", {}).keys()):
                 if "icon" in gameObj["assets"][asset].get("type", ""):
                     assetsKey = asset
                     break
 
-            assetsObj = gameObj["assets"][assetsKey]
+            assetsObj = gameObj.get("assets", {}).get(assetsKey, None)
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
         
             self.stockIcons = {}
@@ -536,16 +537,18 @@ class Window(QWidget):
                         self.skins[c][number] = True
                 print("Character "+c+" has "+str(len(self.skins[c]))+" skins")
             
-            assetsKey = list(gameObj["assets"].keys())[0]
+            assetsKey = ""
+            if len(list(gameObj.get("assets", {}).keys())) > 0:
+                assetsKey = list(gameObj.get("assets", {}).keys())[0]
 
-            for asset in list(gameObj["assets"].keys()):
+            for asset in list(gameObj.get("assets", {}).keys()):
                 if "portrait" in gameObj["assets"][asset].get("type", []):
                     assetsKey = asset
                     break
                 if "icon" in gameObj["assets"][asset].get("type", []):
                     assetsKey = asset
             
-            assetsObj = gameObj["assets"][assetsKey]
+            assetsObj = gameObj.get("assets", {}).get(assetsKey)
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
 
             self.portraits = {}
@@ -562,14 +565,16 @@ class Window(QWidget):
                 for i, f in enumerate(filteredFiles):
                     self.portraits[c][i] = QIcon('./assets/games/'+game+'/'+assetsKey+'/'+f)
             
-            assetsKey = list(gameObj["assets"].keys())[0]
+            assetsKey = ""
+            if len(list(gameObj.get("assets", {}).keys())) > 0:
+                assetsKey = list(gameObj.get("assets", {}).keys())[0]
 
-            for asset in list(gameObj["assets"].keys()):
+            for asset in list(gameObj.get("assets", {}).keys()):
                 if "stage_icon" in gameObj["assets"][asset].get("type", ""):
                     assetsKey = asset
                     break
 
-            assetsObj = gameObj["assets"][assetsKey]
+            assetsObj = gameObj.get("assets", {}).get(assetsKey)
             files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
         
             self.stages = gameObj.get("stage_to_codename", {})

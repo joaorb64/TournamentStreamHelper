@@ -468,7 +468,9 @@ class PlayerColumn():
             gameId = None
 
             if self.parent.games is not None and len(self.parent.games) > 0:
-                gameId = list(self.parent.games.keys())[self.parent.gameSelect.currentIndex()]
+                if self.parent.gameSelect.currentIndex() > 0:
+                    game = self.parent.gameSelect.currentIndex()-1
+                    gameId = list(self.parent.games.keys())[game]
 
             oldCharacterAssets = [f for f in os.listdir("./out") if f.startswith("p"+str(self.id)+"_character_")]
             for f in oldCharacterAssets:
@@ -477,7 +479,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_assets_path'] = {}
 
             if gameId is not None:
-                for assetKey in list(self.parent.games.values())[self.parent.gameSelect.currentIndex()]["assets"]:
+                for assetKey in list(self.parent.games.values())[self.parent.gameSelect.currentIndex()-1].get("assets", {}):
                     try:
                         asset = self.parent.games[gameId]["assets"][assetKey]
                         assetPath = './assets/games/'+gameId+'/'+assetKey+'/'
