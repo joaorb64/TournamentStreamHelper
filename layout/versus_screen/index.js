@@ -68,15 +68,15 @@
             );
     
             SetInnerHtml($(`.${p} .flagstate`),
-                data[p+"_state_flag_url"] ? `
+                data[p+"_state"] ? `
                     <div>
-                        <div class='flag' style='background-image: url(${data[p+"_state_flag_url"]})'>
+                        <div class='flag' style='background-image: url(../../assets/state_flag/${data[p+"_country"].toUpperCase()}/${data[p+"_state"].toUpperCase()}.png)'>
                             <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
                         </div>
                     </div>`
                     :
                     ""
-            , oldData[p+"_state_flag_url"] != data[p+"_state_flag_url"]);
+            );
     
             if(oldData[p+"_character_codename"] != data[p+"_character_codename"] ||
             oldData[p+"_character_color"] != data[p+"_character_color"]){
