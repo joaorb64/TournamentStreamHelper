@@ -20,6 +20,10 @@ A Stream helper for fighting game tournaments!
 
 ![screenshot](../media/media/scoreboard2.png)
 
+### "FGC-style" scoreboard
+
+![screenshot](../media/media/scoreboard_fgc.png)
+
 ### Demo with automatic transcription of Kana to Romaji
 
 ![screenshot](../media/media/scoreboard_jp.png)
@@ -27,6 +31,12 @@ A Stream helper for fighting game tournaments!
 ### VS screen
 
 ![screenshot](../media/media/vs_screen.gif)
+
+### Download multiple asset packs from within the program!
+
+![screenshot](../media/media/vs1.png)
+![screenshot](../media/media/vs2.png)
+![screenshot](../media/media/vs3.png)
 
 ### Stage Striking output
 
