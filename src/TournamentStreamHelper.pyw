@@ -2172,7 +2172,7 @@ class Window(QWidget):
                 pool.cancel(worker1)
                 pool.cancel(worker2)
             else:
-                print("Fini")
+                print("Finished")
                 return
             
         def myFun2():
