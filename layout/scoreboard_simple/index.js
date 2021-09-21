@@ -34,7 +34,7 @@
         `);
 
         SetInnerHtml($(".p1 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../country_icon/${data.p1_country.toLowerCase()}.png)'></div>
+            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p1_country.toLowerCase()}.png)'></div>
         `);
 
         SetInnerHtml($(".p1 .flagstate"), `
@@ -42,12 +42,15 @@
         `, oldData.p1_state != data.p1_state);
 
         SetInnerHtml($(".p2 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../country_icon/${data.p2_country.toLowerCase()}.png)'></div>
+            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
         `);
 
         SetInnerHtml($(".p2 .flagstate"), `
             <div class='flag' style='background-image: url(../../out/p2_state_flag.png#${data.p2_state})'></div>
         `, oldData.p2_state != data.p2_state);
+
+        SetInnerHtml($(".p1 .twitter"), String(data.p1_twitter));
+        SetInnerHtml($(".p2 .twitter"), String(data.p2_twitter));
 
         SetInnerHtml($(".p1 .score"), String(data.score_left));
         SetInnerHtml($(".p2 .score"), String(data.score_right));

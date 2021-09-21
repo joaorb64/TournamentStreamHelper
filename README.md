@@ -1,6 +1,6 @@
-# SmashStreamHelper
+# TournamentStreamHelper
 
-A Stream helper for Super Smash Bros Ultimate
+A Stream helper for fighting game tournaments!
 
 ## Program itself
 
@@ -44,13 +44,13 @@ Windows:
 
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - Install Python 3.X and be sure to have it added to "Path" when installing (Windows x64: https://www.python.org/ftp/python/3.9.2/python-3.9.2-amd64.exe)
-- Run `install_requirements.bat` (a command prompt window should open, load some bars, then wait for you to press any key)
-- Double click `SmashStreamHelper.pyw`
+- Only for the first run, double click `install_requirements.bat` (a command prompt window should open, load some bars, then wait for you to press any key)
+- From now on you may open the program using `TournamentStreamHelper.bat`
 
 Linux:
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - `pip3 install -r requirements.txt`
-- Double click `SmashStreamHelper.sh` or run `python3 SmashStreamHelper.pyw` from a terminal
+- Double click `TournamentStreamHelper.sh` or run `./TournamentStreamHelper.sh` from a terminal. Make sure the script has executable permissions.
 
 # Getting started
 
@@ -113,6 +113,6 @@ It's not possible to animate these elements unless there's an OBS plugin for tha
 
 You can find a directory called `/sponsor_logos/` in the program's directory. If you put an image, say, `google.png` (has to be a lowercase png), and a player has its prefix set as `GOOGLE`, `google` (or any casing variations) this file will also get copied to the output.
 
-## Feed me
+## Donations
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W22YK26)

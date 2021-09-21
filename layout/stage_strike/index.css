@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Roboto";
-    src: url("../include/Roboto-Regular.ttf") format("truetype");
+    font-family: "Roboto Condensed";
+    src: url("../include/RobotoCondensed-Regular.ttf") format("truetype");
 }
 
 .text {
@@ -14,7 +14,7 @@
 }
 
 body {
-    font-family: Roboto;
+    font-family: "Roboto Condensed";
     font-weight: bold;
     opacity: 0;
     overflow: hidden;
@@ -25,6 +25,18 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+.stage-name {
+    position: absolute;
+    color: white;
+    width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 24px;
+    height: 28px;
+    bottom: 0;
 }
 
 .stage-icon {
@@ -43,7 +55,7 @@ body {
 
 .stamp {
     position: absolute;
-    bottom: 8px;
+    top: 8px;
     right: 10px;
     width: 64px;
     height: 64px;

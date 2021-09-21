@@ -1,4 +1,8 @@
 (($) => {
+    // Change this to the name of the assets pack you want to use
+    // It's basically the folder name: assets/games/game/ASSETPACK
+    var ASSET_TO_USE = "full";
+
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
         .from(['.score_container'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
@@ -30,6 +34,15 @@
                     ${data[p+"_losers"] ? " [L]" : ""}
                 </span>
             `);
+
+            SetInnerHtml($(`.${p} .sponsor_logo`),
+                data[p+"_org"] ? `
+                    <div>
+                        <div class='sponsor_logo' style='background-image: url(../../sponsor_logos/${data[p+"_org"].toUpperCase()}.png)'></div>
+                    </div>`
+                    :
+                    ""
+            , oldData[p+"_org"] != data[p+"_org"]);
     
             SetInnerHtml($(`.${p} .real_name`), `${data[p+"_real_name"]}`);
     
@@ -45,9 +58,10 @@
     
             SetInnerHtml($(`.${p} .flagcountry`),
                 data[p+"_country"] ? `
-                    <div style="position: relative; margin-left: 8px">
-                        <div class='flag' style='background-image: url(../../country_icon/${data[p+"_country"].toLowerCase()}.png)'></div>
-                        <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
+                    <div>
+                        <div class='flag' style='background-image: url(../../assets/country_flag/${data[p+"_country"].toLowerCase()}.png)'>
+                            <div class="flagname">${data[p+"_country"].toUpperCase()}</div>
+                        </div>
                     </div>`
                     :
                     ""
@@ -55,21 +69,35 @@
     
             SetInnerHtml($(`.${p} .flagstate`),
                 data[p+"_state"] ? `
-                    <div style="position: relative; margin-left: 8px">
-                        <div class='flag' style='background-image: url(../../out/${p}_state_flag.png#${data[p+"_state"]})'></div>
-                        <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
+                    <div>
+                        <div class='flag' style='background-image: url(../../assets/state_flag/${data[p+"_country"].toUpperCase()}/${data[p+"_state"].toUpperCase()}.png)'>
+                            <div class="flagname">${data[p+"_state"].toUpperCase()}</div>
+                        </div>
                     </div>`
                     :
                     ""
-            , oldData[p+"_state"] != data[p+"_state"]);
+            );
     
             if(oldData[p+"_character_codename"] != data[p+"_character_codename"] ||
             oldData[p+"_character_color"] != data[p+"_character_color"]){
-                $(`.${p}.character`).html(`
-                    <div class="bg">
-                        <div class="portrait" style='background-image: url(../../character_icon/chara_1_${data[p+"_character_codename"]}_0${data[p+"_character_color"]}.png)'></div>
-                    </div>
-                `)
+                if(!data[p+"_assets_path"][ASSET_TO_USE].endsWith(".webm")){
+                    // if asset is a image, add a image element
+                    $(`.${p}.character`).html(`
+                        <div class="bg">
+                            <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"][ASSET_TO_USE]})'></div>
+                        </div>
+                    `)
+                } else {
+                    // if asset is a video, add a video element
+                    $(`.${p}.character`).html(`
+                        <div class="bg">
+                            <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
+                                <source src="../../${data[p+"_assets_path"][ASSET_TO_USE]}">
+                            </video>
+                        </div>
+                    `)
+                }
+                
                 gsap.timeline()
                     .from(
                         `.${p}.character .portrait`,
