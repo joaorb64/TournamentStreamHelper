@@ -384,7 +384,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_country_name'] = self.player_country.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportState()
+            self.parent.ExportProgramState()
             self.ExportCountry()
 
     def ExportCountry(self):
@@ -424,7 +424,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_state_name'] = self.player_state.currentText()
         
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportState()
+            self.parent.ExportProgramState()
             self.ExportState()
 
     def ExportState(self):
@@ -455,7 +455,7 @@ class PlayerColumn():
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.ExportState()
+            self.parent.ExportProgramState()
             self.ExportCharacter()
             
     def ExportCharacter(self):
@@ -500,7 +500,7 @@ class PlayerColumn():
                             if str(self.player_character_color.currentIndex()) in characterAssets:
                                 color = str(self.player_character_color.currentIndex())
                             else:
-                                remap = asset.get("skin_mapping", {}).get(self.parent.characters.get(self.player_character.currentText(), ""), None)
+                                remap = asset.get("skin_mapping", {}).get(self.parent.characters.get(self.player_character.currentText(), {"codename": ""})["codename"], None)
                                 if remap and str(self.player_character_color.currentIndex()) in remap:
                                     color = str(remap[str(self.player_character_color.currentIndex())])
                             
