@@ -632,7 +632,7 @@ class Window(QWidget):
         versions = None
 
         try:
-            response = requests.get("https://api.github.com/repos/joaorb64/SmashStreamHelper/releases/latest")
+            response = requests.get("https://api.github.com/repos/joaorb64/TournamentStreamHelper/releases/latest")
             release = json.loads(response.text)
         except Exception as e:
             if silent == False:
