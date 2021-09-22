@@ -384,7 +384,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_country_name'] = self.player_country.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.CalculateProgramStateDiff()
+            self.parent.ExportState()
             self.ExportCountry()
 
     def ExportCountry(self):
@@ -406,7 +406,6 @@ class PlayerColumn():
                     )
             except Exception as e:
                 print(traceback.format_exc())
-        self.parent.ExportProgramState()
     
     def StateChanged(self):
         try:
@@ -425,7 +424,7 @@ class PlayerColumn():
             self.parent.programState['p'+str(self.id)+'_state_name'] = self.player_state.currentText()
         
         if self.parent.settings.get("autosave") == True:
-            self.parent.CalculateProgramStateDiff()
+            self.parent.ExportState()
             self.ExportState()
 
     def ExportState(self):
@@ -449,7 +448,6 @@ class PlayerColumn():
                     )
             except Exception as e:
                 print(traceback.format_exc())
-        self.parent.ExportProgramState()
     
     def CharacterChanged(self):
         self.parent.programState['p'+str(self.id)+'_character'] = self.player_character.currentText()
@@ -457,7 +455,7 @@ class PlayerColumn():
         self.parent.programState['p'+str(self.id)+'_character_color'] = self.player_character_color.currentText()
 
         if self.parent.settings.get("autosave") == True:
-            self.parent.CalculateProgramStateDiff()
+            self.parent.ExportState()
             self.ExportCharacter()
             
     def ExportCharacter(self):
@@ -516,8 +514,6 @@ class PlayerColumn():
                     except Exception as e:
                         print(traceback.format_exc())
             self.parent.saveMutex.unlock()
-            
-            self.parent.ExportProgramState()
     
     def AutocompleteSelected(self, selected):
         if type(selected) == QModelIndex:
