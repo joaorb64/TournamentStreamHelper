@@ -515,7 +515,7 @@ class PlayerColumn():
                     try:
                         shutil.copy(
                             characterAssets[assetKey],
-                            "./out/p"+str(self.id)+"_character_"+assetKey.split("/")[0]+"."+characterAssets[assetKey].rsplit(".", 1)[1]
+                            "./out/p"+str(self.id)+"_character_"+assetKey.split("/")[-1]+"."+characterAssets[assetKey].rsplit(".", 1)[1]
                         )
                     except Exception as e:
                         print(traceback.format_exc())
