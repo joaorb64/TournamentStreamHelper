@@ -485,7 +485,6 @@ class Window(QWidget):
         self.selectedGame = gameObj
 
         if gameObj != None:
-            print("Yo")
             self.characters = gameObj.get("character_to_codename", {})
 
             assetsKey = ""

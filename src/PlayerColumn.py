@@ -131,7 +131,7 @@ class PlayerColumn():
             self.player_country.setItemData(i+1, country_code)
         self.player_country.setEditable(True)
         location_layout.addWidget(self.player_country)
-        self.player_country.setMinimumWidth(75)
+        self.player_country.setMinimumWidth(80)
         self.player_country.setFont(self.parent.font_small)
         self.player_country.lineEdit().setFont(self.parent.font_small)
         self.player_country.currentIndexChanged.connect(self.CountryChanged)
@@ -145,7 +145,7 @@ class PlayerColumn():
         self.player_state = QComboBox()
         self.player_state.setEditable(True)
         location_layout.addWidget(self.player_state)
-        self.player_state.setMinimumWidth(60)
+        self.player_state.setMinimumWidth(80)
         self.player_state.setFont(self.parent.font_small)
         self.player_state.lineEdit().setFont(self.parent.font_small)
         self.player_state.activated.connect(self.StateChanged)
@@ -213,6 +213,7 @@ class PlayerColumn():
         self.player_character.addItem("")
         for c in self.parent.stockIcons:
             self.player_character.addItem(self.parent.stockIcons[c][0], c)
+        self.player_character_color.setIconSize(QSize(32, 32))
         self.player_character.setCurrentIndex(0)
         self.player_character_color.clear()
     
@@ -257,10 +258,11 @@ class PlayerColumn():
     def LoadSkinOptions(self, text=None):
         self.player_character_color.clear()
         for c in sorted(self.parent.skins.get(self.player_character.currentText(), [])):
-            if self.parent.skins.get(self.player_character.currentText()).get(c) is not None:
+            if self.parent.portraits.get(self.player_character.currentText()).get(c) is not None:
                 self.player_character_color.addItem(self.parent.portraits.get(self.player_character.currentText()).get(c), str(c))
             else:
                 self.player_character_color.addItem(self.parent.stockIcons.get(self.player_character.currentText()).get(c), str(c))
+        self.player_character_color.setIconSize(QSize(48, 48))
         self.player_character_color.repaint()
 
     def LoadStateOptions(self, text):
@@ -273,7 +275,7 @@ class PlayerColumn():
             if index > 0:
                 states = list(self.parent.countries.values())[index]["states"]
                 for s in list(states.values()):
-                    self.player_state.addItem(str(s["state_name"]+" ("+s["state_code"]+")"))
+                    self.player_state.addItem(QIcon(f"./assets/state_flag/{list(self.parent.countries.keys())[index]}/{s['state_code']}.png"), str(s["state_name"]+" ("+s["state_code"]+")"))
         except Exception as e:
             print(traceback.format_exc())
 
@@ -478,7 +480,10 @@ class PlayerColumn():
                         for f in charFiles:
                             skin = f[len(baseName):]
                             skin = skin.rsplit(".", 1)[0]
-                            skin = int(skin)
+                            if skin == "":
+                                skin = 0
+                            else:
+                                skin = int(skin)
                             characterAssets[str(skin)] = f
                         print(characterAssets)
 
