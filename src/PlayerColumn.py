@@ -222,7 +222,7 @@ class PlayerColumn():
         self.player_character.addItem("")
         for c in self.parent.stockIcons:
             self.player_character.addItem(
-                QIcon(QPixmap.fromImage(self.parent.stockIcons[c][0])), c)
+                QIcon(QPixmap.fromImage(self.parent.stockIcons[c][0]).scaledToWidth(32, Qt.TransformationMode.SmoothTransformation)), c)
         self.player_character_color.setIconSize(QSize(32, 32))
         self.player_character.setCurrentIndex(0)
         self.player_character_color.clear()
