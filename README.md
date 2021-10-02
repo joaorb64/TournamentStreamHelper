@@ -8,23 +8,25 @@ A Stream helper for fighting game tournaments!
 
 ## Usage
 
+All data is updated in one click!
+
 ![screenshot](../media/media/usage.gif)
 
 ## Scoreboard samples -- included in the program
 
-### Animated scoreboard
+### Animated scoreboards!
 
 ![screenshot](../media/media/scoreboard.gif)
 
-### Simpler scoreboard
+#### Simpler scoreboard
 
 ![screenshot](../media/media/scoreboard2.png)
 
-### "FGC-style" scoreboard
+#### "FGC-style" scoreboard
 
 ![screenshot](../media/media/scoreboard_fgc.png)
 
-### Demo with automatic transcription of Kana to Romaji
+#### Demo with automatic transcription of Kana to Romaji
 
 ![screenshot](../media/media/scoreboard_jp.png)
 
@@ -34,9 +36,7 @@ A Stream helper for fighting game tournaments!
 
 ### Download multiple asset packs from within the program!
 
-![screenshot](../media/media/vs1.png)
-![screenshot](../media/media/vs2.png)
-![screenshot](../media/media/vs3.png)
+![screenshot](../media/media/multi.gif)
 
 Features:
 
