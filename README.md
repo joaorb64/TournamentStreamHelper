@@ -34,6 +34,8 @@ All data is updated in one click!
 
 ![screenshot](../media/media/vs_screen.gif)
 
+![screenshot](../media/media/vs2.gif)
+
 ### Download multiple asset packs from within the program!
 
 ![screenshot](../media/media/multi.gif)
