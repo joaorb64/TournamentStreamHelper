@@ -38,11 +38,8 @@ A Stream helper for fighting game tournaments!
 ![screenshot](../media/media/vs2.png)
 ![screenshot](../media/media/vs3.png)
 
-### Stage Striking output
-
-![screenshot](../media/media/stage_strike.png)
-
 Features:
+
 - Update stream information without messing up your OBS setup
 - For TOs: select set from SmashGG to have player information automatically filled, update current info from set in StreamQueue, with 100% automatic data input
 - For Competitors: turn on Competitor Mode to get your current set info in one click or automatically, so you can play the tournament without needing to manually update the overlay data
@@ -58,6 +55,7 @@ Windows:
 - From now on you may open the program using `TournamentStreamHelper.bat`
 
 Linux:
+
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - `pip3 install -r requirements.txt`
 - Double click `TournamentStreamHelper.sh` or run `./TournamentStreamHelper.sh` from a terminal. Make sure the script has executable permissions.
@@ -104,6 +102,14 @@ There are sample overlays located in the `/layout/` directory. In OBS, add a Bro
 
 - Make sure to set the window size to 1920x1080 for the overlay samples.
 - Make sure to set the browser element to hide when inactive and reload on scene change, or else you will get a quick flicker when the scene is changed.
+
+### VS Screens
+
+- For the VS screens, check out their `index.js` to select which asset pack you want to use. There you can also define if P2's character asset will be mirrored or not.
+- There are 2 versions of the vs screen: `tall` and `square`. Tall has stage strike output and is made based mainly on Smash Ultimate, but assets for some games can look weird in a taller crop. Square has no stage output and doesn't crop the character assets.
+
+### Stage strike
+
 - For the stage striking sample, experiment with different window sizes as the elements will adapt to it (i.e. 2000x2000, 1000x1000, 500x500, ...)
 
 There's also instructions for editing those layouts in the `/layout/` directory.
@@ -115,6 +121,7 @@ When you click save (or edit anything when auto save is on) a directory named `o
 It's not possible to animate these elements unless there's an OBS plugin for that (I'm not aware of one).
 
 ### Tips
+
 - In OBS you can select any element and use `Edit > Transform > Edit Transform (Ctrl+E)`. There you can set up the absolute position and size for your elements. There are alignment options and bounding box options so that when a player's name would overflow your layout the font gets smaller instead. Also works for images, where you can reserve a space and the image will fit that space independent of image size or proportion
 
 # Extra configs

@@ -3,6 +3,10 @@
     // It's basically the folder name: assets/games/game/ASSETPACK
     var ASSET_TO_USE = "full";
 
+    // Change this to select wether to flip P2 character asset or not
+    // Set it to true or false
+    var FLIP_P2_ASSET = true;
+
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
         .from(['.score_container'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
@@ -84,7 +88,13 @@
                     // if asset is a image, add a image element
                     $(`.${p}.character`).html(`
                         <div class="bg">
-                            <div class="portrait" style='background-image: url(../../${data[p+"_assets_path"][ASSET_TO_USE]})'></div>
+                            <div
+                                class="portrait"
+                                style='
+                                    background-image: url(../../${data[p+"_assets_path"][ASSET_TO_USE]});
+                                    ${p == "p2" && FLIP_P2_ASSET ? "transform: scaleX(-1)" : ""}
+                                '>
+                            </div>
                         </div>
                     `)
                 } else {

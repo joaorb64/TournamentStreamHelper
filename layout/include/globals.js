@@ -36,9 +36,7 @@ function SetInnerHtml(element, html, force=undefined){
         fadeOutTime = 0;
     };
 
-    html = html.replace(/'/g, '"');
-
-    if(force == true || element.find(".text").html() != html){
+    if(force == true || element.find(".text").html().replace(/'/g, '"') != html.replace(/'/g, '"')){
         gsap.to(element.find(".text"), { autoAlpha: 0, duration: fadeOutTime, onComplete: ()=>{
             element.find(".text").html(html);
             FitText(element);

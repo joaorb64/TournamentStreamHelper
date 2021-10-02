@@ -546,7 +546,16 @@ class Window(QWidget):
                     self.stockIcons[c][0] = QImage('./icons/cancel.svg')
 
                 for i, f in enumerate(filteredFiles):
-                    self.stockIcons[c][i] = QImage(
+                    numberStart = f.rfind(
+                        assetsObj.get("postfix", "")) + len(assetsObj.get("postfix", ""))
+                    numberEnd = f.rfind(".")
+                    number = 0
+                    try:
+                        number = int(f[numberStart:numberEnd])
+                    except:
+                        print(f)
+                        pass
+                    self.stockIcons[c][number] = QImage(
                         './assets/games/'+game+'/'+assetsKey+'/'+f)
 
             self.skins = {}
