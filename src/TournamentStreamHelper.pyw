@@ -769,7 +769,9 @@ class Window(QWidget):
                             tar = tarfile.open("update.tar.gz")
                             print(tar.getmembers())
                             os.rename(
-                                "./layout", "./layout_backup_"+str(time.time()))
+                                "./layout", f"./layout_backup_{str(time.time())}")
+                            os.rename(
+                                "./tournament_phases.txt", f"./tournament_phases_backup_{str(time.time())}.txt")
                             for m in tar.getmembers():
                                 if "/" in m.name:
                                     m.name = m.name.split("/", 1)[1]
