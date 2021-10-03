@@ -140,6 +140,7 @@ class Window(QWidget):
         self.player_layouts = []
 
         self.allplayers = None
+        self.local_players = None
 
         try:
             version = json.load(
@@ -644,6 +645,8 @@ class Window(QWidget):
                 p.LoadCharacters()
 
         self.programState["asset_path"] = self.selectedGame.get("path")
+
+        self.SetupAutocomplete()
 
         if self.settings.get("autosave") == True:
             self.ExportProgramState()
@@ -1272,34 +1275,27 @@ class Window(QWidget):
                         skin = 0
 
             autocompleter_skins.append(skin)
-
             autocompleter_players.append(p)
 
         model = QStandardItemModel()
 
         model.appendRow(
             [QStandardItem(""), QStandardItem(""), QStandardItem("")])
-        # smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
-        # prLogo = QImage("icons/pr.svg").scaled(16, 16)
-        # localLogo = QImage("icons/db.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
-            # item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
-            #     autocompleter_skins[i], QIcon('./icons/cancel.svg')))
 
-            #pix = QPixmap(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')).pixmap(32, 32))
-            #p = QPainter(pix)
+            icon = self.stockIcons.get(autocompleter_mains[i], [None])[0]
 
-            # if "from_smashgg" in self.mergedPlayers[i]:
-            #     p.drawImage(QPoint(16, 16), smashggLogo)
-            # elif "from_local" in self.mergedPlayers[i]:
-            #     p.drawImage(QPoint(16, 16), localLogo)
-            # else:
-            #     p.drawImage(QPoint(16, 16), prLogo)
-
-            # p.end()
-            # item.setIcon(QIcon(pix))
+            if icon is not None:
+                print("Icon found")
+                pixmap = QPixmap.fromImage(icon)
+                item.setIcon(QIcon(pixmap.scaledToWidth(
+                    32, Qt.TransformationMode.SmoothTransformation)))
+            else:
+                print("Icon not found")
+                item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
+                    autocompleter_skins[i], QIcon('./icons/cancel.svg')))
 
             item.setData(autocompleter_players[i])
             model.appendRow([
@@ -1318,6 +1314,7 @@ class Window(QWidget):
             completer.activated[QModelIndex].connect(
                 p.AutocompleteSelected, Qt.QueuedConnection)
             completer.popup().setMinimumWidth(500)
+            completer.popup().setIconSize(QSize(32, 32))
             # p.player_name.currentIndexChanged.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
 
