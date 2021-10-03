@@ -253,10 +253,15 @@ class Window(QWidget):
         self.tournament_phase.setFont(self.font_small)
         layout_middle.addWidget(self.tournament_phase, 1, 0, 1, 2)
 
-        self.tournament_phase.addItems([
-            "", "Friendlies", "Winners Bracket", "Losers Bracket",
-            "Winners Finals", "Losers Finals", "Grand Finals"
-        ])
+        self.tournament_phase.addItem("")
+
+        try:
+            with open('tournament_phases.txt', 'r') as f:
+                self.tournament_phase.addItems(
+                    [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
+        except Exception as e:
+            print("ERROR: Did not find tournament_phases.txt")
+            print(traceback.format_exc())
 
         self.tournament_phase.currentTextChanged.connect(self.ScoreChanged)
 
@@ -1272,14 +1277,14 @@ class Window(QWidget):
 
         model.appendRow(
             [QStandardItem(""), QStandardItem(""), QStandardItem("")])
-        #smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
-        #prLogo = QImage("icons/pr.svg").scaled(16, 16)
-        #localLogo = QImage("icons/db.svg").scaled(16, 16)
+        # smashggLogo = QImage("icons/smashgg.svg").scaled(16, 16)
+        # prLogo = QImage("icons/pr.svg").scaled(16, 16)
+        # localLogo = QImage("icons/db.svg").scaled(16, 16)
 
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
-            item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
-                autocompleter_skins[i], QIcon('./icons/cancel.svg')))
+            # item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
+            #     autocompleter_skins[i], QIcon('./icons/cancel.svg')))
 
             #pix = QPixmap(self.stockIcons.get(autocompleter_mains[i], {}).get(autocompleter_skins[i], QIcon('./icons/cancel.svg')).pixmap(32, 32))
             #p = QPainter(pix)

@@ -653,7 +653,7 @@ class PlayerColumn():
         print("Update Smashgg Avatar")
         self.parent.programState["p"+str(self.id) +
                                  "_smashgg_id"] = player.get("smashgg_id", None)
-        self.parent.ExportProgramState()
+
         self.ExportSmashGGAvatar()
 
     def UpdateCharacterFromSetData(self, data):
