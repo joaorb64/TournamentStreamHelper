@@ -17,6 +17,7 @@ try:
     import sys
     import time
     import os
+    import threading
 
     import csv
 
@@ -79,15 +80,22 @@ class Window(QWidget):
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
 
+        try:
+            url = 'https://api.smash.gg/characters'
+            r = requests.get(url, allow_redirects=True)
+            open('./assets/characters.json', 'wb').write(r.content)
+        except Exception as e:
+            print("Could not update /assets/characters.json: "+str(e))
+
         f = open('assets/characters.json', encoding='utf-8')
         self.smashgg_character_data = json.load(f)["entities"]
 
-        # try:
-        #     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
-        #     r = requests.get(url, allow_redirects=True)
-        #     open('./assets/countries+states+cities.json', 'wb').write(r.content)
-        # except Exception as e:
-        #     print("Could not update /assets/countries+states+cities.json: "+str(e))
+        try:
+            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+            r = requests.get(url, allow_redirects=True)
+            open('./assets/countries+states+cities.json', 'wb').write(r.content)
+        except Exception as e:
+            print("Could not update /assets/countries+states+cities.json: "+str(e))
 
         try:
             f = open('./assets/countries+states+cities.json', encoding='utf-8')
@@ -1294,12 +1302,10 @@ class Window(QWidget):
                 icon = list(iconSet.values())[0]
 
             if icon is not None:
-                print("Icon found")
                 pixmap = QPixmap.fromImage(icon)
                 item.setIcon(QIcon(pixmap.scaledToWidth(
                     24, Qt.TransformationMode.SmoothTransformation)))
             else:
-                print("Icon not found")
                 item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
                     str(autocompleter_skins[i]), QIcon('./icons/cancel.svg')))
 
