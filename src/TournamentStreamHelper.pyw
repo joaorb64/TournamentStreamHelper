@@ -1251,10 +1251,10 @@ class Window(QWidget):
 
         for i, p in enumerate(ap):
             name = ""
-            if("org" in p.keys() and p["org"] != None):
+            if("org" in p.keys() and p["org"] != ""):
                 name += str(p["org"]) + " "
             name += str(p["name"])
-            if("country_code" in p.keys() and p["country_code"] != None):
+            if("country_code" in p.keys() and p["country_code"] != ""):
                 name += " ("+p["country_code"]+")"
             autocompleter_names.append(name)
             names.append(str(p["name"]))
@@ -1291,7 +1291,7 @@ class Window(QWidget):
                 print("Icon found")
                 pixmap = QPixmap.fromImage(icon)
                 item.setIcon(QIcon(pixmap.scaledToWidth(
-                    32, Qt.TransformationMode.SmoothTransformation)))
+                    24, Qt.TransformationMode.SmoothTransformation)))
             else:
                 print("Icon not found")
                 item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
@@ -1314,7 +1314,7 @@ class Window(QWidget):
             completer.activated[QModelIndex].connect(
                 p.AutocompleteSelected, Qt.QueuedConnection)
             completer.popup().setMinimumWidth(500)
-            completer.popup().setIconSize(QSize(32, 32))
+            completer.popup().setIconSize(QSize(24, 24))
             # p.player_name.currentIndexChanged.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
 

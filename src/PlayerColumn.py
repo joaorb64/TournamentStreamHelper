@@ -197,16 +197,25 @@ class PlayerColumn():
         bottom_buttons_layout = QHBoxLayout()
         self.layout_grid.addLayout(bottom_buttons_layout, 5, 0, 1, -1)
 
-        self.save_bt = QPushButton("Save to local DB")
+        self.save_bt = QPushButton("Save new player")
         self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
         self.save_bt.clicked.connect(self.SavePlayerToDB)
+        self.player_name.textChanged.connect(
+            self.ManageSavePlayerToDBText)
+        self.player_org.textChanged.connect(
+            self.ManageSavePlayerToDBText)
 
-        self.delete_bt = QPushButton("Delete from local DB")
+        self.delete_bt = QPushButton("Delete player entry")
         self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
+        self.delete_bt.setEnabled(False)
+        self.player_name.textChanged.connect(
+            self.ManageDeletePlayerFromDBActive)
+        self.player_org.textChanged.connect(
+            self.ManageDeletePlayerFromDBActive)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
         self.clear_bt = QPushButton("Clear")
@@ -260,6 +269,24 @@ class PlayerColumn():
             }
         }
         self.parent.SaveDB()
+        self.ManageDeletePlayerFromDBActive()
+        self.ManageSavePlayerToDBText()
+
+    def ManageSavePlayerToDBText(self):
+        key = (self.player_org.text()+" " if self.player_org.text()
+               != "" else "") + self.player_name.text()
+        if key in self.parent.local_players:
+            self.save_bt.setText("Update player entry")
+        else:
+            self.save_bt.setText("Save new player")
+
+    def ManageDeletePlayerFromDBActive(self):
+        key = (self.player_org.text()+" " if self.player_org.text()
+               != "" else "") + self.player_name.text()
+        if key in self.parent.local_players:
+            self.delete_bt.setEnabled(True)
+        else:
+            self.delete_bt.setEnabled(False)
 
     def DeletePlayerFromDB(self):
         key = (self.player_org.text()+" " if self.player_org.text()
@@ -267,6 +294,8 @@ class PlayerColumn():
         if key in self.parent.local_players:
             del self.parent.local_players[key]
         self.parent.SaveDB()
+        self.ManageDeletePlayerFromDBActive()
+        self.ManageSavePlayerToDBText()
 
     def LoadSkinOptions(self, text=None):
         self.player_character_color.clear()
