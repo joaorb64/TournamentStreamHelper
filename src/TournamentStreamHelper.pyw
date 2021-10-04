@@ -1285,7 +1285,13 @@ class Window(QWidget):
         for i, n in enumerate(names):
             item = QStandardItem(autocompleter_names[i])
 
-            icon = self.stockIcons.get(autocompleter_mains[i], [None])[0]
+            icon = None
+            iconSet = self.stockIcons.get(autocompleter_mains[i], {})
+
+            if autocompleter_skins[i] in iconSet:
+                icon = iconSet[autocompleter_skins[i]]
+            elif len(iconSet) > 0:
+                icon = list(iconSet.values())[0]
 
             if icon is not None:
                 print("Icon found")
@@ -1295,7 +1301,7 @@ class Window(QWidget):
             else:
                 print("Icon not found")
                 item.setIcon(self.stockIcons.get(autocompleter_mains[i], {}).get(
-                    autocompleter_skins[i], QIcon('./icons/cancel.svg')))
+                    str(autocompleter_skins[i]), QIcon('./icons/cancel.svg')))
 
             item.setData(autocompleter_players[i])
             model.appendRow([
