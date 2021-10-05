@@ -1768,7 +1768,7 @@ class Window(QWidget):
         self.SetupAutocomplete()
         self.SaveDB()
 
-    def LoadSmashGGPlayer(self, user, player, entrantId=None, selectedChars=None):
+    def LoadSmashGGPlayer(self, user, player, entrantId=None, selectedChars=[]):
         player_obj = {}
 
         if user is None and player is None:
