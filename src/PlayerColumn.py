@@ -245,6 +245,7 @@ class PlayerColumn():
         self.player_character_color.clear()
         self.player_twitter.clear()
         self.player_real_name.clear()
+        self.losersCheckbox.setCheckState(0)
         self.StateChanged()
         self.CharacterChanged()
         self.ExportState()
