@@ -1,143 +1,143 @@
 @font-face {
-    font-family: "Roboto Condensed";
-    src: url("../include/RobotoCondensed-Regular.ttf") format("truetype");
+  font-family: "Roboto Condensed";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
 .text {
-    white-space: nowrap;
-    display: flex;
-    min-width: 100%;
-    width: fit-content;
-    place-items: center;
-    place-content: inherit;
-    height: 100%;
+  white-space: nowrap;
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
+  place-items: center;
+  place-content: inherit;
+  height: 100%;
 }
 
 body {
-    font-family: "Roboto Condensed";
-    letter-spacing: 1.2px;
-    font-weight: bold;
-    opacity: 0;
-    overflow: hidden;
-    margin: 0;
-    width: 1920px;
-    height: 1080px;
+  font-family: "Roboto Condensed";
+  letter-spacing: 1.2px;
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
 }
 
 .container {
-    width: 300px;
-    height: 67px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: absolute;
-    color: white;
+  width: 300px;
+  height: 67px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  color: white;
 }
 
 .p1.container {
-    background-position: 100% 0;
-    right: 1158px;
-    top: 998px;
-    background-image: url("./p1-container.png");
+  background-position: 100% 0;
+  right: 1158px;
+  top: 998px;
+  background-image: url("./p1-container.png");
 }
 
 .p2.container {
-    background-position: 0 0;
-    left: 1200px;
-    top: 998px;
-    background-image: url("./p2-container.png");
+  background-position: 0 0;
+  left: 1200px;
+  top: 998px;
+  background-image: url("./p2-container.png");
 }
 
 .container .name {
-    letter-spacing: 1.2px;
-    position: absolute;
-    left: 44px;
-    top: 5px;
-    width: 208px;
-    height: 32px;
-    font-size: 32px;
-    padding-left: 4px;
-    padding-right: 4px;
-    justify-content: center;
-    text-transform: uppercase;
+  letter-spacing: 1.2px;
+  position: absolute;
+  left: 44px;
+  top: 5px;
+  width: 208px;
+  height: 32px;
+  font-size: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+  justify-content: center;
+  text-transform: uppercase;
 }
 
 .container .twitter {
-    position: absolute;
-    left: 105px;
-    top: 41px;
-    width: 180px;
-    height: 22px;
-    font-size: 22px;
-    padding-left: 4px;
-    padding-right: 4px;
-    justify-content: center;
+  position: absolute;
+  left: 105px;
+  top: 41px;
+  width: 180px;
+  height: 22px;
+  font-size: 22px;
+  padding-left: 4px;
+  padding-right: 4px;
+  justify-content: center;
 }
 
 .logo {
-    position: absolute;
-    top: 900px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 150px;
-    background-image: url("./logo.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+  position: absolute;
+  top: 900px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 150px;
+  background-image: url("./logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .sponsor {
-    color: yellow;
+  color: yellow;
 }
 
 .phase {
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 472px;
-    height: 46px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-image: url("./phase-container.png");
-    color: white;
-    font-size: 34px;
-    place-content: center;
-    padding-left: 30px;
-    padding-right: 30px;
-    background-position: center;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 472px;
+  height: 46px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./phase-container.png");
+  color: white;
+  font-size: 34px;
+  place-content: center;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-position: center;
 }
 
 .flag {
-    display: inline-block;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 36px;
-    height: 28px;
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 36px;
+  height: 28px;
 }
 
 .flagcountry {
-    position: absolute;
-    top: 6px;
-    left: -72px;
+  position: absolute;
+  top: 6px;
+  left: -72px;
 }
 
 .flagstate {
-    position: absolute;
-    top: 38px;
-    left: -54px;
+  position: absolute;
+  top: 38px;
+  left: -54px;
 }
 
 .score {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    font-size: 35px;
-    top: 6px;
-    right: 6px;
-    color: black;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 35px;
+  top: 6px;
+  right: 6px;
+  color: black;
 }

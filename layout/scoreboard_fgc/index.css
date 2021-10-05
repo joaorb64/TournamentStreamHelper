@@ -1,180 +1,180 @@
 @font-face {
-    font-family: "RobotoCondensed";
-    src: url("../include/RobotoCondensed-Regular.ttf") format("truetype");
+  font-family: "RobotoCondensed";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
 .text {
-    white-space: nowrap;
-    display: flex;
-    min-width: 100%;
-    width: fit-content;
-    place-items: inherit;
-    place-content: inherit;
-    height: 100%;
+  white-space: nowrap;
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
+  place-items: inherit;
+  place-content: inherit;
+  height: 100%;
 }
 
 body {
-    font-family: "RobotoCondensed";
-    letter-spacing: 1.2px;
-    font-weight: bold;
-    opacity: 0;
-    overflow: hidden;
-    margin: 0;
-    width: 1920px;
-    height: 1080px;
+  font-family: "RobotoCondensed";
+  letter-spacing: 1.2px;
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
 }
 
 .overlay {
-    left: 50%;
-    width: 1409px;
-    height: 63px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: absolute;
-    overflow: hidden;
-    background-image: url("./overlay.png");
-    transform: translateX(-50%);
-    text-transform: uppercase;
-    color: white;
+  left: 50%;
+  width: 1409px;
+  height: 63px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  overflow: hidden;
+  background-image: url("./overlay.png");
+  transform: translateX(-50%);
+  text-transform: uppercase;
+  color: white;
 }
 
 .name {
-    font-size: 32px;
-    position: absolute;
-    align-items: center;
-    top: 0;
-    width: 230px;
-    height: 100%;
+  font-size: 32px;
+  position: absolute;
+  align-items: center;
+  top: 0;
+  width: 230px;
+  height: 100%;
 }
 
 .p1 .name {
-    left: 100px;
-    text-align: left;
-    justify-content: flex-start;
+  left: 100px;
+  text-align: left;
+  justify-content: flex-start;
 }
 
 .p2 .name {
-    right: 100px;
-    text-align: right;
-    justify-content: flex-end;
+  right: 100px;
+  text-align: right;
+  justify-content: flex-end;
 }
 
 .twitter {
-    top: 0;
-    width: 120px;
-    height: 100%;
-    font-size: 20px;
-    position: absolute;
-    align-items: center;
-    color: rgb(194, 194, 194);
+  top: 0;
+  width: 120px;
+  height: 100%;
+  font-size: 20px;
+  position: absolute;
+  align-items: center;
+  color: rgb(194, 194, 194);
 }
 
 .p1 .twitter {
-    left: 330px;
-    text-align: right;
-    justify-content: flex-end;
+  left: 330px;
+  text-align: right;
+  justify-content: flex-end;
 }
 
 .p2 .twitter {
-    right: 330px;
-    text-align: left;
-    justify-content: flex-start;
+  right: 330px;
+  text-align: left;
+  justify-content: flex-start;
 }
 
 .sponsor {
-    color: yellow;
+  color: yellow;
 }
 
 .phase {
-    position: absolute;
-    left: 543px;
-    top: 2px;
-    width: 300px;
-    height: 34px;
-    font-size: 22px;
-    padding-left: 10px;
-    padding-right: 10px;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  left: 543px;
+  top: 2px;
+  width: 300px;
+  height: 34px;
+  font-size: 22px;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .flag {
-    display: inline-block;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%;
-    height: 100%;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
 }
 
 .stockicon {
-    position: absolute;
-    width: 63px;
-    height: 63px;
-    top: 0;
+  position: absolute;
+  width: 63px;
+  height: 63px;
+  top: 0;
 }
 
 .icon {
-    width: 100%;
-    height: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .p1 .stockicon {
-    left: 20px;
+  left: 20px;
 }
 
 .p2 .stockicon {
-    right: 20px;
+  right: 20px;
 }
 
 .flagcountry {
-    position: absolute;
-    top: 10px;
-    width: 60px;
-    height: 40px;
+  position: absolute;
+  top: 10px;
+  width: 60px;
+  height: 40px;
 }
 
 .p1 .flagcountry {
-    left: 28px;
+  left: 28px;
 }
 
 .p2 .flagcountry {
-    right: 28px;
+  right: 28px;
 }
 
 .flagstate {
-    position: absolute;
-    top: 50px;
+  position: absolute;
+  top: 50px;
 }
 
 .p1 .flagstate {
-    left: 110px;
+  left: 110px;
 }
 
 .p2 .flagstate {
-    right: 110px;
+  right: 110px;
 }
 
 .score {
-    position: absolute;
-    top: 9px;
-    width: 44px;
-    height: 44px;
-    font-size: 42px;
-    color: black;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  top: 9px;
+  width: 44px;
+  height: 44px;
+  font-size: 42px;
+  color: black;
+  align-items: center;
+  justify-content: center;
 }
 
 .p1 .score {
-    left: 461px;
+  left: 461px;
 }
 
 .p2 .score {
-    left: 903px;
+  left: 903px;
 }

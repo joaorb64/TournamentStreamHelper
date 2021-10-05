@@ -140,7 +140,8 @@ class Window(QWidget):
             self.SaveSettings()
             print("Settings created")
 
-        self.font_small = QFont("assets/font/RobotoCondensed.ttf", pointSize=8)
+        self.font_small = QFont(
+            "./assets/font/RobotoCondensed.ttf", pointSize=8)
 
         self.threadpool = QThreadPool()
         self.saveMutex = QMutex()
@@ -285,13 +286,13 @@ class Window(QWidget):
 
         self.scoreLeft = QSpinBox()
         self.scoreLeft.setFont(
-            QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
+            QFont("./assets/font/RobotoCondensed.ttf", pointSize=12))
         self.scoreLeft.setAlignment(Qt.AlignHCenter)
         layout_middle.addWidget(self.scoreLeft, 3, 0, 1, 1)
         self.scoreLeft.valueChanged.connect(self.ScoreChanged)
         self.scoreRight = QSpinBox()
         self.scoreRight.setFont(
-            QFont("font/RobotoCondensed-Regular.ttf", pointSize=12))
+            QFont("./assets/font/RobotoCondensed.ttf", pointSize=12))
         self.scoreRight.setAlignment(Qt.AlignHCenter)
         self.scoreRight.valueChanged.connect(self.ScoreChanged)
         layout_middle.addWidget(self.scoreRight, 3, 1, 1, 1)

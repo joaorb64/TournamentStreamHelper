@@ -42,16 +42,16 @@
         `);
 
         SetInnerHtml($(".p1 .flagstate"), `
-            <div class='flag' style='background-image: url(${data.p1_state_flag_url})'></div>
-        `, oldData.p1_state != data.p1_state);
+            <div class='flag' style='background-image: url(../../assets/state_flag/${data.p1_country.toUpperCase()}/${data.p1_state.toUpperCase()}.png)'></div>
+        `);
 
         SetInnerHtml($(".p2 .flagcountry"), `
             <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
         `);
 
-        SetInnerHtml($(".p2 .flagstate"), `
-            <div class='flag' style='background-image: url(${data.p2_state_flag_url})'></div>
-        `, oldData.p2_state != data.p2_state);
+        SetInnerHtml($(".p1 .flagstate"), `
+            <div class='flag' style='background-image: url(../../assets/state_flag/${data.p2_country.toUpperCase()}/${data.p2_state.toUpperCase()}.png)'></div>
+        `);
 
         SetInnerHtml($(".p1 .stockicon"), `
             <div class="icon" style='background-image: url(../../${data.p1_assets_path["base_files/icon"]})'></div>

@@ -51,23 +51,23 @@
         `);
 
         SetInnerHtml($(".p1 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p1_state_flag.png#${data.p1_state})'></div>
-        `, oldData.p1_state != data.p1_state);
+            <div class='flag' style='background-image: url(../../assets/state_flag/${data.p1_country.toUpperCase()}/${data.p1_state.toUpperCase()}.png)'></div>
+        `);
 
         SetInnerHtml($(".p2 .flagcountry"), `
             <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
         `);
 
         SetInnerHtml($(".p2 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p2_state_flag.png#${data.p2_state})'></div>
-        `, oldData.p2_state != data.p2_state);
+            <div class='flag' style='background-image: url(../../assets/state_flag/${data.p2_country.toUpperCase()}/${data.p2_state.toUpperCase()}.png)'></div>
+        `);
 
         SetInnerHtml($(".p1 .stockicon"), `
-            <div class="icon" style='background-image: url(../../character_icon/chara_2_${data.p1_character_codename}_0${data.p1_character_color}.png)'></div>
+            <div class="icon" style='background-image: url(../../${data.p1_assets_path["base_files/icon"]})'></div>
         `);
 
         SetInnerHtml($(".p2 .stockicon"), `
-            <div class="icon" style='background-image: url(../../character_icon/chara_2_${data.p2_character_codename}_0${data.p2_character_color}.png)'></div>
+            <div class="icon" style='background-image: url(../../${data.p2_assets_path["base_files/icon"]})'></div>
         `);
 
         SetInnerHtml($(".p1 .score"), String(data.score_left));

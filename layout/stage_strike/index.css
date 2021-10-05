@@ -1,71 +1,71 @@
 @font-face {
-    font-family: "Roboto Condensed";
-    src: url("../include/RobotoCondensed-Regular.ttf") format("truetype");
+  font-family: "Roboto Condensed";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
 .text {
-    white-space: nowrap;
-    display: flex;
-    min-width: 100%;
-    width: fit-content;
-    place-items: center;
-    place-content: center;
-    height: 100%;
+  white-space: nowrap;
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
+  place-items: center;
+  place-content: center;
+  height: 100%;
 }
 
 body {
-    font-family: "Roboto Condensed";
-    font-weight: bold;
-    opacity: 0;
-    overflow: hidden;
-    margin: 0;
+  font-family: "Roboto Condensed";
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
 .container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .stage-name {
-    position: absolute;
-    color: white;
-    width: 100%;
-    padding-left: 5px;
-    padding-right: 5px;
-    background-color: rgba(0, 0, 0, 0.8);
-    font-size: 24px;
-    height: 28px;
-    bottom: 0;
+  position: absolute;
+  color: white;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: rgba(0, 0, 0, 0.8);
+  font-size: 24px;
+  height: 28px;
+  bottom: 0;
 }
 
 .stage-icon {
-    width: 200px;
-    height: 128px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  width: 200px;
+  height: 128px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .stage-container {
-    flex-shrink: 0;
-    margin: 10px;
-    position: relative;
+  flex-shrink: 0;
+  margin: 10px;
+  position: relative;
 }
 
 .stamp {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    width: 64px;
-    height: 64px;
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 64px;
+  height: 64px;
 }
 .stamp.stage-striked {
-    background-image: url(../../icons/stage_strike.svg);
+  background-image: url(../../icons/stage_strike.svg);
 }
 .stamp.stage-dsr {
-    background-image: url(../../icons/stage_dsr.svg);
+  background-image: url(../../icons/stage_dsr.svg);
 }
 .stamp.stage-selected {
-    background-image: url(../../icons/stage_select.svg);
+  background-image: url(../../icons/stage_select.svg);
 }
