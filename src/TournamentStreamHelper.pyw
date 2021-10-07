@@ -2210,7 +2210,7 @@ class Window(QWidget):
             def fun1(self, progress_callback):
                 print("Try old smashgg api")
                 r = requests.get(
-                    "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
+                    f'https://smash.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
                     {
                         "extensions": {"cacheControl": {"version": 1, "noCache": True}},
                         "cacheControl": {"version": 1, "noCache": True},
@@ -2419,6 +2419,7 @@ class Window(QWidget):
                         "playerTurn": playerTurn
                     }
                 except:
+                    print(traceback.format_exc())
                     stageStrikeState = {}
 
                 if "stage_strike" in self.programState:
@@ -2553,7 +2554,7 @@ class Window(QWidget):
             def fun1(self, progress_callback):
                 print("Try old smashgg api")
                 r = requests.get(
-                    "https://api.smash.gg/set/"+str(setId)+"?expand[]=setTask",
+                    f'https://smash.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
                     {
                         "extensions": {"cacheControl": {"version": 1, "noCache": True}},
                         "cacheControl": {"version": 1, "noCache": True},
@@ -2718,13 +2719,14 @@ class Window(QWidget):
 
                 try:
                     stageStrikeState = {
-                        "stages": {st: self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id"), None) == str(stage)) for stage in allStages]} if allStages != None else {},
+                        "stages": {st: self.stages[st] for st in [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id", None)) == str(stage)) for stage in allStages]} if allStages != None else {},
                         "striked": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in strikedStages] if strikedStages != None else [],
                         "selected": next((s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(selectedStage)), ""),
                         "dsr": [next(s for s in self.stages.keys() if str(self.stages[s].get("smashgg_id")) == str(stage)) for stage in dsrStages] if dsrStages != None else [],
                         "playerTurn": playerTurn
                     }
                 except:
+                    print(traceback.format_exc())
                     stageStrikeState = {}
 
                 if "stage_strike" in self.programState:
