@@ -31,12 +31,15 @@ body {
   position: absolute;
   color: white;
   width: 100%;
-  padding-left: 5px;
-  padding-right: 5px;
   background-color: rgba(0, 0, 0, 0.8);
   font-size: 24px;
   height: 28px;
   bottom: 0;
+}
+
+.stage-name.text {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .stage-icon {
