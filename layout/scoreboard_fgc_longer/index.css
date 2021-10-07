@@ -26,7 +26,7 @@ body {
 
 .overlay {
   left: 50%;
-  width: 1409px;
+  width: 1705px;
   height: 63px;
   background-size: cover;
   background-repeat: no-repeat;
@@ -43,7 +43,7 @@ body {
   position: absolute;
   align-items: center;
   top: 0;
-  width: 230px;
+  width: 280px;
   height: 100%;
 }
 
@@ -61,7 +61,7 @@ body {
 
 .twitter {
   top: 0;
-  width: 120px;
+  width: 200px;
   height: 100%;
   font-size: 20px;
   position: absolute;
@@ -70,13 +70,13 @@ body {
 }
 
 .p1 .twitter {
-  left: 330px;
+  left: 380px;
   text-align: right;
   justify-content: flex-end;
 }
 
 .p2 .twitter {
-  right: 330px;
+  right: 380px;
   text-align: left;
   justify-content: flex-start;
 }
@@ -88,7 +88,8 @@ body {
 .phase {
   position: absolute;
   top: 2px;
-  left: 533px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 330px;
   height: 34px;
   font-size: 22px;
@@ -169,9 +170,9 @@ body {
 }
 
 .p1 .score {
-  left: 461px;
+  left: 596px;
 }
 
 .p2 .score {
-  left: 903px;
+  right: 596px;
 }

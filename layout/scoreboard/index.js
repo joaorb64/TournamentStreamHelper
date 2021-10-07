@@ -49,7 +49,7 @@
             <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
         `);
 
-        SetInnerHtml($(".p1 .flagstate"), `
+        SetInnerHtml($(".p2 .flagstate"), `
             <div class='flag' style='background-image: url(../../assets/state_flag/${data.p2_country.toUpperCase()}/${data.p2_state.toUpperCase()}.png)'></div>
         `);
 
