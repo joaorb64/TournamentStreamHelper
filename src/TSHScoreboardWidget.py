@@ -101,6 +101,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText("TEAM 2")
 
+        self.SetPlayersPerTeam(1)
+
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:
             for element in elements:
@@ -116,12 +118,14 @@ class TSHScoreboardWidget(QDockWidget):
             self.playerWidgets.append(p)
             self.team1column.findChild(QGroupBox).layout().addWidget(p)
             p.SetIndex(len(self.team1playerWidgets)+1)
+            p.SetCharactersPerPlayer(self.charNumber.value())
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget()
             self.playerWidgets.append(p)
             self.team2column.findChild(QGroupBox).layout().addWidget(p)
             p.SetIndex(len(self.team2playerWidgets)+1)
+            p.SetCharactersPerPlayer(self.charNumber.value())
             self.team2playerWidgets.append(p)
 
         while len(self.team1playerWidgets) > number:

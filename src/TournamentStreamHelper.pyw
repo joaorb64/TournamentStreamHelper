@@ -36,7 +36,7 @@ except ImportError as error:
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
     exit()
 
-sys.stderr = open('./log_error.txt', 'w')
+#sys.stderr = open('./log_error.txt', 'w')
 
 
 def remove_accents_lower(input_str):
@@ -247,90 +247,6 @@ class Window(QMainWindow):
         self.base_layout = QBoxLayout(QBoxLayout.LeftToRight)
 
         pre_base_layout.addLayout(self.base_layout)
-
-        self.setStyleSheet("QBoxLayout{padding:0px; margin:0px}")
-        self.base_layout.setSpacing(0)
-        self.base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
-
-        # Inputs do jogador 1 na vertical
-        p1 = PlayerColumn(self, 1)
-        self.player_layouts.append(p1)
-        self.base_layout.addWidget(p1.group_box)
-
-        # Botoes no meio
-        layout_middle = QGridLayout()
-        layout_middle.setVerticalSpacing(0)
-
-        group_box = QGroupBox()
-        group_box.setStyleSheet("QGroupBox{padding-top:0px;}")
-        group_box.setLayout(layout_middle)
-        group_box.setFont(self.font_small)
-        group_box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-
-        self.base_layout.addWidget(group_box)
-
-        tournament_phase_label = QLabel("Tournament phase")
-        tournament_phase_label.setFont(self.font_small)
-        layout_middle.addWidget(tournament_phase_label, 0, 0, 1, 2)
-
-        self.tournament_phase = QComboBox()
-        self.tournament_phase.setEditable(True)
-        self.tournament_phase.setFont(self.font_small)
-        layout_middle.addWidget(self.tournament_phase, 1, 0, 1, 2)
-
-        self.tournament_phase.addItem("")
-
-        try:
-            with open('tournament_phases.txt', 'r') as f:
-                self.tournament_phase.addItems(
-                    [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
-        except Exception as e:
-            print("ERROR: Did not find tournament_phases.txt")
-            print(traceback.format_exc())
-
-        self.tournament_phase.currentTextChanged.connect(self.ScoreChanged)
-
-        best_of_label = QLabel("Best of")
-        best_of_label.setFont(self.font_small)
-        layout_middle.addWidget(best_of_label, 2, 0, 1, 2)
-
-        self.bestOf = QSpinBox()
-        self.bestOf.setFont(self.font_small)
-        layout_middle.addWidget(self.bestOf, 2, 1, 1, 2)
-        self.bestOf.valueChanged.connect(self.ScoreChanged)
-
-        self.scoreLeft = QSpinBox()
-        self.scoreLeft.setFont(
-            QFont("./assets/font/RobotoCondensed.ttf", pointSize=12))
-        self.scoreLeft.setAlignment(Qt.AlignHCenter)
-        layout_middle.addWidget(self.scoreLeft, 3, 0, 1, 1)
-        self.scoreLeft.valueChanged.connect(self.ScoreChanged)
-        self.scoreRight = QSpinBox()
-        self.scoreRight.setFont(
-            QFont("./assets/font/RobotoCondensed.ttf", pointSize=12))
-        self.scoreRight.setAlignment(Qt.AlignHCenter)
-        self.scoreRight.valueChanged.connect(self.ScoreChanged)
-        layout_middle.addWidget(self.scoreRight, 3, 1, 1, 1)
-        self.ScoreChanged()
-
-        self.reset_score_bt = QPushButton()
-        layout_middle.addWidget(self.reset_score_bt, 4, 0, 1, 2)
-        self.reset_score_bt.setIcon(QIcon('icons/undo.svg'))
-        self.reset_score_bt.setText("Reset score")
-        self.reset_score_bt.setFont(self.font_small)
-        self.reset_score_bt.clicked.connect(self.ResetScoreButtonClicked)
-
-        self.invert_bt = QPushButton()
-        layout_middle.addWidget(self.invert_bt, 5, 0, 1, 2)
-        self.invert_bt.setIcon(QIcon('icons/swap.svg'))
-        self.invert_bt.setText("Swap players")
-        self.invert_bt.setFont(self.font_small)
-        self.invert_bt.clicked.connect(self.InvertButtonClicked)
-
-        # Inputs do jogador 2 na vertical
-        p2 = PlayerColumn(self, 2)
-        self.player_layouts.append(p2)
-        self.base_layout.addWidget(p2.group_box)
 
         # Botoes no final
         layout_end = QGridLayout()
