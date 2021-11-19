@@ -18,6 +18,7 @@ try:
     import time
     import os
     import threading
+    import re
 
     import csv
 
@@ -29,6 +30,7 @@ try:
 
     from PlayerColumn import *
     from Workers import *
+    from TSHScoreboardWidget import *
 except ImportError as error:
     print(error)
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
@@ -46,9 +48,10 @@ class WindowSignals(QObject):
     StopTimer = pyqtSignal()
     ExportStageStrike = pyqtSignal(object)
     DetectGame = pyqtSignal(int)
+    SetupAutocomplete = pyqtSignal()
 
 
-class Window(QWidget):
+class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -56,6 +59,7 @@ class Window(QWidget):
         self.signals.StopTimer.connect(self.StopTimer)
         self.signals.ExportStageStrike.connect(self.ExportStageStrike)
         self.signals.DetectGame.connect(self.DetectGameFromId)
+        self.signals.SetupAutocomplete.connect(self.SetupAutocomplete)
 
         splash = QSplashScreen(self, QPixmap(
             'icons/icon.png').scaled(128, 128))
@@ -80,22 +84,22 @@ class Window(QWidget):
         f = open('powerrankings_to_smashgg.json', encoding='utf-8')
         self.powerrankings_to_smashgg = json.load(f)
 
-        try:
-            url = 'https://api.smash.gg/characters'
-            r = requests.get(url, allow_redirects=True)
-            open('./assets/characters.json', 'wb').write(r.content)
-        except Exception as e:
-            print("Could not update /assets/characters.json: "+str(e))
+        # try:
+        #     url = 'https://api.smash.gg/characters'
+        #     r = requests.get(url, allow_redirects=True)
+        #     open('./assets/characters.json', 'wb').write(r.content)
+        # except Exception as e:
+        #     print("Could not update /assets/characters.json: "+str(e))
 
-        f = open('assets/characters.json', encoding='utf-8')
-        self.smashgg_character_data = json.load(f)["entities"]
+        # f = open('assets/characters.json', encoding='utf-8')
+        # self.smashgg_character_data = json.load(f)["entities"]
 
-        try:
-            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
-            r = requests.get(url, allow_redirects=True)
-            open('./assets/countries+states+cities.json', 'wb').write(r.content)
-        except Exception as e:
-            print("Could not update /assets/countries+states+cities.json: "+str(e))
+        # try:
+        #     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+        #     r = requests.get(url, allow_redirects=True)
+        #     open('./assets/countries+states+cities.json', 'wb').write(r.content)
+        # except Exception as e:
+        #     print("Could not update /assets/countries+states+cities.json: "+str(e))
 
         try:
             f = open('./assets/countries+states+cities.json', encoding='utf-8')
@@ -160,9 +164,20 @@ class Window(QWidget):
         self.setGeometry(300, 300, 800, 100)
         self.setWindowTitle("TournamentStreamHelper v"+version)
 
+        self.setDockOptions(
+            QMainWindow.DockOption.AllowTabbedDocks | QMainWindow.DockOption.ForceTabbedDocks)
+
+        self.setTabPosition(
+            Qt.DockWidgetArea.AllDockWidgetAreas, QTabWidget.TabPosition.North)
+
         # Layout base com status no topo
-        pre_base_layout = QBoxLayout(QBoxLayout.TopToBottom)
-        self.setLayout(pre_base_layout)
+        central_widget = QWidget()
+        pre_base_layout = QVBoxLayout()
+        central_widget.setLayout(pre_base_layout)
+        self.setCentralWidget(central_widget)
+
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, TSHScoreboardWidget())
 
         pre_base_layout.setSpacing(0)
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
@@ -625,6 +640,9 @@ class Window(QWidget):
                 if len(filteredFiles) == 0:
                     self.portraits[c][0] = QImage('./icons/cancel.svg')
 
+                filteredFiles.sort(key=lambda x: int(re.search(
+                    r'(\d+)\D+$', x).group(1)) or 1)
+
                 for i, f in enumerate(filteredFiles):
                     self.portraits[c][i] = QImage(
                         './assets/games/'+game+'/'+assetsKey+'/'+f)
@@ -654,6 +672,7 @@ class Window(QWidget):
                 p.LoadCharacters()
 
         self.programState["asset_path"] = self.selectedGame.get("path")
+        self.programState["game"] = game
 
         self.SetupAutocomplete()
 
@@ -1318,16 +1337,21 @@ class Window(QWidget):
             )
 
         for p in self.player_layouts:
-            completer = QCompleter(
-                completionColumn=0, caseSensitivity=Qt.CaseInsensitive)
+            completer = p.player_name.completer()
+
+            if not completer:
+                completer = QCompleter()
+                p.player_name.setCompleter(completer)
+
             completer.setFilterMode(Qt.MatchFlag.MatchContains)
             completer.setModel(model)
             # p.player_name.setModel(model)
-            p.player_name.setCompleter(completer)
             completer.activated[QModelIndex].connect(
                 p.AutocompleteSelected, Qt.QueuedConnection)
             completer.popup().setMinimumWidth(500)
             completer.popup().setIconSize(QSize(24, 24))
+            completer.setCompletionColumn(0)
+            completer.setCaseSensitivity(Qt.CaseInsensitive)
             # p.player_name.currentIndexChanged.connect(p.AutocompleteSelected)
         print("Autocomplete reloaded")
 
@@ -1587,6 +1611,8 @@ class Window(QWidget):
                 "Set tournament slug (" + str(self.settings.get(
                     "SMASHGG_TOURNAMENT_SLUG", None)) + ")"
             )
+            self.LoadPlayersFromSmashGGTournamentStart(
+                self.settings.get("SMASHGG_TOURNAMENT_SLUG", None))
 
         inp.deleteLater()
 
@@ -1630,14 +1656,6 @@ class Window(QWidget):
         if slug is None or slug == "":
             return
 
-        self.downloadDialogue = QProgressDialog(
-            "Fetching players...", "Cancel", 0, 100, self)
-        self.downloadDialogue.setAutoClose(True)
-        self.downloadDialogue.setWindowTitle(
-            "Download SmashGG players for autocomplete")
-        self.downloadDialogue.setWindowModality(Qt.WindowModal)
-        self.downloadDialogue.show()
-
         worker = Worker(
             self.LoadPlayersFromSmashGGTournamentWorker, **{"slug": slug})
         worker.signals.progress.connect(
@@ -1654,9 +1672,6 @@ class Window(QWidget):
         players = []
 
         while True:
-            if self.downloadDialogue.wasCanceled():
-                return
-
             r = requests.post(
                 'https://api.smash.gg/gql/alpha',
                 headers={
@@ -1678,7 +1693,6 @@ class Window(QWidget):
                                     participants {
                                         user {
                                             id
-                                            slug
                                             name
                                             authorizations(types: [TWITTER]) {
                                                 type
@@ -1697,7 +1711,7 @@ class Window(QWidget):
                                             id
                                             gamerTag
                                             prefix
-                                            sets(page: 1, perPage: 2) {
+                                            sets(page: 1, perPage: 1) {
                                                 nodes {
                                                     games {
                                                         selections {
@@ -1726,11 +1740,6 @@ class Window(QWidget):
             )
             resp = json.loads(r.text)
 
-            gameId = resp.get("data", {}).get("event", {}).get(
-                "videogame", {}).get("id", None)
-            if resp is not None and gameId:
-                self.signals.DetectGame.emit(gameId)
-
             totalPages = resp["data"]["event"]["entrants"]["pageInfo"]["totalPages"]
 
             if resp is None or \
@@ -1750,23 +1759,19 @@ class Window(QWidget):
 
                 players.append(player_obj)
 
+                for p in players:
+                    print(p)
+                    key = (p["org"]+" " if (p["org"] != "" and
+                                            p["org"] != None) else "") + p["name"]
+                    self.local_players[key] = p
+                players = []
+
             page += 1
 
             progress_callback.emit(page/totalPages*100)
 
             if page >= totalPages:
                 break
-
-        for p in players:
-            key = (p["org"]+" " if (p["org"] != "" and p["org"]
-                   != None) else "") + p["name"]
-            if self.local_players[key].get("mains", [""])[0] != p.get("mains", [""])[0]:
-                p["mains"][0] = self.local_players[key]["mains"][0]
-            else:
-                p["skins"] = self.local_players[key]["skins"]
-            self.local_players[key] = p
-        self.SetupAutocomplete()
-        self.SaveDB()
 
     def LoadSmashGGPlayer(self, user, player, entrantId=None, selectedChars=[]):
         player_obj = {}
@@ -1796,7 +1801,7 @@ class Window(QWidget):
 
         if player is not None:
             player_obj["name"] = player["gamerTag"]
-            player_obj["org"] = player["prefix"]
+            player_obj["org"] = player["prefix"] if player["prefix"] != None else ""
 
             if str(entrantId) in selectedChars:
                 found = None
@@ -1896,14 +1901,13 @@ class Window(QWidget):
         return player_obj
 
     def LoadPlayersFromSmashGGTournamentProgress(self, n):
-        self.downloadDialogue.setValue(int(n))
-
-        if n == 100:
-            self.downloadDialogue.setMaximum(0)
-            self.downloadDialogue.setValue(0)
+        print(f"Downloading players from tournament... {n}%")
+        self.SaveDB()
+        self.signals.SetupAutocomplete.emit()
 
     def LoadPlayersFromSmashGGTournamentFinished(self):
-        self.downloadDialogue.close()
+        self.SaveDB()
+        self.signals.SetupAutocomplete.emit()
 
     def LoadSetsFromSmashGGTournament(self):
         if self.settings.get("SMASHGG_KEY", None) is None:

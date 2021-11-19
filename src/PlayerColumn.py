@@ -55,81 +55,99 @@ class PlayerColumn():
             QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.group_box.setContentsMargins(QMargins(0, 0, 0, 0))
 
-        self.layout_grid = QGridLayout()
+        self.layout_grid = QVBoxLayout()
         self.group_box.setLayout(self.layout_grid)
-        self.layout_grid.setVerticalSpacing(0)
+        self.layout_grid.setSpacing(0)
 
         self.group_box.setFont(self.parent.font_small)
 
+        topLine = QHBoxLayout()
+        self.layout_grid.addLayout(topLine)
+
         self.titleLabel = QLabel("Player "+str(self.id))
         self.titleLabel.setFont(self.parent.font_small)
-        self.layout_grid.addWidget(self.titleLabel, 0, 0, 1, 2)
+        topLine.addWidget(self.titleLabel)
 
         self.losersCheckbox = QCheckBox("Losers")
         self.losersCheckbox.setFont(self.parent.font_small)
-        self.layout_grid.addWidget(
-            self.losersCheckbox, 0, 3, 1, 2, Qt.AlignmentFlag.AlignRight)
+        # self.layout_grid.addWidget(
+        #     self.losersCheckbox, 0, 2, 1, 1, Qt.AlignmentFlag.AlignRight)
         self.losersCheckbox.stateChanged.connect(self.NameChanged)
 
-        pos_labels = 0
-        pos_forms = 1
+        self.eyeBt = QToolButton()
+        self.eyeBt.setIcon(QIcon('icons/eye.svg'))
+        self.eyeBt.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Fixed)
+        topLine.addWidget(self.eyeBt, Qt.AlignmentFlag.AlignRight)
+        self.eyeBt.setPopupMode(QToolButton.InstantPopup)
+        self.eyeBt.setMenu(QMenu())
+
+        self.lines = []
+
         text_alignment = Qt.AlignRight | Qt.AlignVCenter
 
-        if inverted:
-            pos_labels = 1
-            pos_forms = 0
-            text_alignment = Qt.AlignLeft | Qt.AlignVCenter
-
-        nick_label = QLabel("Player")
-        nick_label.setFont(self.parent.font_small)
-        nick_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(nick_label, 1, pos_labels)
+        prefix_label = QLabel("Team/Player")
+        prefix_label.setFont(self.parent.font_small)
+        prefix_label.setAlignment(text_alignment)
+        line = QWidget()
+        line.setLayout(QHBoxLayout())
+        line.layout().setSpacing(0)
+        self.lines.append(["Team/Player", line])
+        self.layout_grid.addWidget(line)
+        line.layout().addWidget(prefix_label)
+        self.player_org = QLineEdit()
+        line.layout().addWidget(self.player_org)
+        self.player_org.setFont(self.parent.font_small)
+        self.player_org.textChanged.connect(self.NameChanged)
+        self.player_org.setMinimumWidth(100)
         self.player_name = QLineEdit()
-        self.layout_grid.addWidget(self.player_name, 1, pos_forms)
+        line.layout().addWidget(self.player_name)
         self.player_name.setMinimumWidth(100)
         self.player_name.setFont(self.parent.font_small)
         self.player_name.textChanged.connect(self.NameChanged)
 
-        prefix_label = QLabel("Prefix")
-        prefix_label.setFont(self.parent.font_small)
-        prefix_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(prefix_label, 2, pos_labels)
-        self.player_org = QLineEdit()
-        self.layout_grid.addWidget(self.player_org, 2, pos_forms)
-        self.player_org.setFont(self.parent.font_small)
-        self.player_org.textChanged.connect(self.NameChanged)
-        self.player_org.setMinimumWidth(100)
-        self.NameChanged()
-
+        line = QWidget()
+        line.setLayout(QHBoxLayout())
+        line.layout().setSpacing(0)
+        self.lines.append(["Real name", line])
+        self.layout_grid.addWidget(line)
         real_name_label = QLabel("Name")
         real_name_label.setFont(self.parent.font_small)
         real_name_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(real_name_label, 3, pos_labels)
+        line.layout().addWidget(real_name_label)
         self.player_real_name = QLineEdit()
-        self.layout_grid.addWidget(self.player_real_name, 3, pos_forms)
+        line.layout().addWidget(self.player_real_name)
         self.player_real_name.setFont(self.parent.font_small)
         self.player_real_name.textChanged.connect(self.RealNameChanged)
         self.RealNameChanged()
         self.player_real_name.setMinimumWidth(100)
 
+        line = QWidget()
+        line.setLayout(QHBoxLayout())
+        line.layout().setSpacing(0)
+        self.lines.append(["Twitter", line])
+        self.layout_grid.addWidget(line)
         player_twitter_label = QLabel("Twitter")
         player_twitter_label.setFont(self.parent.font_small)
         player_twitter_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_twitter_label, 4, pos_labels)
+        line.layout().addWidget(player_twitter_label)
         self.player_twitter = QLineEdit()
-        self.layout_grid.addWidget(self.player_twitter, 4, pos_forms)
+        line.layout().addWidget(self.player_twitter)
         self.player_twitter.setFont(self.parent.font_small)
         self.player_twitter.textChanged.connect(self.TwitterChanged)
         self.TwitterChanged()
         self.player_twitter.setMinimumWidth(100)
 
-        location_layout = QHBoxLayout()
-        self.layout_grid.addLayout(location_layout, 1, pos_forms+2)
+        line = QWidget()
+        line.setLayout(QHBoxLayout())
+        line.layout().setSpacing(0)
+        self.lines.append(["Country/Region", line])
+        self.layout_grid.addWidget(line)
 
-        player_country_label = QLabel("Location")
+        player_country_label = QLabel("Country/Region")
         player_country_label.setFont(self.parent.font_small)
         player_country_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_country_label, 1, pos_labels+2)
+        line.layout().addWidget(player_country_label)
         self.player_country = QComboBox()
         self.player_country.addItem("")
         for i, country_code in enumerate(self.parent.countries.keys()):
@@ -137,7 +155,7 @@ class PlayerColumn():
             )+".png"), self.parent.countries[country_code]["name"]+" ("+country_code+")")
             self.player_country.setItemData(i+1, country_code)
         self.player_country.setEditable(True)
-        location_layout.addWidget(self.player_country)
+        line.layout().addWidget(self.player_country)
         self.player_country.setMinimumWidth(80)
         self.player_country.setFont(self.parent.font_small)
         self.player_country.lineEdit().setFont(self.parent.font_small)
@@ -151,7 +169,7 @@ class PlayerColumn():
 
         self.player_state = QComboBox()
         self.player_state.setEditable(True)
-        location_layout.addWidget(self.player_state)
+        line.layout().addWidget(self.player_state)
         self.player_state.setMinimumWidth(80)
         self.player_state.setFont(self.parent.font_small)
         self.player_state.lineEdit().setFont(self.parent.font_small)
@@ -162,13 +180,19 @@ class PlayerColumn():
         self.player_state.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.player_state.completer().popup().setMinimumWidth(300)
 
+        line = QWidget()
+        line.setLayout(QHBoxLayout())
+        line.layout().setSpacing(0)
+        self.lines.append(["Characters", line])
+        self.layout_grid.addWidget(line)
+
         player_character_label = QLabel("Character")
         player_character_label.setFont(self.parent.font_small)
         player_character_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(player_character_label, 2, pos_labels+2)
+        line.layout().addWidget(player_character_label)
         self.player_character = QComboBox()
         self.player_character.setEditable(True)
-        self.layout_grid.addWidget(self.player_character, 2, pos_forms+2)
+        line.layout().addWidget(self.player_character)
         self.player_character.activated.connect(self.LoadSkinOptions)
         self.player_character.setMinimumWidth(120)
         self.player_character.setFont(self.parent.font_small)
@@ -179,14 +203,8 @@ class PlayerColumn():
         self.player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.player_character.completer().popup().setMinimumWidth(250)
 
-        player_character_color_label = QLabel("Skin")
-        player_character_color_label.setFont(self.parent.font_small)
-        player_character_color_label.setAlignment(text_alignment)
-        self.layout_grid.addWidget(
-            player_character_color_label, 3, pos_labels+2)
         self.player_character_color = QComboBox()
-        self.layout_grid.addWidget(
-            self.player_character_color, 3, pos_forms+2, 2, 1)
+        line.layout().addWidget(self.player_character_color)
         self.player_character_color.setIconSize(QSize(48, 48))
         self.player_character_color.setMinimumHeight(48)
         self.player_character_color.setMinimumWidth(120)
@@ -195,7 +213,7 @@ class PlayerColumn():
         self.CharacterChanged()
 
         bottom_buttons_layout = QHBoxLayout()
-        self.layout_grid.addLayout(bottom_buttons_layout, 5, 0, 1, -1)
+        self.layout_grid.addLayout(bottom_buttons_layout)
 
         self.save_bt = QPushButton("Save new player")
         self.save_bt.setFont(self.parent.font_small)
@@ -225,6 +243,17 @@ class PlayerColumn():
         self.clear_bt.clicked.connect(self.Clear)
 
         self.LoadCharacters()
+
+        for line in self.lines:
+            action: QAction = self.eyeBt.menu().addAction(line[0])
+            action.setCheckable(True)
+            action.setChecked(True)
+            action.toggled.connect(
+                lambda toggled, action=action, line=line: self.ToggleLine(action, line[1]))
+
+    def ToggleLine(self, action: QAction, line: QHBoxLayout()):
+        print(action.text())
+        line.setVisible(action.isChecked())
 
     def LoadCharacters(self):
         self.player_character.clear()
@@ -300,7 +329,7 @@ class PlayerColumn():
 
     def LoadSkinOptions(self, text=None):
         self.player_character_color.clear()
-        for c in sorted(self.parent.skins.get(self.player_character.currentText(), [])):
+        for c in sorted(self.parent.skins.get(self.player_character.currentText(), []), key=lambda x: int(x)):
             if self.parent.portraits.get(self.player_character.currentText()).get(c) is not None:
                 self.player_character_color.addItem(QIcon(QPixmap.fromImage(self.parent.portraits.get(
                     self.player_character.currentText()).get(c).scaledToWidth(48, Qt.TransformationMode.SmoothTransformation))), str(c))
