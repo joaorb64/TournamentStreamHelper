@@ -3,11 +3,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
+from TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
     countries = None
     countryModel = None
+    characterModel = None
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -59,7 +61,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def SetCharactersPerPlayer(self, number):
         while len(self.character_elements) < number:
             character_element = QWidget()
-            self.character_elements.append(character_element)
             character_element.setLayout(QHBoxLayout())
             character_element.layout().setSpacing(0)
             character_element.layout().setContentsMargins(0, 0, 0, 0)
@@ -75,6 +76,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character.view().setMinimumWidth(250)
             player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
             player_character.completer().popup().setMinimumWidth(250)
+            player_character.setModel(TSHScoreboardPlayerWidget.characterModel)
+            player_character.setIconSize(QSize(24, 24))
 
             player_character_color = QComboBox()
             character_element.layout().addWidget(player_character_color)
@@ -86,8 +89,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             # self.CharacterChanged()
             self.character_container.layout().addWidget(character_element)
 
+            self.character_elements.append(
+                [character_element, player_character, player_character_color])
+
         while len(self.character_elements) > number:
-            self.character_elements[-1].setParent(None)
+            self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
 
     def LoadCountries(self):
@@ -174,3 +180,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         state: QComboBox = self.findChild(QComboBox, "state")
         state.setModel(stateModel)
+
+    def LoadCharacters():
+        TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
+        for c in TSHGameAssetManager.instance.characters.keys():
+            item = QStandardItem()
+            item.setData(c, Qt.ItemDataRole.EditRole)
+            item.setIcon(
+                QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(32, Qt.TransformationMode.SmoothTransformation)))
+            TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+
+    def ReloadCharacters(self):
+        for c in self.character_elements:
+            c[1].setModel(TSHScoreboardPlayerWidget.characterModel)
+            c[1].setIconSize(QSize(24, 24))

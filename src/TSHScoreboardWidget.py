@@ -103,6 +103,14 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.SetPlayersPerTeam(1)
 
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.LoadCharacters)
+
+    def LoadCharacters(self):
+        TSHScoreboardPlayerWidget.LoadCharacters()
+        for pw in self.playerWidgets:
+            pw.ReloadCharacters()
+
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:
             for element in elements:
