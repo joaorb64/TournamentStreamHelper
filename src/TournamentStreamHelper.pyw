@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from TSHCommentaryWidget import TSHCommentaryWidget
+
+
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
@@ -165,7 +168,7 @@ class Window(QMainWindow):
         self.setWindowTitle("TournamentStreamHelper v"+version)
 
         self.setDockOptions(
-            QMainWindow.DockOption.AllowTabbedDocks | QMainWindow.DockOption.ForceTabbedDocks)
+            QMainWindow.DockOption.AllowTabbedDocks)
 
         self.setTabPosition(
             Qt.DockWidgetArea.AllDockWidgetAreas, QTabWidget.TabPosition.North)
@@ -178,6 +181,9 @@ class Window(QMainWindow):
 
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, TSHScoreboardWidget())
+
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, TSHCommentaryWidget(), Qt.Orientation.Vertical)
 
         pre_base_layout.setSpacing(0)
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
@@ -250,7 +256,7 @@ class Window(QMainWindow):
 
         # Botoes no final
         layout_end = QGridLayout()
-        self.base_layout.addLayout(layout_end)
+        # self.base_layout.addLayout(layout_end)
 
         # Settings
         self.optionsBt = QToolButton()
