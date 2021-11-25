@@ -180,11 +180,13 @@ class Window(QMainWindow):
         central_widget.setLayout(pre_base_layout)
         self.setCentralWidget(central_widget)
 
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, TSHScoreboardWidget())
+        scoreboard = TSHScoreboardWidget()
+        scoreboard.setObjectName("Scoreboard")
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, scoreboard)
 
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, TSHCommentaryWidget(), Qt.Orientation.Vertical)
+        commentary = TSHCommentaryWidget()
+        commentary.setObjectName("Commentary")
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
 
         pre_base_layout.setSpacing(0)
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
@@ -439,6 +441,18 @@ class Window(QMainWindow):
         splash.finish(self)
 
         self.ReloadGames()
+
+        self.qtSettings = QSettings("CompanyNameTest", "AppNameTest")
+
+        if self.qtSettings.value("geometry"):
+            self.restoreGeometry(self.qtSettings.value("geometry"))
+
+        if self.qtSettings.value("windowState"):
+            self.restoreState(self.qtSettings.value("windowState"))
+
+    def closeEvent(self, event):
+        self.qtSettings.setValue("geometry", self.saveGeometry())
+        self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
         self.gameSelect.addItem("")

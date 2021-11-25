@@ -1,0 +1,23 @@
+from functools import reduce
+
+
+def deep_get(dictionary, keys, default=None):
+    return reduce(lambda d, key: d.get(key, default) if isinstance(d, dict) else default, keys.split("."), dictionary)
+
+
+def deep_set(dictionary, keys, value):
+    d = dictionary
+    for key in keys.split(".")[:-1]:
+        if key not in d:
+            d[key] = {}
+        d = d[key]
+    d[keys.split(".")[-1]] = value
+
+
+def deep_unset(dictionary, keys):
+    d = dictionary
+    for key in keys.split(".")[:-1]:
+        if key not in d:
+            d[key] = {}
+        d = d[key]
+    del d[keys.split(".")[-1]]

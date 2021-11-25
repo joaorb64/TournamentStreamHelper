@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
+from StateManager import StateManager
 from TSHGameAssetManager import TSHGameAssetManager
 
 
@@ -11,8 +12,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     countryModel = None
     characterModel = None
 
-    def __init__(self, *args):
+    def __init__(self, index=0, teamNumber=0, *args):
         super().__init__(*args)
+
+        self.index = index
+        self.teamNumber = teamNumber
 
         uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
 
@@ -21,7 +25,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.LoadCountries()
 
         self.character_elements = []
-        self.SetCharactersPerPlayer(1)
 
         bottom_buttons_layout = QHBoxLayout()
         self.layout().addLayout(bottom_buttons_layout, 999, 0, 1, 3)
@@ -55,8 +58,51 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         # self.LoadCharacters()
 
-    def SetIndex(self, index: int):
+        self.SetIndex(index, teamNumber)
+
+        for c in self.findChildren(QLineEdit):
+            c.textChanged.connect(
+                lambda text, element=c: [
+                    print(self.teamNumber, self.index,
+                          element.objectName(), text),
+                    StateManager.Set(
+                        f"score.team{self.teamNumber}.{self.index}.{element.objectName()}", text)
+                ])
+            c.textChanged.emit("")
+
+        for c in self.findChildren(QComboBox):
+            c.currentIndexChanged.connect(
+                lambda text, element=c: [
+                    print(
+                        self.teamNumber,
+                        self.index,
+                        element.objectName(),
+                        element.currentData().get("name") if element.currentData() else element.currentText(),
+                        element.currentData().get("code") if element.currentData() else ""
+                    ),
+                    StateManager.Set(
+                        f"score.team{self.teamNumber}.{self.index}.{element.objectName()}", element.currentData(
+                        )
+                    )
+                ]
+            )
+            c.currentIndexChanged.emit(0)
+
+        self.SetCharactersPerPlayer(1)
+
+    def CharactersChanged(self):
+        characters = []
+
+        for element, character, color in self.character_elements:
+            characters.append(character.currentText())
+
+        StateManager.Set(
+            f"score.team{self.teamNumber}.{self.index}.character", characters)
+
+    def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
+        self.index = index
+        self.teamNumber = team
 
     def SetCharactersPerPlayer(self, number):
         while len(self.character_elements) < number:
@@ -91,6 +137,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             self.character_elements.append(
                 [character_element, player_character, player_character_color])
+
+            player_character.currentIndexChanged.connect(
+                lambda index, element=player_character: [
+                    print(
+                        element.currentText(), element.currentData()),
+                    self.CharactersChanged()
+                ]
+            )
 
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
@@ -127,8 +181,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     item = QStandardItem()
                     item.setIcon(
                         QIcon(f'assets/country_flag/{country_code.lower()}.png'))
-                    item.setData(
-                        TSHScoreboardPlayerWidget.countries[country_code], Qt.ItemDataRole.UserRole)
+                    countryData = {
+                        "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
+                        "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
+                    }
+                    item.setData(countryData, Qt.ItemDataRole.UserRole)
                     item.setData(
                         f'{TSHScoreboardPlayerWidget.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
                     TSHScoreboardPlayerWidget.countryModel.appendRow(item)
@@ -158,7 +215,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def LoadStates(self, index):
         country: QComboBox = self.findChild(QComboBox, "country")
-        countryData = country.currentData(Qt.ItemDataRole.UserRole)
+        countryData = TSHScoreboardPlayerWidget.countries[country.currentData(
+            Qt.ItemDataRole.UserRole).get("code")]
 
         stateModel = QStandardItemModel()
 

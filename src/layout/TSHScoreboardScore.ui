@@ -63,7 +63,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="phase">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -98,7 +98,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox_2">
+         <widget class="QComboBox" name="match">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -136,7 +136,7 @@
          </widget>
         </item>
         <item alignment="Qt::AlignLeft">
-         <widget class="QSpinBox" name="spinBox">
+         <widget class="QSpinBox" name="best_of">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -166,7 +166,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QSpinBox" name="spinBox_2">
+         <widget class="QSpinBox" name="score_left">
           <property name="font">
            <font>
             <pointsize>16</pointsize>
@@ -180,7 +180,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox_3">
+         <widget class="QSpinBox" name="score_right">
           <property name="font">
            <font>
             <pointsize>16</pointsize>
@@ -196,14 +196,14 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="btResetScore">
         <property name="text">
          <string>RESET SCORE</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="btSwapTeams">
         <property name="text">
          <string>SWAP TEAMS</string>
         </property>
@@ -215,11 +215,11 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboBox</tabstop>
-  <tabstop>comboBox_2</tabstop>
-  <tabstop>spinBox</tabstop>
-  <tabstop>spinBox_2</tabstop>
-  <tabstop>spinBox_3</tabstop>
+  <tabstop>phase</tabstop>
+  <tabstop>match</tabstop>
+  <tabstop>best_of</tabstop>
+  <tabstop>score_left</tabstop>
+  <tabstop>score_right</tabstop>
  </tabstops>
  <resources/>
  <connections/>

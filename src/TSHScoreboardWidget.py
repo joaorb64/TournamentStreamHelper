@@ -4,6 +4,8 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 
 from TSHScoreboardPlayerWidget import *
+from SettingsManager import *
+from StateManager import *
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -95,16 +97,46 @@ class TSHScoreboardWidget(QDockWidget):
         self.columns.layout().addWidget(self.team1column)
         self.team1column.findChild(QLabel, "teamLabel").setText("TEAM 1")
 
-        self.columns.layout().addWidget(uic.loadUi("src/layout/TSHScoreboardScore.ui"))
+        self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
+        self.columns.layout().addWidget(self.scoreColumn)
 
         self.team2column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText("TEAM 2")
 
+        StateManager.Set("score", {})
         self.SetPlayersPerTeam(1)
 
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.LoadCharacters)
+
+        for c in self.findChildren(QLineEdit):
+            c.textChanged.connect(
+                lambda text, element=c: print(element.objectName(), text))
+
+        for c in self.scoreColumn.findChildren(QComboBox):
+            c.editTextChanged.connect(
+                lambda text, element=c: [
+                    print(
+                        element.objectName(),
+                        element.currentText()
+                    ),
+                    StateManager.Set(
+                        f"score.{element.objectName()}", element.currentText())
+                ]
+            )
+
+        for c in self.scoreColumn.findChildren(QSpinBox):
+            c.valueChanged.connect(
+                lambda value, element=c: [
+                    print(
+                        element.objectName(),
+                        value
+                    ),
+                    StateManager.Set(
+                        f"score.{element.objectName()}", value)
+                ]
+            )
 
     def LoadCharacters(self):
         TSHScoreboardPlayerWidget.LoadCharacters()
@@ -122,17 +154,17 @@ class TSHScoreboardWidget(QDockWidget):
 
     def SetPlayersPerTeam(self, number):
         while len(self.team1playerWidgets) < number:
-            p = TSHScoreboardPlayerWidget()
+            p = TSHScoreboardPlayerWidget(
+                index=len(self.team1playerWidgets)+1, teamNumber=1)
             self.playerWidgets.append(p)
             self.team1column.findChild(QGroupBox).layout().addWidget(p)
-            p.SetIndex(len(self.team1playerWidgets)+1)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team1playerWidgets.append(p)
 
-            p = TSHScoreboardPlayerWidget()
+            p = TSHScoreboardPlayerWidget(
+                index=len(self.team2playerWidgets)+1, teamNumber=2)
             self.playerWidgets.append(p)
             self.team2column.findChild(QGroupBox).layout().addWidget(p)
-            p.SetIndex(len(self.team2playerWidgets)+1)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team2playerWidgets.append(p)
 
@@ -146,6 +178,12 @@ class TSHScoreboardWidget(QDockWidget):
             team2player.setParent(None)
             self.playerWidgets.remove(team2player)
             self.team2playerWidgets.remove(team2player)
+
+        for team in [1, 2]:
+            if StateManager.Get(f'score.team{team}'):
+                for k in list(StateManager.Get(f'score.team{team}').keys()):
+                    if not k.isnumeric() or (k.isnumeric() and int(k) > number):
+                        StateManager.Unset(f'score.team{team}.{k}')
 
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
