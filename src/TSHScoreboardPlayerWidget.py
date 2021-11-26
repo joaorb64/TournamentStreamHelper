@@ -66,7 +66,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     print(self.teamNumber, self.index,
                           element.objectName(), text),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.{self.index}.{element.objectName()}", text)
+                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
             c.textChanged.emit("")
 
@@ -81,7 +81,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         element.currentData().get("code") if element.currentData() else ""
                     ),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.{self.index}.{element.objectName()}", element.currentData(
+                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
                         )
                     )
                 ]
@@ -97,7 +97,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             characters.append(character.currentText())
 
         StateManager.Set(
-            f"score.team{self.teamNumber}.{self.index}.character", characters)
+            f"score.team{self.teamNumber}.players.{self.index}.character", characters)
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")

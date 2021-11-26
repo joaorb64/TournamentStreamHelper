@@ -39,7 +39,49 @@ class TSHCommentaryWidget(QDockWidget):
         self.commentatorNumber = QSpinBox()
         col.layout().addWidget(QLabel("Number of commentators"))
         col.layout().addWidget(self.commentatorNumber)
-        # self.commentatorNumber.valueChanged.connect(self.SetPlayersPerTeam)
+        self.commentatorNumber.valueChanged.connect(self.SetCommentatorNumber)
+
+        scrollArea = QScrollArea()
+        scrollArea.setFrameShadow(QFrame.Shadow.Plain)
+        scrollArea.setFrameShape(QFrame.Shape.NoFrame)
+        scrollArea.setWidgetResizable(True)
+
+        self.widgetArea = QWidget()
+        self.widgetArea.setLayout(QVBoxLayout())
+        self.widgetArea.setSizePolicy(
+            QSizePolicy.Preferred, QSizePolicy.Maximum)
+        scrollArea.setWidget(self.widgetArea)
+
+        self.widget.layout().addWidget(scrollArea)
+
+        self.commentaryWidgets = []
 
         StateManager.Set("commentary", {})
         self.commentatorNumber.setValue(2)
+
+    def SetCommentatorNumber(self, number):
+        while len(self.commentaryWidgets) < number:
+            comm = QGroupBox()
+            uic.loadUi("src/layout/TSHCommentator.ui", comm)
+            comm.setTitle(f"Commentator {len(self.commentaryWidgets)+1}")
+
+            for c in comm.findChildren(QLineEdit):
+                c.textChanged.connect(
+                    lambda text, element=c, index=len(self.commentaryWidgets)+1: [
+                        StateManager.Set(
+                            f"commentary.{index}.{element.objectName()}", text)
+                    ])
+                c.textChanged.emit("")
+
+            self.commentaryWidgets.append(comm)
+            self.widgetArea.layout().addWidget(comm)
+
+        while len(self.commentaryWidgets) > number:
+            comm = self.commentaryWidgets[-1]
+            comm.setParent(None)
+            self.commentaryWidgets.remove(comm)
+
+        if StateManager.Get(f'commentary'):
+            for k in list(StateManager.Get(f'commentary').keys()):
+                if not k.isnumeric() or (k.isnumeric() and int(k) > number):
+                    StateManager.Unset(f'commentary.{k}')

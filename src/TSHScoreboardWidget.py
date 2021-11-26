@@ -101,6 +101,14 @@ class TSHScoreboardWidget(QDockWidget):
         self.team1column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
 
+        for c in self.team1column.findChildren(QLineEdit):
+            c.textChanged.connect(
+                lambda text, element=c: [
+                    StateManager.Set(
+                        f"score.team1.{element.objectName()}", text)
+                ])
+            c.textChanged.emit("")
+
         self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
         self.columns.layout().addWidget(self.scoreColumn)
 
@@ -110,6 +118,14 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
         self.team2column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
+
+        for c in self.team2column.findChildren(QLineEdit):
+            c.textChanged.connect(
+                lambda text, element=c: [
+                    StateManager.Set(
+                        f"score.team2.{element.objectName()}", text)
+                ])
+            c.textChanged.emit("")
 
         StateManager.Set("score", {})
         self.playerNumber.setValue(1)
@@ -194,13 +210,15 @@ class TSHScoreboardWidget(QDockWidget):
 
         for team in [1, 2]:
             if StateManager.Get(f'score.team{team}'):
-                for k in list(StateManager.Get(f'score.team{team}').keys()):
+                for k in list(StateManager.Get(f'score.team{team}.players').keys()):
                     if not k.isnumeric() or (k.isnumeric() and int(k) > number):
-                        StateManager.Unset(f'score.team{team}.{k}')
+                        StateManager.Unset(f'score.team{team}.players.{k}')
 
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
             self.team2column.findChild(QLineEdit, "teamName").setVisible(True)
         else:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(False)
+            self.team1column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
+            self.team2column.findChild(QLineEdit, "teamName").setText("")
