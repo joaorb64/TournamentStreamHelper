@@ -179,6 +179,7 @@ class Window(QMainWindow):
         pre_base_layout = QVBoxLayout()
         central_widget.setLayout(pre_base_layout)
         self.setCentralWidget(central_widget)
+        central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
         scoreboard = TSHScoreboardWidget()
         scoreboard.setObjectName("Scoreboard")

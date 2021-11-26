@@ -29,6 +29,7 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.setLayout(QHBoxLayout())
         topOptions.layout().setSpacing(0)
         topOptions.layout().setContentsMargins(0, 0, 0, 0)
+        topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.widget.layout().addWidget(topOptions)
 
@@ -96,6 +97,9 @@ class TSHScoreboardWidget(QDockWidget):
         self.team1column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team1column)
         self.team1column.findChild(QLabel, "teamLabel").setText("TEAM 1")
+        self.team1column.findChild(QScrollArea).setWidget(QWidget())
+        self.team1column.findChild(
+            QScrollArea).widget().setLayout(QVBoxLayout())
 
         self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
         self.columns.layout().addWidget(self.scoreColumn)
@@ -103,9 +107,13 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText("TEAM 2")
+        self.team2column.findChild(QScrollArea).setWidget(QWidget())
+        self.team2column.findChild(
+            QScrollArea).widget().setLayout(QVBoxLayout())
 
         StateManager.Set("score", {})
-        self.SetPlayersPerTeam(1)
+        self.playerNumber.setValue(1)
+        self.charNumber.setValue(1)
 
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.LoadCharacters)
@@ -125,6 +133,7 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", element.currentText())
                 ]
             )
+            c.editTextChanged.emit("")
 
         for c in self.scoreColumn.findChildren(QSpinBox):
             c.valueChanged.connect(
@@ -137,6 +146,7 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", value)
                 ]
             )
+            c.valueChanged.emit(0)
 
     def LoadCharacters(self):
         TSHScoreboardPlayerWidget.LoadCharacters()
@@ -157,14 +167,17 @@ class TSHScoreboardWidget(QDockWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1, teamNumber=1)
             self.playerWidgets.append(p)
-            self.team1column.findChild(QGroupBox).layout().addWidget(p)
+            print(self.team1column.findChild(QScrollArea))
+            self.team1column.findChild(
+                QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team2playerWidgets)+1, teamNumber=2)
             self.playerWidgets.append(p)
-            self.team2column.findChild(QGroupBox).layout().addWidget(p)
+            self.team2column.findChild(
+                QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team2playerWidgets.append(p)
 
