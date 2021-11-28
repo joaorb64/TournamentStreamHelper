@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -41,6 +44,20 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item alignment="Qt::AlignRight">
+    <widget class="QCheckBox" name="losers">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>LOSERS</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
@@ -84,7 +101,7 @@
            <x>0</x>
            <y>0</y>
            <width>358</width>
-           <height>200</height>
+           <height>172</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">

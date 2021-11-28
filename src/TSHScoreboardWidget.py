@@ -18,6 +18,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
 
+        StateManager.Set("score", {})
+
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
@@ -109,6 +111,14 @@ class TSHScoreboardWidget(QDockWidget):
                 ])
             c.textChanged.emit("")
 
+        for c in self.team1column.findChildren(QCheckBox):
+            c.toggled.connect(
+                lambda state, element=c: [
+                    StateManager.Set(
+                        f"score.team1.{element.objectName()}", state)
+                ])
+            c.toggled.emit(False)
+
         self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
         self.columns.layout().addWidget(self.scoreColumn)
 
@@ -127,7 +137,14 @@ class TSHScoreboardWidget(QDockWidget):
                 ])
             c.textChanged.emit("")
 
-        StateManager.Set("score", {})
+        for c in self.team2column.findChildren(QCheckBox):
+            c.toggled.connect(
+                lambda state, element=c: [
+                    StateManager.Set(
+                        f"score.team2.{element.objectName()}", state)
+                ])
+            c.toggled.emit(False)
+
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
 
