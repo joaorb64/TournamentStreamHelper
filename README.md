@@ -54,7 +54,7 @@ Windows:
 - Download the latest release zip and extract it: https://github.com/joaorb64/SmashStreamHelper/releases/latest
 - Install Python 3.X and be sure to have it added to "Path" when installing (Windows x64: https://www.python.org/ftp/python/3.9.2/python-3.9.2-amd64.exe)
 - Only for the first run, double click `install_requirements.bat` (a command prompt window should open, load some bars, then wait for you to press any key)
-- From now on you may open the program using `TournamentStreamHelper.py`
+- From now on you may open the program using `TournamentStreamHelper.pyw`
 
 Linux:
 
