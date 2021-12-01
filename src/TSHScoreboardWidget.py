@@ -6,6 +6,7 @@ from PyQt5 import uic
 from TSHScoreboardPlayerWidget import *
 from SettingsManager import *
 from StateManager import *
+from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -95,6 +96,30 @@ class TSHScoreboardWidget(QDockWidget):
         self.columns = QWidget()
         self.columns.setLayout(QHBoxLayout())
         self.widget.layout().addWidget(self.columns)
+
+        bottomOptions = QWidget()
+        bottomOptions.setLayout(QHBoxLayout())
+        bottomOptions.layout().setSpacing(0)
+        bottomOptions.layout().setContentsMargins(0, 0, 0, 0)
+        bottomOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+
+        self.widget.layout().addWidget(bottomOptions)
+
+        self.btDownload = QPushButton("Load set")
+        self.btDownload.setEnabled(False)
+        bottomOptions.layout().addWidget(self.btDownload)
+        self.btDownload.clicked.connect(
+            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
+        )
+        TSHTournamentDataProvider.signals.tournament_changed.connect(
+            lambda: [
+                print("ASDF"),
+                self.btDownload.setText(
+                    "Load set from "+TSHTournamentDataProvider.provider.url),
+                self.btDownload.setEnabled(True)
+            ]
+        )
+        TSHTournamentDataProvider.signals.tournament_changed.emit()
 
         self.team1column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team1column)

@@ -68,7 +68,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     StateManager.Set(
                         f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
-            c.textChanged.emit("")
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(

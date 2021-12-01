@@ -3,6 +3,7 @@
 
 from TSHCommentaryWidget import TSHCommentaryWidget
 from TSHGameAssetManager import TSHGameAssetManager
+from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 try:
@@ -193,9 +194,14 @@ class Window(QMainWindow):
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
 
         # Game
-        group_box = QHBoxLayout()
+        group_box = QVBoxLayout()
         group_box.setSpacing(8)
         group_box.setContentsMargins(4, 4, 4, 4)
+
+        self.setTournamentBt = QPushButton("Set tournament")
+        group_box.addWidget(self.setTournamentBt)
+        self.setTournamentBt.clicked.connect(
+            lambda bt, s=self: TSHTournamentDataProvider.SetSmashggEventSlug(s))
 
         gameLabel = QLabel("Game: ")
         gameLabel.setFont(self.font_small)
