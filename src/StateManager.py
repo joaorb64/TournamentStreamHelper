@@ -25,8 +25,10 @@ class StateManager:
         StateManager.ExportText(oldState)
 
     def Unset(key: str):
+        oldState = copy.deepcopy(StateManager.state)
         deep_unset(StateManager.state, key)
         StateManager.SaveState()
+        StateManager.ExportText(oldState)
 
     def Get(key: str):
         return deep_get(StateManager.state, key)

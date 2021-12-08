@@ -232,8 +232,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def LoadStates(self, index):
         country: QComboBox = self.findChild(QComboBox, "country")
-        countryData = TSHScoreboardPlayerWidget.countries[country.currentData(
-            Qt.ItemDataRole.UserRole).get("code")]
+        countryData = TSHScoreboardPlayerWidget.countries.get(country.currentData(
+            Qt.ItemDataRole.UserRole).get("code"), {})
 
         stateModel = QStandardItemModel()
 
