@@ -98,9 +98,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 data = {"name": character.currentText()}
 
             data["assets"] = color.currentData()
+
+            if data["assets"] == None:
+                data["assets"] = {}
+
             data["skin"] = color.currentText()
 
-            characters[i] = data
+            characters[i+1] = data
 
         StateManager.Set(
             f"score.team{self.teamNumber}.players.{self.index}.character", characters)
@@ -192,10 +196,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 for i, country_code in enumerate(TSHScoreboardPlayerWidget.countries.keys()):
                     item = QStandardItem()
                     item.setIcon(
-                        QIcon(f'assets/country_flag/{country_code.lower()}.png'))
+                        QIcon(f'./assets/country_flag/{country_code.lower()}.png'))
                     countryData = {
                         "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
                         "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
+                        "path": f'./assets/country_flag/{country_code.lower()}.png'
                     }
                     item.setData(countryData, Qt.ItemDataRole.UserRole)
                     item.setData(
@@ -241,8 +246,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 item = QStandardItem()
                 # Windows has some weird thing with files named CON.png. In case a state code is CON,
                 # we try to load _CON.png instead
-                item.setIcon(
-                    QIcon(f'assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'))
+                path = f'./assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'
+                states[state_code].update({
+                    "path": path
+                })
+                item.setIcon(QIcon(path))
                 item.setData(states[state_code], Qt.ItemDataRole.UserRole)
                 item.setData(
                     f'{states[state_code]["name"]} ({state_code})', Qt.ItemDataRole.EditRole)
@@ -281,6 +289,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for skin in sortedSkins:
             assetData = TSHGameAssetManager.instance.GetCharacterAssets(
                 element.currentData().get("codename"), skin)
+            print(assetData)
+            if assetData == None:
+                assetData = {}
             item = QStandardItem()
             item.setData(str(skin), Qt.ItemDataRole.EditRole)
             item.setData(assetData, Qt.ItemDataRole.UserRole)

@@ -36,7 +36,7 @@ class StateManager:
         print(diff)
 
         mergedDiffs = list(diff.get("values_changed", {}).items())
-        mergedDiffs.extend(list(diff.get("types_changed", {}).items()))
+        mergedDiffs.extend(list(diff.get("type_changes", {}).items()))
 
         print(mergedDiffs)
 
@@ -47,12 +47,12 @@ class StateManager:
 
             print(filename)
 
-            if change.get("new_value").startswith("./"):
-                shutil.copyfile(change.get("new_value"), f"./out/{filename}" + "." +
-                                change.get("new_value").rsplit(".", 1)[-1])
+            if change.get("new_type") == type(None):
+                StateManager.RemoveFilesDict(
+                    filename, extract(oldState, changeKey))
             else:
-                with open(f"./out/{filename}.txt", 'w') as file:
-                    file.write(change.get("new_value"))
+                StateManager.CreateFilesDict(
+                    filename, change.get("new_value"))
 
         removedKeys = diff.get("dictionary_item_removed", {})
 
@@ -67,10 +67,38 @@ class StateManager:
 
             StateManager.RemoveFilesDict(filename, item)
 
+        addedKeys = diff.get("dictionary_item_added", {})
+
+        for key in addedKeys:
+            item = extract(StateManager.state, key)
+
+            # Remove "root[" from start and separate keys
+            filename = "_".join(key[5:].replace(
+                "'", "").replace("]", "").replace("/", "_").split("["))
+
+            print("Added:", filename, item)
+
+            StateManager.CreateFilesDict(filename, item)
+
+    def CreateFilesDict(path, di):
+        if type(di) == dict:
+            for k, i in di.items():
+                StateManager.CreateFilesDict(
+                    path+"_"+str(k).replace("/", "_"), i)
+        else:
+            print("try to add: ", path)
+            if type(di) == str and di.startswith("./"):
+                shutil.copyfile(
+                    di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+            else:
+                with open(f"./out/{path}.txt", 'w') as file:
+                    file.write(str(di))
+
     def RemoveFilesDict(path, di):
         if type(di) == dict:
             for k, i in di.items():
-                StateManager.RemoveFilesDict(path+"_"+k, i)
+                StateManager.RemoveFilesDict(
+                    path+"_"+str(k).replace("/", "_"), i)
         else:
             print("try to remove: ", path)
             if type(di) == str and di.startswith("./"):
