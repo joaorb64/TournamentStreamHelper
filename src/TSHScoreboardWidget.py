@@ -113,7 +113,6 @@ class TSHScoreboardWidget(QDockWidget):
         )
         TSHTournamentDataProvider.signals.tournament_changed.connect(
             lambda: [
-                print("ASDF"),
                 self.btDownload.setText(
                     "Load set from "+TSHTournamentDataProvider.provider.url),
                 self.btDownload.setEnabled(True)

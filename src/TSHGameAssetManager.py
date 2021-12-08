@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import re
+import traceback
 
 
 class TSHGameAssetManagerSignals(QObject):
@@ -17,6 +18,7 @@ class TSHGameAssetManager():
         self.signals = TSHGameAssetManagerSignals()
         self.games = {}
         self.LoadGames()
+        self.selectedGame = None
 
     def LoadGames(self):
         self.games = {}
@@ -191,6 +193,8 @@ class TSHGameAssetManager():
 
         self.signals.onLoad.emit()
 
+        print(self.selectedGame)
+
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
 
@@ -205,6 +209,56 @@ class TSHGameAssetManager():
 
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
+
+    def GetCharacterAssets(self, characterCodename: str, skin: int):
+        charFiles = {}
+
+        if self.selectedGame is not None:
+            # For each assets pack
+            for assetKey, asset in self.selectedGame.get("assets", {}).items():
+                try:
+                    # Skip stage icon asset packs
+                    if type(asset.get("type")) == list:
+                        if "stage_icon" in asset.get("type"):
+                            continue
+                    elif type(asset.get("type")) == str:
+                        if asset.get("type") == "stage_icon":
+                            continue
+
+                    assetPath = f'{self.selectedGame.get("path")}/{assetKey}/'
+
+                    baseName = asset.get(
+                        "prefix", "")+characterCodename+asset.get("postfix", "")
+
+                    skinFileList = [f for f in os.listdir(
+                        assetPath) if f.startswith(baseName)]
+
+                    skinFiles = {}
+
+                    for f in skinFileList:
+                        skinId = f[len(baseName):].rsplit(".", 1)[0]
+                        if skinId == "":
+                            skinId = 0
+                        else:
+                            skinId = int(skinId)
+                        skinFiles[skinId] = f
+
+                    if len(skinFiles) > 0:
+                        charFiles[assetKey] = {
+                            "type": asset.get("type", [])
+                        }
+
+                        if skin in skinFiles:
+                            charFiles[assetKey]["path"] = assetPath + \
+                                skinFiles[skin]
+                        else:
+                            charFiles[assetKey]["path"] = assetPath + \
+                                list(skinFiles.values())[0]
+
+                except Exception as e:
+                    print(traceback.format_exc())
+
+        return(charFiles)
 
 
 if TSHGameAssetManager.instance == None:

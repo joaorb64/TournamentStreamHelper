@@ -90,10 +90,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.SetCharactersPerPlayer(1)
 
     def CharactersChanged(self):
-        characters = []
+        characters = {}
 
-        for element, character, color in self.character_elements:
-            characters.append(character.currentText())
+        for i, (element, character, color) in enumerate(self.character_elements):
+            data = character.currentData()
+            if character.currentData() == None:
+                data = {"name": character.currentText()}
+
+            data["assets"] = color.currentData()
+            data["skin"] = color.currentText()
+
+            characters[i] = data
 
         StateManager.Set(
             f"score.team{self.teamNumber}.players.{self.index}.character", characters)
@@ -112,24 +119,20 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character = QComboBox()
             player_character.setEditable(True)
             character_element.layout().addWidget(player_character)
-            # self.player_character.activated.connect(self.LoadSkinOptions)
             player_character.setMinimumWidth(120)
-            # self.player_character.setFont(self.parent.font_small)
-            # self.player_character.lineEdit().setFont(self.parent.font_small)
-            # self.player_character.activated.connect(self.CharacterChanged)
             player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             player_character.view().setMinimumWidth(250)
             player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
             player_character.completer().popup().setMinimumWidth(250)
             player_character.setModel(TSHScoreboardPlayerWidget.characterModel)
             player_character.setIconSize(QSize(24, 24))
+            player_character.setFixedHeight(32)
 
             player_character_color = QComboBox()
             character_element.layout().addWidget(player_character_color)
             player_character_color.setIconSize(QSize(48, 48))
-            # self.player_character_color.setMinimumHeight(48)
+            player_character_color.setFixedHeight(32)
             player_character_color.setMinimumWidth(120)
-            # self.player_character_color.setFont(self.parent.font_small)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
             self.character_container.layout().addWidget(character_element)
@@ -137,13 +140,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_elements.append(
                 [character_element, player_character, player_character_color])
 
-            player_character.currentIndexChanged.connect(
-                lambda index, element=player_character: [
-                    print(
-                        element.currentText(), element.currentData()),
+            player_character.activated.connect(
+                lambda x, element=player_character, target=player_character_color: [
+                    self.LoadSkinOptions(element, target),
                     self.CharactersChanged()
                 ]
             )
+
+            player_character_color.activated.connect(
+                lambda index, element=player_character: [
+                    self.CharactersChanged()
+                ]
+            )
+
+            player_character.setCurrentIndex(0)
+            player_character_color.setCurrentIndex(0)
+
+            self.CharactersChanged()
 
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
@@ -244,10 +257,54 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             item = QStandardItem()
             item.setData(c, Qt.ItemDataRole.EditRole)
             item.setIcon(
-                QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(32, Qt.TransformationMode.SmoothTransformation)))
+                QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
+                    32, Qt.TransformationMode.SmoothTransformation))
+            )
+            data = {
+                "name": c,
+                "codename": TSHGameAssetManager.instance.characters[c].get("codename")
+            }
+            item.setData(data, Qt.ItemDataRole.UserRole)
             TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+
+    def LoadSkinOptions(self, element, target):
+        skins = TSHGameAssetManager.instance.skins.get(
+            element.currentData().get("name"), {})
+
+        sortedSkins = [int(k) for k in skins.keys()]
+        sortedSkins.sort()
+
+        target.clear()
+
+        skinModel = QStandardItemModel()
+
+        for skin in sortedSkins:
+            assetData = TSHGameAssetManager.instance.GetCharacterAssets(
+                element.currentData().get("codename"), skin)
+            item = QStandardItem()
+            item.setData(str(skin), Qt.ItemDataRole.EditRole)
+            item.setData(assetData, Qt.ItemDataRole.UserRole)
+
+            # Set to use first asset as a fallback
+            key = list(assetData.keys())[0]
+
+            for k, asset in list(assetData.items()):
+                if "portrait" in asset.get("type", []):
+                    key = k
+                    break
+                if "icon" in asset.get("type", []):
+                    key = k
+
+            item.setIcon(
+                QIcon(QPixmap.fromImage(QImage(assetData[key]["path"]).scaledToWidth(
+                    32, Qt.TransformationMode.SmoothTransformation)))
+            )
+            skinModel.appendRow(item)
+
+        target.setModel(skinModel)
 
     def ReloadCharacters(self):
         for c in self.character_elements:
             c[1].setModel(TSHScoreboardPlayerWidget.characterModel)
             c[1].setIconSize(QSize(24, 24))
+            c[1].setFixedHeight(32)
