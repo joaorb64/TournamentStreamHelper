@@ -54,6 +54,37 @@ class StateManager:
                 with open(f"./out/{filename}.txt", 'w') as file:
                     file.write(change.get("new_value"))
 
+        removedKeys = diff.get("dictionary_item_removed", {})
+
+        for key in removedKeys:
+            item = extract(oldState, key)
+
+            # Remove "root[" from start and separate keys
+            filename = "_".join(key[5:].replace(
+                "'", "").replace("]", "").replace("/", "_").split("["))
+
+            print("Removed:", filename, item)
+
+            StateManager.RemoveFilesDict(filename, item)
+
+    def RemoveFilesDict(path, di):
+        if type(di) == dict:
+            for k, i in di.items():
+                StateManager.RemoveFilesDict(path+"_"+k, i)
+        else:
+            print("try to remove: ", path)
+            if type(di) == str and di.startswith("./"):
+                try:
+                    os.remove(f"./out/{path}" + "." +
+                              di.rsplit(".", 1)[-1])
+                except:
+                    pass
+            else:
+                try:
+                    os.remove(f"./out/{path}.txt")
+                except:
+                    pass
+
 
 if not os.path.isfile("./out/program_state.json"):
     StateManager.SaveState()
