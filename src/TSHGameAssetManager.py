@@ -6,6 +6,8 @@ from PyQt5.QtCore import *
 import re
 import traceback
 
+import requests
+
 
 class TSHGameAssetManagerSignals(QObject):
     onLoad = pyqtSignal()
@@ -17,8 +19,18 @@ class TSHGameAssetManager():
     def __init__(self) -> None:
         self.signals = TSHGameAssetManagerSignals()
         self.games = {}
+        self.characters = {}
+        self.DownloadSmashGGCharacters()
         self.LoadGames()
         self.selectedGame = None
+
+    def DownloadSmashGGCharacters(self):
+        try:
+            url = 'https://api.smash.gg/characters'
+            r = requests.get(url, allow_redirects=True)
+            open('./assets/characters.json', 'wb').write(r.content)
+        except Exception as e:
+            print("Could not update /assets/characters.json: "+str(e))
 
     def LoadGames(self):
         self.games = {}
@@ -259,6 +271,24 @@ class TSHGameAssetManager():
                     print(traceback.format_exc())
 
         return(charFiles)
+
+    def GetCharacterFromSmashGGId(self, smashgg_id: int):
+        sggcharacters = json.loads(
+            open('./assets/characters.json', 'r').read())
+
+        smashggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
+            "character", []) if str(c.get("id")) == str(smashgg_id)), None)
+
+        print(smashggcharacter)
+
+        if smashggcharacter:
+            print(smashggcharacter)
+            character = next((c for c in self.characters.items() if c[1].get(
+                "smashgg_name") == smashggcharacter.get("name")), None)
+            if character:
+                return character
+
+        return None
 
 
 if TSHGameAssetManager.instance == None:

@@ -59,6 +59,9 @@ class TSHCommentaryWidget(QDockWidget):
         StateManager.Set("commentary", {})
         self.commentatorNumber.setValue(2)
 
+        TSHTournamentDataProvider.signals.entrants_updated.connect(self.SetupAutocomplete)
+        self.SetupAutocomplete()
+
     def SetCommentatorNumber(self, number):
         while len(self.commentaryWidgets) < number:
             comm = QGroupBox()
@@ -85,3 +88,11 @@ class TSHCommentaryWidget(QDockWidget):
             for k in list(StateManager.Get(f'commentary').keys()):
                 if not k.isnumeric() or (k.isnumeric() and int(k) > number):
                     StateManager.Unset(f'commentary.{k}')
+
+    def SetupAutocomplete(self):
+        if TSHTournamentDataProvider.entrantsModel:
+            for c in self.commentaryWidgets:
+                c.findChild(QLineEdit, "name").setCompleter(QCompleter())
+                c.findChild(QLineEdit, "name").completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+                c.findChild(QLineEdit, "name").completer().setFilterMode(Qt.MatchFlag.MatchContains)
+                c.findChild(QLineEdit, "name").completer().setModel(TSHTournamentDataProvider.entrantsModel)

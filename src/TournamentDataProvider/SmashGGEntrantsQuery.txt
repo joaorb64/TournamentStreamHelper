@@ -1,0 +1,62 @@
+query EventEntrantsListQuery($eventSlug: String!, $page: Int!) {
+  event(slug: $eventSlug) {
+    id
+    videogame {
+      id
+      name
+    }
+    entrants(query: {page: $page, perPage: 64}) {
+      pageInfo {
+        page
+        total
+        perPage
+        totalPages
+        sortBy
+      }
+      nodes {
+        id
+        name
+        participants {
+          player {
+            id
+            gamerTag
+            prefix
+            name
+            sets(page: 1, perPage: 5, filters: { hideEmpty: true, videogameId: 1386, videogameIds: [1386] }) {
+              nodes {
+                games {
+                  selections {
+                    entrant {
+                      participants {
+                        player {
+                          id
+                        }
+                      }
+                    }
+                    selectionValue
+                  }
+                }
+              }
+            }
+          }
+          user {
+            id
+            prefix
+            name
+            location {
+              country
+              state
+              city
+            }
+            authorizations(types: [TWITTER]) {
+              externalUsername
+            }
+            images(type: "profile") {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}

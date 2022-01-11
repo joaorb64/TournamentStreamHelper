@@ -5,7 +5,7 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
         id
         name
     }
-    sets(page: $page, perPage: 1500, sortType: MAGIC, filters: $filters) {
+    sets(page: $page, perPage: 64, sortType: MAGIC, filters: $filters) {
       pageInfo {
         page
         total
@@ -28,7 +28,6 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
                 entrant {
                     id
                     name
-                    networkIdDisplayName
                     participants {
                         player {
                             id
@@ -82,12 +81,8 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
             }
         }
         stream {
-            id
             streamName
             streamSource
-            streamUrl(streamUrlType: PAGE)
-            enabled
-            isOnline
         }
       }
     }

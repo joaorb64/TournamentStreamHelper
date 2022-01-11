@@ -1,17 +1,24 @@
+from collections import Counter
+from typing import final
+from PyQt5.QtCore import *
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback
+from Helpers.TSHDictHelper import deep_get
 from TournamentDataProvider import TournamentDataProvider
+import json
+import TSHTournamentDataProvider
+
+from Workers import Worker
 
 
 class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     SetsQuery = None
+    EntrantsQuery = None
 
     def __init__(self, url) -> None:
         super().__init__(url)
-
-    def GetEntrants(self):
-        pass
 
     def GetTournamentData(self):
         pass
@@ -39,13 +46,181 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                             ],
                             "hideEmpty": True
                         },
-                        "eventSlug": "tournament/semanal-ultra-arcade-30/event/smash-top-da-contorno-28"
+                        "eventSlug": self.url.split("smash.gg/")[1]
                     },
                     "query": SmashGGDataProvider.SetsQuery
                 }
 
             )
             print(data)
-            print(data.text)
+
+            data = json.loads(data.text)
+
+            sets = deep_get(data, "data.event.sets.nodes", [])
+            final_data = []
+
+            for _set in sets:
+                setData = {
+                    "round_name": _set.get("fullRoundText"),
+                    "tournament_phase": deep_get(_set, "phaseGroup.phase.name"),
+                    "p1_name": deep_get(_set, "paginatedSlots.nodes", [])[0].get("entrant", {}).get("name", ""),
+                    "p2_name": deep_get(_set, "paginatedSlots.nodes", [])[1].get("entrant", {}).get("name", ""),
+                }
+
+                players = [[], []]
+
+                entrants = [
+                    deep_get(_set, "paginatedSlots.nodes", [])[0].get(
+                        "entrant", {}).get("participants", []),
+                    deep_get(_set, "paginatedSlots.nodes", [])[1].get(
+                        "entrant", {}).get("participants", [])
+                ]
+
+                for i, team in enumerate(entrants):
+                    for j, entrant in enumerate(team):
+                        player = entrant.get("player")
+                        user = entrant.get("user")
+
+                        playerData = {}
+
+                        if player:
+                            playerData["prefix"] = player.get("prefix")
+                            playerData["gamerTag"] = player.get("gamerTag")
+                            playerData["name"] = player.get("name")
+
+                        if user:
+                            if len(user.get("authorizations", [])) > 0:
+                                playerData["twitter"] = user.get("authorizations", [])[
+                                    0].get("externalUsername")
+                            if len(user.get("images")) > 0:
+                                playerData["picture"] = user.get("images")[
+                                    0].get("url")
+                            if user.get("location"):
+                                playerData["location"] = user.get("location")
+
+                        players[i].append(playerData)
+
+                setData["entrants"] = players
+
+                final_data.append(setData)
+
+            print(final_data)
+
+            return(final_data)
         except Exception as e:
             traceback.print_exc()
+
+    def GetEntrants(self):
+        self.threadpool = QThreadPool()
+        worker = Worker(self.GetEntrantsWorker)
+        worker.signals.progress.connect(self.GetEntrantsProgress)
+        self.threadpool.start(worker)
+
+    def GetEntrantsWorker(self, progress_callback):
+        try:
+            page = 1
+            totalPages = 1
+            final_data = QStandardItemModel()
+
+            while page <= totalPages:
+                print(page, "/", totalPages)
+                data = requests.post(
+                    "https://smash.gg/api/-/gql",
+                    headers={
+                        "client-version": "19",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "EventEntrantsListQuery",
+                        "variables": {
+                            "eventSlug": self.url.split("smash.gg/")[1],
+                            "page": page
+                        },
+                        "query": SmashGGDataProvider.EntrantsQuery
+                    }
+
+                )
+
+                data = json.loads(data.text)
+                print(data)
+
+                totalPages = deep_get(
+                    data, "data.event.entrants.pageInfo.totalPages", [])
+
+                entrants = deep_get(data, "data.event.entrants.nodes", [])
+                print("Entrants: ", len(entrants))
+
+                for i, team in enumerate(entrants):
+                    for j, entrant in enumerate(team.get("participants", [])):
+                        player = entrant.get("player")
+                        user = entrant.get("user")
+
+                        playerData = {}
+
+                        if player:
+                            playerData["prefix"] = player.get("prefix")
+                            playerData["gamerTag"] = player.get("gamerTag")
+                            playerData["name"] = player.get("name")
+
+                            # Main character
+                            playerSelections = Counter()
+
+                            sets = deep_get(player, "sets.nodes", [])
+                            playerId = player.get("id")
+                            if len(sets) > 0:
+                                games = sets[0].get("games", [])
+                                if games and len(games) > 0:
+                                    for game in games:
+                                        selections = game.get("selections", [])
+                                        if selections:
+                                            for selection in selections:
+                                                participants = selection.get(
+                                                    "entrant", {}).get("participants", [])
+                                                if len(participants) > 0:
+                                                    participantId = participants[0].get(
+                                                        "player", {}).get("id", None)
+                                                    if participantId and participantId == playerId:
+                                                        playerSelections[selection.get(
+                                                            "selectionValue")] += 1
+
+                            print(playerSelections.most_common())
+                            main = playerSelections.most_common(1)
+
+                            if len(main) > 0:
+                                playerData["smashggMain"] = main[0][0]
+
+                        if user:
+                            if len(user.get("authorizations", [])) > 0:
+                                playerData["twitter"] = user.get("authorizations", [])[
+                                    0].get("externalUsername")
+                            if len(user.get("images")) > 0:
+                                playerData["picture"] = user.get("images")[
+                                    0].get("url")
+                            if user.get("location"):
+                                playerData["location"] = user.get("location")
+
+                        name = player.get(
+                            "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+                        item = QStandardItem(name)
+                        item.setData(playerData, Qt.ItemDataRole.UserRole)
+
+                        final_data.appendRow(item)
+
+                progress_callback.emit(final_data)
+
+                page += 1
+        except Exception as e:
+            traceback.print_exc()
+
+    def GetEntrantsProgress(self, progress):
+        TSHTournamentDataProvider.TSHTournamentDataProvider.entrantsModel = progress
+        TSHTournamentDataProvider.TSHTournamentDataProvider.signals.entrants_updated.emit()
+
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
+         "SmashGGSetsQuery.txt", 'r')
+SmashGGDataProvider.SetsQuery = f.read()
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
+         "SmashGGEntrantsQuery.txt", 'r')
+SmashGGDataProvider.EntrantsQuery = f.read()

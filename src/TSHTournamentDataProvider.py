@@ -13,19 +13,23 @@ import json
 
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = pyqtSignal()
+    entrants_updated = pyqtSignal()
 
 
 class TSHTournamentDataProvider:
     provider: TournamentDataProvider = None
     signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
+    entrantsModel: QStandardItemModel = None
 
     def SetTournament(url):
         if "smash.gg" in url:
             TSHTournamentDataProvider.provider = SmashGGDataProvider(url)
-        elif "challonge" in url:
+        elif "challonge.com" in url:
             TSHTournamentDataProvider.provider = ChallongeDataProvider(url)
         else:
             print("Unsupported provider...")
+        
+        TSHTournamentDataProvider.provider.GetEntrants()
 
         TSHTournamentDataProvider.signals.tournament_changed.emit()
 
@@ -86,15 +90,17 @@ class TSHTournamentDataProvider:
 
         if sets is not None:
             for s in sets:
+                dataItem = QStandardItem(str(s.get("id")))
+                dataItem.setData(s, Qt.ItemDataRole.UserRole)
+
                 model.appendRow([
                     QStandardItem(s.get("stream", {}).get(
                         "streamName", "") if s.get("stream") != None else ""),
-                    QStandardItem(s.get("phaseGroup", {}).get(
-                        "phase", {}).get("name", "")),
+                    QStandardItem(s.get("tournament_phase", "")),
                     QStandardItem(s["round_name"]),
                     QStandardItem(s["p1_name"]),
                     QStandardItem(s["p2_name"]),
-                    QStandardItem(str(s.get("id")))
+                    dataItem
                 ])
 
         mainWindow.smashGGSetSelecDialog = QDialog(mainWindow)
@@ -142,15 +148,16 @@ class TSHTournamentDataProvider:
         mainWindow.smashGGSetSelecDialog.resize(1200, 500)
 
     def SetFromSmashGGSelected(mainWindow):
-        row = mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()[
-            0].row()
-        setId = mainWindow.smashggSetSelectionItemList.model().index(row, 5).data()
-        mainWindow.LoadPlayersFromSmashGGSet(setId)
+        row = 0
+
+        if len(mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()) > 0:
+            row = mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()[
+                0].row()
+        setId = mainWindow.smashggSetSelectionItemList.model().index(
+            row, 5).data(Qt.ItemDataRole.UserRole)
         mainWindow.smashGGSetSelecDialog.close()
 
-        mainWindow.smashggSetAutoUpdateId = setId
-        mainWindow.SetTimer("Auto (SmashGG Set: "+setId+")",
-                            mainWindow.UpdateDataFromSmashGGSet)
+        mainWindow.signals.UpdateSetData.emit(setId)
 
 
 if SettingsManager.Get("TOURNAMENT_URL"):

@@ -3,8 +3,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
+from Helpers.TSHCountryHelper import TSHCountryHelper
 from StateManager import StateManager
 from TSHGameAssetManager import TSHGameAssetManager
+from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -89,6 +91,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.SetCharactersPerPlayer(1)
 
+        TSHTournamentDataProvider.signals.entrants_updated.connect(
+            self.SetupAutocomplete)
+        self.SetupAutocomplete()
+
     def CharactersChanged(self):
         characters = {}
 
@@ -144,7 +150,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_elements.append(
                 [character_element, player_character, player_character_color])
 
-            player_character.activated.connect(
+            player_character.currentIndexChanged.connect(
                 lambda x, element=player_character, target=player_character_color: [
                     self.LoadSkinOptions(element, target),
                     self.CharactersChanged()
@@ -213,6 +219,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country: QComboBox = self.findChild(QComboBox, "country")
             country.setCompleter(countryCompleter)
             country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+            country.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+            country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             country.view().setMinimumWidth(300)
             country.completer().setCompletionMode(QCompleter.PopupCompletion)
             country.completer().popup().setMinimumWidth(300)
@@ -221,6 +229,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country.currentIndexChanged.connect(self.LoadStates)
 
             state: QComboBox = self.findChild(QComboBox, "state")
+            state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+            state.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             state.view().setMinimumWidth(300)
             state.completer().setCompletionMode(QCompleter.PopupCompletion)
@@ -264,6 +274,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def LoadCharacters():
         TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
+
+        # Add one empty
+        item = QStandardItem()
+        TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+
         for c in TSHGameAssetManager.instance.characters.keys():
             item = QStandardItem()
             item.setData(c, Qt.ItemDataRole.EditRole)
@@ -322,3 +337,91 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c[1].setModel(TSHScoreboardPlayerWidget.characterModel)
             c[1].setIconSize(QSize(24, 24))
             c[1].setFixedHeight(32)
+
+    def SetupAutocomplete(self):
+        if TSHTournamentDataProvider.entrantsModel:
+            self.findChild(QLineEdit, "name").setCompleter(QCompleter())
+            self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
+                lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection)
+            self.findChild(QLineEdit, "name").completer().setCaseSensitivity(
+                Qt.CaseSensitivity.CaseInsensitive)
+            self.findChild(QLineEdit, "name").completer(
+            ).setFilterMode(Qt.MatchFlag.MatchContains)
+            self.findChild(QLineEdit, "name").completer().setModel(
+                TSHTournamentDataProvider.entrantsModel)
+
+    def SetData(self, data):
+        if data.get("gamerTag"):
+            self.findChild(QWidget, "name").setText(f'{data.get("gamerTag")}')
+
+        if data.get("prefix"):
+            self.findChild(QWidget, "team").setText(f'{data.get("prefix")}')
+
+        if data.get("name"):
+            self.findChild(QWidget, "real_name").setText(f'{data.get("name")}')
+
+        if data.get("twitter"):
+            self.findChild(QWidget, "twitter").setText(
+                f'{data.get("twitter")}')
+
+        if data.get("location"):
+            print(data.get("location"))
+            if data.get("location").get("country"):
+                countryElement: QComboBox = self.findChild(
+                    QComboBox, "country")
+                countryIndex = 0
+                for i in range(self.countryModel.rowCount()):
+                    item = self.countryModel.item(
+                        i).data(Qt.ItemDataRole.UserRole)
+                    if item:
+                        if data.get("location").get("country") == item.get("name"):
+                            countryIndex = i
+                            break
+                countryElement.setCurrentIndex(countryIndex)
+
+            if data.get("location").get("state"):
+                countryElement: QComboBox = self.findChild(
+                    QComboBox, "country")
+                stateElement: QComboBox = self.findChild(QComboBox, "state")
+                stateCode = data.get("location").get("state")
+                if stateCode:
+                    stateIndex = 0
+                    for i in range(stateElement.model().rowCount()):
+                        item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
+                        if item:
+                            if stateCode == item.get("code"):
+                                stateIndex = i
+                                break
+                    stateElement.setCurrentIndex(stateIndex)
+            elif data.get("location").get("city"):
+                countryElement: QComboBox = self.findChild(
+                    QComboBox, "country")
+                stateElement: QComboBox = self.findChild(QComboBox, "state")
+                stateCode = TSHCountryHelper.FindState(countryElement.currentData(
+                    Qt.ItemDataRole.UserRole).get("code"), data.get("location").get("city"))
+                if stateCode:
+                    stateIndex = 0
+                    for i in range(stateElement.model().rowCount()):
+                        item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
+                        if item:
+                            if stateCode == item.get("code"):
+                                stateIndex = i
+                                break
+                    stateElement.setCurrentIndex(stateIndex)
+
+        if data.get("smashggMain"):
+            main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
+                data.get("smashggMain"))
+            if main:
+                for element in self.character_elements:
+                    character_element = element[1]
+                    characterIndex = 0
+                    for i in range(character_element.model().rowCount()):
+                        item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
+                        if item:
+                            print(item)
+                            print(main)
+                            if item.get("name") == main[0]:
+                                characterIndex = i
+                                break
+                    character_element.setCurrentIndex(characterIndex)

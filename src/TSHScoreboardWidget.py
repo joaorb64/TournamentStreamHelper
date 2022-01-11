@@ -9,9 +9,17 @@ from StateManager import *
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
+class TSHScoreboardWidgetSignals(QObject):
+    UpdateSetData = pyqtSignal(object)
+
+
 class TSHScoreboardWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
+
+        self.signals = TSHScoreboardWidgetSignals()
+        self.signals.UpdateSetData.connect(self.UpdateSetData)
+
         self.setWindowTitle("Scoreboard")
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
@@ -263,3 +271,29 @@ class TSHScoreboardWidget(QDockWidget):
             self.team1column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team2column.findChild(QLineEdit, "teamName").setText("")
+
+    def UpdateSetData(self, data):
+        print(data)
+
+        if data.get("round_name"):
+            self.scoreColumn.findChild(
+                QComboBox, "match").setCurrentText(data.get("round_name"))
+
+        if data.get("tournament_phase"):
+            self.scoreColumn.findChild(
+                QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
+        
+        if data.get("entrants"):
+            self.playerNumber.setValue(len(max(data.get("entrants"), key=lambda x: len(x))))
+
+            for t, team in enumerate(data.get("entrants")):
+                teamInstances = [self.team1playerWidgets, self.team2playerWidgets]
+                teamInstance = teamInstances[t]
+
+                if len(team) > 1:
+                    teamColumns = [self.team1column, self.team2column]
+                    teamNames = [data.get("p1_name"), data.get("p2_name")]
+                    teamColumns[t].findChild(QLineEdit, "teamName").setText(teamNames[t])
+
+                for p, player in enumerate(team):
+                    teamInstance[p].SetData(player)

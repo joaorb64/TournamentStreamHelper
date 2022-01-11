@@ -4,7 +4,7 @@ import os
 import traceback
 import re
 import json
-from Helpers import deep_get
+from Helpers.TSHDictHelper import deep_get
 from TournamentDataProvider import TournamentDataProvider
 
 
