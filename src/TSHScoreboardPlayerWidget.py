@@ -157,7 +157,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 ]
             )
 
-            player_character_color.activated.connect(
+            player_character_color.currentIndexChanged.connect(
                 lambda index, element=player_character: [
                     self.CharactersChanged()
                 ]
