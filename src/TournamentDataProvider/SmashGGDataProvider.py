@@ -5,7 +5,10 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback
+from Helpers.TSHCountryHelper import TSHCountryHelper
 from Helpers.TSHDictHelper import deep_get
+from TSHGameAssetManager import TSHGameAssetManager
+from TSHPlayerDB import TSHPlayerDB
 from TournamentDataProvider import TournamentDataProvider
 import json
 import TSHTournamentDataProvider
@@ -88,23 +91,75 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                             playerData["gamerTag"] = player.get("gamerTag")
                             playerData["name"] = player.get("name")
 
+                            # Main character
+                            playerSelections = Counter()
+
+                            sets = deep_get(player, "sets.nodes", [])
+                            playerId = player.get("id")
+                            if len(sets) > 0:
+                                games = sets[0].get("games", [])
+                                if games and len(games) > 0:
+                                    for game in games:
+                                        selections = game.get("selections", [])
+                                        if selections:
+                                            for selection in selections:
+                                                participants = selection.get(
+                                                    "entrant", {}).get("participants", [])
+                                                if len(participants) > 0:
+                                                    participantId = participants[0].get(
+                                                        "player", {}).get("id", None)
+                                                    if participantId and participantId == playerId:
+                                                        playerSelections[selection.get(
+                                                            "selectionValue")] += 1
+
+                            main = playerSelections.most_common(1)
+
+                            if len(main) > 0:
+                                playerData["smashggMain"] = main[0][0]
+
                         if user:
                             if len(user.get("authorizations", [])) > 0:
                                 playerData["twitter"] = user.get("authorizations", [])[
                                     0].get("externalUsername")
+
                             if len(user.get("images")) > 0:
                                 playerData["picture"] = user.get("images")[
                                     0].get("url")
+
                             if user.get("location"):
-                                playerData["location"] = user.get("location")
+                                # Country to country code
+                                if user.get("location").get("country"):
+                                    for country in TSHCountryHelper.countries.values():
+                                        if user.get("location").get("country") == country.get("name"):
+                                            playerData["country_code"] = country.get(
+                                                "code")
+                                            break
+
+                                # State -- direct
+                                if user.get("location").get("state"):
+                                    stateCode = user.get(
+                                        "location").get("state")
+                                    if stateCode:
+                                        playerData["state_code"] = user.get(
+                                            "location").get("state")
+                                # State -- from city
+                                elif user.get("location").get("city"):
+                                    stateCode = TSHCountryHelper.FindState(
+                                        playerData["country_code"], user.get("location").get("city"))
+                                    if stateCode:
+                                        playerData["state_code"] = stateCode
+
+                            if playerData.get("smashggMain"):
+                                main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
+                                    playerData.get("smashggMain"))
+                                if main:
+                                    playerData["mains"] = main[0]
 
                         players[i].append(playerData)
 
                 setData["entrants"] = players
 
                 final_data.append(setData)
-
-            print(final_data)
 
             return(final_data)
         except Exception as e:
@@ -113,14 +168,14 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     def GetEntrants(self):
         self.threadpool = QThreadPool()
         worker = Worker(self.GetEntrantsWorker)
-        worker.signals.progress.connect(self.GetEntrantsProgress)
         self.threadpool.start(worker)
 
     def GetEntrantsWorker(self, progress_callback):
         try:
             page = 1
             totalPages = 1
-            final_data = QStandardItemModel()
+            #final_data = QStandardItemModel()
+            players = []
 
             while page <= totalPages:
                 print(page, "/", totalPages)
@@ -142,7 +197,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 )
 
                 data = json.loads(data.text)
-                print(data)
 
                 totalPages = deep_get(
                     data, "data.event.entrants.pageInfo.totalPages", [])
@@ -183,7 +237,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                                         playerSelections[selection.get(
                                                             "selectionValue")] += 1
 
-                            print(playerSelections.most_common())
                             main = playerSelections.most_common(1)
 
                             if len(main) > 0:
@@ -193,28 +246,48 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                             if len(user.get("authorizations", [])) > 0:
                                 playerData["twitter"] = user.get("authorizations", [])[
                                     0].get("externalUsername")
+
                             if len(user.get("images")) > 0:
                                 playerData["picture"] = user.get("images")[
                                     0].get("url")
+
                             if user.get("location"):
-                                playerData["location"] = user.get("location")
+                                # Country to country code
+                                if user.get("location").get("country"):
+                                    for country in TSHCountryHelper.countries.values():
+                                        if user.get("location").get("country") == country.get("name"):
+                                            playerData["country_code"] = country.get(
+                                                "code")
+                                            break
 
-                        name = player.get(
-                            "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
-                        item = QStandardItem(name)
-                        item.setData(playerData, Qt.ItemDataRole.UserRole)
+                                # State -- direct
+                                if user.get("location").get("state"):
+                                    stateCode = user.get(
+                                        "location").get("state")
+                                    if stateCode:
+                                        playerData["state_code"] = user.get(
+                                            "location").get("state")
+                                # State -- from city
+                                elif user.get("location").get("city"):
+                                    stateCode = TSHCountryHelper.FindState(
+                                        playerData["country_code"], user.get("location").get("city"))
+                                    if stateCode:
+                                        playerData["state_code"] = stateCode
 
-                        final_data.appendRow(item)
+                            if playerData.get("smashggMain"):
+                                main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
+                                    playerData.get("smashggMain"))
+                                if main:
+                                    playerData["mains"] = main[0]
 
-                progress_callback.emit(final_data)
+                        players.append(playerData)
+
+                TSHPlayerDB.AddPlayers(players)
+                players = []
 
                 page += 1
         except Exception as e:
             traceback.print_exc()
-
-    def GetEntrantsProgress(self, progress):
-        TSHTournamentDataProvider.TSHTournamentDataProvider.entrantsModel = progress
-        TSHTournamentDataProvider.TSHTournamentDataProvider.signals.entrants_updated.emit()
 
 
 f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +

@@ -279,8 +279,6 @@ class TSHGameAssetManager():
         smashggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
             "character", []) if str(c.get("id")) == str(smashgg_id)), None)
 
-        print(smashggcharacter)
-
         if smashggcharacter:
             print(smashggcharacter)
             character = next((c for c in self.characters.items() if c[1].get(

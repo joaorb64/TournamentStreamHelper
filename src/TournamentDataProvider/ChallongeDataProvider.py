@@ -5,6 +5,7 @@ import traceback
 import re
 import json
 from Helpers.TSHDictHelper import deep_get
+from TSHPlayerDB import TSHPlayerDB
 from TournamentDataProvider import TournamentDataProvider
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
@@ -55,10 +56,32 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                 match for match in all_matches if match.get("state") == "open"]
 
             for match in all_matches:
+                p1_split = deep_get(
+                    match, "player1.display_name").rsplit("|", 1)
+
+                p1_gamerTag = p1_split[-1].strip()
+                p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
+
+                p2_split = deep_get(
+                    match, "player2.display_name").rsplit("|", 1)
+
+                p2_gamerTag = p2_split[-1].strip()
+                p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
+
                 final_data.append({
                     "round_name": deep_get(match, "round_name"),
                     "p1_name": deep_get(match, "player1.display_name"),
-                    "p2_name": deep_get(match, "player2.display_name")
+                    "p2_name": deep_get(match, "player2.display_name"),
+                    "entrants": [
+                        [{
+                            "gamerTag": p1_gamerTag,
+                            "prefix": p1_prefix
+                        }],
+                        [{
+                            "gamerTag": p2_gamerTag,
+                            "prefix": p2_prefix
+                        }],
+                    ]
                 })
 
             print(final_data)
@@ -70,13 +93,10 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
     def GetEntrants(self):
         self.threadpool = QThreadPool()
         worker = Worker(self.GetEntrantsWorker)
-        worker.signals.progress.connect(self.GetEntrantsProgress)
         self.threadpool.start(worker)
 
     def GetEntrantsWorker(self, progress_callback):
         try:
-            final_data = QStandardItemModel()
-
             data = requests.get(
                 self.url+".json",
                 headers={
@@ -108,20 +128,20 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                     if player:
                         if not player.get("id") in all_entrants:
                             playerData = {}
-                            playerData["gamerTag"] = player.get("display_name")
-                            playerData["picture"] = player.get("portrait_url")
-                            item = QStandardItem(playerData["gamerTag"])
-                            item.setData(playerData, Qt.ItemDataRole.UserRole)
 
-                            final_data.appendRow(item)
+                            split = player.get("display_name").rsplit("|", 1)
+
+                            gamerTag = split[-1].strip()
+                            prefix = split[0].strip() if len(
+                                split) > 1 else None
+
+                            playerData["gamerTag"] = gamerTag
+                            playerData["prefix"] = prefix
+
+                            playerData["picture"] = player.get("portrait_url")
+
                             all_entrants[player.get("id")] = playerData
 
-            progress_callback.emit(final_data)
-
-            print(final_data)
+            TSHPlayerDB.AddPlayers(all_entrants.values())
         except Exception as e:
             traceback.print_exc()
-
-    def GetEntrantsProgress(self, progress):
-        TSHTournamentDataProvider.TSHTournamentDataProvider.entrantsModel = progress
-        TSHTournamentDataProvider.TSHTournamentDataProvider.signals.entrants_updated.emit()

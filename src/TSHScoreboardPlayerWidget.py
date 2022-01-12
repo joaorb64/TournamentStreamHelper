@@ -6,6 +6,7 @@ import json
 from Helpers.TSHCountryHelper import TSHCountryHelper
 from StateManager import StateManager
 from TSHGameAssetManager import TSHGameAssetManager
+from TSHPlayerDB import TSHPlayerDB
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
@@ -35,28 +36,28 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         # self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
-        # self.save_bt.clicked.connect(self.SavePlayerToDB)
-        # self.player_name.textChanged.connect(
-        #    self.ManageSavePlayerToDBText)
-        # self.player_org.textChanged.connect(
-        #    self.ManageSavePlayerToDBText)
+        self.save_bt.clicked.connect(self.SavePlayerToDB)
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            self.ManageSavePlayerToDBText)
+        self.findChild(QLineEdit, "team").textChanged.connect(
+            self.ManageSavePlayerToDBText)
 
         self.delete_bt = QPushButton("Delete player entry")
         # self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
         self.delete_bt.setEnabled(False)
-        # self.player_name.textChanged.connect(
-        #    self.ManageDeletePlayerFromDBActive)
-        # self.player_org.textChanged.connect(
-        #    self.ManageDeletePlayerFromDBActive)
-        # self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            self.ManageDeletePlayerFromDBActive)
+        self.findChild(QLineEdit, "team").textChanged.connect(
+            self.ManageDeletePlayerFromDBActive)
+        self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
         self.clear_bt = QPushButton("Clear")
         # self.clear_bt.setFont(self.parent.font_small)
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
-        # self.clear_bt.clicked.connect(self.Clear)
+        self.clear_bt.clicked.connect(self.Clear)
 
         # self.LoadCharacters()
 
@@ -91,7 +92,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.SetCharactersPerPlayer(1)
 
-        TSHTournamentDataProvider.signals.entrants_updated.connect(
+        TSHPlayerDB.signals.db_updated.connect(
             self.SetupAutocomplete)
         self.SetupAutocomplete()
 
@@ -294,8 +295,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             TSHScoreboardPlayerWidget.characterModel.appendRow(item)
 
     def LoadSkinOptions(self, element, target):
-        skins = TSHGameAssetManager.instance.skins.get(
-            element.currentData().get("name"), {})
+        characterData = element.currentData()
+
+        skins = {}
+
+        if characterData:
+            skins = TSHGameAssetManager.instance.skins.get(
+                element.currentData().get("name"), {})
 
         sortedSkins = [int(k) for k in skins.keys()]
         sortedSkins.sort()
@@ -339,7 +345,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c[1].setFixedHeight(32)
 
     def SetupAutocomplete(self):
-        if TSHTournamentDataProvider.entrantsModel:
+        if TSHPlayerDB.model:
             self.findChild(QLineEdit, "name").setCompleter(QCompleter())
             self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
                 lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection)
@@ -348,9 +354,28 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.findChild(QLineEdit, "name").completer(
             ).setFilterMode(Qt.MatchFlag.MatchContains)
             self.findChild(QLineEdit, "name").completer().setModel(
-                TSHTournamentDataProvider.entrantsModel)
+                TSHPlayerDB.model)
 
-    def SetData(self, data):
+            self.ManageSavePlayerToDBText()
+            self.ManageDeletePlayerFromDBActive()
+
+    def SetData(self, data, dontLoadFromDB=False):
+        self.Clear()
+
+        # Load player data from DB; will be overwriten by incoming data
+        if not dontLoadFromDB:
+            tag = data.get(
+                "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
+
+            for i in range(TSHPlayerDB.model.rowCount()):
+                item = TSHPlayerDB.model.item(i).data(Qt.ItemDataRole.UserRole)
+
+                dbTag = item.get(
+                    "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
+
+                if tag == dbTag:
+                    self.SetData(item, dontLoadFromDB=True)
+
         if data.get("gamerTag"):
             self.findChild(QWidget, "name").setText(f'{data.get("gamerTag")}')
 
@@ -364,64 +389,92 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.findChild(QWidget, "twitter").setText(
                 f'{data.get("twitter")}')
 
-        if data.get("location"):
-            print(data.get("location"))
-            if data.get("location").get("country"):
-                countryElement: QComboBox = self.findChild(
-                    QComboBox, "country")
-                countryIndex = 0
-                for i in range(self.countryModel.rowCount()):
-                    item = self.countryModel.item(
-                        i).data(Qt.ItemDataRole.UserRole)
+        if data.get("country_code"):
+            countryElement: QComboBox = self.findChild(
+                QComboBox, "country")
+            countryIndex = 0
+            for i in range(self.countryModel.rowCount()):
+                item = self.countryModel.item(
+                    i).data(Qt.ItemDataRole.UserRole)
+                if item:
+                    if data.get("country_code") == item.get("code"):
+                        countryIndex = i
+                        break
+            countryElement.setCurrentIndex(countryIndex)
+
+        if data.get("state_code"):
+            countryElement: QComboBox = self.findChild(
+                QComboBox, "country")
+            stateElement: QComboBox = self.findChild(QComboBox, "state")
+            stateIndex = 0
+            for i in range(stateElement.model().rowCount()):
+                item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
+                if item:
+                    if data.get("state_code") == item.get("code"):
+                        stateIndex = i
+                        break
+            stateElement.setCurrentIndex(stateIndex)
+
+        if data.get("mains"):
+            for element in self.character_elements:
+                character_element = element[1]
+                characterIndex = 0
+                for i in range(character_element.model().rowCount()):
+                    item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                     if item:
-                        if data.get("location").get("country") == item.get("name"):
-                            countryIndex = i
+                        if item.get("name") == data.get("mains"):
+                            characterIndex = i
                             break
-                countryElement.setCurrentIndex(countryIndex)
+                character_element.setCurrentIndex(characterIndex)
 
-            if data.get("location").get("state"):
-                countryElement: QComboBox = self.findChild(
-                    QComboBox, "country")
-                stateElement: QComboBox = self.findChild(QComboBox, "state")
-                stateCode = data.get("location").get("state")
-                if stateCode:
-                    stateIndex = 0
-                    for i in range(stateElement.model().rowCount()):
-                        item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
-                        if item:
-                            if stateCode == item.get("code"):
-                                stateIndex = i
-                                break
-                    stateElement.setCurrentIndex(stateIndex)
-            elif data.get("location").get("city"):
-                countryElement: QComboBox = self.findChild(
-                    QComboBox, "country")
-                stateElement: QComboBox = self.findChild(QComboBox, "state")
-                stateCode = TSHCountryHelper.FindState(countryElement.currentData(
-                    Qt.ItemDataRole.UserRole).get("code"), data.get("location").get("city"))
-                if stateCode:
-                    stateIndex = 0
-                    for i in range(stateElement.model().rowCount()):
-                        item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
-                        if item:
-                            if stateCode == item.get("code"):
-                                stateIndex = i
-                                break
-                    stateElement.setCurrentIndex(stateIndex)
+    def GetCurrentPlayerTag(self):
+        gamerTag = self.findChild(QWidget, "name").text()
+        prefix = self.findChild(QWidget, "team").text()
+        return prefix+" "+gamerTag if prefix else gamerTag
 
-        if data.get("smashggMain"):
-            main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
-                data.get("smashggMain"))
-            if main:
-                for element in self.character_elements:
-                    character_element = element[1]
-                    characterIndex = 0
-                    for i in range(character_element.model().rowCount()):
-                        item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
-                        if item:
-                            print(item)
-                            print(main)
-                            if item.get("name") == main[0]:
-                                characterIndex = i
-                                break
-                    character_element.setCurrentIndex(characterIndex)
+    def SavePlayerToDB(self):
+        tag = self.GetCurrentPlayerTag()
+
+        playerData = {
+            "prefix": self.findChild(QWidget, "team").text(),
+            "gamerTag": self.findChild(QWidget, "name").text(),
+            "name": self.findChild(QWidget, "real_name").text(),
+            "twitter": self.findChild(QWidget, "twitter").text()
+        }
+
+        if self.findChild(QComboBox, "country").currentData(Qt.ItemDataRole.UserRole):
+            playerData["country_code"] = self.findChild(
+                QComboBox, "country").currentData(Qt.ItemDataRole.UserRole).get("code")
+
+        if self.findChild(QComboBox, "state").currentData(Qt.ItemDataRole.UserRole):
+            playerData["state_code"] = self.findChild(
+                QComboBox, "state").currentData(Qt.ItemDataRole.UserRole).get("code")
+
+        TSHPlayerDB.AddPlayers([playerData], overwrite=True)
+
+    def ManageSavePlayerToDBText(self):
+        tag = self.GetCurrentPlayerTag()
+
+        if tag in TSHPlayerDB.database:
+            self.save_bt.setText("Update player")
+        else:
+            self.save_bt.setText("Save new player")
+
+    def ManageDeletePlayerFromDBActive(self):
+        tag = self.GetCurrentPlayerTag()
+
+        if tag in TSHPlayerDB.database:
+            self.delete_bt.setEnabled(True)
+        else:
+            self.delete_bt.setEnabled(False)
+
+    def DeletePlayerFromDB(self):
+        tag = self.GetCurrentPlayerTag()
+        TSHPlayerDB.DeletePlayer(tag)
+
+    def Clear(self):
+        for c in self.findChildren(QLineEdit):
+            c.setText("")
+
+        for c in self.findChildren(QComboBox):
+            c.setCurrentIndex(0)

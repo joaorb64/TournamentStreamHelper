@@ -28,6 +28,7 @@ class TSHCountryHelper():
         for c in countries_json:
             TSHCountryHelper.countries[c["iso2"]] = {
                 "name": c["name"],
+                "code": c["iso2"],
                 "states": {}
             }
 
@@ -42,9 +43,11 @@ class TSHCountryHelper():
                 for c in state["cities"]:
                     if country["iso2"] not in TSHCountryHelper.cities:
                         TSHCountryHelper.cities[country["iso2"]] = {}
-                    city_name = TSHCountryHelper.remove_accents_lower(c["name"])
+                    city_name = TSHCountryHelper.remove_accents_lower(
+                        c["name"])
                     if city_name not in TSHCountryHelper.cities[country["iso2"]]:
-                        TSHCountryHelper.cities[country["iso2"]][city_name] = state["state_code"]
+                        TSHCountryHelper.cities[country["iso2"]
+                                                ][city_name] = state["state_code"]
 
     def FindState(countryCode, city):
         # State explicit?
@@ -52,18 +55,21 @@ class TSHCountryHelper():
 
         for part in split:
             state = next(
-                (st for st in TSHCountryHelper.countries[countryCode]["states"].values() if TSHCountryHelper.remove_accents_lower(st["state_code"]) == TSHCountryHelper.remove_accents_lower(part)),
+                (st for st in TSHCountryHelper.countries[countryCode]["states"].values(
+                ) if TSHCountryHelper.remove_accents_lower(st["state_code"]) == TSHCountryHelper.remove_accents_lower(part)),
                 None
             )
             if state is not None:
                 return state["state_code"]
 
         # No, so get by City
-        state = TSHCountryHelper.cities.get(countryCode, {}).get(TSHCountryHelper.remove_accents_lower(city), None)
+        state = TSHCountryHelper.cities.get(countryCode, {}).get(
+            TSHCountryHelper.remove_accents_lower(city), None)
 
         if state is not None:
             return state
-        
+
         return None
+
 
 TSHCountryHelper.LoadCountries()

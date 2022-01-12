@@ -4,6 +4,7 @@
 from TSHCommentaryWidget import TSHCommentaryWidget
 from TSHGameAssetManager import TSHGameAssetManager
 from TSHTournamentDataProvider import TSHTournamentDataProvider
+from TSHPlayerDB import TSHPlayerDB
 
 
 try:
@@ -1125,7 +1126,7 @@ class Window(QMainWindow):
             self.allplayers = None
             print(traceback.format_exc())
 
-        self.LoadLocalPlayers()
+        # self.LoadLocalPlayers()
 
         self.SetupAutocomplete()
 
