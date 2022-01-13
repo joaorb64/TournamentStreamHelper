@@ -59,7 +59,7 @@ class TSHCommentaryWidget(QDockWidget):
         StateManager.Set("commentary", {})
         self.commentatorNumber.setValue(2)
 
-        TSHTournamentDataProvider.signals.entrants_updated.connect(self.SetupAutocomplete)
+        TSHPlayerDB.signals.db_updated.connect(self.SetupAutocomplete)
         self.SetupAutocomplete()
 
     def SetCommentatorNumber(self, number):
@@ -84,15 +84,31 @@ class TSHCommentaryWidget(QDockWidget):
             comm.setParent(None)
             self.commentaryWidgets.remove(comm)
 
+        self.SetupAutocomplete()
+
         if StateManager.Get(f'commentary'):
             for k in list(StateManager.Get(f'commentary').keys()):
                 if not k.isnumeric() or (k.isnumeric() and int(k) > number):
                     StateManager.Unset(f'commentary.{k}')
 
     def SetupAutocomplete(self):
-        if TSHTournamentDataProvider.entrantsModel:
+        if TSHPlayerDB.model:
             for c in self.commentaryWidgets:
                 c.findChild(QLineEdit, "name").setCompleter(QCompleter())
-                c.findChild(QLineEdit, "name").completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-                c.findChild(QLineEdit, "name").completer().setFilterMode(Qt.MatchFlag.MatchContains)
-                c.findChild(QLineEdit, "name").completer().setModel(TSHTournamentDataProvider.entrantsModel)
+                c.findChild(QLineEdit, "name").completer().setCaseSensitivity(
+                    Qt.CaseSensitivity.CaseInsensitive)
+                c.findChild(QLineEdit, "name").completer(
+                ).setFilterMode(Qt.MatchFlag.MatchContains)
+                c.findChild(QLineEdit, "name").completer().setModel(
+                    TSHPlayerDB.model)
+                c.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
+                    lambda x, c=c: self.SetData(
+                        c,
+                        x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection
+                )
+
+    def SetData(self, widget, data):
+        widget.findChild(QLineEdit, "name").setText(data.get("gamerTag"))
+        widget.findChild(QLineEdit, "team").setText(data.get("prefix"))
+        widget.findChild(QLineEdit, "real_name").setText(data.get("name"))
+        widget.findChild(QLineEdit, "twitter").setText(data.get("twitter"))
