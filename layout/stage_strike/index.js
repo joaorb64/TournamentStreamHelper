@@ -10,32 +10,32 @@
         oldData = data;
         data = await getData();
 
-        if(JSON.stringify(data.stage_strike) != JSON.stringify(oldData.stage_strike)){
+        if(JSON.stringify(data.score?.stage_strike) != JSON.stringify(oldData.score?.stage_strike)){
             html = "";
-            Object.keys(data.stage_strike.stages).forEach((stage)=>{
-                let filename = data.stage_strike.stages[stage].filename;
+            Object.keys(data.score?.stage_strike.stages).forEach((stage)=>{
+                let path = data.score?.stage_strike.stages[stage].path;
                 html += `
                     <div class="stage-container">
-                        <div class="stage-icon" style="background-image: url('../../${data.asset_path}/stage_icon/${filename}.png')">
-                            ${data.stage_strike.striked.includes(stage) &&
-                            !data.stage_strike.dsr.includes(stage)?
+                        <div class="stage-icon" style="background-image: url('../../${path}')">
+                            ${data.score?.stage_strike.striked.includes(stage) &&
+                            !data.score?.stage_strike.dsr.includes(stage)?
                                 `<div class="stage-striked stamp"></div>`
                                 :
                                 ""
                             }
-                            ${data.stage_strike.dsr.includes(stage) ?
+                            ${data.score?.stage_strike.dsr.includes(stage) ?
                                 `<div class="stage-dsr stamp"></div>`
                                 :
                                 ""
                             }
-                            ${data.stage_strike.selected == stage ?
+                            ${data.score?.stage_strike.selected == stage ?
                                 `<div class="stage-selected stamp"></div>`
                                 :
                                 ""
                             }
                             <div class="stage-name">
                                 <div class="text">
-                                    ${stage}
+                                    ${data.score?.stage_strike.stages[stage].name}
                                 </div>
                             </div>
                         </div>

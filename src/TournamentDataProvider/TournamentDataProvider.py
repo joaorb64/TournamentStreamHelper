@@ -9,7 +9,7 @@ class TournamentDataProvider:
     def GetTournamentData(self):
         pass
 
-    def GetMatch(self):
+    def GetMatch(self, id):
         pass
 
     def GetMatches(self):

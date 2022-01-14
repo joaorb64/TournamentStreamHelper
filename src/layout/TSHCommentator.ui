@@ -56,9 +56,6 @@
    </item>
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <widget class="QLineEdit" name="team">
        <property name="sizePolicy">
@@ -75,6 +72,9 @@
          <italic>false</italic>
          <bold>true</bold>
         </font>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="placeholderText">
         <string>Team</string>

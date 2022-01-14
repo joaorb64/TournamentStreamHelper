@@ -199,6 +199,7 @@ class TSHScoreboardWidget(QDockWidget):
                 ]
             )
             c.editTextChanged.emit("")
+            c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         for c in self.scoreColumn.findChildren(QSpinBox):
             c.valueChanged.connect(
@@ -282,18 +283,28 @@ class TSHScoreboardWidget(QDockWidget):
         if data.get("tournament_phase"):
             self.scoreColumn.findChild(
                 QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
-        
+
         if data.get("entrants"):
-            self.playerNumber.setValue(len(max(data.get("entrants"), key=lambda x: len(x))))
+            self.playerNumber.setValue(
+                len(max(data.get("entrants"), key=lambda x: len(x))))
 
             for t, team in enumerate(data.get("entrants")):
-                teamInstances = [self.team1playerWidgets, self.team2playerWidgets]
+                teamInstances = [self.team1playerWidgets,
+                                 self.team2playerWidgets]
                 teamInstance = teamInstances[t]
 
                 if len(team) > 1:
                     teamColumns = [self.team1column, self.team2column]
                     teamNames = [data.get("p1_name"), data.get("p2_name")]
-                    teamColumns[t].findChild(QLineEdit, "teamName").setText(teamNames[t])
+                    teamColumns[t].findChild(
+                        QLineEdit, "teamName").setText(teamNames[t])
 
                 for p, player in enumerate(team):
-                    teamInstance[p].SetData(player)
+                    teamInstance[p].SetData(
+                        player, False, data.get("clear", True))
+
+        if data.get("id"):
+            TSHTournamentDataProvider.GetMatch(self, data.get("id"))
+
+        if data.get("stage_strike"):
+            StateManager.Set(f"score.stage_strike", data.get("stage_strike"))

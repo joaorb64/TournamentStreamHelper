@@ -146,9 +146,6 @@
    </item>
    <item row="1" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <widget class="QLineEdit" name="team">
        <property name="sizePolicy">
@@ -161,6 +158,9 @@
         <font>
          <pointsize>10</pointsize>
         </font>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="placeholderText">
         <string>Team</string>

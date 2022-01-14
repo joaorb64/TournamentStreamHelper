@@ -28,7 +28,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.provider = ChallongeDataProvider(url)
         else:
             print("Unsupported provider...")
-        
+
         TSHTournamentDataProvider.provider.GetEntrants()
 
         TSHTournamentDataProvider.signals.tournament_changed.emit()
@@ -158,6 +158,10 @@ class TSHTournamentDataProvider:
         mainWindow.smashGGSetSelecDialog.close()
 
         mainWindow.signals.UpdateSetData.emit(setId)
+
+    def GetMatch(mainWindow, setId):
+        data = TSHTournamentDataProvider.provider.GetMatch(setId)
+        mainWindow.signals.UpdateSetData.emit(data)
 
 
 if SettingsManager.Get("TOURNAMENT_URL"):

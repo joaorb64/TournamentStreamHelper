@@ -197,8 +197,8 @@ class TSHGameAssetManager():
             self.stages = gameObj.get("stage_to_codename", {})
 
             for stage in self.stages:
-                self.stages[stage]["filename"] = assetsObj.get(
-                    "prefix", "")+self.stages[stage].get("codename", "")+assetsObj.get("postfix", "")
+                self.stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
+                    "prefix", "")+self.stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
 
             for s in self.stages.keys():
                 self.stages[s]["name"] = s
@@ -287,6 +287,11 @@ class TSHGameAssetManager():
                 return character
 
         return None
+
+    def GetStageFromSmashGGId(self, smashgg_id: int):
+        stage = next((s for s in self.stages.items() if str(
+            s[1].get("smashgg_id")) == str(smashgg_id)), None)
+        return stage
 
 
 if TSHGameAssetManager.instance == None:

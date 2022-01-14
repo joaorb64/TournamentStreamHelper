@@ -26,8 +26,141 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     def GetTournamentData(self):
         pass
 
-    def GetMatch(self):
-        pass
+    def GetMatch(self, setId):
+        try:
+            r = requests.get(
+                f'https://smash.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+                {
+                    "extensions": {"cacheControl": {"version": 1, "noCache": True}},
+                    "cacheControl": {"version": 1, "noCache": True},
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                }
+            )
+            respTasks = json.loads(r.text)
+
+            tasks = respTasks.get("entities", {}).get("setTask", [])
+
+            selectedCharMap = {}
+
+            for task in reversed(tasks):
+                if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+                    selectedCharMap = task.get(
+                        "metadata", {}).get("charSelections", {})
+                    break
+
+            selectedChars = [[], []]
+
+            print("Hey!")
+            print(respTasks.get("entities", {}))
+
+            for char in selectedCharMap.items():
+                if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                    selectedChars[0] = char[1]
+                if str(char[1] == respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                    selectedChars[1] = char[1]
+
+            latestWinner = None
+
+            for task in reversed(tasks):
+                if len(task.get("metadata", [])) == 0:
+                    continue
+                if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
+                    latestWinner = int(task.get("metadata", {}).get(
+                        "report", {}).get("winnerId"))
+                    break
+
+            allStages = None
+            strikedStages = None
+            selectedStage = None
+            dsrStages = None
+            playerTurn = None
+
+            for task in reversed(tasks):
+                if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
+                    if len(task.get("metadata", [])) == 0:
+                        continue
+
+                    base = task.get("metadata", {})
+
+                    if task.get("action") == "report":
+                        base = base.get("report", {})
+
+                    print(base)
+
+                    if base.get("strikeStages", None) is not None:
+                        allStages = base.get("strikeStages")
+                    elif base.get("banStages", None) is not None:
+                        allStages = base.get("banStages")
+
+                    if base.get("strikeList", None) is not None:
+                        strikedStages = base.get("strikeList")
+                    elif base.get("banList", None) is not None:
+                        strikedStages = base.get("banList")
+
+                    if base.get("stageSelection", None) is not None:
+                        selectedStage = base.get("stageSelection")
+                    elif base.get("stageId", None) is not None:
+                        selectedStage = base.get("stageId")
+
+                    if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+
+                        loser = next(
+                            (p for p in base.get("stageWins").keys()
+                                if int(p) != int(latestWinner)),
+                            None
+                        )
+
+                        if loser is not None:
+                            dsrStages = []
+                            dsrStages = [int(s) for s in base.get(
+                                "stageWins")[loser]]
+
+                    if allStages == None and strikedStages == None and selectedStage == None:
+                        continue
+
+                    if allStages == None:
+                        continue
+
+                    break
+
+            changed = False
+
+            try:
+                allStages = [TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                    st)[1] for st in allStages]
+
+                stageStrikeState = {
+                    "stages": {st.get("codename"): st for st in allStages} if allStages != None else {},
+                    "striked": [TSHGameAssetManager.instance.GetStageFromSmashGGId(stage)[1].get("codename") for stage in strikedStages] if strikedStages != None else [],
+                    "selected": TSHGameAssetManager.instance.GetStageFromSmashGGId(selectedStage)[1] if selectedStage else "",
+                    "dsr": [TSHGameAssetManager.instance.GetStageFromSmashGGId(stage)[1].get("codename") for stage in dsrStages] if dsrStages != None else [],
+                    "playerTurn": playerTurn
+                }
+            except:
+                print(traceback.format_exc())
+                stageStrikeState = {}
+
+            print(selectedChars)
+            print(stageStrikeState)
+
+            entrants = [[], []]
+
+            for i, entrantChars in enumerate(selectedChars):
+                for char in entrantChars:
+                    entrants[i].append({
+                        "mains": TSHGameAssetManager.instance.GetCharacterFromSmashGGId(char)[0]
+                    })
+
+            return({
+                "stage_strike": stageStrikeState,
+                "entrants": entrants if len(entrants[0]) > 0 and len(entrants[1]) > 0 else None,
+                "clear": False
+            })
+
+        except Exception as e:
+            traceback.print_exc()
+        return {}
 
     def GetMatches(self):
         try:
@@ -64,6 +197,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
             for _set in sets:
                 setData = {
+                    "id": _set.get("id"),
                     "round_name": _set.get("fullRoundText"),
                     "tournament_phase": deep_get(_set, "phaseGroup.phase.name"),
                     "p1_name": deep_get(_set, "paginatedSlots.nodes", [])[0].get("entrant", {}).get("name", ""),
@@ -174,7 +308,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
         try:
             page = 1
             totalPages = 1
-            #final_data = QStandardItemModel()
+            # final_data = QStandardItemModel()
             players = []
 
             while page <= totalPages:

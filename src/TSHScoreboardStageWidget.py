@@ -10,16 +10,9 @@ from TSHPlayerDB import TSHPlayerDB
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
-class TSHScoreboardPlayerWidget(QGroupBox):
-    countries = None
-    countryModel = None
-    characterModel = None
-
+class TSHScoreboardStageWidget(QGroupBox):
     def __init__(self, index=0, teamNumber=0, *args):
         super().__init__(*args)
-
-        self.index = index
-        self.teamNumber = teamNumber
 
         uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
 
@@ -30,11 +23,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.character_elements = []
 
         bottom_buttons_layout = QHBoxLayout()
-        bottom_buttons_layout.setSpacing(4)
         self.layout().addLayout(bottom_buttons_layout, 999, 0, 1, 3)
 
         self.save_bt = QPushButton("Save new player")
-        self.save_bt.font().setPointSize(10)
         # self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
@@ -48,7 +39,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         # self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
-        self.delete_bt.font().setPointSize(10)
         self.delete_bt.setEnabled(False)
         self.findChild(QLineEdit, "name").textChanged.connect(
             self.ManageDeletePlayerFromDBActive)
@@ -57,7 +47,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
         self.clear_bt = QPushButton("Clear")
-        self.clear_bt.font().setPointSize(10)
         # self.clear_bt.setFont(self.parent.font_small)
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
@@ -139,7 +128,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character.view().setMinimumWidth(250)
             player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
             player_character.completer().popup().setMinimumWidth(250)
-            player_character.setModel(TSHScoreboardPlayerWidget.characterModel)
+            player_character.setModel(TSHScoreboardStageWidget.characterModel)
             player_character.setIconSize(QSize(24, 24))
             player_character.setFixedHeight(32)
 
@@ -179,47 +168,47 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def LoadCountries(self):
         try:
-            if TSHScoreboardPlayerWidget.countryModel == None:
+            if TSHScoreboardStageWidget.countryModel == None:
                 f = open('./assets/countries+states+cities.json',
                          encoding='utf-8')
                 countries_json = json.load(f)
                 print("countries+states+cities loaded")
 
-                TSHScoreboardPlayerWidget.countries = {}
+                TSHScoreboardStageWidget.countries = {}
 
                 for c in countries_json:
-                    TSHScoreboardPlayerWidget.countries[c["iso2"]] = {
+                    TSHScoreboardStageWidget.countries[c["iso2"]] = {
                         "name": c["name"],
                         "code": c["iso2"],
                         "states": {}
                     }
 
                     for s in c["states"]:
-                        TSHScoreboardPlayerWidget.countries[c["iso2"]]["states"][s["state_code"]] = {
+                        TSHScoreboardStageWidget.countries[c["iso2"]]["states"][s["state_code"]] = {
                             "code": s["state_code"],
                             "name": s["name"]
                         }
 
-                TSHScoreboardPlayerWidget.countryModel = QStandardItemModel()
-                TSHScoreboardPlayerWidget.countryModel.appendRow(
+                TSHScoreboardStageWidget.countryModel = QStandardItemModel()
+                TSHScoreboardStageWidget.countryModel.appendRow(
                     QStandardItem())
 
-                for i, country_code in enumerate(TSHScoreboardPlayerWidget.countries.keys()):
+                for i, country_code in enumerate(TSHScoreboardStageWidget.countries.keys()):
                     item = QStandardItem()
                     item.setIcon(
                         QIcon(f'./assets/country_flag/{country_code.lower()}.png'))
                     countryData = {
-                        "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
-                        "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
+                        "name": TSHScoreboardStageWidget.countries[country_code]["name"],
+                        "code": TSHScoreboardStageWidget.countries[country_code]["code"],
                         "path": f'./assets/country_flag/{country_code.lower()}.png'
                     }
                     item.setData(countryData, Qt.ItemDataRole.UserRole)
                     item.setData(
-                        f'{TSHScoreboardPlayerWidget.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
-                    TSHScoreboardPlayerWidget.countryModel.appendRow(item)
+                        f'{TSHScoreboardStageWidget.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
+                    TSHScoreboardStageWidget.countryModel.appendRow(item)
 
             countryCompleter = QCompleter(
-                TSHScoreboardPlayerWidget.countryModel)
+                TSHScoreboardStageWidget.countryModel)
 
             country: QComboBox = self.findChild(QComboBox, "country")
             country.setCompleter(countryCompleter)
@@ -229,7 +218,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country.view().setMinimumWidth(300)
             country.completer().setCompletionMode(QCompleter.PopupCompletion)
             country.completer().popup().setMinimumWidth(300)
-            country.setModel(TSHScoreboardPlayerWidget.countryModel)
+            country.setModel(TSHScoreboardStageWidget.countryModel)
 
             country.currentIndexChanged.connect(self.LoadStates)
 
@@ -250,7 +239,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         countryData = None
         if country.currentData(Qt.ItemDataRole.UserRole) != None:
-            countryData = TSHScoreboardPlayerWidget.countries[country.currentData(
+            countryData = TSHScoreboardStageWidget.countries[country.currentData(
                 Qt.ItemDataRole.UserRole).get("code")]
 
         stateModel = QStandardItemModel()
@@ -278,11 +267,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         state.setModel(stateModel)
 
     def LoadCharacters():
-        TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
+        TSHScoreboardStageWidget.characterModel = QStandardItemModel()
 
         # Add one empty
         item = QStandardItem()
-        TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+        TSHScoreboardStageWidget.characterModel.appendRow(item)
 
         for c in TSHGameAssetManager.instance.characters.keys():
             item = QStandardItem()
@@ -296,7 +285,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 "codename": TSHGameAssetManager.instance.characters[c].get("codename")
             }
             item.setData(data, Qt.ItemDataRole.UserRole)
-            TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+            TSHScoreboardStageWidget.characterModel.appendRow(item)
 
     def LoadSkinOptions(self, element, target):
         characterData = element.currentData()
@@ -344,7 +333,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def ReloadCharacters(self):
         for c in self.character_elements:
-            c[1].setModel(TSHScoreboardPlayerWidget.characterModel)
+            c[1].setModel(TSHScoreboardStageWidget.characterModel)
             c[1].setIconSize(QSize(24, 24))
             c[1].setFixedHeight(32)
 
@@ -363,9 +352,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageSavePlayerToDBText()
             self.ManageDeletePlayerFromDBActive()
 
-    def SetData(self, data, dontLoadFromDB=False, clear=True):
-        if clear:
-            self.Clear()
+    def SetData(self, data, dontLoadFromDB=False):
+        self.Clear()
 
         # Load player data from DB; will be overwriten by incoming data
         if not dontLoadFromDB:

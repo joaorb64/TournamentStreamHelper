@@ -21,7 +21,8 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
     def GetTournamentData(self):
         pass
 
-    def GetMatch(self):
+    def GetMatch(self, id):
+        # https://challonge.com/pt_BR/matches/{id}/details.json
         pass
 
     def GetMatches(self):

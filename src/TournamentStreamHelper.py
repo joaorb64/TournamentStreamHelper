@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from qdarkstyle import palette
 from TSHCommentaryWidget import TSHCommentaryWidget
 from TSHGameAssetManager import TSHGameAssetManager
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 from TSHPlayerDB import TSHPlayerDB
-
 
 try:
     from PyQt5.QtGui import *
@@ -15,6 +15,8 @@ try:
     import shutil
     import tarfile
     import py7zr
+
+    import qdarkstyle
 
     import requests
     import urllib
@@ -2606,11 +2608,8 @@ class Window(QMainWindow):
 
 App = QApplication(sys.argv)
 
-if os.path.isfile("./program_assets/style.qss"):
-    with open("./program_assets/style.qss", "r") as f:
-        App.setStyleSheet(f.read())
-else:
-    print("Stylesheet file not found\n")
+App.setStyleSheet(qdarkstyle.load_stylesheet(
+    palette=qdarkstyle.DarkPalette))
 
 window = Window()
 sys.exit(App.exec_())
