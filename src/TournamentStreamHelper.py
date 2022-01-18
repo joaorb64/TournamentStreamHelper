@@ -255,7 +255,7 @@ class Window(QMainWindow):
         self.autoTimer = None
         self.smashggSetAutoUpdateId = None
 
-        pre_base_layout.addLayout(group_box)
+        # pre_base_layout.addLayout(group_box)
 
         # Layout base
         self.base_layout = QBoxLayout(QBoxLayout.LeftToRight)

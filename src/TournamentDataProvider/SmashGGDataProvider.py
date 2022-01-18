@@ -57,7 +57,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             for char in selectedCharMap.items():
                 if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
                     selectedChars[0] = char[1]
-                if str(char[1] == respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
                     selectedChars[1] = char[1]
 
             latestWinner = None

@@ -11,6 +11,7 @@ from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHScoreboardWidgetSignals(QObject):
     UpdateSetData = pyqtSignal(object)
+    NewSetSelected = pyqtSignal(object)
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -19,6 +20,10 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
+        self.signals.NewSetSelected.connect(self.NewSetSelected)
+
+        self.autoUpdateTimer: QTimer = None
+        self.timeLeftTimer: QTimer = None
 
         self.setWindowTitle("Scoreboard")
         self.setFloating(True)
@@ -106,8 +111,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.widget.layout().addWidget(self.columns)
 
         bottomOptions = QWidget()
-        bottomOptions.setLayout(QHBoxLayout())
-        bottomOptions.layout().setSpacing(0)
+        bottomOptions.setLayout(QVBoxLayout())
         bottomOptions.layout().setContentsMargins(0, 0, 0, 0)
         bottomOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
@@ -127,6 +131,23 @@ class TSHScoreboardWidget(QDockWidget):
             ]
         )
         TSHTournamentDataProvider.signals.tournament_changed.emit()
+
+        self.timerLayout = QWidget()
+        self.timerLayout.setLayout(QHBoxLayout())
+        self.timerLayout.layout().setContentsMargins(0, 0, 0, 0)
+        self.timerLayout.setSizePolicy(
+            QSizePolicy.Minimum, QSizePolicy.Maximum)
+        self.timerLayout.layout().setAlignment(Qt.AlignmentFlag.AlignCenter)
+        bottomOptions.layout().addWidget(self.timerLayout)
+        labelAutoUpdate = QLabel("Auto update")
+        self.timerLayout.layout().addWidget(labelAutoUpdate)
+        self.timerTime = QLabel("0")
+        self.timerLayout.layout().addWidget(self.timerTime)
+        self.timerCancelBt = QPushButton()
+        self.timerCancelBt.setIcon(QIcon('icons/cancel.svg'))
+        self.timerCancelBt.setIconSize(QSize(12, 12))
+        self.timerLayout.layout().addWidget(self.timerCancelBt)
+        self.timerLayout.setVisible(False)
 
         self.team1column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team1column)
@@ -273,6 +294,33 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team2column.findChild(QLineEdit, "teamName").setText("")
 
+    def NewSetSelected(self, setId):
+        if setId:
+            if self.autoUpdateTimer != None:
+                self.autoUpdateTimer.stop()
+                self.autoUpdateTimer = None
+            if self.timeLeftTimer != None:
+                self.timeLeftTimer.stop()
+                self.timeLeftTimer = None
+
+            TSHTournamentDataProvider.GetMatch(self, setId)
+
+            self.autoUpdateTimer = QTimer()
+            self.autoUpdateTimer.start(5000)
+            self.autoUpdateTimer.timeout.connect(
+                lambda setId=setId: TSHTournamentDataProvider.GetMatch(self, setId))
+
+            self.timeLeftTimer = QTimer()
+            self.timeLeftTimer.start(100)
+            self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
+
+            self.timerLayout.setVisible(True)
+
+    def UpdateTimeLeftTimer(self):
+        if self.autoUpdateTimer:
+            self.timerTime.setText(
+                str(int(self.autoUpdateTimer.remainingTime()/1000)))
+
     def UpdateSetData(self, data):
         print(data)
 
@@ -302,9 +350,6 @@ class TSHScoreboardWidget(QDockWidget):
                 for p, player in enumerate(team):
                     teamInstance[p].SetData(
                         player, False, data.get("clear", True))
-
-        if data.get("id"):
-            TSHTournamentDataProvider.GetMatch(self, data.get("id"))
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))

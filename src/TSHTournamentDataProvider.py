@@ -158,6 +158,7 @@ class TSHTournamentDataProvider:
         mainWindow.smashGGSetSelecDialog.close()
 
         mainWindow.signals.UpdateSetData.emit(setId)
+        mainWindow.signals.NewSetSelected.emit(setId.get("id"))
 
     def GetMatch(mainWindow, setId):
         data = TSHTournamentDataProvider.provider.GetMatch(setId)
