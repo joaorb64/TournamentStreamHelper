@@ -146,6 +146,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.timerCancelBt = QPushButton()
         self.timerCancelBt.setIcon(QIcon('icons/cancel.svg'))
         self.timerCancelBt.setIconSize(QSize(12, 12))
+        self.timerCancelBt.clicked.connect(self.StopAutoUpdate)
         self.timerLayout.layout().addWidget(self.timerCancelBt)
         self.timerLayout.setVisible(False)
 
@@ -296,12 +297,7 @@ class TSHScoreboardWidget(QDockWidget):
 
     def NewSetSelected(self, setId):
         if setId:
-            if self.autoUpdateTimer != None:
-                self.autoUpdateTimer.stop()
-                self.autoUpdateTimer = None
-            if self.timeLeftTimer != None:
-                self.timeLeftTimer.stop()
-                self.timeLeftTimer = None
+            self.StopAutoUpdate()
 
             TSHTournamentDataProvider.GetMatch(self, setId)
 
@@ -315,6 +311,15 @@ class TSHScoreboardWidget(QDockWidget):
             self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
 
             self.timerLayout.setVisible(True)
+
+    def StopAutoUpdate(self):
+        if self.autoUpdateTimer != None:
+            self.autoUpdateTimer.stop()
+            self.autoUpdateTimer = None
+        if self.timeLeftTimer != None:
+            self.timeLeftTimer.stop()
+            self.timeLeftTimer = None
+        self.timerLayout.setVisible(False)
 
     def UpdateTimeLeftTimer(self):
         if self.autoUpdateTimer:
