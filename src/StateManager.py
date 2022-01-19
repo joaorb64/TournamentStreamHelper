@@ -80,9 +80,14 @@ class StateManager:
 
             print("Added:", filename, item)
 
+            if not os.path.isdir("./out/"+filename.split("_")[0]):
+                os.mkdir("./out/"+filename.split("_")[0])
+
             StateManager.CreateFilesDict(filename, item)
 
     def CreateFilesDict(path, di):
+        directory = path.split("_")[0]
+
         if type(di) == dict:
             for k, i in di.items():
                 StateManager.CreateFilesDict(
@@ -91,12 +96,14 @@ class StateManager:
             print("try to add: ", path)
             if type(di) == str and di.startswith("./"):
                 shutil.copyfile(
-                    di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                    di, f"./out/{directory}/{path}" + "." + di.rsplit(".", 1)[-1])
             else:
-                with open(f"./out/{path}.txt", 'w') as file:
+                with open(f"./out/{directory}/{path}.txt", 'w') as file:
                     file.write(str(di))
 
     def RemoveFilesDict(path, di):
+        directory = path.split("_")[0]
+
         if type(di) == dict:
             for k, i in di.items():
                 StateManager.RemoveFilesDict(
@@ -105,13 +112,13 @@ class StateManager:
             print("try to remove: ", path)
             if type(di) == str and di.startswith("./"):
                 try:
-                    os.remove(f"./out/{path}" + "." +
+                    os.remove(f"./out/{directory}/{path}" + "." +
                               di.rsplit(".", 1)[-1])
                 except:
                     pass
             else:
                 try:
-                    os.remove(f"./out/{path}.txt")
+                    os.remove(f"./out/{directory}/{path}.txt")
                 except:
                     pass
 
