@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+import traceback
 from deepdiff import DeepDiff, extract
 import shutil
 
@@ -44,7 +45,7 @@ class StateManager:
 
         for changeKey, change in mergedDiffs:
             # Remove "root[" from start and separate keys
-            filename = "_".join(changeKey[5:].replace(
+            filename = "/".join(changeKey[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
             print(filename)
@@ -62,7 +63,7 @@ class StateManager:
             item = extract(oldState, key)
 
             # Remove "root[" from start and separate keys
-            filename = "_".join(key[5:].replace(
+            filename = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
             print("Removed:", filename, item)
@@ -75,52 +76,60 @@ class StateManager:
             item = extract(StateManager.state, key)
 
             # Remove "root[" from start and separate keys
-            filename = "_".join(key[5:].replace(
+            path = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            print("Added:", filename, item)
+            print("Added:", path, item)
 
-            if not os.path.isdir("./out/"+filename.split("_")[0]):
-                os.mkdir("./out/"+filename.split("_")[0])
-
-            StateManager.CreateFilesDict(filename, item)
+            StateManager.CreateFilesDict(path, item)
 
     def CreateFilesDict(path, di):
-        directory = path.split("_")[0]
+        pathdirs = "/".join(path.split("/")[0:-1])
+
+        if not os.path.isdir("./out/"+pathdirs):
+            os.mkdir("./out/"+pathdirs)
 
         if type(di) == dict:
             for k, i in di.items():
                 StateManager.CreateFilesDict(
-                    path+"_"+str(k).replace("/", "_"), i)
+                    path+"/"+str(k).replace("/", "_"), i)
         else:
             print("try to add: ", path)
             if type(di) == str and di.startswith("./"):
                 shutil.copyfile(
-                    di, f"./out/{directory}/{path}" + "." + di.rsplit(".", 1)[-1])
+                    di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
             else:
-                with open(f"./out/{directory}/{path}.txt", 'w') as file:
+                with open(f"./out/{path}.txt", 'w') as file:
                     file.write(str(di))
 
     def RemoveFilesDict(path, di):
-        directory = path.split("_")[0]
+        pathdirs = "/".join(path.split("/")[0:-1])
 
         if type(di) == dict:
             for k, i in di.items():
                 StateManager.RemoveFilesDict(
-                    path+"_"+str(k).replace("/", "_"), i)
+                    path+"/"+str(k).replace("/", "_"), i)
         else:
-            print("try to remove: ", path)
             if type(di) == str and di.startswith("./"):
                 try:
-                    os.remove(f"./out/{directory}/{path}" + "." +
-                              di.rsplit(".", 1)[-1])
+                    removeFile = f"./out/{path}" + \
+                        "." + di.rsplit(".", 1)[-1]
+                    print("try to remove: ", removeFile)
+                    os.remove(removeFile)
                 except:
-                    pass
+                    print(traceback.format_exc())
             else:
                 try:
-                    os.remove(f"./out/{directory}/{path}.txt")
+                    removeFile = f"./out/{path}.txt"
+                    print("try to remove: ", removeFile)
+                    os.remove(removeFile)
                 except:
-                    pass
+                    print(traceback.format_exc())
+
+        try:
+            os.rmdir(f"./out/{pathdirs}")
+        except:
+            print(traceback.format_exc())
 
 
 if not os.path.isfile("./out/program_state.json"):

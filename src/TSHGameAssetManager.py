@@ -261,10 +261,10 @@ class TSHGameAssetManager():
                         }
 
                         if skin in skinFiles:
-                            charFiles[assetKey]["path"] = assetPath + \
+                            charFiles[assetKey]["image"] = assetPath + \
                                 skinFiles[skin]
                         else:
-                            charFiles[assetKey]["path"] = assetPath + \
+                            charFiles[assetKey]["image"] = assetPath + \
                                 list(skinFiles.values())[0]
 
                 except Exception as e:

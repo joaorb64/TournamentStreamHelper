@@ -171,11 +171,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character.setCurrentIndex(0)
             player_character_color.setCurrentIndex(0)
 
-            self.CharactersChanged()
-
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
+
+        self.CharactersChanged()
 
     def LoadCountries(self):
         try:
@@ -201,8 +201,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         }
 
                 TSHScoreboardPlayerWidget.countryModel = QStandardItemModel()
-                TSHScoreboardPlayerWidget.countryModel.appendRow(
-                    QStandardItem())
+
+                noCountry = QStandardItem()
+                noCountry.setData({}, Qt.ItemDataRole.UserRole)
+                TSHScoreboardPlayerWidget.countryModel.appendRow(noCountry)
 
                 for i, country_code in enumerate(TSHScoreboardPlayerWidget.countries.keys()):
                     item = QStandardItem()
@@ -211,7 +213,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     countryData = {
                         "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
                         "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
-                        "path": f'./assets/country_flag/{country_code.lower()}.png'
+                        "image": f'./assets/country_flag/{country_code.lower()}.png'
                     }
                     item.setData(countryData, Qt.ItemDataRole.UserRole)
                     item.setData(
@@ -250,23 +252,25 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         countryData = None
         if country.currentData(Qt.ItemDataRole.UserRole) != None:
-            countryData = TSHScoreboardPlayerWidget.countries[country.currentData(
-                Qt.ItemDataRole.UserRole).get("code")]
+            countryData = TSHScoreboardPlayerWidget.countries.get(country.currentData(
+                Qt.ItemDataRole.UserRole).get("code"), {})
 
         stateModel = QStandardItemModel()
 
-        stateModel.appendRow(QStandardItem())
+        noState = QStandardItem()
+        noState.setData({}, Qt.ItemDataRole.UserRole)
+        stateModel.appendRow(noState)
 
-        if countryData is not None:
-            states = countryData.get("states")
+        states = countryData.get("states")
 
+        if states is not None:
             for i, state_code in enumerate(states.keys()):
                 item = QStandardItem()
                 # Windows has some weird thing with files named CON.png. In case a state code is CON,
                 # we try to load _CON.png instead
                 path = f'./assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'
                 states[state_code].update({
-                    "path": path
+                    "image": path
                 })
                 item.setIcon(QIcon(path))
                 item.setData(states[state_code], Qt.ItemDataRole.UserRole)
@@ -276,6 +280,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         state: QComboBox = self.findChild(QComboBox, "state")
         state.setModel(stateModel)
+        state.setCurrentIndex(0)
 
     def LoadCharacters():
         TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
@@ -335,7 +340,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     key = k
 
             item.setIcon(
-                QIcon(QPixmap.fromImage(QImage(assetData[key]["path"]).scaledToWidth(
+                QIcon(QPixmap.fromImage(QImage(assetData[key]["image"]).scaledToWidth(
                     32, Qt.TransformationMode.SmoothTransformation)))
             )
             skinModel.appendRow(item)
