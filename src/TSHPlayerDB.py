@@ -1,4 +1,5 @@
 import copy
+from multiprocessing import Lock
 import os
 import json
 from turtle import update
@@ -22,6 +23,7 @@ class TSHPlayerDB:
     model: QStandardItemModel = None
     fieldnames = ["prefix", "gamerTag", "name", "twitter",
                   "country_code", "state_code", "mains"]
+    modelLock = Lock()
 
     def LoadDB():
         try:
@@ -57,9 +59,15 @@ class TSHPlayerDB:
 
                 if not overwrite:
                     if tag not in TSHPlayerDB.database:
+                        incomingMains = player.get("mains", {})
+                        for game in incomingMains:
+                            for main in incomingMains[game]:
+                                if len(main) == 1:
+                                    main.append(0)
                         TSHPlayerDB.database[tag] = player
                     else:
-                        dbMains = TSHPlayerDB.database[tag].get("mains", {})
+                        dbMains = copy.deepcopy(
+                            TSHPlayerDB.database[tag].get("mains", {}))
                         incomingMains = player.get("mains", {})
 
                         newMains = []
@@ -76,7 +84,7 @@ class TSHPlayerDB:
                             dbMains[game] = newMains
 
                         TSHPlayerDB.database[tag].update(player)
-                        player["mains"] = dbMains
+                        TSHPlayerDB.database[tag]["mains"] = dbMains
                 else:
                     if TSHPlayerDB.database.get(tag) is not None and player.get("mains") is not None:
                         try:
@@ -98,52 +106,53 @@ class TSHPlayerDB:
         TSHPlayerDB.SetupModel()
 
     def SetupModel():
-        TSHPlayerDB.model = QStandardItemModel()
+        with TSHPlayerDB.modelLock:
+            TSHPlayerDB.model = QStandardItemModel()
 
-        for player in TSHPlayerDB.database.values():
-            if player is not None:
-                tag = player.get(
-                    "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+            for player in TSHPlayerDB.database.values():
+                if player is not None:
+                    tag = player.get(
+                        "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
 
-                item = QStandardItem(tag)
-                item.setData(player, Qt.ItemDataRole.UserRole)
+                    item = QStandardItem(tag)
+                    item.setData(player, Qt.ItemDataRole.UserRole)
 
-                item.setIcon(QIcon(QPixmap.fromImage(QImage("./icons/cancel.svg").scaledToWidth(
-                    32, Qt.TransformationMode.SmoothTransformation))))
+                    item.setIcon(QIcon(QPixmap.fromImage(QImage("./icons/cancel.svg").scaledToWidth(
+                        32, Qt.TransformationMode.SmoothTransformation))))
 
-                if player.get("mains") and type(player.get("mains")) == dict:
-                    if TSHGameAssetManager.instance.selectedGame.get("codename") in player.get("mains", {}).keys():
-                        playerMains = player.get(
-                            "mains")[TSHGameAssetManager.instance.selectedGame.get("codename")]
+                    if player.get("mains") and type(player.get("mains")) == dict:
+                        if TSHGameAssetManager.instance.selectedGame.get("codename") in player.get("mains", {}).keys():
+                            playerMains = player.get(
+                                "mains")[TSHGameAssetManager.instance.selectedGame.get("codename")]
 
-                        if playerMains is not None and len(playerMains) > 0:
-                            character = next((c for c in TSHGameAssetManager.instance.characters.items(
-                            ) if c[0] == playerMains[0][0]), None)
-                            if character:
-                                assets = TSHGameAssetManager.instance.GetCharacterAssets(
-                                    character[1].get("codename"), 0)
+                            if playerMains is not None and len(playerMains) > 0:
+                                character = next((c for c in TSHGameAssetManager.instance.characters.items(
+                                ) if c[0] == playerMains[0][0]), None)
+                                if character:
+                                    assets = TSHGameAssetManager.instance.GetCharacterAssets(
+                                        character[1].get("codename"), playerMains[0][1])
 
-                                if assets == None:
-                                    assets = {}
+                                    if assets == None:
+                                        assets = {}
 
-                                # Set to use first asset as a fallback
-                                key = list(assets.keys())[0]
+                                    # Set to use first asset as a fallback
+                                    key = list(assets.keys())[0]
 
-                                for k, asset in list(assets.items()):
-                                    if "icon" in asset.get("type", []):
-                                        key = k
-                                        break
-                                    elif "portrait" in asset.get("type", []):
-                                        key = k
+                                    for k, asset in list(assets.items()):
+                                        if "icon" in asset.get("type", []):
+                                            key = k
+                                            break
+                                        elif "portrait" in asset.get("type", []):
+                                            key = k
 
-                                item.setIcon(
-                                    QIcon(QPixmap.fromImage(QImage(assets[key]["asset"]).scaledToWidth(
-                                        32, Qt.TransformationMode.SmoothTransformation)))
-                                )
+                                    item.setIcon(
+                                        QIcon(QPixmap.fromImage(QImage(assets[key]["asset"]).scaledToWidth(
+                                            32, Qt.TransformationMode.SmoothTransformation)))
+                                    )
 
-                TSHPlayerDB.model.appendRow(item)
+                    TSHPlayerDB.model.appendRow(item)
 
-        TSHPlayerDB.signals.db_updated.emit()
+            TSHPlayerDB.signals.db_updated.emit()
 
     def SaveDB():
         try:
