@@ -127,14 +127,40 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             changed = False
 
             try:
-                allStages = [TSHGameAssetManager.instance.GetStageFromSmashGGId(
-                    st)[1] for st in allStages]
+                allStagesFinal = {}
+                for st in allStages:
+                    stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                        st)
+                    if stage:
+                        allStagesFinal[stage[1].get("codename")] = stage[1]
+
+                striked = []
+                if strikedStages is not None:
+                    for stage in strikedStages:
+                        stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                            stage)
+                        if stage:
+                            striked.append(stage[1].get("codename"))
+
+                selected = ""
+                selectedStage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                    selectedStage)
+                if selectedStage:
+                    selected = selectedStage[1]
+
+                dsr = []
+                if dsrStages:
+                    for stage in dsrStages:
+                        stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                            stage)
+                        if stage:
+                            dsr.append(stage[1].get("codename"))
 
                 stageStrikeState = {
-                    "stages": {st.get("codename"): st for st in allStages} if allStages != None else {},
-                    "striked": [TSHGameAssetManager.instance.GetStageFromSmashGGId(stage)[1].get("codename") for stage in strikedStages] if strikedStages != None else [],
-                    "selected": TSHGameAssetManager.instance.GetStageFromSmashGGId(selectedStage)[1] if selectedStage else "",
-                    "dsr": [TSHGameAssetManager.instance.GetStageFromSmashGGId(stage)[1].get("codename") for stage in dsrStages] if dsrStages != None else [],
+                    "stages": allStagesFinal,
+                    "striked": striked,
+                    "selected": selected,
+                    "dsr": dsr,
                     "playerTurn": playerTurn
                 }
             except:
@@ -196,21 +222,26 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             final_data = []
 
             for _set in sets:
+                p1 = deep_get(_set, "paginatedSlots.nodes", [])[0]
+                p2 = deep_get(_set, "paginatedSlots.nodes", [])[1]
+
                 setData = {
                     "id": _set.get("id"),
                     "round_name": _set.get("fullRoundText"),
                     "tournament_phase": deep_get(_set, "phaseGroup.phase.name"),
-                    "p1_name": deep_get(_set, "paginatedSlots.nodes", [])[0].get("entrant", {}).get("name", ""),
-                    "p2_name": deep_get(_set, "paginatedSlots.nodes", [])[1].get("entrant", {}).get("name", ""),
+                    "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
+                    "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
                 }
 
                 players = [[], []]
 
                 entrants = [
                     deep_get(_set, "paginatedSlots.nodes", [])[0].get(
-                        "entrant", {}).get("participants", []),
+                        "entrant", {}).get("participants", []) if deep_get(_set, "paginatedSlots.nodes", [])[0].get(
+                        "entrant", {}) is not None else [],
                     deep_get(_set, "paginatedSlots.nodes", [])[1].get(
-                        "entrant", {}).get("participants", [])
+                        "entrant", {}).get("participants", []) if deep_get(_set, "paginatedSlots.nodes", [])[1].get(
+                        "entrant", {}) is not None else [],
                 ]
 
                 for i, team in enumerate(entrants):

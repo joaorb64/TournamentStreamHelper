@@ -75,7 +75,7 @@ class TSHPlayerDB:
                             for main in incomingMains[game]:
                                 if len(main) == 1:
                                     found = next(
-                                        (m for m in dbMains[game] if m[0] == main[0]), None)
+                                        (m for m in dbMains.get(game, []) if m[0] == main[0]), None)
                                     if found:
                                         main.append(found[1])
                                     else:

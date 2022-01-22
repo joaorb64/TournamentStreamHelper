@@ -71,18 +71,16 @@ class TSHGameAssetManager():
             return
 
         for i, game in enumerate(self.games.values()):
+            print("videojogo", gameid, game.get("smashgg_game_id"))
             if str(game.get("smashgg_game_id")) == str(gameid):
-                self.LoadGameAssets(i)
+                self.LoadGameAssets(i+1)
                 break
 
     def LoadGameAssets(self, game: int = 0):
         if len(self.games.keys()) == 0:
             return
 
-        if game != 0:
-            game = list(self.games.keys())[game-1]
-        else:
-            game = list(self.games.keys())[0]
+        game = list(self.games.keys())[game-1]
 
         print("Changed to game: "+game)
 

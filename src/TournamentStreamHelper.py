@@ -217,6 +217,7 @@ class Window(QMainWindow):
         self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(
             TSHGameAssetManager.instance.LoadGameAssets)
+        TSHGameAssetManager.instance.signals.onLoad.connect(self.SetGame)
 
         pre_base_layout.addLayout(group_box)
         group_box.addWidget(self.gameSelect)
@@ -462,14 +463,23 @@ class Window(QMainWindow):
         if self.qtSettings.value("windowState"):
             self.restoreState(self.qtSettings.value("windowState"))
 
+    def SetGame(self):
+        index = next(i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
+            "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename"))
+        if index is not None:
+            self.gameSelect.setCurrentIndex(index)
+
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
         self.gameSelect.addItem("")
-        for game in TSHGameAssetManager.instance.games.keys():
-            self.gameSelect.addItem(game)
+        for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
+            if game[1].get("name"):
+                self.gameSelect.addItem(game[1].get("name"), i+1)
+            else:
+                self.gameSelect.addItem(game[0], i+1)
 
     def DetectGameFromId(self, id):
         game = next(
@@ -1665,15 +1675,6 @@ class Window(QMainWindow):
                             player_obj["state"] = state
 
         return player_obj
-
-    def LoadPlayersFromSmashGGTournamentProgress(self, n):
-        print(f"Downloading players from tournament... {n}%")
-        self.SaveDB()
-        self.signals.SetupAutocomplete.emit()
-
-    def LoadPlayersFromSmashGGTournamentFinished(self):
-        self.SaveDB()
-        self.signals.SetupAutocomplete.emit()
 
     def LoadSetsFromSmashGGTournament(self):
         if self.settings.get("SMASHGG_KEY", None) is None:
