@@ -40,6 +40,7 @@ except ImportError as error:
 from qdarkstyle import palette
 from TSHCommentaryWidget import TSHCommentaryWidget
 from TSHGameAssetManager import TSHGameAssetManager
+from TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 from TSHPlayerDB import TSHPlayerDB
 from PlayerColumn import *
@@ -59,9 +60,12 @@ class WindowSignals(QObject):
     ExportStageStrike = pyqtSignal(object)
     DetectGame = pyqtSignal(int)
     SetupAutocomplete = pyqtSignal()
+    UiMounted = pyqtSignal()
 
 
 class Window(QMainWindow):
+    signals = WindowSignals()
+
     def __init__(self):
         super().__init__()
 
@@ -186,6 +190,11 @@ class Window(QMainWindow):
         central_widget.setLayout(pre_base_layout)
         self.setCentralWidget(central_widget)
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+        tournamentInfo = TSHTournamentInfoWidget()
+        tournamentInfo.setObjectName("Tournament Info")
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
 
         scoreboard = TSHScoreboardWidget()
         scoreboard.setObjectName("Scoreboard")
@@ -462,6 +471,8 @@ class Window(QMainWindow):
 
         if self.qtSettings.value("windowState"):
             self.restoreState(self.qtSettings.value("windowState"))
+
+        TSHTournamentDataProvider.UiMounted()
 
     def SetGame(self):
         index = next(i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

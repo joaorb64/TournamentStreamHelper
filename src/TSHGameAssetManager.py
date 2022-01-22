@@ -71,7 +71,6 @@ class TSHGameAssetManager():
             return
 
         for i, game in enumerate(self.games.values()):
-            print("videojogo", gameid, game.get("smashgg_game_id"))
             if str(game.get("smashgg_game_id")) == str(gameid):
                 self.LoadGameAssets(i+1)
                 break
@@ -210,8 +209,6 @@ class TSHGameAssetManager():
 
         self.signals.onLoad.emit()
 
-        print(self.selectedGame)
-
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
 
@@ -285,7 +282,6 @@ class TSHGameAssetManager():
             "character", []) if str(c.get("id")) == str(smashgg_id)), None)
 
         if smashggcharacter:
-            print(smashggcharacter)
             character = next((c for c in self.characters.items() if c[1].get(
                 "smashgg_name") == smashggcharacter.get("name")), None)
             if character:

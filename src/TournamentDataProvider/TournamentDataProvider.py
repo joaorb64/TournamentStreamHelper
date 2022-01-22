@@ -2,6 +2,7 @@ class TournamentDataProvider:
     def __init__(self, url) -> None:
         self.url = url
         self.entrants = []
+        self.tournamentData = {}
 
     def GetEntrants(self):
         pass

@@ -25,6 +25,8 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
         super().__init__(url)
 
     def GetTournamentData(self):
+        finalData = {}
+
         try:
             data = requests.post(
                 "https://smash.gg/api/-/gql",
@@ -45,12 +47,22 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             data = json.loads(data.text)
 
             videogame = deep_get(data, "data.event.videogame.id", None)
-            print("videojogo", videogame)
             if videogame:
                 TSHGameAssetManager.instance.SetGameFromSmashGGId(
                     videogame)
+
+            finalData["tournamentName"] = deep_get(
+                data, "data.event.tournament.name", "")
+            finalData["eventName"] = deep_get(
+                data, "data.event.name", "")
+            finalData["numEntrants"] = deep_get(
+                data, "data.event.numEntrants", 0)
+            finalData["address"] = deep_get(
+                data, "data.event.tournament.venueAddress", "")
         except:
             traceback.print_exc()
+
+        return finalData
 
     def GetMatch(self, setId):
         try:
@@ -76,9 +88,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                     break
 
             selectedChars = [[], []]
-
-            print("Hey!")
-            print(respTasks.get("entities", {}))
 
             for char in selectedCharMap.items():
                 if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
@@ -111,8 +120,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
                     if task.get("action") == "report":
                         base = base.get("report", {})
-
-                    print(base)
 
                     if base.get("strikeStages", None) is not None:
                         allStages = base.get("strikeStages")
@@ -240,7 +247,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 }
 
             )
-            print(data)
 
             data = json.loads(data.text)
 
@@ -390,7 +396,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 data = json.loads(data.text)
 
                 videogame = deep_get(data, "data.event.videogame.id", None)
-                print("videojogo", videogame)
                 if videogame:
                     TSHGameAssetManager.instance.SetGameFromSmashGGId(
                         videogame)

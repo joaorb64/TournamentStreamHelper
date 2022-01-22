@@ -1,3 +1,4 @@
+from time import sleep
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -14,6 +15,7 @@ import json
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = pyqtSignal()
     entrants_updated = pyqtSignal()
+    tournament_data_updated = pyqtSignal(dict)
 
 
 class TSHTournamentDataProvider:
@@ -29,7 +31,10 @@ class TSHTournamentDataProvider:
         else:
             print("Unsupported provider...")
 
-        TSHTournamentDataProvider.provider.GetTournamentData()
+        tournamentData = TSHTournamentDataProvider.provider.GetTournamentData()
+        TSHTournamentDataProvider.signals.tournament_data_updated.emit(
+            tournamentData)
+
         TSHTournamentDataProvider.provider.GetEntrants()
         TSHTournamentDataProvider.signals.tournament_changed.emit()
 
@@ -164,7 +169,7 @@ class TSHTournamentDataProvider:
         data = TSHTournamentDataProvider.provider.GetMatch(setId)
         mainWindow.signals.UpdateSetData.emit(data)
 
-
-if SettingsManager.Get("TOURNAMENT_URL"):
-    TSHTournamentDataProvider.SetTournament(
-        SettingsManager.Get("TOURNAMENT_URL"))
+    def UiMounted():
+        if SettingsManager.Get("TOURNAMENT_URL"):
+            TSHTournamentDataProvider.SetTournament(
+                SettingsManager.Get("TOURNAMENT_URL"))
