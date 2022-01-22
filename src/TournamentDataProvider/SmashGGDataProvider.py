@@ -19,12 +19,38 @@ from Workers import Worker
 class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     SetsQuery = None
     EntrantsQuery = None
+    TournamentDataQuery = None
 
     def __init__(self, url) -> None:
         super().__init__(url)
 
     def GetTournamentData(self):
-        pass
+        try:
+            data = requests.post(
+                "https://smash.gg/api/-/gql",
+                headers={
+                    "client-version": "19",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentDataQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("smash.gg/")[1]
+                    },
+                    "query": SmashGGDataProvider.TournamentDataQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+
+            videogame = deep_get(data, "data.event.videogame.id", None)
+            print("videojogo", videogame)
+            if videogame:
+                TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                    videogame)
+        except:
+            traceback.print_exc()
 
     def GetMatch(self, setId):
         try:
@@ -175,7 +201,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             for i, entrantChars in enumerate(selectedChars):
                 for char in entrantChars:
                     entrants[i].append({
-                        "mains": TSHGameAssetManager.instance.GetCharacterFromSmashGGId(char)[0]
+                        "mains": [TSHGameAssetManager.instance.GetCharacterFromSmashGGId(char)[0], 0]
                     })
 
             return({
@@ -481,3 +507,7 @@ SmashGGDataProvider.SetsQuery = f.read()
 f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
          "SmashGGEntrantsQuery.txt", 'r')
 SmashGGDataProvider.EntrantsQuery = f.read()
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
+         "SmashGGTournamentDataQuery.txt", 'r')
+SmashGGDataProvider.TournamentDataQuery = f.read()

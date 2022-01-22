@@ -29,6 +29,7 @@ class TSHTournamentDataProvider:
         else:
             print("Unsupported provider...")
 
+        TSHTournamentDataProvider.provider.GetTournamentData()
         TSHTournamentDataProvider.provider.GetEntrants()
         TSHTournamentDataProvider.signals.tournament_changed.emit()
 
