@@ -20,6 +20,20 @@ class TSHTournamentInfoWidget(QDockWidget):
             self.UpdateData)
         print("signalconnected")
 
+        for widget in self.findChildren(QLineEdit, options=Qt.FindChildOption.FindDirectChildrenOnly):
+            widget.textChanged.connect(lambda text, widget=widget: [
+                StateManager.Set(
+                    f"tournamentInfo.{widget.objectName()}", text)
+            ])
+            widget.textChanged.emit("")
+
+        for widget in self.findChildren(QSpinBox, options=Qt.FindChildOption.FindDirectChildrenOnly):
+            widget.valueChanged.connect(lambda value, widget=widget: [
+                StateManager.Set(
+                    f"tournamentInfo.{widget.objectName()}", value)
+            ])
+            widget.valueChanged.emit(0)
+
     def UpdateData(self, data):
         print("tournamentdata", data)
 
