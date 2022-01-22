@@ -213,7 +213,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     countryData = {
                         "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
                         "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
-                        "image": f'./assets/country_flag/{country_code.lower()}.png'
+                        "asset": f'./assets/country_flag/{country_code.lower()}.png'
                     }
                     item.setData(countryData, Qt.ItemDataRole.UserRole)
                     item.setData(
@@ -270,7 +270,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 # we try to load _CON.png instead
                 path = f'./assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'
                 states[state_code].update({
-                    "image": path
+                    "asset": path
                 })
                 item.setIcon(QIcon(path))
                 item.setData(states[state_code], Qt.ItemDataRole.UserRole)
@@ -340,7 +340,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     key = k
 
             item.setIcon(
-                QIcon(QPixmap.fromImage(QImage(assetData[key]["image"]).scaledToWidth(
+                QIcon(QPixmap.fromImage(QImage(assetData[key]["asset"]).scaledToWidth(
                     32, Qt.TransformationMode.SmoothTransformation)))
             )
             skinModel.appendRow(item)
@@ -426,16 +426,34 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             stateElement.setCurrentIndex(stateIndex)
 
         if data.get("mains"):
-            for element in self.character_elements:
-                character_element = element[1]
-                characterIndex = 0
-                for i in range(character_element.model().rowCount()):
-                    item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
-                    if item:
-                        if item.get("name") == data.get("mains"):
-                            characterIndex = i
-                            break
-                character_element.setCurrentIndex(characterIndex)
+            if type(data.get("mains")) == list:
+                for element in self.character_elements:
+                    character_element = element[1]
+                    characterIndex = 0
+                    for i in range(character_element.model().rowCount()):
+                        item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
+                        if item:
+                            if item.get("name") == data.get("mains"):
+                                characterIndex = i
+                                break
+                    character_element.setCurrentIndex(characterIndex)
+            elif type(data.get("mains")) == dict:
+                mains = data.get("mains").get(
+                    TSHGameAssetManager.instance.selectedGame.get("codename"), [])
+
+                for i, main in enumerate(mains):
+                    if i < len(self.character_elements):
+                        character_element = self.character_elements[i][1]
+                        color_element = self.character_elements[i][2]
+                        characterIndex = 0
+                        for i in range(character_element.model().rowCount()):
+                            item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
+                            if item:
+                                if item.get("name") == main[0]:
+                                    characterIndex = i
+                                    break
+                        character_element.setCurrentIndex(characterIndex)
+                        color_element.setCurrentIndex(int(main[1]))
 
     def GetCurrentPlayerTag(self):
         gamerTag = self.findChild(QWidget, "name").text()
@@ -451,6 +469,29 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             "name": self.findChild(QWidget, "real_name").text(),
             "twitter": self.findChild(QWidget, "twitter").text()
         }
+
+        if TSHGameAssetManager.instance.selectedGame.get("codename"):
+            mains = []
+
+            for i, (element, character, color) in enumerate(self.character_elements):
+                data = {}
+
+                if character.currentData() is not None:
+                    data["name"] = character.currentData().get("name")
+                else:
+                    data["name"] = ""
+
+                data["skin"] = color.currentText()
+
+                if data["skin"] == None:
+                    data["skin"] = 0
+
+                if data["name"] != "":
+                    mains.append([data.get("name"), data.get("skin")])
+
+            playerData["mains"] = {
+                TSHGameAssetManager.instance.selectedGame.get("codename"): mains
+            }
 
         if self.findChild(QComboBox, "country").currentData(Qt.ItemDataRole.UserRole):
             playerData["country_code"] = self.findChild(

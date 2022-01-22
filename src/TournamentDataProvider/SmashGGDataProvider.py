@@ -332,6 +332,12 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
                 data = json.loads(data.text)
 
+                videogame = deep_get(data, "data.event.videogame.id", None)
+                print("videojogo", videogame)
+                if videogame:
+                    TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                        videogame)
+
                 totalPages = deep_get(
                     data, "data.event.entrants.pageInfo.totalPages", [])
 
@@ -371,10 +377,10 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                                         playerSelections[selection.get(
                                                             "selectionValue")] += 1
 
-                            main = playerSelections.most_common(1)
+                            mains = playerSelections.most_common()
 
-                            if len(main) > 0:
-                                playerData["smashggMain"] = main[0][0]
+                            if len(mains) > 0:
+                                playerData["smashggMains"] = mains
 
                         if user:
                             if len(user.get("authorizations", [])) > 0:
@@ -408,11 +414,24 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                     if stateCode:
                                         playerData["state_code"] = stateCode
 
-                            if playerData.get("smashggMain"):
-                                main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
-                                    playerData.get("smashggMain"))
-                                if main:
-                                    playerData["mains"] = main[0]
+                            if playerData.get("smashggMains"):
+                                if TSHGameAssetManager.instance.selectedGame:
+                                    gameCodename = TSHGameAssetManager.instance.selectedGame.get(
+                                        "codename")
+
+                                    mains = []
+
+                                    for sggmain in playerData.get("smashggMains"):
+                                        main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
+                                            sggmain[0])
+                                        if main:
+                                            mains.append([main[0]])
+
+                                    playerData["mains"] = {
+                                        gameCodename: mains
+                                    }
+                                else:
+                                    playerData["mains"] = {}
 
                         players.append(playerData)
 

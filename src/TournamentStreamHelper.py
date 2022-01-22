@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from qdarkstyle import palette
-from TSHCommentaryWidget import TSHCommentaryWidget
-from TSHGameAssetManager import TSHGameAssetManager
-from TSHTournamentDataProvider import TSHTournamentDataProvider
-from TSHPlayerDB import TSHPlayerDB
-
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
@@ -36,13 +30,21 @@ try:
 
     import unicodedata
 
-    from PlayerColumn import *
-    from Workers import *
-    from TSHScoreboardWidget import *
+    App = QApplication(sys.argv)
 except ImportError as error:
     print(error)
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
     exit()
+
+
+from qdarkstyle import palette
+from TSHCommentaryWidget import TSHCommentaryWidget
+from TSHGameAssetManager import TSHGameAssetManager
+from TSHTournamentDataProvider import TSHTournamentDataProvider
+from TSHPlayerDB import TSHPlayerDB
+from PlayerColumn import *
+from Workers import *
+from TSHScoreboardWidget import *
 
 #sys.stderr = open('./log_error.txt', 'w')
 
@@ -2605,8 +2607,6 @@ class Window(QMainWindow):
         worker.signals.finished.connect(myFun2)
         self.threadpool.start(worker)
 
-
-App = QApplication(sys.argv)
 
 App.setStyleSheet(qdarkstyle.load_stylesheet(
     palette=qdarkstyle.DarkPalette))

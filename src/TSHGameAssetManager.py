@@ -22,7 +22,7 @@ class TSHGameAssetManager():
         self.characters = {}
         self.DownloadSmashGGCharacters()
         self.LoadGames()
-        self.selectedGame = None
+        self.selectedGame = {}
 
     def DownloadSmashGGCharacters(self):
         try:
@@ -66,22 +66,29 @@ class TSHGameAssetManager():
         for game in self.games:
             print(game)
 
-    def LoadGameAssets(self, game=None):
+    def SetGameFromSmashGGId(self, gameid):
         if len(self.games.keys()) == 0:
             return
 
-        if game == None:
-            game = list(self.games.keys())[0]
+        for i, game in enumerate(self.games.values()):
+            if str(game.get("smashgg_game_id")) == str(gameid):
+                self.LoadGameAssets(i)
+                break
+
+    def LoadGameAssets(self, game: int = 0):
+        if len(self.games.keys()) == 0:
+            return
+
+        if game != 0:
+            game = list(self.games.keys())[game-1]
         else:
-            if game != 0:
-                game = list(self.games.keys())[game-1]
-            else:
-                game = ""
+            game = list(self.games.keys())[0]
 
         print("Changed to game: "+game)
 
         gameObj = self.games.get(game, {})
         self.selectedGame = gameObj
+        gameObj["codename"] = game
 
         if gameObj != None:
             self.characters = gameObj.get("character_to_codename", {})
@@ -261,10 +268,10 @@ class TSHGameAssetManager():
                         }
 
                         if skin in skinFiles:
-                            charFiles[assetKey]["image"] = assetPath + \
+                            charFiles[assetKey]["asset"] = assetPath + \
                                 skinFiles[skin]
                         else:
-                            charFiles[assetKey]["image"] = assetPath + \
+                            charFiles[assetKey]["asset"] = assetPath + \
                                 list(skinFiles.values())[0]
 
                 except Exception as e:

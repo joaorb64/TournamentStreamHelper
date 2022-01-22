@@ -30,7 +30,6 @@ class TSHTournamentDataProvider:
             print("Unsupported provider...")
 
         TSHTournamentDataProvider.provider.GetEntrants()
-
         TSHTournamentDataProvider.signals.tournament_changed.emit()
 
     def SetSmashggEventSlug(mainWindow):
