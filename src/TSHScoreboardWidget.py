@@ -236,6 +236,9 @@ class TSHScoreboardWidget(QDockWidget):
             )
             c.valueChanged.emit(0)
 
+        self.scoreColumn.findChild(
+            QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
+
     def LoadCharacters(self):
         TSHScoreboardPlayerWidget.LoadCharacters()
         for pw in self.playerWidgets:
@@ -294,6 +297,33 @@ class TSHScoreboardWidget(QDockWidget):
             self.team1column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team2column.findChild(QLineEdit, "teamName").setText("")
+
+    def SwapTeams(self):
+        tmpData = [[], []]
+
+        # Save state
+        for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
+            for i, p in enumerate(team):
+                data = {}
+                for widget in p.findChildren(QWidget):
+                    if type(widget) == QLineEdit:
+                        data[widget.objectName()] = widget.text()
+                    if type(widget) == QComboBox:
+                        data[widget.objectName()] = widget.currentIndex()
+                tmpData[t].append(data)
+
+        # Load state
+        for t, team in enumerate([self.team2playerWidgets, self.team1playerWidgets]):
+            for i, p in enumerate(tmpData[t]):
+                for objName in tmpData[t][i]:
+                    widget = team[i].findChild(QWidget, objName)
+                    if widget:
+                        if type(widget) == QLineEdit:
+                            widget.setText(tmpData[t][i][objName])
+                        if type(widget) == QComboBox:
+                            widget.setCurrentIndex(tmpData[t][i][objName])
+
+        print(tmpData)
 
     def NewSetSelected(self, setId):
         if setId:

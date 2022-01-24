@@ -81,6 +81,10 @@ class TSHGameAssetManager():
 
         game = list(self.games.keys())[game-1]
 
+        # Game is already loaded
+        if game == self.selectedGame.get("codename"):
+            return
+
         print("Changed to game: "+game)
 
         gameObj = self.games.get(game, {})

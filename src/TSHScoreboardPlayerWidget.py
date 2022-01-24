@@ -171,6 +171,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character.setCurrentIndex(0)
             player_character_color.setCurrentIndex(0)
 
+            player_character.setObjectName(
+                f"character_{len(self.character_elements)}")
+            player_character_color.setObjectName(
+                f"character_color_{len(self.character_elements)}")
+
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
