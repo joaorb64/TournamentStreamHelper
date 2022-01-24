@@ -22,7 +22,7 @@ class TSHCountryHelper():
         return u"".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
     def LoadCountries():
-        f = open("./assets/countries+states+cities.json", 'r')
+        f = open("./assets/countries+states+cities.json", 'r', encoding='utf-8')
         countries_json = json.loads(f.read())
 
         for c in countries_json:

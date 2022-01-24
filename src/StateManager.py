@@ -4,6 +4,7 @@ import copy
 import traceback
 from deepdiff import DeepDiff, extract
 import shutil
+from PIL import Image
 
 from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -11,9 +12,96 @@ from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 class StateManager:
     state = {}
 
+    def SavePlayerAPNG(team_key:str, player_key:str):
+        print(f"Player {player_key}")
+
+        duration = 10000  # in milliseconds
+
+        team = StateManager.state.get("score").get(team_key)
+        player = team.get("players").get(player_key)
+        characters = player.get("character")
+
+        sources = {}
+
+        if characters:
+            for character_key in characters.keys():
+                assets = characters.get(character_key).get("assets")
+                for asset_key in assets.keys():
+                    asset_type = assets.get(asset_key).get("type")[0]
+                    asset_path = assets.get(asset_key).get("path")
+                    if sources.get(asset_type):
+                        sources[asset_type].append(asset_path)
+                    else:
+                        sources[asset_type] = [asset_path]
+
+        for asset_type in sources.keys():
+            apng_name = f"score_{team_key}_player{player_key}_{asset_type}_apng"
+            out_folder = './out'
+            apng_path = f"{out_folder}/{apng_name}.png"
+            html_path = f"{out_folder}/{apng_name}.html"
+
+            asset_list = sources.get(asset_type)
+            nb_assets = len(asset_list)
+
+            if nb_assets > 0:
+                len_slide = float(duration)/nb_assets
+
+                frames = []
+                for i in asset_list:
+                    new_frame = Image.open(i).convert('RGBA')
+                    frames.append(new_frame)
+                
+                max_width , max_height = 0,0
+                for i in range(len(frames)):
+                    width, height = frames[i].size
+                    if width > max_width:
+                        max_width = width
+                    if height > max_height:
+                        max_height = height
+
+                for i in range(len(frames)):
+                    width, height = frames[i].size
+                    if width != max_width or height != max_height:
+                        ratio = min(max_width/width, max_height/height)
+                        print(ratio)
+                        frames[i]=frames[i].resize((int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
+
+                        new_image = Image.new('RGBA', (max_height, max_width), (0, 0, 0, 0))
+                        upper = (max_height - int(height*ratio)) // 2
+                        left = (max_width - int(width*ratio)) //2
+                        new_image.paste(frames[i], (left,upper))
+                        frames[i] = new_image
+
+                frames[0].save(apng_path, format='PNG',
+                append_images=frames[1:],
+                save_all=True,
+                duration=len_slide, loop=0)
+                
+                html_contents = f'<img src="{apng_name}.png">'
+                with open(html_path, 'wt', encoding='utf-8') as html_file:
+                    html_file.write(html_contents)
+
+    def SaveTeamAPNG(team_key: str):
+        print(f"Saving APNG for {team_key}")
+        team = StateManager.state.get("score").get(team_key)
+        players = team.get("players")
+        if players:
+            for player_key in players.keys():
+                StateManager.SavePlayerAPNG(team_key, player_key)
+
+    def SaveAPNG():
+        print("Saving APNG files")
+        score = StateManager.state.get("score")
+        if score:
+            for team_key in ["team1", "team2"]:
+                team = score.get(team_key)
+                if team:
+                    StateManager.SaveTeamAPNG(team_key)
+
     def SaveState():
         with open("./out/program_state.json", 'w') as file:
             json.dump(StateManager.state, file, indent=4, sort_keys=True)
+        StateManager.SaveAPNG()
 
     def LoadState():
         with open("./out/program_state.json", 'r') as file:

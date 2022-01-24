@@ -15,3 +15,4 @@ log_error.txt
 log.txt
 sponsor_logos/*
 !sponsor_logos/*.txt
+assets/characters.json
