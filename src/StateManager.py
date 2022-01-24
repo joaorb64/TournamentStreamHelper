@@ -28,7 +28,7 @@ class StateManager:
                 assets = characters.get(character_key).get("assets")
                 for asset_key in assets.keys():
                     asset_type = assets.get(asset_key).get("type")[0]
-                    asset_path = assets.get(asset_key).get("image")
+                    asset_path = assets.get(asset_key).get("asset")
                     if sources.get(asset_type):
                         sources[asset_type].append(asset_path)
                     else:
