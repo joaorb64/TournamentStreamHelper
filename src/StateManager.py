@@ -28,15 +28,15 @@ class StateManager:
                 assets = characters.get(character_key).get("assets")
                 for asset_key in assets.keys():
                     asset_type = assets.get(asset_key).get("type")[0]
-                    asset_path = assets.get(asset_key).get("path")
+                    asset_path = assets.get(asset_key).get("image")
                     if sources.get(asset_type):
                         sources[asset_type].append(asset_path)
                     else:
                         sources[asset_type] = [asset_path]
 
         for asset_type in sources.keys():
-            apng_name = f"{team_key}_player{player_key}_{asset_type}_apng"
-            out_folder = './out/score'
+            apng_name = f"{asset_type}_apng"
+            out_folder = f'./out/score/{team_key}/players/{player_key}/character'
             apng_path = f"{out_folder}/{apng_name}.png"
             html_path = f"{out_folder}/{apng_name}.html"
 
