@@ -12,7 +12,7 @@ from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 class StateManager:
     state = {}
 
-    def SavePlayerAPNG(team_key:str, player_key:str):
+    def SavePlayerAPNG(team_key: str, player_key: str):
         print(f"Player {player_key}")
 
         duration = 10000  # in milliseconds
@@ -50,8 +50,8 @@ class StateManager:
                 for i in asset_list:
                     new_frame = Image.open(i).convert('RGBA')
                     frames.append(new_frame)
-                
-                max_width , max_height = 0,0
+
+                max_width, max_height = 0, 0
                 for i in range(len(frames)):
                     width, height = frames[i].size
                     if width > max_width:
@@ -64,19 +64,21 @@ class StateManager:
                     if width != max_width or height != max_height:
                         ratio = min(max_width/width, max_height/height)
                         print(ratio)
-                        frames[i]=frames[i].resize((int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
+                        frames[i] = frames[i].resize(
+                            (int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
 
-                        new_image = Image.new('RGBA', (max_height, max_width), (0, 0, 0, 0))
+                        new_image = Image.new(
+                            'RGBA', (max_height, max_width), (0, 0, 0, 0))
                         upper = (max_height - int(height*ratio)) // 2
-                        left = (max_width - int(width*ratio)) //2
-                        new_image.paste(frames[i], (left,upper))
+                        left = (max_width - int(width*ratio)) // 2
+                        new_image.paste(frames[i], (left, upper))
                         frames[i] = new_image
 
                 frames[0].save(apng_path, format='PNG',
-                append_images=frames[1:],
-                save_all=True,
-                duration=len_slide, loop=0)
-                
+                               append_images=frames[1:],
+                               save_all=True,
+                               duration=len_slide, loop=0)
+
                 html_contents = f'<img src="{apng_name}.png">'
                 with open(html_path, 'wt', encoding='utf-8') as html_file:
                     html_file.write(html_contents)
