@@ -4,7 +4,7 @@ import copy
 import traceback
 from deepdiff import DeepDiff, extract
 import shutil
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -35,8 +35,8 @@ class StateManager:
                         sources[asset_type] = [asset_path]
 
         for asset_type in sources.keys():
-            apng_name = f"score_{team_key}_player{player_key}_{asset_type}_apng"
-            out_folder = './out'
+            apng_name = f"{team_key}_player{player_key}_{asset_type}_apng"
+            out_folder = './out/score'
             apng_path = f"{out_folder}/{apng_name}.png"
             html_path = f"{out_folder}/{apng_name}.html"
 
@@ -44,44 +44,50 @@ class StateManager:
             nb_assets = len(asset_list)
 
             if nb_assets > 0:
-                len_slide = float(duration)/nb_assets
+                try:
+                    len_slide = float(duration)/nb_assets
 
-                frames = []
-                for i in asset_list:
-                    new_frame = Image.open(i).convert('RGBA')
-                    frames.append(new_frame)
+                    frames = []
+                    for i in asset_list:
+                        new_frame = Image.open(i).convert('RGBA')
+                        frames.append(new_frame)
 
-                max_width, max_height = 0, 0
-                for i in range(len(frames)):
-                    width, height = frames[i].size
-                    if width > max_width:
-                        max_width = width
-                    if height > max_height:
-                        max_height = height
+                    max_width, max_height = 0, 0
+                    for i in range(len(frames)):
+                        width, height = frames[i].size
+                        if width > max_width:
+                            max_width = width
+                        if height > max_height:
+                            max_height = height
 
-                for i in range(len(frames)):
-                    width, height = frames[i].size
-                    if width != max_width or height != max_height:
-                        ratio = min(max_width/width, max_height/height)
-                        print(ratio)
-                        frames[i] = frames[i].resize(
-                            (int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
+                    for i in range(len(frames)):
+                        width, height = frames[i].size
+                        if width != max_width or height != max_height:
+                            ratio = min(max_width/width, max_height/height)
+                            print(ratio)
+                            frames[i] = frames[i].resize(
+                                (int(width*ratio), int(height*ratio)), Image.ANTIALIAS)
 
-                        new_image = Image.new(
-                            'RGBA', (max_height, max_width), (0, 0, 0, 0))
-                        upper = (max_height - int(height*ratio)) // 2
-                        left = (max_width - int(width*ratio)) // 2
-                        new_image.paste(frames[i], (left, upper))
-                        frames[i] = new_image
+                            new_image = Image.new(
+                                'RGBA', (max_height, max_width), (0, 0, 0, 0))
+                            upper = (max_height - int(height*ratio)) // 2
+                            left = (max_width - int(width*ratio)) // 2
+                            new_image.paste(frames[i], (left, upper))
+                            frames[i] = new_image
 
-                frames[0].save(apng_path, format='PNG',
-                               append_images=frames[1:],
-                               save_all=True,
-                               duration=len_slide, loop=0)
+                    frames[0].save(apng_path, format='PNG',
+                                append_images=frames[1:],
+                                save_all=True,
+                                duration=len_slide, loop=0)
 
-                html_contents = f'<img src="{apng_name}.png">'
-                with open(html_path, 'wt', encoding='utf-8') as html_file:
-                    html_file.write(html_contents)
+                    html_contents = f'<img src="{apng_name}.png">'
+                    with open(html_path, 'wt', encoding='utf-8') as html_file:
+                        html_file.write(html_contents)
+                except UnidentifiedImageError:
+                    if os.path.exists(apng_path):
+                        os.remove(apng_path)
+                    if os.path.exists(html_path):
+                        os.remove(html_path)
 
     def SaveTeamAPNG(team_key: str):
         print(f"Saving APNG for {team_key}")
