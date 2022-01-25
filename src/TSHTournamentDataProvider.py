@@ -75,14 +75,9 @@ class TSHTournamentDataProvider:
         inp.resize(600, 10)
 
         if inp.exec_() == QDialog.Accepted:
-            mainWindow.settings["TOURNAMENT_URL"] = lineEdit.text()
-            mainWindow.SaveSettings()
-            mainWindow.smashggTournamentSlug.setText(
-                "Set tournament slug (" + str(mainWindow.settings.get(
-                    "TOURNAMENT_URL", None)) + ")"
-            )
-            mainWindow.LoadPlayersFromSmashGGTournamentStart(
-                mainWindow.settings.get("TOURNAMENT_URL", None))
+            SettingsManager.Set("TOURNAMENT_URL", lineEdit.text())
+            TSHTournamentDataProvider.SetTournament(
+                SettingsManager.Get("TOURNAMENT_URL"))
 
         inp.deleteLater()
 
