@@ -12,11 +12,11 @@ class StateManager:
     state = {}
 
     def SaveState():
-        with open("./out/program_state.json", 'w') as file:
+        with open("./out/program_state.json", 'w', encoding='utf-8') as file:
             json.dump(StateManager.state, file, indent=4, sort_keys=True)
 
     def LoadState():
-        with open("./out/program_state.json", 'r') as file:
+        with open("./out/program_state.json", 'r', encoding='utf-8') as file:
             StateManager.state = json.load(file)
 
     def Set(key: str, value):
@@ -31,8 +31,8 @@ class StateManager:
         StateManager.SaveState()
         StateManager.ExportText(oldState)
 
-    def Get(key: str):
-        return deep_get(StateManager.state, key)
+    def Get(key: str, default=None):
+        return deep_get(StateManager.state, key, default)
 
     def ExportText(oldState):
         diff = DeepDiff(oldState, StateManager.state)
@@ -99,7 +99,7 @@ class StateManager:
                 shutil.copyfile(
                     di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
             else:
-                with open(f"./out/{path}.txt", 'w') as file:
+                with open(f"./out/{path}.txt", 'w', encoding='utf-8') as file:
                     file.write(str(di))
 
     def RemoveFilesDict(path, di):

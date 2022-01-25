@@ -439,8 +439,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     for i in range(character_element.model().rowCount()):
                         item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                         if item:
-                            print("asopcoes", item.get(
-                                "name", data.get("mains")[0]))
                             if item.get("name") == data.get("mains")[0]:
                                 characterIndex = i
                                 break

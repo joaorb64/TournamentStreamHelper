@@ -75,6 +75,15 @@ class TSHGameAssetManager():
                 self.LoadGameAssets(i+1)
                 break
 
+    def SetGameFromChallongeId(self, gameid):
+        if len(self.games.keys()) == 0:
+            return
+
+        for i, game in enumerate(self.games.values()):
+            if str(game.get("challonge_game_id")) == str(gameid):
+                self.LoadGameAssets(i+1)
+                break
+
     def LoadGameAssets(self, game: int = 0):
         if len(self.games.keys()) == 0:
             return

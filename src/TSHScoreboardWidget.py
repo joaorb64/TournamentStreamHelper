@@ -32,7 +32,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
 
-        StateManager.Set("score", {})
+        # StateManager.Set("score", {})
 
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
@@ -124,12 +124,7 @@ class TSHScoreboardWidget(QDockWidget):
             lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
         )
         TSHTournamentDataProvider.signals.tournament_changed.connect(
-            lambda: [
-                self.btDownload.setText(
-                    "Load set from "+TSHTournamentDataProvider.provider.url),
-                self.btDownload.setEnabled(True)
-            ]
-        )
+            self.UpdateLoadSetBt)
         TSHTournamentDataProvider.signals.tournament_changed.emit()
 
         self.timerLayout = QWidget()
@@ -163,7 +158,8 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team1.{element.objectName()}", text)
                 ])
-            c.textChanged.emit("")
+            c.setText(StateManager.Get(
+                f"score.team1.{c.objectName()}", ""))
 
         for c in self.team1column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -171,7 +167,8 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team1.{element.objectName()}", state)
                 ])
-            c.toggled.emit(False)
+            c.setChecked(StateManager.Get(
+                f"score.team1.{c.objectName()}", False))
 
         self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
         self.columns.layout().addWidget(self.scoreColumn)
@@ -189,7 +186,8 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team2.{element.objectName()}", text)
                 ])
-            c.textChanged.emit("")
+            c.setText(StateManager.Get(
+                f"score.team2.{c.objectName()}", ""))
 
         for c in self.team2column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -197,7 +195,8 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team2.{element.objectName()}", state)
                 ])
-            c.toggled.emit(False)
+            c.setChecked(StateManager.Get(
+                f"score.team2.{c.objectName()}", False))
 
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
@@ -220,7 +219,8 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", element.currentText())
                 ]
             )
-            c.editTextChanged.emit("")
+            c.setCurrentText(StateManager.Get(
+                f"score.{c.objectName()}", ""))
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         for c in self.scoreColumn.findChildren(QSpinBox):
@@ -234,7 +234,9 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", value)
                 ]
             )
-            c.valueChanged.emit(0)
+            c.setValue(StateManager.Get(f"score.{c.objectName()}", 0))
+
+        self.teamsSwapped = False
 
         self.scoreColumn.findChild(
             QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
@@ -248,6 +250,16 @@ class TSHScoreboardWidget(QDockWidget):
         for pw in self.playerWidgets:
             for element in elements:
                 pw.findChild(QWidget, element).setVisible(action.isChecked())
+
+    def UpdateLoadSetBt(self):
+        if TSHTournamentDataProvider.provider and TSHTournamentDataProvider.provider.url:
+            self.btDownload.setText(
+                "Load set from "+TSHTournamentDataProvider.provider.url)
+            self.btDownload.setEnabled(True)
+        else:
+            self.btDownload.setText(
+                "Load set")
+            self.btDownload.setEnabled(False)
 
     def SetCharacterNumber(self, value):
         for pw in self.playerWidgets:
@@ -323,7 +335,7 @@ class TSHScoreboardWidget(QDockWidget):
                         if type(widget) == QComboBox:
                             widget.setCurrentIndex(tmpData[t][i][objName])
 
-        print(tmpData)
+        self.teamsSwapped = not self.teamsSwapped
 
     def NewSetSelected(self, setId):
         if setId:
@@ -374,6 +386,8 @@ class TSHScoreboardWidget(QDockWidget):
             for t, team in enumerate(data.get("entrants")):
                 teamInstances = [self.team1playerWidgets,
                                  self.team2playerWidgets]
+                if self.teamsSwapped:
+                    teamInstances.reverse()
                 teamInstance = teamInstances[t]
 
                 if len(team) > 1:

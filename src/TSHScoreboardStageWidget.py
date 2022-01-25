@@ -64,6 +64,8 @@ class TSHScoreboardStageWidget(QGroupBox):
                     StateManager.Set(
                         f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
+            c.textChanged.emit(StateManager.Get(
+                f"score.team{self.teamNumber}.players.{self.index}.{c.objectName()}"), "")
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(

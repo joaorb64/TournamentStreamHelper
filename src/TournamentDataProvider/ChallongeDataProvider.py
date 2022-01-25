@@ -5,6 +5,7 @@ import traceback
 import re
 import json
 from Helpers.TSHDictHelper import deep_get
+from TSHGameAssetManager import TSHGameAssetManager
 from TSHPlayerDB import TSHPlayerDB
 from TournamentDataProvider import TournamentDataProvider
 from PyQt5.QtCore import *
@@ -19,11 +20,51 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         super().__init__(url)
 
     def GetTournamentData(self):
-        pass
+        finalData = {}
+
+        try:
+            slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)
+            if len(slug) > 0:
+                slug = slug[0]
+
+                data = requests.get(
+                    f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                    headers={
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                        "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                        "Accept-Encoding": "gzip, deflate, br"
+                    }
+                )
+
+                data = json.loads(data.text)
+
+                collection = deep_get(data, "collection", [{}])[0]
+
+                videogame = collection.get("filter", {}).get("id", None)
+                if videogame:
+                    TSHGameAssetManager.instance.SetGameFromChallongeId(
+                        videogame)
+
+                finalData["tournamentName"] = deep_get(collection, "name")
+
+                details = collection.get("details", [])
+                participantsElement = next(
+                    (d for d in details if d.get("icon") == "fa fa-users"), None)
+                if participantsElement:
+                    participants = int(
+                        participantsElement.get("text").split(" ")[0])
+                    finalData["numEntrants"] = participants
+                # finalData["address"] = deep_get(
+                #     data, "data.event.tournament.venueAddress", "")
+        except:
+            traceback.print_exc()
+
+        return finalData
 
     def GetMatch(self, id):
-        # https://challonge.com/pt_BR/matches/{id}/details.json
-        pass
+        # https://challonge.com/en/matches/{id}/details.json
+        return {}
 
     def GetMatches(self):
         final_data = []
@@ -70,7 +111,9 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                 p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
 
                 final_data.append({
+                    "id": deep_get(match, "id"),
                     "round_name": deep_get(match, "round_name"),
+                    "tournament_phase": "Bracket",
                     "p1_name": deep_get(match, "player1.display_name"),
                     "p2_name": deep_get(match, "player2.display_name"),
                     "entrants": [

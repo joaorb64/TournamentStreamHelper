@@ -26,14 +26,16 @@ class TSHTournamentInfoWidget(QDockWidget):
                         StateManager.Set(
                             f"tournamentInfo.{element.objectName()}", text)
                     ])
-                widget.textChanged.emit("")
+                widget.setText(StateManager.Get(
+                    f"tournamentInfo.{widget.objectName()}", ""))
 
         for widget in self.findChildren(QSpinBox):
             widget.valueChanged.connect(lambda value, element=widget: [
                 StateManager.Set(
                     f"tournamentInfo.{element.objectName()}", value)
             ])
-            widget.valueChanged.emit(0)
+            widget.setValue(StateManager.Get(
+                f"tournamentInfo.{widget.objectName()}", 0))
 
     def UpdateData(self, data):
         print("tournamentdata", data)
