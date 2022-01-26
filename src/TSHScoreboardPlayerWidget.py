@@ -21,6 +21,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.index = index
         self.teamNumber = teamNumber
 
+        self.losers = False
+
         uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
 
         self.character_container = self.findChild(QWidget, "characters")
@@ -66,6 +68,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         # self.LoadCharacters()
 
         self.SetIndex(index, teamNumber)
+
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            self.ExportMergedName)
+        self.findChild(QLineEdit, "team").textChanged.connect(
+            self.ExportMergedName)
 
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
@@ -119,6 +126,26 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         StateManager.Set(
             f"score.team{self.teamNumber}.players.{self.index}.character", characters)
+
+    def SetLosers(self, value):
+        self.losers = value
+        self.ExportMergedName()
+
+    def ExportMergedName(self):
+        team = self.findChild(QLineEdit, "team").text()
+        name = self.findChild(QLineEdit, "name").text()
+        merged = ""
+
+        if team != "":
+            merged += team+" | "
+
+        merged += name
+
+        if self.losers:
+            merged += " [L]"
+
+        StateManager.Set(
+            f"score.team{self.teamNumber}.players.{self.index}.mergedName", merged)
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
@@ -196,13 +223,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     TSHScoreboardPlayerWidget.countries[c["iso2"]] = {
                         "name": c["name"],
                         "code": c["iso2"],
+                        "latitude": c.get("latitude"),
+                        "longitude": c.get("longitude"),
                         "states": {}
                     }
 
                     for s in c["states"]:
                         TSHScoreboardPlayerWidget.countries[c["iso2"]]["states"][s["state_code"]] = {
                             "code": s["state_code"],
-                            "name": s["name"]
+                            "name": s["name"],
+                            "latitude": s.get("latitude"),
+                            "longitude": s.get("longitude"),
                         }
 
                 TSHScoreboardPlayerWidget.countryModel = QStandardItemModel()
@@ -218,6 +249,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     countryData = {
                         "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
                         "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
+                        "latitude": TSHScoreboardPlayerWidget.countries[country_code]["latitude"],
+                        "longitude": TSHScoreboardPlayerWidget.countries[country_code]["longitude"],
                         "asset": f'./assets/country_flag/{country_code.lower()}.png'
                     }
                     item.setData(countryData, Qt.ItemDataRole.UserRole)

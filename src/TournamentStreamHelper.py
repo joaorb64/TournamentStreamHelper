@@ -208,7 +208,10 @@ class Window(QMainWindow):
         pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
 
         # Game
+        base_layout = QHBoxLayout()
+
         group_box = QVBoxLayout()
+        base_layout.layout().addLayout(group_box)
         group_box.setSpacing(8)
         group_box.setContentsMargins(4, 4, 4, 4)
 
@@ -216,6 +219,38 @@ class Window(QMainWindow):
         group_box.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
             lambda bt, s=self: TSHTournamentDataProvider.SetSmashggEventSlug(s))
+
+        # Settings
+        self.optionsBt = QToolButton()
+        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
+        self.optionsBt.setToolButtonStyle(
+            Qt.ToolButtonStyle.ToolButtonIconOnly)
+        self.optionsBt.setPopupMode(QToolButton.InstantPopup)
+        base_layout.addWidget(self.optionsBt)
+        self.optionsBt.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.optionsBt.setFixedSize(QSize(32, 32))
+        self.optionsBt.setIconSize(QSize(32, 32))
+        self.optionsBt.setMenu(QMenu())
+        action = self.optionsBt.menu().addAction("Always on top")
+        action.setCheckable(True)
+        action.toggled.connect(self.ToggleAlwaysOnTop)
+        action = self.optionsBt.menu().addAction("Competitor mode")
+        action.toggled.connect(self.ToggleCompetitorMode)
+        action.setCheckable(True)
+        if self.settings.get("competitor_mode", False):
+            action.setChecked(True)
+            # self.player_layouts[0].group_box.hide()
+        action = self.optionsBt.menu().addAction("Check for updates")
+        self.updateAction = action
+        action.setIcon(QIcon('icons/undo.svg'))
+        action.triggered.connect(self.CheckForUpdates)
+        action = self.optionsBt.menu().addAction("Download assets")
+        action.setIcon(QIcon('icons/download.svg'))
+        action.triggered.connect(self.DownloadAssets)
+        action = self.optionsBt.menu().addAction("Change layout orientation")
+        action.setIcon(QIcon('icons/swap.svg'))
+        action.triggered.connect(self.ChangeLayoutOrientation)
 
         gameLabel = QLabel("Game: ")
         gameLabel.setFont(self.font_small)
@@ -228,7 +263,7 @@ class Window(QMainWindow):
             TSHGameAssetManager.instance.LoadGameAssets)
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetGame)
 
-        pre_base_layout.addLayout(group_box)
+        pre_base_layout.addLayout(base_layout)
         group_box.addWidget(self.gameSelect)
 
         self.selectedGame = {}
@@ -277,37 +312,6 @@ class Window(QMainWindow):
         # Botoes no final
         layout_end = QGridLayout()
         # self.base_layout.addLayout(layout_end)
-
-        # Settings
-        self.optionsBt = QToolButton()
-        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
-        self.optionsBt.setText("Settings")
-        self.optionsBt.setToolButtonStyle(
-            Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        self.optionsBt.setPopupMode(QToolButton.InstantPopup)
-        layout_end.addWidget(self.optionsBt, 0, 0, 1, 2)
-        self.optionsBt.setSizePolicy(
-            QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction("Always on top")
-        action.setCheckable(True)
-        action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction("Competitor mode")
-        action.toggled.connect(self.ToggleCompetitorMode)
-        action.setCheckable(True)
-        if self.settings.get("competitor_mode", False):
-            action.setChecked(True)
-            # self.player_layouts[0].group_box.hide()
-        action = self.optionsBt.menu().addAction("Check for updates")
-        self.updateAction = action
-        action.setIcon(QIcon('icons/undo.svg'))
-        action.triggered.connect(self.CheckForUpdates)
-        action = self.optionsBt.menu().addAction("Download assets")
-        action.setIcon(QIcon('icons/download.svg'))
-        action.triggered.connect(self.DownloadAssets)
-        action = self.optionsBt.menu().addAction("Change layout orientation")
-        action.setIcon(QIcon('icons/swap.svg'))
-        action.triggered.connect(self.ChangeLayoutOrientation)
 
         # Downloads
         self.downloadsBt = QToolButton()
@@ -872,7 +876,7 @@ class Window(QMainWindow):
                         assets[key]["assets"][asset]["files"].values())]
                 )/1024/1024) + " MB"
 
-                currVersion = str(self.games.get(key, {}).get(
+                currVersion = str(TSHGameAssetManager.instance.games.get(key, {}).get(
                     "assets", {}).get(asset, {}).get("version"))
                 print(currVersion)
                 version = str(assets[key]["assets"][asset].get("version"))
@@ -2622,6 +2626,9 @@ class Window(QMainWindow):
 
 App.setStyleSheet(qdarkstyle.load_stylesheet(
     palette=qdarkstyle.DarkPalette))
+
+# App.setStyleSheet(qdarkstyle.load_stylesheet(
+#     palette=qdarkstyle.LightPalette))
 
 window = Window()
 sys.exit(App.exec_())

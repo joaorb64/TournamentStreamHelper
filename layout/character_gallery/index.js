@@ -12,7 +12,7 @@
         oldData = data;
         data = await getData();
 
-        let characters = data?.score?.team1?.players["1"]?.character;
+        let characters = data.score.team1.players["1"].character;
 
         if(JSON.stringify(characters) != JSON.stringify(oldCharacters)){
             oldCharacters = characters;
@@ -21,7 +21,7 @@
             characterAssets = []
     
             Object.values(characters).forEach((character)=>{
-                if(character?.assets){
+                if(character.assets){
                     if(character.assets.hasOwnProperty(assetToUse)){
                         characterAssets.push(character.assets[assetToUse])
                     }
