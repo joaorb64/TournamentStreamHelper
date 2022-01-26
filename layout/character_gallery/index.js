@@ -17,7 +17,7 @@
         if(JSON.stringify(characters) != JSON.stringify(oldCharacters)){
             oldCharacters = characters;
 
-            assetToUse = "portrait";
+            assetToUse = "base_files/icon";
             characterAssets = []
     
             Object.values(characters).forEach((character)=>{
