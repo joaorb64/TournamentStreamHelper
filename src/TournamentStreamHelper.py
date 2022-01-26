@@ -252,11 +252,6 @@ class Window(QMainWindow):
         action.setIcon(QIcon('icons/swap.svg'))
         action.triggered.connect(self.ChangeLayoutOrientation)
 
-        gameLabel = QLabel("Game: ")
-        gameLabel.setFont(self.font_small)
-        gameLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        group_box.addWidget(gameLabel)
-
         self.gameSelect = QComboBox()
         self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(
@@ -479,8 +474,8 @@ class Window(QMainWindow):
         TSHTournamentDataProvider.UiMounted()
 
     def SetGame(self):
-        index = next(i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
-            "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename"))
+        index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
+            "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
         if index is not None:
             self.gameSelect.setCurrentIndex(index)
 
@@ -489,7 +484,7 @@ class Window(QMainWindow):
         self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
-        self.gameSelect.addItem("")
+        self.gameSelect.addItem("Select a game", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
             if game[1].get("name"):
                 self.gameSelect.addItem(game[1].get("name"), i+1)

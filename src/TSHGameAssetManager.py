@@ -88,7 +88,10 @@ class TSHGameAssetManager():
         if len(self.games.keys()) == 0:
             return
 
-        game = list(self.games.keys())[game-1]
+        if game == 0:
+            game = ""
+        else:
+            game = list(self.games.keys())[game-1]
 
         # Game is already loaded
         if game == self.selectedGame.get("codename"):
