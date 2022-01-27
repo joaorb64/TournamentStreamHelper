@@ -212,10 +212,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def LoadCountries(self):
         try:
             if TSHScoreboardPlayerWidget.countryModel == None:
-                f = open('./assets/countries+states+cities.json',
-                         encoding='utf-8')
-                countries_json = json.load(f)
-                print("countries+states+cities loaded")
+                countries_json = TSHCountryHelper.countries_json
 
                 TSHScoreboardPlayerWidget.countries = {}
 

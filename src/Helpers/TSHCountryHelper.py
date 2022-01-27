@@ -11,6 +11,7 @@ import json
 
 
 class TSHCountryHelper():
+    countries_json = {}
     countries = {}
     cities = {}
 
@@ -25,6 +26,7 @@ class TSHCountryHelper():
         f = open("./assets/countries+states+cities.json",
                  'r', encoding='utf-8')
         countries_json = json.loads(f.read())
+        TSHCountryHelper.countries_json = countries_json
 
         for c in countries_json:
             TSHCountryHelper.countries[c["iso2"]] = {
