@@ -153,16 +153,16 @@ class Window(QMainWindow):
         commentary.setObjectName("Commentary")
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
 
-        pre_base_layout.setSpacing(0)
-        pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
+        # pre_base_layout.setSpacing(0)
+        # pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
 
         # Game
         base_layout = QHBoxLayout()
 
         group_box = QVBoxLayout()
         base_layout.layout().addLayout(group_box)
-        group_box.setSpacing(8)
-        group_box.setContentsMargins(4, 4, 4, 4)
+        # group_box.setSpacing(8)
+        #group_box.setContentsMargins(4, 4, 4, 4)
 
         self.setTournamentBt = QPushButton("Set tournament")
         group_box.addWidget(self.setTournamentBt)

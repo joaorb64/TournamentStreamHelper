@@ -94,8 +94,7 @@ class TSHTournamentDataProvider:
                 dataItem.setData(s, Qt.ItemDataRole.UserRole)
 
                 model.appendRow([
-                    QStandardItem(s.get("stream", {}).get(
-                        "streamName", "") if s.get("stream") != None else ""),
+                    QStandardItem(s.get("stream", "")),
                     QStandardItem(s.get("tournament_phase", "")),
                     QStandardItem(s["round_name"]),
                     QStandardItem(s["p1_name"]),

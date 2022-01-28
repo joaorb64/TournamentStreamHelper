@@ -214,6 +214,9 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             return({
                 "stage_strike": stageStrikeState,
                 "entrants": entrants if len(entrants[0]) > 0 and len(entrants[1]) > 0 else None,
+                "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
+                "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
+                "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
                 "clear": False
             })
 

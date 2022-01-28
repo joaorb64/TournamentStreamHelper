@@ -63,8 +63,29 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         return finalData
 
     def GetMatch(self, id):
-        # https://challonge.com/en/matches/{id}/details.json
-        return {}
+        finalData = {}
+
+        try:
+            data = requests.get(
+                f"https://challonge.com/en/matches/{id}/details.json",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+            data = json.loads(data.text)
+
+            finalData["team1score"] = deep_get(
+                data, "participants.player1.scores", [None])[0]
+            finalData["team2score"] = deep_get(
+                data, "participants.player2.scores", [None])[0]
+            finalData["clear"] = False
+        except:
+            traceback.print_exc()
+
+        return finalData
 
     def GetMatches(self):
         final_data = []
@@ -110,6 +131,15 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                 p2_gamerTag = p2_split[-1].strip()
                 p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
 
+                stream = deep_get(match, "station.stream_url", None)
+
+                if not stream:
+                    stream = deep_get(
+                        match, "queued_for_station.stream_url", None)
+
+                if stream:
+                    stream = stream.split("twitch.tv/")[1].replace("/", "")
+
                 final_data.append({
                     "id": deep_get(match, "id"),
                     "round_name": deep_get(match, "round_name"),
@@ -125,7 +155,9 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                             "gamerTag": p2_gamerTag,
                             "prefix": p2_prefix
                         }],
-                    ]
+                    ],
+                    "stream": stream,
+                    "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False
                 })
 
             print(final_data)

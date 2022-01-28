@@ -37,10 +37,6 @@ class TSHScoreboardWidget(QDockWidget):
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.widget.setContentsMargins(0, 0, 0, 0)
-
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
         topOptions.layout().setSpacing(0)
@@ -126,6 +122,27 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.signals.tournament_changed.connect(
             self.UpdateLoadSetBt)
         TSHTournamentDataProvider.signals.tournament_changed.emit()
+
+        self.btLoadStreamSet = QPushButton("Load current stream set")
+        self.btLoadStreamSet.setIcon(QIcon("./icons/twitch.svg"))
+        self.btLoadStreamSet.setEnabled(False)
+        bottomOptions.layout().addWidget(self.btLoadStreamSet)
+        self.btLoadStreamSet.clicked.connect(
+            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
+        )
+        # TSHTournamentDataProvider.signals.tournament_changed.connect(
+        #     self.UpdateLoadSetBt)
+        # TSHTournamentDataProvider.signals.tournament_changed.emit()
+
+        self.btLoadPlayerSet = QPushButton("Load player set")
+        self.btLoadPlayerSet.setEnabled(False)
+        bottomOptions.layout().addWidget(self.btLoadPlayerSet)
+        self.btLoadPlayerSet.clicked.connect(
+            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
+        )
+        # TSHTournamentDataProvider.signals.tournament_changed.connect(
+        #     self.UpdateLoadSetBt)
+        # TSHTournamentDataProvider.signals.tournament_changed.emit()
 
         self.timerLayout = QWidget()
         self.timerLayout.setLayout(QHBoxLayout())
@@ -380,6 +397,21 @@ class TSHScoreboardWidget(QDockWidget):
         if data.get("tournament_phase"):
             self.scoreColumn.findChild(
                 QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
+
+        scoreContainers = [
+            self.scoreColumn.findChild(QSpinBox, "score_left"),
+            self.scoreColumn.findChild(QSpinBox, "score_right")
+        ]
+        if self.teamsSwapped:
+            scoreContainers.reverse()
+
+        if data.get("team1score"):
+            scoreContainers[0].setValue(data.get("team1score"))
+        if data.get("team2score"):
+            scoreContainers[1].setValue(data.get("team2score"))
+        if data.get("bestOf"):
+            self.scoreColumn.findChild(
+                QSpinBox, "best_of").setValue(data.get("bestOf"))
 
         if data.get("entrants"):
             self.playerNumber.setValue(
