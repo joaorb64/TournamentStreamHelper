@@ -6,6 +6,7 @@ var baseMap = L.tileLayer.colorFilter(
     "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
         maxZoom: 6,
+        zoomSnap: 0,
         zoomControl: false,
         id: "osm.streets",
         filter: myFilter
@@ -68,8 +69,17 @@ baseMap.addTo(map);
             }) }).addTo(map)
                 .bindTooltip(data.score.team2.players["1"].name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
                 .openTooltip();
+            
+            map.on("zoomend", ()=>{
+                var polyline = L.polyline([pos1, pos2], {color: 'blue', dashArray: '5,10'}).addTo(map);
+            })
 
-            map.flyToBounds(L.latLngBounds(pos1, pos2), { padding: [80, 80], duration: 2, easeLinearity: 0.01 })
+            map.flyToBounds(L.latLngBounds(pos1, pos2), {
+                paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
+                paddingBottomRight: [80, 80],
+                duration: 2,
+                easeLinearity: 0.000001
+            })
         })
     }
 
