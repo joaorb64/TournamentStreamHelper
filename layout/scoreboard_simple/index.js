@@ -1,6 +1,8 @@
 (($) => {
     let startingAnimation = gsap.timeline({ paused: true })
         .from(['.phase'], { duration: .8, opacity: '0', y: "-20px", ease: "power2.inOut" }, 0)
+        .from(['.container'], { duration: .8, opacity: '0', x: "-20px", ease: "power2.inOut" }, 0)
+        .from(['.twitter-container'], { duration: .8, opacity: '0', x: "+40px", ease: "power2.inOut" }, 0)
             
     function Start(){
         startingAnimation.restart();
@@ -13,49 +15,51 @@
         oldData = data;
         data = await getData();
 
-        SetInnerHtml($(".p1 .name"), `
-            <span>
-                <span class='sponsor'>
-                    ${data.p1_org ? (data.p1_org+"&nbsp;") : ""}
-                </span>
-                ${data.p1_name}
-                ${data.p1_losers ? " [L]" : ""}
-            </span>
-        `);
+        if(oldData.score == null || Object.keys(oldData.score.team1.players).length != Object.keys(data.score.team1.players).length) {
+            if(Object.keys(data.score.team1.players).length == 1){
+                gsap.timeline().from(['.singles'], { duration: .8, opacity: '1', ease: "power2.inOut" }, 0)
+                gsap.timeline().to(['.doubles'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
+            } else {
+                gsap.timeline().to(['.singles'], { duration: .8, opacity: '0', ease: "power2.inOut" }, 0)
+                gsap.timeline().from(['.doubles'], { duration: .8, opacity: '1', ease: "power2.inOut" }, 0)
+            }
+        }
 
-        SetInnerHtml($(".p2 .name"), `
-            <span>
-                <span class='sponsor'>
-                    ${data.p2_org ? (data.p2_org+"&nbsp;") : ""}
-                </span>
-                ${data.p2_name}
-                ${data.p2_losers ? " [L]" : ""}
-            </span>
-        `);
+        [data.score.team1, data.score.team2].forEach((team, t) => {
+            Object.values(team.players).forEach((player, p) => {
+                if(p){
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .name`), `
+                        <span>
+                            <span class='sponsor'>
+                                ${player.team ? (player.team+"") : ""}
+                            </span>
+                            ${player.name}
+                            ${team.losers ? " [L]" : ""}
+                        </span>
+                    `);
+            
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .flagcountry`), `
+                        <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                    `);
+            
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .flagstate`), `
+                        <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                    `);
+            
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .twitter`), String(player.twitter));
+            
+                    let score = [data.score.score_left, data.score.score_right]
+    
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .score`), String(score[t]));
+    
+                    SetInnerHtml($(`.t${t+1}.p${p+1} .sponsor-container`),
+                        `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`);
+                }
+            });
+        });
 
-        SetInnerHtml($(".p1 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p1_country.toLowerCase()}.png)'></div>
-        `);
 
-        SetInnerHtml($(".p1 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p1_state_flag.png#${data.p1_state})'></div>
-        `, oldData.p1_state != data.p1_state);
-
-        SetInnerHtml($(".p2 .flagcountry"), `
-            <div class='flag' style='background-image: url(../../assets/country_flag/${data.p2_country.toLowerCase()}.png)'></div>
-        `);
-
-        SetInnerHtml($(".p2 .flagstate"), `
-            <div class='flag' style='background-image: url(../../out/p2_state_flag.png#${data.p2_state})'></div>
-        `, oldData.p2_state != data.p2_state);
-
-        SetInnerHtml($(".p1 .twitter"), String(data.p1_twitter));
-        SetInnerHtml($(".p2 .twitter"), String(data.p2_twitter));
-
-        SetInnerHtml($(".p1 .score"), String(data.score_left));
-        SetInnerHtml($(".p2 .score"), String(data.score_right));
-
-        SetInnerHtml($(".phase"), data.tournament_phase + (data.best_of != 0 ? " - Best of " + data.best_of : ""));
+        //SetInnerHtml($(".phase"), data.tournament_phase + (data.best_of != 0 ? " - Best of " + data.best_of : ""));
     }
 
     $(window).on("load", () => {

@@ -76,9 +76,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ExportMergedName)
 
         self.findChild(QLineEdit, "name").textChanged.connect(
-            self.ExportPlayerImages)
+            lambda x: self.ExportPlayerImages())
         self.findChild(QLineEdit, "team").textChanged.connect(
-            self.ExportPlayerImages)
+            lambda x: self.ExportPlayerImages())
 
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
@@ -86,7 +86,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     print(self.teamNumber, self.index,
                           element.objectName(), text),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
+                        f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
 
         for c in self.findChildren(QComboBox):
@@ -100,7 +100,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         element.currentData().get("code") if element.currentData() else ""
                     ),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
+                        f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
                         )
                     )
                 ]
@@ -131,7 +131,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             characters[i+1] = data
 
         StateManager.Set(
-            f"score.team{self.teamNumber}.players.{self.index}.character", characters)
+            f"score.team.{self.teamNumber}.players.{self.index}.character", characters)
 
     def SetLosers(self, value):
         self.losers = value
@@ -151,7 +151,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             merged += " [L]"
 
         StateManager.Set(
-            f"score.team{self.teamNumber}.players.{self.index}.mergedName", merged)
+            f"score.team.{self.teamNumber}.players.{self.index}.mergedName", merged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         team = self.findChild(QLineEdit, "team").text()
@@ -163,15 +163,24 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         merged += name
 
+        # Player avatar
         if onlineAvatar and not os.path.exists(f"./player_avatar/{merged.lower()}.png"):
             StateManager.Set(
-                f"score.team{self.teamNumber}.players.{self.index}.avatar", onlineAvatar)
+                f"score.team.{self.teamNumber}.players.{self.index}.avatar", onlineAvatar)
+        elif os.path.exists(f"./player_avatar/{merged.lower()}.png"):
+            StateManager.Set(
+                f"score.team.{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged.lower()}.png")
         else:
             StateManager.Set(
-                f"score.team{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged.lower()}.png")
+                f"score.team.{self.teamNumber}.players.{self.index}.avatar", None)
 
-        StateManager.Set(
-            f"score.team{self.teamNumber}.players.{self.index}.sponsor_logo", f"./sponsor_logo/{team.lower()}.png")
+        # Sponsor logo
+        if os.path.exists(f"./sponsor_logo/{team.lower()}.png"):
+            StateManager.Set(
+                f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", f"./sponsor_logo/{team.lower()}.png")
+        else:
+            StateManager.Set(
+                f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", None)
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")

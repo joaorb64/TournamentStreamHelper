@@ -62,10 +62,10 @@ class TSHScoreboardStageWidget(QGroupBox):
                     print(self.teamNumber, self.index,
                           element.objectName(), text),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
+                        f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
             c.textChanged.emit(StateManager.Get(
-                f"score.team{self.teamNumber}.players.{self.index}.{c.objectName()}"), "")
+                f"score.team.{self.teamNumber}.players.{self.index}.{c.objectName()}"), "")
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
@@ -78,7 +78,7 @@ class TSHScoreboardStageWidget(QGroupBox):
                         element.currentData().get("code") if element.currentData() else ""
                     ),
                     StateManager.Set(
-                        f"score.team{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
+                        f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
                         )
                     )
                 ]
@@ -109,7 +109,7 @@ class TSHScoreboardStageWidget(QGroupBox):
             characters[i+1] = data
 
         StateManager.Set(
-            f"score.team{self.teamNumber}.players.{self.index}.character", characters)
+            f"score.team.{self.teamNumber}.players.{self.index}.character", characters)
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")

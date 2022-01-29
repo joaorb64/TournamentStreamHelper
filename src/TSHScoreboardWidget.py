@@ -166,7 +166,7 @@ class TSHScoreboardWidget(QDockWidget):
             c.textChanged.connect(
                 lambda text, element=c: [
                     StateManager.Set(
-                        f"score.team1.{element.objectName()}", text)
+                        f"score.team.1.{element.objectName()}", text)
                 ])
             c.textChanged.emit("")
 
@@ -174,7 +174,7 @@ class TSHScoreboardWidget(QDockWidget):
             c.toggled.connect(
                 lambda state, element=c: [
                     StateManager.Set(
-                        f"score.team1.{element.objectName()}", state)
+                        f"score.team.1.{element.objectName()}", state)
                 ])
             c.toggled.emit(False)
 
@@ -192,7 +192,7 @@ class TSHScoreboardWidget(QDockWidget):
             c.textChanged.connect(
                 lambda text, element=c: [
                     StateManager.Set(
-                        f"score.team2.{element.objectName()}", text)
+                        f"score.team.2.{element.objectName()}", text)
                 ])
             c.textChanged.emit("")
 
@@ -200,12 +200,12 @@ class TSHScoreboardWidget(QDockWidget):
             c.toggled.connect(
                 lambda state, element=c: [
                     StateManager.Set(
-                        f"score.team2.{element.objectName()}", state)
+                        f"score.team.2.{element.objectName()}", state)
                 ])
             c.toggled.emit(False)
 
-        StateManager.Unset(f'score.team1.players')
-        StateManager.Unset(f'score.team2.players')
+        StateManager.Unset(f'score.team.1.players')
+        StateManager.Unset(f'score.team.2.players')
         StateManager.Unset(f'score.stage_strike')
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
@@ -231,32 +231,44 @@ class TSHScoreboardWidget(QDockWidget):
             c.editTextChanged.emit("")
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        for c in self.scoreColumn.findChildren(QSpinBox):
-            c.valueChanged.connect(
-                lambda value, element=c: [
-                    print(
-                        element.objectName(),
-                        value
-                    ),
-                    StateManager.Set(
-                        f"score.{element.objectName()}", value)
-                ]
-            )
-            c.valueChanged.emit(0)
+        self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.{element.objectName()}", value)
+        )
+        self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
+
+        self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.team.1.score", value)
+        )
+        self.scoreColumn.findChild(
+            QSpinBox, "score_left").valueChanged.emit(0)
+
+        self.scoreColumn.findChild(QSpinBox, "score_right").valueChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.team.2.score", value)
+        )
+        self.scoreColumn.findChild(
+            QSpinBox, "score_right").valueChanged.emit(0)
 
         self.team1column.findChild(QLineEdit, "teamName").textChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.team1Logo", f"./team_logo/{value.lower()}.png")
+            lambda value: self.ExportTeamLogo("1", value)
         )
-        self.team1column.findChild(QLineEdit, "teamName").textChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.team2Logo", f"./team_logo/{value.lower()}.png")
+        self.team2column.findChild(QLineEdit, "teamName").textChanged.connect(
+            lambda value: self.ExportTeamLogo("2", value)
         )
 
         self.teamsSwapped = False
 
         self.scoreColumn.findChild(
             QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
+
+    def ExportTeamLogo(self, team, value):
+        if os.path.exists(f"./team_logo/{value.lower()}.png"):
+            StateManager.Set(f"score.team.{team}.logo",
+                             f"./team_logo/{value.lower()}.png")
+        else:
+            StateManager.Set(None)
 
     def LoadCharacters(self):
         TSHScoreboardPlayerWidget.LoadCharacters()
@@ -317,10 +329,10 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2playerWidgets.remove(team2player)
 
         for team in [1, 2]:
-            if StateManager.Get(f'score.team{team}'):
-                for k in list(StateManager.Get(f'score.team{team}.players').keys()):
+            if StateManager.Get(f'score.team.{team}'):
+                for k in list(StateManager.Get(f'score.team.{team}.players').keys()):
                     if not k.isnumeric() or (k.isnumeric() and int(k) > number):
-                        StateManager.Unset(f'score.team{team}.players.{k}')
+                        StateManager.Unset(f'score.team.{team}.players.{k}')
 
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
