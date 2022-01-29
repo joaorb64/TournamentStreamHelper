@@ -233,7 +233,7 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: StateManager.Set(
-                f"score.{element.objectName()}", value)
+                f"score.best_of", value)
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
