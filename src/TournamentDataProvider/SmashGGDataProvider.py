@@ -119,10 +119,11 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
             finalResult["entrants"] = result["new"]["entrants"]
 
-            for t, team in enumerate(result["old"].get("entrants", [])):
-                for p, player in enumerate(team):
-                    if player["mains"]:
-                        finalResult["entrants"][t][p]["mains"] = player["mains"]
+            if result["old"].get("entrants", []) is not None:
+                for t, team in enumerate(result["old"].get("entrants", [])):
+                    for p, player in enumerate(team):
+                        if player["mains"]:
+                            finalResult["entrants"][t][p]["mains"] = player["mains"]
 
         except Exception as e:
             traceback.print_exc()

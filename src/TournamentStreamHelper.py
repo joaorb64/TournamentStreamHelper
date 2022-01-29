@@ -159,13 +159,14 @@ class Window(QMainWindow):
         # Game
         base_layout = QHBoxLayout()
 
-        group_box = QVBoxLayout()
-        base_layout.layout().addLayout(group_box)
-        # group_box.setSpacing(8)
-        #group_box.setContentsMargins(4, 4, 4, 4)
+        group_box = QWidget()
+        group_box.setLayout(QVBoxLayout())
+        group_box.setSizePolicy(
+            QSizePolicy.Minimum, QSizePolicy.Maximum)
+        base_layout.layout().addWidget(group_box)
 
         self.setTournamentBt = QPushButton("Set tournament")
-        group_box.addWidget(self.setTournamentBt)
+        group_box.layout().addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
             lambda bt, s=self: TSHTournamentDataProvider.instance.SetSmashggEventSlug(s))
 
@@ -205,23 +206,9 @@ class Window(QMainWindow):
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetGame)
 
         pre_base_layout.addLayout(base_layout)
-        group_box.addWidget(self.gameSelect)
+        group_box.layout().addWidget(self.gameSelect)
 
         # pre_base_layout.addLayout(group_box)
-
-        # # Set from stream queue
-        # self.getFromStreamQueueBt = QToolButton()
-        # self.getFromStreamQueueBt.setText("Get from queue")
-        # self.getFromStreamQueueBt.setIcon(QIcon('icons/twitch.svg'))
-        # self.getFromStreamQueueBt.setToolButtonStyle(
-        #     Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        # layout_end.addWidget(self.getFromStreamQueueBt, 2, 0, 1, 1)
-        # self.getFromStreamQueueBt.clicked.connect(
-        #     self.LoadSetsFromSmashGGTournamentQueueClicked)
-        # self.getFromStreamQueueBt.setSizePolicy(
-        #     QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
-        # self.getFromStreamQueueBt.setPopupMode(QToolButton.MenuButtonPopup)
-        # self.getFromStreamQueueBt.setMenu(QMenu())
 
         # self.setTwitchUsernameAction = QAction(
         #     "Set Twitch username (" +
@@ -333,7 +320,7 @@ class Window(QMainWindow):
         self.CheckForUpdates(True)
         self.ReloadGames()
 
-        self.qtSettings = QSettings("CompanyNameTest", "AppNameTest")
+        self.qtSettings = QSettings("joao_shino", "TournamentStreamHelper")
 
         if self.qtSettings.value("geometry"):
             self.restoreGeometry(self.qtSettings.value("geometry"))

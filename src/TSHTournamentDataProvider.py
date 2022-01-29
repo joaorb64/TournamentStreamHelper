@@ -1,4 +1,5 @@
 from time import sleep
+import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -101,12 +102,25 @@ class TSHTournamentDataProvider:
                 dataItem = QStandardItem(str(s.get("id")))
                 dataItem.setData(s, Qt.ItemDataRole.UserRole)
 
+                player_names = [s.get("p1_name"), s.get("p2_name")]
+
+                try:
+                    # For doubles, use team name + entrants names
+                    if len(s.get("entrants", [[]])[0]) > 1:
+                        for t, team in enumerate(s.get("entrants")):
+                            pnames = []
+                            for p, player in enumerate(s.get("entrants")[t]):
+                                pnames.append(player.get("gamerTag"))
+                            player_names[t] += " ("+", ".join(pnames)+")"
+                except Exception as e:
+                    traceback.print_exc()
+
                 model.appendRow([
                     QStandardItem(s.get("stream", "")),
                     QStandardItem(s.get("tournament_phase", "")),
                     QStandardItem(s["round_name"]),
-                    QStandardItem(s["p1_name"]),
-                    QStandardItem(s["p2_name"]),
+                    QStandardItem(player_names[0]),
+                    QStandardItem(player_names[1]),
                     dataItem
                 ])
 

@@ -12,6 +12,7 @@ query SetQuery($id: ID!) {
         slots {
             entrant {
                 id
+                name
                 participants {
                     id
                     user {
