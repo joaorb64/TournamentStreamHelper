@@ -4,6 +4,8 @@ import copy
 import traceback
 from deepdiff import DeepDiff, extract
 import shutil
+import threading
+import requests
 
 from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -66,7 +68,7 @@ class StateManager:
             filename = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            #print("Removed:", filename, item)
+            # print("Removed:", filename, item)
 
             StateManager.RemoveFilesDict(filename, item)
 
@@ -79,7 +81,7 @@ class StateManager:
             path = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            #print("Added:", path, item)
+            # print("Added:", path, item)
 
             StateManager.CreateFilesDict(path, item)
 
@@ -94,12 +96,36 @@ class StateManager:
                 StateManager.CreateFilesDict(
                     path+"/"+str(k).replace("/", "_"), i)
         else:
-            #print("try to add: ", path)
+            # print("try to add: ", path)
             if type(di) == str and di.startswith("./"):
                 if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                     os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                 shutil.copyfile(
                     di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+            elif type(di) == str and di.startswith("http") and di.endswith(".png"):
+                try:
+                    if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
+                        os.remove(f"./out/{path}" + "." +
+                                  di.rsplit(".", 1)[-1])
+
+                    def downloadImage(url, dlpath):
+                        r = requests.get(url, stream=True)
+                        if r.status_code == 200:
+                            with open(dlpath, 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                                f.flush()
+
+                    t = threading.Thread(
+                        target=downloadImage,
+                        args=[
+                            di,
+                            f"./out/{path}" + "." + di.rsplit(".", 1)[-1]
+                        ]
+                    )
+                    t.start()
+                except Exception as e:
+                    print(traceback.format_exc())
             else:
                 with open(f"./out/{path}.txt", 'w', encoding='utf-8') as file:
                     file.write(str(di))
@@ -116,14 +142,14 @@ class StateManager:
                 try:
                     removeFile = f"./out/{path}" + \
                         "." + di.rsplit(".", 1)[-1]
-                    #print("try to remove: ", removeFile)
+                    # print("try to remove: ", removeFile)
                     os.remove(removeFile)
                 except:
                     print(traceback.format_exc())
             else:
                 try:
                     removeFile = f"./out/{path}.txt"
-                    #print("try to remove: ", removeFile)
+                    # print("try to remove: ", removeFile)
                     os.remove(removeFile)
                 except:
                     print(traceback.format_exc())

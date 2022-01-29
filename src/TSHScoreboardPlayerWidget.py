@@ -76,9 +76,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ExportMergedName)
 
         self.findChild(QLineEdit, "name").textChanged.connect(
-            self.ExportPlayerImage)
+            self.ExportPlayerImages)
         self.findChild(QLineEdit, "team").textChanged.connect(
-            self.ExportPlayerImage)
+            self.ExportPlayerImages)
 
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
@@ -153,7 +153,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         StateManager.Set(
             f"score.team{self.teamNumber}.players.{self.index}.mergedName", merged)
 
-    def ExportPlayerImage(self, onlineAvatar=None):
+    def ExportPlayerImages(self, onlineAvatar=None):
         team = self.findChild(QLineEdit, "team").text()
         name = self.findChild(QLineEdit, "name").text()
         merged = ""
@@ -169,6 +169,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         else:
             StateManager.Set(
                 f"score.team{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged.lower()}.png")
+
+        StateManager.Set(
+            f"score.team{self.teamNumber}.players.{self.index}.sponsor_logo", f"./sponsor_logo/{team.lower()}.png")
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
@@ -454,7 +457,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.findChild(QWidget, "real_name").setText(f'{data.get("name")}')
 
         if data.get("avatar"):
-            self.ExportPlayerImage(data.get("avatar"))
+            self.ExportPlayerImages(data.get("avatar"))
 
         if data.get("twitter"):
             self.findChild(QWidget, "twitter").setText(
