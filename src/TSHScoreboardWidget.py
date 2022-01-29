@@ -244,6 +244,15 @@ class TSHScoreboardWidget(QDockWidget):
             )
             c.valueChanged.emit(0)
 
+        self.team1column.findChild(QLineEdit, "teamName").textChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.team1Logo", f"./team_logo/{value.lower()}.png")
+        )
+        self.team1column.findChild(QLineEdit, "teamName").textChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.team2Logo", f"./team_logo/{value.lower()}.png")
+        )
+
         self.teamsSwapped = False
 
         self.scoreColumn.findChild(
@@ -431,6 +440,18 @@ class TSHScoreboardWidget(QDockWidget):
         if data.get("bestOf"):
             self.scoreColumn.findChild(
                 QSpinBox, "best_of").setValue(data.get("bestOf"))
+
+        losersContainers = [
+            self.team1column.findChild(QCheckBox, "losers"),
+            self.team2column.findChild(QCheckBox, "losers")
+        ]
+        if self.teamsSwapped:
+            scoreContainers.reverse()
+
+        if data.get("team1losers"):
+            losersContainers[0].setChecked(data.get("team1losers"))
+        if data.get("team2losers"):
+            losersContainers[1].setChecked(data.get("team1losers"))
 
         if data.get("entrants"):
             self.playerNumber.setValue(

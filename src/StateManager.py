@@ -96,6 +96,8 @@ class StateManager:
         else:
             #print("try to add: ", path)
             if type(di) == str and di.startswith("./"):
+                if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
+                    os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                 shutil.copyfile(
                     di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
             else:

@@ -267,7 +267,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                             0].get("externalUsername")
 
                     if len(user.get("images")) > 0:
-                        playerData["picture"] = user.get("images")[
+                        playerData["avatar"] = user.get("images")[
                             0].get("url")
 
                     if user.get("location"):
@@ -570,7 +570,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                     0].get("externalUsername")
 
                             if len(user.get("images")) > 0:
-                                playerData["picture"] = user.get("images")[
+                                playerData["avatar"] = user.get("images")[
                                     0].get("url")
 
                             if user.get("location"):

@@ -1,3 +1,4 @@
+import os
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -74,6 +75,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.findChild(QLineEdit, "team").textChanged.connect(
             self.ExportMergedName)
 
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            self.ExportPlayerImage)
+        self.findChild(QLineEdit, "team").textChanged.connect(
+            self.ExportPlayerImage)
+
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
                 lambda text, element=c: [
@@ -146,6 +152,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         StateManager.Set(
             f"score.team{self.teamNumber}.players.{self.index}.mergedName", merged)
+
+    def ExportPlayerImage(self, onlineAvatar=None):
+        team = self.findChild(QLineEdit, "team").text()
+        name = self.findChild(QLineEdit, "name").text()
+        merged = ""
+
+        if team != "":
+            merged += team+" | "
+
+        merged += name
+
+        if onlineAvatar and not os.path.exists(f"./player_avatar/{merged.lower()}.png"):
+            StateManager.Set(
+                f"score.team{self.teamNumber}.players.{self.index}.avatar", onlineAvatar)
+        else:
+            StateManager.Set(
+                f"score.team{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged.lower()}.png")
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
@@ -430,6 +453,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         if data.get("name"):
             self.findChild(QWidget, "real_name").setText(f'{data.get("name")}')
 
+        if data.get("avatar"):
+            self.ExportPlayerImage(data.get("avatar"))
+
         if data.get("twitter"):
             self.findChild(QWidget, "twitter").setText(
                 f'{data.get("twitter")}')
@@ -462,7 +488,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if data.get("mains"):
             if type(data.get("mains")) == list:
-                print("osmains", data.get("mains"))
                 for element in self.character_elements:
                     character_element = element[1]
                     characterIndex = 0

@@ -394,9 +394,9 @@ class PlayerColumn():
             with open('out/p'+str(self.id)+'_prefix.txt', 'w', encoding='utf-8') as outfile:
                 outfile.write(self.player_org.text())
             removeFileIfExists('out/p'+str(self.id)+'_sponsor.png')
-            if os.path.exists("./sponsor_logos/"+self.player_org.text().lower()+".png"):
+            if os.path.exists("./sponsor_logo/"+self.player_org.text().lower()+".png"):
                 shutil.copy(
-                    "./sponsor_logos/"+self.player_org.text().lower()+".png",
+                    "./sponsor_logo/"+self.player_org.text().lower()+".png",
                     "out/p"+str(self.id)+"_sponsor.png"
                 )
 

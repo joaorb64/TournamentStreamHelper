@@ -241,7 +241,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                             playerData["gamerTag"] = gamerTag
                             playerData["prefix"] = prefix
 
-                            playerData["picture"] = player.get("portrait_url")
+                            playerData["avatar"] = player.get("portrait_url")
 
                             all_entrants[player.get("id")] = playerData
 

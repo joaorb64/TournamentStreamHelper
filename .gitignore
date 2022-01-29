@@ -13,5 +13,9 @@ __pycache__/
 .vscode/
 log_error.txt
 log.txt
-sponsor_logos/*
-!sponsor_logos/*.txt
+sponsor_logo/*
+!sponsor_logo/*.txt
+player_avatar/*
+!player_avatar/*.txt
+team_logo/*
+!team_logo/*.txt
