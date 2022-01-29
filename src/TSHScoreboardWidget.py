@@ -353,6 +353,8 @@ class TSHScoreboardWidget(QDockWidget):
         if data and data.get("id") and data.get("id") != self.lastSetSelected:
             StateManager.Unset(f'score.stage_strike')
 
+            self.ClearScore()
+
             self.StopAutoUpdate()
             self.autoUpdateTimer = QTimer()
             self.autoUpdateTimer.start(5000)
@@ -394,6 +396,16 @@ class TSHScoreboardWidget(QDockWidget):
         self.lastSetSelected = None
         TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino")
 
+    def ClearScore(self):
+        for c in self.scoreColumn.findChildren(QComboBox):
+            c.setCurrentText("")
+
+        for c in self.scoreColumn.findChildren(QSpinBox):
+            c.setValue(0)
+
+        self.team1column.findChild(QCheckBox, "losers").setChecked(False)
+        self.team2column.findChild(QCheckBox, "losers").setChecked(False)
+
     def UpdateSetData(self, data):
         print(data)
 
@@ -412,9 +424,9 @@ class TSHScoreboardWidget(QDockWidget):
         if self.teamsSwapped:
             scoreContainers.reverse()
 
-        if data.get("team1score") is not None:
+        if data.get("team1score"):
             scoreContainers[0].setValue(data.get("team1score"))
-        if data.get("team2score") is not None:
+        if data.get("team2score"):
             scoreContainers[1].setValue(data.get("team2score"))
         if data.get("bestOf"):
             self.scoreColumn.findChild(

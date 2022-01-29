@@ -189,8 +189,8 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             ],
             "stream": stream,
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
-            "team1score": match.get("scores", [0, 0])[0],
-            "team2score": match.get("scores", [0, 0])[1]
+            "team1score": match.get("scores", [None, None])[0],
+            "team2score": match.get("scores", [None, None])[1]
         })
 
     def GetEntrants(self):
