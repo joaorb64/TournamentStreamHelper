@@ -10,8 +10,11 @@ class TournamentDataProvider:
     def GetTournamentData(self):
         pass
 
-    def GetMatch(self, id):
+    def GetMatch(self, setId):
         pass
 
     def GetMatches(self):
+        pass
+
+    def GetStreamMatchId(self, streamName):
         pass

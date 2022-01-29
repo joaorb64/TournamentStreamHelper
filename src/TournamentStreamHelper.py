@@ -167,7 +167,7 @@ class Window(QMainWindow):
         self.setTournamentBt = QPushButton("Set tournament")
         group_box.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
-            lambda bt, s=self: TSHTournamentDataProvider.SetSmashggEventSlug(s))
+            lambda bt, s=self: TSHTournamentDataProvider.instance.SetSmashggEventSlug(s))
 
         # Settings
         self.optionsBt = QToolButton()
@@ -341,7 +341,7 @@ class Window(QMainWindow):
         if self.qtSettings.value("windowState"):
             self.restoreState(self.qtSettings.value("windowState"))
 
-        TSHTournamentDataProvider.UiMounted()
+        TSHTournamentDataProvider.instance.UiMounted()
 
         splash.finish(self)
         self.show()

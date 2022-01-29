@@ -1,0 +1,79 @@
+query SetQuery($id: ID!) {
+    set(id: $id) {
+        event {
+            hasTasks
+            videogame {
+                id
+            }
+        }
+        fullRoundText
+        state
+        totalGames
+        slots {
+            entrant {
+                id
+                participants {
+                    id
+                    user {
+                        id
+                        slug
+                        name
+                        authorizations(types: [TWITTER]) {
+                            type
+                            externalUsername
+                        }
+                        location {
+                            city
+                            country
+                            state
+                        }
+                        images(type: "profile") {
+                            url
+                        }
+                    }
+                    player {
+                        id
+                        gamerTag
+                        prefix
+                        sets(page: 1, perPage: 1) {
+                            nodes {
+                                games {
+                                    selections {
+                                        entrant {
+                                            participants {
+                                                player {
+                                                    id
+                                                }
+                                            }
+                                        }
+                                        selectionValue
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        games {
+            selections {
+                entrant {
+                    id
+                    participants {
+                        player {
+                            id
+                        }
+                    }
+                }
+                selectionValue
+            }
+            winnerId
+        }
+        phaseGroup {
+            phase {
+                name
+            }
+            displayIdentifier
+        }
+    }
+}

@@ -20,4 +20,5 @@ def deep_unset(dictionary, keys):
         if key not in d:
             d[key] = {}
         d = d[key]
-    del d[keys.split(".")[-1]]
+    if keys.split(".")[-1] in d:
+        del d[keys.split(".")[-1]]

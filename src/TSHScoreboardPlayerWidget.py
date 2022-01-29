@@ -408,7 +408,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.Clear()
 
         # Load player data from DB; will be overwriten by incoming data
-        if not dontLoadFromDB:
+        if not dontLoadFromDB and clear:
             tag = data.get(
                 "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
 

@@ -11,6 +11,8 @@ from TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
 import json
 
+from Workers import Worker
+
 
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = pyqtSignal()
@@ -19,26 +21,32 @@ class TSHTournamentDataProviderSignals(QObject):
 
 
 class TSHTournamentDataProvider:
-    provider: TournamentDataProvider = None
-    signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
-    entrantsModel: QStandardItemModel = None
+    instance: "TSHTournamentDataProvider" = None
 
-    def SetTournament(url):
+    def __init__(self) -> None:
+        self.provider: TournamentDataProvider = None
+        self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
+        self.entrantsModel: QStandardItemModel = None
+        self.threadPool = QThreadPool()
+
+    def SetTournament(self, url):
         if "smash.gg" in url:
-            TSHTournamentDataProvider.provider = SmashGGDataProvider(url)
+            TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
+                url)
         elif "challonge.com" in url:
-            TSHTournamentDataProvider.provider = ChallongeDataProvider(url)
+            TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
+                url)
         else:
             print("Unsupported provider...")
 
-        tournamentData = TSHTournamentDataProvider.provider.GetTournamentData()
-        TSHTournamentDataProvider.signals.tournament_data_updated.emit(
+        tournamentData = TSHTournamentDataProvider.instance.provider.GetTournamentData()
+        TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(
             tournamentData)
 
-        TSHTournamentDataProvider.provider.GetEntrants()
-        TSHTournamentDataProvider.signals.tournament_changed.emit()
+        TSHTournamentDataProvider.instance.provider.GetEntrants()
+        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
 
-    def SetSmashggEventSlug(mainWindow):
+    def SetSmashggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)
 
         layout = QVBoxLayout()
@@ -76,13 +84,13 @@ class TSHTournamentDataProvider:
 
         if inp.exec_() == QDialog.Accepted:
             SettingsManager.Set("TOURNAMENT_URL", lineEdit.text())
-            TSHTournamentDataProvider.SetTournament(
+            TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"))
 
         inp.deleteLater()
 
-    def LoadSetsFromTournament(mainWindow):
-        sets = TSHTournamentDataProvider.provider.GetMatches()
+    def LoadSets(self, mainWindow):
+        sets = TSHTournamentDataProvider.instance.provider.GetMatches()
 
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(
@@ -139,14 +147,22 @@ class TSHTournamentDataProvider:
         btOk = QPushButton("OK")
         layout.addWidget(btOk)
         btOk.clicked.connect(
-            lambda x: TSHTournamentDataProvider.SetFromSmashGGSelected(
+            lambda x: TSHTournamentDataProvider.instance.LoadSelectedSet(
                 mainWindow)
         )
 
         mainWindow.smashGGSetSelecDialog.show()
         mainWindow.smashGGSetSelecDialog.resize(1200, 500)
 
-    def SetFromSmashGGSelected(mainWindow):
+    def LoadStreamSet(self, mainWindow, streamName):
+        streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
+            streamName)
+
+        if streamSet:
+            streamSet["auto_update"] = "stream"
+            mainWindow.signals.NewSetSelected.emit(streamSet)
+
+    def LoadSelectedSet(self, mainWindow):
         row = 0
 
         if len(mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()) > 0:
@@ -156,14 +172,21 @@ class TSHTournamentDataProvider:
             row, 5).data(Qt.ItemDataRole.UserRole)
         mainWindow.smashGGSetSelecDialog.close()
 
-        mainWindow.signals.UpdateSetData.emit(setId)
-        mainWindow.signals.NewSetSelected.emit(setId.get("id"))
+        mainWindow.signals.NewSetSelected.emit(setId)
 
-    def GetMatch(mainWindow, setId):
-        data = TSHTournamentDataProvider.provider.GetMatch(setId)
-        mainWindow.signals.UpdateSetData.emit(data)
+    def GetMatch(self, mainWindow, setId, overwrite=True):
+        worker = Worker(self.provider.GetMatch, **
+                        {"setId": setId})
+        worker.signals.result.connect(lambda data: [
+            data.update({"overwrite": overwrite}),
+            mainWindow.signals.UpdateSetData.emit(data)
+        ])
+        self.threadPool.start(worker)
 
-    def UiMounted():
+    def UiMounted(self):
         if SettingsManager.Get("TOURNAMENT_URL"):
-            TSHTournamentDataProvider.SetTournament(
+            TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"))
+
+
+TSHTournamentDataProvider.instance = TSHTournamentDataProvider()

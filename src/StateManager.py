@@ -36,19 +36,19 @@ class StateManager:
 
     def ExportText(oldState):
         diff = DeepDiff(oldState, StateManager.state)
-        print(diff)
+        # print(diff)
 
         mergedDiffs = list(diff.get("values_changed", {}).items())
         mergedDiffs.extend(list(diff.get("type_changes", {}).items()))
 
-        print(mergedDiffs)
+        # print(mergedDiffs)
 
         for changeKey, change in mergedDiffs:
             # Remove "root[" from start and separate keys
             filename = "/".join(changeKey[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            print(filename)
+            # print(filename)
 
             if change.get("new_type") == type(None):
                 StateManager.RemoveFilesDict(
@@ -66,7 +66,7 @@ class StateManager:
             filename = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            print("Removed:", filename, item)
+            #print("Removed:", filename, item)
 
             StateManager.RemoveFilesDict(filename, item)
 
@@ -79,7 +79,7 @@ class StateManager:
             path = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            print("Added:", path, item)
+            #print("Added:", path, item)
 
             StateManager.CreateFilesDict(path, item)
 
@@ -94,7 +94,7 @@ class StateManager:
                 StateManager.CreateFilesDict(
                     path+"/"+str(k).replace("/", "_"), i)
         else:
-            print("try to add: ", path)
+            #print("try to add: ", path)
             if type(di) == str and di.startswith("./"):
                 shutil.copyfile(
                     di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
@@ -114,14 +114,14 @@ class StateManager:
                 try:
                     removeFile = f"./out/{path}" + \
                         "." + di.rsplit(".", 1)[-1]
-                    print("try to remove: ", removeFile)
+                    #print("try to remove: ", removeFile)
                     os.remove(removeFile)
                 except:
                     print(traceback.format_exc())
             else:
                 try:
                     removeFile = f"./out/{path}.txt"
-                    print("try to remove: ", removeFile)
+                    #print("try to remove: ", removeFile)
                     os.remove(removeFile)
                 except:
                     print(traceback.format_exc())

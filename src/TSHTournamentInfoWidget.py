@@ -16,7 +16,7 @@ class TSHTournamentInfoWidget(QDockWidget):
 
         uic.loadUi("src/layout/TSHTournamentInfo.ui", self)
 
-        TSHTournamentDataProvider.signals.tournament_data_updated.connect(
+        TSHTournamentDataProvider.instance.signals.tournament_data_updated.connect(
             self.UpdateData)
 
         for widget in self.findChildren(QLineEdit):
@@ -41,7 +41,6 @@ class TSHTournamentInfoWidget(QDockWidget):
         print("tournamentdata", data)
 
         for key in data.keys():
-            print(key)
             widget: QWidget = self.findChild(QWidget, key)
 
             if widget:

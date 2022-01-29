@@ -22,6 +22,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
 
+        self.lastSetSelected = None
+
         self.autoUpdateTimer: QTimer = None
         self.timeLeftTimer: QTimer = None
 
@@ -113,36 +115,29 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.widget.layout().addWidget(bottomOptions)
 
-        self.btDownload = QPushButton("Load set")
-        self.btDownload.setEnabled(False)
-        bottomOptions.layout().addWidget(self.btDownload)
-        self.btDownload.clicked.connect(
-            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
+        self.btSelectSet = QPushButton("Load set")
+        self.btSelectSet.setEnabled(False)
+        bottomOptions.layout().addWidget(self.btSelectSet)
+        self.btSelectSet.clicked.connect(
+            lambda x: TSHTournamentDataProvider.instance.LoadSets(self)
         )
-        TSHTournamentDataProvider.signals.tournament_changed.connect(
-            self.UpdateLoadSetBt)
-        TSHTournamentDataProvider.signals.tournament_changed.emit()
 
         self.btLoadStreamSet = QPushButton("Load current stream set")
         self.btLoadStreamSet.setIcon(QIcon("./icons/twitch.svg"))
         self.btLoadStreamSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btLoadStreamSet)
-        self.btLoadStreamSet.clicked.connect(
-            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
-        )
-        # TSHTournamentDataProvider.signals.tournament_changed.connect(
-        #     self.UpdateLoadSetBt)
-        # TSHTournamentDataProvider.signals.tournament_changed.emit()
+        self.btLoadStreamSet.clicked.connect(self.LoadStreamSetClicked)
 
         self.btLoadPlayerSet = QPushButton("Load player set")
         self.btLoadPlayerSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btLoadPlayerSet)
         self.btLoadPlayerSet.clicked.connect(
-            lambda x: TSHTournamentDataProvider.LoadSetsFromTournament(self)
+            lambda x: TSHTournamentDataProvider.instance.LoadUserSet(self)
         )
-        # TSHTournamentDataProvider.signals.tournament_changed.connect(
-        #     self.UpdateLoadSetBt)
-        # TSHTournamentDataProvider.signals.tournament_changed.emit()
+
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateBottomButtons)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
 
         self.timerLayout = QWidget()
         self.timerLayout.setLayout(QHBoxLayout())
@@ -175,8 +170,7 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team1.{element.objectName()}", text)
                 ])
-            c.setText(StateManager.Get(
-                f"score.team1.{c.objectName()}", ""))
+            c.textChanged.emit("")
 
         for c in self.team1column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -184,8 +178,7 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team1.{element.objectName()}", state)
                 ])
-            c.setChecked(StateManager.Get(
-                f"score.team1.{c.objectName()}", False))
+            c.toggled.emit(False)
 
         self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
         self.columns.layout().addWidget(self.scoreColumn)
@@ -203,8 +196,7 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team2.{element.objectName()}", text)
                 ])
-            c.setText(StateManager.Get(
-                f"score.team2.{c.objectName()}", ""))
+            c.textChanged.emit("")
 
         for c in self.team2column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -212,9 +204,11 @@ class TSHScoreboardWidget(QDockWidget):
                     StateManager.Set(
                         f"score.team2.{element.objectName()}", state)
                 ])
-            c.setChecked(StateManager.Get(
-                f"score.team2.{c.objectName()}", False))
+            c.toggled.emit(False)
 
+        StateManager.Unset(f'score.team1.players')
+        StateManager.Unset(f'score.team2.players')
+        StateManager.Unset(f'score.stage_strike')
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
 
@@ -236,8 +230,7 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", element.currentText())
                 ]
             )
-            c.setCurrentText(StateManager.Get(
-                f"score.{c.objectName()}", ""))
+            c.editTextChanged.emit("")
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         for c in self.scoreColumn.findChildren(QSpinBox):
@@ -251,7 +244,7 @@ class TSHScoreboardWidget(QDockWidget):
                         f"score.{element.objectName()}", value)
                 ]
             )
-            c.setValue(StateManager.Get(f"score.{c.objectName()}", 0))
+            c.valueChanged.emit(0)
 
         self.teamsSwapped = False
 
@@ -268,15 +261,17 @@ class TSHScoreboardWidget(QDockWidget):
             for element in elements:
                 pw.findChild(QWidget, element).setVisible(action.isChecked())
 
-    def UpdateLoadSetBt(self):
-        if TSHTournamentDataProvider.provider and TSHTournamentDataProvider.provider.url:
-            self.btDownload.setText(
-                "Load set from "+TSHTournamentDataProvider.provider.url)
-            self.btDownload.setEnabled(True)
+    def UpdateBottomButtons(self):
+        if TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.url:
+            self.btSelectSet.setText(
+                "Load set from "+TSHTournamentDataProvider.instance.provider.url)
+            self.btSelectSet.setEnabled(True)
+            self.btLoadStreamSet.setEnabled(True)
+            self.btLoadPlayerSet.setEnabled(True)
         else:
-            self.btDownload.setText(
+            self.btSelectSet.setText(
                 "Load set")
-            self.btDownload.setEnabled(False)
+            self.btSelectSet.setEnabled(False)
 
     def SetCharacterNumber(self, value):
         for pw in self.playerWidgets:
@@ -356,22 +351,28 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.teamsSwapped = not self.teamsSwapped
 
-    def NewSetSelected(self, setId):
-        if setId:
+    def NewSetSelected(self, data):
+        if data and data.get("id") and data.get("id") != self.lastSetSelected:
+            StateManager.Unset(f'score.stage_strike')
+
             self.StopAutoUpdate()
-
-            TSHTournamentDataProvider.GetMatch(self, setId)
-
             self.autoUpdateTimer = QTimer()
             self.autoUpdateTimer.start(5000)
-            self.autoUpdateTimer.timeout.connect(
-                lambda setId=setId: TSHTournamentDataProvider.GetMatch(self, setId))
-
             self.timeLeftTimer = QTimer()
             self.timeLeftTimer.start(100)
             self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
-
             self.timerLayout.setVisible(True)
+            TSHTournamentDataProvider.instance.GetMatch(
+                self, data["id"], overwrite=True)
+
+            self.autoUpdateTimer.timeout.connect(
+                lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data["id"], overwrite=False))
+
+            if(data.get("auto_update") == "stream"):
+                self.autoUpdateTimer.timeout.connect(
+                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino"))
+
+            self.lastSetSelected = data.get("id")
 
     def StopAutoUpdate(self):
         if self.autoUpdateTimer != None:
@@ -386,6 +387,10 @@ class TSHScoreboardWidget(QDockWidget):
         if self.autoUpdateTimer:
             self.timerTime.setText(
                 str(int(self.autoUpdateTimer.remainingTime()/1000)))
+
+    def LoadStreamSetClicked(self):
+        self.lastSetSelected = None
+        TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino")
 
     def UpdateSetData(self, data):
         print(data)
@@ -405,9 +410,9 @@ class TSHScoreboardWidget(QDockWidget):
         if self.teamsSwapped:
             scoreContainers.reverse()
 
-        if data.get("team1score"):
+        if data.get("team1score") is not None:
             scoreContainers[0].setValue(data.get("team1score"))
-        if data.get("team2score"):
+        if data.get("team2score") is not None:
             scoreContainers[1].setValue(data.get("team2score"))
         if data.get("bestOf"):
             self.scoreColumn.findChild(
@@ -432,7 +437,7 @@ class TSHScoreboardWidget(QDockWidget):
 
                 for p, player in enumerate(team):
                     teamInstance[p].SetData(
-                        player, False, data.get("clear", True))
+                        player, False, data.get("overwrite", True))
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))

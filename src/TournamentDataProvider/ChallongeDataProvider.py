@@ -62,12 +62,12 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
         return finalData
 
-    def GetMatch(self, id):
+    def GetMatch(self, setId, progress_callback):
         finalData = {}
 
         try:
             data = requests.get(
-                f"https://challonge.com/en/matches/{id}/details.json",
+                self.url+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -77,13 +77,26 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             )
             data = json.loads(data.text)
 
-            finalData["team1score"] = deep_get(
-                data, "participants.player1.scores", [None])[0]
-            finalData["team2score"] = deep_get(
-                data, "participants.player2.scores", [None])[0]
-            finalData["clear"] = False
+            rounds = deep_get(data, "rounds", {})
+            matches = deep_get(data, "matches_by_round", {})
+
+            all_matches = []
+
+            for round in matches.values():
+                for match in round:
+                    match["round_name"] = next(
+                        r["title"] for r in rounds if r["number"] == match.get("round"))
+                    all_matches.append(match)
+
+            match = next((m for m in all_matches if str(
+                m.get("id")) == str(setId)), None)
+
+            if match:
+                finalData = self.ParseMatchData(match)
         except:
             traceback.print_exc()
+
+        print(finalData)
 
         return finalData
 
@@ -100,7 +113,6 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                     "Accept-Encoding": "gzip, deflate, br"
                 }
             )
-            print(data)
 
             data = json.loads(data.text)
 
@@ -119,52 +131,67 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                 match for match in all_matches if match.get("state") == "open"]
 
             for match in all_matches:
-                p1_split = deep_get(
-                    match, "player1.display_name").rsplit("|", 1)
-
-                p1_gamerTag = p1_split[-1].strip()
-                p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
-
-                p2_split = deep_get(
-                    match, "player2.display_name").rsplit("|", 1)
-
-                p2_gamerTag = p2_split[-1].strip()
-                p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
-
-                stream = deep_get(match, "station.stream_url", None)
-
-                if not stream:
-                    stream = deep_get(
-                        match, "queued_for_station.stream_url", None)
-
-                if stream:
-                    stream = stream.split("twitch.tv/")[1].replace("/", "")
-
-                final_data.append({
-                    "id": deep_get(match, "id"),
-                    "round_name": deep_get(match, "round_name"),
-                    "tournament_phase": "Bracket",
-                    "p1_name": deep_get(match, "player1.display_name"),
-                    "p2_name": deep_get(match, "player2.display_name"),
-                    "entrants": [
-                        [{
-                            "gamerTag": p1_gamerTag,
-                            "prefix": p1_prefix
-                        }],
-                        [{
-                            "gamerTag": p2_gamerTag,
-                            "prefix": p2_prefix
-                        }],
-                    ],
-                    "stream": stream,
-                    "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False
-                })
-
+                final_data.append(self.ParseMatchData(match))
             print(final_data)
         except Exception as e:
             traceback.print_exc()
 
         return final_data
+
+    def GetStreamMatchId(self, streamName):
+        sets = self.GetMatches()
+
+        streamSet = next(
+            (s for s in sets if s.get("stream", None) ==
+             streamName and s.get("is_current_stream_game")),
+            None
+        )
+
+        return streamSet
+
+    def ParseMatchData(self, match):
+        p1_split = deep_get(
+            match, "player1.display_name").rsplit("|", 1)
+
+        p1_gamerTag = p1_split[-1].strip()
+        p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
+
+        p2_split = deep_get(
+            match, "player2.display_name").rsplit("|", 1)
+
+        p2_gamerTag = p2_split[-1].strip()
+        p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
+
+        stream = deep_get(match, "station.stream_url", None)
+
+        if not stream:
+            stream = deep_get(
+                match, "queued_for_station.stream_url", None)
+
+        if stream:
+            stream = stream.split("twitch.tv/")[1].replace("/", "")
+
+        return({
+            "id": deep_get(match, "id"),
+            "round_name": deep_get(match, "round_name"),
+            "tournament_phase": "Bracket",
+            "p1_name": deep_get(match, "player1.display_name"),
+            "p2_name": deep_get(match, "player2.display_name"),
+            "entrants": [
+                [{
+                    "gamerTag": p1_gamerTag,
+                    "prefix": p1_prefix
+                }],
+                [{
+                    "gamerTag": p2_gamerTag,
+                    "prefix": p2_prefix
+                }],
+            ],
+            "stream": stream,
+            "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
+            "team1score": match.get("scores", [0, 0])[0],
+            "team2score": match.get("scores", [0, 0])[1]
+        })
 
     def GetEntrants(self):
         self.threadpool = QThreadPool()
