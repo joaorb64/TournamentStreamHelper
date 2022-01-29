@@ -118,9 +118,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.btSelectSet = QPushButton("Load set")
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
-        self.btSelectSet.clicked.connect(
-            lambda x: TSHTournamentDataProvider.instance.LoadSets(self)
-        )
+        self.btSelectSet.clicked.connect(self.LoadSetClicked)
 
         self.btLoadStreamSet = QPushButton("Load current stream set")
         self.btLoadStreamSet.setIcon(QIcon("./icons/twitch.svg"))
@@ -388,6 +386,10 @@ class TSHScoreboardWidget(QDockWidget):
             self.timerTime.setText(
                 str(int(self.autoUpdateTimer.remainingTime()/1000)))
 
+    def LoadSetClicked(self):
+        self.lastSetSelected = None
+        TSHTournamentDataProvider.instance.LoadSets(self)
+
     def LoadStreamSetClicked(self):
         self.lastSetSelected = None
         TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino")
@@ -436,8 +438,16 @@ class TSHScoreboardWidget(QDockWidget):
                         QLineEdit, "teamName").setText(teamNames[t])
 
                 for p, player in enumerate(team):
-                    teamInstance[p].SetData(
-                        player, False, data.get("overwrite", True))
+                    if data.get("overwrite"):
+                        teamInstance[p].SetData(
+                            player, False, True)
+
+                    if data.get("has_selection_data"):
+                        player = {
+                            "mains": player.get("mains")
+                        }
+                        teamInstance[p].SetData(
+                            player, True, False)
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))

@@ -124,6 +124,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                     for p, player in enumerate(team):
                         if player["mains"]:
                             finalResult["entrants"][t][p]["mains"] = player["mains"]
+                            finalResult["has_selection_data"] = True
 
         except Exception as e:
             traceback.print_exc()
