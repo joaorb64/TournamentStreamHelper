@@ -438,12 +438,25 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                     "mains": [TSHGameAssetManager.instance.GetCharacterFromSmashGGId(char)[0], 0]
                 })
 
+        team1losers = False
+        team2losers = False
+
+        if respTasks.get("entities", {}).get("sets", {}).get("isGF", False):
+            if "Reset" not in respTasks.get("entities", {}).get("sets", {}).get("fullRoundText", ""):
+                team1losers = False
+                team2losers = True
+            else:
+                team1losers = True
+                team2losers = True
+
         return({
             "stage_strike": stageStrikeState,
             "entrants": entrants if len(entrants[0]) > 0 and len(entrants[1]) > 0 else None,
             "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
             "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
-            "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None)
+            "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
+            "team1losers": team1losers,
+            "team2losers": team2losers
         })
 
     def GetStreamMatchId(self, streamName):

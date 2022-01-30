@@ -368,6 +368,19 @@ class TSHScoreboardWidget(QDockWidget):
                         if type(widget) == QComboBox:
                             widget.setCurrentIndex(tmpData[t][i][objName])
 
+        # Scores
+        scoreLeft = self.scoreColumn.findChild(QSpinBox, "score_left").value()
+        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(
+            self.scoreColumn.findChild(QSpinBox, "score_right").value())
+        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(scoreLeft)
+
+        # Losers
+        losersLeft = self.team1column.findChild(
+            QCheckBox, "losers").isChecked()
+        self.team1column.findChild(QCheckBox, "losers").setChecked(
+            self.team2column.findChild(QCheckBox, "losers").isChecked())
+        self.team2column.findChild(QCheckBox, "losers").setChecked(losersLeft)
+
         self.teamsSwapped = not self.teamsSwapped
 
     def NewSetSelected(self, data):
@@ -458,12 +471,12 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2column.findChild(QCheckBox, "losers")
         ]
         if self.teamsSwapped:
-            scoreContainers.reverse()
+            losersContainers.reverse()
 
-        if data.get("team1losers"):
+        if data.get("team1losers") is not None:
             losersContainers[0].setChecked(data.get("team1losers"))
-        if data.get("team2losers"):
-            losersContainers[1].setChecked(data.get("team1losers"))
+        if data.get("team2losers") is not None:
+            losersContainers[1].setChecked(data.get("team2losers"))
 
         if data.get("entrants"):
             self.playerNumber.setValue(

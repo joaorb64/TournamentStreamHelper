@@ -1,11 +1,6 @@
 query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}) {
   event(slug: $eventSlug) {
-    id
-    videogame {
-        id
-        name
-    }
-    sets(page: $page, perPage: 64, sortType: MAGIC, filters: $filters) {
+    sets(page: $page, perPage: 999, sortType: MAGIC, filters: $filters) {
       pageInfo {
         page
         total
@@ -18,50 +13,22 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
         identifier
         fullRoundText
         state
-        setLink
         entrant1Score
         entrant2Score
-        bestOf
-        filledSlots
-        stationNumber
         slots {
-            id
-            slotIndex
             entrant {
-                id
                 name
                 participants {
                     player {
-                        id
                         gamerTag
                         prefix
-                        name
-                    }
-                    user {
-                        id
-                        prefix
-                        name
-                        location {
-                            country
-                            state
-                            city
-                        }
-                        authorizations(types: [TWITTER]) {
-                            externalUsername
-                        }
-                        images(type: "profile") {
-                            url
-                        }
                     }
                 }
             }
         }
         phaseGroup {
-            id
-            bracketType
             displayIdentifier
             phase {
-                id
                 name
             }
         }
