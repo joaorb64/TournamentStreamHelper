@@ -177,7 +177,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                 1,
                                 6,
                                 2,
-                                3
+                                # 3
                             ],
                             "hideEmpty": True
                         },

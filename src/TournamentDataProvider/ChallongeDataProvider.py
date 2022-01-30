@@ -82,10 +82,15 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
             all_matches = []
 
-            for round in matches.values():
-                for match in round:
+            for r, round in enumerate(matches.values()):
+                for m, match in enumerate(round):
                     match["round_name"] = next(
                         r["title"] for r in rounds if r["number"] == match.get("round"))
+                    if r == len(matches.values()) - 1:
+                        if m == 0:
+                            match["isGF"] = True
+                        elif m == 1:
+                            match["isGFR"] = True
                     all_matches.append(match)
 
             match = next((m for m in all_matches if str(
@@ -132,7 +137,8 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
             for match in all_matches:
                 final_data.append(self.ParseMatchData(match))
-            print(final_data)
+
+            final_data.reverse()
         except Exception as e:
             traceback.print_exc()
 
@@ -155,12 +161,14 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
         p1_gamerTag = p1_split[-1].strip()
         p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
+        p1_avatar = deep_get(match, "player1.portrait_url")
 
         p2_split = deep_get(
             match, "player2.display_name").rsplit("|", 1)
 
         p2_gamerTag = p2_split[-1].strip()
         p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
+        p2_avatar = deep_get(match, "player2.portrait_url")
 
         stream = deep_get(match, "station.stream_url", None)
 
@@ -171,6 +179,16 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         if stream:
             stream = stream.split("twitch.tv/")[1].replace("/", "")
 
+        team1losers = False
+        team2losers = False
+
+        if match.get("isGF"):
+            team1losers = False
+            team2losers = True
+        elif match.get("isGFR"):
+            team1losers = True
+            team2losers = True
+
         return({
             "id": deep_get(match, "id"),
             "round_name": deep_get(match, "round_name"),
@@ -180,17 +198,21 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             "entrants": [
                 [{
                     "gamerTag": p1_gamerTag,
-                    "prefix": p1_prefix
+                    "prefix": p1_prefix,
+                    "avatar": p1_avatar
                 }],
                 [{
                     "gamerTag": p2_gamerTag,
-                    "prefix": p2_prefix
+                    "prefix": p2_prefix,
+                    "avatar": p2_avatar
                 }],
             ],
             "stream": stream,
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
             "team1score": match.get("scores", [None, None])[0],
-            "team2score": match.get("scores", [None, None])[1]
+            "team2score": match.get("scores", [None, None])[1],
+            "team1losers": team1losers,
+            "team2losers": team2losers,
         })
 
     def GetEntrants(self):

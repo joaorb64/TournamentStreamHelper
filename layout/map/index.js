@@ -25,61 +25,55 @@ baseMap.addTo(map);
         pingData = getPings().then((pingData)=>{
             console.log(pingData)
 
-            let pos1 = [
-                data.score.team1.players["1"].state.latitude,
-                data.score.team1.players["1"].state.longitude,
-            ]
+            Object.values(data.score.team).forEach((team)=>{
+                Object.values(team.players).forEach((player)=>{
+                    let pos = [
+                        player.state.latitude? player.state.latitude : player.country.latitude,
+                        player.state.longitude? player.state.longitude : player.country.latitude,
+                    ]
 
-            let server1 = findClosestServer(pingData, pos1[0], pos1[1])
+                    let server = findClosestServer(pingData, pos[0], pos[1])
 
-            L.marker(pos1, { icon: L.icon({
-                iconUrl: "./marker.svg",
-                iconSize: [12, 12],
-                iconAnchor: [6, 6],
-            }) }).addTo(map)
-                .bindTooltip(data.score.team1.players["1"].name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
-                .openTooltip();
+                    L.marker(pos, { icon: L.icon({
+                        iconUrl: "./marker.svg",
+                        iconSize: [12, 12],
+                        iconAnchor: [6, 6],
+                    }) }).addTo(map)
+                        .bindTooltip(player.name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
+                        .openTooltip();
+                })
+            })
 
-            let pos2 = [
-                data.score.team2.players["1"].state.latitude,
-                data.score.team2.players["1"].state.longitude,
-            ]
+            // let ping = pingBetweenServers(server1, server2);
+            // let distance = distanceInKm(pos1, pos2);
 
-            let server2 = findClosestServer(pingData, pos2[0], pos2[1])
+            // console.log("Ping: "+ping);
+            // console.log("Distance: "+distance);
 
-            console.log(server1)
-            console.log(server2)
+            // $("#distance").html("Distance: "+distance.toFixed(2)+" Km"+" / "+(distance*0.621371).toFixed(2)+" mi")
+            // $("#ping").html("Estimated ping: "+ping.toFixed(2)+" ms")
 
-            let ping = pingBetweenServers(server1, server2);
-            let distance = distanceInKm(pos1, pos2);
+            // gsap.timeline()
+            //     .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
 
-            console.log("Ping: "+ping);
-            console.log("Distance: "+distance);
-
-            $("#distance").html("Distance: "+distance.toFixed(2)+" Km"+" / "+(distance*0.621371).toFixed(2)+" mi")
-            $("#ping").html("Estimated ping: "+ping.toFixed(2)+" ms")
-
-            gsap.timeline()
-                .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
-
-            L.marker(pos2, { icon: L.icon({
-                iconUrl: "../../icons/update_circle.svg",
-                iconSize: [12, 12],
-                iconAnchor: [6, 6],
-            }) }).addTo(map)
-                .bindTooltip(data.score.team2.players["1"].name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
-                .openTooltip();
+            // L.marker(pos2, { icon: L.icon({
+            //     iconUrl: "../../icons/update_circle.svg",
+            //     iconSize: [12, 12],
+            //     iconAnchor: [6, 6],
+            // }) }).addTo(map)
+            //     .bindTooltip(data.score.team2.players["1"].name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
+            //     .openTooltip();
             
-            map.on("zoomend", ()=>{
-                var polyline = L.polyline([pos1, pos2], {color: 'blue', dashArray: '5,10'}).addTo(map);
-            })
+            // map.on("zoomend", ()=>{
+            //     var polyline = L.polyline([pos1, pos2], {color: 'blue', dashArray: '5,10'}).addTo(map);
+            // })
 
-            map.flyToBounds(L.latLngBounds(pos1, pos2), {
-                paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
-                paddingBottomRight: [80, 80],
-                duration: 2,
-                easeLinearity: 0.000001
-            })
+            // map.flyToBounds(L.latLngBounds(pos1, pos2), {
+            //     paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
+            //     paddingBottomRight: [80, 80],
+            //     duration: 2,
+            //     easeLinearity: 0.000001
+            // })
         })
     }
 
