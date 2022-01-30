@@ -47,8 +47,8 @@ baseMap.addTo(map);
         Object.values(data.score.team).forEach((team)=>{
             Object.values(team.players).forEach((player)=>{
                 let pos = [
-                    player.state.latitude? player.state.latitude : player.country.latitude,
-                    player.state.longitude? player.state.longitude : player.country.latitude,
+                    player.state.latitude != null ? parseFloat(player.state.latitude) : parseFloat(player.country.latitude),
+                    player.state.longitude != null ? parseFloat(player.state.longitude) : parseFloat(player.country.longitude),
                 ]
                 positions.push(pos)
 
@@ -93,7 +93,7 @@ baseMap.addTo(map);
 
         console.log("Ping: "+ping);
 
-        let pingString = maxPing < 10 ? "< 10" : maxPing.toFixed(2);
+        let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
         $("#ping").html("Estimated ping: "+pingString+" ms")
 
         let maxDistance = 0;
