@@ -40,6 +40,12 @@ class TSHTournamentInfoWidget(QDockWidget):
     def UpdateData(self, data):
         print("tournamentdata", data)
 
+        if not data.get("initial_load"):
+            for widget in self.findChildren(QLineEdit):
+                widget.setText("")
+            for widget in self.findChildren(QSpinBox):
+                widget.setValue(0)
+
         for key in data.keys():
             widget: QWidget = self.findChild(QWidget, key)
 

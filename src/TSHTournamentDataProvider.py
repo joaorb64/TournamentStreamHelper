@@ -1,3 +1,4 @@
+import re
 from time import sleep
 import traceback
 from PyQt5.QtGui import *
@@ -30,7 +31,7 @@ class TSHTournamentDataProvider:
         self.entrantsModel: QStandardItemModel = None
         self.threadPool = QThreadPool()
 
-    def SetTournament(self, url):
+    def SetTournament(self, url, initialLoading=False):
         if "smash.gg" in url:
             TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
                 url)
@@ -41,6 +42,7 @@ class TSHTournamentDataProvider:
             print("Unsupported provider...")
 
         tournamentData = TSHTournamentDataProvider.instance.provider.GetTournamentData()
+        tournamentData.update({"initial_load": initialLoading})
         TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(
             tournamentData)
 
@@ -61,7 +63,7 @@ class TSHTournamentDataProvider:
         okButton = QPushButton("OK")
         validators = [
             QRegularExpression("smash.gg/tournament/[^/]+/event/[^/]+"),
-            QRegularExpression("challonge.com.*/.+")
+            QRegularExpression("challonge.com/.+/.+")
         ]
 
         def validateText():
@@ -84,7 +86,20 @@ class TSHTournamentDataProvider:
         inp.resize(600, 10)
 
         if inp.exec_() == QDialog.Accepted:
-            SettingsManager.Set("TOURNAMENT_URL", lineEdit.text())
+            url = lineEdit.text()
+
+            if "smash.gg" in url:
+                matches = re.match(
+                    "(.*smash.gg/tournament/[^/]*/event/[^/]*)", url)
+                if matches:
+                    url = matches.group(0)
+            if "challonge" in url:
+                matches = re.match(
+                    "(.*challonge.com/[^/]*/[^/]*)", url)
+                if matches:
+                    url = matches.group(0)
+
+            SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"))
 
@@ -200,7 +215,7 @@ class TSHTournamentDataProvider:
     def UiMounted(self):
         if SettingsManager.Get("TOURNAMENT_URL"):
             TSHTournamentDataProvider.instance.SetTournament(
-                SettingsManager.Get("TOURNAMENT_URL"))
+                SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
 
 
 TSHTournamentDataProvider.instance = TSHTournamentDataProvider()
