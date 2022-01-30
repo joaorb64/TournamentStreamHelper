@@ -25,14 +25,19 @@ baseMap.addTo(map);
         pingData = getPings().then((pingData)=>{
             console.log(pingData)
 
+            let servers = []
+            let positions = []
+
             Object.values(data.score.team).forEach((team)=>{
                 Object.values(team.players).forEach((player)=>{
                     let pos = [
                         player.state.latitude? player.state.latitude : player.country.latitude,
                         player.state.longitude? player.state.longitude : player.country.latitude,
                     ]
+                    positions.push(pos)
 
                     let server = findClosestServer(pingData, pos[0], pos[1])
+                    servers.push(server)
 
                     L.marker(pos, { icon: L.icon({
                         iconUrl: "./marker.svg",
@@ -44,36 +49,66 @@ baseMap.addTo(map);
                 })
             })
 
-            // let ping = pingBetweenServers(server1, server2);
-            // let distance = distanceInKm(pos1, pos2);
+            let maxPing = 0;
 
-            // console.log("Ping: "+ping);
-            // console.log("Distance: "+distance);
+            servers.forEach((server1)=>{
+                servers.forEach((server2)=>{
+                    if(server1 != server2){
+                        let ping = pingBetweenServers(server1, server2);
+                        if(ping > maxPing){
+                            maxPing = ping;
+                        }
+                    }
+                })
+            })
 
-            // $("#distance").html("Distance: "+distance.toFixed(2)+" Km"+" / "+(distance*0.621371).toFixed(2)+" mi")
-            // $("#ping").html("Estimated ping: "+ping.toFixed(2)+" ms")
+            console.log("Ping: "+ping);
 
-            // gsap.timeline()
-            //     .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
+            let pingString = maxPing < 10 ? "< 10" : maxPing.toFixed(2);
+            $("#ping").html("Estimated ping: "+pingString+" ms")
 
-            // L.marker(pos2, { icon: L.icon({
-            //     iconUrl: "../../icons/update_circle.svg",
-            //     iconSize: [12, 12],
-            //     iconAnchor: [6, 6],
-            // }) }).addTo(map)
-            //     .bindTooltip(data.score.team2.players["1"].name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
-            //     .openTooltip();
+            let maxDistance = 0;
+
+            positions.forEach((pos1)=>{
+                positions.forEach((pos2)=>{
+                    if(pos1 != pos2){
+                        let distance = distanceInKm(pos1, pos2);
+                        if(distance > maxDistance){
+                            maxDistance = distance;
+                        }
+                    }
+                })
+            })
+
+            console.log("Distance: "+maxDistance);
+
+            let distanceString = ""
             
-            // map.on("zoomend", ()=>{
-            //     var polyline = L.polyline([pos1, pos2], {color: 'blue', dashArray: '5,10'}).addTo(map);
-            // })
+            if(maxDistance < 100){
+                distanceString = "< 100 Km / < 62 mi"
+            } else {
+                distanceString = maxDistance.toFixed(2)+" Km"+" / "+(maxDistance*0.621371).toFixed(2)+" mi"
+            }
 
-            // map.flyToBounds(L.latLngBounds(pos1, pos2), {
-            //     paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
-            //     paddingBottomRight: [80, 80],
-            //     duration: 2,
-            //     easeLinearity: 0.000001
-            // })
+            if(positions.length == 2){
+                $("#distance").html("Distance: "+distanceString)
+            } else {
+                $("#distance").html("Max distance: "+distanceString)
+            }
+
+            gsap.timeline()
+                .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
+            
+            map.on("zoomend", ()=>{
+                var polyline = L.polyline(getPairs(positions), {color: 'blue', dashArray: '5,10'}).addTo(map);
+            })
+
+            map.flyToBounds(L.latLngBounds(positions), {
+                paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
+                paddingBottomRight: [80, 80],
+                duration: 2,
+                easeLinearity: 0.000001
+            })
         })
     }
 
@@ -132,6 +167,15 @@ baseMap.addTo(map);
         ys *= ys;
         return Math.sqrt( xs + ys );
     };
+
+    function getPairs(arr) {
+        var res = [],
+            l = arr.length;
+        for(var i=0; i<l; ++i)
+            for(var j=i+1; j<l; ++j)
+                res.push([arr[i], arr[j]]);
+        return res;
+    }
 
     function getPings() {
         return $.ajax({

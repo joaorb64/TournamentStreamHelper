@@ -91,12 +91,12 @@ class Window(QMainWindow):
         if not os.path.exists("assets/games"):
             os.mkdir("assets/games")
 
-        # try:
-        #     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
-        #     r = requests.get(url, allow_redirects=True)
-        #     open('./assets/countries+states+cities.json', 'wb').write(r.content)
-        # except Exception as e:
-        #     print("Could not update /assets/countries+states+cities.json: "+str(e))
+        try:
+            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+            r = requests.get(url, allow_redirects=True)
+            open('./assets/countries+states+cities.json', 'wb').write(r.content)
+        except Exception as e:
+            print("Could not update /assets/countries+states+cities.json: "+str(e))
 
         try:
             f = open('settings.json', encoding='utf-8')
