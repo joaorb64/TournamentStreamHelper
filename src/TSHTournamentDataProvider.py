@@ -20,6 +20,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = pyqtSignal()
     entrants_updated = pyqtSignal()
     tournament_data_updated = pyqtSignal(dict)
+    twitch_username_updated = pyqtSignal()
 
 
 class TSHTournamentDataProvider:
@@ -104,6 +105,12 @@ class TSHTournamentDataProvider:
                 SettingsManager.Get("TOURNAMENT_URL"))
 
         inp.deleteLater()
+
+    def SetTwitchUsername(self, window):
+        text, okPressed = QInputDialog.getText(
+            window, "Set Twitch username", "Username: ", QLineEdit.Normal, "")
+        if okPressed:
+            SettingsManager.Set("twitch_username", text)
 
     def LoadSets(self, mainWindow):
         sets = TSHTournamentDataProvider.instance.provider.GetMatches()

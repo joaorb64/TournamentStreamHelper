@@ -129,9 +129,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.btLoadPlayerSet = QPushButton("Load player set")
         self.btLoadPlayerSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btLoadPlayerSet)
-        self.btLoadPlayerSet.clicked.connect(
-            lambda x: TSHTournamentDataProvider.instance.LoadUserSet(self)
-        )
+        self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
 
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateBottomButtons)
@@ -429,6 +427,9 @@ class TSHScoreboardWidget(QDockWidget):
     def LoadStreamSetClicked(self):
         self.lastSetSelected = None
         TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino")
+
+    def LoadUserSetClicked(self):
+        TSHTournamentDataProvider.instance.SetTwitchUsername(self)
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):

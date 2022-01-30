@@ -21,94 +21,123 @@ var map = L.map('map', {
 baseMap.addTo(map);
 
 (($) => { 
-    function Start(){
-        pingData = getPings().then((pingData)=>{
-            console.log(pingData)
+    var markers = []
+    var polylines = []
+    var positions = []
 
-            let servers = []
-            let positions = []
+    async function Start(){
+    }
 
-            Object.values(data.score.team).forEach((team)=>{
-                Object.values(team.players).forEach((player)=>{
-                    let pos = [
-                        player.state.latitude? player.state.latitude : player.country.latitude,
-                        player.state.longitude? player.state.longitude : player.country.latitude,
-                    ]
-                    positions.push(pos)
+    function UpdateMap(){
+        console.log(pingData)
 
-                    let server = findClosestServer(pingData, pos[0], pos[1])
-                    servers.push(server)
+        markers.forEach((marker)=>{
+            map.removeLayer(marker);
+        })
+        markers = [];
 
-                    L.marker(pos, { icon: L.icon({
-                        iconUrl: "./marker.svg",
-                        iconSize: [12, 12],
-                        iconAnchor: [6, 6],
-                    }) }).addTo(map)
-                        .bindTooltip(player.name, { direction: "top", className: 'leaflet-tooltip-own', offset: [0, -12] })
-                        .openTooltip();
-                })
-            })
+        polylines.forEach((poly)=>{
+            poly.removeFrom(map);
+        })
+        polylines = [];
 
-            let maxPing = 0;
+        positions = [];
+        let servers = []
 
-            servers.forEach((server1)=>{
-                servers.forEach((server2)=>{
-                    if(server1 != server2){
-                        let ping = pingBetweenServers(server1, server2);
-                        if(ping > maxPing){
-                            maxPing = ping;
+        Object.values(data.score.team).forEach((team)=>{
+            Object.values(team.players).forEach((player)=>{
+                let pos = [
+                    player.state.latitude? player.state.latitude : player.country.latitude,
+                    player.state.longitude? player.state.longitude : player.country.latitude,
+                ]
+                positions.push(pos)
+
+                let server = findClosestServer(pingData, pos[0], pos[1])
+                servers.push(server)
+
+                let directions = ["top", "bottom", "left", "right"];
+                let direction = 0;
+                
+                positions.forEach((position)=>{
+                    if(position != pos){
+                        if(position[0] == pos[0] && position[1] == pos[1]){
+                            direction = (direction+1)%directions.length;
                         }
                     }
                 })
+
+                let marker = L.marker(pos, { icon: L.icon({
+                    iconUrl: "./marker.svg",
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6],
+                }) }).addTo(map)
+                    .bindTooltip(player.name, { direction: directions[direction], className: 'leaflet-tooltip-own', offset: [0, 0] })
+                    .openTooltip();
+                
+                markers.push(marker)
             })
+        })
 
-            console.log("Ping: "+ping);
+        let maxPing = 0;
 
-            let pingString = maxPing < 10 ? "< 10" : maxPing.toFixed(2);
-            $("#ping").html("Estimated ping: "+pingString+" ms")
-
-            let maxDistance = 0;
-
-            positions.forEach((pos1)=>{
-                positions.forEach((pos2)=>{
-                    if(pos1 != pos2){
-                        let distance = distanceInKm(pos1, pos2);
-                        if(distance > maxDistance){
-                            maxDistance = distance;
-                        }
+        servers.forEach((server1)=>{
+            servers.forEach((server2)=>{
+                if(server1 != server2){
+                    let ping = pingBetweenServers(server1, server2);
+                    if(ping > maxPing){
+                        maxPing = ping;
                     }
-                })
+                }
             })
+        })
 
-            console.log("Distance: "+maxDistance);
+        console.log("Ping: "+ping);
 
-            let distanceString = ""
-            
-            if(maxDistance < 100){
-                distanceString = "< 100 Km / < 62 mi"
-            } else {
-                distanceString = maxDistance.toFixed(2)+" Km"+" / "+(maxDistance*0.621371).toFixed(2)+" mi"
-            }
+        let pingString = maxPing < 10 ? "< 10" : maxPing.toFixed(2);
+        $("#ping").html("Estimated ping: "+pingString+" ms")
 
-            if(positions.length == 2){
-                $("#distance").html("Distance: "+distanceString)
-            } else {
-                $("#distance").html("Max distance: "+distanceString)
-            }
+        let maxDistance = 0;
 
-            gsap.timeline()
-                .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
-            
-            map.on("zoomend", ()=>{
-                var polyline = L.polyline(getPairs(positions), {color: 'blue', dashArray: '5,10'}).addTo(map);
+        positions.forEach((pos1)=>{
+            positions.forEach((pos2)=>{
+                if(pos1 != pos2){
+                    let distance = distanceInKm(pos1, pos2);
+                    if(distance > maxDistance){
+                        maxDistance = distance;
+                    }
+                }
             })
+        })
 
-            map.flyToBounds(L.latLngBounds(positions), {
-                paddingTopLeft: [80 + $(".overlay").outerHeight(), 80],
-                paddingBottomRight: [80, 80],
-                duration: 2,
-                easeLinearity: 0.000001
-            })
+        console.log("Distance: "+maxDistance);
+
+        let distanceString = ""
+        
+        if(maxDistance < 100){
+            distanceString = "< 100 Km / < 62 mi"
+        } else {
+            distanceString = maxDistance.toFixed(2)+" Km"+" / "+(maxDistance*0.621371).toFixed(2)+" mi"
+        }
+
+        if(positions.length == 2){
+            $("#distance").html("Distance: "+distanceString)
+        } else {
+            $("#distance").html("Max distance: "+distanceString)
+        }
+
+        gsap.timeline()
+            .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
+        
+        map.on("zoomend", ()=>{
+            var polyline = L.polyline(getPairs(positions), {color: 'blue', dashArray: '5,10'}).addTo(map);
+            polylines.push(polyline)
+        })
+
+        map.flyToBounds(L.latLngBounds(positions), {
+            paddingTopLeft: [30, 30+$(".overlay").outerHeight()],
+            paddingBottomRight: [30, 30],
+            duration: 2,
+            easeLinearity: 0.000001
         })
     }
 
@@ -155,9 +184,12 @@ baseMap.addTo(map);
     async function Update(){
         oldData = data;
         data = await getData();
-
-        if(oldData == {}){
-            
+        pingData = await getPings();
+        
+        if(Object.keys(oldData).length == 0 ||
+            JSON.stringify(oldData.score.team["1"].players) != JSON.stringify(data.score.team["1"].players) ||
+            JSON.stringify(oldData.score.team["2"].players) != JSON.stringify(data.score.team["2"].players)){
+            UpdateMap();
         }
     }
 
@@ -185,7 +217,6 @@ baseMap.addTo(map);
         });
     }
 
-    Update();
     $(window).on("load", () => {
         $('body').fadeTo(500, 1, async () => {
             Start();

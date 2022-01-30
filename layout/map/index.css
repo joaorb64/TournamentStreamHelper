@@ -80,3 +80,15 @@ body {
 .leaflet-tooltip-top:before {
   border-top-color: rgba(0, 0, 0, 0.8);
 }
+
+.leaflet-tooltip-left:before {
+  border-left-color: rgba(0, 0, 0, 0.8);
+}
+
+.leaflet-tooltip-right:before {
+  border-right-color: rgba(0, 0, 0, 0.8);
+}
+
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: rgba(0, 0, 0, 0.8);
+}
