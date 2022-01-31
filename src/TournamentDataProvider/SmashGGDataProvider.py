@@ -519,7 +519,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                         "operationName": "EventEntrantsListQuery",
                         "variables": {
                             "eventSlug": self.url.split("smash.gg/")[1],
-                            "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_id"),
+                            "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id"),
                             "page": page,
                         },
                         "query": SmashGGDataProvider.EntrantsQuery

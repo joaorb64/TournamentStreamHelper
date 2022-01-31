@@ -7,6 +7,7 @@ from TSHScoreboardPlayerWidget import *
 from SettingsManager import *
 from StateManager import *
 from TSHTournamentDataProvider import TSHTournamentDataProvider
+from TSHScoreboardStageWidget import TSHScoreboardStageWidget
 
 
 class TSHScoreboardWidgetSignals(QObject):
@@ -34,6 +35,17 @@ class TSHScoreboardWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
 
+        self.tabs = QTabWidget()
+        self.widget.layout().addWidget(self.tabs)
+
+        self.tabScore = QWidget()
+        self.tabScore.setLayout(QVBoxLayout())
+        self.tabs.addTab(self.tabScore, "Score")
+        self.tabStage = QWidget()
+        self.tabStage.setLayout(QVBoxLayout())
+        self.tabs.addTab(self.tabStage, "Stage")
+        self.tabStage.layout().addWidget(TSHScoreboardStageWidget())
+
         # StateManager.Set("score", {})
 
         self.setFloating(True)
@@ -45,7 +57,7 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
-        self.widget.layout().addWidget(topOptions)
+        self.tabScore.layout().addWidget(topOptions)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
@@ -106,14 +118,14 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.columns = QWidget()
         self.columns.setLayout(QHBoxLayout())
-        self.widget.layout().addWidget(self.columns)
+        self.tabScore.layout().addWidget(self.columns)
 
         bottomOptions = QWidget()
         bottomOptions.setLayout(QVBoxLayout())
         bottomOptions.layout().setContentsMargins(0, 0, 0, 0)
         bottomOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
-        self.widget.layout().addWidget(bottomOptions)
+        self.tabScore.layout().addWidget(bottomOptions)
 
         self.btSelectSet = QPushButton("Load set")
         self.btSelectSet.setEnabled(False)

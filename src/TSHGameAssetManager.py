@@ -307,7 +307,7 @@ class TSHGameAssetManager():
 
     def GetStageFromSmashGGId(self, smashgg_id: int):
         stage = next((s for s in self.stages.items() if str(
-            s[1].get("smashgg_id")) == str(smashgg_id)), None)
+            s[1].get("smashgg_game_id")) == str(smashgg_id)), None)
         return stage
 
 
