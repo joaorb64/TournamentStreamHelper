@@ -1,0 +1,82 @@
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
+}
+
+.text {
+  white-space: nowrap;
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
+  place-items: center;
+  place-content: center;
+  height: 100%;
+}
+
+body {
+  font-family: "Roboto Condensed";
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  gap: 40px;
+  color: white;
+}
+
+.commentator_container {
+  width: 300;
+  height: 80;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 30px;
+  box-sizing: border-box;
+}
+
+.mic_icon {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url("./icon_mic.svg");
+  background-size: contain;
+}
+
+.name {
+  font-size: 26px;
+}
+
+.team {
+  opacity: 0.6;
+}
+
+.twitter {
+  font-size: 20px;
+}
+
+.icon {
+  width: 128px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex-grow: 1;
+}
+
+.index_display {
+  position: absolute;
+  bottom: 8px;
+  right: 32px;
+  z-index: 999;
+  color: white;
+  font-size: 100px;
+  text-shadow: 12px 12px 2px black;
+}
