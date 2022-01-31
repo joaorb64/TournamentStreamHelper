@@ -22,7 +22,7 @@ query EventEntrantsListQuery($eventSlug: String!, $videogameId: Int, $page: Int!
             gamerTag
             prefix
             name
-            sets(page: 1, perPage: 5, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
+            sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
               nodes {
                 games {
                   selections {

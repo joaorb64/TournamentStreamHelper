@@ -37,6 +37,7 @@ try:
     from TSHGameAssetManager import TSHGameAssetManager
     from TSHTournamentInfoWidget import TSHTournamentInfoWidget
     from TSHTournamentDataProvider import TSHTournamentDataProvider
+    from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
     from TSHPlayerDB import TSHPlayerDB
     from PlayerColumn import *
     from Workers import *
@@ -145,9 +146,10 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
 
-        scoreboard = TSHScoreboardWidget()
-        scoreboard.setObjectName("Scoreboard")
-        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, scoreboard)
+        self.scoreboard = TSHScoreboardWidget()
+        self.scoreboard.setObjectName("Scoreboard")
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
 
         commentary = TSHCommentaryWidget()
         commentary.setObjectName("Commentary")
@@ -177,7 +179,7 @@ class Window(QMainWindow):
         self.btLoadPlayerSet = QPushButton("Load SmashGG user set")
         self.btLoadPlayerSet.setIcon(QIcon("./icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
-        self.btLoadPlayerSet.clicked.connect(scoreboard.LoadUserSetClicked)
+        self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         hbox.addWidget(self.btLoadPlayerSet)
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)
@@ -192,7 +194,7 @@ class Window(QMainWindow):
             QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.btLoadPlayerSetOptions.setIcon(QIcon("./icons/settings.svg"))
         self.btLoadPlayerSetOptions.clicked.connect(
-            scoreboard.LoadUserSetOptionsClicked)
+            self.LoadUserSetOptionsClicked)
         hbox.addWidget(self.btLoadPlayerSetOptions)
 
         # Settings
@@ -258,6 +260,18 @@ class Window(QMainWindow):
             self.btLoadPlayerSet.setText(
                 "Load tournament and sets from SmashGG user")
             self.btLoadPlayerSet.setEnabled(False)
+
+    def LoadUserSetClicked(self):
+        self.scoreboard.lastSetSelected = None
+        if SettingsManager.Get("SmashGG_user"):
+            TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
+                "smash.gg")
+            TSHTournamentDataProvider.instance.LoadUserSet(
+                self.scoreboard, SettingsManager.Get("SmashGG_user"))
+
+    def LoadUserSetOptionsClicked(self):
+        TSHTournamentDataProvider.instance.SetUserAccount(
+            self.scoreboard, smashgg=True)
 
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())

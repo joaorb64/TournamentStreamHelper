@@ -102,7 +102,7 @@ class StateManager:
                     os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                 shutil.copyfile(
                     di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
-            elif type(di) == str and di.startswith("http") and di.endswith(".png"):
+            elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
                 try:
                     if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                         os.remove(f"./out/{path}" + "." +
@@ -138,7 +138,7 @@ class StateManager:
                 StateManager.RemoveFilesDict(
                     path+"/"+str(k).replace("/", "_"), i)
         else:
-            if type(di) == str and di.startswith("./"):
+            if type(di) == str and (di.startswith("./") or di.startswith("http")):
                 try:
                     removeFile = f"./out/{path}" + \
                         "." + di.rsplit(".", 1)[-1]

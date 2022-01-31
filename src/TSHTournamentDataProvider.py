@@ -119,10 +119,10 @@ class TSHTournamentDataProvider:
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
-    def SetUserAccount(self, window):
+    def SetUserAccount(self, window, smashgg=False):
         if self.provider.url:
             window_text = ""
-            if "smash.gg" in self.provider.url:
+            if "smash.gg" in self.provider.url or smashgg:
                 window_text = "Paste the URL to the player's SmashGG profile"
             elif "challonge" in self.provider.url:
                 window_text = "Insert the player's name in bracket"
