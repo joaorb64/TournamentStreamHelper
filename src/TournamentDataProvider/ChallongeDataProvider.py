@@ -133,7 +133,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                     all_matches.append(match)
 
             all_matches = [
-                match for match in all_matches if match.get("state") == "open"]
+                match for match in all_matches if match.get("state") in ["open", "pending"] and match.get("player1") and match.get("player2")]
 
             for match in all_matches:
                 final_data.append(self.ParseMatchData(match))
@@ -189,6 +189,10 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             team1losers = True
             team2losers = True
 
+        scores = match.get("scores")
+        if len(match.get("scores")) < 2:
+            scores = [None, None]
+
         return({
             "id": deep_get(match, "id"),
             "round_name": deep_get(match, "round_name"),
@@ -209,8 +213,8 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             ],
             "stream": stream,
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
-            "team1score": match.get("scores", [None, None])[0],
-            "team2score": match.get("scores", [None, None])[1],
+            "team1score": scores[0],
+            "team2score": scores[1],
             "team1losers": team1losers,
             "team2losers": team2losers,
         })
