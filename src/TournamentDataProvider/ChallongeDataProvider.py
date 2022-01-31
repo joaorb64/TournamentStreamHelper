@@ -18,6 +18,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
     def __init__(self, url) -> None:
         super().__init__(url)
+        self.name = "Challonge"
 
     def GetTournamentData(self):
         finalData = {}
@@ -154,6 +155,24 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         )
 
         return streamSet
+
+    def GetUserMatchId(self, user):
+        sets = self.GetMatches()
+
+        userSet = next(
+            (s for s in sets if s.get("p1_name")
+             == user or s.get("p2_name") == user),
+            None
+        )
+
+        print(sets)
+        print(user)
+        print(userSet)
+
+        if userSet and user == userSet.get("p2_name"):
+            userSet["reversed"] = True
+
+        return userSet
 
     def ParseMatchData(self, match):
         p1_split = deep_get(

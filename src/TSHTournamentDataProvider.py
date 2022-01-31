@@ -21,6 +21,7 @@ class TSHTournamentDataProviderSignals(QObject):
     entrants_updated = pyqtSignal()
     tournament_data_updated = pyqtSignal(dict)
     twitch_username_updated = pyqtSignal()
+    user_updated = pyqtSignal()
 
 
 class TSHTournamentDataProvider:
@@ -113,6 +114,22 @@ class TSHTournamentDataProvider:
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
+    def SetUserAccount(self, window):
+        if self.provider.url:
+            window_text = ""
+            if "smash.gg" in self.provider.url:
+                window_text = "Paste the URL to the player's SmashGG profile"
+            elif "challonge" in self.provider.url:
+                window_text = "Insert the player's name in bracket"
+            else:
+                print("Invalid tournament data provider")
+                return
+            text, okPressed = QInputDialog.getText(
+                window, "Set player", window_text, QLineEdit.Normal, "")
+            if okPressed:
+                SettingsManager.Set(self.provider.name+"_user", text)
+                TSHTournamentDataProvider.instance.signals.user_updated.emit()
+
     def LoadSets(self, mainWindow):
         sets = TSHTournamentDataProvider.instance.provider.GetMatches()
 
@@ -195,9 +212,20 @@ class TSHTournamentDataProvider:
         streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
             streamName)
 
-        if streamSet:
-            streamSet["auto_update"] = "stream"
-            mainWindow.signals.NewSetSelected.emit(streamSet)
+        if not streamSet:
+            streamSet = {}
+
+        streamSet["auto_update"] = "stream"
+        mainWindow.signals.NewSetSelected.emit(streamSet)
+
+    def LoadUserSet(self, mainWindow, user):
+        _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)
+
+        if not _set:
+            _set = {}
+
+        _set["auto_update"] = "user"
+        mainWindow.signals.NewSetSelected.emit(_set)
 
     def LoadSelectedSet(self, mainWindow):
         row = 0
@@ -225,6 +253,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
+            TSHTournamentDataProvider.instance.signals.user_updated.emit()
 
 
 TSHTournamentDataProvider.instance = TSHTournamentDataProvider()

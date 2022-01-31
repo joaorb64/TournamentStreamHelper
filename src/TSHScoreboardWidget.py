@@ -132,18 +132,44 @@ class TSHScoreboardWidget(QDockWidget):
         bottomOptions.layout().addWidget(self.btSelectSet)
         self.btSelectSet.clicked.connect(self.LoadSetClicked)
 
+        hbox = QHBoxLayout()
+        bottomOptions.layout().addLayout(hbox)
+
         self.btLoadStreamSet = QPushButton("Load current stream set")
         self.btLoadStreamSet.setIcon(QIcon("./icons/twitch.svg"))
         self.btLoadStreamSet.setEnabled(False)
-        bottomOptions.layout().addWidget(self.btLoadStreamSet)
+        hbox.addWidget(self.btLoadStreamSet)
         self.btLoadStreamSet.clicked.connect(self.LoadStreamSetClicked)
         TSHTournamentDataProvider.instance.signals.twitch_username_updated.connect(
             self.UpdateStreamButton)
 
+        self.btLoadStreamSetOptions = QPushButton()
+        self.btLoadStreamSetOptions.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.btLoadStreamSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadStreamSetOptions.clicked.connect(
+            self.LoadStreamSetOptionsClicked)
+        hbox.addWidget(self.btLoadStreamSetOptions)
+
+        hbox = QHBoxLayout()
+        bottomOptions.layout().addLayout(hbox)
+
         self.btLoadPlayerSet = QPushButton("Load player set")
         self.btLoadPlayerSet.setEnabled(False)
-        bottomOptions.layout().addWidget(self.btLoadPlayerSet)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
+        hbox.addWidget(self.btLoadPlayerSet)
+        TSHTournamentDataProvider.instance.signals.user_updated.connect(
+            self.UpdateUserSetButton)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateUserSetButton)
+
+        self.btLoadPlayerSetOptions = QPushButton()
+        self.btLoadPlayerSetOptions.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.btLoadPlayerSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadPlayerSetOptions.clicked.connect(
+            self.LoadUserSetOptionsClicked)
+        hbox.addWidget(self.btLoadPlayerSetOptions)
 
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateBottomButtons)
@@ -396,29 +422,34 @@ class TSHScoreboardWidget(QDockWidget):
         self.teamsSwapped = not self.teamsSwapped
 
     def NewSetSelected(self, data):
+        self.StopAutoUpdate()
+        self.autoUpdateTimer = QTimer()
+        self.autoUpdateTimer.start(5000)
+        self.timeLeftTimer = QTimer()
+        self.timeLeftTimer.start(100)
+        self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
+        self.timerLayout.setVisible(True)
+
         if data and data.get("id") and data.get("id") != self.lastSetSelected:
             StateManager.Unset(f'score.stage_strike')
-
+            self.lastSetSelected = data.get("id")
             self.ClearScore()
 
-            self.StopAutoUpdate()
-            self.autoUpdateTimer = QTimer()
-            self.autoUpdateTimer.start(5000)
-            self.timeLeftTimer = QTimer()
-            self.timeLeftTimer.start(100)
-            self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
-            self.timerLayout.setVisible(True)
+        if data and data.get("id"):
             TSHTournamentDataProvider.instance.GetMatch(
                 self, data["id"], overwrite=True)
 
             self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data["id"], overwrite=False))
+                lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
 
-            if(data.get("auto_update") == "stream"):
-                self.autoUpdateTimer.timeout.connect(
-                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+        if(data.get("auto_update") == "stream"):
+            self.autoUpdateTimer.timeout.connect(
+                lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
 
-            self.lastSetSelected = data.get("id")
+        if(data.get("auto_update") == "user"):
+            self.autoUpdateTimer.timeout.connect(
+                lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
+                    self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
 
     def StopAutoUpdate(self):
         if self.autoUpdateTimer != None:
@@ -443,15 +474,37 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.instance.LoadStreamSet(
             self, SettingsManager.Get("twitch_username"))
 
+    def LoadStreamSetOptionsClicked(self):
+        TSHTournamentDataProvider.instance.SetTwitchUsername(self)
+
     def UpdateStreamButton(self):
         if SettingsManager.Get("twitch_username"):
             self.btLoadStreamSet.setText(
                 "Load current stream set ("+SettingsManager.Get("twitch_username")+")")
+            self.btLoadStreamSet.setEnabled(True)
         else:
             self.btLoadStreamSet.setText("Load current stream set")
+            self.btLoadStreamSet.setEnabled(False)
+
+    def UpdateUserSetButton(self):
+        provider = TSHTournamentDataProvider.instance.provider.name
+        if SettingsManager.Get(provider+"_user"):
+            self.btLoadPlayerSet.setText(
+                f"Load user set ({SettingsManager.Get(provider+'_user')})")
+            self.btLoadPlayerSet.setEnabled(True)
+        else:
+            self.btLoadStreamSet.setText("Load user set")
+            self.btLoadPlayerSet.setEnabled(False)
 
     def LoadUserSetClicked(self):
-        TSHTournamentDataProvider.instance.SetTwitchUsername(self)
+        self.lastSetSelected = None
+        provider = TSHTournamentDataProvider.instance.provider.name
+        if SettingsManager.Get(provider+"_user"):
+            TSHTournamentDataProvider.instance.LoadUserSet(
+                self, SettingsManager.Get(provider+"_user"))
+
+    def LoadUserSetOptionsClicked(self):
+        TSHTournamentDataProvider.instance.SetUserAccount(self)
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):

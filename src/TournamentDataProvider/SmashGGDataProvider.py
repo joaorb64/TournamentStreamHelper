@@ -26,6 +26,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
     def __init__(self, url) -> None:
         super().__init__(url)
+        self.name = "SmashGG"
 
     def GetTournamentData(self):
         finalData = {}

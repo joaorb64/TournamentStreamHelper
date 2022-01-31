@@ -1,5 +1,6 @@
 class TournamentDataProvider:
     def __init__(self, url) -> None:
+        self.name = ""
         self.url = url
         self.entrants = []
         self.tournamentData = {}
@@ -17,4 +18,7 @@ class TournamentDataProvider:
         pass
 
     def GetStreamMatchId(self, streamName):
+        pass
+
+    def GetUserMatchId(self, user):
         pass

@@ -53,6 +53,9 @@ class TSHScoreboardStageWidget(QWidget):
 
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
 
+        # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
+        # load tournament ruleset
+
     def SetupOptions(self):
         self.rulesetsBox.clear()
 
@@ -79,6 +82,7 @@ class TSHScoreboardStageWidget(QWidget):
                     ruleset["settings"]["stages"]["counterpick"] = counterpick
                 item = QStandardItem(ruleset.get("name"))
                 item.setData(ruleset, Qt.ItemDataRole.UserRole)
+                item.setIcon(QIcon("./icons/smashgg.svg"))
                 rulesetsModel.appendRow(item)
         self.rulesetsBox.setModel(rulesetsModel)
 
@@ -135,3 +139,10 @@ class TSHScoreboardStageWidget(QWidget):
         # settings: {gameSetup: true, stages: {neutral: [311, 328, 397, 378, 387], counterpick: [497, 484, 407, 348]},…}
         # type: "standard"
         # videogameId: 1386
+
+        # "additionalFlags":{"banCountByMaxGames":{"3":3,"5":2},"useDSR":true}
+        # "additionalFlags":{"banCount":2,"useDSR":true}
+        # "additionalFlags":{"useMDSR":true,"banCount":1}
+
+        # settings -> stages -> "strikeOrder":[1,2,1]
+        # "strikeOrder":[1,1,1]
