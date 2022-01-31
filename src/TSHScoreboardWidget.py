@@ -430,26 +430,36 @@ class TSHScoreboardWidget(QDockWidget):
         self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
         self.timerLayout.setVisible(True)
 
-        if data and data.get("id") and data.get("id") != self.lastSetSelected:
-            StateManager.Unset(f'score.stage_strike')
-            self.lastSetSelected = data.get("id")
-            self.ClearScore()
-
         if data and data.get("id"):
-            TSHTournamentDataProvider.instance.GetMatch(
-                self, data["id"], overwrite=True)
+            if data.get("id") != self.lastSetSelected:
+                StateManager.Unset(f'score.stage_strike')
+                self.lastSetSelected = data.get("id")
+                self.ClearScore()
 
-            self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
+                if data and data.get("id"):
+                    TSHTournamentDataProvider.instance.GetMatch(
+                        self, data["id"], overwrite=True)
 
-        if(data.get("auto_update") == "stream"):
+                self.autoUpdateTimer.timeout.connect(
+                    lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
+            else:
+                TSHTournamentDataProvider.instance.GetMatch(
+                    self, data["id"], overwrite=False)
+
+        if data.get("auto_update") == "stream":
             self.autoUpdateTimer.timeout.connect(
                 lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
 
-        if(data.get("auto_update") == "user"):
+        if data.get("auto_update") == "user":
             self.autoUpdateTimer.timeout.connect(
                 lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
                     self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
+
+            # Force user to be P1
+            if data.get("reverse") and not self.teamsSwapped:
+                self.SwapTeams()
+            elif not data.get("reverse") and self.teamsSwapped:
+                self.SwapTeams()
 
     def StopAutoUpdate(self):
         if self.autoUpdateTimer != None:
@@ -493,7 +503,7 @@ class TSHScoreboardWidget(QDockWidget):
                 f"Load user set ({SettingsManager.Get(provider+'_user')})")
             self.btLoadPlayerSet.setEnabled(True)
         else:
-            self.btLoadStreamSet.setText("Load user set")
+            self.btLoadPlayerSet.setText("Load user set")
             self.btLoadPlayerSet.setEnabled(False)
 
     def LoadUserSetClicked(self):

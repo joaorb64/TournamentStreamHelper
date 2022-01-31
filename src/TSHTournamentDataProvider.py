@@ -34,6 +34,9 @@ class TSHTournamentDataProvider:
         self.threadPool = QThreadPool()
 
     def SetTournament(self, url, initialLoading=False):
+        if self.provider and self.provider.url == url:
+            return
+
         if "smash.gg" in url:
             TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
                 url)
@@ -50,6 +53,8 @@ class TSHTournamentDataProvider:
 
         TSHTournamentDataProvider.instance.provider.GetEntrants()
         TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+        SettingsManager.Set("TOURNAMENT_URL", url)
 
     def SetSmashggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)

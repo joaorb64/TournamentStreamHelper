@@ -170,6 +170,31 @@ class Window(QMainWindow):
         self.setTournamentBt.clicked.connect(
             lambda bt, s=self: TSHTournamentDataProvider.instance.SetSmashggEventSlug(s))
 
+        # Follow smashgg user
+        hbox = QHBoxLayout()
+        group_box.layout().addLayout(hbox)
+
+        self.btLoadPlayerSet = QPushButton("Load SmashGG user set")
+        self.btLoadPlayerSet.setIcon(QIcon("./icons/smashgg.svg"))
+        self.btLoadPlayerSet.setEnabled(False)
+        self.btLoadPlayerSet.clicked.connect(scoreboard.LoadUserSetClicked)
+        hbox.addWidget(self.btLoadPlayerSet)
+        TSHTournamentDataProvider.instance.signals.user_updated.connect(
+            self.UpdateUserSetButton)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateUserSetButton)
+
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateUserSetButton)
+
+        self.btLoadPlayerSetOptions = QPushButton()
+        self.btLoadPlayerSetOptions.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.btLoadPlayerSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadPlayerSetOptions.clicked.connect(
+            scoreboard.LoadUserSetOptionsClicked)
+        hbox.addWidget(self.btLoadPlayerSetOptions)
+
         # Settings
         self.optionsBt = QToolButton()
         self.optionsBt.setIcon(QIcon('icons/menu.svg'))
@@ -185,12 +210,6 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction("Always on top")
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction("Competitor mode")
-        action.toggled.connect(self.ToggleCompetitorMode)
-        action.setCheckable(True)
-        if self.settings.get("competitor_mode", False):
-            action.setChecked(True)
-            # self.player_layouts[0].group_box.hide()
         action = self.optionsBt.menu().addAction("Check for updates")
         self.updateAction = action
         action.setIcon(QIcon('icons/undo.svg'))
@@ -207,115 +226,6 @@ class Window(QMainWindow):
 
         pre_base_layout.addLayout(base_layout)
         group_box.layout().addWidget(self.gameSelect)
-
-        # pre_base_layout.addLayout(group_box)
-
-        # self.setTwitchUsernameAction = QAction(
-        #     "Set Twitch username (" +
-        #     str(self.settings.get("twitch_username", None)) + ")"
-        # )
-        # self.getFromStreamQueueBt.menu().addAction(self.setTwitchUsernameAction)
-        # self.setTwitchUsernameAction.triggered.connect(self.SetTwitchUsername)
-
-        # action = self.getFromStreamQueueBt.menu().addAction("Auto")
-        # action.toggled.connect(self.ToggleAutoTwitchQueueMode)
-        # action.setCheckable(True)
-        # if self.settings.get("twitch_auto_mode", False):
-        #     action.setChecked(True)
-        #     self.SetTimer("Auto (StreamQueue)",
-        #                   self.LoadSetsFromSmashGGTournamentQueueClicked)
-
-        # # Load set from SmashGG tournament
-        # self.smashggSelectSetBt = QToolButton()
-        # self.smashggSelectSetBt.setText("Select set")
-        # self.smashggSelectSetBt.setIcon(QIcon('icons/smashgg.svg'))
-        # self.smashggSelectSetBt.setToolButtonStyle(
-        #     Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        # layout_end.addWidget(self.smashggSelectSetBt, 2, 1, 1, 1)
-        # self.smashggSelectSetBt.clicked.connect(
-        #     self.LoadSetsFromSmashGGTournament)
-        # self.smashggSelectSetBt.setSizePolicy(
-        #     QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
-        # self.smashggSelectSetBt.setPopupMode(QToolButton.MenuButtonPopup)
-        # self.smashggSelectSetBt.setMenu(QMenu())
-
-        # action = self.smashggSelectSetBt.menu().addAction("Set SmashGG key")
-        # action.triggered.connect(self.SetSmashggKey)
-
-        # self.smashggTournamentSlug = QAction(
-        #     "Set tournament slug (" +
-        #     str(self.settings.get("SMASHGG_TOURNAMENT_SLUG", None)) + ")"
-        # )
-        # self.smashggSelectSetBt.menu().addAction(self.smashggTournamentSlug)
-        # self.smashggTournamentSlug.triggered.connect(self.SetSmashggEventSlug)
-
-        # # Competitor mode smashgg button
-        # self.competitorModeSmashggBt = QToolButton()
-        # self.competitorModeSmashggBt.setText("Update from SmashGG set")
-        # self.competitorModeSmashggBt.setIcon(QIcon('icons/smashgg.svg'))
-        # self.competitorModeSmashggBt.setToolButtonStyle(
-        #     Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        # layout_end.addWidget(self.competitorModeSmashggBt, 2, 0, 1, 2)
-        # self.competitorModeSmashggBt.clicked.connect(
-        #     self.LoadUserSetFromSmashGGTournament)
-        # self.competitorModeSmashggBt.setSizePolicy(
-        #     QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
-        # self.competitorModeSmashggBt.setPopupMode(QToolButton.MenuButtonPopup)
-        # self.competitorModeSmashggBt.setMenu(QMenu())
-
-        # action = self.competitorModeSmashggBt.menu().addAction("Set SmashGG key")
-        # action.triggered.connect(self.SetSmashggKey)
-
-        # self.smashggUserId = QAction(
-        #     "Set user id (" +
-        #     str(self.settings.get("smashgg_user_id", None)) + ")"
-        # )
-        # self.competitorModeSmashggBt.menu().addAction(self.smashggUserId)
-        # self.smashggUserId.triggered.connect(self.SetSmashggUserId)
-
-        # action = self.competitorModeSmashggBt.menu().addAction("Auto")
-        # action.toggled.connect(self.ToggleAutoCompetitorSmashGGMode)
-        # action.setCheckable(True)
-        # if self.settings.get("competitor_smashgg_auto_mode", False) and self.settings.get("competitor_mode", False):
-        #     action.setChecked(True)
-        #     self.SetTimer("Competitor: Auto (SmashGG)",
-        #                   self.LoadUserSetFromSmashGGTournament)
-
-        # if self.settings.get("competitor_mode", False) == False:
-        #     self.competitorModeSmashggBt.hide()
-
-        # # save button
-        # self.saveBt = QToolButton()
-        # self.saveBt.setText("Save and export")
-        # self.saveBt.setIcon(QIcon('icons/save.svg'))
-        # self.saveBt.setToolButtonStyle(
-        #     Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        # pal = self.saveBt.palette()
-        # pal.setColor(QPalette.Button, QColor(Qt.green))
-        # self.saveBt.setPalette(pal)
-        # layout_end.addWidget(self.saveBt, 3, 0, 2, 2)
-        # self.saveBt.setSizePolicy(
-        #     QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-        # self.saveBt.setPopupMode(QToolButton.MenuButtonPopup)
-        # self.saveBt.clicked.connect(self.SaveButtonClicked)
-
-        # self.saveBt.setMenu(QMenu())
-
-        # action = self.saveBt.menu().addAction("Auto")
-        # action.setCheckable(True)
-        # if "autosave" in self.settings:
-        #     if self.settings["autosave"] == True:
-        #         action.setChecked(True)
-        # action.toggled.connect(self.ToggleAutosave)
-
-        # action = self.saveBt.menu().addAction("Add @ to twitter")
-        # action.setCheckable(True)
-        # if "twitter_add_at" in self.settings:
-        #     if self.settings["twitter_add_at"] == True:
-        #         action.setChecked(True)
-        # action.toggled.connect(self.ToggleTwitterAddAt)
-
-        # self.LoadData()
 
         self.CheckForUpdates(True)
         self.ReloadGames()
@@ -338,6 +248,16 @@ class Window(QMainWindow):
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
         if index is not None:
             self.gameSelect.setCurrentIndex(index)
+
+    def UpdateUserSetButton(self):
+        if SettingsManager.Get("SmashGG_user"):
+            self.btLoadPlayerSet.setText(
+                f"Load tournament and sets from SmashGG user ({SettingsManager.Get('SmashGG_user')})")
+            self.btLoadPlayerSet.setEnabled(True)
+        else:
+            self.btLoadPlayerSet.setText(
+                "Load tournament and sets from SmashGG user")
+            self.btLoadPlayerSet.setEnabled(False)
 
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
@@ -710,338 +630,9 @@ class Window(QMainWindow):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
 
-    def ToggleCompetitorMode(self, checked):
-        if checked:
-            self.settings["competitor_mode"] = True
-            try:
-                # self.player_layouts[0].group_box.hide()
-                self.getFromStreamQueueBt.hide()
-                self.smashggSelectSetBt.hide()
-                self.competitorModeSmashggBt.show()
-            except Exception as e:
-                print(traceback.format_exc())
-        else:
-            try:
-                self.settings["competitor_mode"] = False
-                self.player_layouts[0].group_box.show()
-                self.getFromStreamQueueBt.show()
-                self.smashggSelectSetBt.show()
-                self.competitorModeSmashggBt.hide()
-            except Exception as e:
-                print(traceback.format_exc())
-        self.StopTimer()
-        self.SaveSettings()
-
-    def ToggleAutoTwitchQueueMode(self, checked):
-        if checked:
-            self.settings["twitch_auto_mode"] = True
-            self.SetTimer("Auto (StreamQueue)",
-                          self.LoadSetsFromSmashGGTournamentQueueClicked)
-        else:
-            self.settings["twitch_auto_mode"] = False
-            self.StopTimer()
-        self.SaveSettings()
-
-    def ToggleAutoCompetitorSmashGGMode(self, checked):
-        if checked:
-            self.settings["competitor_smashgg_auto_mode"] = True
-            self.SetTimer("Competitor: Auto (SmashGG)",
-                          self.LoadUserSetFromSmashGGTournament)
-        else:
-            self.settings["competitor_smashgg_auto_mode"] = False
-            self.StopTimer()
-        self.SaveSettings()
-
-    def ToggleAutosave(self, checked):
-        if checked:
-            self.settings["autosave"] = True
-        else:
-            self.settings["autosave"] = False
-        self.SaveSettings()
-
-    def ToggleTwitterAddAt(self, checked):
-        if checked:
-            self.settings["twitter_add_at"] = True
-        else:
-            self.settings["twitter_add_at"] = False
-        self.SaveSettings()
-
-    def CalculateProgramStateDiff(self):
-        diff = [k for k in self.programState.keys() if self.programState[k]
-                != self.savedProgramState.get(k, None)]
-        self.programStateDiff = diff
-
-    def ExportProgramState(self):
-        self.saveMutex.lock()
-
-        diff = [k for k in self.programState.keys() if self.programState[k]
-                != self.savedProgramState.get(k, None)]
-
-        print(diff)
-
-        for k in diff:
-            print("["+k+"] "+str(self.savedProgramState.get(k)) +
-                  " → "+str(self.programState.get(k)))
-
-        with open('./out/program_state.json', 'w') as outfile:
-            json.dump(self.programState, outfile, indent=4)
-            self.savedProgramState = copy.deepcopy(self.programState)
-            self.programStateDiff = diff
-        self.saveMutex.unlock()
-
-    def SaveButtonClicked(self):
-        self.ExportProgramState()
-        for p in self.player_layouts:
-            p.ExportName()
-            p.ExportRealName()
-            p.ExportTwitter()
-            p.ExportCountry()
-            p.ExportState()
-            p.ExportCharacter()
-        self.ExportScore()
-
     def SaveSettings(self):
         with open('settings.json', 'w', encoding='utf-8') as outfile:
             json.dump(self.settings, outfile, indent=4, sort_keys=True)
-
-    def SetTwitchUsername(self):
-        text, okPressed = QInputDialog.getText(
-            self, "Set Twitch username", "Username: ", QLineEdit.Normal, "")
-        if okPressed:
-            self.settings["twitch_username"] = text
-            self.SaveSettings()
-            self.setTwitchUsernameAction.setText(
-                "Set Twitch username (" +
-                self.settings.get("twitch_username", None) + ")"
-            )
-
-    def SetSmashggKey(self):
-        text, okPressed = QInputDialog.getText(
-            self,
-            "Set SmashGG key",
-            '''
-            - Go over to smash.gg, login;
-            - Click on your profile image > Developer settings;
-            - Click on "Create new token";
-            - Paste the code you obtained here.
-            ''',
-            QLineEdit.Normal,
-            ""
-        )
-        if okPressed:
-            self.settings["SMASHGG_KEY"] = text.strip()
-            self.SaveSettings()
-
-    def SetSmashggEventSlug(self):
-        inp = QDialog(self)
-
-        layout = QVBoxLayout()
-        inp.setLayout(layout)
-
-        inp.layout().addWidget(QLabel(
-            "Paste the URL to an event on SmashGG (must contain the /event/ part)"
-        ))
-
-        lineEdit = QLineEdit()
-        okButton = QPushButton("OK")
-        validator = QRegularExpression("tournament/[^/]*/event/[^/]*")
-
-        def validateText():
-            match = validator.match(lineEdit.text()).capturedTexts()
-            if len(match) > 0:
-                okButton.setDisabled(False)
-            else:
-                okButton.setDisabled(True)
-
-        lineEdit.textEdited.connect(validateText)
-
-        inp.layout().addWidget(lineEdit)
-
-        okButton.clicked.connect(inp.accept)
-        okButton.setDisabled(True)
-        inp.layout().addWidget(okButton)
-
-        inp.setWindowTitle('Set SmashGG tournament slug')
-        inp.resize(600, 10)
-
-        if inp.exec_() == QDialog.Accepted:
-            match = validator.match(lineEdit.text()).capturedTexts()
-            self.settings["SMASHGG_TOURNAMENT_SLUG"] = match[0]
-            self.SaveSettings()
-            self.smashggTournamentSlug.setText(
-                "Set tournament slug (" + str(self.settings.get(
-                    "SMASHGG_TOURNAMENT_SLUG", None)) + ")"
-            )
-            self.LoadPlayersFromSmashGGTournamentStart(
-                self.settings.get("SMASHGG_TOURNAMENT_SLUG", None))
-
-        inp.deleteLater()
-
-    def SetSmashggUserId(self):
-        inp = QDialog(self)
-
-        inp.setLayout(QVBoxLayout())
-
-        lineEdit = QLineEdit()
-        lineEdit.setInputMask("user/HHHHHHHH;_")
-
-        inp.layout().addWidget(lineEdit)
-
-        okButton = QPushButton("OK")
-        okButton.clicked.connect(inp.accept)
-        inp.layout().addWidget(okButton)
-
-        inp.setWindowTitle('Set SmashGG user id')
-
-        if inp.exec_() == QDialog.Accepted:
-            self.settings["smashgg_user_id"] = lineEdit.text().strip()
-            self.SaveSettings()
-            self.smashggUserId.setText(
-                "Set user id (" +
-                str(self.settings.get("smashgg_user_id", None)) + ")"
-            )
-
-        inp.deleteLater()
-
-    def LoadPlayersFromSmashGGTournamentClicked(self):
-        if self.settings.get("SMASHGG_KEY", None) is None:
-            self.SetSmashggKey()
-
-        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
-            self.SetSmashggEventSlug()
-
-        self.LoadPlayersFromSmashGGTournamentStart(
-            self.settings.get("SMASHGG_TOURNAMENT_SLUG", None))
-
-    def LoadSetsFromSmashGGTournamentQueueClicked(self):
-        if self.getFromStreamQueueBt.isHidden():
-            return
-
-        if self.settings.get("twitch_username", None) == None:
-            self.SetTwitchUsername()
-
-        twitch_username = self.settings["twitch_username"]
-
-        if self.settings.get("SMASHGG_TOURNAMENT_SLUG", None) is None:
-            self.SetSmashggEventSlug()
-
-        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
-
-        if self.settings.get("SMASHGG_KEY", None) is None:
-            self.SetSmashggKey()
-
-        r = requests.post(
-            'https://api.smash.gg/gql/alpha',
-            headers={
-                'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-            },
-            json={
-                'query': '''
-                query evento($eventSlug: String!) {
-                    event(slug: $eventSlug) {
-                        videogame {
-                            id
-                        }
-                        tournament {
-                            streamQueue {
-                                sets {
-                                    id
-                                    fullRoundText
-                                    slots {
-                                        entrant {
-                                            participants {
-                                                gamerTag
-                                            }                                        
-                                        }
-                                    }
-                                }
-                                stream {
-                                    streamName
-                                    streamSource
-                                }
-                            }
-                        }
-                    }
-                }''',
-                'variables': {
-                    "eventSlug": slug
-                },
-            }
-        )
-        resp = json.loads(r.text)
-
-        gameId = resp.get("data", {}).get("event", {}).get(
-            "videogame", {}).get("id", None)
-        if resp is not None and gameId:
-            self.signals.DetectGame.emit(gameId)
-
-        streamSets = resp["data"]["event"]["tournament"]["streamQueue"]
-
-        if streamSets is not None:
-            for s in streamSets:
-                if s["stream"]["streamName"].lower() == twitch_username.lower():
-                    if s["sets"][0]["slots"][0].get("entrant", None) is not None and \
-                            s["sets"][0]["slots"][1].get("entrant", None) is not None:
-                        self.LoadPlayersFromSmashGGSet(s["sets"][0]["id"])
-
-    def LoadUserSetFromSmashGGTournament(self):
-        if self.competitorModeSmashggBt.isHidden():
-            return
-
-        if self.settings.get("smashgg_user_id", None) == None:
-            self.SetSmashggUserId()
-
-        smashgg_username = self.settings["smashgg_user_id"]
-
-        slug = self.settings["SMASHGG_TOURNAMENT_SLUG"]
-
-        if self.settings.get("SMASHGG_KEY", None) is None:
-            self.SetSmashggKey()
-
-        def myFun(self, progress_callback):
-            if self.smashggSetAutoUpdateId is None:
-                r = requests.post(
-                    'https://api.smash.gg/gql/alpha',
-                    headers={
-                        'Authorization': 'Bearer'+self.settings["SMASHGG_KEY"],
-                    },
-                    json={
-                        'query': '''
-                        query user($playerSlug: String!) {
-                            user(slug: $playerSlug) {
-                                player {
-                                    sets(page: 1, perPage: 1) {
-                                        nodes{
-                                            id
-                                        }
-                                    }
-                                }
-                            }
-                        }''',
-                        'variables': {
-                            "playerSlug": smashgg_username
-                        },
-                    }
-                )
-                resp = json.loads(r.text)
-
-                sets = resp.get("data", {}).get("user", {}).get(
-                    "player", {}).get("sets", {}).get("nodes", [])
-
-                if len(sets) == 0:
-                    return
-
-                self.smashggSetAutoUpdateId = sets[0]["id"]
-                progress_callback.emit(0)
-            else:
-                self.UpdateDataFromSmashGGSet()
-
-        def myFun2(progress):
-            self.LoadPlayersFromSmashGGSet()
-
-        worker = Worker(myFun, *{self})
-        worker.signals.progress.connect(myFun2)
-        self.threadpool.start(worker)
 
 
 App.setStyleSheet(qdarkstyle.load_stylesheet(

@@ -1,4 +1,5 @@
 from collections import Counter
+import re
 from time import sleep
 from typing import final
 from PyQt5.QtCore import *
@@ -20,6 +21,7 @@ from Workers import Worker
 class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     SetsQuery = None
     SetQuery = None
+    UserSetQuery = None
     StreamSetsQuery = None
     EntrantsQuery = None
     TournamentDataQuery = None
@@ -496,12 +498,75 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
 
         return streamSet
 
+    def GetUserMatchId(self, user):
+        matches = re.match(
+            r".*smash.gg/(user/[^/]*)", user)
+        print(matches)
+        if matches:
+            user = matches.groups()[0]
+
+        userSet = None
+
+        try:
+            print(user)
+            data = requests.post(
+                "https://smash.gg/api/-/gql",
+                headers={
+                    "client-version": "19",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "UserSetQuery",
+                    "variables": {
+                        "userSlug": user
+                    },
+                    "query": SmashGGDataProvider.UserSetQuery
+                }
+            )
+            data = json.loads(data.text)
+
+            print(data)
+
+            sets = deep_get(data, "data.user.player.sets.nodes")
+            if sets and len(sets) > 0:
+                userSet = sets[0]
+
+                videogame = deep_get(userSet, "event.videogame.id", None)
+                if videogame:
+                    TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                        videogame)
+
+                TSHTournamentDataProvider.TSHTournamentDataProvider.instance.SetTournament(
+                    "https://smash.gg/"+deep_get(userSet, "event.slug"))
+
+                playerId = deep_get(data, "data.user.player.id")
+                slots = userSet.get("slots", [])
+
+                # Check if player is in slot 2
+                if len(slots) >= 2:
+                    participants = deep_get(
+                        slots[1], "entrant.participants", [])
+                    for participant in participants:
+                        p = participant.get("player", {}).get("id", None)
+                        if p == playerId:
+                            userSet["reverse"] = True
+                            break
+
+                print(userSet)
+        except Exception as e:
+            traceback.print_exc()
+
+        return userSet
+
     def GetEntrants(self):
         self.threadpool = QThreadPool()
-        worker = Worker(self.GetEntrantsWorker)
+        worker = Worker(self.GetEntrantsWorker, **{
+            "gameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id"),
+            "eventSlug": self.url.split("smash.gg/")[1]
+        })
         self.threadpool.start(worker)
 
-    def GetEntrantsWorker(self, progress_callback):
+    def GetEntrantsWorker(self, eventSlug, gameId, progress_callback):
         try:
             page = 1
             totalPages = 1
@@ -519,8 +584,8 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                     json={
                         "operationName": "EventEntrantsListQuery",
                         "variables": {
-                            "eventSlug": self.url.split("smash.gg/")[1],
-                            "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id"),
+                            "eventSlug": eventSlug,
+                            "videogameId": gameId,
                             "page": page,
                         },
                         "query": SmashGGDataProvider.EntrantsQuery
@@ -529,11 +594,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 )
 
                 data = json.loads(data.text)
-
-                videogame = deep_get(data, "data.event.videogame.id", None)
-                if videogame:
-                    TSHGameAssetManager.instance.SetGameFromSmashGGId(
-                        videogame)
 
                 totalPages = deep_get(
                     data, "data.event.entrants.pageInfo.totalPages", [])
@@ -647,6 +707,10 @@ SmashGGDataProvider.SetsQuery = f.read()
 f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
          "SmashGGSetQuery.txt", 'r')
 SmashGGDataProvider.SetQuery = f.read()
+
+f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
+         "SmashGGUserSetQuery.txt", 'r')
+SmashGGDataProvider.UserSetQuery = f.read()
 
 f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
          "SmashGGStreamSetsQuery.txt", 'r')

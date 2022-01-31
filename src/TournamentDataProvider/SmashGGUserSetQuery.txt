@@ -1,0 +1,27 @@
+query UserSetQuery($userSlug: String!) {
+    user(slug: $userSlug) {
+        player {
+            id
+            sets(page: 1, perPage: 1) {
+                nodes {
+                    id
+                    slots {
+                        entrant {
+                            participants {
+                                player {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                    event {
+                        slug
+                        videogame {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

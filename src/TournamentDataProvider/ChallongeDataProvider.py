@@ -165,12 +165,8 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             None
         )
 
-        print(sets)
-        print(user)
-        print(userSet)
-
         if userSet and user == userSet.get("p2_name"):
-            userSet["reversed"] = True
+            userSet["reverse"] = True
 
         return userSet
 
