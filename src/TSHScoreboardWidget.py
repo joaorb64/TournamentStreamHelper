@@ -125,6 +125,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.btLoadStreamSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btLoadStreamSet)
         self.btLoadStreamSet.clicked.connect(self.LoadStreamSetClicked)
+        TSHTournamentDataProvider.instance.signals.twitch_username_updated.connect(
+            self.UpdateStreamButton)
 
         self.btLoadPlayerSet = QPushButton("Load player set")
         self.btLoadPlayerSet.setEnabled(False)
@@ -402,7 +404,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             if(data.get("auto_update") == "stream"):
                 self.autoUpdateTimer.timeout.connect(
-                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino"))
+                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
 
             self.lastSetSelected = data.get("id")
 
@@ -426,7 +428,15 @@ class TSHScoreboardWidget(QDockWidget):
 
     def LoadStreamSetClicked(self):
         self.lastSetSelected = None
-        TSHTournamentDataProvider.instance.LoadStreamSet(self, "joao_shino")
+        TSHTournamentDataProvider.instance.LoadStreamSet(
+            self, SettingsManager.Get("twitch_username"))
+
+    def UpdateStreamButton(self):
+        if SettingsManager.Get("twitch_username"):
+            self.btLoadStreamSet.setText(
+                "Load current stream set ("+SettingsManager.Get("twitch_username")+")")
+        else:
+            self.btLoadStreamSet.setText("Load current stream set")
 
     def LoadUserSetClicked(self):
         TSHTournamentDataProvider.instance.SetTwitchUsername(self)

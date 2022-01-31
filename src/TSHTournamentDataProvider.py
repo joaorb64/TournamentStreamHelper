@@ -111,6 +111,7 @@ class TSHTournamentDataProvider:
             window, "Set Twitch username", "Username: ", QLineEdit.Normal, "")
         if okPressed:
             SettingsManager.Set("twitch_username", text)
+            TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
     def LoadSets(self, mainWindow):
         sets = TSHTournamentDataProvider.instance.provider.GetMatches()
@@ -223,6 +224,7 @@ class TSHTournamentDataProvider:
         if SettingsManager.Get("TOURNAMENT_URL"):
             TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
+            TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
 
 TSHTournamentDataProvider.instance = TSHTournamentDataProvider()
