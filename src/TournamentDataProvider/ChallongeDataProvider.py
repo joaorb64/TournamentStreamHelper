@@ -122,16 +122,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
             data = json.loads(data.text)
 
-            rounds = deep_get(data, "rounds", {})
-            matches = deep_get(data, "matches_by_round", {})
-
-            all_matches = []
-
-            for round in matches.values():
-                for match in round:
-                    match["round_name"] = next(
-                        r["title"] for r in rounds if r["number"] == match.get("round"))
-                    all_matches.append(match)
+            all_matches = self.GetAllMatchesFromData(data)
 
             all_matches = [
                 match for match in all_matches if match.get("state") in ["open", "pending"] and match.get("player1") and match.get("player2")]
@@ -144,6 +135,35 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             traceback.print_exc()
 
         return final_data
+
+    def GetAllMatchesFromData(self, data):
+        rounds = deep_get(data, "rounds", {})
+        matches = deep_get(data, "matches_by_round", {})
+
+        all_matches = []
+
+        for round in matches.values():
+            for match in round:
+                match["round_name"] = next(
+                    r["title"] for r in rounds if r["number"] == match.get("round"))
+                if data.get("tournament", {}).get("tournament_type") == "round robin":
+                    match["phase"] = "Round Robin"
+                else:
+                    match["phase"] = "Bracket"
+                all_matches.append(match)
+
+        for group in deep_get(data, "groups", []):
+            rounds = deep_get(group, "rounds", {})
+            matches = deep_get(group, "matches_by_round", {})
+
+            for round in matches.values():
+                for match in round:
+                    match["round_name"] = next(
+                        r["title"] for r in rounds if r["number"] == match.get("round"))
+                    match["phase"] = group.get("name")
+                    all_matches.append(match)
+
+        return all_matches
 
     def GetStreamMatchId(self, streamName):
         sets = self.GetMatches()
@@ -211,7 +231,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         return({
             "id": deep_get(match, "id"),
             "round_name": deep_get(match, "round_name"),
-            "tournament_phase": "Bracket",
+            "tournament_phase": match.get("phase"),
             "p1_name": deep_get(match, "player1.display_name"),
             "p2_name": deep_get(match, "player2.display_name"),
             "entrants": [
@@ -257,13 +277,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             rounds = deep_get(data, "rounds", {})
             matches = deep_get(data, "matches_by_round", {})
 
-            all_matches = []
-
-            for round in matches.values():
-                for match in round:
-                    match["round_name"] = next(
-                        r["title"] for r in rounds if r["number"] == match.get("round"))
-                    all_matches.append(match)
+            all_matches = self.GetAllMatchesFromData(data)
 
             all_entrants = {}
 
