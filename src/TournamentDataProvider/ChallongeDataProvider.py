@@ -16,8 +16,8 @@ import TSHTournamentDataProvider
 
 class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self, url, threadpool) -> None:
+        super().__init__(url, threadpool)
         self.name = "Challonge"
 
     def GetTournamentData(self):
@@ -255,7 +255,6 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
         })
 
     def GetEntrants(self):
-        self.threadpool = QThreadPool()
         worker = Worker(self.GetEntrantsWorker)
         self.threadpool.start(worker)
 

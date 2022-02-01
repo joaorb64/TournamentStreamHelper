@@ -265,7 +265,9 @@ class Window(QMainWindow):
         self.scoreboard.lastSetSelected = None
         if SettingsManager.Get("SmashGG_user"):
             TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
-                "smash.gg")
+                "smash.gg/",
+                TSHTournamentDataProvider.instance.threadPool
+            )
             TSHTournamentDataProvider.instance.LoadUserSet(
                 self.scoreboard, SettingsManager.Get("SmashGG_user"))
 

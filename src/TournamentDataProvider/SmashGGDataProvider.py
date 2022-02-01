@@ -26,8 +26,8 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
     EntrantsQuery = None
     TournamentDataQuery = None
 
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self, url, threadpool) -> None:
+        super().__init__(url, threadpool)
         self.name = "SmashGG"
 
     def GetTournamentData(self):
@@ -90,7 +90,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
         finalResult = {}
 
         try:
-            pool = QThreadPool()
+            pool = self.threadpool
 
             result = {}
 
@@ -559,7 +559,6 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
         return userSet
 
     def GetEntrants(self):
-        self.threadpool = QThreadPool()
         worker = Worker(self.GetEntrantsWorker, **{
             "gameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id"),
             "eventSlug": self.url.split("smash.gg/")[1]
