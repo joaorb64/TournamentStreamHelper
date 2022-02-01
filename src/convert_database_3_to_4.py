@@ -7,6 +7,7 @@ header_new = "prefix,gamerTag,name,twitter,country_code,state_code,mains"
 game_dir = "../assets/games"
 list_dir = os.listdir(game_dir)
 
+
 class OldLine:
     org = ''
     name = ''
@@ -17,11 +18,12 @@ class OldLine:
     main = ''
     color = ''
 
-    def __init__(self, line:str) -> None:
+    def __init__(self, line: str) -> None:
         line = line.strip()
-        self.org, self.name, self.full_name, self.country_code, self.state_code, self.twitter, self.main, self.color = line.split(',')
+        self.org, self.name, self.full_name, self.country_code, self.state_code, self.twitter, self.main, self.color = line.split(
+            ',')
         self.color = str(self.color)
-    
+
     def get_game_id_from_main(self):
         for dir_name in list_dir:
             config_path = f"{game_dir}/{dir_name}/base_files/config.json"
@@ -33,10 +35,10 @@ class OldLine:
         return(None)
 
 
-def convert_database_3_to_4(file_path:str):
+def convert_database_3_to_4(file_path: str):
     with open(file_path, 'r', encoding='utf-8') as f:
         old_database_csv = f.readlines()
-    
+
     new_database = header_new + "\n"
 
     for line in old_database_csv:
@@ -63,4 +65,3 @@ if __name__ == '__main__':
     new_database_text = convert_database_3_to_4("../local_players_old.csv")
     with open('../local_players.csv', 'w', encoding='utf-8') as f:
         f.write(new_database_text)
-
