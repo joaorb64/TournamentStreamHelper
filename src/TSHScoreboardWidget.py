@@ -501,8 +501,10 @@ class TSHScoreboardWidget(QDockWidget):
             self.btLoadStreamSet.setEnabled(False)
 
     def UpdateUserSetButton(self):
-        provider = TSHTournamentDataProvider.instance.provider.name
-        if SettingsManager.Get(provider+"_user"):
+        provider = None
+        if TSHTournamentDataProvider.instance.provider:
+            provider = TSHTournamentDataProvider.instance.provider.name
+        if provider and SettingsManager.Get(provider+"_user"):
             self.btLoadPlayerSet.setText(
                 f"Load user set ({SettingsManager.Get(provider+'_user')})")
             self.btLoadPlayerSet.setEnabled(True)
@@ -512,8 +514,10 @@ class TSHScoreboardWidget(QDockWidget):
 
     def LoadUserSetClicked(self):
         self.lastSetSelected = None
-        provider = TSHTournamentDataProvider.instance.provider.name
-        if SettingsManager.Get(provider+"_user"):
+        provider = None
+        if TSHTournamentDataProvider.instance.provider:
+            provider = TSHTournamentDataProvider.instance.provider.name
+        if provider and SettingsManager.Get(provider+"_user"):
             TSHTournamentDataProvider.instance.LoadUserSet(
                 self, SettingsManager.Get(provider+"_user"))
 
