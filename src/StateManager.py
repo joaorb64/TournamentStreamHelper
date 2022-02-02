@@ -6,6 +6,7 @@ from deepdiff import DeepDiff, extract
 import shutil
 import threading
 import requests
+from PIL import Image
 
 from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -115,6 +116,11 @@ class StateManager:
                                 r.raw.decode_content = True
                                 shutil.copyfileobj(r.raw, f)
                                 f.flush()
+                        if url.endswith(".jpg"):
+                            original = Image.open(dlpath)
+                            original.save(dlpath.rsplit(
+                                ".", 1)[0]+".png", format="png")
+                            os.remove(dlpath)
 
                     t = threading.Thread(
                         target=downloadImage,
