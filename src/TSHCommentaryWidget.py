@@ -97,8 +97,8 @@ class TSHCommentaryWidget(QDockWidget):
                     StateManager.Unset(f'commentary.{k}')
 
     def ExportMergedName(self, comm, index):
-        team = self.findChild(QLineEdit, "team").text()
-        name = self.findChild(QLineEdit, "name").text()
+        team = comm.findChild(QLineEdit, "team").text()
+        name = comm.findChild(QLineEdit, "name").text()
         merged = ""
 
         if team != "":
