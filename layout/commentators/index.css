@@ -26,14 +26,14 @@ body {
   flex-direction: row;
   justify-content: center;
   align-content: center;
-  height: 100%;
-  gap: 40px;
+  width: 100%;
+  gap: 16px;
   color: white;
+  flex-wrap: wrap;
 }
 
 .commentator_container {
   width: 300;
-  height: 100;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 6px;
   display: flex;

@@ -18,8 +18,8 @@
                 html += `
                     <div class="commentator_container commentator${index}">
                         <div class="name"></div>
-                        <div class="real_name"></div>
-                        <div class="twitter"></div>
+                        ${window.config.size == "normal" ? `<div class="real_name"></div>` : ""}
+                        ${window.config.size == "normal" || window.config.size == "mini" ? `<div class="twitter"></div>` : ""}
                     </div>
                 `
             })
