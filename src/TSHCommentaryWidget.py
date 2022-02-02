@@ -76,6 +76,11 @@ class TSHCommentaryWidget(QDockWidget):
                     ])
                 c.textChanged.emit("")
 
+            comm.findChild(QLineEdit, "name").textChanged.connect(
+                lambda comm=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(comm, index))
+            comm.findChild(QLineEdit, "team").textChanged.connect(
+                lambda comm=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(comm, index))
+
             self.commentaryWidgets.append(comm)
             self.widgetArea.layout().addWidget(comm)
 
@@ -90,6 +95,19 @@ class TSHCommentaryWidget(QDockWidget):
             for k in list(StateManager.Get(f'commentary').keys()):
                 if not k.isnumeric() or (k.isnumeric() and int(k) > number):
                     StateManager.Unset(f'commentary.{k}')
+
+    def ExportMergedName(self, comm, index):
+        team = self.findChild(QLineEdit, "team").text()
+        name = self.findChild(QLineEdit, "name").text()
+        merged = ""
+
+        if team != "":
+            merged += team+" | "
+
+        merged += name
+
+        StateManager.Set(
+            f"commentary.{index}.mergedName", merged)
 
     def SetupAutocomplete(self):
         if TSHPlayerDB.model:

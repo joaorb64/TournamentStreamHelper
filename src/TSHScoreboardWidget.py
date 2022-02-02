@@ -306,7 +306,7 @@ class TSHScoreboardWidget(QDockWidget):
             StateManager.Set(f"score.team.{team}.logo",
                              f"./team_logo/{value.lower()}.png")
         else:
-            StateManager.Set(None)
+            StateManager.Set(f"score.team.{team}.logo", None)
 
     def LoadCharacters(self):
         TSHScoreboardPlayerWidget.LoadCharacters()
