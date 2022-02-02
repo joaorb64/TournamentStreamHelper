@@ -77,9 +77,9 @@ class TSHCommentaryWidget(QDockWidget):
                 c.textChanged.emit("")
 
             comm.findChild(QLineEdit, "name").textChanged.connect(
-                lambda comm=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(comm, index))
+                lambda x, c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
             comm.findChild(QLineEdit, "team").textChanged.connect(
-                lambda comm=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(comm, index))
+                lambda x, c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
 
             self.commentaryWidgets.append(comm)
             self.widgetArea.layout().addWidget(comm)
