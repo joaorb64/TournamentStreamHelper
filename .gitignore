@@ -6,7 +6,7 @@ character_icon/chara_3*
 character_icon/*.tar.xz
 powerrankings_player_data.json
 tournament_players.json
-local_players.csv
+local_players*.csv
 settings.json
 update.tar.gz
 __pycache__/
@@ -19,3 +19,5 @@ player_avatar/*
 !player_avatar/*.txt
 team_logo/*
 !team_logo/*.txt
+assets/*.json
+layout_custom/*
