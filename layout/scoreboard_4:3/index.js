@@ -36,7 +36,7 @@
                 `);
 
                 SetInnerHtml($(`.p${t+1} .character_container`), `
-                    <div class='character' style='background-image: url(../../${player.character["1"].assets.full.asset})'></div>
+                    <div class='character' style='background-image: url(../../${player.character["1"].assets.portrait.asset})'></div>
                 `);
         
                 SetInnerHtml($(`.p${t+1} .twitter`), player.twitter);
