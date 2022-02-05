@@ -43,16 +43,28 @@ body {
   padding: 6px;
 }
 
+.fgc .player.container {
+  top: 4px;
+}
+
 .p1.container {
   background-position: 100% 0;
   right: 1020px;
   flex-direction: row;
 }
 
+.fgc .p1.container {
+  right: 1116px;
+}
+
 .p2.container {
   background-position: 0 0;
   left: 1020px;
   flex-direction: row-reverse;
+}
+
+.fgc .p2.container {
+  left: 1116px;
 }
 
 .name_twitter {
