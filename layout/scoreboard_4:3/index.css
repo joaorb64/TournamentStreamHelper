@@ -11,6 +11,7 @@
   place-items: center;
   place-content: center;
   height: 100%;
+  flex-direction: inherit;
 }
 
 body {
@@ -21,31 +22,62 @@ body {
   margin: 0;
   width: 1920px;
   height: 1080px;
-  background-image: url("base.png");
   background-size: cover;
 }
 
+.bg {
+  position: absolute;
+  width: 224px;
+  height: 100vh;
+  background-color: #212121;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  background-image: url("wallpaper.png");
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+}
+
+.bg.left {
+}
+
+.bg.right {
+  right: 0;
+  background-position: right;
+}
+
 .container {
+  color: white;
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  gap: 8px;
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  border-radius: 8px;
+  background-color: #212121ff;
+}
+
+.player.container {
   top: 236px;
-  width: 240px;
-  height: 512px;
+  width: 100%;
+  height: 420px;
   background-size: cover;
   background-repeat: no-repeat;
-  position: absolute;
   color: white;
   overflow: hidden;
 }
 
-.p1.container {
+.left .player.container {
   background-position: 100% 0;
   left: 0;
-  background-image: url("./container_p1.png");
 }
 
-.p2.container {
+.right .player.container {
   background-position: 0 0;
   right: 0px;
-  background-image: url("./container_p2.png");
 }
 
 .container .name {
@@ -66,54 +98,48 @@ body {
   font-size: 25px;
 }
 
-.logo {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  width: 176px;
-  height: 176px;
-  background-image: url(./logo.png);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
 .sponsor {
   color: yellow;
 }
 
-.container_top {
+.info.container {
   position: absolute;
-  top: 0px;
   left: 50%;
   transform: translateX(-50%);
-  width: 866px;
-  height: 52px;
-  font-size: 34px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url("./container_top.png");
+  width: 800px;
+  height: 30px;
   color: white;
   padding-left: 30px;
   padding-right: 30px;
   background-position: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  font-size: 22px;
 }
 
-.container_bottom {
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 866px;
-  height: 52px;
-  font-size: 34px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url("./container_bottom.png");
-  color: white;
-  padding-left: 30px;
-  padding-right: 30px;
-  background-position: center;
+.info.container_inner {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  font-size: inherit;
+  justify-content: space-around;
+}
+
+.info.container_inner > div {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.info.container.top {
+  top: 4px;
+  height: 50px;
+  font-size: 28px;
+}
+
+.info.container.bottom {
+  bottom: 4px;
+  display: flex;
+  justify-content: space-around;
 }
 
 .flags_container {
@@ -126,10 +152,10 @@ body {
   flex-direction: column;
 }
 
-.p1 .flags_container {
+.left .flags_container {
   left: 8px;
 }
-.p2 .flags_container {
+.right .flags_container {
   right: 8px;
 }
 
@@ -147,17 +173,18 @@ body {
   overflow: hidden;
   top: 70px;
   height: 300px;
+  width: 100%;
   display: flex;
+  flex-direction: column;
 }
 
-.p1 .character_container {
-  left: 0;
-  right: 4;
+.left .character_container {
+  background-color: #ff3837ff;
 }
 
-.p2 .character_container {
-  left: 4;
-  right: 0;
+.right .character_container {
+  background-color: #1255a3ff;
+  transform: scaleX(-1);
 }
 
 .character {
@@ -176,25 +203,35 @@ body {
 }
 
 .score {
-  position: absolute;
-  bottom: 43px;
-  width: 90px;
-  height: 90px;
-  font-size: 74px;
-  background-image: url("./score_container.png");
+  top: 14px;
+  width: 92px;
+  height: 92px;
+  font-size: 64px;
+  color: white;
+  border-radius: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
-.p1 .score {
-  right: 0;
+.left .score {
+  background-color: #ff3837ff;
 }
 
-.p2 .score {
-  left: 0;
+.left .sponsor {
+  color: #ff3837ff;
+}
+
+.right .score {
+  background-color: #1255a3ff;
+}
+
+.right .sponsor {
+  color: #1255a3ff;
 }
 
 .sponsor_logo {
   position: absolute;
-  bottom: 23px;
+  bottom: 25px;
   width: 80px;
   height: 80px;
   font-size: 74px;
@@ -203,10 +240,10 @@ body {
   background-repeat: no-repeat;
 }
 
-.p1 .sponsor_logo {
+.left .sponsor_logo {
   left: 0;
 }
 
-.p2 .sponsor_logo {
+.right .sponsor_logo {
   right: 0;
 }

@@ -13,8 +13,8 @@ function FitText(target) {
 
     let textElement = target.find(".text");
     
-    if(textElement.text() == "undefined"){
-        textElement.text("");
+    if(textElement.text().trim() == "undefined"){
+        textElement.html("");
     }
 
     textElement.css("font-size", "");
