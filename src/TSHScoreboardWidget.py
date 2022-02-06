@@ -353,6 +353,8 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
+            self.team2column.findChild(
+                QCheckBox, "losers").toggled.connect(p.SetLosers)
             self.team2playerWidgets.append(p)
 
         while len(self.team1playerWidgets) > number:
