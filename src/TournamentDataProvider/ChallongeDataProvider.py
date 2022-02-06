@@ -78,21 +78,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
             )
             data = json.loads(data.text)
 
-            rounds = deep_get(data, "rounds", {})
-            matches = deep_get(data, "matches_by_round", {})
-
-            all_matches = []
-
-            for r, round in enumerate(matches.values()):
-                for m, match in enumerate(round):
-                    match["round_name"] = next(
-                        r["title"] for r in rounds if r["number"] == match.get("round"))
-                    if r == len(matches.values()) - 1:
-                        if m == 0:
-                            match["isGF"] = True
-                        elif m == 1:
-                            match["isGFR"] = True
-                    all_matches.append(match)
+            all_matches = self.GetAllMatchesFromData(data)
 
             match = next((m for m in all_matches if str(
                 m.get("id")) == str(setId)), None)
@@ -142,14 +128,19 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
 
         all_matches = []
 
-        for round in matches.values():
-            for match in round:
+        for r, round in enumerate(matches.values()):
+            for m, match in enumerate(round):
                 match["round_name"] = next(
                     r["title"] for r in rounds if r["number"] == match.get("round"))
                 if data.get("tournament", {}).get("tournament_type") == "round robin":
                     match["phase"] = "Round Robin"
                 else:
                     match["phase"] = "Bracket"
+                if r == len(matches.values()) - 1:
+                    if m == 0:
+                        match["isGF"] = True
+                    elif m == 1:
+                        match["isGFR"] = True
                 all_matches.append(match)
 
         for group in deep_get(data, "groups", []):
