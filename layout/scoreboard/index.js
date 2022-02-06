@@ -36,7 +36,7 @@
 
                     let charactersHtml = "";
                     Object.values(player.character).forEach((character, index)=>{
-                        if(character.assets["base_files/icon"].asset){
+                        if(character.assets["base_files/icon"]){
                             charactersHtml += `
                             <div class="icon stockicon">
                                 <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
@@ -44,7 +44,7 @@
                             `
                         }
                     })
-                    $(`.p${t+1}.container .character_container`).html(charactersHtml);
+                    SetInnerHtml($(`.p${t+1}.container .character_container`), charactersHtml);
 
                     SetInnerHtml($(`.p${t+1}.container .sponsor`), 
                         player.sponsor_logo ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>` : ""

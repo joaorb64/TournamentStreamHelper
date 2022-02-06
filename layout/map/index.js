@@ -24,6 +24,9 @@ baseMap.addTo(map);
     var markers = []
     var polylines = []
     var positions = []
+    // I use this to know if I added a icon for a state or a country latlng
+    // for country latlng the icon pulses and there's more zoom out
+    var isPrecise = []
 
     async function Start(){
     }
@@ -42,6 +45,8 @@ baseMap.addTo(map);
         polylines = [];
 
         positions = [];
+        isPrecise = [];
+
         let servers = []
 
         Object.values(data.score.team).forEach((team)=>{
@@ -73,8 +78,23 @@ baseMap.addTo(map);
                 }) }).addTo(map)
                     .bindTooltip(player.name, { direction: directions[direction], className: 'leaflet-tooltip-own', offset: [0, 0] })
                     .openTooltip();
-                
+                    
                 markers.push(marker)
+
+                if(!player.state.latitude){
+                    let marker = L.marker(pos, { icon: L.divIcon({
+                        html: '<div class="gps_ring"></div>',
+                        className: 'css-icon',
+                        iconAnchor: [128, 128],
+                    }) }).addTo(map)
+                        .bindTooltip(player.name, { direction: directions[direction], className: 'leaflet-tooltip-own', offset: [0, 0] })
+                        .openTooltip();
+
+                    markers.push(marker)
+                    isPrecise.push(false)
+                } else {
+                    isPrecise.push(true);
+                }
             })
         })
 
@@ -91,7 +111,19 @@ baseMap.addTo(map);
             })
         })
 
-        console.log("Ping: "+ping);
+        console.log("Max Ping: "+maxPing);
+
+        let pingByDistance = 0;
+
+        positions.forEach((pos1)=>{
+            positions.forEach((pos2)=>{
+                if(pos1 != pos2){
+                    pingByDistance += distanceInKm(pos1, pos2) * 0.0067;
+                }
+            })
+        })
+
+        console.log("Ping by distance: "+pingByDistance);
 
         let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
         $("#ping").html("Estimated ping: "+pingString+" ms")
@@ -129,11 +161,20 @@ baseMap.addTo(map);
             .to(['.overlay-element'], { duration: 1, autoAlpha: 1 }, 0)
         
         map.on("zoomend", ()=>{
-            var polyline = L.polyline(getPairs(positions), {color: 'blue', dashArray: '5,10'}).addTo(map);
+            let validPositions = positions.filter((pos, i)=>{return isPrecise[i];})
+            var polyline = L.polyline(getPairs(validPositions), {color: 'blue', dashArray: '5,10'}).addTo(map);
             polylines.push(polyline)
         })
 
-        map.flyToBounds(L.latLngBounds(positions), {
+        let bounds = L.latLngBounds(positions);
+
+        isPrecise.forEach((precise, i)=>{
+            if(!precise){
+                bounds = bounds.extend(L.latLng(positions[i][0], positions[i][1]).toBounds(2000000))
+            }
+        })
+
+        map.flyToBounds(bounds, {
             paddingTopLeft: [30, 30+$(".overlay").outerHeight()],
             paddingBottomRight: [30, 30],
             duration: 2,

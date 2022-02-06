@@ -29,7 +29,7 @@ body {
   position: absolute;
   width: 224px;
   height: 100vh;
-  background-color: #212121;
+  background-color: black;
   display: flex;
   flex-direction: column;
   justify-content: center;
