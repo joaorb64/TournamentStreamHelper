@@ -24,5 +24,31 @@
         "useDSR": false,
         "useMDSR": true,
         "videogame": "ssbu"
+    },
+    {
+        "banByMaxGames": {},
+        "banCount": 2,
+        "neutralStages": [
+            "Dream Land",
+            "Pokémon Stadium",
+            "Yoshi's Story",
+            "Glacial River",
+            "Dr. Mario"
+        ],
+        "name": "Frame Perfect Series",
+        "counterpickStages": [
+            "Smashville",
+            "Saffron City DL",
+            "Goomba Road",
+            "Planet Clancer"
+        ],
+        "strikeOrder": [
+            1,
+            2,
+            1
+        ],
+        "useDSR": false,
+        "useMDSR": true,
+        "videogame": "ssb64"
     }
 ]
