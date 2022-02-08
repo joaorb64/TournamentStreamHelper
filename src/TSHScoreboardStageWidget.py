@@ -17,6 +17,19 @@ class TSHScoreboardStageWidget(QObject):
     rulesets_changed = pyqtSignal()
 
 
+class Ruleset():
+    def __init__(self) -> None:
+        self.name = ""
+        self.neutralStages = []
+        self.counterpickStages = []
+        self.banByMaxGames = {}
+        self.useDSR = False
+        self.useMDSR = False
+        self.banCount = 0
+        self.strikeOrder = []
+        self.videogame = ""
+
+
 class TSHScoreboardStageWidget(QWidget):
     def __init__(self, *args):
         super().__init__(*args)
@@ -44,14 +57,18 @@ class TSHScoreboardStageWidget(QWidget):
 
         self.stagesNeutral = QListView()
         self.stagesNeutral.setIconSize(QSize(64, 64))
+        vbox.addWidget(QLabel("Neutral Stages"))
         vbox.addWidget(self.stagesNeutral)
         self.stagesCounterpick = QListView()
         self.stagesCounterpick.setIconSize(QSize(64, 64))
+        vbox.addWidget(QLabel("Counterpick Stages"))
         vbox.addWidget(self.stagesCounterpick)
 
         self.LoadSmashggRulesets()
 
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
+
+        StateManager.Set(f"score.ruleset", None)
 
         # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
         # load tournament ruleset
@@ -60,7 +77,42 @@ class TSHScoreboardStageWidget(QWidget):
         self.rulesetsBox.clear()
 
         rulesetsModel = QStandardItemModel()
+
+        rulesetsModel.appendRow(QStandardItem(""))
+
+        # Load local rulesets
+        try:
+            userRulesets = json.loads(open("./user_data/rulesets.json").read())
+
+            for ruleset in userRulesets:
+                if ruleset.get("videogame") == TSHGameAssetManager.instance.selectedGame.get("codename"):
+                    myRuleset = Ruleset()
+                    myRuleset.__dict__.update(ruleset)
+
+                    neutral = []
+                    for neutralStage in myRuleset.neutralStages:
+                        stage = TSHGameAssetManager.instance.selectedGame.get(
+                            "stage_to_codename").get(neutralStage, {})
+                        neutral.append(stage)
+                    myRuleset.neutralStages = neutral
+
+                    counterpick = []
+                    for counterpickStage in myRuleset.counterpickStages:
+                        stage = TSHGameAssetManager.instance.selectedGame.get(
+                            "stage_to_codename").get(counterpickStage, {})
+                        counterpick.append(stage)
+                    myRuleset.counterpickStages = counterpick
+
+                    item = QStandardItem(ruleset.get("name"))
+                    item.setData(myRuleset, Qt.ItemDataRole.UserRole)
+                    item.setIcon(QIcon("./icons/db.svg"))
+                    rulesetsModel.appendRow(item)
+        except:
+            traceback.print_exc()
+
+        # Load SmashGG rulesets
         for ruleset in self.smashggRulesets:
+            myRuleset = Ruleset()
             if str(ruleset.get("videogameId")) == str(TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")):
                 if not ruleset.get("settings"):
                     ruleset["settings"] = {}
@@ -72,18 +124,36 @@ class TSHScoreboardStageWidget(QWidget):
                         stage = next((s[1] for s in TSHGameAssetManager.instance.selectedGame.get(
                             "stage_to_codename").items() if str(s[1].get("smashgg_id")) == str(stage)), {"smashgg_id": stage})
                         neutral.append(stage)
-                    ruleset["settings"]["stages"]["neutral"] = neutral
+                    myRuleset.neutralStages = neutral
                 if ruleset.get("settings") and ruleset.get("settings", {}).get("stages", {}).get("counterpick"):
                     counterpick = []
                     for stage in ruleset["settings"]["stages"]["counterpick"]:
                         stage = next((s[1] for s in TSHGameAssetManager.instance.selectedGame.get(
                             "stage_to_codename").items() if str(s[1].get("smashgg_id")) == str(stage)), {"smashgg_id": stage})
                         counterpick.append(stage)
-                    ruleset["settings"]["stages"]["counterpick"] = counterpick
+                    myRuleset.counterpickStages = counterpick
+                myRuleset.name = ruleset.get("name")
+
+                myRuleset.strikeOrder = ruleset.get(
+                    "settings", {}).get("strikeOrder")
+
+                myRuleset.useDSR = ruleset.get("settings", {}).get(
+                    "additionalFlags", {}).get("useDSR", False)
+                myRuleset.useMDSR = ruleset.get("settings", {}).get(
+                    "additionalFlags", {}).get("useMDSR", False)
+
+                myRuleset.banCount = ruleset.get("settings", {}).get(
+                    "additionalFlags", {}).get("banCount", 0)
+
+                myRuleset.banByMaxGames = ruleset.get("settings", {}).get(
+                    "additionalFlags", {}).get("banCountByMaxGames", 0)
+
                 item = QStandardItem(ruleset.get("name"))
-                item.setData(ruleset, Qt.ItemDataRole.UserRole)
+                item.setData(myRuleset, Qt.ItemDataRole.UserRole)
                 item.setIcon(QIcon("./icons/smashgg.svg"))
                 rulesetsModel.appendRow(item)
+
+        # Update list
         self.rulesetsBox.setModel(rulesetsModel)
 
         self.stagesModel = QStandardItemModel()
@@ -98,23 +168,30 @@ class TSHScoreboardStageWidget(QWidget):
     def LoadRuleset(self):
         data = self.rulesetsBox.currentData()
 
+        allStages = TSHGameAssetManager.instance.selectedGame.get(
+            "stage_to_codename")
+
         neutralModel = QStandardItemModel()
         neutralModel.appendRow(QStandardItem(""))
-        for stage in data.get("settings").get("stages", {}).get("neutral", []):
-            item = QStandardItem(stage.get("name"))
-            item.setData(stage, Qt.ItemDataRole.UserRole)
-            item.setIcon(QIcon(stage.get("path")))
-            neutralModel.appendRow(item)
+        if data.neutralStages:
+            for stage in data.neutralStages:
+                item = QStandardItem(stage.get("name"))
+                item.setData(stage, Qt.ItemDataRole.UserRole)
+                item.setIcon(QIcon(stage.get("path")))
+                neutralModel.appendRow(item)
         self.stagesNeutral.setModel(neutralModel)
 
         counterpickModel = QStandardItemModel()
         counterpickModel.appendRow(QStandardItem(""))
-        for stage in data.get("settings").get("stages", {}).get("counterpick", []):
-            item = QStandardItem(stage.get("name"))
-            item.setData(stage, Qt.ItemDataRole.UserRole)
-            item.setIcon(QIcon(stage.get("path")))
-            counterpickModel.appendRow(item)
+        if data.counterpickStages:
+            for stage in data.counterpickStages:
+                item = QStandardItem(stage.get("name"))
+                item.setData(stage, Qt.ItemDataRole.UserRole)
+                item.setIcon(QIcon(stage.get("path")))
+                counterpickModel.appendRow(item)
         self.stagesCounterpick.setModel(counterpickModel)
+
+        StateManager.Set(f"score.ruleset", vars(data))
 
     def LoadSmashggRulesets(self):
         try:

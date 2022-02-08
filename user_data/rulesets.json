@@ -1,0 +1,28 @@
+[
+    {
+        "banByMaxGames": {},
+        "banCount": 0,
+        "counterpickStages": [
+            "Pokémon Stadium 2",
+            "Yoshi's Story",
+            "Smashville",
+            "Town and City"
+        ],
+        "name": "SuMMIT SEM LAG",
+        "neutralStages": [
+            "Battlefield",
+            "Final Destination",
+            "Small Battlefield",
+            "Hollow Bastion",
+            "Northern Cave"
+        ],
+        "strikeOrder": [
+            1,
+            2,
+            1
+        ],
+        "useDSR": false,
+        "useMDSR": true,
+        "videogame": "ssbu"
+    }
+]
