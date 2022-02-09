@@ -1,3 +1,5 @@
+from asyncio import start_server
+import os
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -11,6 +13,8 @@ from StateManager import StateManager
 from TSHGameAssetManager import TSHGameAssetManager
 from TSHPlayerDB import TSHPlayerDB
 from TSHTournamentDataProvider import TSHTournamentDataProvider
+from flask import Flask, send_from_directory, request
+from Workers import Worker
 
 
 class TSHScoreboardStageWidget(QObject):
@@ -30,9 +34,49 @@ class Ruleset():
         self.videogame = ""
 
 
+class WebServer(QThread):
+    app = Flask(__name__, static_folder=os.path.curdir)
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self.host_name = "0.0.0.0"
+        self.port = 5000
+
+    @app.route("/ruleset")
+    def main():
+        data = StateManager.Get(f"score.ruleset", {})
+        data.update({
+            "basedir": os.path.abspath(".")
+        })
+        return data
+
+    @app.route('/post', methods=['POST'])
+    def post_route():
+        print(request.get_data())
+        print(request.get_json(True))
+        print(json.loads(request.get_data()))
+        StateManager.Set(f"score.stage_strike", json.loads(request.get_data()))
+        return "OK"
+
+    @app.route('/', defaults=dict(filename=None))
+    @app.route('/<path:filename>', methods=['GET', 'POST'])
+    def test(filename):
+        filename = filename or 'stage_strike_app/build/index.html'
+        print(os.path.abspath("."), filename)
+        return send_from_directory(os.path.abspath("."), filename)
+
+    def run(self):
+        self.app.run(host=self.host_name, port=self.port,
+                     debug=True, use_reloader=False)
+
+
 class TSHScoreboardStageWidget(QWidget):
+
     def __init__(self, *args):
         super().__init__(*args)
+
+        self.webserver = WebServer()
+        self.webserver.start()
 
         # uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
 
@@ -167,6 +211,9 @@ class TSHScoreboardStageWidget(QWidget):
 
     def LoadRuleset(self):
         data = self.rulesetsBox.currentData()
+
+        if data == None:
+            data = Ruleset()
 
         allStages = TSHGameAssetManager.instance.selectedGame.get(
             "stage_to_codename")

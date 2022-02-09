@@ -4,3 +4,4 @@ py7zr
 deepdiff
 qdarkstyle
 Pillow
+Flask

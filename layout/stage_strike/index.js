@@ -28,7 +28,7 @@
                                 :
                                 ""
                             }
-                            ${data.score.stage_strike.selected.codename == stage ?
+                            ${data.score.stage_strike.selected && data.score.stage_strike.selected.codename == stage ?
                                 `<div class="stage-selected stamp"></div>`
                                 :
                                 ""
