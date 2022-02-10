@@ -311,5 +311,8 @@ class TSHGameAssetManager():
         return stage
 
 
+if not os.path.exists("./assets/games"):
+    os.makedirs("./assets/games")
+
 if TSHGameAssetManager.instance == None:
     TSHGameAssetManager.instance = TSHGameAssetManager()

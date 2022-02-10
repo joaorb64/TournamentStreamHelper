@@ -166,6 +166,9 @@ class StateManager:
             print(traceback.format_exc())
 
 
+if not os.path.exists("./out"):
+    os.makedirs("./out/")
+
 if not os.path.isfile("./out/program_state.json"):
     StateManager.SaveState()
 

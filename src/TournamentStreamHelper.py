@@ -89,8 +89,8 @@ class Window(QMainWindow):
         if not os.path.exists("out/"):
             os.mkdir("out/")
 
-        if not os.path.exists("assets/games"):
-            os.mkdir("assets/games")
+        if not os.path.exists("./assets/games"):
+            os.makedirs("./assets/games")
 
         try:
             url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
