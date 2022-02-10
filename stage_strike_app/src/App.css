@@ -87,10 +87,11 @@ body {
 
 .stamp {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  width: 64px;
-  height: 64px;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
 }
 .stamp.stage-striked {
   background-image: url(../../icons/stage_strike.svg);
