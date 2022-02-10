@@ -39,8 +39,14 @@ class TSHScoreboardWidget(QDockWidget):
         self.widget.layout().addWidget(self.tabs)
 
         self.tabScore = QWidget()
+
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setWidget(self.tabScore)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setFrameShape(QFrame.Shape.NoFrame)
+
         self.tabScore.setLayout(QVBoxLayout())
-        self.tabs.addTab(self.tabScore, "Score")
+        self.tabs.addTab(self.scrollArea, "Score")
         self.tabStage = QWidget()
         self.tabStage.setLayout(QVBoxLayout())
         self.tabs.addTab(self.tabStage, "Stage")
