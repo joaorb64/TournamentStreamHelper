@@ -144,7 +144,8 @@ class TSHScoreboardStageWidget(QWidget):
 
         # Load local rulesets
         try:
-            userRulesets = json.loads(open("./user_data/rulesets.json").read())
+            userRulesets = json.loads(
+                open("./user_data/rulesets.json", encoding="utf-8").read())
 
             for ruleset in userRulesets:
                 if ruleset.get("videogame") == TSHGameAssetManager.instance.selectedGame.get("codename"):
