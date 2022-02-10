@@ -1,7 +1,12 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Component } from "react";
-import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  useTheme,
+  ThemeProvider,
+  createTheme,
+  responsiveFontSizes,
+} from "@mui/material/styles";
 import {
   Button,
   Card,
@@ -21,7 +26,7 @@ const defaultTheme = createTheme({
   },
 });
 
-const darkTheme = createTheme({
+let darkTheme = createTheme({
   palette: {
     mode: "dark",
     p1color: defaultTheme.palette.augmentColor({
@@ -34,6 +39,8 @@ const darkTheme = createTheme({
     }),
   },
 });
+
+darkTheme = responsiveFontSizes(darkTheme);
 
 class App extends Component {
   state = {
@@ -223,7 +230,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:5000/ruleset")
+    fetch("http://" + window.location.hostname + ":5000/ruleset")
       .then((res) => res.json())
       .then((data) => {
         this.setState({ ruleset: data });
@@ -258,7 +265,7 @@ class App extends Component {
         .map((stage) => stage.codename),
     };
 
-    fetch("http://127.0.0.1:5000/post", {
+    fetch("http://" + window.location.hostname + ":5000/post", {
       method: "POST",
       body: JSON.stringify(data),
       contentType: "application/json",
@@ -284,23 +291,32 @@ class App extends Component {
                 container
                 xs
                 textAlign={"center"}
-                spacing={1}
+                spacing={{ xs: 0, sm: 1 }}
                 justifyItems="center"
                 style={{ flexGrow: 0 }}
               >
                 <Grid item xs={12}>
-                  <Typography variant="h5" component="div">
+                  <Typography
+                    sx={{ typography: { xs: "h7", sm: "h5" } }}
+                    component="div"
+                  >
                     Game {this.state.currGame + 1}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="h4" component="div">
+                  <Typography
+                    sx={{ typography: { xs: "h7", sm: "h4" } }}
+                    component="div"
+                  >
                     {this.state.stagesWon[0].length} -{" "}
                     {this.state.stagesWon[1].length}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="h4" component="div">
+                  <Typography
+                    sx={{ typography: { xs: "h6", sm: "h4" } }}
+                    component="div"
+                  >
                     {this.state.selectedStage ? (
                       <>Report Results</>
                     ) : this.state.currGame > 0 && this.state.currStep > 0 ? (
@@ -342,6 +358,11 @@ class App extends Component {
                 spacing={1}
                 justifyItems="center"
                 alignContent={"center"}
+                style={
+                  darkTheme.breakpoints.up("md")
+                    ? { "overflow-x": "hidden" }
+                    : { "overflow-x": "scroll" }
+                }
               >
                 <Grid
                   item
@@ -357,7 +378,7 @@ class App extends Component {
                         )
                       : this.state.ruleset.neutralStages
                     ).map((stage) => (
-                      <Grid item xs={2}>
+                      <Grid item xs={4} sm={3}>
                         <Card>
                           <CardActionArea
                             onClick={() => this.StageClicked(stage)}
@@ -373,8 +394,8 @@ class App extends Component {
                             ) : null}
                             <CardMedia
                               component="img"
-                              height="100"
-                              image={`http://127.0.0.1:5000/${stage.path}`}
+                              height={{ sm: "50", md: "100" }}
+                              image={`http://${window.location.hostname}:5000/${stage.path}`}
                             />
                             <CardContent
                               style={{ padding: darkTheme.spacing(1) }}
@@ -383,6 +404,7 @@ class App extends Component {
                                 variant="button"
                                 component="div"
                                 noWrap
+                                fontSize={{ xs: 8, md: "" }}
                               >
                                 {stage.name}
                               </Typography>
@@ -411,7 +433,8 @@ class App extends Component {
                 >
                   <Grid item xs={4}>
                     <Button
-                      size="large"
+                      size={darkTheme.breakpoints.up("md") ? "large" : "small"}
+                      fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                       fullWidth
                       color="success"
                       variant={this.CanConfirm() ? "contained" : "outlined"}
@@ -422,7 +445,8 @@ class App extends Component {
                   </Grid>
                   <Grid item xs={4}>
                     <Button
-                      size="large"
+                      size={darkTheme.breakpoints.up("md") ? "large" : "small"}
+                      fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                       fullWidth
                       variant="outlined"
                       onClick={() => this.Initialize()}
@@ -441,7 +465,10 @@ class App extends Component {
                   >
                     <Grid item xs={4}>
                       <Button
-                        size="large"
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
                         color="p1color"
                         variant="contained"
@@ -452,7 +479,10 @@ class App extends Component {
                     </Grid>
                     <Grid item xs={4}>
                       <Button
-                        size="large"
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
                         color="p2color"
                         variant="contained"

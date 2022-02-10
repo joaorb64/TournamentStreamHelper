@@ -15,6 +15,7 @@ from TSHPlayerDB import TSHPlayerDB
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 from flask import Flask, send_from_directory, request
 from Workers import Worker
+import socket
 
 
 class TSHScoreboardStageWidget(QObject):
@@ -108,6 +109,11 @@ class TSHScoreboardStageWidget(QWidget):
         vbox.addWidget(QLabel("Counterpick Stages"))
         vbox.addWidget(self.stagesCounterpick)
 
+        self.webappLabel = QLabel(
+            f"Open <a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a> in a browser to stage strike.")
+        self.webappLabel.setOpenExternalLinks(True)
+        self.layout().addWidget(self.webappLabel)
+
         self.LoadSmashggRulesets()
 
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
@@ -116,6 +122,18 @@ class TSHScoreboardStageWidget(QWidget):
 
         # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
         # load tournament ruleset
+
+    def GetIP(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
 
     def SetupOptions(self):
         self.rulesetsBox.clear()
