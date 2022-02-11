@@ -146,6 +146,8 @@ class TSHGameAssetManager():
                     self.stockIcons[c][number] = QImage(
                         './assets/games/'+game+'/'+assetsKey+'/'+f)
 
+            print("Loaded stock icons")
+
             self.skins = {}
 
             for c in self.characters.keys():
@@ -182,28 +184,6 @@ class TSHGameAssetManager():
                     break
                 if "icon" in gameObj["assets"][asset].get("type", []):
                     assetsKey = asset
-
-            assetsObj = gameObj.get("assets", {}).get(assetsKey)
-            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
-
-            self.portraits = {}
-
-            for c in self.characters.keys():
-                self.portraits[c] = {}
-
-                filteredFiles = \
-                    [f for f in files if f.startswith(assetsObj.get(
-                        "prefix", "")+self.characters[c].get("codename")+assetsObj.get("postfix", ""))]
-
-                if len(filteredFiles) == 0:
-                    self.portraits[c][0] = QImage('./icons/cancel.svg')
-
-                filteredFiles.sort(key=lambda x: int(re.search(
-                    r'(\d+)\D+$', x).group(1)) or 1)
-
-                for i, f in enumerate(filteredFiles):
-                    self.portraits[c][i] = QImage(
-                        './assets/games/'+game+'/'+assetsKey+'/'+f)
 
             assetsKey = ""
             if len(list(gameObj.get("assets", {}).keys())) > 0:
@@ -243,12 +223,19 @@ class TSHGameAssetManager():
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
 
-    def GetCharacterAssets(self, characterCodename: str, skin: int):
+    def GetCharacterAssets(self, characterCodename: str, skin: int, assetpack: str = None):
         charFiles = {}
 
         if self.selectedGame is not None:
+            assetsPacks = []
+
+            if assetpack:
+                assetsPacks = [assetpack]
+            else:
+                assetsPacks = self.selectedGame.get("assets", {}).items()
+
             # For each assets pack
-            for assetKey, asset in self.selectedGame.get("assets", {}).items():
+            for assetKey, asset in assetsPacks:
                 try:
                     # Skip stage icon asset packs
                     if type(asset.get("type")) == list:

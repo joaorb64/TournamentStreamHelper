@@ -109,6 +109,18 @@ class TSHPlayerDB:
         with TSHPlayerDB.modelLock:
             TSHPlayerDB.model = QStandardItemModel()
 
+            cancelIcon = QIcon(QPixmap.fromImage(QImage("./icons/cancel.svg").scaledToWidth(
+                32, Qt.TransformationMode.SmoothTransformation)))
+
+            charIcons = {}
+
+            for char in TSHGameAssetManager.instance.stockIcons:
+                charIcons[char] = {}
+                for skin in TSHGameAssetManager.instance.stockIcons[char]:
+                    charIcons[char][skin] = QIcon(QPixmap.fromImage(
+                        TSHGameAssetManager.instance.stockIcons[char][skin]).scaledToWidth(
+                        32, Qt.TransformationMode.SmoothTransformation))
+
             for player in TSHPlayerDB.database.values():
                 if player is not None:
                     tag = player.get(
@@ -117,8 +129,7 @@ class TSHPlayerDB:
                     item = QStandardItem(tag)
                     item.setData(player, Qt.ItemDataRole.UserRole)
 
-                    item.setIcon(QIcon(QPixmap.fromImage(QImage("./icons/cancel.svg").scaledToWidth(
-                        32, Qt.TransformationMode.SmoothTransformation))))
+                    item.setIcon(cancelIcon)
 
                     if player.get("mains") and type(player.get("mains")) == dict:
                         if TSHGameAssetManager.instance.selectedGame.get("codename") in player.get("mains", {}).keys():
@@ -129,26 +140,24 @@ class TSHPlayerDB:
                                 character = next((c for c in TSHGameAssetManager.instance.characters.items(
                                 ) if c[0] == playerMains[0][0]), None)
                                 if character:
-                                    assets = TSHGameAssetManager.instance.GetCharacterAssets(
-                                        character[1].get("codename"), playerMains[0][1])
+                                    assets = charIcons
 
                                     if assets == None:
                                         assets = {}
 
                                     # Set to use first asset as a fallback
-                                    key = list(assets.keys())[0]
+                                    # key = list(assets.keys())[0]
 
-                                    for k, asset in list(assets.items()):
-                                        if "icon" in asset.get("type", []):
-                                            key = k
-                                            break
-                                        elif "portrait" in asset.get("type", []):
-                                            key = k
+                                    # for k, asset in list(assets.items()):
+                                    #     if "icon" in asset.get("type", []):
+                                    #         key = k
+                                    #         break
+                                    #     elif "portrait" in asset.get("type", []):
+                                    #         key = k
 
-                                    item.setIcon(
-                                        QIcon(QPixmap.fromImage(QImage(assets[key]["asset"]).scaledToWidth(
-                                            32, Qt.TransformationMode.SmoothTransformation)))
-                                    )
+                                    if assets.get(character[0], {}).get(int(playerMains[0][1]), None):
+                                        item.setIcon(assets.get(character[0], {}).get(
+                                            int(playerMains[0][1]), None))
 
                     TSHPlayerDB.model.appendRow(item)
 
