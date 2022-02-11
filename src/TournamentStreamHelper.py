@@ -228,7 +228,8 @@ class Window(QMainWindow):
         self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(
             TSHGameAssetManager.instance.LoadGameAssets)
-        TSHGameAssetManager.instance.signals.onLoad.connect(self.SetGame)
+        TSHGameAssetManager.instance.signals.onLoadAssets.connect(
+            self.ReloadGames)
 
         pre_base_layout.addLayout(base_layout)
         group_box.layout().addWidget(self.gameSelect)
@@ -284,6 +285,7 @@ class Window(QMainWindow):
         self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
+        self.gameSelect.clear()
         self.gameSelect.addItem("Select a game", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
             if game[1].get("name"):
@@ -353,6 +355,7 @@ class Window(QMainWindow):
                     def Update():
                         self.downloadDialogue = QProgressDialog(
                             "Downloading update... ", "Cancel", 0, 0, self)
+                        self.preDownloadDialogue.setModal(True)
                         self.downloadDialogue.show()
 
                         def worker(progress_callback):
@@ -443,6 +446,9 @@ class Window(QMainWindow):
         self.preDownloadDialogue.show()
 
         select = QComboBox()
+        select.setEditable(True)
+        select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        select.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.preDownloadDialogue.layout().addWidget(select)
 
         model = QStandardItemModel()
@@ -473,11 +479,15 @@ class Window(QMainWindow):
         downloadList.resizeColumnsToContents()
         downloadList.resizeRowsToContents()
 
-        for game in assets:
-            select.addItem(assets[game]["name"])
+        for i, game in enumerate(assets):
+            select.addItem(assets[game]["name"], i)
+
+        select.model().sort(0)
 
         def ReloadGameAssets(index=None):
             nonlocal self
+
+            index = select.currentData()
 
             if index == None:
                 index = select.currentIndex()
@@ -548,6 +558,7 @@ class Window(QMainWindow):
 
             self.downloadDialogue = QProgressDialog(
                 "Downloading assets", "Cancel", 0, 100, self)
+            self.preDownloadDialogue.setModal(True)
             self.downloadDialogue.show()
             worker = Worker(self.DownloadAssetsWorker, *
                             [list(filesToDownload.values())])

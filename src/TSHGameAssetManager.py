@@ -11,6 +11,7 @@ import requests
 
 class TSHGameAssetManagerSignals(QObject):
     onLoad = pyqtSignal()
+    onLoadAssets = pyqtSignal()
 
 
 class TSHGameAssetManager():
@@ -65,6 +66,8 @@ class TSHGameAssetManager():
 
         for game in self.games:
             print(game)
+
+        self.signals.onLoadAssets.emit()
 
     def SetGameFromSmashGGId(self, gameid):
         if len(self.games.keys()) == 0:
