@@ -358,11 +358,11 @@ class App extends Component {
                 spacing={1}
                 justifyItems="center"
                 alignContent={"center"}
-                style={
-                  darkTheme.breakpoints.up("md")
-                    ? { "overflow-x": "hidden" }
-                    : { "overflow-x": "scroll" }
-                }
+                alignItems="center"
+                sx={{
+                  overflow: { xs: "scroll", lg: "hidden" },
+                  "flex-wrap": { xs: "nowrap", lg: "wrap" },
+                }}
               >
                 <Grid
                   item
@@ -370,6 +370,8 @@ class App extends Component {
                   xs={12}
                   spacing={2}
                   justifyContent="center"
+                  alignContent={"center"}
+                  style={{ height: "100%" }}
                 >
                   <>
                     {(this.state.currGame > 0
@@ -378,7 +380,7 @@ class App extends Component {
                         )
                       : this.state.ruleset.neutralStages
                     ).map((stage) => (
-                      <Grid item xs={4} sm={3}>
+                      <Grid item xs={4} sm={3} md={2}>
                         <Card>
                           <CardActionArea
                             onClick={() => this.StageClicked(stage)}

@@ -24,6 +24,7 @@ class TSHGameAssetManager():
         self.DownloadSmashGGCharacters()
         self.LoadGames()
         self.selectedGame = {}
+        self.stockIcons = {}
 
     def DownloadSmashGGCharacters(self):
         try:

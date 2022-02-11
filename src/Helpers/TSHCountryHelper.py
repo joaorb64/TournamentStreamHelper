@@ -58,7 +58,7 @@ class TSHCountryHelper():
 
         for part in split:
             state = next(
-                (st for st in TSHCountryHelper.countries[countryCode]["states"].values(
+                (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
                 ) if TSHCountryHelper.remove_accents_lower(st["state_code"]) == TSHCountryHelper.remove_accents_lower(part)),
                 None
             )
