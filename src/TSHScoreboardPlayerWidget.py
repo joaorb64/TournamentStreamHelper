@@ -356,7 +356,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
 
         # Add one empty
-        item = QStandardItem()
+        item = QStandardItem("")
         TSHScoreboardPlayerWidget.characterModel.appendRow(item)
 
         for c in TSHGameAssetManager.instance.characters.keys():
@@ -372,6 +372,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             }
             item.setData(data, Qt.ItemDataRole.UserRole)
             TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+
+        TSHScoreboardPlayerWidget.characterModel.sort(0)
 
     def LoadSkinOptions(self, element, target):
         characterData = element.currentData()
