@@ -129,7 +129,7 @@ class Window(QMainWindow):
         self.setWindowTitle("TournamentStreamHelper v"+version)
 
         self.setDockOptions(
-            QMainWindow.DockOption.AllowTabbedDocks)
+            QMainWindow.DockOption.ForceTabbedDocks)
 
         self.setTabPosition(
             Qt.DockWidgetArea.AllDockWidgetAreas, QTabWidget.TabPosition.North)
@@ -154,6 +154,10 @@ class Window(QMainWindow):
         commentary = TSHCommentaryWidget()
         commentary.setObjectName("Commentary")
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
+
+        self.tabifyDockWidget(self.scoreboard, commentary)
+        self.tabifyDockWidget(self.scoreboard, tournamentInfo)
+        self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
         # pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))

@@ -238,7 +238,6 @@ class TSHScoreboardStageWidget(QWidget):
             "stage_to_codename")
 
         neutralModel = QStandardItemModel()
-        neutralModel.appendRow(QStandardItem(""))
         if data.neutralStages:
             for stage in data.neutralStages:
                 item = QStandardItem(stage.get("name"))
@@ -248,7 +247,6 @@ class TSHScoreboardStageWidget(QWidget):
         self.stagesNeutral.setModel(neutralModel)
 
         counterpickModel = QStandardItemModel()
-        counterpickModel.appendRow(QStandardItem(""))
         if data.counterpickStages:
             for stage in data.counterpickStages:
                 item = QStandardItem(stage.get("name"))
