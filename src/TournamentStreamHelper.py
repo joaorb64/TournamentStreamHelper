@@ -225,9 +225,14 @@ class Window(QMainWindow):
         action.triggered.connect(self.DownloadAssets)
 
         self.gameSelect = QComboBox()
+        self.gameSelect.setEditable(True)
+        self.gameSelect.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.gameSelect.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(
-            TSHGameAssetManager.instance.LoadGameAssets)
+            lambda x: TSHGameAssetManager.instance.LoadGameAssets(self.gameSelect.currentData()))
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetGame)
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.ReloadGames)
 
@@ -286,12 +291,13 @@ class Window(QMainWindow):
 
     def ReloadGames(self):
         self.gameSelect.clear()
-        self.gameSelect.addItem("Select a game", 0)
+        self.gameSelect.addItem("", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
             if game[1].get("name"):
                 self.gameSelect.addItem(game[1].get("name"), i+1)
             else:
                 self.gameSelect.addItem(game[0], i+1)
+        self.gameSelect.model().sort(0)
 
     def DetectGameFromId(self, id):
         game = next(
