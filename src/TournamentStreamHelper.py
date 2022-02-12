@@ -298,6 +298,7 @@ class Window(QMainWindow):
             else:
                 self.gameSelect.addItem(game[0], i+1)
         self.gameSelect.model().sort(0)
+        self.SetGame()
 
     def DetectGameFromId(self, id):
         game = next(
