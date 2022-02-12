@@ -32,7 +32,7 @@ body {
   height: 100%;
   z-index: -999;
   background-size: cover;
-  background-image: url(./tournament_bg.png);
+  background-image: url(./bg.png);
 }
 
 .container {
@@ -227,17 +227,10 @@ body {
   top: 50%;
   transform: translateY(-50%);
   height: 800px;
-  perspective: 300px;
-  perspective-origin: left;
+  perspective: 800px;
+  perspective-origin: center;
   z-index: -1;
-}
-
-.p1.character .portrait {
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  display: flex;
 }
 
 .character .video {
@@ -256,8 +249,12 @@ body {
 .p1.character .bg {
   width: 100%;
   height: 100%;
-  transform: rotateY(3deg);
-  background-color: #ff383780;
+  transform: rotateY(10deg);
+  background-color: #ff3837ff;
+}
+
+.bg {
+  border-radius: 16px;
 }
 
 .p2.character {
@@ -268,27 +265,29 @@ body {
   top: 50%;
   transform: translateY(-50%);
   height: 800px;
-  perspective: 300px;
-  perspective-origin: right;
+  perspective: 800px;
+  perspective-origin: center;
+  display: flex;
 }
 
 .p2.character .bg {
   width: 100%;
   height: 100%;
-  transform: rotateY(-3deg);
-  background-color: #308aff80;
+  transform: rotateY(-10deg);
+  background-color: #308affff;
 }
 
-.p2.character .portrait {
+.portrait {
   width: 100%;
   height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  box-shadow: 0 0px 20px 4px rgb(0 0 0);
 }
 
 .vs {
-  font-size: 300px;
+  font-size: 220px;
   position: absolute;
   color: white;
   left: 50%;
