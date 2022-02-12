@@ -50,5 +50,61 @@
         "useDSR": false,
         "useMDSR": true,
         "videogame": "ssb64"
+    },
+    {
+        "banByMaxGames": {},
+        "banCount": 2,
+        "neutralStages": [
+            "Sparring Ring",
+            "Temple Grounds",
+            "DNA Lab",
+            "Mausoleum",
+            "Buster Beach"
+        ],
+        "name": "EU Backroom",
+        "counterpickStages": [
+            "Ninja College",
+            "Via Dolce"
+        ],
+        "strikeOrder": [
+            1,
+            2,
+            1
+        ],
+        "useDSR": false,
+        "useMDSR": false,
+        "videogame": "arms"
+    },
+    {
+        "banByMaxGames": {},
+        "banCount": 3,
+        "neutralStages": [
+            "Aetherial Gates",
+            "Julesvale",
+            "Merchant Port",
+            "The Forest Floor",
+            "Tower of Heaven"
+        ],
+        "name": "Online Ranked",
+        "counterpickStages": [
+            "Air Armada",
+            "Blazing Hideout",
+            "Fire Capital",
+            "Frozen Fortress",
+            "Tempest Peak",
+            "The Endless Abyss",
+            "The Rock Wall",
+            "The Spirit Tree",
+            "Troupple Pond"
+        ],
+        "strikeOrder": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "useDSR": false,
+        "useMDSR": false,
+        "videogame": "roa"
     }
 ]
