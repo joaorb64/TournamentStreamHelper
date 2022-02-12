@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "Roboto Condensed";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("../include/Roboto-Regular.ttf") format("truetype");
 }
 
 .text {
@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: "Roboto Condensed";
+  font-family: "Roboto";
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -28,23 +28,24 @@ body {
 }
 
 .stage-name {
-  position: absolute;
   color: white;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  font-size: 24px;
+  width: 200px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2;
   height: 28px;
   bottom: 0;
-}
-
-.stage-name.text {
+  padding-top: 5px;
+  padding-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .stage-icon {
   width: 200px;
-  height: 128px;
+  height: 100px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -54,6 +55,11 @@ body {
   flex-shrink: 0;
   margin: 10px;
   position: relative;
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  border-radius: 8px;
+  background-color: #212121ff;
+  overflow: hidden;
 }
 
 .stamp {
