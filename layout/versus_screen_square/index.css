@@ -39,8 +39,8 @@ body {
   position: absolute;
   color: white;
   z-index: 9;
-  width: 500px;
-  height: 130px;
+  width: 600px;
+  height: 210px;
   background-color: #000000df;
   display: flex;
   flex-direction: column;
@@ -50,6 +50,8 @@ body {
   padding-right: 50px;
   padding-top: 30px;
   padding-bottom: 30px;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .row {
@@ -77,63 +79,11 @@ body {
 .container .name {
   width: 380px;
   font-size: 50px;
-  flex-shrink: 1;
 }
 
 .container .real_name {
   width: 380px;
   font-size: 32px;
-}
-
-.logo {
-  position: absolute;
-  top: 900px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 150px;
-  background-image: url("./logo.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.sponsor {
-  color: yellow;
-}
-
-.phase {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 46px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: white;
-  font-size: 140px;
-  place-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-position: center;
-}
-
-.best_of {
-  position: absolute;
-  top: 160px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 350px;
-  height: 80px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: white;
-  font-size: 60px;
-  place-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-position: center;
 }
 
 .twitter_logo {
@@ -149,6 +99,80 @@ body {
 .twitter {
   font-size: 32px;
   width: 380px;
+}
+
+.logo {
+  position: absolute;
+  top: 900px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 150px;
+  background-image: url("./logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.p1 .sponsor {
+  color: #ff3837ff;
+}
+
+.p2 .sponsor {
+  color: #308affff;
+}
+
+.phase {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 46px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 60px;
+  place-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
+}
+
+.match {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 46px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 80px;
+  letter-spacing: 2px;
+  place-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
+  text-transform: uppercase;
+}
+
+.best_of {
+  position: absolute;
+  top: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  height: 80px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 50px;
+  place-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
 }
 
 .flagscontainer {
@@ -195,6 +219,8 @@ body {
   background-color: #000000ff;
   color: white;
   z-index: 9;
+  display: flex;
+  border-radius: 8px;
 }
 
 .p1.score_container {
@@ -226,9 +252,9 @@ body {
   width: 800px;
   top: 50%;
   transform: translateY(-50%);
-  height: 800px;
-  perspective: 800px;
-  perspective-origin: center;
+  height: 680px;
+  perspective: 1500px;
+  perspective-origin: right;
   z-index: -1;
   display: flex;
 }
@@ -264,9 +290,9 @@ body {
   width: 800px;
   top: 50%;
   transform: translateY(-50%);
-  height: 800px;
-  perspective: 800px;
-  perspective-origin: center;
+  height: 680px;
+  perspective: 1000px;
+  perspective-origin: left;
   display: flex;
 }
 
@@ -286,7 +312,7 @@ body {
 }
 
 .vs {
-  font-size: 220px;
+  font-size: 200px;
   position: absolute;
   color: white;
   left: 50%;

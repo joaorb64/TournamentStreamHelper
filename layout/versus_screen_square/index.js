@@ -10,6 +10,7 @@
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".phase"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
+    .from([".match"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from(
       [".score_container"],
       { duration: 0.8, opacity: "0", ease: "power2.inOut" },
@@ -40,25 +41,25 @@
         SetInnerHtml(
           $(`.p${t + 1} .name`),
           `
-                    <span>
-                        <span class='sponsor'>
-                            ${player.team ? player.team + "&nbsp;" : ""}
-                        </span>
-                        ${player.name}
-                        ${team.losers ? " [L]" : ""}
-                    </span>
-                `
+            <span>
+                <span class='sponsor'>
+                    ${player.team ? player.team + "&nbsp;" : ""}
+                </span>
+                ${player.name}
+                ${team.losers ? " [L]" : ""}
+            </span>
+          `
         );
 
         SetInnerHtml(
           $(`.${p} .sponsor_logo`),
           data[p + "_org"]
             ? `
-                        <div>
-                            <div class='sponsor_logo' style='background-image: url(../../sponsor_logos/${data[
-                              p + "_org"
-                            ].toUpperCase()}.png)'></div>
-                        </div>`
+              <div>
+                  <div class='sponsor_logo' style='background-image: url(../../sponsor_logos/${data[
+                    p + "_org"
+                  ].toUpperCase()}.png)'></div>
+              </div>`
             : "",
           oldData[p + "_org"] != data[p + "_org"]
         );
@@ -68,15 +69,15 @@
         SetInnerHtml(
           $(`.p${t + 1} .twitter`),
           `
-                    ${
-                      player.twitter
-                        ? `
-                        <div class="twitter_logo"></div>
-                        ${player.twitter}
-                        `
-                        : ""
-                    }
+            ${
+              player.twitter
+                ? `
+                <div class="twitter_logo"></div>
+                ${player.twitter}
                 `
+                : ""
+            }
+        `
         );
 
         SetInnerHtml(
@@ -116,7 +117,11 @@
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
           characters.forEach((character, c) => {
-            if (character) {
+            if (
+              character &&
+              character.assets &&
+              character.assets[ASSET_TO_USE]
+            ) {
               if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
                 // if asset is a image, add a image element
                 html += `
@@ -148,12 +153,6 @@
                 </div>
                   `;
               }
-
-              // if (character.assets["full"]) {
-              //   charactersHtml += `
-              //                 <div class='character' style='background-image: url(../../${character.assets["full"].asset})'></div>
-              //             `;
-              // }
             }
           });
 
@@ -161,35 +160,48 @@
 
           characters.forEach((character, c) => {
             if (character) {
-              gsap.timeline().from(
+              gsap.timeline().fromTo(
                 [`.p${t + 1}.character .char${c}`],
                 {
                   duration: 0.8,
                   x: zIndexMultiplyier * -800 + "px",
+                  z: 0,
+                  rotationY: zIndexMultiplyier * -270,
+                  ease: "out",
+                },
+                {
+                  duration: 0.8,
+                  x: 0,
+                  z: -c * 50 + "px",
+                  rotationY: zIndexMultiplyier * 15 * (c + 1),
                   ease: "out",
                 },
                 c / 6
               );
+
+              gsap
+                .timeline()
+                .from(
+                  `.p${t + 1}.character .char${c} .portrait`,
+                  {
+                    duration: 0.5,
+                    opacity: 0,
+                  },
+                  c / 6
+                )
+                .from(`.p${t + 1}.character .char${c} .portrait`, {
+                  duration: 0.4,
+                  filter: "brightness(0%)",
+                  onUpdate: function (tl) {
+                    var tlp = (this.progress() * 100) >> 0;
+                    TweenMax.set(`.p${t + 1}.character .char${c} .portrait`, {
+                      filter: "brightness(" + tlp + "%)",
+                    });
+                  },
+                  onUpdateParams: ["{self}"],
+                });
             }
           });
-
-          gsap
-            .timeline()
-            .from(`.p${t + 1}.character .portrait`, {
-              duration: 0.5,
-              opacity: 0,
-            })
-            .from(`.p${t + 1}.character .portrait`, {
-              duration: 0.4,
-              filter: "brightness(0%)",
-              onUpdate: function (tl) {
-                var tlp = (this.progress() * 100) >> 0;
-                TweenMax.set(`.p${t + 1}.character .portrait`, {
-                  filter: "brightness(" + tlp + "%)",
-                });
-              },
-              onUpdateParams: ["{self}"],
-            });
         }
       });
     });
@@ -197,7 +209,8 @@
     SetInnerHtml($(`.p1 .score`), String(data.score.team["1"].score));
     SetInnerHtml($(`.p2 .score`), String(data.score.team["2"].score));
 
-    SetInnerHtml($(".phase"), data.score.match);
+    SetInnerHtml($(".phase"), data.score.phase);
+    SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
       data.score.best_of ? "Best of " + data.score.best_of : ""
