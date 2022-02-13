@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 src/TournamentStreamHelper.py
+python3 src/TournamentStreamHelper.pyw
