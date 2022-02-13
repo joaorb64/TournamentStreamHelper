@@ -1,1 +1,1 @@
-start "" pythonw src/TournamentStreamHelper.py
+start "" pythonw.exe src/TournamentStreamHelper.pyw

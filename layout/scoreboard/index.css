@@ -37,6 +37,14 @@ body {
   background-color: #212121ff;
 }
 
+.p1.container > div:not(:last-child) {
+  margin-right: 8px;
+}
+
+.p2.container > div:not(:last-child) {
+  margin-left: 8px;
+}
+
 .player.container {
   width: 550px;
   height: 60px;
@@ -73,6 +81,7 @@ body {
   flex-grow: 1;
   flex-direction: column;
   overflow: hidden;
+  justify-content: center;
 }
 
 .name_twitter .name {
@@ -117,7 +126,6 @@ body {
 .info.container_inner {
   display: flex;
   width: 100%;
-  gap: 8px;
   font-size: inherit;
   justify-content: space-around;
 }
@@ -168,7 +176,10 @@ body {
 
 .character_container {
   display: flex;
-  gap: 4px;
+}
+
+.character_container > div > div:not(:last-child) {
+  margin-right: 4px;
 }
 
 .score {
