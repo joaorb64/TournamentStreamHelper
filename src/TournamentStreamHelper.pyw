@@ -228,6 +228,11 @@ class Window(QMainWindow):
         self.gameSelect.setEditable(True)
         self.gameSelect.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.gameSelect.completer().setCompletionMode(QCompleter.PopupCompletion)
+        proxyModel = QSortFilterProxyModel()
+        proxyModel.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        proxyModel.setSourceModel(self.gameSelect.model())
+        self.gameSelect.model().setParent(proxyModel)
+        self.gameSelect.setModel(proxyModel)
         self.gameSelect.setFont(self.font_small)
         self.gameSelect.activated.connect(
             lambda x: TSHGameAssetManager.instance.LoadGameAssets(self.gameSelect.currentData()))
