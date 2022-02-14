@@ -195,6 +195,7 @@ body {
   justify-content: center;
   border: 2px solid white;
   margin-bottom: 32px;
+  border-radius: 8px;
 }
 
 .flagname {
@@ -208,6 +209,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   border: 2px white solid;
+  border-radius: 8px;
 }
 
 .score_container {
@@ -281,6 +283,7 @@ body {
 .bg {
   border-radius: 8px;
   height: 100%;
+  box-shadow: 0 0px 20px 4px rgb(0 0 0);
 }
 
 .p2.character {
@@ -302,13 +305,25 @@ body {
   background-color: #308affff;
 }
 
+.portrait_container {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .portrait {
   width: 100%;
   height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 0px 20px 4px rgb(0 0 0);
+  filter: drop-shadow(-16px 12px 0px black);
+}
+
+.invert_shadow {
+  filter: drop-shadow(16px 12px 0px black);
 }
 
 .vs {

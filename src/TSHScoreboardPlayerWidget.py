@@ -80,6 +80,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.findChild(QLineEdit, "team").textChanged.connect(
             lambda x: self.ExportPlayerImages())
 
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            lambda x: self.ExportPlayerId())
+        self.findChild(QLineEdit, "team").textChanged.connect(
+            lambda x: self.ExportPlayerId())
+
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
                 lambda text, element=c: [
@@ -181,6 +186,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         else:
             StateManager.Set(
                 f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", None)
+
+    def ExportPlayerId(self, id=None):
+        StateManager.Set(
+            f"score.team.{self.teamNumber}.players.{self.index}.id", id)
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
@@ -469,6 +478,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if data.get("avatar"):
             self.ExportPlayerImages(data.get("avatar"))
+
+        if data.get("id"):
+            self.ExportPlayerId(data.get("id"))
 
         if data.get("twitter"):
             self.findChild(QWidget, "twitter").setText(

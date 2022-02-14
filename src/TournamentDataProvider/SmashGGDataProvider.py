@@ -273,6 +273,9 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                         playerData["avatar"] = user.get("images")[
                             0].get("url")
 
+                    if user.get("id"):
+                        playerData["id"] = user.get("id")
+
                     if user.get("location"):
                         # Country to country code
                         if user.get("location").get("country"):

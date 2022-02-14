@@ -128,16 +128,22 @@
                 <div class="bg char${
                   t == 1 ? c : characters.length - 1 - c
                 }" style="z-index: ${c * zIndexMultiplyier};">
-                  <div
-                    class="portrait"
-                    style='
-                        background-image: url(../../${
-                          character.assets[ASSET_TO_USE].asset
-                        });
-                        ${
-                          t == 1 && FLIP_P2_ASSET ? "transform: scaleX(-1)" : ""
-                        }
-                    '>
+                  <div class="portrait_container">
+                    <div
+                      class="portrait ${
+                        !FLIP_P2_ASSET && t == 1 ? "invert_shadow" : ""
+                      }"
+                      style='
+                          background-image: url(../../${
+                            character.assets[ASSET_TO_USE].asset
+                          });
+                          ${
+                            t == 1 && FLIP_P2_ASSET
+                              ? "transform: scaleX(-1)"
+                              : ""
+                          }
+                      '>
+                      </div>
                     </div>
                 </div>
                   `;
@@ -182,21 +188,24 @@
               gsap
                 .timeline()
                 .from(
-                  `.p${t + 1}.character .char${c} .portrait`,
+                  `.p${t + 1}.character .char${c} .portrait_container`,
                   {
                     duration: 0.5,
                     opacity: 0,
                   },
                   c / 6
                 )
-                .from(`.p${t + 1}.character .char${c} .portrait`, {
+                .from(`.p${t + 1}.character .char${c} .portrait_container`, {
                   duration: 0.4,
                   filter: "brightness(0%)",
                   onUpdate: function (tl) {
                     var tlp = (this.progress() * 100) >> 0;
-                    TweenMax.set(`.p${t + 1}.character .char${c} .portrait`, {
-                      filter: "brightness(" + tlp + "%)",
-                    });
+                    TweenMax.set(
+                      `.p${t + 1}.character .char${c} .portrait_container`,
+                      {
+                        filter: "brightness(" + tlp + "%)",
+                      }
+                    );
                   },
                   onUpdateParams: ["{self}"],
                 });
