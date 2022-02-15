@@ -403,8 +403,10 @@ class TSHScoreboardWidget(QDockWidget):
                         data[widget.objectName()] = widget.text()
                     if type(widget) == QComboBox:
                         data[widget.objectName()] = widget.currentIndex()
-                data["avatar"] = StateManager.Get(
-                    f"score.team.{t+1}.players.{i+1}.avatar")
+                data["online_avatar"] = StateManager.Get(
+                    f"score.team.{t+1}.players.{i+1}.online_avatar")
+                data["id"] = StateManager.Get(
+                    f"score.team.{t+1}.players.{i+1}.id")
                 tmpData[t].append(data)
 
         # Load state
@@ -418,7 +420,8 @@ class TSHScoreboardWidget(QDockWidget):
                         if type(widget) == QComboBox:
                             widget.setCurrentIndex(tmpData[t][i][objName])
                 QCoreApplication.processEvents()
-                team[i].ExportPlayerImages(tmpData[t][i]["avatar"])
+                team[i].ExportPlayerImages(tmpData[t][i]["online_avatar"])
+                team[i].ExportPlayerId(tmpData[t][i]["id"])
 
         # Scores
         scoreLeft = self.scoreColumn.findChild(QSpinBox, "score_left").value()
