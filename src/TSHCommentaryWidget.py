@@ -76,6 +76,16 @@ class TSHCommentaryWidget(QDockWidget):
                     ])
                 c.textChanged.emit("")
 
+            comm.findChild(QPushButton, "btUp").setIcon(
+                QIcon("./icons/arrow_up.svg"))
+            comm.findChild(QPushButton, "btUp").clicked.connect(
+                lambda x, index=len(self.commentaryWidgets): self.MoveUp(index))
+
+            comm.findChild(QPushButton, "btDown").setIcon(
+                QIcon("./icons/arrow_down.svg"))
+            comm.findChild(QPushButton, "btDown").clicked.connect(
+                lambda x, index=len(self.commentaryWidgets): self.MoveDown(index))
+
             comm.findChild(QLineEdit, "name").textChanged.connect(
                 lambda x, c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
             comm.findChild(QLineEdit, "team").textChanged.connect(
@@ -95,6 +105,25 @@ class TSHCommentaryWidget(QDockWidget):
             for k in list(StateManager.Get(f'commentary').keys()):
                 if not k.isnumeric() or (k.isnumeric() and int(k) > number):
                     StateManager.Unset(f'commentary.{k}')
+
+    def MoveUp(self, index):
+        if index > 0:
+            self.SwapComms(index, index-1)
+
+    def MoveDown(self, index):
+        if index < len(self.commentaryWidgets)-1:
+            self.SwapComms(index, index+1)
+
+    def SwapComms(self, index1, index2):
+        saveState = {c.objectName(): c.text()
+                     for c in self.commentaryWidgets[index1].findChildren(QLineEdit)}
+
+        for c in self.commentaryWidgets[index2].findChildren(QLineEdit):
+            for c2 in self.commentaryWidgets[index2].findChildren(QLineEdit):
+                self.commentaryWidgets[index1].findChild(
+                    QLineEdit, c.objectName()).setText(c.text())
+
+            c.setText(saveState[c.objectName()])
 
     def ExportMergedName(self, comm, index):
         team = comm.findChild(QLineEdit, "team").text()
