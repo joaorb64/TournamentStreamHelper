@@ -251,7 +251,7 @@ body {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 800px;
+  width: 720px;
   top: 50%;
   transform: translateY(-50%);
   height: 680px;
@@ -290,7 +290,7 @@ body {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 800px;
+  width: 720px;
   top: 50%;
   transform: translateY(-50%);
   height: 680px;
@@ -319,11 +319,11 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  filter: drop-shadow(-16px 12px 0px black);
+  filter: drop-shadow(-16px 12px 0px rgba(0, 0, 0, 0.8));
 }
 
 .invert_shadow {
-  filter: drop-shadow(16px 12px 0px black);
+  filter: drop-shadow(16px 12px 0px rgba(0, 0, 0, 0.8));
 }
 
 .vs {

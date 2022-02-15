@@ -168,21 +168,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         merged += name
 
-        # Player avatar
-        if onlineAvatar and not os.path.exists(f"./player_avatar/{merged.lower()}.png"):
+        # Online avatar
+        StateManager.Set(
+            f"score.team.{self.teamNumber}.players.{self.index}.online_avatar", onlineAvatar)
+
+        # Local avatar
+        if os.path.exists(f"./player_avatar/{merged}.png"):
             StateManager.Set(
-                f"score.team.{self.teamNumber}.players.{self.index}.avatar", onlineAvatar)
-        elif os.path.exists(f"./player_avatar/{merged.lower()}.png"):
-            StateManager.Set(
-                f"score.team.{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged.lower()}.png")
+                f"score.team.{self.teamNumber}.players.{self.index}.avatar", f"./player_avatar/{merged}.png")
         else:
             StateManager.Set(
                 f"score.team.{self.teamNumber}.players.{self.index}.avatar", None)
 
         # Sponsor logo
-        if os.path.exists(f"./sponsor_logo/{team.lower()}.png"):
+        if os.path.exists(f"./sponsor_logo/{team}.png"):
             StateManager.Set(
-                f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", f"./sponsor_logo/{team.lower()}.png")
+                f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", f"./sponsor_logo/{team}.png")
         else:
             StateManager.Set(
                 f"score.team.{self.teamNumber}.players.{self.index}.sponsor_logo", None)
