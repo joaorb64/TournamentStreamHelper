@@ -367,7 +367,8 @@ class Window(QMainWindow):
                     def Update():
                         self.downloadDialogue = QProgressDialog(
                             "Downloading update... ", "Cancel", 0, 0, self)
-                        self.preDownloadDialogue.setModal(True)
+                        self.downloadDialogue.setWindowModality(
+                            Qt.WindowModality.WindowModal)
                         self.downloadDialogue.show()
 
                         def worker(progress_callback):
@@ -575,7 +576,9 @@ class Window(QMainWindow):
 
             self.downloadDialogue = QProgressDialog(
                 "Downloading assets", "Cancel", 0, 100, self)
-            self.preDownloadDialogue.setModal(True)
+            self.downloadDialogue.setMinimumWidth(500)
+            self.downloadDialogue.setWindowModality(
+                Qt.WindowModality.WindowModal)
             self.downloadDialogue.show()
             worker = Worker(self.DownloadAssetsWorker, *
                             [list(filesToDownload.values())])
