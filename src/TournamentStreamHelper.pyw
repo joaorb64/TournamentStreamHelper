@@ -295,7 +295,7 @@ class Window(QMainWindow):
         self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
-        self.gameSelect.clear()
+        self.gameSelect.setModel(QStandardItemModel())
         self.gameSelect.addItem("", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
             if game[1].get("name"):
@@ -458,6 +458,11 @@ class Window(QMainWindow):
         self.preDownloadDialogue.show()
 
         select = QComboBox()
+        selectProxy = QSortFilterProxyModel()
+        selectProxy.setSourceModel(select.model())
+        select.model().setParent(selectProxy)
+        selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        select.setModel(selectProxy)
         select.setEditable(True)
         select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         select.completer().setCompletionMode(QCompleter.PopupCompletion)
@@ -468,7 +473,7 @@ class Window(QMainWindow):
         proxyModel = QSortFilterProxyModel()
         proxyModel.setSourceModel(model)
         proxyModel.setFilterKeyColumn(-1)
-        proxyModel.setFilterCaseSensitivity(False)
+        proxyModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
 
         def filterList(text):
             proxyModel.setFilterFixedString(text)

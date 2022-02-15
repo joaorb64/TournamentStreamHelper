@@ -220,7 +220,7 @@ class TSHScoreboardStageWidget(QWidget):
         self.rulesetsBox.setModel(rulesetsModel)
 
         self.stagesModel = QStandardItemModel()
-        for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename").items():
+        for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
             item = QStandardItem(stage[1].get("name"))
             item.setData(stage[1], Qt.ItemDataRole.UserRole)
             item.setIcon(QIcon(stage[1].get("path")))

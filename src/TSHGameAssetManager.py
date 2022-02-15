@@ -65,8 +65,7 @@ class TSHGameAssetManager():
             else:
                 print("Game config for "+game+" doesn't exist.")
 
-        for game in self.games:
-            print(game)
+        print(self.games)
 
         self.signals.onLoadAssets.emit()
 
@@ -92,7 +91,7 @@ class TSHGameAssetManager():
         if len(self.games.keys()) == 0:
             return
 
-        if game == 0:
+        if game == 0 or game == None:
             game = ""
         else:
             game = list(self.games.keys())[game-1]
