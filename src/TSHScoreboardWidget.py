@@ -124,6 +124,9 @@ class TSHScoreboardWidget(QDockWidget):
         self.team1playerWidgets = []
         self.team2playerWidgets = []
 
+        self.team1swaps = []
+        self.team2swaps = []
+
         self.columns = QWidget()
         self.columns.setLayout(QHBoxLayout())
         self.tabScore.layout().addWidget(self.columns)
@@ -345,7 +348,7 @@ class TSHScoreboardWidget(QDockWidget):
     def SetPlayersPerTeam(self, number):
         while len(self.team1playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team1playerWidgets)+1, teamNumber=1)
+                index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.players.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
             print(self.team1column.findChild(QScrollArea))
             self.team1column.findChild(
@@ -353,16 +356,30 @@ class TSHScoreboardWidget(QDockWidget):
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team1column.findChild(
                 QCheckBox, "losers").toggled.connect(p.SetLosers)
+
+            index = len(self.team1playerWidgets)
+
+            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+                self.team1playerWidgets[index-1]))
+            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+                self.team1playerWidgets[index+1]))
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team2playerWidgets)+1, teamNumber=2)
+                index=len(self.team2playerWidgets)+1, teamNumber=2, path=f'score.team.{2}.players.{len(self.team2playerWidgets)+1}')
             self.playerWidgets.append(p)
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team2column.findChild(
                 QCheckBox, "losers").toggled.connect(p.SetLosers)
+
+            index = len(self.team2playerWidgets)
+
+            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+                self.team2playerWidgets[index-1]))
+            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+                self.team2playerWidgets[index+1]))
             self.team2playerWidgets.append(p)
 
         while len(self.team1playerWidgets) > number:

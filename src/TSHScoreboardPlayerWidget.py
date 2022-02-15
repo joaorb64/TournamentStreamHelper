@@ -16,8 +16,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     countryModel = None
     characterModel = None
 
-    def __init__(self, index=0, teamNumber=0, *args):
+    def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
+
+        self.path = path
 
         self.index = index
         self.teamNumber = teamNumber
@@ -201,6 +203,38 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def ExportPlayerId(self, id=None):
         StateManager.Set(
             f"score.team.{self.teamNumber}.players.{self.index}.id", id)
+
+    def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
+        print(self.path)
+        print(other.path)
+        tmpData = []
+
+        # Save state
+        for w in [self, other]:
+            data = {}
+            for widget in w.findChildren(QWidget):
+                if type(widget) == QLineEdit:
+                    data[widget.objectName()] = widget.text()
+                if type(widget) == QComboBox:
+                    data[widget.objectName()] = widget.currentIndex()
+            data["online_avatar"] = StateManager.Get(
+                f"{w.path}.online_avatar")
+            data["id"] = StateManager.Get(
+                f"{w.path}.id")
+            tmpData.append(data)
+
+        # Load state
+        for i, w in enumerate([other, self]):
+            for objName in tmpData[i]:
+                widget = w.findChild(QWidget, objName)
+                if widget:
+                    if type(widget) == QLineEdit:
+                        widget.setText(tmpData[i][objName])
+                    if type(widget) == QComboBox:
+                        widget.setCurrentIndex(tmpData[i][objName])
+            QCoreApplication.processEvents()
+            w.ExportPlayerImages(tmpData[i]["online_avatar"])
+            w.ExportPlayerId(tmpData[i]["id"])
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(f"Player {index}")
