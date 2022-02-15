@@ -34,7 +34,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         bottom_buttons_layout = QHBoxLayout()
         bottom_buttons_layout.setSpacing(4)
-        self.layout().addLayout(bottom_buttons_layout, 999, 0, 1, 3)
+        self.layout().addLayout(bottom_buttons_layout, 99, 0, 1, 3)
 
         self.save_bt = QPushButton("Save new player")
         self.save_bt.font().setPointSize(10)
@@ -65,6 +65,16 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.clear_bt.setIcon(QIcon('icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
         self.clear_bt.clicked.connect(self.Clear)
+
+        # Move up/down
+        self.btMoveUp = QPushButton()
+        self.btMoveUp.setMaximumWidth(32)
+        self.btMoveUp.setIcon(QIcon("./icons/arrow_up.svg"))
+        bottom_buttons_layout.addWidget(self.btMoveUp)
+        self.btMoveDown = QPushButton()
+        self.btMoveDown.setMaximumWidth(32)
+        self.btMoveDown.setIcon(QIcon("./icons/arrow_down.svg"))
+        bottom_buttons_layout.addWidget(self.btMoveDown)
 
         # self.LoadCharacters()
 
@@ -164,7 +174,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         merged = ""
 
         if team != "":
-            merged += team+" | "
+            merged += team+" "
 
         merged += name
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>117</height>
+    <height>143</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -166,7 +166,7 @@
    <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="spacing">
-      <number>6</number>
+      <number>4</number>
      </property>
      <item>
       <spacer name="horizontalSpacer">
