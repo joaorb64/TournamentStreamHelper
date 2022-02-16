@@ -448,10 +448,10 @@ class TSHScoreboardStageWidget(QWidget):
 
                 if len(split) == 2:
                     key, value = split
-                    ruleset.banByMaxGames[key.strip()] = value.strip()
+                    ruleset.banByMaxGames[key.strip()] = int(value.strip())
 
         ruleset.strikeOrder = [
-            n.strip() for n in self.strikeOrder.text().split(",") if n.strip() != ""
+            int(n.strip()) for n in self.strikeOrder.text().split(",") if n.strip() != ""
         ]
 
         return ruleset
