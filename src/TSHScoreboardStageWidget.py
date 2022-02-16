@@ -98,6 +98,7 @@ class TSHScoreboardStageWidget(QWidget):
         self.stagesCounterpick.setIconSize(QSize(64, 64))
 
         self.rulesetName = self.findChild(QLineEdit, "rulesetName")
+        self.rulesetName.textEdited.connect(self.ExportCurrentRuleset)
 
         self.btAddNeutral = self.findChild(QPushButton, "btAddNeutral")
         self.btAddNeutral.clicked.connect(
@@ -121,18 +122,27 @@ class TSHScoreboardStageWidget(QWidget):
         self.btRemoveCounterpick.setIcon(QIcon("./icons/arrow_left.svg"))
 
         self.noDSR = self.findChild(QRadioButton, "noDSR")
+        self.noDSR.clicked.connect(self.ExportCurrentRuleset)
         self.DSR = self.findChild(QRadioButton, "DSR")
+        self.DSR.clicked.connect(self.ExportCurrentRuleset)
         self.MDSR = self.findChild(QRadioButton, "MDSR")
+        self.MDSR.clicked.connect(self.ExportCurrentRuleset)
 
         self.strikeOrder = self.findChild(QLineEdit, "strikeOrder")
+        self.strikeOrder.textEdited.connect(self.ExportCurrentRuleset)
 
         self.fixedBanCount = self.findChild(QRadioButton, "fixedBanCount")
+        self.fixedBanCount.clicked.connect(self.ExportCurrentRuleset)
         self.variableBanCount = self.findChild(
             QRadioButton, "variableBanCount")
+        self.variableBanCount.clicked.connect(self.ExportCurrentRuleset)
 
         self.banCount = self.findChild(QSpinBox, "banCount")
+        self.banCount.valueChanged.connect(self.ExportCurrentRuleset)
+
         self.banCountByMaxGames = self.findChild(
             QLineEdit, "banCountByMaxGames")
+        self.banCountByMaxGames.textEdited.connect(self.ExportCurrentRuleset)
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
@@ -145,6 +155,16 @@ class TSHScoreboardStageWidget(QWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
 
         StateManager.Set(f"score.ruleset", None)
+        self.ExportCurrentRuleset()
+
+        self.btSave = self.findChild(QPushButton, "btSave")
+        self.btDelete = self.findChild(QPushButton, "btDelete")
+        self.btClear = self.findChild(QPushButton, "btClear")
+
+        self.rulesetName.textChanged.connect(self.UpdateBottomButtons)
+        self.btSave.clicked.connect(self.SaveRuleset)
+        self.btDelete.clicked.connect(self.DeleteRuleset)
+        self.btClear.clicked.connect(self.ClearRuleset)
 
         # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
         # load tournament ruleset
@@ -167,32 +187,100 @@ class TSHScoreboardStageWidget(QWidget):
         if len(selected) == 1:
             data = selected[0].data(Qt.ItemDataRole.UserRole)
 
-            for i in range(view.model().rowCount()):
-                if view.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
+            for i in range(self.stagesNeutral.model().rowCount()):
+                if self.stagesNeutral.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
+                    return
+
+            for i in range(self.stagesCounterpick.model().rowCount()):
+                if self.stagesCounterpick.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
                     return
 
             item = self.stagesView.model().itemFromIndex(selected[0]).clone()
             view.model().appendRow(item)
+            view.model().sort(0)
+            self.ExportCurrentRuleset()
 
     def RemoveStage(self, view: QListView):
         selected = view.selectedIndexes()
 
         if len(selected) == 1:
             view.model().removeRow(selected[0].row())
+            self.ExportCurrentRuleset()
+
+    def UpdateBottomButtons(self):
+        found = next((
+            ruleset for ruleset in self.userRulesets if ruleset.get(
+                "videogame") == TSHGameAssetManager.instance.selectedGame.get(
+                    "codename") and ruleset.get("name") == self.rulesetName.text()), None)
+
+        if found:
+            self.btSave.setText("Update")
+            self.btDelete.setEnabled(True)
+        else:
+            self.btSave.setText("Save new")
+            self.btDelete.setEnabled(False)
+
+    def SaveRuleset(self):
+        found = next((
+            ruleset for ruleset in self.userRulesets if ruleset.get(
+                "videogame") == TSHGameAssetManager.instance.selectedGame.get(
+                    "codename") and ruleset.get("name") == self.rulesetName.text()), None)
+
+        if found:
+            found = vars(self.GetCurrentRuleset(True))
+        else:
+            self.userRulesets.append(vars(self.GetCurrentRuleset(True)))
+
+        self.SaveRulesetsFile()
+
+    def DeleteRuleset(self):
+        found = next((
+            ruleset for ruleset in self.userRulesets if ruleset.get(
+                "videogame") == TSHGameAssetManager.instance.selectedGame.get(
+                    "codename") and ruleset.get("name") == self.rulesetName.text()), None)
+
+        if found:
+            self.userRulesets.remove(found)
+            self.SaveRulesetsFile()
+
+    def ClearRuleset(self):
+        self.LoadRuleset()
+
+    def SaveRulesetsFile(self):
+        try:
+            with open("./user_data/rulesets.json", 'w', encoding="utf-8") as outfile:
+                json.dump(self.userRulesets, outfile, indent=4, sort_keys=True)
+        except Exception as e:
+            traceback.print_exc()
+
+        self.LoadRulesets()
+        self.UpdateBottomButtons()
 
     def SetupOptions(self):
         self.rulesetsBox.clear()
 
+        self.LoadRulesets()
+
+        self.stagesModel = QStandardItemModel()
+        for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
+            item = QStandardItem(stage[1].get("name"))
+            item.setData(stage[1], Qt.ItemDataRole.UserRole)
+            item.setIcon(QIcon(stage[1].get("path")))
+            self.stagesModel.appendRow(item)
+        self.stagesModel.sort(0)
+        self.stagesView.setModel(self.stagesModel)
+
+    def LoadRulesets(self):
         rulesetsModel = QStandardItemModel()
 
         rulesetsModel.appendRow(QStandardItem(""))
 
         # Load local rulesets
         try:
-            userRulesets = json.loads(
+            self.userRulesets = json.loads(
                 open("./user_data/rulesets.json", encoding="utf-8").read())
 
-            for ruleset in userRulesets:
+            for ruleset in self.userRulesets:
                 if ruleset.get("videogame") == TSHGameAssetManager.instance.selectedGame.get("codename"):
                     myRuleset = Ruleset()
                     myRuleset.__dict__.update(ruleset)
@@ -264,15 +352,6 @@ class TSHScoreboardStageWidget(QWidget):
         # Update list
         self.rulesetsBox.setModel(rulesetsModel)
 
-        self.stagesModel = QStandardItemModel()
-        for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
-            item = QStandardItem(stage[1].get("name"))
-            item.setData(stage[1], Qt.ItemDataRole.UserRole)
-            item.setIcon(QIcon(stage[1].get("path")))
-            self.stagesModel.appendRow(item)
-        self.stagesModel.sort(0)
-        self.stagesView.setModel(self.stagesModel)
-
     def LoadRuleset(self):
         data = self.rulesetsBox.currentData()
 
@@ -323,7 +402,59 @@ class TSHScoreboardStageWidget(QWidget):
                 counterpickModel.appendRow(item)
         self.stagesCounterpick.setModel(counterpickModel)
 
-        StateManager.Set(f"score.ruleset", vars(data))
+        self.ExportCurrentRuleset()
+
+    def ExportCurrentRuleset(self):
+        ruleset = self.GetCurrentRuleset()
+        StateManager.Set(f"score.ruleset", vars(ruleset))
+
+    def GetCurrentRuleset(self, forSaving=False):
+        ruleset = Ruleset()
+
+        ruleset.videogame = TSHGameAssetManager.instance.selectedGame.get(
+            "codename")
+        ruleset.name = self.rulesetName.text()
+
+        ruleset.neutralStages = []
+        for i in range(self.stagesNeutral.model().rowCount()):
+            if not forSaving:
+                ruleset.neutralStages.append(self.stagesNeutral.model().item(
+                    i, 0).data(Qt.ItemDataRole.UserRole))
+            else:
+                ruleset.neutralStages.append(self.stagesNeutral.model().item(
+                    i, 0).data(Qt.ItemDataRole.UserRole).get("name"))
+
+        ruleset.counterpickStages = []
+        for i in range(self.stagesCounterpick.model().rowCount()):
+            if not forSaving:
+                ruleset.counterpickStages.append(self.stagesCounterpick.model().item(
+                    i, 0).data(Qt.ItemDataRole.UserRole))
+            else:
+                ruleset.counterpickStages.append(self.stagesCounterpick.model().item(
+                    i, 0).data(Qt.ItemDataRole.UserRole).get("name"))
+
+        ruleset.useDSR = self.DSR.isChecked()
+        ruleset.useMDSR = self.MDSR.isChecked()
+
+        if self.fixedBanCount.isChecked():
+            ruleset.banCount = self.banCount.value()
+
+        if self.variableBanCount.isChecked():
+            inputText: str = self.banCountByMaxGames.text()
+            ruleset.banByMaxGames = {}
+
+            for _set in inputText.split(","):
+                split = _set.split(":")
+
+                if len(split) == 2:
+                    key, value = split
+                    ruleset.banByMaxGames[key.strip()] = value.strip()
+
+        ruleset.strikeOrder = [
+            n.strip() for n in self.strikeOrder.text().split(",") if n.strip() != ""
+        ]
+
+        return ruleset
 
     def LoadSmashggRulesets(self):
         try:

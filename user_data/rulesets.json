@@ -3,7 +3,7 @@
         "banByMaxGames": {},
         "banCount": 2,
         "counterpickStages": [
-            "Pokémon Stadium 2",
+            "Pok\u00e9mon Stadium 2",
             "Yoshi's Story",
             "Smashville",
             "Town and City"
@@ -28,19 +28,19 @@
     {
         "banByMaxGames": {},
         "banCount": 2,
-        "neutralStages": [
-            "Dream Land",
-            "Pokémon Stadium",
-            "Yoshi's Story",
-            "Glacial River",
-            "Dr. Mario"
-        ],
-        "name": "Frame Perfect Series",
         "counterpickStages": [
             "Smashville",
             "Saffron City DL",
             "Goomba Road",
             "Planet Clancer"
+        ],
+        "name": "Frame Perfect Series",
+        "neutralStages": [
+            "Dream Land",
+            "Pok\u00e9mon Stadium",
+            "Yoshi's Story",
+            "Glacial River",
+            "Dr. Mario"
         ],
         "strikeOrder": [
             1,
@@ -54,17 +54,17 @@
     {
         "banByMaxGames": {},
         "banCount": 2,
+        "counterpickStages": [
+            "Ninja College",
+            "Via Dolce"
+        ],
+        "name": "EU Backroom",
         "neutralStages": [
             "Sparring Ring",
             "Temple Grounds",
             "DNA Lab",
             "Mausoleum",
             "Buster Beach"
-        ],
-        "name": "EU Backroom",
-        "counterpickStages": [
-            "Ninja College",
-            "Via Dolce"
         ],
         "strikeOrder": [
             1,
@@ -78,14 +78,6 @@
     {
         "banByMaxGames": {},
         "banCount": 3,
-        "neutralStages": [
-            "Aetherial Gates",
-            "Julesvale",
-            "Merchant Port",
-            "The Forest Floor",
-            "Tower of Heaven"
-        ],
-        "name": "Online Ranked",
         "counterpickStages": [
             "Air Armada",
             "Blazing Hideout",
@@ -96,6 +88,14 @@
             "The Rock Wall",
             "The Spirit Tree",
             "Troupple Pond"
+        ],
+        "name": "Online Ranked",
+        "neutralStages": [
+            "Aetherial Gates",
+            "Julesvale",
+            "Merchant Port",
+            "The Forest Floor",
+            "Tower of Heaven"
         ],
         "strikeOrder": [
             1,
