@@ -79,40 +79,57 @@ class TSHScoreboardStageWidget(QWidget):
         self.webserver = WebServer()
         self.webserver.start()
 
-        # uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
+        uic.loadUi("src/layout/TSHScoreboardStage.ui", self)
 
         self.userRulesets = []
         self.smashggRulesets = []
         self.stagesModel = QStandardItemModel()
 
-        self.setLayout(QVBoxLayout())
-        self.rulesetsBox = QComboBox()
-        self.layout().addWidget(self.rulesetsBox)
+        self.rulesetsBox = self.findChild(QComboBox, "rulesetSelect")
         self.rulesetsBox.activated.connect(self.LoadRuleset)
 
-        hbox = QHBoxLayout()
-        self.layout().addLayout(hbox)
-
-        self.stagesView = QListView()
-        hbox.addWidget(self.stagesView)
+        self.stagesView = self.findChild(QListView, "allStages")
         self.stagesView.setIconSize(QSize(64, 64))
 
-        vbox = QVBoxLayout()
-        hbox.addLayout(vbox)
-
-        self.stagesNeutral = QListView()
+        self.stagesNeutral = self.findChild(QListView, "neutralStages")
         self.stagesNeutral.setIconSize(QSize(64, 64))
-        vbox.addWidget(QLabel("Neutral Stages"))
-        vbox.addWidget(self.stagesNeutral)
-        self.stagesCounterpick = QListView()
-        self.stagesCounterpick.setIconSize(QSize(64, 64))
-        vbox.addWidget(QLabel("Counterpick Stages"))
-        vbox.addWidget(self.stagesCounterpick)
 
-        self.webappLabel = QLabel(
+        self.stagesCounterpick = self.findChild(QListView, "counterpickStages")
+        self.stagesCounterpick.setIconSize(QSize(64, 64))
+
+        self.rulesetName = self.findChild(QLineEdit, "rulesetName")
+
+        self.btAddNeutral = self.findChild(QPushButton, "btAddNeutral")
+        self.btAddNeutral.setIcon(QIcon("./icons/arrow_right.svg"))
+
+        self.btRemoveNeutral = self.findChild(QPushButton, "btRemoveNeutral")
+        self.btRemoveNeutral.setIcon(QIcon("./icons/arrow_left.svg"))
+
+        self.btAddCounterpick = self.findChild(QPushButton, "btAddCounterpick")
+        self.btAddCounterpick.setIcon(QIcon("./icons/arrow_right.svg"))
+
+        self.btRemoveCounterpick = self.findChild(
+            QPushButton, "btRemoveCounterpick")
+        self.btRemoveCounterpick.setIcon(QIcon("./icons/arrow_left.svg"))
+
+        self.noDSR = self.findChild(QRadioButton, "noDSR")
+        self.DSR = self.findChild(QRadioButton, "DSR")
+        self.MDSR = self.findChild(QRadioButton, "MDSR")
+
+        self.strikeOrder = self.findChild(QLineEdit, "strikeOrder")
+
+        self.fixedBanCount = self.findChild(QRadioButton, "fixedBanCount")
+        self.variableBanCount = self.findChild(
+            QRadioButton, "variableBanCount")
+
+        self.banCount = self.findChild(QSpinBox, "banCount")
+        self.banCountByMaxGames = self.findChild(
+            QLineEdit, "banCountByMaxGames")
+
+        self.webappLabel = self.findChild(QLabel, "labelIp")
+        self.webappLabel.setText(
             f"Open <a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a> in a browser to stage strike.")
         self.webappLabel.setOpenExternalLinks(True)
-        self.layout().addWidget(self.webappLabel)
 
         self.LoadSmashggRulesets()
 
@@ -234,6 +251,29 @@ class TSHScoreboardStageWidget(QWidget):
         if data == None:
             data = Ruleset()
 
+        self.rulesetName.setText(data.name)
+
+        if data.useDSR:
+            self.DSR.setChecked(True)
+        elif data.useMDSR:
+            self.MDSR.setChecked(True)
+        else:
+            self.noDSR.setChecked(True)
+
+        if data.strikeOrder:
+            self.strikeOrder.setText(
+                ",".join([str(s) for s in data.strikeOrder]))
+
+        if data.banCount:
+            self.fixedBanCount.setChecked(True)
+            self.banCount.setValue(data.banCount)
+            self.banCountByMaxGames.setText("")
+        elif data.banByMaxGames:
+            self.variableBanCount.setChecked(True)
+            self.banCountByMaxGames.setText(
+                ",".join([f'{k}:{v}' for k, v in data.banByMaxGames.items()]))
+            self.banCount.setValue(0)
+
         allStages = TSHGameAssetManager.instance.selectedGame.get(
             "stage_to_codename")
 
@@ -267,6 +307,7 @@ class TSHScoreboardStageWidget(QWidget):
             self.smashggRulesets = rulesets
         except Exception as e:
             traceback.print_exc()
+
         # https://smash.gg/api/-/gg_api./rulesets
         # entities > ruleset[]
 
