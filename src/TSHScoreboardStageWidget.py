@@ -100,16 +100,24 @@ class TSHScoreboardStageWidget(QWidget):
         self.rulesetName = self.findChild(QLineEdit, "rulesetName")
 
         self.btAddNeutral = self.findChild(QPushButton, "btAddNeutral")
+        self.btAddNeutral.clicked.connect(
+            lambda x, view=self.stagesNeutral: self.AddStage(view))
         self.btAddNeutral.setIcon(QIcon("./icons/arrow_right.svg"))
 
         self.btRemoveNeutral = self.findChild(QPushButton, "btRemoveNeutral")
+        self.btRemoveNeutral.clicked.connect(
+            lambda x: self.RemoveStage(self.stagesNeutral))
         self.btRemoveNeutral.setIcon(QIcon("./icons/arrow_left.svg"))
 
         self.btAddCounterpick = self.findChild(QPushButton, "btAddCounterpick")
+        self.btAddCounterpick.clicked.connect(
+            lambda x, view=self.stagesCounterpick: self.AddStage(view))
         self.btAddCounterpick.setIcon(QIcon("./icons/arrow_right.svg"))
 
         self.btRemoveCounterpick = self.findChild(
             QPushButton, "btRemoveCounterpick")
+        self.btRemoveCounterpick.clicked.connect(
+            lambda x: self.RemoveStage(self.stagesCounterpick))
         self.btRemoveCounterpick.setIcon(QIcon("./icons/arrow_left.svg"))
 
         self.noDSR = self.findChild(QRadioButton, "noDSR")
@@ -132,6 +140,7 @@ class TSHScoreboardStageWidget(QWidget):
         self.webappLabel.setOpenExternalLinks(True)
 
         self.LoadSmashggRulesets()
+        self.LoadRuleset()
 
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
 
@@ -151,6 +160,25 @@ class TSHScoreboardStageWidget(QWidget):
         finally:
             s.close()
         return IP
+
+    def AddStage(self, view: QListView):
+        selected = self.stagesView.selectedIndexes()
+
+        if len(selected) == 1:
+            data = selected[0].data(Qt.ItemDataRole.UserRole)
+
+            for i in range(view.model().rowCount()):
+                if view.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
+                    return
+
+            item = self.stagesView.model().itemFromIndex(selected[0]).clone()
+            view.model().appendRow(item)
+
+    def RemoveStage(self, view: QListView):
+        selected = view.selectedIndexes()
+
+        if len(selected) == 1:
+            view.model().removeRow(selected[0].row())
 
     def SetupOptions(self):
         self.rulesetsBox.clear()
