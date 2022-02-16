@@ -40,8 +40,16 @@ body {
   margin-right: 8px;
 }
 
+.p1.container > div:first-child {
+  margin-left: 8px;
+}
+
 .p2.container > div:not(:last-child) {
   margin-left: 8px;
+}
+
+.p2.container > div:first-child {
+  margin-right: 8px;
 }
 
 .player.container {

@@ -90,7 +90,7 @@ class StateManager:
         pathdirs = "/".join(path.split("/")[0:-1])
 
         if not os.path.isdir("./out/"+pathdirs):
-            os.mkdir("./out/"+pathdirs)
+            os.makedirs("./out/"+pathdirs)
 
         if type(di) == dict:
             for k, i in di.items():
@@ -149,19 +149,22 @@ class StateManager:
                     removeFile = f"./out/{path}" + \
                         "." + di.rsplit(".", 1)[-1]
                     # print("try to remove: ", removeFile)
-                    os.remove(removeFile)
+                    if os.path.exists(removeFile):
+                        os.remove(removeFile)
                 except:
                     print(traceback.format_exc())
             else:
                 try:
                     removeFile = f"./out/{path}.txt"
                     # print("try to remove: ", removeFile)
-                    os.remove(removeFile)
+                    if os.path.exists(removeFile):
+                        os.remove(removeFile)
                 except:
                     print(traceback.format_exc())
 
         try:
-            os.rmdir(f"./out/{pathdirs}")
+            if os.path.exists(f"./out/{pathdirs}"):
+                shutil.rmtree(f"./out/{pathdirs}")
         except:
             print(traceback.format_exc())
 
