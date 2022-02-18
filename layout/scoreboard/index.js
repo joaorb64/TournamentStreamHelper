@@ -20,14 +20,14 @@
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),
             `
-                        <span>
-                            <span class='sponsor'>
-                                ${player.team ? player.team + "" : ""}
-                            </span>
-                            ${player.name}
-                            ${team.losers ? " [L]" : ""}
-                        </span>
-                    `
+            <span>
+              <span class="sponsor">
+                ${player.team ? player.team : ""}
+              </span>
+              ${player.name}
+              ${team.losers ? " [L]" : ""}
+            </span>
+            `
           );
 
           SetInnerHtml(
@@ -74,6 +74,13 @@
           );
 
           SetInnerHtml(
+            $(`.p${t + 1}.container .online_avatar`),
+            player.online_avatar
+              ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+              : ""
+          );
+
+          SetInnerHtml(
             $(`.p${t + 1}.container .twitter`),
             String(player.twitter)
           );
@@ -111,7 +118,7 @@
       FitText($($(this)[0].parentNode));
     });
 
-    $(".icon:has(>.text:empty)").css("margin-right", "-6px");
+    $(".icon:has(>.text:empty)").css("margin-right", "0");
   }
 
   $(window).on("load", () => {

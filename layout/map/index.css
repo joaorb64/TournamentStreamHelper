@@ -44,7 +44,6 @@ body {
   z-index: 9999;
   align-items: center;
   padding: 10px;
-  gap: 5px;
   flex-direction: column;
 }
 
@@ -55,15 +54,15 @@ body {
   background: rgba(0, 0, 0, 0.8);
   color: white;
   opacity: 0;
+  margin: 6px;
 }
 
 .leaflet-tooltip-own {
   position: absolute;
-  padding: 4px;
   background-color: rgba(0, 0, 0, 0.8);
   border: 0px solid #000;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 4px 16px;
   white-space: nowrap;
   -webkit-user-select: none;
   -moz-user-select: none;

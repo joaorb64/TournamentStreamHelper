@@ -22,6 +22,10 @@ body {
   margin: 0;
   width: 1920px;
   height: 1080px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .container {
@@ -30,8 +34,6 @@ body {
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
-  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
-    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
   border-radius: 8px;
   background-color: #212121ff;
 }
@@ -60,12 +62,18 @@ body {
 }
 
 .fgc .player.container {
-  top: 4px;
+  top: 6px;
+}
+
+.fgc.thin .player.container {
+  top: 2px;
+  height: 48px;
+  width: 640px;
 }
 
 .p1.container {
   background-position: 100% 0;
-  right: 1020px;
+  right: 1000px;
   flex-direction: row;
 }
 
@@ -75,7 +83,7 @@ body {
 
 .p2.container {
   background-position: 0 0;
-  left: 1020px;
+  left: 1000px;
   flex-direction: row-reverse;
 }
 
@@ -91,6 +99,15 @@ body {
   justify-content: center;
 }
 
+.fgc.thin .name_twitter {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.fgc.thin .p2 .name_twitter {
+  flex-direction: row-reverse;
+}
+
 .name_twitter .name {
   font-size: 24px;
 }
@@ -101,15 +118,16 @@ body {
 
 .logo {
   position: absolute;
-  top: 36px;
+  top: 42px;
   left: 50%;
   transform: translateX(-50%);
-  width: 76px;
-  height: 76px;
+  width: 64px;
+  height: 64px;
   background-image: url("./logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 8px;
 }
 
 .fgc .logo {
@@ -122,12 +140,12 @@ body {
   width: 645px;
   height: 30px;
   color: white;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   background-position: center;
   text-transform: uppercase;
   box-sizing: border-box;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .info.container_inner {
@@ -143,23 +161,30 @@ body {
 }
 
 .info.container.top {
-  top: 4px;
+  top: 8px;
   width: 400px;
 }
 
 .fgc .info.container.top {
+  top: 6px;
   height: 60px;
   width: 300px;
 }
 
+.fgc.thin .info.container.top {
+  top: 2px;
+  height: 48px;
+}
+
 .info.container.bottom {
-  top: 114px;
+  top: 110px;
   display: flex;
   justify-content: space-around;
 }
 
 .fgc .info.container.bottom {
-  top: 68px;
+  top: unset;
+  bottom: 6px;
 }
 
 .icon {
@@ -183,6 +208,20 @@ body {
 
 .character_container {
   display: flex;
+  overflow: hidden;
+  height: 100%;
+}
+
+.character_container > div {
+  overflow: hidden;
+  height: 100%;
+}
+
+.character_container > div > div {
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .character_container > div > div:not(:last-child) {
@@ -192,12 +231,13 @@ body {
 .score {
   top: 14px;
   width: 48px;
-  height: 48px;
+  height: 100%;
   font-size: 38px;
   color: #212121ff;
   border-radius: 8px;
   flex-grow: 0;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .p1 .score {
