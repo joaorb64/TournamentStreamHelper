@@ -3,6 +3,7 @@ import json
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from StateManager import StateManager
 import re
 import traceback
 
@@ -25,6 +26,7 @@ class TSHGameAssetManager():
         self.LoadGames()
         self.selectedGame = {}
         self.stockIcons = {}
+        StateManager.Set(f"game.name", "")
 
     def DownloadSmashGGCharacters(self):
         try:
@@ -205,6 +207,8 @@ class TSHGameAssetManager():
 
             for s in self.stages.keys():
                 self.stages[s]["name"] = s
+
+        StateManager.Set(f"game.name", self.selectedGame.get("name"))
 
         self.signals.onLoad.emit()
 
