@@ -100,8 +100,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for c in self.findChildren(QLineEdit):
             c.textChanged.connect(
                 lambda text, element=c: [
-                    print(self.teamNumber, self.index,
-                          element.objectName(), text),
                     StateManager.Set(
                         f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", text)
                 ])
@@ -109,13 +107,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
                 lambda text, element=c: [
-                    print(
-                        self.teamNumber,
-                        self.index,
-                        element.objectName(),
-                        element.currentData().get("name") if element.currentData() else element.currentText(),
-                        element.currentData().get("code") if element.currentData() else ""
-                    ),
                     StateManager.Set(
                         f"score.team.{self.teamNumber}.players.{self.index}.{element.objectName()}", element.currentData(
                         )
@@ -208,8 +199,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             f"score.team.{self.teamNumber}.players.{self.index}.id", id)
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
-        print(self.path)
-        print(other.path)
         tmpData = []
 
         # Save state

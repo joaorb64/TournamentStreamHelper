@@ -262,17 +262,9 @@ class TSHScoreboardWidget(QDockWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.LoadCharacters)
 
-        for c in self.findChildren(QLineEdit):
-            c.textChanged.connect(
-                lambda text, element=c: print(element.objectName(), text))
-
         for c in self.scoreColumn.findChildren(QComboBox):
             c.editTextChanged.connect(
                 lambda text, element=c: [
-                    print(
-                        element.objectName(),
-                        element.currentText()
-                    ),
                     StateManager.Set(
                         f"score.{element.objectName()}", element.currentText())
                 ]
@@ -311,6 +303,9 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(
             QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
+
+        self.scoreColumn.findChild(
+            QPushButton, "btResetScore").clicked.connect(self.ResetScore)
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./team_logo/{value.lower()}.png"):
@@ -454,6 +449,12 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(losersLeft)
 
         self.teamsSwapped = not self.teamsSwapped
+
+    def ResetScore(self):
+        self.scoreColumn.findChild(QComboBox, "match").setCurrentText("")
+        self.scoreColumn.findChild(QComboBox, "phase").setCurrentText("")
+        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
+        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
 
     def NewSetSelected(self, data):
         self.StopAutoUpdate()
