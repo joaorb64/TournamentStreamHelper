@@ -180,6 +180,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         merged += name
 
+        merged = merged.replace("/", " ")
+        merged = merged.replace(":", " ")
+
         # Online avatar
         StateManager.Set(
             f"score.team.{self.teamNumber}.players.{self.index}.online_avatar", onlineAvatar)

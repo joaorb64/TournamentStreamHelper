@@ -28,6 +28,8 @@ body {
   justify-content: center;
   align-content: center;
   height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .map {
