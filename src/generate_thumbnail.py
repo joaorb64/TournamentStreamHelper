@@ -87,28 +87,29 @@ def paste_characters(thumbnail, data):
         thumbnail.paste(character_image, paste_coordinates, character_image)
 
 
-def get_text_size_for_height(thumbnail, font_path, pixel_height, current_size=None):
+def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval=None, recursion_level=0):
     if pixel_height <= 1:
         raise ValueError("pixel_height too small")
 
-    tolerance = 1
+    tolerance = 0
     thumbnail_copy = deepcopy(thumbnail)
     draw = ImageDraw.Draw(thumbnail_copy)
-    if not current_size:
-        current_size = pixel_height
+    if not search_interval:
+        search_interval = [0, pixel_height*2]
+    current_size = round((search_interval[0] + search_interval[1])/2)
     font = ImageFont.truetype(font_path, current_size)
     bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
     calculated_height = bbox[-1]
 
-    if calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance:
+    if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level>100:
         return(current_size)
     elif calculated_height < pixel_height:
         result = get_text_size_for_height(
-            thumbnail, font_path, pixel_height, current_size=round(current_size + current_size/2))
+            thumbnail, font_path, pixel_height, [current_size, search_interval[1]], recursion_level+1)
         return(result)
     else:
         result = get_text_size_for_height(
-            thumbnail, font_path, pixel_height, current_size=round(current_size/2))
+            thumbnail, font_path, pixel_height, [search_interval[0], current_size], recursion_level+1)
         return(result)
 
 
