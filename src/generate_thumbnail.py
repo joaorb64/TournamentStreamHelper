@@ -64,7 +64,8 @@ def calculate_new_dimensions(current_size, max_size):
         new_y = x_ratio*current_size[1]
     return((round(new_x), round(new_y)))
 
-def resize_image_to_max_size(image:Image, max_size):
+
+def resize_image_to_max_size(image: Image, max_size):
     current_size = image.size
     x_ratio = max_size[0]/current_size[0]
     y_ratio = max_size[1]/current_size[1]
@@ -72,18 +73,18 @@ def resize_image_to_max_size(image:Image, max_size):
     if max_size[0] < 0 or max_size[1] < 0:
         raise ValueError(
             msg=f"Size cannot be negative, given max size is {max_size}")
-    
+
     if (x_ratio < y_ratio):
         new_x = y_ratio*current_size[0]
         new_y = max_size[1]
     else:
         new_x = max_size[0]
         new_y = x_ratio*current_size[1]
-    
+
     new_size = (round(new_x), round(new_y))
     image = image.resize(new_size, resample=Image.BICUBIC)
 
-    #crop
+    # crop
     left = round(-(max_size[0] - new_x)/2)
     top = round(-(max_size[1] - new_y)/2)
     right = round((max_size[0] + new_x)/2)
@@ -92,10 +93,12 @@ def resize_image_to_max_size(image:Image, max_size):
 
     return(image)
 
+
 def create_composite_image(image, size, coordinates):
-    background = Image.new('RGBA', size, (0,0,0,0))
+    background = Image.new('RGBA', size, (0, 0, 0, 0))
     background.paste(image, coordinates, image)
     return(background)
+
 
 def paste_characters(thumbnail, data):
     used_assets = "full"
@@ -115,7 +118,8 @@ def paste_characters(thumbnail, data):
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
-        composite_image = create_composite_image(character_image, thumbnail.size, paste_coordinates)
+        composite_image = create_composite_image(
+            character_image, thumbnail.size, paste_coordinates)
         thumbnail = Image.alpha_composite(thumbnail, composite_image)
 
     return(thumbnail)
@@ -135,7 +139,7 @@ def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval
     bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
     calculated_height = bbox[-1]
 
-    if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level>100:
+    if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level > 100:
         return(current_size)
     elif calculated_height < pixel_height:
         result = get_text_size_for_height(
@@ -219,7 +223,8 @@ def paste_icon(thumbnail, icon_path):
     icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
     icon_y = round(thumbnail.size[1]*(6.0/1080.0))
     icon_coordinates = (icon_x, icon_y)
-    composite_image = create_composite_image(icon_image, thumbnail.size, icon_coordinates)
+    composite_image = create_composite_image(
+        icon_image, thumbnail.size, icon_coordinates)
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
@@ -232,11 +237,11 @@ with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
 
 thumbnail = Image.new("RGBA", foreground.size, "PINK")
-composite_image = create_composite_image(background, thumbnail.size, (0,0))
+composite_image = create_composite_image(background, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
 thumbnail.paste(background, (0, 0), mask=background)
 thumbnail = paste_characters(thumbnail, data)
-composite_image = create_composite_image(foreground, thumbnail.size, (0,0))
+composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
 paste_player_text(thumbnail, data)
 paste_round_text(thumbnail, data, display_phase)
