@@ -216,7 +216,8 @@ paste_player_text(thumbnail, data)
 paste_round_text(thumbnail, data, display_phase)
 thumbnail = paste_icon(thumbnail, icon_path)
 
-thumbnail_filename = f"thumb-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}.png"
-thumbnail.save(f"{out_path}/{thumbnail_filename}")
+thumbnail_filename = f"thumb-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
+thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
+thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
 
 shutil.rmtree(tmp_path)
