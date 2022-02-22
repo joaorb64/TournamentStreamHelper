@@ -88,7 +88,6 @@ def resize_image_to_max_size(image:Image, max_size):
     top = round(-(max_size[1] - new_y)/2)
     right = round((max_size[0] + new_x)/2)
     bottom = round((max_size[1] + new_y)/2)
-    print (left, top, right, bottom)
     image = image.crop((left, top, right, bottom))
 
     return(image)
