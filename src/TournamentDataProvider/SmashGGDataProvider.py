@@ -485,6 +485,8 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             )
             data = json.loads(data.text)
 
+            eventId = deep_get(data, "data.event.id", None)
+
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
             if queues:
@@ -495,7 +497,10 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 )
 
                 if queue and len(queue.get("sets")) > 0:
-                    streamSet = queue.get("sets")[0]
+                    queueSets = [s for s in queue.get("sets") if deep_get(
+                        s, "event.id") == eventId]
+                    if len(queueSets) > 0:
+                        streamSet = queueSets[0]
         except Exception as e:
             traceback.print_exc()
 

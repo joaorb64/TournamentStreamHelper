@@ -119,6 +119,7 @@
     });
 
     $(".icon:has(>.text:empty)").css("margin-right", "0");
+    $(".icon:has(>.text:empty)").css("margin-left", "0");
   }
 
   $(window).on("load", () => {

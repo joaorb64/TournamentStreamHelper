@@ -52,16 +52,12 @@
         );
 
         SetInnerHtml(
-          $(`.${p} .sponsor_logo`),
-          data[p + "_org"]
+          $(`.p${t + 1} > .sponsor_logo`),
+          player.sponsor_logo
             ? `
-              <div>
-                  <div class='sponsor_logo' style='background-image: url(../../sponsor_logos/${data[
-                    p + "_org"
-                  ].toUpperCase()}.png)'></div>
-              </div>`
-            : "",
-          oldData[p + "_org"] != data[p + "_org"]
+              <div class='sponsor_logo' style='background-image: url(../../${player.sponsor_logo})'></div>
+              `
+            : ""
         );
 
         SetInnerHtml($(`.p${t + 1} .real_name`), `${player.real_name}`);

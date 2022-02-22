@@ -1,9 +1,14 @@
 query StreamSetsQuery($eventSlug: String!) {
   event(slug: $eventSlug) {
+    id
     tournament {
         streamQueue {
             sets {
                 id
+                state
+                event {
+                  id
+                }
             }
             stream {
                 streamName
