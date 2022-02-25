@@ -26,7 +26,7 @@ class TSHGameAssetManager():
         self.LoadGames()
         self.selectedGame = {}
         self.stockIcons = {}
-        StateManager.Set(f"game.name", "")
+        StateManager.Set(f"game", {})
 
     def DownloadSmashGGCharacters(self):
         try:
@@ -208,7 +208,11 @@ class TSHGameAssetManager():
             for s in self.stages.keys():
                 self.stages[s]["name"] = s
 
-        StateManager.Set(f"game.name", self.selectedGame.get("name"))
+        StateManager.Set(f"game", {
+            "name": self.selectedGame.get("name"),
+            "smashgg_id": self.selectedGame.get("smashgg_game_id"),
+            "codename": self.selectedGame.get("codename"),
+        })
 
         self.signals.onLoad.emit()
 

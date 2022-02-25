@@ -3,32 +3,6 @@
         "banByMaxGames": {},
         "banCount": 2,
         "counterpickStages": [
-            "Pok\u00e9mon Stadium 2",
-            "Yoshi's Story",
-            "Smashville",
-            "Town and City"
-        ],
-        "name": "SuMMIT SEM LAG",
-        "neutralStages": [
-            "Battlefield",
-            "Final Destination",
-            "Small Battlefield",
-            "Hollow Bastion",
-            "Northern Cave"
-        ],
-        "strikeOrder": [
-            1,
-            2,
-            1
-        ],
-        "useDSR": false,
-        "useMDSR": true,
-        "videogame": "ssbu"
-    },
-    {
-        "banByMaxGames": {},
-        "banCount": 2,
-        "counterpickStages": [
             "Smashville",
             "Saffron City DL",
             "Goomba Road",
@@ -106,5 +80,31 @@
         "useDSR": false,
         "useMDSR": false,
         "videogame": "roa"
+    },
+    {
+        "banByMaxGames": {},
+        "banCount": 3,
+        "counterpickStages": [
+            "Pok\u00e9mon Stadium 2",
+            "Yoshi's Story",
+            "Smashville",
+            "Town and City"
+        ],
+        "name": "SuMMIT SEM LAG",
+        "neutralStages": [
+            "Battlefield",
+            "Final Destination",
+            "Small Battlefield",
+            "Hollow Bastion",
+            "Northern Cave"
+        ],
+        "strikeOrder": [
+            1,
+            2,
+            1
+        ],
+        "useDSR": false,
+        "useMDSR": true,
+        "videogame": "ssbu"
     }
 ]

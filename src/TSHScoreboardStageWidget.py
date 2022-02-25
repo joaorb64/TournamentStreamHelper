@@ -227,9 +227,9 @@ class TSHScoreboardStageWidget(QWidget):
                     "codename") and ruleset.get("name") == self.rulesetName.text()), None)
 
         if found:
-            found = vars(self.GetCurrentRuleset(True))
-        else:
-            self.userRulesets.append(vars(self.GetCurrentRuleset(True)))
+            self.userRulesets.remove(found)
+
+        self.userRulesets.append(vars(self.GetCurrentRuleset(True)))
 
         self.SaveRulesetsFile()
 

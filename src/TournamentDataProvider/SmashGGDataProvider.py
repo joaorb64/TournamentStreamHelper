@@ -647,6 +647,8 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                                 playerData["smashggMains"] = mains
 
                         if user:
+                            playerData["id"] = user.get("id")
+
                             if len(user.get("authorizations", [])) > 0:
                                 playerData["twitter"] = user.get("authorizations", [])[
                                     0].get("externalUsername")
