@@ -195,7 +195,7 @@
               playerToEntrant[p2Id] = _set.slots[1].entrant.id;
 
               let winner = 0;
-              if (p1Id == playerToEntrant[ids[0]]) {
+              if (p1Id == ids[0]) {
                 winner = _set.winnerId == playerToEntrant[p1Id] ? 0 : 1;
               } else {
                 winner = _set.winnerId == playerToEntrant[p1Id] ? 1 : 0;
@@ -204,13 +204,13 @@
               let score = [0, 0];
 
               if (_set.entrant1Score != null && _set.entrant2Score != null) {
-                if (p1Id == playerToEntrant[ids[0]]) {
+                if (p1Id == ids[0]) {
                   score = [_set.entrant1Score, _set.entrant2Score];
                 } else {
                   score = [_set.entrant2Score, _set.entrant1Score];
                 }
               } else {
-                if (p1Id == playerToEntrant[ids[0]]) {
+                if (p1Id == ids[0]) {
                   score = ["W", "L"];
                 } else {
                   score = ["L", "W"];
