@@ -1,7 +1,6 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
-from turtle import back
 from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
@@ -14,9 +13,12 @@ import datetime
 
 display_phase = True
 use_team_names = False
+use_sponsors = True
 
 foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
+separator_h_path = "./thumbnail_base/separator_h.png"
+separator_v_path = "./thumbnail_base/separator_v.png"
 data_path = "./out/program_state.json"
 out_path = "./out/thumbnails"
 tmp_path = "./tmp"
@@ -101,6 +103,71 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
+    num_line = len(path_matrix)
+
+    for line_index in range(0, len(path_matrix)):
+        line = path_matrix[line_index]
+        num_col = len(line)
+        for col_index in range(0, len(line)):
+            individual_max_size = (
+                round(max_size[0]/num_col), round(max_size[1]/num_line))
+            image_path = line[col_index]
+            print(f"Processing asset: {image_path}")
+            individual_paste_x = round(
+                paste_coordinates[0] + col_index*individual_max_size[0])
+            individual_paste_y = round(
+                paste_coordinates[1] + line_index*individual_max_size[1])
+            individual_paste_coordinates = (
+                individual_paste_x, individual_paste_y)
+            character_image = Image.open(image_path).convert('RGBA')
+            character_image = resize_image_to_max_size(
+                character_image, individual_max_size)
+            composite_image = create_composite_image(
+                character_image, thumbnail.size, individual_paste_coordinates)
+            thumbnail = Image.alpha_composite(thumbnail, composite_image)
+
+            separator_v_image = Image.open(separator_v_path).convert('RGBA')
+            # crop
+            left = round(0)
+            top = round(0)
+            right = round(separator_v_image.size[0])
+            bottom = round(individual_max_size[1])
+            separator_v_image = separator_v_image.crop(
+                ((left, top, right, bottom)))
+            separator_v_offset = max_size[0]/num_col
+            for i in range(1, num_col):
+                separator_paste_x = round(
+                    paste_coordinates[0]-(separator_v_image.size[0]/2)+i*separator_v_offset)
+                separator_paste_y = individual_paste_y
+                separator_paste_coordinates = (
+                    separator_paste_x, separator_paste_y)
+                composite_image = create_composite_image(
+                    separator_v_image, thumbnail.size, separator_paste_coordinates)
+                thumbnail = Image.alpha_composite(thumbnail, composite_image)
+
+        separator_h_image = Image.open(separator_h_path).convert('RGBA')
+        # crop
+        left = round(0)
+        top = round(0)
+        right = round(max_size[0])
+        bottom = round(separator_h_image.size[1])
+        separator_h_image = separator_h_image.crop(
+            ((left, top, right, bottom)))
+        separator_h_offset = max_size[1]/num_line
+        for i in range(1, num_line):
+            separator_paste_x = paste_coordinates[0]
+            separator_paste_y = round(
+                paste_coordinates[1]-(separator_h_image.size[1]/2)+i*separator_h_offset)
+            separator_paste_coordinates = (
+                separator_paste_x, separator_paste_y)
+            composite_image = create_composite_image(
+                separator_h_image, thumbnail.size, separator_paste_coordinates)
+            thumbnail = Image.alpha_composite(thumbnail, composite_image)
+
+    return(thumbnail)
+
+
 def paste_characters(thumbnail, data):
     used_assets = "full"
 
@@ -112,16 +179,26 @@ def paste_characters(thumbnail, data):
 
     for i in [0, 1]:
         team_index = i+1
-        current_image_path = find(
-            f"score.team.{team_index}.players.1.character.1.assets.{used_assets}.asset", data)
-        character_image = Image.open(current_image_path).convert('RGBA')
-        character_image = resize_image_to_max_size(character_image, max_size)
+        path_matrix = []
+        current_team = find(f"score.team.{team_index}.players", data)
+        for player_key in current_team.keys():
+            character_list = []
+            characters = find(f"{player_key}.character", current_team)
+            for character_key in characters.keys():
+                try:
+                    image_path = find(
+                        f"{character_key}.assets.{used_assets}.asset", characters)
+                    if image_path:
+                        character_list.append(image_path)
+                except KeyError:
+                    None
+            path_matrix.append(character_list)
+
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
-        composite_image = create_composite_image(
-            character_image, thumbnail.size, paste_coordinates)
-        thumbnail = Image.alpha_composite(thumbnail, composite_image)
+        thumbnail = paste_image_matrix(
+            thumbnail, path_matrix, max_size, paste_coordinates)
 
     return(thumbnail)
 
@@ -152,7 +229,7 @@ def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval
         return(result)
 
 
-def paste_player_text(thumbnail, data, use_team_names=False):
+def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_coordinates_center = [
         (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
     text_player_max_dimensions = (-1, 100.0/1080.0)
@@ -164,11 +241,24 @@ def paste_player_text(thumbnail, data, use_team_names=False):
 
     for i in [0, 1]:
         team_index = i+1
+        player_list = []
         if use_team_names:
             player_name = find(f"score.team.{team_index}.teamName", data)
         else:
-            current_player = find(f"score.team.{team_index}.players.1", data)
-            player_name = current_player.get("mergedName")
+            current_team = find(f"score.team.{team_index}.players", data)
+            for key in current_team.keys():
+                if use_sponsors:
+                    player_list.append(current_team[key].get("mergedName"))
+                else:
+                    player_list.append(current_team[key].get("name"))
+            player_name = " / ".join(player_list)
+
+        if use_team_names or len(player_list) > 1:
+            player_type = "team"
+        else:
+            player_type = "player"
+
+        print(f"Processing {player_type}: {player_name}")
 
         font = ImageFont.truetype(font_path, text_size)
         text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
@@ -216,8 +306,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 
 def paste_icon(thumbnail, icon_path):
-    max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(200.0/1080.0))
+    max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
+    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
 
     icon_image = Image.open(icon_path).convert('RGBA')
@@ -247,7 +337,7 @@ thumbnail.paste(background, (0, 0), mask=background)
 thumbnail = paste_characters(thumbnail, data)
 composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
-paste_player_text(thumbnail, data, use_team_names)
+paste_player_text(thumbnail, data, use_team_names, use_sponsors)
 paste_round_text(thumbnail, data, display_phase)
 thumbnail = paste_icon(thumbnail, icon_path)
 
@@ -256,3 +346,6 @@ thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
 thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
 
 shutil.rmtree(tmp_path)
+
+print(
+    f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
