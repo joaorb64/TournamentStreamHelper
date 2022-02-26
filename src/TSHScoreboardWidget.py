@@ -383,7 +383,7 @@ class TSHScoreboardWidget(QDockWidget):
         for team in [1, 2]:
             if StateManager.Get(f'score.team.{team}'):
                 for k in list(StateManager.Get(f'score.team.{team}.players').keys()):
-                    if not k.isnumeric() or (k.isnumeric() and int(k) > number):
+                    if int(k) > number:
                         StateManager.Unset(f'score.team.{team}.players.{k}')
 
         if number > 1:
