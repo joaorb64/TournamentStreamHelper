@@ -192,7 +192,8 @@ def paste_characters(thumbnail, data):
                         character_list.append(image_path)
                 except KeyError:
                     None
-            path_matrix.append(character_list)
+            if character_list:
+                path_matrix.append(character_list)
 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
@@ -247,10 +248,11 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         else:
             current_team = find(f"score.team.{team_index}.players", data)
             for key in current_team.keys():
-                if use_sponsors:
-                    player_list.append(current_team[key].get("mergedName"))
-                else:
-                    player_list.append(current_team[key].get("name"))
+                current_data = current_team[key].get("mergedName")
+                if (not use_sponsors) or (not current_data):
+                    current_data = current_team[key].get("name")
+                if current_data:
+                    player_list.append(current_data)
             player_name = " / ".join(player_list)
 
         if use_team_names or len(player_list) > 1:
