@@ -454,8 +454,7 @@
     recentSetsHtml = "";
 
     if (playersRecentSets && playersRecentSets.length > 0) {
-      recentSetsHtml += `<div class="recent_sets_title">Recent Sets</div>`;
-      playersRecentSets.slice(0, 3).forEach((_set) => {
+      playersRecentSets.slice(0, 5).forEach((_set) => {
         recentSetsHtml += `
           <div class="set_container">
             <div class="${_set.winner == 0 ? "set_winner" : "set_loser"}">${
@@ -471,9 +470,11 @@
           </div>
         `;
       });
+    } else {
+      recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
     }
 
-    SetInnerHtml($(`.recent_sets`), recentSetsHtml);
+    SetInnerHtml($(`.recent_sets_content`), recentSetsHtml);
   }
 
   // Using update here to set images as soon as possible

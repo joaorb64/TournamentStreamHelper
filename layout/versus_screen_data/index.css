@@ -54,6 +54,10 @@ body {
   padding-bottom: 30px;
   border-radius: 8px;
   box-sizing: border-box;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .row {
@@ -77,13 +81,13 @@ body {
 .p1.container {
   background-position: 100% 0;
   left: 0px;
-  top: 850px;
+  top: 780px;
 }
 
 .p2.container {
   background-position: 0 0;
   right: 0px;
-  top: 850px;
+  top: 780px;
 }
 
 .container .name {
@@ -147,6 +151,10 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .match {
@@ -166,6 +174,10 @@ body {
   padding-right: 20px;
   background-position: center;
   text-transform: uppercase;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .best_of {
@@ -183,30 +195,51 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .recent_sets {
   position: absolute;
-  top: 240px;
+  top: 280px;
   left: 50%;
   transform: translateX(-50%);
-  width: 540px;
+  width: 580px;
+  height: 500px;
   background-size: cover;
   background-repeat: no-repeat;
   color: white;
   font-size: 50px;
-  place-content: center;
+  place-content: flex-start;
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
   display: flex;
   flex-direction: column;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.recent_sets_content {
+  height: 100%;
 }
 
 .recent_sets .text {
   flex-direction: column;
   max-width: 100%;
   gap: 8px;
+}
+
+.recent_sets_title {
+  text-align: center;
+  flex-grow: 0;
+  width: 100%;
+  font-size: 50px;
+  margin-bottom: 20px;
 }
 
 .set_container {
@@ -303,6 +336,10 @@ body {
   z-index: 9;
   display: flex;
   border-radius: 8px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .p1.score_container {
@@ -331,10 +368,10 @@ body {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 640px;
+  width: 620px;
   top: 50%;
   transform: translateY(-50%);
-  height: 680px;
+  height: 620px;
   perspective: 1500px;
   perspective-origin: right;
   z-index: -1;
@@ -370,10 +407,10 @@ body {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 640px;
+  width: 620px;
   top: 50%;
   transform: translateY(-50%);
-  height: 680px;
+  height: 620px;
   perspective: 1000px;
   perspective-origin: left;
   display: flex;
@@ -415,6 +452,10 @@ body {
   transform: translate(-50%, -50%);
   font-weight: bold;
   z-index: 999;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .sponsor_logo {
@@ -434,4 +475,42 @@ body {
 
 .p2 .sponsor_logo {
   right: 5px;
+}
+
+.lds-ring {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  margin: 16px;
+  border: 16px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

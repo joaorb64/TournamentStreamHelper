@@ -4,7 +4,7 @@ let myFilter = [];
 var baseMap = L.tileLayer.colorFilter(
   "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
-    maxZoom: 6,
+    maxZoom: 5,
     zoomSnap: 0,
     zoomControl: false,
     id: "osm.streets",
@@ -13,7 +13,7 @@ var baseMap = L.tileLayer.colorFilter(
 );
 
 var map = L.map("map", {
-  maxZoom: 6,
+  maxZoom: 5,
   zoomControl: false,
 }).setView([0, 0], 2);
 
@@ -114,71 +114,77 @@ baseMap.addTo(map);
       });
     });
 
-    let maxPing = 0;
+    if (!window.NOHUD) {
+      let maxPing = 0;
 
-    servers.forEach((server1) => {
-      servers.forEach((server2) => {
-        if (server1 != server2) {
-          let ping = pingBetweenServers(server1, server2);
-          if (ping > maxPing) {
-            maxPing = ping;
+      servers.forEach((server1) => {
+        servers.forEach((server2) => {
+          if (server1 != server2) {
+            let ping = pingBetweenServers(server1, server2);
+            if (ping > maxPing) {
+              maxPing = ping;
+            }
           }
-        }
+        });
       });
-    });
 
-    console.log("Max Ping: " + maxPing);
+      console.log("Max Ping: " + maxPing);
 
-    let pingByDistance = 0;
+      let pingByDistance = 0;
 
-    positions.forEach((pos1) => {
-      positions.forEach((pos2) => {
-        if (pos1 != pos2) {
-          pingByDistance += distanceInKm(pos1, pos2) * 0.0067;
-        }
-      });
-    });
-
-    console.log("Ping by distance: " + pingByDistance);
-
-    let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
-    $("#ping").html("Estimated ping: " + pingString + " ms");
-
-    let maxDistance = 0;
-
-    positions.forEach((pos1) => {
-      positions.forEach((pos2) => {
-        if (pos1 != pos2) {
-          let distance = distanceInKm(pos1, pos2);
-          if (distance > maxDistance) {
-            maxDistance = distance;
+      positions.forEach((pos1) => {
+        positions.forEach((pos2) => {
+          if (pos1 != pos2) {
+            pingByDistance += distanceInKm(pos1, pos2) * 0.0067;
           }
-        }
+        });
       });
-    });
 
-    console.log("Distance: " + maxDistance);
+      console.log("Ping by distance: " + pingByDistance);
 
-    let distanceString = "";
+      let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
+      $("#ping").html("Estimated ping: " + pingString + " ms");
 
-    if (maxDistance < 100) {
-      distanceString = "< 100 Km / < 62 mi";
+      let maxDistance = 0;
+
+      positions.forEach((pos1) => {
+        positions.forEach((pos2) => {
+          if (pos1 != pos2) {
+            let distance = distanceInKm(pos1, pos2);
+            if (distance > maxDistance) {
+              maxDistance = distance;
+            }
+          }
+        });
+      });
+
+      console.log("Distance: " + maxDistance);
+
+      let distanceString = "";
+
+      if (maxDistance < 100) {
+        distanceString = "< 100 Km / < 62 mi";
+      } else {
+        distanceString =
+          maxDistance.toFixed(2) +
+          " Km" +
+          " / " +
+          (maxDistance * 0.621371).toFixed(2) +
+          " mi";
+      }
+
+      if (positions.length == 2) {
+        $("#distance").html("Distance: " + distanceString);
+      } else {
+        $("#distance").html("Max distance: " + distanceString);
+      }
+
+      gsap
+        .timeline()
+        .to([".overlay-element"], { duration: 1, autoAlpha: 1 }, 0);
     } else {
-      distanceString =
-        maxDistance.toFixed(2) +
-        " Km" +
-        " / " +
-        (maxDistance * 0.621371).toFixed(2) +
-        " mi";
+      $(".overlay").css("height", 0);
     }
-
-    if (positions.length == 2) {
-      $("#distance").html("Distance: " + distanceString);
-    } else {
-      $("#distance").html("Max distance: " + distanceString);
-    }
-
-    gsap.timeline().to([".overlay-element"], { duration: 1, autoAlpha: 1 }, 0);
 
     map.on("zoomend", () => {
       let validPositions = positions.filter((pos, i) => {
