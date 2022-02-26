@@ -13,6 +13,7 @@ from copy import deepcopy
 import datetime
 
 display_phase = True
+use_team_names = False
 
 foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
@@ -151,7 +152,7 @@ def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval
         return(result)
 
 
-def paste_player_text(thumbnail, data):
+def paste_player_text(thumbnail, data, use_team_names=False):
     text_player_coordinates_center = [
         (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
     text_player_max_dimensions = (-1, 100.0/1080.0)
@@ -163,8 +164,11 @@ def paste_player_text(thumbnail, data):
 
     for i in [0, 1]:
         team_index = i+1
-        current_player = find(f"score.team.{team_index}.players.1", data)
-        player_name = current_player.get("mergedName")
+        if use_team_names:
+            player_name = find(f"score.team.{team_index}.teamName", data)
+        else:
+            current_player = find(f"score.team.{team_index}.players.1", data)
+            player_name = current_player.get("mergedName")
 
         font = ImageFont.truetype(font_path, text_size)
         text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
@@ -243,7 +247,7 @@ thumbnail.paste(background, (0, 0), mask=background)
 thumbnail = paste_characters(thumbnail, data)
 composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
-paste_player_text(thumbnail, data)
+paste_player_text(thumbnail, data, use_team_names)
 paste_round_text(thumbnail, data, display_phase)
 thumbnail = paste_icon(thumbnail, icon_path)
 
