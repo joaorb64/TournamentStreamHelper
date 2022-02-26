@@ -7,7 +7,7 @@ from PyQt5.QtCore import *
 import requests
 import threading
 from SettingsManager import SettingsManager
-from TSHGameAssetManager import TSHGameAssetManagerSignals
+from TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
 from TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
@@ -32,6 +32,22 @@ class TSHTournamentDataProvider:
         self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
         self.entrantsModel: QStandardItemModel = None
         self.threadPool = QThreadPool()
+
+        TSHGameAssetManager.instance.signals.onLoadAssets.connect(
+            self.SetGameFromProvider)
+
+    def SetGameFromProvider(self):
+        if not self.provider or not self.provider.videogame:
+            return
+
+        if "smash.gg" in self.provider.url:
+            TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                self.provider.videogame)
+        elif "challonge.com" in self.provider.url:
+            TSHGameAssetManager.instance.SetGameFromChallongeId(
+                self.provider.videogame)
+        else:
+            print("Unsupported provider...")
 
     def SetTournament(self, url, initialLoading=False):
         if self.provider and self.provider.url == url:

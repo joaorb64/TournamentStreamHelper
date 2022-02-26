@@ -1,7 +1,7 @@
 from typing import final
 import unicodedata
-from PyQt5.QtCore import QAbstractItemModel
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 import requests
 import os
 import traceback
@@ -10,13 +10,31 @@ from TournamentDataProvider import TournamentDataProvider
 import json
 
 
-class TSHCountryHelper():
+class TSHCountryHelper(QObject):
+    instance: "TSHCountryHelper" = None
+
     countries_json = {}
     countries = {}
     cities = {}
 
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self) -> None:
+        super().__init__()
+        self.UpdateCountriesFile()
+
+    def UpdateCountriesFile(self):
+        class DownloaderThread(QThread):
+            def run(self):
+                try:
+                    url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+                    r = requests.get(url, allow_redirects=True)
+                    open('./assets/countries+states+cities.json',
+                         'wb').write(r.content)
+                    print("Countries file updated")
+                except Exception as e:
+                    print(
+                        "Could not update /assets/countries+states+cities.json: "+str(e))
+        downloaderThread = DownloaderThread(self)
+        downloaderThread.start()
 
     def remove_accents_lower(input_str):
         nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -75,4 +93,5 @@ class TSHCountryHelper():
         return None
 
 
+TSHCountryHelper.instance = TSHCountryHelper()
 TSHCountryHelper.LoadCountries()

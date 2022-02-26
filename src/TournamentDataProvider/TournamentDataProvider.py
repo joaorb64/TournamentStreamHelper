@@ -5,6 +5,7 @@ class TournamentDataProvider:
         self.entrants = []
         self.tournamentData = {}
         self.threadpool = threadpool
+        self.videogame = None
 
     def GetEntrants(self):
         pass

@@ -56,6 +56,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             if videogame:
                 TSHGameAssetManager.instance.SetGameFromSmashGGId(
                     videogame)
+                self.videogame = videogame
 
             finalData["tournamentName"] = deep_get(
                 data, "data.event.tournament.name", "")
@@ -543,6 +544,7 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
                 if videogame:
                     TSHGameAssetManager.instance.SetGameFromSmashGGId(
                         videogame)
+                    self.videogame = videogame
 
                 TSHTournamentDataProvider.TSHTournamentDataProvider.instance.SetTournament(
                     "https://smash.gg/"+deep_get(userSet, "event.slug"))

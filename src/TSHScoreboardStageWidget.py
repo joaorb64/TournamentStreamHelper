@@ -18,7 +18,7 @@ from Workers import Worker
 import socket
 
 
-class TSHScoreboardStageWidget(QObject):
+class TSHScoreboardStageWidgetSignals(QObject):
     rulesets_changed = pyqtSignal()
 
 
@@ -75,6 +75,8 @@ class TSHScoreboardStageWidget(QWidget):
 
     def __init__(self, *args):
         super().__init__(*args)
+
+        self.signals = TSHScoreboardStageWidgetSignals()
 
         self.webserver = WebServer()
         self.webserver.start()
@@ -149,6 +151,7 @@ class TSHScoreboardStageWidget(QWidget):
             f"Open <a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a> in a browser to stage strike.")
         self.webappLabel.setOpenExternalLinks(True)
 
+        self.signals.rulesets_changed.connect(self.LoadRulesets)
         self.LoadSmashggRulesets()
         self.LoadRuleset()
 
@@ -458,12 +461,18 @@ class TSHScoreboardStageWidget(QWidget):
 
     def LoadSmashggRulesets(self):
         try:
-            data = requests.get(
-                "https://smash.gg/api/-/gg_api./rulesets"
-            )
-            data = json.loads(data.text)
-            rulesets = deep_get(data, "entities.ruleset")
-            self.smashggRulesets = rulesets
+            class DownloadThread(QThread):
+                def run(self):
+                    data = requests.get(
+                        "https://smash.gg/api/-/gg_api./rulesets"
+                    )
+                    data = json.loads(data.text)
+                    rulesets = deep_get(data, "entities.ruleset")
+                    self.parent().smashggRulesets = rulesets
+                    print("SmashGG Rulesets loaded")
+                    self.parent().signals.rulesets_changed.emit()
+            downloadThread = DownloadThread(self)
+            downloadThread.start()
         except Exception as e:
             traceback.print_exc()
 

@@ -46,6 +46,7 @@ class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
                 if videogame:
                     TSHGameAssetManager.instance.SetGameFromChallongeId(
                         videogame)
+                    self.videogame = videogame
 
                 finalData["tournamentName"] = deep_get(collection, "name")
 

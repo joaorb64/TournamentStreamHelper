@@ -259,9 +259,6 @@ class TSHScoreboardWidget(QDockWidget):
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
 
-        TSHGameAssetManager.instance.signals.onLoad.connect(
-            self.LoadCharacters)
-
         for c in self.scoreColumn.findChildren(QComboBox):
             c.editTextChanged.connect(
                 lambda text, element=c: [
@@ -313,11 +310,6 @@ class TSHScoreboardWidget(QDockWidget):
                              f"./team_logo/{value.lower()}.png")
         else:
             StateManager.Set(f"score.team.{team}.logo", None)
-
-    def LoadCharacters(self):
-        TSHScoreboardPlayerWidget.LoadCharacters()
-        for pw in self.playerWidgets:
-            pw.ReloadCharacters()
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:

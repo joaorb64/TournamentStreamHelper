@@ -93,13 +93,6 @@ class Window(QMainWindow):
             os.makedirs("./assets/games")
 
         try:
-            url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
-            r = requests.get(url, allow_redirects=True)
-            open('./assets/countries+states+cities.json', 'wb').write(r.content)
-        except Exception as e:
-            print("Could not update /assets/countries+states+cities.json: "+str(e))
-
-        try:
             f = open('settings.json', encoding='utf-8')
             self.settings = json.load(f)
             print("Settings loaded")
@@ -240,6 +233,8 @@ class Window(QMainWindow):
             self.SetGame)
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.ReloadGames)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.SetGame)
 
         pre_base_layout.addLayout(base_layout)
         group_box.layout().addWidget(self.gameSelect)
@@ -256,6 +251,7 @@ class Window(QMainWindow):
             self.restoreState(self.qtSettings.value("windowState"))
 
         TSHTournamentDataProvider.instance.UiMounted()
+        TSHGameAssetManager.instance.UiMounted()
 
         splash.finish(self)
         self.show()
@@ -295,6 +291,7 @@ class Window(QMainWindow):
         self.qtSettings.setValue("windowState", self.saveState())
 
     def ReloadGames(self):
+        print("Reload games")
         self.gameSelect.setModel(QStandardItemModel())
         self.gameSelect.addItem("", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):

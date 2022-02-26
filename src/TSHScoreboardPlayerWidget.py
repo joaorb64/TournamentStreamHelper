@@ -11,10 +11,16 @@ from TSHPlayerDB import TSHPlayerDB
 from TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
+class TSHScoreboardPlayerWidgetSignals(QObject):
+    characters_changed = pyqtSignal()
+
+
 class TSHScoreboardPlayerWidget(QGroupBox):
     countries = None
     countryModel = None
     characterModel = None
+
+    signals = TSHScoreboardPlayerWidgetSignals()
 
     def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
@@ -78,8 +84,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.btMoveDown.setIcon(QIcon("./icons/arrow_down.svg"))
         bottom_buttons_layout.addWidget(self.btMoveDown)
 
-        # self.LoadCharacters()
-
         self.SetIndex(index, teamNumber)
 
         self.findChild(QLineEdit, "name").textChanged.connect(
@@ -116,6 +120,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c.currentIndexChanged.emit(0)
 
         self.SetCharactersPerPlayer(1)
+
+        TSHScoreboardPlayerWidget.signals.characters_changed.connect(
+            self.ReloadCharacters)
 
         TSHPlayerDB.signals.db_updated.connect(
             self.SetupAutocomplete)
@@ -399,27 +406,34 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         state.setCurrentIndex(0)
 
     def LoadCharacters():
-        TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
+        class CharacterLoaderThread(QThread):
+            def run(self):
+                TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
 
-        # Add one empty
-        item = QStandardItem("")
-        TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+                # Add one empty
+                item = QStandardItem("")
+                TSHScoreboardPlayerWidget.characterModel.appendRow(item)
 
-        for c in TSHGameAssetManager.instance.characters.keys():
-            item = QStandardItem()
-            item.setData(c, Qt.ItemDataRole.EditRole)
-            item.setIcon(
-                QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
-                    32, Qt.TransformationMode.SmoothTransformation))
-            )
-            data = {
-                "name": c,
-                "codename": TSHGameAssetManager.instance.characters[c].get("codename")
-            }
-            item.setData(data, Qt.ItemDataRole.UserRole)
-            TSHScoreboardPlayerWidget.characterModel.appendRow(item)
+                for c in TSHGameAssetManager.instance.characters.keys():
+                    item = QStandardItem()
+                    item.setData(c, Qt.ItemDataRole.EditRole)
+                    item.setIcon(
+                        QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
+                            32, Qt.TransformationMode.SmoothTransformation))
+                    )
+                    data = {
+                        "name": c,
+                        "codename": TSHGameAssetManager.instance.characters[c].get("codename")
+                    }
+                    item.setData(data, Qt.ItemDataRole.UserRole)
+                    TSHScoreboardPlayerWidget.characterModel.appendRow(item)
 
-        TSHScoreboardPlayerWidget.characterModel.sort(0)
+                TSHScoreboardPlayerWidget.characterModel.sort(0)
+
+                TSHScoreboardPlayerWidget.signals.characters_changed.emit()
+        characterLoaderThread = CharacterLoaderThread(
+            TSHGameAssetManager.instance)
+        characterLoaderThread.start()
 
     def LoadSkinOptions(self, element, target):
         characterData = element.currentData()
@@ -653,3 +667,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         for c in self.findChildren(QComboBox):
             c.setCurrentIndex(0)
+
+
+TSHGameAssetManager.instance.signals.onLoad.connect(
+    TSHScoreboardPlayerWidget.LoadCharacters)

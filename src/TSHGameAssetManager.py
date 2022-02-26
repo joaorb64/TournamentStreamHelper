@@ -6,6 +6,7 @@ from PyQt5.QtCore import *
 from StateManager import StateManager
 import re
 import traceback
+import threading
 
 import requests
 
@@ -15,61 +16,74 @@ class TSHGameAssetManagerSignals(QObject):
     onLoadAssets = pyqtSignal()
 
 
-class TSHGameAssetManager():
+class TSHGameAssetManager(QObject):
     instance: "TSHGameAssetManager" = None
 
-    def __init__(self) -> None:
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
         self.signals = TSHGameAssetManagerSignals()
         self.games = {}
         self.characters = {}
-        self.DownloadSmashGGCharacters()
-        self.LoadGames()
         self.selectedGame = {}
         self.stockIcons = {}
         StateManager.Set(f"game", {})
 
+    def UiMounted(self):
+        self.DownloadSmashGGCharacters()
+        self.LoadGames()
+
     def DownloadSmashGGCharacters(self):
         try:
-            url = 'https://api.smash.gg/characters'
-            r = requests.get(url, allow_redirects=True)
-            open('./assets/characters.json', 'wb').write(r.content)
+            class DownloaderThread(QThread):
+                def run(self):
+                    url = 'https://api.smash.gg/characters'
+                    r = requests.get(url, allow_redirects=True)
+                    open('./assets/characters.json', 'wb').write(r.content)
+                    print("SmashGG characters file updated")
+            thread = DownloaderThread(self)
+            thread.start()
         except Exception as e:
             print("Could not update /assets/characters.json: "+str(e))
 
     def LoadGames(self):
-        self.games = {}
+        class GameLoaderThread(QThread):
+            def run(self):
+                self.parent().games = {}
 
-        gameDirs = os.listdir("./assets/games/")
+                gameDirs = os.listdir("./assets/games/")
 
-        for game in gameDirs:
-            if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
-                f = open("./assets/games/"+game +
-                         "/base_files/config.json", encoding='utf-8')
-                self.games[game] = json.load(f)
+                for game in gameDirs:
+                    if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
+                        f = open("./assets/games/"+game +
+                                 "/base_files/config.json", encoding='utf-8')
+                        self.parent().games[game] = json.load(f)
 
-                self.games[game]["assets"] = {}
-                self.games[game]["path"] = "./assets/games/"+game+"/"
+                        self.parent().games[game]["assets"] = {}
+                        self.parent(
+                        ).games[game]["path"] = "./assets/games/"+game+"/"
 
-                assetDirs = os.listdir("./assets/games/"+game)
-                assetDirs += ["base_files/" +
-                              f for f in os.listdir("./assets/games/"+game+"/base_files/")]
+                        assetDirs = os.listdir("./assets/games/"+game)
+                        assetDirs += ["base_files/" +
+                                      f for f in os.listdir("./assets/games/"+game+"/base_files/")]
 
-                for dir in assetDirs:
-                    if os.path.isdir("./assets/games/"+game+"/"+dir):
-                        if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
-                            print("Found asset config for ["+game+"]["+dir+"]")
-                            f = open("./assets/games/"+game+"/"+dir +
-                                     "/config.json", encoding='utf-8')
-                            self.games[game]["assets"][dir] = \
-                                json.load(f)
-                        else:
-                            print("No config file for "+game+" - "+dir)
-            else:
-                print("Game config for "+game+" doesn't exist.")
+                        for dir in assetDirs:
+                            if os.path.isdir("./assets/games/"+game+"/"+dir):
+                                if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
+                                    print(
+                                        "Found asset config for ["+game+"]["+dir+"]")
+                                    f = open("./assets/games/"+game+"/"+dir +
+                                             "/config.json", encoding='utf-8')
+                                    self.parent().games[game]["assets"][dir] = \
+                                        json.load(f)
+                                else:
+                                    print("No config file for "+game+" - "+dir)
+                    else:
+                        print("Game config for "+game+" doesn't exist.")
+                print(self.parent().games)
+                self.parent().signals.onLoadAssets.emit()
 
-        print(self.games)
-
-        self.signals.onLoadAssets.emit()
+        gameLoaderThread = GameLoaderThread(self)
+        gameLoaderThread.start()
 
     def SetGameFromSmashGGId(self, gameid):
         if len(self.games.keys()) == 0:
@@ -90,131 +104,147 @@ class TSHGameAssetManager():
                 break
 
     def LoadGameAssets(self, game: int = 0):
-        if len(self.games.keys()) == 0:
-            return
+        class AssetsLoaderThread(QThread):
+            def __init__(self, parent=...) -> None:
+                super().__init__(parent)
+                self.game = None
 
-        if game == 0 or game == None:
-            game = ""
-        else:
-            game = list(self.games.keys())[game-1]
+            def run(self):
+                game = self.game
 
-        # Game is already loaded
-        if game == self.selectedGame.get("codename"):
-            return
+                if len(self.parent().games.keys()) == 0:
+                    return
 
-        print("Changed to game: "+game)
+                if game == 0 or game == None:
+                    game = ""
+                else:
+                    game = list(self.parent().games.keys())[game-1]
 
-        gameObj = self.games.get(game, {})
-        self.selectedGame = gameObj
-        gameObj["codename"] = game
+                # Game is already loaded
+                if game == self.parent().selectedGame.get("codename"):
+                    return
 
-        if gameObj != None:
-            self.characters = gameObj.get("character_to_codename", {})
+                print("Changed to game: "+game)
 
-            assetsKey = ""
-            if len(list(gameObj.get("assets", {}).keys())) > 0:
-                assetsKey = list(gameObj.get("assets", {}).keys())[0]
+                gameObj = self.parent().games.get(game, {})
+                self.parent().selectedGame = gameObj
+                gameObj["codename"] = game
 
-            for asset in list(gameObj.get("assets", {}).keys()):
-                if "icon" in gameObj["assets"][asset].get("type", ""):
-                    assetsKey = asset
-                    break
+                if gameObj != None:
+                    self.parent().characters = gameObj.get("character_to_codename", {})
 
-            assetsObj = gameObj.get("assets", {}).get(assetsKey, None)
-            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+                    assetsKey = ""
+                    if len(list(gameObj.get("assets", {}).keys())) > 0:
+                        assetsKey = list(gameObj.get("assets", {}).keys())[0]
 
-            self.stockIcons = {}
+                    for asset in list(gameObj.get("assets", {}).keys()):
+                        if "icon" in gameObj["assets"][asset].get("type", ""):
+                            assetsKey = asset
+                            break
 
-            for c in self.characters.keys():
-                self.stockIcons[c] = {}
-
-                filteredFiles = \
-                    [f for f in files if f.startswith(assetsObj.get(
-                        "prefix", "")+self.characters[c].get("codename")+assetsObj.get("postfix", ""))]
-
-                if len(filteredFiles) == 0:
-                    self.stockIcons[c][0] = QImage('./icons/cancel.svg')
-
-                for i, f in enumerate(filteredFiles):
-                    numberStart = f.rfind(
-                        assetsObj.get("postfix", "")) + len(assetsObj.get("postfix", ""))
-                    numberEnd = f.rfind(".")
-                    number = 0
-                    try:
-                        number = int(f[numberStart:numberEnd])
-                    except:
-                        print(f)
-                        pass
-                    self.stockIcons[c][number] = QImage(
-                        './assets/games/'+game+'/'+assetsKey+'/'+f)
-
-            print("Loaded stock icons")
-
-            self.skins = {}
-
-            for c in self.characters.keys():
-                self.skins[c] = {}
-                for assetsKey in list(gameObj["assets"].keys()):
-                    asset = gameObj["assets"][assetsKey]
-
+                    assetsObj = gameObj.get("assets", {}).get(assetsKey, None)
                     files = sorted(os.listdir(
                         './assets/games/'+game+'/'+assetsKey))
 
-                    filteredFiles = \
-                        [f for f in files if f.startswith(asset.get(
-                            "prefix", "")+self.characters[c].get("codename")+asset.get("postfix", ""))]
+                    self.parent().stockIcons = {}
 
-                    for f in filteredFiles:
-                        numberStart = f.rfind(
-                            asset.get("postfix", "")) + len(asset.get("postfix", ""))
-                        numberEnd = f.rfind(".")
-                        number = 0
-                        try:
-                            number = int(f[numberStart:numberEnd])
-                        except:
-                            pass
-                        self.skins[c][number] = True
-                print("Character "+c+" has "+str(len(self.skins[c]))+" skins")
+                    for c in self.parent().characters.keys():
+                        self.parent().stockIcons[c] = {}
 
-            assetsKey = ""
-            if len(list(gameObj.get("assets", {}).keys())) > 0:
-                assetsKey = list(gameObj.get("assets", {}).keys())[0]
+                        filteredFiles = \
+                            [f for f in files if f.startswith(assetsObj.get(
+                                "prefix", "")+self.parent().characters[c].get("codename")+assetsObj.get("postfix", ""))]
 
-            for asset in list(gameObj.get("assets", {}).keys()):
-                if "portrait" in gameObj["assets"][asset].get("type", []):
-                    assetsKey = asset
-                    break
-                if "icon" in gameObj["assets"][asset].get("type", []):
-                    assetsKey = asset
+                        if len(filteredFiles) == 0:
+                            self.parent().stockIcons[c][0] = QImage(
+                                './icons/cancel.svg')
 
-            assetsKey = ""
-            if len(list(gameObj.get("assets", {}).keys())) > 0:
-                assetsKey = list(gameObj.get("assets", {}).keys())[0]
+                        for i, f in enumerate(filteredFiles):
+                            numberStart = f.rfind(
+                                assetsObj.get("postfix", "")) + len(assetsObj.get("postfix", ""))
+                            numberEnd = f.rfind(".")
+                            number = 0
+                            try:
+                                number = int(f[numberStart:numberEnd])
+                            except:
+                                print(f)
+                                pass
+                            self.parent().stockIcons[c][number] = QImage(
+                                './assets/games/'+game+'/'+assetsKey+'/'+f)
 
-            for asset in list(gameObj.get("assets", {}).keys()):
-                if "stage_icon" in gameObj["assets"][asset].get("type", ""):
-                    assetsKey = asset
-                    break
+                    print("Loaded stock icons")
 
-            assetsObj = gameObj.get("assets", {}).get(assetsKey)
-            files = sorted(os.listdir('./assets/games/'+game+'/'+assetsKey))
+                    self.parent().skins = {}
 
-            self.stages = gameObj.get("stage_to_codename", {})
+                    for c in self.parent().characters.keys():
+                        self.parent().skins[c] = {}
+                        for assetsKey in list(gameObj["assets"].keys()):
+                            asset = gameObj["assets"][assetsKey]
 
-            for stage in self.stages:
-                self.stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
-                    "prefix", "")+self.stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
+                            files = sorted(os.listdir(
+                                './assets/games/'+game+'/'+assetsKey))
 
-            for s in self.stages.keys():
-                self.stages[s]["name"] = s
+                            filteredFiles = \
+                                [f for f in files if f.startswith(asset.get(
+                                    "prefix", "")+self.parent().characters[c].get("codename")+asset.get("postfix", ""))]
 
-        StateManager.Set(f"game", {
-            "name": self.selectedGame.get("name"),
-            "smashgg_id": self.selectedGame.get("smashgg_game_id"),
-            "codename": self.selectedGame.get("codename"),
-        })
+                            for f in filteredFiles:
+                                numberStart = f.rfind(
+                                    asset.get("postfix", "")) + len(asset.get("postfix", ""))
+                                numberEnd = f.rfind(".")
+                                number = 0
+                                try:
+                                    number = int(f[numberStart:numberEnd])
+                                except:
+                                    pass
+                                self.parent().skins[c][number] = True
+                        print("Character "+c+" has " +
+                              str(len(self.parent().skins[c]))+" skins")
 
-        self.signals.onLoad.emit()
+                    assetsKey = ""
+                    if len(list(gameObj.get("assets", {}).keys())) > 0:
+                        assetsKey = list(gameObj.get("assets", {}).keys())[0]
+
+                    for asset in list(gameObj.get("assets", {}).keys()):
+                        if "portrait" in gameObj["assets"][asset].get("type", []):
+                            assetsKey = asset
+                            break
+                        if "icon" in gameObj["assets"][asset].get("type", []):
+                            assetsKey = asset
+
+                    assetsKey = ""
+                    if len(list(gameObj.get("assets", {}).keys())) > 0:
+                        assetsKey = list(gameObj.get("assets", {}).keys())[0]
+
+                    for asset in list(gameObj.get("assets", {}).keys()):
+                        if "stage_icon" in gameObj["assets"][asset].get("type", ""):
+                            assetsKey = asset
+                            break
+
+                    assetsObj = gameObj.get("assets", {}).get(assetsKey)
+                    files = sorted(os.listdir(
+                        './assets/games/'+game+'/'+assetsKey))
+
+                    self.parent().stages = gameObj.get("stage_to_codename", {})
+
+                    for stage in self.parent().stages:
+                        self.parent().stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
+                            "prefix", "")+self.parent().stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
+
+                    for s in self.parent().stages.keys():
+                        self.parent().stages[s]["name"] = s
+
+                StateManager.Set(f"game", {
+                    "name": self.parent().selectedGame.get("name"),
+                    "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
+                    "codename": self.parent().selectedGame.get("codename"),
+                })
+
+                self.parent().signals.onLoad.emit()
+
+        assetsLoaderThread = AssetsLoaderThread(self)
+        assetsLoaderThread.game = game
+        assetsLoaderThread.start()
 
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
