@@ -163,7 +163,7 @@ class StateManager:
                     print(traceback.format_exc())
 
         try:
-            print("Remove path", f"./out/{path}")
+            # print("Remove path", f"./out/{path}")
             if os.path.exists(f"./out/{path}"):
                 shutil.rmtree(f"./out/{path}")
         except:

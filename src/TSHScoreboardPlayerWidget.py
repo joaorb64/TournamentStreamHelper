@@ -1,4 +1,5 @@
 import os
+import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -408,29 +409,34 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def LoadCharacters():
         class CharacterLoaderThread(QThread):
             def run(self):
-                TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
+                try:
+                    TSHScoreboardPlayerWidget.characterModel = QStandardItemModel()
 
-                # Add one empty
-                item = QStandardItem("")
-                TSHScoreboardPlayerWidget.characterModel.appendRow(item)
-
-                for c in TSHGameAssetManager.instance.characters.keys():
-                    item = QStandardItem()
-                    item.setData(c, Qt.ItemDataRole.EditRole)
-                    item.setIcon(
-                        QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
-                            32, Qt.TransformationMode.SmoothTransformation))
-                    )
-                    data = {
-                        "name": c,
-                        "codename": TSHGameAssetManager.instance.characters[c].get("codename")
-                    }
-                    item.setData(data, Qt.ItemDataRole.UserRole)
+                    # Add one empty
+                    item = QStandardItem("")
                     TSHScoreboardPlayerWidget.characterModel.appendRow(item)
 
-                TSHScoreboardPlayerWidget.characterModel.sort(0)
+                    for c in TSHGameAssetManager.instance.characters.keys():
+                        item = QStandardItem()
+                        item.setData(c, Qt.ItemDataRole.EditRole)
+                        item.setIcon(
+                            QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
+                                32, Qt.TransformationMode.SmoothTransformation))
+                        )
+                        data = {
+                            "name": c,
+                            "codename": TSHGameAssetManager.instance.characters[c].get("codename")
+                        }
+                        item.setData(data, Qt.ItemDataRole.UserRole)
+                        TSHScoreboardPlayerWidget.characterModel.appendRow(
+                            item)
 
-                TSHScoreboardPlayerWidget.signals.characters_changed.emit()
+                    TSHScoreboardPlayerWidget.characterModel.sort(0)
+
+                    TSHScoreboardPlayerWidget.signals.characters_changed.emit()
+                except:
+                    print(traceback.format_exc())
+
         characterLoaderThread = CharacterLoaderThread(
             TSHGameAssetManager.instance)
         characterLoaderThread.start()
