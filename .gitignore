@@ -19,5 +19,4 @@ player_avatar/*
 !player_avatar/*.txt
 team_logo/*
 !team_logo/*.txt
-assets/*.json
 layout_custom/*
