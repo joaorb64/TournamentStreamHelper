@@ -3,11 +3,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 
-from TSHScoreboardPlayerWidget import *
-from SettingsManager import *
-from StateManager import *
-from TSHTournamentDataProvider import TSHTournamentDataProvider
-from TSHScoreboardStageWidget import TSHScoreboardStageWidget
+from .TSHScoreboardPlayerWidget import *
+from .SettingsManager import *
+from .StateManager import *
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 
 
 class TSHScoreboardWidgetSignals(QObject):

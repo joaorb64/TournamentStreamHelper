@@ -10,7 +10,7 @@ import re
 import csv
 import traceback
 
-from TSHGameAssetManager import TSHGameAssetManager
+from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHPlayerDBSignals(QObject):

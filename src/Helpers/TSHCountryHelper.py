@@ -5,8 +5,8 @@ from PyQt5.QtGui import *
 import requests
 import os
 import traceback
-from Helpers.TSHDictHelper import deep_get
-from TournamentDataProvider import TournamentDataProvider
+from .TSHDictHelper import deep_get
+from ..TournamentDataProvider import TournamentDataProvider
 import json
 
 

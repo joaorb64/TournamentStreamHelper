@@ -21,3 +21,5 @@ player_avatar/*
 team_logo/*
 !team_logo/*.txt
 layout_custom/*
+dist
+build

@@ -33,19 +33,19 @@ try:
     App = QApplication(sys.argv)
 
     from qdarkstyle import palette
-    from TSHCommentaryWidget import TSHCommentaryWidget
-    from TSHGameAssetManager import TSHGameAssetManager
-    from TSHTournamentInfoWidget import TSHTournamentInfoWidget
-    from TSHTournamentDataProvider import TSHTournamentDataProvider
-    from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
-    from TSHAlertNotification import TSHAlertNotification
-    from TSHPlayerDB import TSHPlayerDB
-    from PlayerColumn import *
-    from Workers import *
-    from TSHScoreboardWidget import *
+    from .TSHCommentaryWidget import TSHCommentaryWidget
+    from .TSHGameAssetManager import TSHGameAssetManager
+    from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+    from .TSHTournamentDataProvider import TSHTournamentDataProvider
+    from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+    from .TSHAlertNotification import TSHAlertNotification
+    from .TSHPlayerDB import TSHPlayerDB
+    from .PlayerColumn import *
+    from .Workers import *
+    from .TSHScoreboardWidget import *
 
 except ImportError as error:
-    print(error)
+    print(traceback.format_exc())
     print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
     exit()
 

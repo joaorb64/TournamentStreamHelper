@@ -6,14 +6,14 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import requests
 import threading
-from SettingsManager import SettingsManager
-from TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
-from TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
-from TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
-from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+from .SettingsManager import SettingsManager
+from .TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
+from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
+from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
+from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
 import json
 
-from Workers import Worker
+from .Workers import Worker
 
 
 class TSHTournamentDataProviderSignals(QObject):

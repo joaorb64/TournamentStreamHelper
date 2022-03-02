@@ -7,18 +7,17 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback
-from Helpers.TSHCountryHelper import TSHCountryHelper
-from Helpers.TSHDictHelper import deep_get
-from TSHGameAssetManager import TSHGameAssetManager
-from TSHPlayerDB import TSHPlayerDB
-from TournamentDataProvider import TournamentDataProvider
+from ..Helpers.TSHCountryHelper import TSHCountryHelper
+from ..Helpers.TSHDictHelper import deep_get
+from ..TSHGameAssetManager import TSHGameAssetManager
+from ..TSHPlayerDB import TSHPlayerDB
+from .TournamentDataProvider import TournamentDataProvider
 import json
-import TSHTournamentDataProvider
 
-from Workers import Worker
+from ..Workers import Worker
 
 
-class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
+class SmashGGDataProvider(TournamentDataProvider):
     SetsQuery = None
     SetQuery = None
     UserSetQuery = None
@@ -711,26 +710,20 @@ class SmashGGDataProvider(TournamentDataProvider.TournamentDataProvider):
             traceback.print_exc()
 
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGSetsQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGSetsQuery.txt", 'r')
 SmashGGDataProvider.SetsQuery = f.read()
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGSetQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGSetQuery.txt", 'r')
 SmashGGDataProvider.SetQuery = f.read()
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGUserSetQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGUserSetQuery.txt", 'r')
 SmashGGDataProvider.UserSetQuery = f.read()
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGStreamSetsQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGStreamSetsQuery.txt", 'r')
 SmashGGDataProvider.StreamSetsQuery = f.read()
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGEntrantsQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGEntrantsQuery.txt", 'r')
 SmashGGDataProvider.EntrantsQuery = f.read()
 
-f = open(os.path.dirname(os.path.realpath(__file__)) + "/" +
-         "SmashGGTournamentDataQuery.txt", 'r')
+f = open("src/TournamentDataProvider/SmashGGTournamentDataQuery.txt", 'r')
 SmashGGDataProvider.TournamentDataQuery = f.read()

@@ -5,11 +5,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
-from Helpers.TSHCountryHelper import TSHCountryHelper
-from StateManager import StateManager
-from TSHGameAssetManager import TSHGameAssetManager
-from TSHPlayerDB import TSHPlayerDB
-from TSHTournamentDataProvider import TSHTournamentDataProvider
+from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .StateManager import StateManager
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHPlayerDB import TSHPlayerDB
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):

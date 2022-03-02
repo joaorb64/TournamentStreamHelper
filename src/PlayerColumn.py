@@ -22,7 +22,7 @@ from collections import Counter
 
 import unicodedata
 
-from Workers import *
+from .Workers import *
 
 
 def removeFileIfExists(file):

@@ -7,14 +7,14 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
 import requests
-from Helpers.TSHCountryHelper import TSHCountryHelper
-from Helpers.TSHDictHelper import deep_get
-from StateManager import StateManager
-from TSHGameAssetManager import TSHGameAssetManager
-from TSHPlayerDB import TSHPlayerDB
-from TSHTournamentDataProvider import TSHTournamentDataProvider
+from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHDictHelper import deep_get
+from .StateManager import StateManager
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHPlayerDB import TSHPlayerDB
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from flask import Flask, send_from_directory, request
-from Workers import Worker
+from .Workers import Worker
 import socket
 
 

@@ -8,7 +8,7 @@ import threading
 import requests
 from PIL import Image
 
-from Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
+from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
 
 class StateManager:

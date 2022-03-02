@@ -4,17 +4,16 @@ import os
 import traceback
 import re
 import json
-from Helpers.TSHDictHelper import deep_get
-from TSHGameAssetManager import TSHGameAssetManager
-from TSHPlayerDB import TSHPlayerDB
-from TournamentDataProvider import TournamentDataProvider
+from ..Helpers.TSHDictHelper import deep_get
+from ..TSHGameAssetManager import TSHGameAssetManager
+from ..TSHPlayerDB import TSHPlayerDB
+from .TournamentDataProvider import TournamentDataProvider
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from Workers import Worker
-import TSHTournamentDataProvider
+from ..Workers import Worker
 
 
-class ChallongeDataProvider(TournamentDataProvider.TournamentDataProvider):
+class ChallongeDataProvider(TournamentDataProvider):
 
     def __init__(self, url, threadpool) -> None:
         super().__init__(url, threadpool)
