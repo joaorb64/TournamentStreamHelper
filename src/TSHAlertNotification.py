@@ -28,7 +28,7 @@ class TSHAlertNotification(QObject):
 
                 try:
                     response = requests.get(
-                        "https://raw.githubusercontent.com/joaorb64/TournamentStreamHelper/next/assets/alerts.json")
+                        "https://raw.githubusercontent.com/joaorb64/TournamentStreamHelper/main/assets/alerts.json")
                     alerts = json.loads(response.text)
                 except Exception as e:
                     print(traceback.format_exc())
