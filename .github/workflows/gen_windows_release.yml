@@ -21,7 +21,8 @@ jobs:
 
       - name: Copy dist files to correct directory
         run: |
-          cp ./dist/main/* ./src/
+          cp ./dist/main.exe ./TournamentStreamHelper.exe
+          rm -rf ./src/
 
       - uses: actions/upload-artifact@v2
         with:
