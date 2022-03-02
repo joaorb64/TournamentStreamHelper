@@ -27,7 +27,6 @@ jobs:
           sudo ls -l ./dist/windows/
           sudo cp ./dist/windows/main.exe ./TournamentStreamHelper.exe
           sudo rm -rf dist;
-          sudo rm -rf src;
 
       - uses: actions/upload-artifact@v2
         with:
