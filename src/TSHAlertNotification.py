@@ -83,6 +83,8 @@ class TSHAlertNotification(QObject):
             message.setMinimumHeight(200)
 
             btOk.clicked.connect(
+                lambda: self.MarkNotificationRed(alertId))
+            btOk.clicked.connect(
                 lambda: message.close())
             btRemindLater.clicked.connect(
                 lambda: message.close())
@@ -90,6 +92,20 @@ class TSHAlertNotification(QObject):
             message.exec()
 
             i += 1
+
+    def MarkNotificationRed(self, id):
+        alerts_red = None
+
+        try:
+            alerts_red = json.load(
+                open('./assets/alerts_red.json', encoding='utf-8'))
+        except Exception as e:
+            print(traceback.format_exc())
+
+        if alerts_red is not None:
+            alerts_red.append(id)
+            with open("./assets/alerts_red.json", 'w') as outfile:
+                json.dump(alerts_red, outfile)
 
 
 if not os.path.exists("./assets/alerts_red.json"):
