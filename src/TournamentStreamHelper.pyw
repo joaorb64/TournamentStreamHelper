@@ -38,6 +38,7 @@ try:
     from TSHTournamentInfoWidget import TSHTournamentInfoWidget
     from TSHTournamentDataProvider import TSHTournamentDataProvider
     from TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+    from TSHAlertNotification import TSHAlertNotification
     from TSHPlayerDB import TSHPlayerDB
     from PlayerColumn import *
     from Workers import *
@@ -250,11 +251,12 @@ class Window(QMainWindow):
         if self.qtSettings.value("windowState"):
             self.restoreState(self.qtSettings.value("windowState"))
 
-        TSHTournamentDataProvider.instance.UiMounted()
-        TSHGameAssetManager.instance.UiMounted()
-
         splash.finish(self)
         self.show()
+
+        TSHTournamentDataProvider.instance.UiMounted()
+        TSHGameAssetManager.instance.UiMounted()
+        TSHAlertNotification.instance.UiMounted()
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

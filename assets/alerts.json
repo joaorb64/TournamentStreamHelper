@@ -3,5 +3,15 @@
         "dateStart": null,
         "dateEnd": null,
         "alert": "Test"
+    },
+    "1": {
+        "dateStart": 1646239228,
+        "dateEnd": 1646239238,
+        "alert": "Test2"
+    },
+    "2": {
+        "dateStart": null,
+        "dateEnd": null,
+        "alert": "Test3"
     }
 }
