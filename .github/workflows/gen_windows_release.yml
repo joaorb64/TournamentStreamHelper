@@ -18,10 +18,12 @@ jobs:
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: .
+          spec: main.spec
 
       - name: Copy dist files to correct directory
         run: |
-          ls -l
+          ls -l;
+          rm -rf src;
 
       - uses: actions/upload-artifact@v2
         with:
