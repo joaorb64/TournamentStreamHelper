@@ -2,16 +2,6 @@
     "0": {
         "dateStart": null,
         "dateEnd": null,
-        "alert": "Test"
-    },
-    "1": {
-        "dateStart": 1646239228,
-        "dateEnd": 1646239238,
-        "alert": "Test2"
-    },
-    "2": {
-        "dateStart": null,
-        "dateEnd": null,
-        "alert": "Test3"
+        "alert": "Welcome to Tournament Stream Helper 4.0!\nThis program is made possible because of great efforts from @joao_shino and the community such as @MathiasWolfbrok specially with testing and contributions to game assets.\nBe sure to check out the readme on GitHub for your initial setup and contribute with game assets if possible!\nI hope you have a great experience with TSH!"
     }
 }
