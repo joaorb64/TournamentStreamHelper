@@ -23,9 +23,9 @@ jobs:
       - name: Copy dist files to correct directory
         run: |
           ls -l;
-          cp ./dist/windows/main.exe ./TournamentStreamHelper.exe
-          rm -rf dist;
-          rm -rf src;
+          sudo cp ./dist/windows/main.exe ./TournamentStreamHelper.exe
+          sudo rm -rf dist;
+          sudo rm -rf src;
 
       - uses: actions/upload-artifact@v2
         with:
