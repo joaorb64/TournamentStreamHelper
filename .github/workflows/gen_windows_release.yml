@@ -21,6 +21,8 @@ jobs:
 
       - name: Copy dist files to correct directory
         run: |
+          ls -l
+          ls -l ./dist/
           cp ./dist/main.exe ./TournamentStreamHelper.exe
           rm -rf ./src/
 
