@@ -1,7 +1,6 @@
 from collections import Counter
 import re
 from time import sleep
-from typing import final
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 import requests

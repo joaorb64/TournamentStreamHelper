@@ -1,4 +1,3 @@
-from typing import final
 import requests
 import os
 import traceback

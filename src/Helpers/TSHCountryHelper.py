@@ -1,4 +1,3 @@
-from typing import final
 import unicodedata
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
