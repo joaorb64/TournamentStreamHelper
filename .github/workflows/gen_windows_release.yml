@@ -1,34 +1,26 @@
 name: Generate Windows Release
 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  # push:
-  #   branches: [master]
-  # Allows you to run this workflow manually from the Actions tab
+  #push:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Package Application
-        uses: JackMcKew/pyinstaller-action-windows@main
+      - uses: actions/setup-python@v2
         with:
-          path: .
-          spec: main.spec
+          python-version: 3.7
 
-      - name: Copy dist files to correct directory
-        run: |
-          ls -l;
-          sudo ls -l ./dist
-          sudo ls -l ./dist/windows/
-          sudo cp ./dist/windows/main.exe ./TournamentStreamHelper.exe
-          sudo rm -rf dist;
+      - run: pip install -r requirements.txt pyinstaller
+      - run: pyinstaller main.py --onefile -w --icon icons\icon.ico
 
       - uses: actions/upload-artifact@v2
         with:
-          name: TSH_Windows
-          path: .
+          path: dist/*
