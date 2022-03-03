@@ -1,53 +1,49 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-try:
-    from PyQt5.QtGui import *
-    from PyQt5.QtWidgets import *
-    from PyQt5.QtCore import *
+import PyQt5
+from PyQt5 import QtGui, QtWidgets, QtCore
+from .TSHScoreboardWidget import *
+from .Workers import *
+from .PlayerColumn import *
+from .TSHPlayerDB import TSHPlayerDB
+from .TSHAlertNotification import TSHAlertNotification
+from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHCommentaryWidget import TSHCommentaryWidget
+from qdarkstyle import palette
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
-    import shutil
-    import tarfile
-    import py7zr
+import shutil
+import tarfile
+import py7zr
 
-    import qdarkstyle
+import qdarkstyle
 
-    import requests
-    import urllib
-    import json
-    import traceback
-    import sys
-    import time
-    import os
-    import threading
-    import re
+import requests
+import urllib
+import json
+import traceback
+import sys
+import time
+import os
+import threading
+import re
 
-    import csv
+import csv
 
-    import copy
+import copy
 
-    from collections import Counter
+from collections import Counter
 
-    import unicodedata
+import unicodedata
 
-    App = QApplication(sys.argv)
+App = QApplication(sys.argv)
 
-    from qdarkstyle import palette
-    from .TSHCommentaryWidget import TSHCommentaryWidget
-    from .TSHGameAssetManager import TSHGameAssetManager
-    from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
-    from .TSHTournamentDataProvider import TSHTournamentDataProvider
-    from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
-    from .TSHAlertNotification import TSHAlertNotification
-    from .TSHPlayerDB import TSHPlayerDB
-    from .PlayerColumn import *
-    from .Workers import *
-    from .TSHScoreboardWidget import *
-
-except ImportError as error:
-    print(traceback.format_exc())
-    print("Couldn't find all needed libraries. Please run 'install_requirements.bat' on Windows or 'sudo pip3 install -r requirements.txt' on Linux")
-    exit()
 
 #sys.stderr = open('./log_error.txt', 'w')
 
@@ -257,6 +253,7 @@ class Window(QMainWindow):
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
+        TSHPlayerDB.LoadDB()
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

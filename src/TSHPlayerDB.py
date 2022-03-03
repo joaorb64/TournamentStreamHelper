@@ -182,5 +182,4 @@ class TSHPlayerDB:
             print(traceback.format_exc())
 
 
-TSHPlayerDB.LoadDB()
 TSHGameAssetManager.instance.signals.onLoad.connect(TSHPlayerDB.SetupModel)
