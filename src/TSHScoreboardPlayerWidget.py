@@ -264,6 +264,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character_color.setIconSize(QSize(48, 48))
             player_character_color.setFixedHeight(32)
             player_character_color.setMinimumWidth(120)
+            view = QListView()
+            view.setIconSize(QSize(64, 64))
+            player_character_color.setView(view)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
             self.character_container.layout().addWidget(character_element)
@@ -479,7 +482,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             item.setIcon(
                 QIcon(QPixmap.fromImage(QImage(assetData[key]["asset"]).scaledToWidth(
-                    32, Qt.TransformationMode.SmoothTransformation)))
+                    64, Qt.TransformationMode.SmoothTransformation)))
             )
             skinModel.appendRow(item)
 

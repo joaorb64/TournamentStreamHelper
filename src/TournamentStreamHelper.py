@@ -5,7 +5,6 @@ import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
 from .TSHScoreboardWidget import *
 from .Workers import *
-from .PlayerColumn import *
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHAlertNotification import TSHAlertNotification
 from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
@@ -88,15 +87,6 @@ class Window(QMainWindow):
 
         if not os.path.exists("./assets/games"):
             os.makedirs("./assets/games")
-
-        try:
-            f = open('settings.json', encoding='utf-8')
-            self.settings = json.load(f)
-            print("Settings loaded")
-        except Exception as e:
-            self.settings = {}
-            self.SaveSettings()
-            print("Settings created")
 
         self.font_small = QFont(
             "./assets/font/RobotoCondensed.ttf", pointSize=8)
@@ -684,16 +674,12 @@ class Window(QMainWindow):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
 
-    def SaveSettings(self):
-        with open('settings.json', 'w', encoding='utf-8') as outfile:
-            json.dump(self.settings, outfile, indent=4, sort_keys=True)
-
 
 App.setStyleSheet(qdarkstyle.load_stylesheet(
     palette=qdarkstyle.DarkPalette))
 
-# App.setStyleSheet(qdarkstyle.load_stylesheet(
-#     palette=qdarkstyle.LightPalette))
+App.setStyleSheet(qdarkstyle.load_stylesheet(
+    palette=qdarkstyle.LightPalette))
 
 window = Window()
 sys.exit(App.exec_())
