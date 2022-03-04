@@ -554,11 +554,18 @@ class Window(QMainWindow):
         select.activated.connect(ReloadGameAssets)
         ReloadGameAssets(0)
 
+        TSHGameAssetManager.instance.signals.onLoadAssets.connect(
+            ReloadGameAssets)
+
         btOk = QPushButton("Download")
         self.preDownloadDialogue.layout().addWidget(btOk)
 
         def DownloadStart():
             nonlocal self
+
+            if len(downloadList.selectionModel().selectedRows()) == 0:
+                return
+
             row = downloadList.selectionModel().selectedRows()[0].row()
             game = downloadList.model().index(row, 0).data()
             key = downloadList.model().index(row, 1).data()
@@ -667,9 +674,8 @@ class Window(QMainWindow):
             self.downloadDialogue.setLabelText(n)
 
     def DownloadAssetsFinished(self):
-        TSHGameAssetManager.instance.LoadGames()
         self.downloadDialogue.close()
-        self.reloadDownloadsList()
+        TSHGameAssetManager.instance.LoadGames()
 
     def ToggleAlwaysOnTop(self, checked):
         if checked:
