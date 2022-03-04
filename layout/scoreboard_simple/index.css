@@ -259,15 +259,15 @@ body {
 
 .info.doubles.material_container {
   top: 8px;
-  width: 400px;
+  width: 340px;
   height: 66px;
 }
 
 .t1.material_container {
-  left: 266px;
+  left: 326px;
 }
 
 .t2.material_container {
   left: unset;
-  right: 266px;
+  right: 326px;
 }
