@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "Barlow";
-  src: url("./BarlowCondensed-Regular.ttf") format("truetype");
+  font-family: "Roboto";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
 .text {
@@ -9,19 +9,23 @@
   min-width: 100%;
   width: fit-content;
   place-items: center;
-  place-content: inherit;
+  place-content: center;
   height: 100%;
 }
 
 body {
-  font-family: "Barlow";
-  letter-spacing: 1.2px;
+  font-family: "Roboto";
+  letter-spacing: 1.4px;
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
   margin: 0;
   width: 1920px;
   height: 1080px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .container {
@@ -91,9 +95,9 @@ body {
   position: absolute;
   left: 38px;
   top: 2px;
-  width: 190px;
+  width: 194px;
   height: 34px;
-  font-size: 28px;
+  font-size: 20px;
   padding-left: 4px;
   padding-right: 4px;
   justify-content: left;
@@ -102,7 +106,7 @@ body {
 
 .twitter-container {
   z-index: -1;
-  top: 10px;
+  top: 20px;
   left: 120px;
   width: 238px;
   height: 49px;
@@ -116,13 +120,15 @@ body {
 .twitter {
   position: absolute;
   left: 38px;
-  top: 24px;
+  top: 22px;
   width: 160px;
-  height: 22px;
-  font-size: 22px;
+  height: 20px;
+  font-size: 18px;
   padding-left: 4px;
   padding-right: 4px;
+  display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .logo {
@@ -138,8 +144,12 @@ body {
   background-position: center;
 }
 
-.sponsor {
-  color: yellow;
+.t1 .sponsor {
+  color: #ff3837ff;
+}
+
+.t2 .sponsor {
+  color: #1255a3ff;
 }
 
 .phase {
@@ -163,23 +173,25 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 36px;
-  height: 28px;
+  width: 38px;
+  height: 26px;
+  border: 2px solid white;
+  border-radius: 8px;
 }
 
 .flagcountry {
   position: absolute;
   top: 6px;
-  left: -72px;
+  left: -80px;
 }
 
 .flagstate {
   position: absolute;
   top: 38px;
-  left: -54px;
+  left: -62px;
 }
 
 .score {
@@ -189,27 +201,27 @@ body {
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 34px;
+  font-size: 32px;
   top: 2px;
   right: 18px;
-  color: black;
+  color: white;
 }
 
 .sponsor-container {
   position: absolute;
   top: 2px;
   height: 34px;
-  width: 64px;
-  left: 220px;
+  width: 34px;
+  left: 246px;
   overflow: hidden;
   display: flex;
 }
 
 .sponsor-logo {
   position: relative;
-  width: 64px;
-  height: 64px;
-  opacity: 0.8;
+  width: 32px;
+  height: 32px;
+  opacity: 1;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

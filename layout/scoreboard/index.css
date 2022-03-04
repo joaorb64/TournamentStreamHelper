@@ -206,6 +206,14 @@ body {
   background-color: #424242ff;
 }
 
+.fgc.thin .icon.sponsor div:not(.text) {
+  height: 32px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #424242ff;
+}
+
 .character_container {
   display: flex;
   overflow: hidden;
@@ -233,7 +241,7 @@ body {
   width: 48px;
   height: 100%;
   font-size: 38px;
-  color: #212121ff;
+  color: white;
   border-radius: 8px;
   flex-grow: 0;
   flex-shrink: 0;

@@ -13,7 +13,7 @@ function FitText(target) {
 
   let textElement = target.find(".text");
 
-  if (textElement.text().trim() == "undefined") {
+  if (textElement.text().trim().toLowerCase() == "undefined") {
     textElement.html("");
   }
 
