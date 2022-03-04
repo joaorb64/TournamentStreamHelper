@@ -1,11 +1,12 @@
 class TournamentDataProvider:
-    def __init__(self, url, threadpool) -> None:
+    def __init__(self, url, threadpool, parent) -> None:
         self.name = ""
         self.url = url
         self.entrants = []
         self.tournamentData = {}
         self.threadpool = threadpool
         self.videogame = None
+        self.parent = parent
 
     def GetEntrants(self):
         pass

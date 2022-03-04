@@ -220,25 +220,24 @@ class TSHGameAssetManager(QObject):
                             if "icon" in gameObj["assets"][asset].get("type", []):
                                 assetsKey = asset
 
-                        assetsKey = ""
-                        if len(list(gameObj.get("assets", {}).keys())) > 0:
-                            assetsKey = list(gameObj.get(
-                                "assets", {}).keys())[0]
+                        assetsKey = None
 
                         for asset in list(gameObj.get("assets", {}).keys()):
                             if "stage_icon" in gameObj["assets"][asset].get("type", ""):
                                 assetsKey = asset
                                 break
 
-                        assetsObj = gameObj.get("assets", {}).get(assetsKey)
-                        files = sorted(os.listdir(
-                            './assets/games/'+game+'/'+assetsKey))
-
                         self.parent().stages = gameObj.get("stage_to_codename", {})
 
-                        for stage in self.parent().stages:
-                            self.parent().stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
-                                "prefix", "")+self.parent().stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
+                        if assetsKey:
+                            assetsObj = gameObj.get(
+                                "assets", {}).get(assetsKey)
+                            files = sorted(os.listdir(
+                                './assets/games/'+game+'/'+assetsKey))
+
+                            for stage in self.parent().stages:
+                                self.parent().stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
+                                    "prefix", "")+self.parent().stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
 
                         for s in self.parent().stages.keys():
                             self.parent().stages[s]["name"] = s

@@ -14,8 +14,8 @@ from ..Workers import Worker
 
 class ChallongeDataProvider(TournamentDataProvider):
 
-    def __init__(self, url, threadpool) -> None:
-        super().__init__(url, threadpool)
+    def __init__(self, url, threadpool, parent) -> None:
+        super().__init__(url, threadpool, parent)
         self.name = "Challonge"
 
     def GetTournamentData(self):

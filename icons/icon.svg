@@ -11,7 +11,7 @@
    inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
    inkscape:export-xdpi="3072.0002"
    inkscape:export-ydpi="3072.0002"
-   inkscape:version="1.1 (1:1.1+202105261517+ce6663b3b7)"
+   inkscape:version="1.1.2 (76b9e6a115, 2022-02-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -39,143 +39,76 @@
      inkscape:snap-center="true"
      inkscape:snap-page="true"
      inkscape:snap-global="false"
-     inkscape:zoom="11.313708"
-     inkscape:cx="0.22097087"
-     inkscape:cy="6.7617086"
-     inkscape:window-width="1366"
-     inkscape:window-height="683"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:zoom="32"
+     inkscape:cx="5.5"
+     inkscape:cy="9.875"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="70"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
+    <rect
+       x="-37.634092"
+       y="-26.062011"
+       width="83.570507"
+       height="60.759575"
+       id="rect10114" />
     <rect
        x="-36.18692"
        y="-69.084427"
        width="298.70987"
        height="240.2256"
        id="rect13904" />
+    <rect
+       x="-37.63409"
+       y="-26.062012"
+       width="83.570503"
+       height="60.759575"
+       id="rect10114-6" />
   </defs>
   <g
      inkscape:label="Camada 1"
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="color:#000000;overflow:visible;fill:#ff3837;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-       id="path6865"
+       style="color:#000000;overflow:visible;fill:#ff3837;fill-rule:evenodd;stroke-width:0.264583;stroke-linejoin:round"
+       id="path5973"
        cx="2.1166666"
        cy="2.1166666"
-       r="2.1166666"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002" />
-    <g
-       id="g3477"
-       transform="matrix(1.151534,0,0,1.151534,-0.25882475,0.69594288)"
-       style="fill:#ffffff"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002">
-      <path
-         id="rect53"
-         style="overflow:visible;fill:#ffffff;fill-rule:evenodd;stroke-width:0.64874;stroke-linecap:round;paint-order:stroke fill markers"
-         d="m 1.6496652,2.2499663 h 0.8256931 c 0.1004397,0 0.181299,0.080859 0.181299,0.181299 0,0.1004396 -0.080859,0.181299 -0.181299,0.181299 H 1.6496652 c -0.1004398,0 -0.1812991,-0.080859 -0.1812991,-0.181299 0,-0.1004396 0.080859,-0.181299 0.1812991,-0.181299 z" />
-      <path
-         id="rect994"
-         style="overflow:visible;fill:#ffffff;fill-rule:evenodd;stroke-width:0.64874;stroke-linecap:round;paint-order:stroke fill markers"
-         d="M 1.4683661,2.4312654 H 2.6566574 V 2.6125643 H 1.4683661 Z" />
-      <path
-         id="rect1098"
-         style="overflow:visible;fill:#ffffff;fill-rule:evenodd;stroke-width:0.801514;stroke-linecap:round;paint-order:stroke fill markers"
-         d="m 1.8803828,1.8873683 h 0.364258 v 0.5534861 h -0.364258 z" />
-      <g
-         id="path1202"
-         transform="matrix(0.79067217,0,0,0.79067217,0.34874034,0.27476731)"
-         style="fill:#ffffff">
-        <path
-           style="color:#000000;fill:#ffffff;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
-           d="M 1.3515625,0.93554688 A 0.13857886,0.13857886 0 0 0 1.2128906,1.0742187 C 1.2128452,1.39463 1.3121333,1.6882095 1.4804687,1.90625 1.6488042,2.1242905 1.8943691,2.2694865 2.1679688,2.2695313 2.4415684,2.2694865 2.6851802,2.1242905 2.8535156,1.90625 3.021851,1.6882095 3.1211392,1.39463 3.1210938,1.0742187 A 0.13857886,0.13857886 0 0 0 2.9824219,0.93554688 Z M 1.5351562,1.2128906 H 2.8007813 C 2.7746665,1.4099769 2.734946,1.6065671 2.6347656,1.7363281 2.5081005,1.9003941 2.3445969,1.9921586 2.1679688,1.9921875 1.9913406,1.9921586 1.827837,1.9003941 1.7011719,1.7363281 1.6010766,1.6066773 1.5613284,1.4097707 1.5351562,1.2128906 Z"
-           id="path2697" />
-        <path
-           style="color:#000000;fill:#ffffff;fill-rule:evenodd;stroke-width:0.27713;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
-           d="M 1.3524123,1.0745196 A 0.81517727,1.0555507 0 0 0 2.1674867,2.1302641 0.81517727,1.0555507 0 0 0 2.9825611,1.0745196 Z"
-           id="path2699" />
-      </g>
-      <path
-         style="color:#000000;fill:#ffffff;fill-rule:evenodd;stroke-width:0.790672;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
-         d="m 2.9647533,1.0484524 -0.5435871,0.00772 a 0.084899,0.084899 0 0 0 -0.058683,0.024709 C 2.2275749,1.215791 2.1837355,1.4184493 2.2543838,1.5935838 2.325032,1.7687185 2.4971536,1.881739 2.6867827,1.8792759 2.8764116,1.876809 3.0477887,1.761147 3.12227,1.5858624 3.1967513,1.410578 3.1598285,1.2064648 3.0265246,1.0731609 a 0.084899,0.084899 0 0 0 -0.061771,-0.024709 z m -0.05405,0.1714153 C 2.9788989,1.3030407 3.010718,1.4149192 2.9662972,1.5194583 2.917991,1.6331433 2.8051695,1.7078271 2.6836941,1.7094049 2.5622187,1.7109828 2.4565732,1.6394659 2.4119005,1.528724 2.3705824,1.426298 2.4039695,1.3128655 2.4767604,1.2260448 Z"
-         id="path1820" />
-      <path
-         style="color:#000000;fill:#ffffff;fill-rule:evenodd;stroke-width:0.790672;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
-         d="m 1.1610325,1.0484524 0.5435871,0.00772 a 0.084899,0.084899 0 0 1 0.058683,0.024709 C 1.8982109,1.215791 1.9420503,1.4184493 1.871402,1.5935838 1.8007538,1.7687185 1.6286322,1.881739 1.4390031,1.8792759 1.2493742,1.876809 1.0779971,1.761147 1.0035158,1.5858624 0.92903454,1.410578 0.96595734,1.2064648 1.0992612,1.0731609 a 0.084899,0.084899 0 0 1 0.061771,-0.024709 z m 0.05405,0.1714153 c -0.068196,0.083173 -0.1000145,0.1950515 -0.055594,0.2995906 0.048306,0.113685 0.1611277,0.1883688 0.2826031,0.1899466 0.1214754,0.00158 0.2271208,-0.069939 0.2717936,-0.1806809 0.041318,-0.102426 0.00793,-0.2158585 -0.06486,-0.3026792 z"
-         id="path1820-6"
-         inkscape:transform-center-x="0.62768823"
-         inkscape:transform-center-y="-0.60534909" />
-    </g>
-    <path
-       style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.211667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-       id="path8728"
-       sodipodi:type="arc"
-       sodipodi:cx="-2.1166663"
-       sodipodi:cy="-1.9363829"
-       sodipodi:rx="0.47084364"
-       sodipodi:ry="0.54533124"
-       sodipodi:start="0.78539816"
-       sodipodi:end="2.3561945"
-       sodipodi:arc-type="arc"
-       d="m -1.7837296,-1.5507755 a 0.47084364,0.54533124 0 0 1 -0.3329367,0.1597238 0.47084364,0.54533124 0 0 1 -0.3329368,-0.1597238"
-       transform="scale(-1)"
-       sodipodi:open="true"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002" />
-    <path
-       style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.211667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-       id="path8728-7"
-       sodipodi:type="arc"
-       sodipodi:cx="-2.1166663"
-       sodipodi:cy="-2.0504897"
-       sodipodi:rx="0.89924341"
-       sodipodi:ry="1.041504"
-       sodipodi:start="0.78539816"
-       sodipodi:end="2.3561945"
-       sodipodi:arc-type="arc"
-       transform="scale(-1)"
-       sodipodi:open="true"
-       d="m -1.4808052,-1.3140351 a 0.89924341,1.041504 0 0 1 -0.6358611,0.3050495 0.89924341,1.041504 0 0 1 -0.6358611,-0.3050495"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002" />
-    <path
-       style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.211667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-       id="path8728-7-5"
-       sodipodi:type="arc"
-       sodipodi:cx="-2.1166663"
-       sodipodi:cy="-2.2445059"
-       sodipodi:rx="1.422345"
-       sodipodi:ry="1.6473604"
-       sodipodi:start="0.78539816"
-       sodipodi:end="2.3561945"
-       sodipodi:arc-type="arc"
-       transform="scale(-1)"
-       sodipodi:open="true"
-       d="M -1.1109165,-1.0796461 A 1.422345,1.6473604 0 0 1 -2.1166663,-0.59714544 1.422345,1.6473604 0 0 1 -3.1224162,-1.0796462"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002" />
+       r="2.1166666" />
+    <circle
+       style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5973-3"
+       cx="2.1166666"
+       cy="2.1166666"
+       r="1.7289504" />
+    <circle
+       style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5973-3-6"
+       cx="2.1166666"
+       cy="2.1166666"
+       r="1.2316662" />
+    <rect
+       style="color:#000000;overflow:visible;fill:#ff3837;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.39661;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect12426"
+       width="4.0924563"
+       height="1.7275482"
+       x="0.070437983"
+       y="1.2528926"
+       rx="0.22822617"
+       ry="0.52916664" />
     <text
        xml:space="preserve"
-       transform="matrix(0.02430749,0,0,0.02430749,2.7032558,3.4969795)"
-       id="text13902"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:Roboto;-inkscape-font-specification:Roboto;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect13904);fill:#ff3837;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       inkscape:export-filename="/home/joao/SmashStreamHelper/icons/icon.png"
-       inkscape:export-xdpi="3072.0002"
-       inkscape:export-ydpi="3072.0002"><tspan
-         x="-36.1875"
-         y="-32.303162"
-         id="tspan19905"><tspan
-           style="font-weight:bold;-inkscape-font-specification:'Roboto Bold'"
-           id="tspan19903">1</tspan></tspan></text>
+       transform="matrix(0.16561721,0,0,0.1836315,6.7860528,5.8667859)"
+       id="text10112"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Bold';letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect10114);fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.303435;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
+         x="-37.634766"
+         y="-16.867295"
+         id="tspan16079"><tspan
+           style="font-family:Roboto;-inkscape-font-specification:'Roboto Bold'"
+           id="tspan16077">TSH</tspan></tspan></text>
   </g>
 </svg>

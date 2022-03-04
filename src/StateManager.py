@@ -101,8 +101,12 @@ class StateManager:
             if type(di) == str and di.startswith("./"):
                 if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                     os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
-                shutil.copyfile(
-                    di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                if os.path.exists(di):
+                    try:
+                        shutil.copyfile(
+                            di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                    except Exception as e:
+                        print(traceback.format_exc())
             elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
                 try:
                     if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):

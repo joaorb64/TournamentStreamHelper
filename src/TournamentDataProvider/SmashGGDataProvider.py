@@ -24,8 +24,8 @@ class SmashGGDataProvider(TournamentDataProvider):
     EntrantsQuery = None
     TournamentDataQuery = None
 
-    def __init__(self, url, threadpool) -> None:
-        super().__init__(url, threadpool)
+    def __init__(self, url, threadpool, parent) -> None:
+        super().__init__(url, threadpool, parent)
         self.name = "SmashGG"
 
     def GetTournamentData(self):
@@ -544,7 +544,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                         videogame)
                     self.videogame = videogame
 
-                TSHTournamentDataProvider.TSHTournamentDataProvider.instance.SetTournament(
+                self.parent.SetTournament(
                     "https://smash.gg/"+deep_get(userSet, "event.slug"))
 
                 playerId = deep_get(data, "data.user.player.id")

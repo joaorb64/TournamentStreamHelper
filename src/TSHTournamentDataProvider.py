@@ -55,10 +55,10 @@ class TSHTournamentDataProvider:
 
         if "smash.gg" in url:
             TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
-                url, self.threadPool)
+                url, self.threadPool, self)
         elif "challonge.com" in url:
             TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
-                url, self.threadPool)
+                url, self.threadPool, self)
         else:
             print("Unsupported provider...")
 
