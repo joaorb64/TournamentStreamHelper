@@ -152,25 +152,6 @@ body {
   color: #1255a3ff;
 }
 
-.phase {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 472px;
-  height: 46px;
-  box-sizing: border-box;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url("./phase-container.png");
-  color: white;
-  font-size: 34px;
-  place-content: center;
-  padding-left: 30px;
-  padding-right: 30px;
-  background-position: center;
-}
-
 .flag {
   display: inline-block;
   background-size: cover;
@@ -226,4 +207,67 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   overflow: hidden;
+}
+
+.material_container {
+  position: absolute;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #212121ff;
+}
+
+.info.material_container {
+  width: 580px;
+  height: 30px;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  font-size: 20px;
+}
+
+.info.material_container_inner {
+  display: flex;
+  width: 100%;
+  font-size: inherit;
+  justify-content: space-around;
+}
+
+.info.material_container_inner > div {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.info.material_container.top {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 8px;
+}
+
+.info.material_container.bottom {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 44px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.info.doubles.material_container {
+  top: 8px;
+  width: 400px;
+  height: 66px;
+}
+
+.t1.material_container {
+  left: 266px;
+}
+
+.t2.material_container {
+  left: unset;
+  right: 266px;
 }

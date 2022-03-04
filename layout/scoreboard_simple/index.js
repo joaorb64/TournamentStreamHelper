@@ -28,6 +28,8 @@
     oldData = data;
     data = await getData();
 
+    let isDoubles = Object.keys(data.score.team["1"].players).length == 2;
+
     if (
       oldData.score == null ||
       Object.keys(oldData.score.team["1"].players).length !=
@@ -36,37 +38,55 @@
       if (Object.keys(data.score.team["1"].players).length == 1) {
         gsap
           .timeline()
-          .from(
-            [".singles"],
-            { duration: 0.8, opacity: "1", ease: "power2.inOut" },
-            0
-          );
-        gsap
-          .timeline()
-          .to(
-            [".doubles"],
-            { duration: 0.8, opacity: "0", ease: "power2.inOut" },
-            0
+          .fromTo(
+            ["body > .doubles"],
+            { duration: 0.2, opacity: "1", ease: "power2.inOut" },
+            { duration: 0.2, opacity: "0", ease: "power2.inOut" }
+          )
+          .fromTo(
+            ["body > .singles"],
+            { duration: 0.2, opacity: "0", ease: "power2.inOut" },
+            { duration: 0.2, opacity: "1", ease: "power2.inOut" }
           );
       } else {
         gsap
           .timeline()
-          .to(
-            [".singles"],
-            { duration: 0.8, opacity: "0", ease: "power2.inOut" },
-            0
-          );
-        gsap
-          .timeline()
-          .from(
-            [".doubles"],
-            { duration: 0.8, opacity: "1", ease: "power2.inOut" },
-            0
+          .fromTo(
+            ["body > .singles"],
+            { duration: 0.2, opacity: "1", ease: "power2.inOut" },
+            { duration: 0.2, opacity: "0", ease: "power2.inOut" }
+          )
+          .fromTo(
+            ["body > .doubles"],
+            { duration: 0.2, opacity: "0", ease: "power2.inOut" },
+            { duration: 0.2, opacity: "1", ease: "power2.inOut" }
           );
       }
     }
 
     [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      let teamName = "";
+
+      if (!team.teamName || team.teamName == "") {
+        let names = [];
+        Object.values(team.players).forEach((player, p) => {
+          if (player) {
+            names.push(player.name);
+          }
+        });
+        teamName = names.join(" / ");
+      } else {
+        teamName = team.teamName;
+      }
+      console.log(teamName);
+
+      SetInnerHtml(
+        $(`.info.doubles.t${t + 1}`),
+        `
+          ${teamName}${team.losers ? " [L]" : ""}
+        `
+      );
+
       Object.values(team.players).forEach((player, p) => {
         if (player) {
           SetInnerHtml(
@@ -77,7 +97,7 @@
                         ${player.team ? player.team + "" : ""}
                     </span>
                     ${player.name}
-                    ${team.losers ? " [L]" : ""}
+										${team.losers && !isDoubles ? " [L]" : ""}
                 </span>
             `
           );
@@ -105,7 +125,10 @@
             String(player.twitter)
           );
 
-          SetInnerHtml($(`.t${t + 1}.p${p + 1} .score`), String(team.score));
+          SetInnerHtml(
+            $(`.t${t + 1}.p${p + 1} .score`),
+            !isDoubles ? String(team.score) : ""
+          );
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .sponsor-container`),
@@ -115,7 +138,24 @@
       });
     });
 
-    //SetInnerHtml($(".phase"), data.tournament_phase + (data.best_of != 0 ? " - Best of " + data.best_of : ""));
+    SetInnerHtml(
+      $(".info.material_container.top"),
+      data.tournamentInfo.tournamentName
+    );
+    SetInnerHtml(
+      $(".info.material_container.bottom"),
+      `
+            <div class="info material_container_inner">
+                ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
+                ${data.score.match ? `<div>${data.score.match}</div>` : ""}
+                ${
+                  data.score.best_of
+                    ? `<div>Best of ${data.score.best_of}</div>`
+                    : ""
+                }
+            </div>
+        `
+    );
   }
 
   $(window).on("load", () => {
