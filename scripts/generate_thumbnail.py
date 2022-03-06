@@ -227,12 +227,16 @@ def paste_characters(thumbnail, data):
                         f"{character_key}.assets.{used_assets}.asset", characters)
                     eyesight_coordinates = None
                     if all_eyesight:
-                        character_codename = find(f"{character_key}.codename", characters)
+                        character_codename = find(
+                            f"{character_key}.codename", characters)
                         skin_index = find(f"{character_key}.skin", characters)
-                        eyesight_coordinates_dict = all_eyesight.get(character_codename).get(skin_index)
+                        eyesight_coordinates_dict = all_eyesight.get(
+                            character_codename).get(skin_index)
                         if not eyesight_coordinates_dict:
-                            eyesight_coordinates_dict = all_eyesight.get(character_codename).get("0")
-                        eyesight_coordinates = (eyesight_coordinates_dict.get("x"), eyesight_coordinates_dict.get("y"))
+                            eyesight_coordinates_dict = all_eyesight.get(
+                                character_codename).get("0")
+                        eyesight_coordinates = (eyesight_coordinates_dict.get(
+                            "x"), eyesight_coordinates_dict.get("y"))
                     print(eyesight_coordinates)
                     if image_path:
                         character_list.append(image_path)
