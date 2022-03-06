@@ -14,15 +14,24 @@ import datetime
 display_phase = True
 use_team_names = False
 use_sponsors = True
+used_assets = "full"
 
 foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
 separator_h_path = "./thumbnail_base/separator_h.png"
 separator_v_path = "./thumbnail_base/separator_v.png"
 data_path = "../out/program_state.json"
-out_path = "./out/thumbnails"
-tmp_path = "./tmp"
-icon_path = "./assets/icons/icon.png"
+out_path = "../out/thumbnails"
+tmp_path = "../tmp"
+icon_path = "../assets/icons/icon.png"
+
+with open(data_path, 'rt', encoding='utf-8') as f:
+    data = json.loads(f.read())
+
+game_codename = data.get("game").get("codename")
+asset_data_path = f"../user_data/games/{game_codename}/{used_assets}/config.json"
+with open(asset_data_path, 'rt', encoding='utf-8') as f:
+    all_eyesight = json.loads(f.read()).get("eyesights")
 
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
 
@@ -68,7 +77,7 @@ def calculate_new_dimensions(current_size, max_size):
     return((round(new_x), round(new_y)))
 
 
-def resize_image_to_max_size(image: Image, max_size):
+def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None):
     current_size = image.size
     x_ratio = max_size[0]/current_size[0]
     y_ratio = max_size[1]/current_size[1]
@@ -77,21 +86,46 @@ def resize_image_to_max_size(image: Image, max_size):
         raise ValueError(
             msg=f"Size cannot be negative, given max size is {max_size}")
 
+    resized_eyesight = None
     if (x_ratio < y_ratio):
         new_x = y_ratio*current_size[0]
         new_y = max_size[1]
+        if eyesight_coordinates:
+            resized_eyesight = (
+                round(eyesight_coordinates[0]*y_ratio), round(eyesight_coordinates[1]*y_ratio))
     else:
         new_x = max_size[0]
         new_y = x_ratio*current_size[1]
+        if eyesight_coordinates:
+            resized_eyesight = (
+                round(eyesight_coordinates[0]*x_ratio), round(eyesight_coordinates[1]*x_ratio))
 
     new_size = (round(new_x), round(new_y))
     image = image.resize(new_size, resample=Image.BICUBIC)
 
     # crop
-    left = round(-(max_size[0] - new_x)/2)
-    top = round(-(max_size[1] - new_y)/2)
-    right = round((max_size[0] + new_x)/2)
-    bottom = round((max_size[1] + new_y)/2)
+    if not resized_eyesight:
+        left = round(-(max_size[0] - new_x)/2)
+        top = round(-(max_size[1] - new_y)/2)
+        right = round((max_size[0] + new_x)/2)
+        bottom = round((max_size[1] + new_y)/2)
+    else:
+        left = round(resized_eyesight[0]-(max_size[0]/2))
+        top = round(resized_eyesight[1]-(max_size[1]/2))
+        right = round(resized_eyesight[0]+(max_size[0]/2))
+        bottom = round(resized_eyesight[1]+(max_size[1]/2))
+        if left < 0:
+            left = 0
+            right = max_size[0]
+        if top < 0:
+            top = 0
+            bottom = max_size[1]
+        if right > new_x:
+            right = new_x
+            left = new_x - max_size[0]
+        if bottom > new_y:
+            bottom = new_y
+            top = new_y - max_size[1]
     image = image.crop((left, top, right, bottom))
 
     return(image)
@@ -103,16 +137,18 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix):
     num_line = len(path_matrix)
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
+        eyesight_line = eyesight_matrix[line_index]
         num_col = len(line)
         for col_index in range(0, len(line)):
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
+            eyesight_coordinates = eyesight_line[col_index]
             print(f"Processing asset: {image_path}")
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
@@ -122,7 +158,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
                 individual_paste_x, individual_paste_y)
             character_image = Image.open("../"+image_path).convert('RGBA')
             character_image = resize_image_to_max_size(
-                character_image, individual_max_size)
+                character_image, individual_max_size, eyesight_coordinates)
             composite_image = create_composite_image(
                 character_image, thumbnail.size, individual_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
@@ -169,7 +205,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
 
 
 def paste_characters(thumbnail, data):
-    used_assets = "full"
 
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
@@ -180,26 +215,43 @@ def paste_characters(thumbnail, data):
     for i in [0, 1]:
         team_index = i+1
         path_matrix = []
+        eyesight_matrix = []
         current_team = find(f"score.team.{team_index}.player", data)
         for player_key in current_team.keys():
             character_list = []
+            eyesight_list = []
             characters = find(f"{player_key}.character", current_team)
             for character_key in characters.keys():
                 try:
                     image_path = find(
                         f"{character_key}.assets.{used_assets}.asset", characters)
+                    eyesight_coordinates = None
+                    if all_eyesight:
+                        character_codename = find(
+                            f"{character_key}.codename", characters)
+                        skin_index = find(f"{character_key}.skin", characters)
+                        eyesight_coordinates_dict = all_eyesight.get(
+                            character_codename).get(skin_index)
+                        if not eyesight_coordinates_dict:
+                            eyesight_coordinates_dict = all_eyesight.get(
+                                character_codename).get("0")
+                        eyesight_coordinates = (eyesight_coordinates_dict.get(
+                            "x"), eyesight_coordinates_dict.get("y"))
+                    print(eyesight_coordinates)
                     if image_path:
                         character_list.append(image_path)
+                        eyesight_list.append(eyesight_coordinates)
                 except KeyError:
                     None
             if character_list:
                 path_matrix.append(character_list)
+                eyesight_matrix.append(eyesight_list)
 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix)
 
     return(thumbnail)
 
@@ -312,7 +364,7 @@ def paste_icon(thumbnail, icon_path):
     max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
 
-    icon_image = Image.open("../"+icon_path).convert('RGBA')
+    icon_image = Image.open(icon_path).convert('RGBA')
     icon_size = calculate_new_dimensions(icon_image.size, max_size)
     icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 
@@ -329,8 +381,6 @@ Path(out_path).mkdir(parents=True, exist_ok=True)
 
 foreground = Image.open(foreground_path).convert('RGBA')
 background = Image.open(background_path).convert('RGBA')
-with open(data_path, 'rt', encoding='utf-8') as f:
-    data = json.loads(f.read())
 
 thumbnail = Image.new("RGBA", foreground.size, "PINK")
 composite_image = create_composite_image(background, thumbnail.size, (0, 0))
