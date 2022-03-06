@@ -19,8 +19,19 @@ jobs:
           python-version: 3.10
 
       - run: pip install -r dependencies/requirements.txt pyinstaller
-      - run: pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+      - run: |
+        pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+        copy dist\main.exe TSH.exe
 
-      - uses: actions/upload-artifact@v2
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "update data" -a
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
         with:
-          path: dist/*
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main  
