@@ -341,7 +341,7 @@ class Window(QMainWindow):
                         QLabel("New update available: "+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        "Update to latest version?\nNOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA"))
+                        "Update to latest version?\nNOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/"))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)
@@ -679,8 +679,8 @@ class Window(QMainWindow):
 App.setStyleSheet(qdarkstyle.load_stylesheet(
     palette=qdarkstyle.DarkPalette))
 
-App.setStyleSheet(qdarkstyle.load_stylesheet(
-    palette=qdarkstyle.LightPalette))
+# App.setStyleSheet(qdarkstyle.load_stylesheet(
+#     palette=qdarkstyle.LightPalette))
 
 window = Window()
 sys.exit(App.exec_())
