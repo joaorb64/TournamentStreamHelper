@@ -13,7 +13,8 @@ import datetime
 
 display_phase = True
 use_team_names = False
-use_sponsors = True
+use_sponsors = False
+used_assets = "full"
 
 foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
@@ -23,6 +24,14 @@ data_path = "../out/program_state.json"
 out_path = "./out/thumbnails"
 tmp_path = "./tmp"
 icon_path = "./assets/icons/icon.png"
+
+with open(data_path, 'rt', encoding='utf-8') as f:
+    data = json.loads(f.read())
+
+game_codename = data.get("game").get("codename")
+asset_data_path = f"./assets/games/{game_codename}/{used_assets}/config.json"
+with open(asset_data_path, 'rt', encoding='utf-8') as f:
+    all_eyesight = json.loads(f.read()).get("eyesights")
 
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
 
@@ -196,7 +205,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
 
 def paste_characters(thumbnail, data):
-    used_assets = "full"
 
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
@@ -217,10 +225,18 @@ def paste_characters(thumbnail, data):
                 try:
                     image_path = find(
                         f"{character_key}.assets.{used_assets}.asset", characters)
+                    eyesight_coordinates = None
+                    if all_eyesight:
+                        character_codename = find(f"{character_key}.codename", characters)
+                        skin_index = find(f"{character_key}.skin", characters)
+                        eyesight_coordinates_dict = all_eyesight.get(character_codename).get(skin_index)
+                        if not eyesight_coordinates_dict:
+                            eyesight_coordinates_dict = all_eyesight.get(character_codename).get("0")
+                        eyesight_coordinates = (eyesight_coordinates_dict.get("x"), eyesight_coordinates_dict.get("y"))
+                    print(eyesight_coordinates)
                     if image_path:
                         character_list.append(image_path)
-                        # Needs to extract data when implemented in program_state.json
-                        eyesight_list.append(None)
+                        eyesight_list.append(eyesight_coordinates)
                 except KeyError:
                     None
             if character_list:
@@ -361,8 +377,6 @@ Path(out_path).mkdir(parents=True, exist_ok=True)
 
 foreground = Image.open(foreground_path).convert('RGBA')
 background = Image.open(background_path).convert('RGBA')
-with open(data_path, 'rt', encoding='utf-8') as f:
-    data = json.loads(f.read())
 
 thumbnail = Image.new("RGBA", foreground.size, "PINK")
 composite_image = create_composite_image(background, thumbnail.size, (0, 0))
