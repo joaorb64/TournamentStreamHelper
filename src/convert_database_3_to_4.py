@@ -4,7 +4,7 @@ import json
 header_old = "org,name,full_name,country_code,state,twitter,main,color (0-7)"
 header_new = "prefix,gamerTag,name,twitter,country_code,state_code,mains"
 
-game_dir = "../assets/games"
+game_dir = "../user_data/games"
 list_dir = os.listdir(game_dir)
 
 
@@ -63,5 +63,5 @@ def convert_database_3_to_4(file_path: str):
 
 if __name__ == '__main__':
     new_database_text = convert_database_3_to_4("../local_players_old.csv")
-    with open('../local_players.csv', 'w', encoding='utf-8') as f:
+    with open('../user_data/local_players.csv', 'w', encoding='utf-8') as f:
         f.write(new_database_text)

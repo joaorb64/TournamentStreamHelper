@@ -28,14 +28,14 @@
     oldData = data;
     data = await getData();
 
-    let isDoubles = Object.keys(data.score.team["1"].players).length == 2;
+    let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
     if (
       oldData.score == null ||
-      Object.keys(oldData.score.team["1"].players).length !=
-        Object.keys(data.score.team["1"].players).length
+      Object.keys(oldData.score.team["1"].player).length !=
+        Object.keys(data.score.team["1"].player).length
     ) {
-      if (Object.keys(data.score.team["1"].players).length == 1) {
+      if (Object.keys(data.score.team["1"].player).length == 1) {
         gsap
           .timeline()
           .fromTo(
@@ -69,7 +69,7 @@
 
       if (!team.teamName || team.teamName == "") {
         let names = [];
-        Object.values(team.players).forEach((player, p) => {
+        Object.values(team.player).forEach((player, p) => {
           if (player) {
             names.push(player.name);
           }
@@ -87,7 +87,7 @@
         `
       );
 
-      Object.values(team.players).forEach((player, p) => {
+      Object.values(team.player).forEach((player, p) => {
         if (player) {
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .name`),

@@ -95,7 +95,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.eyeBt = QToolButton()
-        self.eyeBt.setIcon(QIcon('icons/eye.svg'))
+        self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
         self.eyeBt.setSizePolicy(
             QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.eyeBt, Qt.AlignmentFlag.AlignRight)
@@ -147,7 +147,7 @@ class TSHScoreboardWidget(QDockWidget):
         bottomOptions.layout().addLayout(hbox)
 
         self.btLoadStreamSet = QPushButton("Load current stream set")
-        self.btLoadStreamSet.setIcon(QIcon("./icons/twitch.svg"))
+        self.btLoadStreamSet.setIcon(QIcon("./assets/icons/twitch.svg"))
         self.btLoadStreamSet.setEnabled(False)
         hbox.addWidget(self.btLoadStreamSet)
         self.btLoadStreamSet.clicked.connect(self.LoadStreamSetClicked)
@@ -157,7 +157,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.btLoadStreamSetOptions = QPushButton()
         self.btLoadStreamSetOptions.setSizePolicy(
             QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadStreamSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadStreamSetOptions.setIcon(
+            QIcon("./assets/icons/settings.svg"))
         self.btLoadStreamSetOptions.clicked.connect(
             self.LoadStreamSetOptionsClicked)
         hbox.addWidget(self.btLoadStreamSetOptions)
@@ -177,7 +178,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.btLoadPlayerSetOptions = QPushButton()
         self.btLoadPlayerSetOptions.setSizePolicy(
             QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadPlayerSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadPlayerSetOptions.setIcon(
+            QIcon("./assets/icons/settings.svg"))
         self.btLoadPlayerSetOptions.clicked.connect(
             self.LoadUserSetOptionsClicked)
         hbox.addWidget(self.btLoadPlayerSetOptions)
@@ -198,7 +200,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.timerTime = QLabel("0")
         self.timerLayout.layout().addWidget(self.timerTime)
         self.timerCancelBt = QPushButton()
-        self.timerCancelBt.setIcon(QIcon('icons/cancel.svg'))
+        self.timerCancelBt.setIcon(QIcon('assets/icons/cancel.svg'))
         self.timerCancelBt.setIconSize(QSize(12, 12))
         self.timerCancelBt.clicked.connect(self.StopAutoUpdate)
         self.timerLayout.layout().addWidget(self.timerCancelBt)
@@ -253,8 +255,8 @@ class TSHScoreboardWidget(QDockWidget):
                 ])
             c.toggled.emit(False)
 
-        StateManager.Unset(f'score.team.1.players')
-        StateManager.Unset(f'score.team.2.players')
+        StateManager.Unset(f'score.team.1.player')
+        StateManager.Unset(f'score.team.2.player')
         StateManager.Unset(f'score.stage_strike')
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
@@ -305,9 +307,9 @@ class TSHScoreboardWidget(QDockWidget):
             QPushButton, "btResetScore").clicked.connect(self.ResetScore)
 
     def ExportTeamLogo(self, team, value):
-        if os.path.exists(f"./team_logo/{value.lower()}.png"):
+        if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.team.{team}.logo",
-                             f"./team_logo/{value.lower()}.png")
+                             f"./user_data/team_logo/{value.lower()}.png")
         else:
             StateManager.Set(f"score.team.{team}.logo", None)
 
@@ -335,7 +337,7 @@ class TSHScoreboardWidget(QDockWidget):
     def SetPlayersPerTeam(self, number):
         while len(self.team1playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.players.{len(self.team1playerWidgets)+1}')
+                index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
             print(self.team1column.findChild(QScrollArea))
             self.team1column.findChild(
@@ -353,7 +355,7 @@ class TSHScoreboardWidget(QDockWidget):
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team2playerWidgets)+1, teamNumber=2, path=f'score.team.{2}.players.{len(self.team2playerWidgets)+1}')
+                index=len(self.team2playerWidgets)+1, teamNumber=2, path=f'score.team.{2}.player.{len(self.team2playerWidgets)+1}')
             self.playerWidgets.append(p)
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
@@ -382,9 +384,9 @@ class TSHScoreboardWidget(QDockWidget):
 
         for team in [1, 2]:
             if StateManager.Get(f'score.team.{team}'):
-                for k in list(StateManager.Get(f'score.team.{team}.players').keys()):
+                for k in list(StateManager.Get(f'score.team.{team}.player').keys()):
                     if int(k) > number:
-                        StateManager.Unset(f'score.team.{team}.players.{k}')
+                        StateManager.Unset(f'score.team.{team}.player.{k}')
 
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -408,9 +410,9 @@ class TSHScoreboardWidget(QDockWidget):
                     if type(widget) == QComboBox:
                         data[widget.objectName()] = widget.currentIndex()
                 data["online_avatar"] = StateManager.Get(
-                    f"score.team.{t+1}.players.{i+1}.online_avatar")
+                    f"score.team.{t+1}.player.{i+1}.online_avatar")
                 data["id"] = StateManager.Get(
-                    f"score.team.{t+1}.players.{i+1}.id")
+                    f"score.team.{t+1}.player.{i+1}.id")
                 tmpData[t].append(data)
 
         # Load state

@@ -69,7 +69,7 @@ class Window(QMainWindow):
         self.signals = WindowSignals()
 
         splash = QSplashScreen(self, QPixmap(
-            'icons/icon.png').scaled(128, 128))
+            'assets/icons/icon.png').scaled(128, 128))
         splash.show()
 
         time.sleep(0.1)
@@ -80,13 +80,13 @@ class Window(QMainWindow):
         self.savedProgramState = {}
         self.programStateDiff = {}
 
-        self.setWindowIcon(QIcon('icons/icon.png'))
+        self.setWindowIcon(QIcon('assets/icons/icon.png'))
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
 
-        if not os.path.exists("./assets/games"):
-            os.makedirs("./assets/games")
+        if not os.path.exists("./user_data/games"):
+            os.makedirs("./user_data/games")
 
         self.font_small = QFont(
             "./assets/font/RobotoCondensed.ttf", pointSize=8)
@@ -101,7 +101,7 @@ class Window(QMainWindow):
 
         try:
             version = json.load(
-                open('versions.json', encoding='utf-8')).get("program", "?")
+                open('./assets/versions.json', encoding='utf-8')).get("program", "?")
         except Exception as e:
             version = "?"
 
@@ -161,7 +161,7 @@ class Window(QMainWindow):
         group_box.layout().addLayout(hbox)
 
         self.btLoadPlayerSet = QPushButton("Load SmashGG user set")
-        self.btLoadPlayerSet.setIcon(QIcon("./icons/smashgg.svg"))
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         hbox.addWidget(self.btLoadPlayerSet)
@@ -176,14 +176,15 @@ class Window(QMainWindow):
         self.btLoadPlayerSetOptions = QPushButton()
         self.btLoadPlayerSetOptions.setSizePolicy(
             QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadPlayerSetOptions.setIcon(QIcon("./icons/settings.svg"))
+        self.btLoadPlayerSetOptions.setIcon(
+            QIcon("./assets/icons/settings.svg"))
         self.btLoadPlayerSetOptions.clicked.connect(
             self.LoadUserSetOptionsClicked)
         hbox.addWidget(self.btLoadPlayerSetOptions)
 
         # Settings
         self.optionsBt = QToolButton()
-        self.optionsBt.setIcon(QIcon('icons/menu.svg'))
+        self.optionsBt.setIcon(QIcon('assets/icons/menu.svg'))
         self.optionsBt.setToolButtonStyle(
             Qt.ToolButtonStyle.ToolButtonIconOnly)
         self.optionsBt.setPopupMode(QToolButton.InstantPopup)
@@ -198,10 +199,10 @@ class Window(QMainWindow):
         action.toggled.connect(self.ToggleAlwaysOnTop)
         action = self.optionsBt.menu().addAction("Check for updates")
         self.updateAction = action
-        action.setIcon(QIcon('icons/undo.svg'))
+        action.setIcon(QIcon('assets/icons/undo.svg'))
         action.triggered.connect(self.CheckForUpdates)
         action = self.optionsBt.menu().addAction("Download assets")
-        action.setIcon(QIcon('icons/download.svg'))
+        action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
         self.gameSelect = QComboBox()
@@ -319,7 +320,8 @@ class Window(QMainWindow):
                 messagebox.exec()
 
         try:
-            versions = json.load(open('versions.json', encoding='utf-8'))
+            versions = json.load(
+                open('./assets/versions.json', encoding='utf-8'))
         except Exception as e:
             print("Local version file not found")
 
@@ -390,8 +392,6 @@ class Window(QMainWindow):
                             print(tar.getmembers())
                             os.rename(
                                 "./layout", f"./layout_backup_{str(time.time())}")
-                            os.rename(
-                                "./tournament_phases.txt", f"./tournament_phases_backup_{str(time.time())}.txt")
                             for m in tar.getmembers():
                                 if "/" in m.name:
                                     m.name = m.name.split("/", 1)[1]
@@ -399,7 +399,7 @@ class Window(QMainWindow):
                             tar.close()
                             os.remove("update.tar.gz")
 
-                            with open('versions.json', 'w') as outfile:
+                            with open('./assets/versions.json', 'w') as outfile:
                                 versions["program"] = currVersion
                                 json.dump(versions, outfile)
 
@@ -423,9 +423,10 @@ class Window(QMainWindow):
                     messagebox.exec()
             else:
                 if myVersion < currVersion:
-                    baseIcon = QPixmap(QImage("icons/menu.svg").scaled(32, 32))
+                    baseIcon = QPixmap(
+                        QImage("assets/icons/menu.svg").scaled(32, 32))
                     updateIcon = QImage(
-                        "./icons/update_circle.svg").scaled(12, 12)
+                        "./assets/icons/update_circle.svg").scaled(12, 12)
                     p = QPainter(baseIcon)
                     p.drawImage(QPoint(20, 0), updateIcon)
                     p.end()
@@ -566,7 +567,7 @@ class Window(QMainWindow):
                 filesToDownload[f]["path"] = \
                     "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
                     filesToDownload[f]["name"]
-                filesToDownload[f]["extractpath"] = "./assets/games/"+game
+                filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 
             self.downloadDialogue = QProgressDialog(
                 "Downloading assets", "Cancel", 0, 100, self)
@@ -599,7 +600,7 @@ class Window(QMainWindow):
         downloaded = 0
 
         for f in files:
-            with open("assets/games/"+f["name"], 'wb') as downloadFile:
+            with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+f["name"])
                 progress_callback.emit("Downloading "+f["name"]+"...")
 
@@ -624,8 +625,8 @@ class Window(QMainWindow):
 
         progress_callback.emit(100)
 
-        filenames = ["./assets/games/"+f["name"] for f in files]
-        mergedFile = "./assets/games/"+files[0]["name"].split(".")[0]+'.7z'
+        filenames = ["./user_data/games/"+f["name"] for f in files]
+        mergedFile = "./user_data/games/"+files[0]["name"].split(".")[0]+'.7z'
 
         is7z = next((f for f in files if ".7z" in f["name"]), None)
 
@@ -642,14 +643,14 @@ class Window(QMainWindow):
                 parent_zip.extractall(files[0]["extractpath"])
 
             for f in files:
-                os.remove("./assets/games/"+f["name"])
+                os.remove("./user_data/games/"+f["name"])
 
             os.remove(mergedFile)
         else:
             for f in files:
                 if os.path.isfile(f["extractpath"]+"/"+f["name"]):
                     os.remove(f["extractpath"]+"/"+f["name"])
-                shutil.move("./assets/games/"+f["name"], f["extractpath"])
+                shutil.move("./user_data/games/"+f["name"], f["extractpath"])
 
         print("OK")
 

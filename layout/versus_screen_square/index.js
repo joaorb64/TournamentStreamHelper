@@ -1,6 +1,6 @@
 (($) => {
   // Change this to the name of the assets pack you want to use
-  // It's basically the folder name: assets/games/game/ASSETPACK
+  // It's basically the folder name: user_data/games/game/ASSETPACK
   var ASSET_TO_USE = "full";
 
   // Change this to select wether to flip P2 character asset or not
@@ -37,7 +37,7 @@
     data = await getData();
 
     Object.values(data.score.team).forEach((team, t) => {
-      Object.values(team.players).forEach((player, p) => {
+      Object.values(team.player).forEach((player, p) => {
         SetInnerHtml(
           $(`.p${t + 1} .name`),
           `
@@ -104,7 +104,7 @@
           !oldData.score ||
           JSON.stringify(player.character) !=
             JSON.stringify(
-              oldData.score.team[String(t + 1)].players[String(p + 1)].character
+              oldData.score.team[String(t + 1)].player[String(p + 1)].character
             )
         ) {
           let html = "";

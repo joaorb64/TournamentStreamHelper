@@ -27,12 +27,12 @@ class TSHPlayerDB:
 
     def LoadDB():
         try:
-            if os.path.exists("./local_players.csv") == False:
-                with open('./local_players.csv', 'w', encoding='utf-8') as outfile:
+            if os.path.exists("./user_data/local_players.csv") == False:
+                with open('./user_data/local_players.csv', 'w', encoding='utf-8') as outfile:
                     spamwriter = csv.writer(outfile)
                     spamwriter.writerow(TSHPlayerDB.fieldnames)
 
-            with open('./local_players.csv', 'r', encoding='utf-8') as csvfile:
+            with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile, quotechar='\'')
                 for player in reader:
                     tag = player.get(
@@ -109,7 +109,7 @@ class TSHPlayerDB:
         with TSHPlayerDB.modelLock:
             TSHPlayerDB.model = QStandardItemModel()
 
-            cancelIcon = QIcon(QPixmap.fromImage(QImage("./icons/cancel.svg").scaledToWidth(
+            cancelIcon = QIcon(QPixmap.fromImage(QImage("./assets/icons/cancel.svg").scaledToWidth(
                 32, Qt.TransformationMode.SmoothTransformation)))
 
             charIcons = {}
@@ -165,7 +165,7 @@ class TSHPlayerDB:
 
     def SaveDB():
         try:
-            with open('./local_players.csv', 'w', encoding="utf-8", newline='') as outfile:
+            with open('./user_data/local_players.csv', 'w', encoding="utf-8", newline='') as outfile:
                 spamwriter = csv.DictWriter(
                     outfile, fieldnames=TSHPlayerDB.fieldnames, extrasaction="ignore", quotechar='\'')
                 spamwriter.writeheader()

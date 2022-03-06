@@ -130,7 +130,7 @@ It's not possible to animate these elements unless there's an OBS plugin for tha
 
 ## Sponsor logos
 
-You can find a directory called `/sponsor_logo/` in the program's directory. If you put an image, say, `google.png` (has to be a lowercase png), and a player has its prefix set as `GOOGLE`, `google` (or any casing variations) this file will also get copied to the output.
+You can find a directory called `/user_data/sponsor_logo/` in the program's directory. If you put an image, say, `google.png` (has to be a lowercase png), and a player has its prefix set as `GOOGLE`, `google` (or any casing variations) this file will also get copied to the output.
 
 ## Donations
 

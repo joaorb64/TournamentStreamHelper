@@ -105,23 +105,24 @@ class TSHScoreboardStageWidget(QWidget):
         self.btAddNeutral = self.findChild(QPushButton, "btAddNeutral")
         self.btAddNeutral.clicked.connect(
             lambda x, view=self.stagesNeutral: self.AddStage(view))
-        self.btAddNeutral.setIcon(QIcon("./icons/arrow_right.svg"))
+        self.btAddNeutral.setIcon(QIcon("./assets/icons/arrow_right.svg"))
 
         self.btRemoveNeutral = self.findChild(QPushButton, "btRemoveNeutral")
         self.btRemoveNeutral.clicked.connect(
             lambda x: self.RemoveStage(self.stagesNeutral))
-        self.btRemoveNeutral.setIcon(QIcon("./icons/arrow_left.svg"))
+        self.btRemoveNeutral.setIcon(QIcon("./assets/icons/arrow_left.svg"))
 
         self.btAddCounterpick = self.findChild(QPushButton, "btAddCounterpick")
         self.btAddCounterpick.clicked.connect(
             lambda x, view=self.stagesCounterpick: self.AddStage(view))
-        self.btAddCounterpick.setIcon(QIcon("./icons/arrow_right.svg"))
+        self.btAddCounterpick.setIcon(QIcon("./assets/icons/arrow_right.svg"))
 
         self.btRemoveCounterpick = self.findChild(
             QPushButton, "btRemoveCounterpick")
         self.btRemoveCounterpick.clicked.connect(
             lambda x: self.RemoveStage(self.stagesCounterpick))
-        self.btRemoveCounterpick.setIcon(QIcon("./icons/arrow_left.svg"))
+        self.btRemoveCounterpick.setIcon(
+            QIcon("./assets/icons/arrow_left.svg"))
 
         self.noDSR = self.findChild(QRadioButton, "noDSR")
         self.noDSR.clicked.connect(self.ExportCurrentRuleset)
@@ -304,7 +305,7 @@ class TSHScoreboardStageWidget(QWidget):
 
                     item = QStandardItem(ruleset.get("name"))
                     item.setData(myRuleset, Qt.ItemDataRole.UserRole)
-                    item.setIcon(QIcon("./icons/db.svg"))
+                    item.setIcon(QIcon("./assets/icons/db.svg"))
                     rulesetsModel.appendRow(item)
         except:
             traceback.print_exc()
@@ -349,7 +350,7 @@ class TSHScoreboardStageWidget(QWidget):
 
                 item = QStandardItem(ruleset.get("name"))
                 item.setData(myRuleset, Qt.ItemDataRole.UserRole)
-                item.setIcon(QIcon("./icons/smashgg.svg"))
+                item.setIcon(QIcon("./assets/icons/smashgg.svg"))
                 rulesetsModel.appendRow(item)
 
         # Update list

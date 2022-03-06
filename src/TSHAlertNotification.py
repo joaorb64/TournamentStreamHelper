@@ -35,7 +35,7 @@ class TSHAlertNotification(QObject):
 
                 try:
                     alerts_red = json.load(
-                        open('./assets/alerts_red.json', encoding='utf-8'))
+                        open('./user_data/alerts_red.json', encoding='utf-8'))
                 except Exception as e:
                     print(traceback.format_exc())
 
@@ -98,18 +98,18 @@ class TSHAlertNotification(QObject):
 
         try:
             alerts_red = json.load(
-                open('./assets/alerts_red.json', encoding='utf-8'))
+                open('./user_data/alerts_red.json', encoding='utf-8'))
         except Exception as e:
             print(traceback.format_exc())
 
         if alerts_red is not None:
             alerts_red.append(id)
-            with open("./assets/alerts_red.json", 'w') as outfile:
+            with open("./user_data/alerts_red.json", 'w') as outfile:
                 json.dump(alerts_red, outfile)
 
 
-if not os.path.exists("./assets/alerts_red.json"):
-    with open("./assets/alerts_red.json", 'w') as outfile:
+if not os.path.exists("./user_data/alerts_red.json"):
+    with open("./user_data/alerts_red.json", 'w') as outfile:
         outfile.write("[]")
 
 TSHAlertNotification.instance = TSHAlertNotification()

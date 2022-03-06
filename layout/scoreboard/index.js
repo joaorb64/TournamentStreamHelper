@@ -15,7 +15,7 @@
     data = await getData();
 
     [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.players["1"]].forEach((player, p) => {
+      [team.player["1"]].forEach((player, p) => {
         if (player) {
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),

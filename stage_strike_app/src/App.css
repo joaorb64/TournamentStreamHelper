@@ -94,11 +94,11 @@ body {
   height: 48px;
 }
 .stamp.stage-striked {
-  background-image: url(../../icons/stage_strike.svg);
+  background-image: url(../../assets/icons/stage_strike.svg);
 }
 .stamp.stage-dsr {
-  background-image: url(../../icons/stage_dsr.svg);
+  background-image: url(../../assets/icons/stage_dsr.svg);
 }
 .stamp.stage-selected {
-  background-image: url(../../icons/stage_select.svg);
+  background-image: url(../../assets/icons/stage_select.svg);
 }

@@ -1,7 +1,7 @@
 name: Generate Windows Release
 
 on:
-  #push:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
         with:
           python-version: 3.10
 
-      - run: pip install -r requirements.txt pyinstaller
-      - run: pyinstaller main.py --onefile -w --icon icons\icon.ico
+      - run: pip install -r dependencies/requirements.txt pyinstaller
+      - run: pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
 
       - uses: actions/upload-artifact@v2
         with:

@@ -19,7 +19,7 @@ foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
 separator_h_path = "./thumbnail_base/separator_h.png"
 separator_v_path = "./thumbnail_base/separator_v.png"
-data_path = "./out/program_state.json"
+data_path = "../out/program_state.json"
 out_path = "./out/thumbnails"
 tmp_path = "./tmp"
 icon_path = "./assets/icons/icon.png"
@@ -120,7 +120,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
                 paste_coordinates[1] + line_index*individual_max_size[1])
             individual_paste_coordinates = (
                 individual_paste_x, individual_paste_y)
-            character_image = Image.open(image_path).convert('RGBA')
+            character_image = Image.open("../"+image_path).convert('RGBA')
             character_image = resize_image_to_max_size(
                 character_image, individual_max_size)
             composite_image = create_composite_image(
@@ -312,7 +312,7 @@ def paste_icon(thumbnail, icon_path):
     max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
 
-    icon_image = Image.open(icon_path).convert('RGBA')
+    icon_image = Image.open("../"+icon_path).convert('RGBA')
     icon_size = calculate_new_dimensions(icon_image.size, max_size)
     icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 

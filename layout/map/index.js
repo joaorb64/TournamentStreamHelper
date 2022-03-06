@@ -48,7 +48,7 @@ baseMap.addTo(map);
     let servers = [];
 
     Object.values(data.score.team).forEach((team) => {
-      Object.values(team.players).forEach((player) => {
+      Object.values(team.player).forEach((player) => {
         let pos = [
           player.state.latitude != null
             ? parseFloat(player.state.latitude)
@@ -274,10 +274,10 @@ baseMap.addTo(map);
 
     if (
       Object.keys(oldData).length == 0 ||
-      JSON.stringify(oldData.score.team["1"].players) !=
-        JSON.stringify(data.score.team["1"].players) ||
-      JSON.stringify(oldData.score.team["2"].players) !=
-        JSON.stringify(data.score.team["2"].players)
+      JSON.stringify(oldData.score.team["1"].player) !=
+        JSON.stringify(data.score.team["1"].player) ||
+      JSON.stringify(oldData.score.team["2"].player) !=
+        JSON.stringify(data.score.team["2"].player)
     ) {
       UpdateMap();
     }

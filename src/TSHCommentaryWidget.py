@@ -77,12 +77,12 @@ class TSHCommentaryWidget(QDockWidget):
                 c.textChanged.emit("")
 
             comm.findChild(QPushButton, "btUp").setIcon(
-                QIcon("./icons/arrow_up.svg"))
+                QIcon("./assets/icons/arrow_up.svg"))
             comm.findChild(QPushButton, "btUp").clicked.connect(
                 lambda x, index=len(self.commentaryWidgets): self.MoveUp(index))
 
             comm.findChild(QPushButton, "btDown").setIcon(
-                QIcon("./icons/arrow_down.svg"))
+                QIcon("./assets/icons/arrow_down.svg"))
             comm.findChild(QPushButton, "btDown").clicked.connect(
                 lambda x, index=len(self.commentaryWidgets): self.MoveDown(index))
 

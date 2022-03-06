@@ -52,28 +52,28 @@ class TSHGameAssetManager(QObject):
             def run(self):
                 self.parent().games = {}
 
-                gameDirs = os.listdir("./assets/games/")
+                gameDirs = os.listdir("./user_data/games/")
 
                 for game in gameDirs:
-                    if os.path.isfile("./assets/games/"+game+"/base_files/config.json"):
-                        f = open("./assets/games/"+game +
+                    if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
+                        f = open("./user_data/games/"+game +
                                  "/base_files/config.json", encoding='utf-8')
                         self.parent().games[game] = json.load(f)
 
                         self.parent().games[game]["assets"] = {}
                         self.parent(
-                        ).games[game]["path"] = "./assets/games/"+game+"/"
+                        ).games[game]["path"] = "./user_data/games/"+game+"/"
 
-                        assetDirs = os.listdir("./assets/games/"+game)
+                        assetDirs = os.listdir("./user_data/games/"+game)
                         assetDirs += ["base_files/" +
-                                      f for f in os.listdir("./assets/games/"+game+"/base_files/")]
+                                      f for f in os.listdir("./user_data/games/"+game+"/base_files/")]
 
                         for dir in assetDirs:
-                            if os.path.isdir("./assets/games/"+game+"/"+dir):
-                                if os.path.isfile("./assets/games/"+game+"/"+dir+"/config.json"):
+                            if os.path.isdir("./user_data/games/"+game+"/"+dir):
+                                if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
                                     print(
                                         "Found asset config for ["+game+"]["+dir+"]")
-                                    f = open("./assets/games/"+game+"/"+dir +
+                                    f = open("./user_data/games/"+game+"/"+dir +
                                              "/config.json", encoding='utf-8')
                                     self.parent().games[game]["assets"][dir] = \
                                         json.load(f)
@@ -151,7 +151,7 @@ class TSHGameAssetManager(QObject):
                         assetsObj = gameObj.get(
                             "assets", {}).get(assetsKey, None)
                         files = sorted(os.listdir(
-                            './assets/games/'+game+'/'+assetsKey))
+                            './user_data/games/'+game+'/'+assetsKey))
 
                         self.parent().stockIcons = {}
 
@@ -164,7 +164,7 @@ class TSHGameAssetManager(QObject):
 
                             if len(filteredFiles) == 0:
                                 self.parent().stockIcons[c][0] = QImage(
-                                    './icons/cancel.svg')
+                                    './assets/icons/cancel.svg')
 
                             for i, f in enumerate(filteredFiles):
                                 numberStart = f.rfind(
@@ -177,7 +177,7 @@ class TSHGameAssetManager(QObject):
                                     print(f)
                                     pass
                                 self.parent().stockIcons[c][number] = QImage(
-                                    './assets/games/'+game+'/'+assetsKey+'/'+f)
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f)
 
                         print("Loaded stock icons")
 
@@ -189,7 +189,7 @@ class TSHGameAssetManager(QObject):
                                 asset = gameObj["assets"][assetsKey]
 
                                 files = sorted(os.listdir(
-                                    './assets/games/'+game+'/'+assetsKey))
+                                    './user_data/games/'+game+'/'+assetsKey))
 
                                 filteredFiles = \
                                     [f for f in files if f.startswith(asset.get(
@@ -233,10 +233,10 @@ class TSHGameAssetManager(QObject):
                             assetsObj = gameObj.get(
                                 "assets", {}).get(assetsKey)
                             files = sorted(os.listdir(
-                                './assets/games/'+game+'/'+assetsKey))
+                                './user_data/games/'+game+'/'+assetsKey))
 
                             for stage in self.parent().stages:
-                                self.parent().stages[stage]["path"] = './assets/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
+                                self.parent().stages[stage]["path"] = './user_data/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
                                     "prefix", "")+self.parent().stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
 
                         for s in self.parent().stages.keys():
@@ -352,8 +352,8 @@ class TSHGameAssetManager(QObject):
         return stage
 
 
-if not os.path.exists("./assets/games"):
-    os.makedirs("./assets/games")
+if not os.path.exists("./user_data/games"):
+    os.makedirs("./user_data/games")
 
 if TSHGameAssetManager.instance == None:
     TSHGameAssetManager.instance = TSHGameAssetManager()

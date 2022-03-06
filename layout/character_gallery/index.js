@@ -11,7 +11,7 @@
     data = await getData();
 
     let characters =
-      data.score.team[window.team].players[window.player].character;
+      data.score.team[window.team].player[window.player].character;
 
     if (JSON.stringify(characters) != JSON.stringify(oldCharacters)) {
       TweenMax.to(".container", 0.1, { autoAlpha: 0 }).then(() => {

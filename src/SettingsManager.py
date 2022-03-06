@@ -6,11 +6,11 @@ class SettingsManager:
     settings = {}
 
     def SaveSettings():
-        with open("./settings.json", 'w') as file:
+        with open("./user_data/settings.json", 'w') as file:
             json.dump(SettingsManager.settings, file, indent=4)
 
     def LoadSettings():
-        with open("./settings.json", 'r') as file:
+        with open("./user_data/settings.json", 'r') as file:
             SettingsManager.settings = json.load(file)
 
     def Set(key: str, value):
@@ -21,7 +21,7 @@ class SettingsManager:
         return SettingsManager.settings.get(key)
 
 
-if not os.path.isfile("./settings.json"):
+if not os.path.isfile("./user_data/settings.json"):
     SettingsManager.SaveSettings()
 
 SettingsManager.LoadSettings()
