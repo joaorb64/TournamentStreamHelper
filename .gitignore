@@ -1,6 +1,9 @@
 user_data/*
+user_data/player_avatar/
 !user_data/player_avatar/*.txt
+user_data/sponsor_logo/
 !user_data/sponsor_logo/*.txt
+user_data/team_logo/
 !user_data/team_logo/*.txt
 out/
 update.tar.gz
