@@ -13,7 +13,7 @@ import datetime
 
 display_phase = True
 use_team_names = False
-use_sponsors = False
+use_sponsors = True
 used_assets = "full"
 
 foreground_path = "./thumbnail_base/foreground.png"
