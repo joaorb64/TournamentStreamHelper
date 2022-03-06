@@ -68,7 +68,7 @@ def calculate_new_dimensions(current_size, max_size):
     return((round(new_x), round(new_y)))
 
 
-def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates = None):
+def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None):
     current_size = image.size
     x_ratio = max_size[0]/current_size[0]
     y_ratio = max_size[1]/current_size[1]
@@ -82,12 +82,14 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates = None
         new_x = y_ratio*current_size[0]
         new_y = max_size[1]
         if eyesight_coordinates:
-            resized_eyesight = (round(eyesight_coordinates[0]*y_ratio), round(eyesight_coordinates[1]*y_ratio))
+            resized_eyesight = (
+                round(eyesight_coordinates[0]*y_ratio), round(eyesight_coordinates[1]*y_ratio))
     else:
         new_x = max_size[0]
         new_y = x_ratio*current_size[1]
         if eyesight_coordinates:
-            resized_eyesight = (round(eyesight_coordinates[0]*x_ratio), round(eyesight_coordinates[1]*x_ratio))
+            resized_eyesight = (
+                round(eyesight_coordinates[0]*x_ratio), round(eyesight_coordinates[1]*x_ratio))
 
     new_size = (round(new_x), round(new_y))
     image = image.resize(new_size, resample=Image.BICUBIC)
@@ -217,7 +219,8 @@ def paste_characters(thumbnail, data):
                         f"{character_key}.assets.{used_assets}.asset", characters)
                     if image_path:
                         character_list.append(image_path)
-                        eyesight_list.append(None) # Needs to extract data when implemented in program_state.json
+                        # Needs to extract data when implemented in program_state.json
+                        eyesight_list.append(None)
                 except KeyError:
                     None
             if character_list:
