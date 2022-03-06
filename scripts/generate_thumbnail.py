@@ -4,6 +4,7 @@
 from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
+from numpy import eye
 import requests
 import zipfile
 import shutil
@@ -68,7 +69,7 @@ def calculate_new_dimensions(current_size, max_size):
     return((round(new_x), round(new_y)))
 
 
-def resize_image_to_max_size(image: Image, max_size):
+def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates = None):
     current_size = image.size
     x_ratio = max_size[0]/current_size[0]
     y_ratio = max_size[1]/current_size[1]
@@ -77,21 +78,44 @@ def resize_image_to_max_size(image: Image, max_size):
         raise ValueError(
             msg=f"Size cannot be negative, given max size is {max_size}")
 
+    resized_eyesight = None
     if (x_ratio < y_ratio):
         new_x = y_ratio*current_size[0]
         new_y = max_size[1]
+        if eyesight_coordinates:
+            resized_eyesight = (round(eyesight_coordinates[0]*y_ratio), round(eyesight_coordinates[1]*y_ratio))
     else:
         new_x = max_size[0]
         new_y = x_ratio*current_size[1]
+        if eyesight_coordinates:
+            resized_eyesight = (round(eyesight_coordinates[0]*x_ratio), round(eyesight_coordinates[1]*x_ratio))
 
     new_size = (round(new_x), round(new_y))
     image = image.resize(new_size, resample=Image.BICUBIC)
 
     # crop
-    left = round(-(max_size[0] - new_x)/2)
-    top = round(-(max_size[1] - new_y)/2)
-    right = round((max_size[0] + new_x)/2)
-    bottom = round((max_size[1] + new_y)/2)
+    if not resized_eyesight:
+        left = round(-(max_size[0] - new_x)/2)
+        top = round(-(max_size[1] - new_y)/2)
+        right = round((max_size[0] + new_x)/2)
+        bottom = round((max_size[1] + new_y)/2)
+    else:
+        left = round(resized_eyesight[0]-(max_size[0]/2))
+        top = round(resized_eyesight[1]-(max_size[1]/2))
+        right = round(resized_eyesight[0]+(max_size[0]/2))
+        bottom = round(resized_eyesight[1]+(max_size[1]/2))
+        if left < 0:
+            left = 0
+            right = max_size[0]
+        if top < 0:
+            top = 0
+            bottom = max_size[1]
+        if right > new_x:
+            right = new_x
+            left = new_x - max_size[0]
+        if bottom > new_y:
+            bottom = new_y
+            top = new_y - max_size[1]
     image = image.crop((left, top, right, bottom))
 
     return(image)
@@ -103,16 +127,18 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix):
     num_line = len(path_matrix)
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
+        eyesight_line = eyesight_matrix[line_index]
         num_col = len(line)
         for col_index in range(0, len(line)):
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
+            eyesight_coordinates = eyesight_line[col_index]
             print(f"Processing asset: {image_path}")
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
@@ -122,7 +148,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates):
                 individual_paste_x, individual_paste_y)
             character_image = Image.open("../"+image_path).convert('RGBA')
             character_image = resize_image_to_max_size(
-                character_image, individual_max_size)
+                character_image, individual_max_size, eyesight_coordinates)
             composite_image = create_composite_image(
                 character_image, thumbnail.size, individual_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
@@ -180,9 +206,11 @@ def paste_characters(thumbnail, data):
     for i in [0, 1]:
         team_index = i+1
         path_matrix = []
+        eyesight_matrix = []
         current_team = find(f"score.team.{team_index}.player", data)
         for player_key in current_team.keys():
             character_list = []
+            eyesight_list = []
             characters = find(f"{player_key}.character", current_team)
             for character_key in characters.keys():
                 try:
@@ -190,16 +218,18 @@ def paste_characters(thumbnail, data):
                         f"{character_key}.assets.{used_assets}.asset", characters)
                     if image_path:
                         character_list.append(image_path)
+                        eyesight_list.append(None) # Needs to extract data when implemented in program_state.json
                 except KeyError:
                     None
             if character_list:
                 path_matrix.append(character_list)
+                eyesight_matrix.append(eyesight_list)
 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix)
 
     return(thumbnail)
 
