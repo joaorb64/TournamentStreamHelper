@@ -20,18 +20,18 @@ jobs:
 
       - run: pip install -r dependencies/requirements.txt pyinstaller
       - run: |
-        pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
-        copy dist\main.exe TSH.exe
+          pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+          copy dist\main.exe TSH.exe
 
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "update data" -a
-          
+          git add TSH.exe
+          git commit -m "Update exe" -a
+
       - name: push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main  
+          branch: main
