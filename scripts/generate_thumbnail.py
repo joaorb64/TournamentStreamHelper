@@ -4,7 +4,6 @@
 from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
-from numpy import eye
 import requests
 import zipfile
 import shutil
