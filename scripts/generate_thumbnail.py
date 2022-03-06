@@ -21,15 +21,15 @@ background_path = "./thumbnail_base/background.png"
 separator_h_path = "./thumbnail_base/separator_h.png"
 separator_v_path = "./thumbnail_base/separator_v.png"
 data_path = "../out/program_state.json"
-out_path = "./out/thumbnails"
-tmp_path = "./tmp"
-icon_path = "./assets/icons/icon.png"
+out_path = "../out/thumbnails"
+tmp_path = "../tmp"
+icon_path = "../assets/icons/icon.png"
 
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
 
 game_codename = data.get("game").get("codename")
-asset_data_path = f"./assets/games/{game_codename}/{used_assets}/config.json"
+asset_data_path = f"../user_data/games/{game_codename}/{used_assets}/config.json"
 with open(asset_data_path, 'rt', encoding='utf-8') as f:
     all_eyesight = json.loads(f.read()).get("eyesights")
 
@@ -364,7 +364,7 @@ def paste_icon(thumbnail, icon_path):
     max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
 
-    icon_image = Image.open("../"+icon_path).convert('RGBA')
+    icon_image = Image.open(icon_path).convert('RGBA')
     icon_size = calculate_new_dimensions(icon_image.size, max_size)
     icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 
