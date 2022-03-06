@@ -308,6 +308,7 @@ class TSHScoreboardStageWidget(QWidget):
                     item.setIcon(QIcon("./assets/icons/db.svg"))
                     rulesetsModel.appendRow(item)
         except:
+            self.userRulesets = []
             traceback.print_exc()
 
         # Load SmashGG rulesets
