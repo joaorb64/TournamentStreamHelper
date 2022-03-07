@@ -4,7 +4,7 @@ let myFilter = [];
 var baseMap = L.tileLayer.colorFilter(
   "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
-    maxZoom: 5,
+    maxZoom: 4,
     zoomSnap: 0,
     zoomControl: false,
     id: "osm.streets",
@@ -13,7 +13,6 @@ var baseMap = L.tileLayer.colorFilter(
 );
 
 var map = L.map("map", {
-  maxZoom: 5,
   zoomControl: false,
 }).setView([0, 0], 2);
 
