@@ -17,6 +17,11 @@ import {
   CssBaseline,
   Grid,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from "@mui/material";
 import { Box } from "@mui/system";
 
@@ -46,19 +51,23 @@ class App extends Component {
   state = {
     ruleset: null,
     currGame: 0,
-    currPlayer: 0,
+    currPlayer: -1,
     currStep: 0,
     strikedStages: [],
     stagesWon: [[], []],
     stagesPicked: [],
     selectedStage: null,
     lastWinner: -1,
+    playerNames: [],
+    phase: null,
+    match: null,
+    bestOf: null
   };
 
   Initialize() {
     this.setState({
       currGame: 0,
-      currPlayer: 0,
+      currPlayer: -1,
       currStep: 0,
       strikedStages: [[]],
       stagesWon: [[], []],
@@ -233,7 +242,13 @@ class App extends Component {
     fetch("http://" + window.location.hostname + ":5000/ruleset")
       .then((res) => res.json())
       .then((data) => {
-        this.setState({ ruleset: data });
+        this.setState({
+          playerNames: [data.p1, data.p2],
+          ruleset: data.ruleset,
+          phase: data.phase,
+          match: data.match,
+          bestOf: data.best_of
+        });
         this.Initialize();
       })
       .catch(console.log);
@@ -300,7 +315,10 @@ class App extends Component {
                     sx={{ typography: { xs: "h7", sm: "h5" } }}
                     component="div"
                   >
+                    {this.state.phase? this.state.phase+" / " : ""}
+                    {this.state.match? this.state.match+" / " : ""}
                     Game {this.state.currGame + 1}
+                    {this.state.bestOf? " (Best of "+this.state.bestOf+")" : ""}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -312,44 +330,49 @@ class App extends Component {
                     {this.state.stagesWon[1].length}
                   </Typography>
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{ typography: { xs: "h6", sm: "h4" } }}
-                    component="div"
-                  >
-                    {this.state.selectedStage ? (
-                      <>Report Results</>
-                    ) : this.state.currGame > 0 && this.state.currStep > 0 ? (
-                      <>
-                        <span
-                          style={{
-                            color:
-                              darkTheme.palette[
-                                `p${this.state.currPlayer + 1}color`
-                              ].main,
-                          }}
-                        >
-                          Player {this.state.currPlayer + 1}
-                        </span>
-                        , pick a stage
-                      </>
-                    ) : (
-                      <>
-                        <span
-                          style={{
-                            color:
-                              darkTheme.palette[
-                                `p${this.state.currPlayer + 1}color`
-                              ].main,
-                          }}
-                        >
-                          Player {this.state.currPlayer + 1}
-                        </span>
-                        , ban {this.GetStrikeNumber()} stage(s)
-                      </>
-                    )}
-                  </Typography>
-                </Grid>
+                {this.state.currPlayer != -1 ? (
+                  <Grid item xs={12}>
+                    <Typography
+                      sx={{ typography: { xs: "h6", sm: "h4" } }}
+                      component="div"
+                    >
+                      {this.state.selectedStage ? (
+                        <>Report Results</>
+                      ) : this.state.currGame > 0 && this.state.currStep > 0 ? (
+                        <>
+                          <span
+                            style={{
+                              color:
+                                darkTheme.palette[
+                                  `p${this.state.currPlayer + 1}color`
+                                ].main,
+                            }}
+                          >
+                            {this.state.playerNames[this.state.currPlayer]}
+                          </span>
+                          , pick a stage
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            style={{
+                              color:
+                                darkTheme.palette[
+                                  `p${this.state.currPlayer + 1}color`
+                                ].main,
+                            }}
+                          >
+                            {this.state.playerNames[this.state.currPlayer]}
+                          </span>
+                          , ban {this.GetStrikeNumber()} stage(s)
+                        </>
+                      )}
+                    </Typography>
+                  </Grid>
+                )
+                :
+                  null
+                }
               </Grid>
               <Grid
                 container
@@ -476,7 +499,7 @@ class App extends Component {
                         variant="contained"
                         onClick={() => this.MatchWinner(0)}
                       >
-                        p1 won
+                        {this.state.playerNames[0]} won
                       </Button>
                     </Grid>
                     <Grid item xs={4}>
@@ -490,7 +513,7 @@ class App extends Component {
                         variant="contained"
                         onClick={() => this.MatchWinner(1)}
                       >
-                        p2 won
+                        {this.state.playerNames[1]} won
                       </Button>
                     </Grid>
                   </Grid>
@@ -499,6 +522,84 @@ class App extends Component {
             </Box>
           ) : null}
         </Container>
+        <Dialog
+          open={this.state.currPlayer == -1}
+          onClose={()=>{}}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <DialogTitle id="responsive-dialog-title">
+          {"Stage Strike"}
+        </DialogTitle>
+        <DialogContent>
+          <Box component="div" gap={2} display="flex" flexDirection={"column"}>
+            <Typography>
+              Play rock-paper-scissors to decide who starts the stage strike process, or use the randomize button.
+            </Typography>
+
+            <Typography
+              sx={{ typography: { xs: "h6", sm: "h5" } }}
+              align="center"
+            >
+              Rock-Paper-Scissors
+            </Typography>
+            <Grid
+              container
+              item
+              xs={12}
+              spacing={2}
+              justifyContent="center"
+            >
+              <Grid item xs>
+                <Button
+                  size={
+                    darkTheme.breakpoints.up("md") ? "large" : "small"
+                  }
+                  fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                  fullWidth
+                  color="p1color"
+                  variant="contained"
+                  onClick={() => this.setState({currPlayer: 0})}
+                >
+                  {this.state.playerNames[0]} won
+                </Button>
+              </Grid>
+              <Grid item xs>
+                <Button
+                  size={
+                    darkTheme.breakpoints.up("md") ? "large" : "small"
+                  }
+                  fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                  fullWidth
+                  color="p2color"
+                  variant="contained"
+                  onClick={() => this.setState({currPlayer: 1})}
+                >
+                  {this.state.playerNames[1]} won
+                </Button>
+              </Grid>
+            </Grid>
+            <Typography
+              sx={{ typography: { xs: "h6", sm: "h5" } }}
+              align="center"
+            >
+              Randomize
+            </Typography>
+            <Button
+              size={
+                darkTheme.breakpoints.up("md") ? "large" : "small"
+              }
+              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+              fullWidth
+              color="success"
+              variant="outlined"
+              onClick={() => this.setState({currPlayer: (Math.random() > 0.5)? 1 : 0})}
+            >
+              Randomize
+            </Button>
+          </Box>
+        </DialogContent>
+        </Dialog>
       </ThemeProvider>
     );
   }
