@@ -261,6 +261,12 @@ body {
   top: 8px;
   width: 340px;
   height: 66px;
+  padding: 10px;
+  gap: 10px;
+}
+
+.info.doubles.material_container .team_name {
+  flex-grow: 1;
 }
 
 .t1.material_container {
@@ -270,4 +276,24 @@ body {
 .t2.material_container {
   left: unset;
   right: 326px;
+  flex-direction: row-reverse;
+}
+
+.material_container .doubles_score {
+  top: 14px;
+  width: 48px;
+  height: 100%;
+  font-size: 38px;
+  color: white;
+  border-radius: 8px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.t1 .doubles_score {
+  background-color: #ff3837ff;
+}
+.t2 .doubles_score {
+  background-color: #1255a3ff;
 }

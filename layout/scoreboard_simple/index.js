@@ -81,7 +81,7 @@
       console.log(teamName);
 
       SetInnerHtml(
-        $(`.info.doubles.t${t + 1}`),
+        $(`.info.doubles.t${t + 1} .team_name`),
         `
           ${teamName}${team.losers ? " [L]" : ""}
         `
@@ -129,6 +129,8 @@
             $(`.t${t + 1}.p${p + 1} .score`),
             !isDoubles ? String(team.score) : ""
           );
+
+          SetInnerHtml($(`.t${t + 1} .doubles_score`), String(team.score));
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .sponsor-container`),
