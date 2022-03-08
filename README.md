@@ -2,6 +2,10 @@
 
 A Stream helper for fighting game tournaments!
 
+# PLEASE REFER TO THE WIKI
+## Most information here is outdated
+https://github.com/joaorb64/TournamentStreamHelper/wiki
+
 ## Program itself
 
 ![screenshot](../media/media/screenshot1.png)
