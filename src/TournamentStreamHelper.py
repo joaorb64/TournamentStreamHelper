@@ -110,7 +110,7 @@ class Window(QMainWindow):
         self.setWindowTitle("TournamentStreamHelper v"+version)
 
         self.setDockOptions(
-            QMainWindow.DockOption.ForceTabbedDocks)
+            QMainWindow.DockOption.AllowTabbedDocks)
 
         self.setTabPosition(
             Qt.DockWidgetArea.AllDockWidgetAreas, QTabWidget.TabPosition.North)
