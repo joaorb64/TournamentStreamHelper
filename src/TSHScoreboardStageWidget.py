@@ -45,10 +45,36 @@ class WebServer(QThread):
 
     @app.route("/ruleset")
     def main():
-        data = StateManager.Get(f"score.ruleset", {})
+        data = {}
+
+        data["ruleset"] = StateManager.Get(f"score.ruleset", {})
+
+        # Add webserver base path
         data.update({
             "basedir": os.path.abspath(".")
         })
+
+        # Add player names
+        for i in [1, 2]:
+            if StateManager.Get(f"score.team.{i}.teamName"):
+                data.update({
+                    f"p{i}": StateManager.Get(f"score.team.{i}.teamName")
+                })
+            else:
+                names = [p.get("name") for p in StateManager.Get(
+                    f"score.team.{i}.player", {}).values() if p.get("name")]
+
+                data.update({
+                    f"p{i}": " / ".join(names)
+                })
+
+        # Add set data
+        data.update({
+            "best_of": StateManager.Get(f"score.best_of"),
+            "match": StateManager.Get(f"score.match"),
+            "phase": StateManager.Get(f"score.phase")
+        })
+
         return data
 
     @app.route('/post', methods=['POST'])

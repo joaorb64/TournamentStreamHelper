@@ -112,8 +112,8 @@ class SmashGGDataProvider(TournamentDataProvider):
             pool.waitForDone(5000)
             QCoreApplication.processEvents()
 
-            print(result["old"])
-            print(result["new"])
+            print(result.get("old"))
+            print(result.get("new"))
 
             finalResult = {}
             finalResult.update(result["new"])
