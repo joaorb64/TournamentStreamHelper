@@ -62,7 +62,8 @@ body {
 }
 
 .fgc .player.container {
-  top: 6px;
+  top: 10px;
+  width: 650px;
 }
 
 .fgc.thin .player.container {
@@ -166,9 +167,10 @@ body {
 }
 
 .fgc .info.container.top {
-  top: 6px;
-  height: 60px;
+  top: 10px;
+  height: 32px;
   width: 300px;
+  font-size: 18px;
 }
 
 .fgc.thin .info.container.top {
