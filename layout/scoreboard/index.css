@@ -250,6 +250,10 @@ body {
   overflow: hidden;
 }
 
+.fgc.thin .score {
+  font-size: 30px;
+}
+
 .p1 .score {
   background-color: #ff3837ff;
 }
