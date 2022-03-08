@@ -16,6 +16,10 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from flask import Flask, send_from_directory, request
 from .Workers import Worker
 import socket
+import logging
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 class TSHScoreboardStageWidgetSignals(QObject):
@@ -37,9 +41,11 @@ class Ruleset():
 
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
+    scoreboard = None
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, scoreboard=None) -> None:
         super().__init__(parent)
+        WebServer.scoreboard = scoreboard
         self.host_name = "0.0.0.0"
         self.port = 5000
 
@@ -79,10 +85,13 @@ class WebServer(QThread):
 
     @app.route('/post', methods=['POST'])
     def post_route():
-        print(request.get_data())
-        print(request.get_json(True))
-        print(json.loads(request.get_data()))
         StateManager.Set(f"score.stage_strike", json.loads(request.get_data()))
+        return "OK"
+
+    @app.route('/score', methods=['POST'])
+    def post_score():
+        score = json.loads(request.get_data())
+        WebServer.scoreboard.signals.UpdateSetData.emit(score)
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))
@@ -99,12 +108,14 @@ class WebServer(QThread):
 
 class TSHScoreboardStageWidget(QWidget):
 
-    def __init__(self, *args):
+    def __init__(self, scoreboard, *args):
         super().__init__(*args)
+
+        self.scoreboard = scoreboard
 
         self.signals = TSHScoreboardStageWidgetSignals()
 
-        self.webserver = WebServer()
+        self.webserver = WebServer(parent=None, scoreboard=self.scoreboard)
         self.webserver.start()
 
         uic.loadUi("src/layout/TSHScoreboardStage.ui", self)

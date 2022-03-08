@@ -228,6 +228,7 @@ class App extends Component {
     this.state.lastWinner = id;
 
     this.setState(this.state);
+    this.UpdateStreamScore();
   }
 
   GetStrikeNumber() {
@@ -239,21 +240,33 @@ class App extends Component {
   }
 
   componentDidMount() {
+    window.setInterval(() => this.FetchRuleset(), 1000);
+    window.setInterval(() => this.UpdateStream(), 1000);
+  }
+
+  FetchRuleset() {
     fetch("http://" + window.location.hostname + ":5000/ruleset")
       .then((res) => res.json())
       .then((data) => {
+        let oldRuleset = this.state.ruleset;
+
         this.setState({
-          playerNames: [data.p1, data.p2],
+          playerNames: [
+            data.p1 ? data.p1 : "P1",
+            data.p2 ? data.p2 : "P2"
+          ],
           ruleset: data.ruleset,
           phase: data.phase,
           match: data.match,
           bestOf: data.best_of
         });
-        this.Initialize();
+
+        // Reset only if ruleset changed
+        if(JSON.stringify(oldRuleset) !== JSON.stringify(this.state.ruleset)){
+          this.Initialize();
+        }
       })
       .catch(console.log);
-
-    window.setInterval(() => this.UpdateStream(), 1000);
   }
 
   UpdateStream() {
@@ -281,6 +294,19 @@ class App extends Component {
     };
 
     fetch("http://" + window.location.hostname + ":5000/post", {
+      method: "POST",
+      body: JSON.stringify(data),
+      contentType: "application/json",
+    });
+  }
+
+  UpdateStreamScore(){
+    let data = {
+      team1score: this.state.stagesWon[0].length,
+      team2score: this.state.stagesWon[1].length
+    }
+
+    fetch("http://" + window.location.hostname + ":5000/score", {
       method: "POST",
       body: JSON.stringify(data),
       contentType: "application/json",
