@@ -122,7 +122,9 @@
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .twitter`),
-            String(player.twitter)
+            player.twitter
+              ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+              : ""
           );
 
           SetInnerHtml(

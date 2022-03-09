@@ -131,6 +131,16 @@ body {
   align-items: center;
 }
 
+.twitter_logo {
+  background-image: url(./twitter.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
 .logo {
   position: absolute;
   top: 900px;
@@ -145,7 +155,7 @@ body {
 }
 
 .t1 .sponsor {
-  color: #f44336;
+  color: #f99090;
 }
 
 .t2 .sponsor {
@@ -216,7 +226,7 @@ body {
   display: flex;
   box-sizing: border-box;
   border-radius: 8px;
-  background-color: #212121ff;
+  background-color: #121212ff;
 }
 
 .info.material_container {

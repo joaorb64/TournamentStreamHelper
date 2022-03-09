@@ -26,6 +26,7 @@ body {
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1.1;
 }
 
 .container {
@@ -35,7 +36,7 @@ body {
   display: flex;
   box-sizing: border-box;
   border-radius: 8px;
-  background-color: #212121ff;
+  background-color: #18181b;
 }
 
 .p1.container > div:not(:last-child) {
@@ -98,23 +99,35 @@ body {
   flex-direction: column;
   overflow: hidden;
   justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
-.fgc.thin .name_twitter {
+.fgc .name_twitter {
   flex-direction: row;
   justify-content: space-between;
 }
 
-.fgc.thin .p2 .name_twitter {
+.fgc .p2 .name_twitter {
   flex-direction: row-reverse;
 }
 
 .name_twitter .name {
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .name_twitter .twitter {
-  font-size: 18px;
+  font-size: 20px;
+}
+
+.twitter_logo {
+  background-image: url(./twitter.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
 }
 
 .logo {
@@ -139,7 +152,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 645px;
-  height: 30px;
+  height: 34px;
   color: white;
   padding-left: 20px;
   padding-right: 20px;
@@ -162,7 +175,7 @@ body {
 }
 
 .info.container.top {
-  top: 8px;
+  top: 6px;
   width: 400px;
 }
 
@@ -179,7 +192,7 @@ body {
 }
 
 .info.container.bottom {
-  top: 110px;
+  top: 108px;
   display: flex;
   justify-content: space-around;
 }
@@ -196,7 +209,7 @@ body {
   background-size: contain;
   border-radius: 8px;
   overflow: hidden;
-  background-color: #424242ff;
+  background-color: #3f3f46;
 }
 
 .icon div:not(.text) {
@@ -205,15 +218,13 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #424242ff;
+  background-color: #3f3f46;
 }
 
-.fgc.thin .icon.sponsor div:not(.text) {
-  height: 32px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #424242ff;
+.fgc.thin .icon div:not(.text) {
+  height: 38px;
+  width: 38px;
+  background-size: cover;
 }
 
 .character_container {
@@ -243,7 +254,7 @@ body {
   width: 48px;
   height: 100%;
   font-size: 38px;
-  color: white;
+  color: #f5f5f5;
   border-radius: 8px;
   flex-grow: 0;
   flex-shrink: 0;
@@ -252,6 +263,7 @@ body {
 
 .fgc.thin .score {
   font-size: 30px;
+  width: 38px;
 }
 
 .p1 .score {
@@ -259,7 +271,7 @@ body {
 }
 
 .p1 .sponsor {
-  color: #ff3837ff;
+  color: #f99090;
 }
 
 .p2 .score {
@@ -267,5 +279,5 @@ body {
 }
 
 .p2 .sponsor {
-  color: #1255a3ff;
+  color: #29b6f6;
 }
