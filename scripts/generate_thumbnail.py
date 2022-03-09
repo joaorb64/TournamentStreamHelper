@@ -319,19 +319,24 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
 
+        outline_color = (0, 0, 0)
+
         draw.text(text_coordinates, player_name,
-                  (255, 255, 255), font=font, anchor="mm")
+                  (255, 255, 255), font=font, anchor="mm", stroke_width=4, stroke_fill=outline_color)
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
     phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
     round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
     text_max_dimensions = (-1, 40.0/1080.0)
+    outline_color = (0, 0, 0)
+    stroke_width = 2
 
     if not display_phase:
         round_text_coordinates_center = (round_text_coordinates_center[0], (
             round_text_coordinates_center[1] + phase_text_coordinates_center[1])/2)
         text_max_dimensions = (-1, text_max_dimensions[1]*2)
+        stroke_width = stroke_width*2
 
     pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
     font_path = f"{opensans_path}/OpenSans-Semibold.ttf"
@@ -347,7 +352,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
         text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
         draw.text(text_coordinates, current_phase,
-                  (255, 255, 255), font=font, anchor="mm")
+                  (255, 255, 255), font=font, anchor="mm", stroke_width=stroke_width, stroke_fill=outline_color)
 
     current_round = find(f"score.match", data)
 
@@ -356,7 +361,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
     text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
     text_coordinates = (text_x, text_y)
     draw.text(text_coordinates, current_round,
-              (255, 255, 255), font=font, anchor="mm")
+              (255, 255, 255), font=font, anchor="mm", stroke_width=stroke_width, stroke_fill=outline_color)
 
 
 def paste_icon(thumbnail, icon_path):
