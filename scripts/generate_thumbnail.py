@@ -282,11 +282,28 @@ def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval
         return(result)
 
 
+def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, recursion_level=0):
+    if max_width <= 1:
+        raise ValueError("max_width too small")
+    if text_size <= 1:
+        raise ValueError("text_size too small")
+    thumbnail_copy = deepcopy(thumbnail)
+    draw = ImageDraw.Draw(thumbnail_copy)
+    font = ImageFont.truetype(font_path, text_size)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    calculated_width = bbox[-2]
+    if calculated_width <= max_width or recursion_level > 100:
+        return(text_size)
+    else:
+        return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
+
+
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_coordinates_center = [
         (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
-    text_player_max_dimensions = (-1, 100.0/1080.0)
+    text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
     pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
+    max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
     font_path = f"{opensans_path}/OpenSans-Bold.ttf"
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
@@ -314,31 +331,36 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 
         print(f"Processing {player_type}: {player_name}")
 
-        font = ImageFont.truetype(font_path, text_size)
+        actual_text_size = reduce_text_size_to_width(
+            thumbnail, font_path, text_size, player_name, max_width)
+        font = ImageFont.truetype(font_path, actual_text_size)
         text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
         text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
 
         outline_color = (0, 0, 0)
+        stroke_width = 4
 
         draw.text(text_coordinates, player_name,
-                  (255, 255, 255), font=font, anchor="mm", stroke_width=4, stroke_fill=outline_color)
+                  (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
     phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
     round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
-    text_max_dimensions = (-1, 40.0/1080.0)
+    text_max_dimensions = (480.0/1920.0, 40.0/1080.0)
     outline_color = (0, 0, 0)
     stroke_width = 2
 
     if not display_phase:
         round_text_coordinates_center = (round_text_coordinates_center[0], (
             round_text_coordinates_center[1] + phase_text_coordinates_center[1])/2)
-        text_max_dimensions = (-1, text_max_dimensions[1]*2)
+        text_max_dimensions = (
+            text_max_dimensions[0], text_max_dimensions[1]*2)
         stroke_width = stroke_width*2
 
     pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
+    max_width = round(text_max_dimensions[0]*thumbnail.size[0])
     font_path = f"{opensans_path}/OpenSans-Semibold.ttf"
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
@@ -347,21 +369,25 @@ def paste_round_text(thumbnail, data, display_phase=True):
     if display_phase:
         current_phase = find(f"score.phase", data)
 
-        font = ImageFont.truetype(font_path, text_size)
+        actual_text_size = reduce_text_size_to_width(
+            thumbnail, font_path, text_size, current_phase, max_width)
+        font = ImageFont.truetype(font_path, actual_text_size)
         text_x = round(phase_text_coordinates_center[0]*thumbnail.size[0])
         text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
         draw.text(text_coordinates, current_phase,
-                  (255, 255, 255), font=font, anchor="mm", stroke_width=stroke_width, stroke_fill=outline_color)
+                  (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
     current_round = find(f"score.match", data)
 
-    font = ImageFont.truetype(font_path, text_size)
+    actual_text_size = reduce_text_size_to_width(
+        thumbnail, font_path, text_size, current_round, max_width)
+    font = ImageFont.truetype(font_path, actual_text_size)
     text_x = round(round_text_coordinates_center[0]*thumbnail.size[0])
     text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
     text_coordinates = (text_x, text_y)
     draw.text(text_coordinates, current_round,
-              (255, 255, 255), font=font, anchor="mm", stroke_width=stroke_width, stroke_fill=outline_color)
+              (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_icon(thumbnail, icon_path):
