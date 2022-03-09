@@ -279,14 +279,14 @@ body {
 .character .video {
   top: 0;
   position: absolute;
-  left: -20%;
+  left: 0%;
 }
 
 .p2.character video {
   transform-origin: 50% 50%;
   transform: scaleX(-1);
   left: unset;
-  right: -20%;
+  right: 0%;
 }
 
 .p1.character .bg {
@@ -326,6 +326,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  overflow: hidden;
 }
 
 .portrait {
@@ -335,6 +336,7 @@ body {
   background-size: cover;
   background-position: center;
   filter: drop-shadow(-16px 12px 0px rgba(0, 0, 0, 0.8));
+  overflow: hidden;
 }
 
 .invert_shadow {

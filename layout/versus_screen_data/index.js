@@ -447,7 +447,7 @@
       data.score.team["2"].player["1"].id !=
         oldData.score.team["2"].player["1"].id
     ) {
-      playersRecentSets = [];
+      playersRecentSets = null;
       GetPlayersRecentSets();
     }
 
@@ -474,10 +474,10 @@
           `;
         });
       } else {
-        recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
+        recentSetsHtml += `No sets found`;
       }
     } else {
-      recentSetsHtml += `No sets found`;
+      recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
     }
 
     SetInnerHtml($(`.recent_sets_content`), recentSetsHtml);
