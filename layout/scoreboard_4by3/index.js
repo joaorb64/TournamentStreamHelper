@@ -108,7 +108,12 @@
             charactersHtml
           );
 
-          SetInnerHtml($(`.${team_id} .p${p + 1} .twitter`), player.twitter);
+          SetInnerHtml(
+            $(`.${team_id} .p${p + 1} .twitter`),
+            player.twitter
+              ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+              : ""
+          );
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .sponsor_logo`),

@@ -102,6 +102,16 @@ body {
   font-size: 25px;
 }
 
+.twitter_logo {
+  background-image: url(./twitter.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+}
+
 .sponsor {
   color: yellow;
 }
@@ -165,11 +175,13 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 44px;
-  height: 32px;
+  width: 38px;
+  height: 26px;
+  border: 2px solid white;
+  border-radius: 8px;
 }
 
 .character_container {
@@ -226,7 +238,7 @@ body {
 }
 
 .left .sponsor {
-  color: #ff3837ff;
+  color: #f99090;
 }
 
 .right .score {
@@ -234,7 +246,7 @@ body {
 }
 
 .right .sponsor {
-  color: #1255a3ff;
+  color: #29b6f6;
 }
 
 .sponsor_logo {
