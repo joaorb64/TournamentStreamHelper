@@ -203,7 +203,7 @@ body {
 
 .recent_sets {
   position: absolute;
-  top: 280px;
+  top: 340px;
   left: 50%;
   transform: translateX(-50%);
   width: 580px;
@@ -273,6 +273,20 @@ body {
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 22px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.wifi_icon {
+  background-image: url(./wifi.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+  display: inline-block;
 }
 
 .set_winner {

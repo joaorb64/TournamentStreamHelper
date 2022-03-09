@@ -25,7 +25,7 @@
     .from([".p1.container"], { duration: 1, x: "-100px", ease: "out" }, 0)
     .from([".p2.container"], { duration: 1, x: "100px", ease: "out" }, 0);
 
-  var playersRecentSets = [];
+  var playersRecentSets = null;
 
   async function GetPlayersRecentSets() {
     let playerFetches = [];
@@ -384,14 +384,14 @@
               gsap.timeline().fromTo(
                 [`.p${t + 1}.character .char${c}`],
                 {
-                  duration: 0.8,
-                  x: zIndexMultiplyier * -800 + "px",
+                  duration: 1,
+                  x: zIndexMultiplyier * -300 + "px",
                   z: 0,
-                  rotationY: zIndexMultiplyier * -270,
+                  rotationY: zIndexMultiplyier * 15 * (c + 1),
                   ease: "out",
                 },
                 {
-                  duration: 0.8,
+                  duration: 1,
                   x: 0,
                   z: -c * 50 + "px",
                   rotationY: zIndexMultiplyier * 15 * (c + 1),
@@ -453,25 +453,31 @@
 
     recentSetsHtml = "";
 
-    if (playersRecentSets && playersRecentSets.length > 0) {
-      playersRecentSets.slice(0, 5).forEach((_set) => {
-        recentSetsHtml += `
-          <div class="set_container">
-            <div class="${_set.winner == 0 ? "set_winner" : "set_loser"}">${
-          _set.score[0]
-        }</div>
-            <div class="set_info">
-              <div class="set_title">${_set.tournament}</div>
-              <div>${_set.date}</div>
+    if (playersRecentSets != null) {
+      if (playersRecentSets && playersRecentSets.length > 0) {
+        playersRecentSets.slice(0, 5).forEach((_set) => {
+          recentSetsHtml += `
+            <div class="set_container">
+              <div class="${_set.winner == 0 ? "set_winner" : "set_loser"}">${
+            _set.score[0]
+          }</div>
+              <div class="set_info">
+                <div class="set_title">${
+                  _set.online ? `<div class="wifi_icon"></div>` : ""
+                }${_set.tournament}</div>
+                <div>${_set.date}</div>
+              </div>
+              <div class="${_set.winner == 1 ? "set_winner" : "set_loser"}">${
+            _set.score[1]
+          }</div>
             </div>
-            <div class="${_set.winner == 1 ? "set_winner" : "set_loser"}">${
-          _set.score[1]
-        }</div>
-          </div>
-        `;
-      });
+          `;
+        });
+      } else {
+        recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
+      }
     } else {
-      recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
+      recentSetsHtml += `No sets found`;
     }
 
     SetInnerHtml($(`.recent_sets_content`), recentSetsHtml);
