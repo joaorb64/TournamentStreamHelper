@@ -97,6 +97,11 @@
     Promise.all(playerFetches).then((ids) => {
       console.log("Players: ", ids);
 
+      if (ids[0] == null || ids[1] == null) {
+        playersRecentSets = [];
+        return;
+      }
+
       let setsFetches = [];
 
       for (let i = 0; i < 30; i += 1) {
