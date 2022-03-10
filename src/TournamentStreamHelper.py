@@ -89,6 +89,9 @@ class Window(QMainWindow):
         if not os.path.exists("./user_data/games"):
             os.makedirs("./user_data/games")
 
+        if os.path.exists("./TSH_old.exe"):
+            os.remove("./TSH_old.exe")
+
         self.font_small = QFont(
             "./assets/font/RobotoCondensed.ttf", pointSize=8)
 
@@ -391,8 +394,14 @@ class Window(QMainWindow):
                             self.downloadDialogue.close()
                             tar = tarfile.open("update.tar.gz")
                             print(tar.getmembers())
+
+                            # backup layouts
                             os.rename(
                                 "./layout", f"./layout_backup_{str(time.time())}")
+
+                            # backup exe
+                            os.rename("./TSH.exe", "./TSH_old.exe")
+
                             for m in tar.getmembers():
                                 if "/" in m.name:
                                     m.name = m.name.split("/", 1)[1]
