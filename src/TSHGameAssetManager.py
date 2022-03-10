@@ -326,6 +326,17 @@ class TSHGameAssetManager(QObject):
                             charFiles[assetKey]["asset"] = assetPath + \
                                 list(skinFiles.values())[0]
 
+                    if asset.get("eyesights"):
+                        eyesights = asset.get("eyesights", {}).get(
+                            characterCodename, {})
+
+                        if len(eyesights.keys()) > 0:
+                            if str(skin) in eyesights:
+                                charFiles[assetKey]["eyesight"] = eyesights.get(
+                                    str(skin))
+                            else:
+                                charFiles[assetKey]["eyesight"] = list(
+                                    eyesights.values())[0]
                 except Exception as e:
                     print(traceback.format_exc())
 
