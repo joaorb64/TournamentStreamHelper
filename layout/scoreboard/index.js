@@ -60,7 +60,7 @@
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor`),
+            $(`.p${t + 1}.container .sponsor_icon`),
             player.sponsor_logo
               ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
               : ""
@@ -104,24 +104,26 @@
     SetInnerHtml(
       $(".info.container.bottom"),
       `
-            <div class="info container_inner">
-                ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-                ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-                ${
-                  data.score.best_of
-                    ? `<div>Best of ${data.score.best_of}</div>`
-                    : ""
-                }
-            </div>
-        `
+        <div class="info container_inner">
+            ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
+            ${data.score.match ? `<div>${data.score.match}</div>` : ""}
+            ${
+              data.score.best_of
+                ? `<div>Best of ${data.score.best_of}</div>`
+                : ""
+            }
+        </div>
+      `
     );
 
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));
     });
 
-    $(".icon:has(>.text:empty)").css("margin-right", "0");
-    $(".icon:has(>.text:empty)").css("margin-left", "0");
+    $(".container div:has(>.text:empty)").css("margin-right", "0");
+    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
+    $(".container div:has(>.text:empty)").css("margin-left", "0");
+    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   }
 
   $(window).on("load", () => {

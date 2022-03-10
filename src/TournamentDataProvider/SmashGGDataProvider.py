@@ -212,6 +212,7 @@ class SmashGGDataProvider(TournamentDataProvider):
             "tournament_phase": deep_get(_set, "phaseGroup.phase.name"),
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
+            "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else ""
         }
 
         players = [[], []]
@@ -491,7 +492,7 @@ class SmashGGDataProvider(TournamentDataProvider):
             if queues:
                 queue = next(
                     (q for q in queues if q and q.get(
-                        "stream", {}).get("streamName") == streamName),
+                        "stream", {}).get("streamName", "").lower() == streamName.lower()),
                     None
                 )
 

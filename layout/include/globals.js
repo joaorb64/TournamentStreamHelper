@@ -18,10 +18,10 @@ function FitText(target) {
   }
 
   textElement.css("font-size", "");
-  let fontSize = parseInt(target.css("font-size").split("px")[0]);
+  let fontSize = parseFloat(target.css("font-size").split("px")[0]);
 
   while (textElement[0].scrollWidth > target.width() && fontSize > 0) {
-    fontSize--;
+    fontSize -= 0.5;
     textElement.css("font-size", fontSize + "px");
   }
 }
@@ -33,7 +33,7 @@ function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
   let fadeOutTime = fadeTime;
   let fadeInTime = fadeTime;
 
-  if (html == null) html = "";
+  if (html == null || html == undefined) html = "";
 
   html = String(html);
 
@@ -48,8 +48,8 @@ function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
   document.fonts.ready.then(() => {
     if (
       force == true ||
-      he.decode(element.find(".text").html().replace(/'/g, '"')) !=
-        he.decode(html.replace(/'/g, '"'))
+      he.decode(String(element.find(".text").html()).replace(/'/g, '"')) !=
+        he.decode(String(html).replace(/'/g, '"'))
     ) {
       gsap.to(element.find(".text"), {
         autoAlpha: 0,
