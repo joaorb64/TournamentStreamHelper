@@ -15,10 +15,10 @@
 
     let characters = data.score.team[team].player[player].character;
 
-    if (JSON.stringify(characters) != JSON.stringify(oldCharacters)) {
+    if (JSON.stringify(characters) != oldCharacters) {
       console.log(oldCharacters);
       console.log(characters);
-      oldCharacters = characters;
+      oldCharacters = JSON.stringify(characters);
 
       assetToUse = "full";
       characterAssets = [];
