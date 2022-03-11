@@ -61,17 +61,21 @@ class WebServer(QThread):
         })
 
         # Add player names
-        for i in [1, 2]:
-            if StateManager.Get(f"score.team.{i}.teamName"):
+        teams = [1, 2]
+        if WebServer.scoreboard.teamsSwapped:
+            teams.reverse()
+
+        for i, t in enumerate(teams):
+            if StateManager.Get(f"score.team.{i+1}.teamName"):
                 data.update({
-                    f"p{i}": StateManager.Get(f"score.team.{i}.teamName")
+                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
                 })
             else:
                 names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i}.player", {}).values() if p.get("name")]
+                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
 
                 data.update({
-                    f"p{i}": " / ".join(names)
+                    f"p{t}": " / ".join(names)
                 })
 
         # Add set data
