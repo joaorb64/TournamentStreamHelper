@@ -17,30 +17,29 @@
     ) {
       let html = "";
       Object.values(data.commentary).forEach((commentator, index) => {
-        if (commentator.name) {
-          html += `
-                <div class="commentator_container commentator${index}">
-                    <div class="name"></div>
-                    ${
-                      window.config.size == "normal"
-                        ? `<div class="real_name"></div>`
-                        : ""
-                    }
-                    ${
-                      window.config.size == "normal" ||
-                      window.config.size == "mini"
-                        ? `<div class="twitter"></div>`
-                        : ""
-                    }
-                </div>
-            `;
-        }
+        html += `
+              <div class="commentator_container commentator${index}">
+                  <div class="name"></div>
+                  ${
+                    window.config.size == "normal"
+                      ? `<div class="real_name"></div>`
+                      : ""
+                  }
+                  ${
+                    window.config.size == "normal" ||
+                    window.config.size == "mini"
+                      ? `<div class="twitter"></div>`
+                      : ""
+                  }
+              </div>
+          `;
       });
       $(".container").html(html);
     }
 
     Object.values(data.commentary).forEach((commentator, index) => {
       if (commentator.name) {
+        $(`.commentator${index}`).css("display", "");
         SetInnerHtml(
           $(`.commentator${index} .name`),
           `
@@ -56,6 +55,8 @@
           commentator.real_name
         );
         SetInnerHtml($(`.commentator${index} .twitter`), commentator.twitter);
+      } else {
+        $(`.commentator${index}`).css("display", "none");
       }
     });
   }

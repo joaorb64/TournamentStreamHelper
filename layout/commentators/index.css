@@ -41,6 +41,7 @@ body {
   justify-content: center;
   padding: 10px 30px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .mic_icon {
