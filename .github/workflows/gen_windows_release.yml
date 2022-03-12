@@ -22,7 +22,8 @@ jobs:
 
       - run: pip install -r dependencies/requirements.txt pyinstaller
       - run: |
-          PYTHONUTF8=1 pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+          set PYTHONUTF8=1
+          pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
       - name: commit files
