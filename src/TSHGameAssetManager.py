@@ -60,6 +60,10 @@ class TSHGameAssetManager(QObject):
                                  "/base_files/config.json", encoding='utf-8')
                         self.parent().games[game] = json.load(f)
 
+                        if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
+                            self.parent().games[game]["logo"] = QIcon(
+                                "./user_data/games/"+game+"/base_files/logo.png")
+
                         self.parent().games[game]["assets"] = {}
                         self.parent(
                         ).games[game]["path"] = "./user_data/games/"+game+"/"
