@@ -510,7 +510,7 @@ class Window(QMainWindow):
 
             model.clear()
             model.setHorizontalHeaderLabels([
-                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size"
+                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size", "Has stage data", "Has eyesight data"
             ])
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
@@ -518,6 +518,7 @@ class Window(QMainWindow):
             downloadList.setWordWrap(True)
             downloadList.resizeColumnsToContents()
             downloadList.resizeRowsToContents()
+            downloadList.setStyleSheet("QTableView::item { padding: 6px }")
 
             key = list(assets.keys())[index]
 
@@ -544,7 +545,11 @@ class Window(QMainWindow):
                     QStandardItem(assets[key]["assets"][asset].get("credits")),
                     QStandardItem(currVersion),
                     QStandardItem(version),
-                    QStandardItem(dlSize)
+                    QStandardItem(dlSize),
+                    QStandardItem(str(assets[key]["assets"]
+                                  [asset].get("has_stage_data", False))),
+                    QStandardItem(str(assets[key]["assets"][asset].get(
+                        "has_eyesight_data", False)))
                 ])
 
             downloadList.horizontalHeader().setStretchLastSection(True)
