@@ -23,6 +23,8 @@ jobs:
       - run: pip install -r dependencies/requirements.txt pyinstaller
       - run: |
           set PYTHONUTF8=1
+          REM change CHCP to UTF-8
+          CHCP 65001
           pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
