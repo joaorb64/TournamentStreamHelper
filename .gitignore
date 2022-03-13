@@ -10,9 +10,7 @@ update.tar.gz
 __pycache__/
 .vscode/
 dist
-build
 assets/log.txt
 assets/log_error.txt
 layout_backup*
 layout_custom*
-stage_strike_app/node*
