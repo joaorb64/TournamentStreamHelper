@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions
+  DialogActions,
 } from "@mui/material";
 import { Box } from "@mui/system";
 
@@ -61,7 +61,7 @@ class App extends Component {
     playerNames: [],
     phase: null,
     match: null,
-    bestOf: null
+    bestOf: null,
   };
 
   Initialize() {
@@ -169,7 +169,7 @@ class App extends Component {
       } else {
         if (
           this.state.strikedStages[this.state.currStep].length ===
-          this.state.ruleset.banCount
+          this.GetStrikeNumber()
         ) {
           return true;
         }
@@ -220,12 +220,18 @@ class App extends Component {
     this.state.currStep = 0;
 
     this.state.stagesWon[id].push(this.state.selectedStage);
+    this.state.stagesPicked.push(this.state.selectedStage);
 
     this.state.currPlayer = id;
     this.state.strikedStages = [[]];
     this.state.selectedStage = null;
 
     this.state.lastWinner = id;
+
+    // If next step has no bans, skip it
+    if (this.GetStrikeNumber() == 0) {
+      this.ConfirmClicked();
+    }
 
     this.setState(this.state);
     this.UpdateStreamScore();
@@ -235,7 +241,21 @@ class App extends Component {
     if (this.state.currGame == 0) {
       return this.state.ruleset.strikeOrder[this.state.currStep];
     } else {
-      return this.state.ruleset.banCount;
+      if (this.state.ruleset.banCount != 0) {
+        // Fixed ban count
+        return this.state.ruleset.banCount;
+      } else if (
+        this.state.ruleset.banByMaxGames &&
+        Object.keys(this.state.ruleset.banByMaxGames).includes(
+          String(this.state.bestOf)
+        )
+      ) {
+        console.log(this.state.bestOf);
+        // Ban by max games
+        return this.state.ruleset.banByMaxGames[String(this.state.bestOf)];
+      } else {
+        return 0;
+      }
     }
   }
 
@@ -251,18 +271,15 @@ class App extends Component {
         let oldRuleset = this.state.ruleset;
 
         this.setState({
-          playerNames: [
-            data.p1 ? data.p1 : "P1",
-            data.p2 ? data.p2 : "P2"
-          ],
+          playerNames: [data.p1 ? data.p1 : "P1", data.p2 ? data.p2 : "P2"],
           ruleset: data.ruleset,
           phase: data.phase,
           match: data.match,
-          bestOf: data.best_of
+          bestOf: data.best_of,
         });
 
         // Reset only if ruleset changed
-        if(JSON.stringify(oldRuleset) !== JSON.stringify(this.state.ruleset)){
+        if (JSON.stringify(oldRuleset) !== JSON.stringify(this.state.ruleset)) {
           this.Initialize();
         }
       })
@@ -300,11 +317,11 @@ class App extends Component {
     });
   }
 
-  UpdateStreamScore(){
+  UpdateStreamScore() {
     let data = {
       team1score: this.state.stagesWon[0].length,
-      team2score: this.state.stagesWon[1].length
-    }
+      team2score: this.state.stagesWon[1].length,
+    };
 
     fetch("http://" + window.location.hostname + ":5000/score", {
       method: "POST",
@@ -317,196 +334,165 @@ class App extends Component {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Container>
-          {this.state.ruleset ? (
-            <Box
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100vh",
-                gap: darkTheme.spacing(2),
-              }}
-              paddingY={2}
-            >
-              <Grid
-                container
-                xs
-                textAlign={"center"}
-                spacing={{ xs: 0, sm: 1 }}
-                justifyItems="center"
-                style={{ flexGrow: 0 }}
+        {this.state.ruleset && this.state.ruleset.neutralStages.length > 0 ? (
+          <>
+            <Container>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100vh",
+                  gap: darkTheme.spacing(2),
+                }}
+                paddingY={2}
               >
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{ typography: { xs: "h7", sm: "h5" } }}
-                    component="div"
-                  >
-                    {this.state.phase? this.state.phase+" / " : ""}
-                    {this.state.match? this.state.match+" / " : ""}
-                    Game {this.state.currGame + 1}
-                    {this.state.bestOf? " (Best of "+this.state.bestOf+")" : ""}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    sx={{ typography: { xs: "h7", sm: "h4" } }}
-                    component="div"
-                  >
-                    {this.state.stagesWon[0].length} -{" "}
-                    {this.state.stagesWon[1].length}
-                  </Typography>
-                </Grid>
-                {this.state.currPlayer != -1 ? (
+                <Grid
+                  container
+                  xs
+                  textAlign={"center"}
+                  spacing={{ xs: 0, sm: 1 }}
+                  justifyItems="center"
+                  style={{ flexGrow: 0 }}
+                >
                   <Grid item xs={12}>
                     <Typography
-                      sx={{ typography: { xs: "h6", sm: "h4" } }}
+                      sx={{ typography: { xs: "h7", sm: "h5" } }}
                       component="div"
                     >
-                      {this.state.selectedStage ? (
-                        <>Report Results</>
-                      ) : this.state.currGame > 0 && this.state.currStep > 0 ? (
-                        <>
-                          <span
-                            style={{
-                              color:
-                                darkTheme.palette[
-                                  `p${this.state.currPlayer + 1}color`
-                                ].main,
-                            }}
-                          >
-                            {this.state.playerNames[this.state.currPlayer]}
-                          </span>
-                          , pick a stage
-                        </>
-                      ) : (
-                        <>
-                          <span
-                            style={{
-                              color:
-                                darkTheme.palette[
-                                  `p${this.state.currPlayer + 1}color`
-                                ].main,
-                            }}
-                          >
-                            {this.state.playerNames[this.state.currPlayer]}
-                          </span>
-                          , ban {this.GetStrikeNumber()} stage(s)
-                        </>
-                      )}
+                      {this.state.phase ? this.state.phase + " / " : ""}
+                      {this.state.match ? this.state.match + " / " : ""}
+                      Game {this.state.currGame + 1}
+                      {this.state.bestOf
+                        ? " (Best of " + this.state.bestOf + ")"
+                        : ""}
                     </Typography>
                   </Grid>
-                )
-                :
-                  null
-                }
-              </Grid>
-              <Grid
-                container
-                xs
-                textAlign={"center"}
-                spacing={1}
-                justifyItems="center"
-                alignContent={"center"}
-                alignItems="center"
-                sx={{
-                  overflow: { xs: "scroll", lg: "hidden" },
-                  "flex-wrap": { xs: "nowrap", lg: "wrap" },
-                }}
-              >
-                <Grid
-                  item
-                  container
-                  xs={12}
-                  spacing={2}
-                  justifyContent="center"
-                  alignContent={"center"}
-                  style={{ height: "100%" }}
-                >
-                  <>
-                    {(this.state.currGame > 0
-                      ? this.state.ruleset.neutralStages.concat(
-                          this.state.ruleset.counterpickStages
-                        )
-                      : this.state.ruleset.neutralStages
-                    ).map((stage) => (
-                      <Grid item xs={4} sm={3} md={2}>
-                        <Card>
-                          <CardActionArea
-                            onClick={() => this.StageClicked(stage)}
-                          >
-                            {this.IsStageStriked(stage.name) ? (
-                              <div className="stamp stage-striked"></div>
-                            ) : null}
-                            {this.IsStageBanned(stage.name) ? (
-                              <div className="stamp stage-dsr"></div>
-                            ) : null}
-                            {this.state.selectedStage === stage.name ? (
-                              <div className="stamp stage-selected"></div>
-                            ) : null}
-                            <CardMedia
-                              component="img"
-                              height={{ sm: "50", md: "100" }}
-                              image={`http://${window.location.hostname}:5000/${stage.path}`}
-                            />
-                            <CardContent
-                              style={{ padding: darkTheme.spacing(1) }}
+                  <Grid item xs={12}>
+                    <Typography
+                      sx={{ typography: { xs: "h7", sm: "h4" } }}
+                      component="div"
+                    >
+                      {this.state.stagesWon[0].length} -{" "}
+                      {this.state.stagesWon[1].length}
+                    </Typography>
+                  </Grid>
+                  {this.state.currPlayer != -1 ? (
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{ typography: { xs: "h6", sm: "h4" } }}
+                        component="div"
+                      >
+                        {this.state.selectedStage ? (
+                          <>Report Results</>
+                        ) : this.state.currGame > 0 &&
+                          this.state.currStep > 0 ? (
+                          <>
+                            <span
+                              style={{
+                                color:
+                                  darkTheme.palette[
+                                    `p${this.state.currPlayer + 1}color`
+                                  ].main,
+                              }}
                             >
-                              <Typography
-                                variant="button"
-                                component="div"
-                                noWrap
-                                fontSize={{ xs: 8, md: "" }}
-                              >
-                                {stage.name}
-                              </Typography>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
-                      </Grid>
-                    ))}
-                  </>
+                              {this.state.playerNames[this.state.currPlayer]}
+                            </span>
+                            , pick a stage
+                          </>
+                        ) : (
+                          <>
+                            <span
+                              style={{
+                                color:
+                                  darkTheme.palette[
+                                    `p${this.state.currPlayer + 1}color`
+                                  ].main,
+                              }}
+                            >
+                              {this.state.playerNames[this.state.currPlayer]}
+                            </span>
+                            , ban {this.GetStrikeNumber()} stage(s)
+                          </>
+                        )}
+                      </Typography>
+                    </Grid>
+                  ) : null}
                 </Grid>
-              </Grid>
-              <Grid
-                container
-                xs
-                textAlign={"center"}
-                spacing={1}
-                justifyItems="center"
-                style={{ flexGrow: 0 }}
-              >
                 <Grid
                   container
-                  item
-                  xs={12}
-                  spacing={2}
-                  justifyContent="center"
+                  xs
+                  textAlign={"center"}
+                  spacing={1}
+                  justifyItems="center"
+                  alignContent={"center"}
+                  alignItems="center"
+                  sx={{
+                    overflow: { xs: "scroll", lg: "hidden" },
+                    "flex-wrap": { xs: "nowrap", lg: "wrap" },
+                  }}
                 >
-                  <Grid item xs={4}>
-                    <Button
-                      size={darkTheme.breakpoints.up("md") ? "large" : "small"}
-                      fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                      fullWidth
-                      color="success"
-                      variant={this.CanConfirm() ? "contained" : "outlined"}
-                      onClick={() => this.ConfirmClicked()}
-                    >
-                      Confirm
-                    </Button>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button
-                      size={darkTheme.breakpoints.up("md") ? "large" : "small"}
-                      fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                      fullWidth
-                      variant="outlined"
-                      onClick={() => this.Initialize()}
-                    >
-                      Reset
-                    </Button>
+                  <Grid
+                    item
+                    container
+                    xs={12}
+                    spacing={2}
+                    justifyContent="center"
+                    alignContent={"center"}
+                    style={{ height: "100%" }}
+                  >
+                    <>
+                      {(this.state.currGame > 0
+                        ? this.state.ruleset.neutralStages.concat(
+                            this.state.ruleset.counterpickStages
+                          )
+                        : this.state.ruleset.neutralStages
+                      ).map((stage) => (
+                        <Grid item xs={4} sm={3} md={2}>
+                          <Card>
+                            <CardActionArea
+                              onClick={() => this.StageClicked(stage)}
+                            >
+                              {this.IsStageStriked(stage.name) ? (
+                                <div className="stamp stage-striked"></div>
+                              ) : null}
+                              {this.IsStageBanned(stage.name) ? (
+                                <div className="stamp stage-dsr"></div>
+                              ) : null}
+                              {this.state.selectedStage === stage.name ? (
+                                <div className="stamp stage-selected"></div>
+                              ) : null}
+                              <CardMedia
+                                component="img"
+                                height={{ sm: "50", md: "100" }}
+                                image={`http://${window.location.hostname}:5000/${stage.path}`}
+                              />
+                              <CardContent
+                                style={{ padding: darkTheme.spacing(1) }}
+                              >
+                                <Typography
+                                  variant="button"
+                                  component="div"
+                                  noWrap
+                                  fontSize={{ xs: 8, md: "" }}
+                                >
+                                  {stage.name}
+                                </Typography>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </>
                   </Grid>
                 </Grid>
-                {this.state.selectedStage ? (
+                <Grid
+                  container
+                  xs
+                  textAlign={"center"}
+                  spacing={1}
+                  justifyItems="center"
+                  style={{ flexGrow: 0 }}
+                >
                   <Grid
                     container
                     item
@@ -521,11 +507,11 @@ class App extends Component {
                         }
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
-                        color="p1color"
-                        variant="contained"
-                        onClick={() => this.MatchWinner(0)}
+                        color="success"
+                        variant={this.CanConfirm() ? "contained" : "outlined"}
+                        onClick={() => this.ConfirmClicked()}
                       >
-                        {this.state.playerNames[0]} won
+                        Confirm
                       </Button>
                     </Grid>
                     <Grid item xs={4}>
@@ -535,97 +521,169 @@ class App extends Component {
                         }
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
+                        variant="outlined"
+                        onClick={() => this.Initialize()}
+                      >
+                        Reset
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  {this.state.selectedStage ? (
+                    <Grid
+                      container
+                      item
+                      xs={12}
+                      spacing={2}
+                      justifyContent="center"
+                    >
+                      <Grid item xs={4}>
+                        <Button
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          color="p1color"
+                          variant="contained"
+                          onClick={() => this.MatchWinner(0)}
+                        >
+                          {this.state.playerNames[0]} won
+                        </Button>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Button
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          color="p2color"
+                          variant="contained"
+                          onClick={() => this.MatchWinner(1)}
+                        >
+                          {this.state.playerNames[1]} won
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  ) : null}
+                </Grid>
+              </Box>
+            </Container>
+            <Dialog
+              open={this.state.currPlayer == -1}
+              onClose={() => {}}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <DialogTitle id="responsive-dialog-title">
+                {"Stage Strike"}
+              </DialogTitle>
+              <DialogContent>
+                <Box
+                  component="div"
+                  gap={2}
+                  display="flex"
+                  flexDirection={"column"}
+                >
+                  <Typography>
+                    Play rock-paper-scissors to decide who starts the stage
+                    strike process, or use the randomize button.
+                  </Typography>
+
+                  <Typography
+                    sx={{ typography: { xs: "h6", sm: "h5" } }}
+                    align="center"
+                  >
+                    Rock-Paper-Scissors
+                  </Typography>
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    spacing={2}
+                    justifyContent="center"
+                  >
+                    <Grid item xs>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        color="p1color"
+                        variant="contained"
+                        onClick={() => this.setState({ currPlayer: 0 })}
+                      >
+                        {this.state.playerNames[0]} won
+                      </Button>
+                    </Grid>
+                    <Grid item xs>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
                         color="p2color"
                         variant="contained"
-                        onClick={() => this.MatchWinner(1)}
+                        onClick={() => this.setState({ currPlayer: 1 })}
                       >
                         {this.state.playerNames[1]} won
                       </Button>
                     </Grid>
                   </Grid>
-                ) : null}
-              </Grid>
-            </Box>
-          ) : null}
-        </Container>
-        <Dialog
-          open={this.state.currPlayer == -1}
-          onClose={()=>{}}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <DialogTitle id="responsive-dialog-title">
-          {"Stage Strike"}
-        </DialogTitle>
-        <DialogContent>
-          <Box component="div" gap={2} display="flex" flexDirection={"column"}>
-            <Typography>
-              Play rock-paper-scissors to decide who starts the stage strike process, or use the randomize button.
-            </Typography>
+                  <Typography
+                    sx={{ typography: { xs: "h6", sm: "h5" } }}
+                    align="center"
+                  >
+                    Randomize
+                  </Typography>
+                  <Button
+                    size={darkTheme.breakpoints.up("md") ? "large" : "small"}
+                    fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                    fullWidth
+                    color="success"
+                    variant="outlined"
+                    onClick={() =>
+                      this.setState({ currPlayer: Math.random() > 0.5 ? 1 : 0 })
+                    }
+                  >
+                    Randomize
+                  </Button>
+                </Box>
+              </DialogContent>
+            </Dialog>
+          </>
+        ) : null}
 
-            <Typography
-              sx={{ typography: { xs: "h6", sm: "h5" } }}
-              align="center"
+        {this.state.ruleset != null &&
+        this.state.ruleset.neutralStages.length == 0 ? (
+          <>
+            <Dialog
+              open={this.state.currPlayer == -1}
+              onClose={() => {}}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
             >
-              Rock-Paper-Scissors
-            </Typography>
-            <Grid
-              container
-              item
-              xs={12}
-              spacing={2}
-              justifyContent="center"
-            >
-              <Grid item xs>
-                <Button
-                  size={
-                    darkTheme.breakpoints.up("md") ? "large" : "small"
-                  }
-                  fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                  fullWidth
-                  color="p1color"
-                  variant="contained"
-                  onClick={() => this.setState({currPlayer: 0})}
+              <DialogTitle id="responsive-dialog-title">
+                {"Stage Strike"}
+              </DialogTitle>
+              <DialogContent>
+                <Box
+                  component="div"
+                  gap={2}
+                  display="flex"
+                  flexDirection={"column"}
                 >
-                  {this.state.playerNames[0]} won
-                </Button>
-              </Grid>
-              <Grid item xs>
-                <Button
-                  size={
-                    darkTheme.breakpoints.up("md") ? "large" : "small"
-                  }
-                  fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                  fullWidth
-                  color="p2color"
-                  variant="contained"
-                  onClick={() => this.setState({currPlayer: 1})}
-                >
-                  {this.state.playerNames[1]} won
-                </Button>
-              </Grid>
-            </Grid>
-            <Typography
-              sx={{ typography: { xs: "h6", sm: "h5" } }}
-              align="center"
-            >
-              Randomize
-            </Typography>
-            <Button
-              size={
-                darkTheme.breakpoints.up("md") ? "large" : "small"
-              }
-              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-              fullWidth
-              color="success"
-              variant="outlined"
-              onClick={() => this.setState({currPlayer: (Math.random() > 0.5)? 1 : 0})}
-            >
-              Randomize
-            </Button>
-          </Box>
-        </DialogContent>
-        </Dialog>
+                  <Typography>
+                    No ruleset is selected. Please notify production/TO to
+                    select a ruleset.
+                  </Typography>
+                </Box>
+              </DialogContent>
+            </Dialog>
+          </>
+        ) : null}
       </ThemeProvider>
     );
   }
