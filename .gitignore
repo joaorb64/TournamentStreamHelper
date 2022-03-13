@@ -15,3 +15,5 @@ assets/log.txt
 assets/log_error.txt
 layout_backup*
 layout_custom*
+
+.idea/

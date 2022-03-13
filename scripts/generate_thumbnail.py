@@ -16,6 +16,8 @@ use_team_names = False
 use_sponsors = True
 used_assets = "full"
 
+print('nope')
+
 foreground_path = "./thumbnail_base/foreground.png"
 background_path = "./thumbnail_base/background.png"
 separator_h_path = "./thumbnail_base/separator_h.png"

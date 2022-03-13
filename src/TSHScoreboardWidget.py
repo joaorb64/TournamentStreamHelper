@@ -94,6 +94,19 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.layout().addWidget(col)
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
+
+        self.thumbnailBtn = QToolButton()
+        self.thumbnailBtn.setIcon(QIcon('assets/icons/eye.svg'))
+        self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
+        self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
+
+        self.thumbnailBtn.setMenu(QMenu())
+        self.thumbnailBtn.menu().addSection("Thumbnail")
+        actionScript: QAction = self.thumbnailBtn.menu().addAction("Pouet")
+        actionScript.triggered.connect(
+            lambda triggered, actionScript=actionScript: self.GenerateThumbnail())
+
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
         self.eyeBt.setSizePolicy(
@@ -312,6 +325,11 @@ class TSHScoreboardWidget(QDockWidget):
                              f"./user_data/team_logo/{value.lower()}.png")
         else:
             StateManager.Set(f"score.team.{team}.logo", None)
+
+    def GenerateThumbnail(self):
+        print('wesh bien ou bien')
+        # ou alors import !
+        exec(open("./scripts/generate_thumbnail.py").read())
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:
