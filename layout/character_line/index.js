@@ -56,16 +56,16 @@
         let img = a.img;
 
         let reposition = () => {
-          let proportion = img.naturalWidth / img.naturalHeight;
+          let proportionX = img.naturalWidth / img.naturalHeight;
+          let proportionY = img.naturalHeight / img.naturalWidth;
           $(`#character${i}`).css(
             "background-position",
             `${
-              ((characterAssets[i].eyesight.x * 1) /
-                proportion /
-                img.naturalWidth) *
+              (characterAssets[i].eyesight.x / proportionX / img.naturalWidth) *
               100
             }% ${
-              ((characterAssets[i].eyesight.y * proportion) /
+              (characterAssets[i].eyesight.y /
+                proportionY /
                 img.naturalHeight) *
               100
             }%`

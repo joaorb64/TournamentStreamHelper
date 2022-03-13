@@ -136,20 +136,24 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
     def SetUserAccount(self, window, smashgg=False):
-        if self.provider.url:
-            window_text = ""
-            if "smash.gg" in self.provider.url or smashgg:
-                window_text = "Paste the URL to the player's SmashGG profile"
-            elif "challonge" in self.provider.url:
-                window_text = "Insert the player's name in bracket"
-            else:
-                print("Invalid tournament data provider")
-                return
-            text, okPressed = QInputDialog.getText(
-                window, "Set player", window_text, QLineEdit.Normal, "")
-            if okPressed:
-                SettingsManager.Set(self.provider.name+"_user", text)
-                TSHTournamentDataProvider.instance.signals.user_updated.emit()
+        providerName = "SmashGG"
+        window_text = ""
+
+        if (self.provider and self.provider.url and "smash.gg" in self.provider.url) or smashgg:
+            window_text = "Paste the URL to the player's SmashGG profile"
+        elif self.provider and self.provider.url and "challonge" in self.provider.url:
+            window_text = "Insert the player's name in bracket"
+            providerName = self.provider.name
+        else:
+            print("Invalid tournament data provider")
+            return
+
+        text, okPressed = QInputDialog.getText(
+            window, "Set player", window_text, QLineEdit.Normal, "")
+
+        if okPressed:
+            SettingsManager.Set(providerName+"_user", text)
+            TSHTournamentDataProvider.instance.signals.user_updated.emit()
 
     def LoadSets(self, mainWindow):
         sets = TSHTournamentDataProvider.instance.provider.GetMatches()

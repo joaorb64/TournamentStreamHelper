@@ -44,8 +44,8 @@ import unicodedata
 App = QApplication(sys.argv)
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    sys.stderr = open('./assets/log_error.txt', 'w')
-    sys.stdout = open('./assets/log.txt', 'w')
+    sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
+    sys.stdout = open('./assets/log.txt', 'w', encoding="utf-8")
 
 
 def remove_accents_lower(input_str):
@@ -291,9 +291,17 @@ class Window(QMainWindow):
         self.gameSelect.addItem("", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
             if game[1].get("name"):
-                self.gameSelect.addItem(game[1].get("name"), i+1)
+                self.gameSelect.addItem(game[1].get(
+                    "logo", QIcon()), game[1].get("name"), i+1)
             else:
-                self.gameSelect.addItem(game[0], i+1)
+                self.gameSelect.addItem(
+                    game[1].get("logo", QIcon()), game[0], i+1)
+        self.gameSelect.setIconSize(QSize(64, 64))
+        self.gameSelect.setFixedHeight(32)
+        view = QListView()
+        view.setIconSize(QSize(64, 64))
+        view.setStyleSheet("QListView::item { height: 32px; }")
+        self.gameSelect.setView(view)
         self.gameSelect.model().sort(0)
         self.SetGame()
 
@@ -510,7 +518,7 @@ class Window(QMainWindow):
 
             model.clear()
             model.setHorizontalHeaderLabels([
-                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size"
+                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size", "Has stage data", "Has eyesight data"
             ])
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
@@ -518,6 +526,7 @@ class Window(QMainWindow):
             downloadList.setWordWrap(True)
             downloadList.resizeColumnsToContents()
             downloadList.resizeRowsToContents()
+            downloadList.setStyleSheet("QTableView::item { padding: 6px }")
 
             key = list(assets.keys())[index]
 
@@ -544,7 +553,11 @@ class Window(QMainWindow):
                     QStandardItem(assets[key]["assets"][asset].get("credits")),
                     QStandardItem(currVersion),
                     QStandardItem(version),
-                    QStandardItem(dlSize)
+                    QStandardItem(dlSize),
+                    QStandardItem(str(assets[key]["assets"]
+                                  [asset].get("has_stage_data", False))),
+                    QStandardItem(str(assets[key]["assets"][asset].get(
+                        "has_eyesight_data", False)))
                 ])
 
             downloadList.horizontalHeader().setStretchLastSection(True)
