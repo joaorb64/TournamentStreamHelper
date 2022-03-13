@@ -379,16 +379,17 @@ class TSHScoreboardStageWidget(QWidget):
                 myRuleset.strikeOrder = ruleset.get(
                     "settings", {}).get("strikeOrder")
 
-                myRuleset.useDSR = ruleset.get("settings", {}).get(
-                    "additionalFlags", {}).get("useDSR", False)
-                myRuleset.useMDSR = ruleset.get("settings", {}).get(
-                    "additionalFlags", {}).get("useMDSR", False)
+                if deep_get(ruleset, "settings.additionalFlags") and isinstance(deep_get(ruleset, "settings.additionalFlags"), dict):
+                    myRuleset.useDSR = ruleset.get("settings", {}).get(
+                        "additionalFlags", {}).get("useDSR", False)
+                    myRuleset.useMDSR = ruleset.get("settings", {}).get(
+                        "additionalFlags", {}).get("useMDSR", False)
 
-                myRuleset.banCount = ruleset.get("settings", {}).get(
-                    "additionalFlags", {}).get("banCount", 0)
+                    myRuleset.banCount = ruleset.get("settings", {}).get(
+                        "additionalFlags", {}).get("banCount", 0)
 
-                myRuleset.banByMaxGames = ruleset.get("settings", {}).get(
-                    "additionalFlags", {}).get("banCountByMaxGames", 0)
+                    myRuleset.banByMaxGames = ruleset.get("settings", {}).get(
+                        "additionalFlags", {}).get("banCountByMaxGames", 0)
 
                 item = QStandardItem(ruleset.get("name"))
                 item.setData(myRuleset, Qt.ItemDataRole.UserRole)
