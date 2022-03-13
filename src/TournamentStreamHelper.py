@@ -44,8 +44,8 @@ import unicodedata
 App = QApplication(sys.argv)
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    sys.stderr = open('./assets/log_error.txt', 'w')
-    sys.stdout = open('./assets/log.txt', 'w')
+    sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
+    sys.stdout = open('./assets/log.txt', 'w', encoding="utf-8")
 
 
 def remove_accents_lower(input_str):
