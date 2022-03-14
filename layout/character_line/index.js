@@ -53,32 +53,7 @@
       $(".container").html(elements);
 
       characterAssets.forEach((a, i) => {
-        let img = a.img;
-
-        let reposition = () => {
-          let proportionX = img.naturalWidth / img.naturalHeight;
-          let proportionY = img.naturalHeight / img.naturalWidth;
-          $(`#character${i}`).css(
-            "background-position",
-            `${
-              (characterAssets[i].eyesight.x / proportionX / img.naturalWidth) *
-              100
-            }% ${
-              (characterAssets[i].eyesight.y /
-                proportionY /
-                img.naturalHeight) *
-              100
-            }%`
-          );
-        };
-
-        $(window).resize(() => {
-          reposition();
-        });
-
-        $(img).on("load", () => {
-          reposition();
-        });
+        CenterImage($(`#character${i}`), a.eyesight);
       });
     }
   }

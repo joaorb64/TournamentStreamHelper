@@ -518,7 +518,7 @@ class Window(QMainWindow):
 
             model.clear()
             model.setHorizontalHeaderLabels([
-                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size", "Has stage data", "Has eyesight data"
+                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size", "Stage data", "Eyesight data"
             ])
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
@@ -526,11 +526,18 @@ class Window(QMainWindow):
             downloadList.setWordWrap(True)
             downloadList.resizeColumnsToContents()
             downloadList.resizeRowsToContents()
-            downloadList.setStyleSheet("QTableView::item { padding: 6px }")
+            downloadList.setStyleSheet("QTableView::item { padding: 6px; }")
 
             key = list(assets.keys())[index]
 
-            for asset in assets[key]["assets"]:
+            hasBaseFiles = TSHGameAssetManager.instance.games.get(
+                key, {}).get("assets", {}).get("base_files", None) != None
+
+            sortedKeys = list(assets[key]["assets"].keys())
+            sortedKeys.sort(
+                key=lambda x: chr(0) if x == "base_files" else x)
+
+            for asset in sortedKeys:
                 dlSize = "{:.2f}".format(sum(
                     [f.get("size", 0) for f in list(
                         assets[key]["assets"][asset]["files"].values())]
@@ -538,7 +545,7 @@ class Window(QMainWindow):
 
                 currVersion = str(TSHGameAssetManager.instance.games.get(key, {}).get(
                     "assets", {}).get(asset, {}).get("version"))
-                print(currVersion)
+
                 version = str(assets[key]["assets"][asset].get("version"))
 
                 if currVersion != version:
@@ -554,11 +561,17 @@ class Window(QMainWindow):
                     QStandardItem(currVersion),
                     QStandardItem(version),
                     QStandardItem(dlSize),
-                    QStandardItem(str(assets[key]["assets"]
-                                  [asset].get("has_stage_data", False))),
-                    QStandardItem(str(assets[key]["assets"][asset].get(
-                        "has_eyesight_data", False)))
+                    QStandardItem("☑" if assets[key]["assets"][asset].get(
+                        "has_stage_data", False) else ""),
+                    QStandardItem("☑" if assets[key]["assets"][asset].get(
+                        "has_eyesight_data", False) else "")
                 ])
+
+                if not hasBaseFiles and asset != "base_files":
+                    for col in range(model.columnCount()):
+                        item = model.item(model.rowCount()-1, col)
+                        item.setEnabled(False)
+                        item.setSelectable(False)
 
             downloadList.horizontalHeader().setStretchLastSection(True)
             downloadList.resizeColumnsToContents()

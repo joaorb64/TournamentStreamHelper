@@ -26,7 +26,13 @@ function FitText(target) {
   }
 }
 
-function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
+function SetInnerHtml(
+  element,
+  html,
+  force = undefined,
+  fadeTime = 0.5,
+  middleFunction = undefined
+) {
   if (element == null) return;
   if (force == false) return;
 
@@ -57,6 +63,9 @@ function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
         onComplete: () => {
           element.find(".text").html(html);
           FitText(element);
+          if (middleFunction != undefined) {
+            middleFunction();
+          }
           gsap.to(element.find(".text"), {
             autoAlpha: 1,
             duration: fadeInTime,
@@ -65,4 +74,27 @@ function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
       });
     }
   });
+}
+
+function CenterImage(element, eyesight) {
+  let image = element.css("background-image");
+
+  console.log("CenterImage", image);
+
+  if (image != undefined && image.includes("url(")) {
+    let img = new Image();
+    img.src = image.split('url("')[1].split('")')[0];
+
+    $(img).on("load", () => {
+      console.log(element);
+      console.log(eyesight.x, img.naturalWidth);
+      console.log(eyesight.x / img.naturalWidth);
+      element.css(
+        "background-position",
+        `${(eyesight.x / img.naturalWidth) * 100}% ${
+          (eyesight.y / img.naturalHeight) * 100
+        }%`
+      );
+    });
+  }
 }
