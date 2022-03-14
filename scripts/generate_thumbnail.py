@@ -10,6 +10,7 @@ import shutil
 import string
 from copy import deepcopy
 import datetime
+import os
 
 display_phase = True
 use_team_names = False
@@ -25,6 +26,9 @@ out_path = "../out/thumbnails"
 tmp_path = "../tmp"
 icon_path = "../assets/icons/icon.png"
 
+font_list = ["../assets/font/OpenSans/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
+# font_list = ["https://github.com/edx/edx-fonts/raw/master/open-sans/fonts/Bold/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
+
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
 
@@ -35,21 +39,20 @@ with open(asset_data_path, 'rt', encoding='utf-8') as f:
 
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
 
+for i in range(0, len(font_list)):
+    if font_list[i].startswith("http"):
+        tmp_font_dir = f"{tmp_path}/fonts"
+        filename, extension = os.path.splitext(font_list[i])
+        filename = f"font_{i}{extension}"
+        Path(tmp_font_dir).mkdir(parents=True, exist_ok=True)
+        local_font_path = f"{tmp_font_dir}/{filename}"
+        with open(local_font_path, 'wb') as f:
+            font_response = requests.get(font_list[i])
+            f.write(font_response.content)
+            font_list[i] = local_font_path
 
-def download_opensans():
-    http_path = "https://www.fontsquirrel.com/fonts/download/open-sans"
-    local_path = f"{tmp_path}/opensans"
-    response = requests.get(http_path)
-    with open(f"{local_path}.zip", 'wb') as f:
-        f.write(response.content)
-    with zipfile.ZipFile(f"{local_path}.zip", 'r') as zip_ref:
-        Path(local_path).mkdir(parents=True, exist_ok=True)
-        zip_ref.extractall(local_path)
-    return(local_path)
-
-
-opensans_path = download_opensans()
-
+font_1 = font_list[0]
+font_2 = font_list[1]
 
 def find(element, json):
     keys = element.split('.')
@@ -304,7 +307,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
     pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
     max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
-    font_path = f"{opensans_path}/OpenSans-Bold.ttf"
+    font_path = font_1
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
     draw = ImageDraw.Draw(thumbnail)
@@ -361,7 +364,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
     pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
     max_width = round(text_max_dimensions[0]*thumbnail.size[0])
-    font_path = f"{opensans_path}/OpenSans-Semibold.ttf"
+    font_path = font_2
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
     draw = ImageDraw.Draw(thumbnail)
