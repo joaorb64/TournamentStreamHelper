@@ -16,31 +16,44 @@ use_team_names = False
 use_sponsors = True
 used_assets = "full"
 
-print('nope')
+print(f'on est là : {os.getcwd()}')
 
-foreground_path = "./thumbnail_base/foreground.png"
-background_path = "./thumbnail_base/background.png"
-separator_h_path = "./thumbnail_base/separator_h.png"
-separator_v_path = "./thumbnail_base/separator_v.png"
-data_path = "../out/program_state.json"
-out_path = "../out/thumbnails"
-tmp_path = "../tmp"
-icon_path = "../assets/icons/icon.png"
+global foreground_path
+global background_path
+global separator_h_path
+global separator_v_path
+global data_path
+global out_path
+global tmp_path
+global icon_path
+foreground_path = "./scripts/thumbnail_base/foreground.png"
+background_path = "./scripts/thumbnail_base/background.png"
+separator_h_path = "./scripts/thumbnail_base/separator_h.png"
+separator_v_path = "./scripts/thumbnail_base/separator_v.png"
+data_path = "./out/program_state.json"
+out_path = "./out/thumbnails"
+tmp_path = "./tmp"
+icon_path = "./assets/icons/icon.png"
 
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
 
+print('nopeeee')
+
 game_codename = data.get("game").get("codename")
-asset_data_path = f"../user_data/games/{game_codename}/{used_assets}/config.json"
+asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
 with open(asset_data_path, 'rt', encoding='utf-8') as f:
     all_eyesight = json.loads(f.read()).get("eyesights")
 
+print(f'aaaaa {tmp_path}')
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
-
+print('mkdir')
 
 def download_opensans():
+    print(f'hey {zipfile}')
     http_path = "https://www.fontsquirrel.com/fonts/download/open-sans"
     local_path = f"{tmp_path}/opensans"
+    print(f'hey {local_path}')
     response = requests.get(http_path)
     with open(f"{local_path}.zip", 'wb') as f:
         f.write(response.content)
@@ -49,9 +62,9 @@ def download_opensans():
         zip_ref.extractall(local_path)
     return(local_path)
 
-
+print('before download opensans 4')
 opensans_path = download_opensans()
-
+print('nope 4')
 
 def find(element, json):
     keys = element.split('.')
@@ -412,12 +425,18 @@ def paste_icon(thumbnail, icon_path):
 
 Path(out_path).mkdir(parents=True, exist_ok=True)
 
+print('nope 5')
+
 foreground = Image.open(foreground_path).convert('RGBA')
 background = Image.open(background_path).convert('RGBA')
+print('nope 6')
 
 thumbnail = Image.new("RGBA", foreground.size, "PINK")
+print('nope 7')
 composite_image = create_composite_image(background, thumbnail.size, (0, 0))
+print('nope 8')
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
+print('nope 9')
 thumbnail.paste(background, (0, 0), mask=background)
 thumbnail = paste_characters(thumbnail, data)
 composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))

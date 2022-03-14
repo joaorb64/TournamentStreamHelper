@@ -80,6 +80,7 @@ class TSHScoreboardWidget(QDockWidget):
         col = QWidget()
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
+        topOptions.layout().addStretch()
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.playerNumber = QSpinBox()
@@ -87,6 +88,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(self.SetPlayersPerTeam)
 
+        # THUMBNAIL
         col = QWidget()
         col.setLayout(QVBoxLayout())
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -95,17 +97,29 @@ class TSHScoreboardWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
 
-        self.thumbnailBtn = QToolButton()
-        self.thumbnailBtn.setIcon(QIcon('assets/icons/eye.svg'))
+        self.thumbnailBtn = QPushButton("Generate Thumbnail ")
+        self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
         self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
-        self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
+        #self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
+        self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
 
-        self.thumbnailBtn.setMenu(QMenu())
-        self.thumbnailBtn.menu().addSection("Thumbnail")
-        actionScript: QAction = self.thumbnailBtn.menu().addAction("Pouet")
-        actionScript.triggered.connect(
-            lambda triggered, actionScript=actionScript: self.GenerateThumbnail())
+        # THUMBNAIL CONFIG
+        # TODO
+        #self.thumbnailBtn.setMenu(QMenu())
+        #self.thumbnailBtn.menu().addSection("Thumbnail")
+        #actionScript: QAction = self.thumbnailBtn.menu().addAction("Pouet")
+        #actionScript.triggered.connect(
+        #    lambda triggered, actionScript=actionScript: self.GenerateThumbnail())
+
+        # VISIBILITY
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        topOptions.layout().addWidget(col)
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
 
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
