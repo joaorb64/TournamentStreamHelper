@@ -73,6 +73,7 @@ query SetQuery($id: ID!) {
         phaseGroup {
             phase {
                 name
+                groupCount
             }
             displayIdentifier
         }

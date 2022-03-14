@@ -66,3 +66,27 @@ function SetInnerHtml(element, html, force = undefined, fadeTime = 0.5) {
     }
   });
 }
+
+function CenterImage() {
+  let.img = new Image();
+  let.img.src = "../../" + asset.asset;
+
+  let proportionX = img.naturalWidth / img.naturalHeight;
+  let proportionY = img.naturalHeight / img.naturalWidth;
+  $(`#character${i}`).css(
+    "background-position",
+    `${
+      (characterAssets[i].eyesight.x / proportionX / img.naturalWidth) * 100
+    }% ${
+      (characterAssets[i].eyesight.y / proportionY / img.naturalHeight) * 100
+    }%`
+  );
+
+  $(window).resize(() => {
+    reposition();
+  });
+
+  $(img).on("load", () => {
+    reposition();
+  });
+}

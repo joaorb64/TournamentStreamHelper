@@ -29,7 +29,8 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
         phaseGroup {
             displayIdentifier
             phase {
-                name
+              name
+              groupCount
             }
         }
         stream {
