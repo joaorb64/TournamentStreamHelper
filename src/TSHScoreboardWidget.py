@@ -9,6 +9,9 @@ from .StateManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 
+from .thumbnail import main_generate_thumbnail as thumbnail
+# import main_generate_thumbnail as thumbnail
+
 
 class TSHScoreboardWidgetSignals(QObject):
     UpdateSetData = pyqtSignal(object)
@@ -341,9 +344,7 @@ class TSHScoreboardWidget(QDockWidget):
             StateManager.Set(f"score.team.{team}.logo", None)
 
     def GenerateThumbnail(self):
-        print('wesh bien ou bien')
-        # ou alors import !
-        exec(open("./scripts/generate_thumbnail.py").read())
+        thumbnail.generate()
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:
