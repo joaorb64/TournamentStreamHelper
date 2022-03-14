@@ -457,7 +457,10 @@ def generate():
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
     thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
-    thumbnail_filename = f"thumb-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
+    # TODO get char name
+    tag_player1 = find("score.team.1.player.1.name", data)
+    tag_player2 = find("score.team.2.player.1.name", data)
+    thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
     thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
     thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
 
