@@ -394,20 +394,21 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 
 def paste_main_icon(thumbnail, icon_path):
-    max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
-    max_size = (max_x_size, max_y_size)
+    if icon_path:
+        max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
+        max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+        max_size = (max_x_size, max_y_size)
 
-    icon_image = Image.open(icon_path).convert('RGBA')
-    icon_size = calculate_new_dimensions(icon_image.size, max_size)
-    icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+        icon_image = Image.open(icon_path).convert('RGBA')
+        icon_size = calculate_new_dimensions(icon_image.size, max_size)
+        icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 
-    icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
-    icon_y = round(thumbnail.size[1]*(6.0/1080.0))
-    icon_coordinates = (icon_x, icon_y)
-    composite_image = create_composite_image(
-        icon_image, thumbnail.size, icon_coordinates)
-    thumbnail = Image.alpha_composite(thumbnail, composite_image)
+        icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
+        icon_y = round(thumbnail.size[1]*(6.0/1080.0))
+        icon_coordinates = (icon_x, icon_y)
+        composite_image = create_composite_image(
+            icon_image, thumbnail.size, icon_coordinates)
+        thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
 def paste_side_icon(thumbnail, icon_path_list):
