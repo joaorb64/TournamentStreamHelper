@@ -27,7 +27,6 @@ tmp_path = "../tmp"
 icon_path = "../assets/icons/icon.png"
 
 font_list = ["../assets/font/OpenSans/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
-# font_list = ["https://github.com/edx/edx-fonts/raw/master/open-sans/fonts/Bold/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
 
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
