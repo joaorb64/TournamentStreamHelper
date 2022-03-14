@@ -10,30 +10,24 @@ import shutil
 import string
 from copy import deepcopy
 import datetime
+import os
 
 display_phase = True
 use_team_names = False
 use_sponsors = True
 used_assets = "full"
 
-print(f'on est là : {os.getcwd()}')
+foreground_path = "./thumbnail_base/foreground.png"
+background_path = "./thumbnail_base/background.png"
+separator_h_path = "./thumbnail_base/separator_h.png"
+separator_v_path = "./thumbnail_base/separator_v.png"
+data_path = "../out/program_state.json"
+out_path = "../out/thumbnails"
+tmp_path = "../tmp"
+main_icon_path = "../assets/icons/icon.png"
+side_icon_list = ["", ""]
 
-global foreground_path
-global background_path
-global separator_h_path
-global separator_v_path
-global data_path
-global out_path
-global tmp_path
-global icon_path
-foreground_path = "./scripts/thumbnail_base/foreground.png"
-background_path = "./scripts/thumbnail_base/background.png"
-separator_h_path = "./scripts/thumbnail_base/separator_h.png"
-separator_v_path = "./scripts/thumbnail_base/separator_v.png"
-data_path = "./out/program_state.json"
-out_path = "./out/thumbnails"
-tmp_path = "./tmp"
-icon_path = "./assets/icons/icon.png"
+font_list = ["../assets/font/OpenSans/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
 
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
@@ -49,22 +43,20 @@ print(f'aaaaa {tmp_path}')
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
 print('mkdir')
 
-def download_opensans():
-    print(f'hey {zipfile}')
-    http_path = "https://www.fontsquirrel.com/fonts/download/open-sans"
-    local_path = f"{tmp_path}/opensans"
-    print(f'hey {local_path}')
-    response = requests.get(http_path)
-    with open(f"{local_path}.zip", 'wb') as f:
-        f.write(response.content)
-    with zipfile.ZipFile(f"{local_path}.zip", 'r') as zip_ref:
-        Path(local_path).mkdir(parents=True, exist_ok=True)
-        zip_ref.extractall(local_path)
-    return(local_path)
+for i in range(0, len(font_list)):
+    if font_list[i].startswith("http"):
+        tmp_font_dir = f"{tmp_path}/fonts"
+        filename, extension = os.path.splitext(font_list[i])
+        filename = f"font_{i}{extension}"
+        Path(tmp_font_dir).mkdir(parents=True, exist_ok=True)
+        local_font_path = f"{tmp_font_dir}/{filename}"
+        with open(local_font_path, 'wb') as f:
+            font_response = requests.get(font_list[i])
+            f.write(font_response.content)
+            font_list[i] = local_font_path
 
-print('before download opensans 4')
-opensans_path = download_opensans()
-print('nope 4')
+font_1 = font_list[0]
+font_2 = font_list[1]
 
 def find(element, json):
     keys = element.split('.')
@@ -319,7 +311,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
     pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
     max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
-    font_path = f"{opensans_path}/OpenSans-Bold.ttf"
+    font_path = font_1
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
     draw = ImageDraw.Draw(thumbnail)
@@ -376,7 +368,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
     pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
     max_width = round(text_max_dimensions[0]*thumbnail.size[0])
-    font_path = f"{opensans_path}/OpenSans-Semibold.ttf"
+    font_path = font_2
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
     draw = ImageDraw.Draw(thumbnail)
@@ -405,21 +397,48 @@ def paste_round_text(thumbnail, data, display_phase=True):
               (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
-def paste_icon(thumbnail, icon_path):
-    max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+def paste_main_icon(thumbnail, icon_path):
+    if icon_path:
+        max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
+        max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+        max_size = (max_x_size, max_y_size)
+
+        icon_image = Image.open(icon_path).convert('RGBA')
+        icon_size = calculate_new_dimensions(icon_image.size, max_size)
+        icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+
+        icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
+        icon_y = round(thumbnail.size[1]*(6.0/1080.0))
+        icon_coordinates = (icon_x, icon_y)
+        composite_image = create_composite_image(
+            icon_image, thumbnail.size, icon_coordinates)
+        thumbnail = Image.alpha_composite(thumbnail, composite_image)
+    return(thumbnail)
+
+def paste_side_icon(thumbnail, icon_path_list):
+    if len(icon_path_list) > 2:
+        raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
+
+    max_x_size = round(thumbnail.size[0]*(100.0/1920.0))
+    max_y_size = round(thumbnail.size[1]*(100.0/1080.0))
     max_size = (max_x_size, max_y_size)
+    icon_y = round(thumbnail.size[1]*(10.0/1080.0))
 
-    icon_image = Image.open(icon_path).convert('RGBA')
-    icon_size = calculate_new_dimensions(icon_image.size, max_size)
-    icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+    for index in range(0, len(icon_path_list)):
+        icon_path = icon_path_list[index]
+        if icon_path:
+            icon_image = Image.open(icon_path).convert('RGBA')
+            icon_size = calculate_new_dimensions(icon_image.size, max_size)
+            icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 
-    icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
-    icon_y = round(thumbnail.size[1]*(6.0/1080.0))
-    icon_coordinates = (icon_x, icon_y)
-    composite_image = create_composite_image(
-        icon_image, thumbnail.size, icon_coordinates)
-    thumbnail = Image.alpha_composite(thumbnail, composite_image)
+            icon_x = index*round(thumbnail.size[0] - icon_size[0])
+            x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
+            icon_x = icon_x + x_offset
+
+            icon_coordinates = (icon_x, icon_y)
+            composite_image = create_composite_image(
+                icon_image, thumbnail.size, icon_coordinates)
+            thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
 
@@ -443,7 +462,8 @@ composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
 paste_player_text(thumbnail, data, use_team_names, use_sponsors)
 paste_round_text(thumbnail, data, display_phase)
-thumbnail = paste_icon(thumbnail, icon_path)
+thumbnail = paste_main_icon(thumbnail, main_icon_path)
+thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
 thumbnail_filename = f"thumb-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
 thumbnail.save(f"{out_path}/{thumbnail_filename}.png")

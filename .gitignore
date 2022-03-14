@@ -14,18 +14,18 @@ assets/log.txt
 assets/log_error.txt
 layout_backup*
 layout_custom*
-
 .idea/
-TSH.files
-
-TSH.cxxflags
-
-TSH.creator.user
-
-TSH.creator
 
 TSH.cflags
 
 TSH.config
+
+TSH.creator
+
+TSH.creator.user
+
+TSH.cxxflags
+
+TSH.files
 
 TSH.includes

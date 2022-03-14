@@ -206,10 +206,17 @@ class SmashGGDataProvider(TournamentDataProvider):
         p1 = deep_get(_set, "slots", [])[0]
         p2 = deep_get(_set, "slots", [])[1]
 
+        # Add Pool identifier if phase has multiple Pools
+        phase_name = deep_get(_set, "phaseGroup.phase.name")
+
+        if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
+            phase_name += " - Pool " + \
+                deep_get(_set, "phaseGroup.displayIdentifier")
+
         setData = {
             "id": _set.get("id"),
             "round_name": _set.get("fullRoundText"),
-            "tournament_phase": deep_get(_set, "phaseGroup.phase.name"),
+            "tournament_phase": phase_name,
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
             "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else ""
