@@ -24,7 +24,8 @@ separator_v_path = "./thumbnail_base/separator_v.png"
 data_path = "../out/program_state.json"
 out_path = "../out/thumbnails"
 tmp_path = "../tmp"
-icon_path = "../assets/icons/icon.png"
+main_icon_path = "../assets/icons/icon.png"
+side_icon_list = ["", ""]
 
 font_list = ["../assets/font/OpenSans/OpenSans-Bold.ttf", "../assets/font/OpenSans/OpenSans-Semibold.ttf"]
 
@@ -392,21 +393,48 @@ def paste_round_text(thumbnail, data, display_phase=True):
               (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
-def paste_icon(thumbnail, icon_path):
-    max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+def paste_main_icon(thumbnail, icon_path):
+    if icon_path:
+        max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
+        max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+        max_size = (max_x_size, max_y_size)
+
+        icon_image = Image.open(icon_path).convert('RGBA')
+        icon_size = calculate_new_dimensions(icon_image.size, max_size)
+        icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+
+        icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
+        icon_y = round(thumbnail.size[1]*(6.0/1080.0))
+        icon_coordinates = (icon_x, icon_y)
+        composite_image = create_composite_image(
+            icon_image, thumbnail.size, icon_coordinates)
+        thumbnail = Image.alpha_composite(thumbnail, composite_image)
+    return(thumbnail)
+
+def paste_side_icon(thumbnail, icon_path_list):
+    if len(icon_path_list) > 2:
+        raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
+
+    max_x_size = round(thumbnail.size[0]*(100.0/1920.0))
+    max_y_size = round(thumbnail.size[1]*(100.0/1080.0))
     max_size = (max_x_size, max_y_size)
+    icon_y = round(thumbnail.size[1]*(10.0/1080.0))
 
-    icon_image = Image.open(icon_path).convert('RGBA')
-    icon_size = calculate_new_dimensions(icon_image.size, max_size)
-    icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+    for index in range(0, len(icon_path_list)):
+        icon_path = icon_path_list[index]
+        if icon_path:
+            icon_image = Image.open(icon_path).convert('RGBA')
+            icon_size = calculate_new_dimensions(icon_image.size, max_size)
+            icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
 
-    icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
-    icon_y = round(thumbnail.size[1]*(6.0/1080.0))
-    icon_coordinates = (icon_x, icon_y)
-    composite_image = create_composite_image(
-        icon_image, thumbnail.size, icon_coordinates)
-    thumbnail = Image.alpha_composite(thumbnail, composite_image)
+            icon_x = index*round(thumbnail.size[0] - icon_size[0])
+            x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
+            icon_x = icon_x + x_offset
+
+            icon_coordinates = (icon_x, icon_y)
+            composite_image = create_composite_image(
+                icon_image, thumbnail.size, icon_coordinates)
+            thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
 
@@ -424,7 +452,8 @@ composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
 paste_player_text(thumbnail, data, use_team_names, use_sponsors)
 paste_round_text(thumbnail, data, display_phase)
-thumbnail = paste_icon(thumbnail, icon_path)
+thumbnail = paste_main_icon(thumbnail, main_icon_path)
+thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
 thumbnail_filename = f"thumb-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
 thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
