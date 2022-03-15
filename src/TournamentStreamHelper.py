@@ -3,6 +3,8 @@
 
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+
+from src.TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHScoreboardWidget import *
 from .Workers import *
 from .TSHPlayerDB import TSHPlayerDB
@@ -139,8 +141,14 @@ class Window(QMainWindow):
         commentary.setObjectName("Commentary")
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
 
+        playerList = TSHPlayerListWidget()
+        playerList.setObjectName("Player List")
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, playerList)
+
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
+        self.tabifyDockWidget(self.scoreboard, playerList)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)

@@ -1,0 +1,297 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
+}
+
+.text {
+  white-space: nowrap;
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
+  place-items: center;
+  place-content: center;
+  height: 100%;
+  gap: inherit;
+}
+
+body {
+  font-family: Roboto;
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1.1;
+}
+
+.container {
+  position: absolute;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: #18181b;
+  align-items: center;
+}
+
+.players_container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player.container > div:not(:last-child) {
+  margin-right: 8px;
+}
+
+.player.container > div:first-child {
+  margin-left: 8px;
+}
+
+.player.container {
+  position: unset;
+  width: 800px;
+  height: 70px;
+  padding: 10px 16px;
+}
+
+.player.container {
+  background-position: 100% 0;
+  right: 1010px;
+  flex-direction: row;
+}
+
+.name_twitter {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  overflow: hidden;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+.fgc .name_twitter {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.fgc .p2 .name_twitter {
+  flex-direction: row-reverse;
+}
+
+.name_twitter .name {
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+.name_twitter .twitter {
+  font-size: 18px;
+}
+
+.twitter_logo {
+  background-image: url(./twitter.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.logo {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 74px;
+  height: 74px;
+  background-image: url("./logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  z-index: 9;
+}
+
+.fgc .logo {
+  display: none;
+}
+
+.info.container {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 34px;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  font-size: 20px;
+}
+
+.info.container_inner {
+  display: flex;
+  width: 100%;
+  font-size: inherit;
+  justify-content: space-around;
+}
+
+.info.container_inner > div {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.info.container.top {
+  top: 4px;
+  width: 500px;
+}
+
+.fgc .info.container.top {
+  top: 8px;
+  height: 32px;
+  width: 300px;
+  font-size: 18px;
+}
+
+.fgc.thin .info.container.top {
+  top: 2px;
+  height: 48px;
+}
+
+.info.container.bottom {
+  top: 116px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.fgc .info.container.bottom {
+  top: unset;
+  bottom: 6px;
+}
+
+.icon {
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #3f3f46;
+}
+
+.thin .icon {
+  border-radius: 8px;
+}
+
+.icon div:not(.text) {
+  width: 48px;
+  height: 48px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #3f3f46;
+}
+
+.icon.stockicon div {
+  width: 128px;
+}
+
+.flag {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 36px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.sponsor_icon > div > div {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+}
+
+.fgc.thin .sponsor_icon > div > div {
+  width: 38px;
+  height: 38px;
+}
+
+.character_container {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+}
+
+.character_container > div {
+  overflow: hidden;
+  height: 48px;
+}
+
+.fgc.thin .character_container > div {
+  height: 100%;
+}
+
+.fgc.thin .character_container > div > div {
+  height: 100%;
+}
+
+.character_container > div > div {
+  overflow: hidden;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.character_container > div > div:not(:last-child) {
+  margin-right: 4px;
+}
+
+.score {
+  top: 14px;
+  width: 48px;
+  height: 48px;
+  font-size: 38px;
+  color: #f5f5f5;
+  border-radius: 12px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.fgc.thin .score {
+  font-size: 28px;
+  width: 38px;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.p1 .score {
+  background-color: #ff3837ff;
+}
+
+.p1 .sponsor {
+  color: #f99090;
+}
+
+.p2 .score {
+  background-color: #1255a3ff;
+}
+
+.p2 .sponsor {
+  color: #29b6f6;
+}

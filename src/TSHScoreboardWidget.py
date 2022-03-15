@@ -339,7 +339,6 @@ class TSHScoreboardWidget(QDockWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
-            print(self.team1column.findChild(QScrollArea))
             self.team1column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
