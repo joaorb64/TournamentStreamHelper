@@ -420,6 +420,7 @@ def generate():
     game_codename = data.get("game").get("codename")
     asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
     with open(asset_data_path, 'rt', encoding='utf-8') as f:
+        global all_eyesight
         all_eyesight = json.loads(f.read()).get("eyesights")
 
     Path(tmp_path).mkdir(parents=True, exist_ok=True)
