@@ -469,3 +469,5 @@ def generate():
 
     print(
         f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
+
+    return f"{out_path}/{thumbnail_filename}.png"
