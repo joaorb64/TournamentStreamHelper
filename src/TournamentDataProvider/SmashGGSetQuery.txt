@@ -1,5 +1,6 @@
 query SetQuery($id: ID!) {
     set(id: $id) {
+        id
         event {
             hasTasks
             videogame {

@@ -112,9 +112,6 @@ class SmashGGDataProvider(TournamentDataProvider):
             pool.waitForDone(5000)
             QCoreApplication.processEvents()
 
-            print(result.get("old"))
-            print(result.get("new"))
-
             finalResult = {}
             finalResult.update(result["new"])
             finalResult.update(result["old"])
@@ -439,9 +436,6 @@ class SmashGGDataProvider(TournamentDataProvider):
         except:
             print(traceback.format_exc())
             stageStrikeState = {}
-
-        print(selectedChars)
-        print(stageStrikeState)
 
         entrants = [[], []]
 

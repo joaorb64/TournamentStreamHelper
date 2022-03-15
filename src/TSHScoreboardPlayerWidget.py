@@ -463,7 +463,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for skin in sortedSkins:
             assetData = TSHGameAssetManager.instance.GetCharacterAssets(
                 element.currentData().get("codename"), skin)
-            print(assetData)
             if assetData == None:
                 assetData = {}
             item = QStandardItem()
