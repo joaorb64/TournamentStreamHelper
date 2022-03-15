@@ -305,6 +305,24 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").clicked.connect(self.ResetScore)
+        
+        self.scoreColumn.findChild(QComboBox, "phase").addItem("")
+
+        try:
+            with open('tournament_phases.txt', 'r') as f:
+                self.scoreColumn.findChild(QComboBox, "phase").addItems([l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
+        except Exception as e:
+            print("ERROR: Did not find tournament_phases.txt")
+            print(traceback.format_exc())
+        
+        self.scoreColumn.findChild(QComboBox, "match").addItem("")
+
+        try:
+            with open('tournament_matches.txt', 'r') as f:
+                self.scoreColumn.findChild(QComboBox, "match").addItems([l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
+        except Exception as e:
+            print("ERROR: Did not find tournament_matches.txt")
+            print(traceback.format_exc())
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
