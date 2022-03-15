@@ -42,8 +42,15 @@ body {
 
 .players_container {
   display: flex;
+  flex-direction: row;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.slot {
+  display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
 }
 
 .player.container > div:not(:last-child) {

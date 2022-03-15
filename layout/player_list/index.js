@@ -23,9 +23,10 @@
       let html = "";
 
       Object.values(data.player_list.slot).forEach((slot, i) => {
+        html += `<div class="slot slot${i + 1}">`;
         Object.values(slot.player).forEach((player, p) => {
           html += `
-            <div class="p${i + 1} player container">
+            <div class="p${p + 1} player container">
               <div class="icon avatar"></div>
               <div class="icon online_avatar"></div>
               <div class="flagcountry"></div>
@@ -39,6 +40,7 @@
             </div>
           `;
         });
+        html += "</div>";
       });
 
       $(".players_container").html(html);
@@ -48,7 +50,7 @@
       Object.values(slot.player).forEach((player, p) => {
         if (player) {
           SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
+            $(`.slot${t + 1} .p${p + 1}.container .name`),
             `
             <span>
               <span class="sponsor">
@@ -60,14 +62,14 @@
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .flagcountry`),
+            $(`.slot${t + 1} .p${p + 1}.container .flagcountry`),
             player.country.asset
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .flagstate`),
+            $(`.slot${t + 1} .p${p + 1}.container .flagstate`),
             player.state.asset
               ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
               : ""
@@ -82,7 +84,6 @@
                 oldData.player_list.slot[t + 1].player[p + 1].character
               )
           ) {
-            console.log("hey");
             Object.values(player.character).forEach((character, index) => {
               if (character.assets["portrait"]) {
                 charactersHtml += `
@@ -93,55 +94,57 @@
               }
             });
             SetInnerHtml(
-              $(`.p${t + 1}.container .character_container`),
+              $(`.slot${t + 1} .p${p + 1}.container .character_container`),
               charactersHtml,
               undefined,
               0.5,
               () => {
                 $(
-                  `.p${
-                    t + 1
+                  `.slot${t + 1} .p${
+                    p + 1
                   }.container .character_container .icon.stockicon div`
                 ).each((e, i) => {
-                  CenterImage(
-                    $(i),
-                    player.character[e + 1].assets["portrait"].eyesight
-                  );
+                  if (player.character[e + 1].assets["portrait"] != null) {
+                    CenterImage(
+                      $(i),
+                      player.character[e + 1].assets["portrait"].eyesight
+                    );
+                  }
                 });
               }
             );
           }
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor_icon`),
+            $(`.slot${t + 1} .p${p + 1}.container .sponsor_icon`),
             player.sponsor_logo
               ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .avatar`),
+            $(`.slot${t + 1} .p${p + 1}.container .avatar`),
             player.avatar
               ? `<div style="background-image: url('../../${player.avatar}')"></div>`
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .online_avatar`),
+            $(`.slot${t + 1} .p${p + 1}.container .online_avatar`),
             player.online_avatar
               ? `<div style="background-image: url('${player.online_avatar}')"></div>`
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .twitter`),
+            $(`.slot${t + 1} .p${p + 1}.container .twitter`),
             player.twitter
               ? `<span class="twitter_logo"></span>${String(player.twitter)}`
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor-container`),
+            $(`.slot${t + 1} .p${p + 1}.container .sponsor-container`),
             `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
           );
         }
