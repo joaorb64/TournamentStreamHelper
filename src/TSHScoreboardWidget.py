@@ -344,15 +344,20 @@ class TSHScoreboardWidget(QDockWidget):
             StateManager.Set(f"score.team.{team}.logo", None)
 
     def GenerateThumbnail(self):
-        thumbnailPath = thumbnail.generate()
-
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle("THS - Thumbnail")
-        msgBox.setText("The thumbnail has been generated here : ")
-        msgBox.setInformativeText(thumbnailPath)
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.exec()
+        try:
+            thumbnailPath = thumbnail.generate()
+            msgBox.setText("The thumbnail has been generated here : ")
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setInformativeText(thumbnailPath)
+        except Exception as e:
+            msgBox.setText("Warning")
+            msgBox.setInformativeText(str(e))
+            msgBox.setIcon(QMessageBox.Warning)
+        finally:
+            msgBox.exec()
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:

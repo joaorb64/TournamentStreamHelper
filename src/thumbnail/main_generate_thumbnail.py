@@ -416,6 +416,15 @@ def generate():
 
     with open(data_path, 'rt', encoding='utf-8') as f:
         data = json.loads(f.read())
+    # if data missing
+    # TODO if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
+    if not data.get("game").get("codename"):
+        raise Exception("Please select a game first")
+    if 'name' not in data.get("score").get("team").get("1").get("player").get("1"):
+        raise Exception("Player 1 tag missing")
+    # TODO refactor this to be cleaner and not copy/paste from last if
+    if 'name' not in data.get("score").get("team").get("2").get("player").get("1"):
+        raise Exception("Player 2 tag missing")
 
     game_codename = data.get("game").get("codename")
     asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
