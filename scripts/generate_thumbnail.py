@@ -32,16 +32,12 @@ font_list = ["../assets/font/OpenSans/OpenSans-Bold.ttf", "../assets/font/OpenSa
 with open(data_path, 'rt', encoding='utf-8') as f:
     data = json.loads(f.read())
 
-print('nopeeee')
-
 game_codename = data.get("game").get("codename")
-asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
+asset_data_path = f"../user_data/games/{game_codename}/{used_assets}/config.json"
 with open(asset_data_path, 'rt', encoding='utf-8') as f:
     all_eyesight = json.loads(f.read()).get("eyesights")
 
-print(f'aaaaa {tmp_path}')
 Path(tmp_path).mkdir(parents=True, exist_ok=True)
-print('mkdir')
 
 for i in range(0, len(font_list)):
     if font_list[i].startswith("http"):
@@ -444,18 +440,12 @@ def paste_side_icon(thumbnail, icon_path_list):
 
 Path(out_path).mkdir(parents=True, exist_ok=True)
 
-print('nope 5')
-
 foreground = Image.open(foreground_path).convert('RGBA')
 background = Image.open(background_path).convert('RGBA')
-print('nope 6')
 
 thumbnail = Image.new("RGBA", foreground.size, "PINK")
-print('nope 7')
 composite_image = create_composite_image(background, thumbnail.size, (0, 0))
-print('nope 8')
 thumbnail = Image.alpha_composite(thumbnail, composite_image)
-print('nope 9')
 thumbnail.paste(background, (0, 0), mask=background)
 thumbnail = paste_characters(thumbnail, data)
 composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
