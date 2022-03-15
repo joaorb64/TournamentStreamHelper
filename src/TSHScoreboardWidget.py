@@ -10,7 +10,6 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 
 from .thumbnail import main_generate_thumbnail as thumbnail
-# import main_generate_thumbnail as thumbnail
 
 
 class TSHScoreboardWidgetSignals(QObject):
