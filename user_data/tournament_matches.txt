@@ -1,0 +1,9 @@
+Winners Quarters
+Winners Semis
+Winners Finals
+------------------
+Losers Semis
+Losers Finals
+------------------
+Grand Finals
+Grand Finals Reset
