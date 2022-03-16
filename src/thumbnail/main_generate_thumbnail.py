@@ -492,10 +492,11 @@ def generate(settingsManager, isPreview = False):
     if main_icon_path and not os.path.isfile(main_icon_path):
         raise Exception(f"Main Icon {main_icon_path} doesn't exist !")
     side_icon_list = settings["side_icon_list"]
+    # not blocking so empty
     if side_icon_list[0] and not os.path.isfile(side_icon_list[0]):
-        raise Exception(f"Top left Icon {side_icon_list[0]} doesn't exist !")
+        side_icon_list[0] = ''
     if side_icon_list[1] and not os.path.isfile(side_icon_list[1]):
-        raise Exception(f"Top right Icon {side_icon_list[1]} doesn't exist !")
+        side_icon_list[1] = ''
     # BOOLEAN
     display_phase = settings["display_phase"]
     use_team_names = settings["use_team_names"]
