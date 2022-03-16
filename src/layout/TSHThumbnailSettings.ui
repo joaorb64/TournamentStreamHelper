@@ -153,8 +153,8 @@
   <widget class="QLabel" name="thumbnailPreview">
    <property name="geometry">
     <rect>
-     <x>196</x>
-     <y>12</y>
+     <x>220</x>
+     <y>30</y>
      <width>640</width>
      <height>360</height>
     </rect>
@@ -167,6 +167,19 @@
    </property>
    <property name="scaledContents">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>0</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Preview :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

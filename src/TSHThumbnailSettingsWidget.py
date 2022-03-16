@@ -32,8 +32,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.foreground.clicked.connect(lambda:self.SaveImage("foreground_path"))
         self.background.clicked.connect(lambda:self.SaveImage("background_path"))
         self.mainIcon.clicked.connect(lambda:self.SaveImage("main_icon_path"))
-        self.topLeftIcon.clicked.connect(lambda:self.SaveIcons("main_icon_path", 0))
-        self.topRightIcon.clicked.connect(lambda:self.SaveIcons("main_icon_path", 1))
+        self.topLeftIcon.clicked.connect(lambda:self.SaveIcons("side_icon_list", 0))
+        self.topRightIcon.clicked.connect(lambda:self.SaveIcons("side_icon_list", 1))
 
         # CHECK BOX
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
@@ -46,7 +46,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.preview = self.settings.findChild(QLabel, "thumbnailPreview")
 
-        # -- load settings a l'initialisation
+        # -- load settings at init
         settings = SettingsManager.Get("thumbnail")
         if settings is not None :
             print(f'found thumbnail settings ! {settings}')
@@ -76,38 +76,40 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
         self.preview.setPixmap(QPixmap(tmp_file))
 
+    # TODO do other way..
     def SaveIcons(self, key, index):
-        try:
-            # TODO do other way..
-            path = QFileDialog.getOpenFileName()[0]
-            print(f'\t- save {path} in {key}')
-            settings = SettingsManager.Get("thumbnail")
-            settings["side_icon_list"][index] = path
+        path = QFileDialog.getOpenFileName()[0]
+        print(f'\t- save {path} in {key}')
+        settings = SettingsManager.Get("thumbnail")
+        settings[key][index] = path
 
-            SettingsManager.Set("thumbnail", settings)
+        SettingsManager.Set("thumbnail", settings)
 
-            # re-generate preview
-            tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
-            self.preview.setPixmap(QPixmap(tmp_file))
-        except Exception as e:
-            print(e)
+        self.GeneratePreview()
 
     def SaveImage(self, key):
-        try:
-            path = QFileDialog.getOpenFileName()[0]
-            self.SaveSettings(key, path)
-        except Exception as e:
-            print(e)
+        path = QFileDialog.getOpenFileName()[0]
+        self.SaveSettings(key, path)
 
     def SaveSettings(self, key, val):
-        try:
-            print(f'\t- save {val} in {key}')
-            settings = SettingsManager.Get("thumbnail")
-            settings[key] = val
-            SettingsManager.Set("thumbnail", settings)
+        print(f'\t- save {val} in {key}')
+        settings = SettingsManager.Get("thumbnail")
+        settings[key] = val
+        SettingsManager.Set("thumbnail", settings)
 
-            # re-generate preview
-            tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
+        self.GeneratePreview()
+
+    # re-generate preview
+    def GeneratePreview(self):
+        try:
+            tmp_file = thumbnail.generate(isPreview=True, settingsManager = SettingsManager)
             self.preview.setPixmap(QPixmap(tmp_file))
         except Exception as e:
             print(e)
+            msgBox = QMessageBox()
+            msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+            msgBox.setWindowTitle("THS - Thumbnail")
+            msgBox.setText("Warning")
+            msgBox.setInformativeText(str(e))
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.exec()
