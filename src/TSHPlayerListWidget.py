@@ -38,25 +38,41 @@ class TSHPlayerListWidget(QDockWidget):
 
         self.widget.layout().addWidget(topOptions)
 
+        row = QWidget()
+        row.setLayout(QHBoxLayout())
+        row.setContentsMargins(0, 0, 0, 0)
+        row.layout().setSpacing(0)
+        topOptions.layout().addWidget(row)
+
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        topOptions.layout().addWidget(col)
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.slotNumber = QSpinBox()
         col.layout().addWidget(QLabel("Number of slots"))
         col.layout().addWidget(self.slotNumber)
         self.slotNumber.valueChanged.connect(self.SetSlotNumber)
+        row.layout().addWidget(col)
 
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
+        self.playerPerTeam = QSpinBox()
+        col.layout().addWidget(QLabel("Players per slot"))
+        col.layout().addWidget(self.playerPerTeam)
+        self.playerPerTeam.valueChanged.connect(self.SetPlayersPerTeam)
+        row.layout().addWidget(col)
+
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel("Characters per player"))
         col.layout().addWidget(self.charNumber)
         self.charNumber.valueChanged.connect(self.SetCharactersPerPlayer)
-
-        self.playerPerTeam = QSpinBox()
-        col.layout().addWidget(QLabel("Players per team"))
-        col.layout().addWidget(self.playerPerTeam)
-        self.playerPerTeam.valueChanged.connect(self.SetPlayersPerTeam)
+        row.layout().addWidget(col)
 
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
@@ -99,6 +115,7 @@ class TSHPlayerListWidget(QDockWidget):
             s = self.slotWidgets[-1]
             s.setParent(None)
             self.slotWidgets.remove(s)
+            StateManager.Unset(f'player_list.slot.{s.index}')
 
     def SetCharactersPerPlayer(self, value):
         for s in self.slotWidgets:

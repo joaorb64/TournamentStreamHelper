@@ -399,11 +399,13 @@ class TSHScoreboardWidget(QDockWidget):
             team1player.setParent(None)
             self.playerWidgets.remove(team1player)
             self.team1playerWidgets.remove(team1player)
+            team1player.Delete()
 
             team2player = self.team2playerWidgets[-1]
             team2player.setParent(None)
             self.playerWidgets.remove(team2player)
             self.team2playerWidgets.remove(team2player)
+            team2player.Delete()
 
         for team in [1, 2]:
             if StateManager.Get(f'score.team.{team}'):

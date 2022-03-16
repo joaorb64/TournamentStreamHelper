@@ -129,6 +129,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.SetupAutocomplete)
         self.SetupAutocomplete()
 
+    def Delete(self):
+        StateManager.Unset(self.path)
+
     def CharactersChanged(self):
         characters = {}
 
