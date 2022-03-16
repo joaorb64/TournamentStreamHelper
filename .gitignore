@@ -29,3 +29,17 @@ TSH.cxxflags
 TSH.files
 
 TSH.includes
+
+THS.cflags
+
+THS.config
+
+THS.creator
+
+THS.creator.user
+
+THS.cxxflags
+
+THS.files
+
+THS.includes

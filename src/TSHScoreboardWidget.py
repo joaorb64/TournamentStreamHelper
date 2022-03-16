@@ -106,14 +106,6 @@ class TSHScoreboardWidget(QDockWidget):
         #self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
 
-        # THUMBNAIL CONFIG
-        # TODO
-        #self.thumbnailBtn.setMenu(QMenu())
-        #self.thumbnailBtn.menu().addSection("Thumbnail")
-        #actionScript: QAction = self.thumbnailBtn.menu().addAction("Pouet")
-        #actionScript.triggered.connect(
-        #    lambda triggered, actionScript=actionScript: self.GenerateThumbnail())
-
         # VISIBILITY
         col = QWidget()
         col.setLayout(QVBoxLayout())
@@ -347,7 +339,7 @@ class TSHScoreboardWidget(QDockWidget):
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle("THS - Thumbnail")
         try:
-            thumbnailPath = thumbnail.generate()
+            thumbnailPath = thumbnail.generate(settingsManager = SettingsManager)
             msgBox.setText("The thumbnail has been generated here : ")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)

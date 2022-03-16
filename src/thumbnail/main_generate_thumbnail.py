@@ -403,26 +403,109 @@ def paste_side_icon(thumbnail, icon_path_list):
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
-def generate():
-    foreground_path = "./scripts/thumbnail_base/foreground.png"
-    background_path = "./scripts/thumbnail_base/background.png"
+def createFalseData():
+    # TODO "game" : recup game asset ?
+    # TODO "player.character" : random ? with asset available
+    data = {
+        "game": {
+            "codename": "roa",
+            "name": "Rivals of Aether",
+            "smashgg_id": 24
+        },
+        "score": {
+            "best_of": 0,
+            "match": "Winners Finals",
+            "phase": "Pool A",
+            "team": {
+                "1": {
+                    #"logo": null,
+                    "losers": False,
+                    "player": {
+                        "1": {
+                            #"avatar": null,
+                            "character": {
+                                "1": {
+                                    "assets": {},
+                                    "name": "",
+                                    "skin": ""
+                                }
+                            },
+                            "country": {},
+                            #"id": null,
+                            "mergedName": "Nintendo | Mario",
+                            "name": "Mario",
+                            #"online_avatar": null,
+                            #"sponsor_logo": null,
+                            "state": {},
+                            "team": "Nintendo"
+                        }
+                    },
+                    "score": 0,
+                    "teamName": "Team A"
+                },
+                "2": {
+                    "losers": False,
+                    "player": {
+                        "1": {
+                            #"avatar": null,
+                            "character": {
+                                "1": {
+                                    "assets": {},
+                                    "name": "",
+                                    "skin": ""
+                                }
+                            },
+                            "country": {},
+                            #"id": null,
+                            "mergedName": "Nintendo | Luigi",
+                            "name": "Luigi",
+                            #"online_avatar": null,
+                            #"sponsor_logo": null,
+                            "state": {},
+                            "team": "Nintendo"
+                        }
+                    },
+                    "score": 0,
+                    "teamName": "Team B"
+                }
+            }
+        }
+    }
+    return data
+
+def generate(settingsManager, isPreview = False):
+    # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
+    settings = settingsManager.Get("thumbnail")
+
     data_path = "./out/program_state.json"
-    out_path = "./out/thumbnails"
+    out_path = "./out/thumbnails" if not isPreview else "./tmp/thumbnail"
     tmp_path = "./tmp"
-    main_icon_path = "./assets/icons/icon.png"
-    side_icon_list = ["", ""]
+
+    # IMG PATH
+    # TODO test if file exists
+    foreground_path = settings["foreground_path"]
+    background_path = settings["background_path"]
+    main_icon_path = settings["main_icon_path"]
+    side_icon_list = settings["side_icon_list"]
+    # BOOLEAN
+    display_phase = settings["display_phase"]
+    use_team_names = settings["use_team_names"]
+    use_sponsors = settings["use_sponsors"]
 
     font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf", "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
 
-    with open(data_path, 'rt', encoding='utf-8') as f:
-        data = json.loads(f.read())
-    # if data missing
-    if not data.get("game").get("codename"):
-        raise Exception("Please select a game first")
-    # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
-    for i in [1, 2]:
-        if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
-            raise Exception(f"Player {i} tag missing")
+    if not isPreview:
+        with open(data_path, 'rt', encoding='utf-8') as f:
+            data = json.loads(f.read())
+        # if data missing
+        if not data.get("game").get("codename"):
+            raise Exception("Please select a game first")
+        # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
+        for i in [1, 2]:
+            if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
+                raise Exception(f"Player {i} tag missing")
+    else:
+        data = createFalseData()
 
     game_codename = data.get("game").get("codename")
     asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
@@ -466,15 +549,18 @@ def generate():
     thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
-    tag_player1 = find("score.team.1.player.1.name", data)
-    tag_player2 = find("score.team.2.player.1.name", data)
-    thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
-    thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
-    thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
-
-    shutil.rmtree(tmp_path)
-
-    print(
-        f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
-
-    return f"{out_path}/{thumbnail_filename}.png"
+    if not isPreview:
+        tag_player1 = find("score.team.1.player.1.name", data)
+        tag_player2 = find("score.team.2.player.1.name", data)
+        thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
+        thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
+        thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
+        shutil.rmtree(tmp_path)
+        print(
+            f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
+        return f"{out_path}/{thumbnail_filename}.png"
+    else:
+        thumbnail_filename = f"template"
+        thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
+        print(f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.jpg")
+        return f"{out_path}/{thumbnail_filename}.jpg"

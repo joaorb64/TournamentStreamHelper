@@ -3,6 +3,7 @@
 
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+from .TSHThumbnailSettingsWidget import *
 from .TSHScoreboardWidget import *
 from .Workers import *
 from .TSHPlayerDB import TSHPlayerDB
@@ -125,6 +126,11 @@ class Window(QMainWindow):
         self.setCentralWidget(central_widget)
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
+        thumbnailSetting = TSHThumbnailSettingsWidget()
+        thumbnailSetting.setObjectName("Thumbnail Settings")
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+
         tournamentInfo = TSHTournamentInfoWidget()
         tournamentInfo.setObjectName("Tournament Info")
         self.addDockWidget(
@@ -141,6 +147,7 @@ class Window(QMainWindow):
 
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
+        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
