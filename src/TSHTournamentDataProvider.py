@@ -262,6 +262,7 @@ class TSHTournamentDataProvider:
             row, 5).data(Qt.ItemDataRole.UserRole)
         mainWindow.smashGGSetSelecDialog.close()
 
+        setId["auto_update"] = "set"
         mainWindow.signals.NewSetSelected.emit(setId)
 
     def GetMatch(self, mainWindow, setId, overwrite=True):
