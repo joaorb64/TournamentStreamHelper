@@ -18,8 +18,8 @@ use_sponsors = True
 used_assets = "full"
 all_eyesight = False
 
-separator_h_path = "./scripts/thumbnail_base/separator_h.png"
-separator_v_path = "./scripts/thumbnail_base/separator_v.png"
+separator_h_path = "./assets/thumbnail_base/separator_h.png"
+separator_v_path = "./assets/thumbnail_base/separator_v.png"
 
 def find(element, json):
     keys = element.split('.')
@@ -494,8 +494,10 @@ def generate(settingsManager, isPreview = False):
     side_icon_list = settings["side_icon_list"]
     # not blocking so empty
     if side_icon_list[0] and not os.path.isfile(side_icon_list[0]):
+        print(f"Top Left Icon {side_icon_list[0]} doesn't exist !")
         side_icon_list[0] = ''
     if side_icon_list[1] and not os.path.isfile(side_icon_list[1]):
+        print(f"Top Right Icon {side_icon_list[1]} doesn't exist !")
         side_icon_list[1] = ''
     # BOOLEAN
     display_phase = settings["display_phase"]

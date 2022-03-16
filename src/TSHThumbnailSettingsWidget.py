@@ -53,8 +53,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             settings = SettingsManager.Get("thumbnail")
         else:
             settings = {
-                "foreground_path": "./scripts/thumbnail_base/foreground.png",
-                "background_path": "./scripts/thumbnail_base/background.png",
+                "foreground_path": "./assets/thumbnail_base/foreground.png",
+                "background_path": "./assets/thumbnail_base/background.png",
                 "display_phase": True,
                 "use_team_names": False,
                 "use_sponsors": True,
