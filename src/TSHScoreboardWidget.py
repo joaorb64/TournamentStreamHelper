@@ -327,6 +327,30 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").clicked.connect(self.ResetScore)
 
+        # Add default and user tournament phase title files
+        self.scoreColumn.findChild(QComboBox, "phase").addItem("")
+
+        for file in ['./assets/tournament_phases.txt', './user_data/tournament_phases.txt']:
+            try:
+                with open(file, 'r') as f:
+                    self.scoreColumn.findChild(QComboBox, "phase").addItems(
+                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
+            except Exception as e:
+                print(f"ERROR: Did not find {file}")
+                print(traceback.format_exc())
+
+        self.scoreColumn.findChild(QComboBox, "match").addItem("")
+
+        # Add default and user tournament match title files
+        for file in ['./assets/tournament_matches.txt', './user_data/tournament_matches.txt']:
+            try:
+                with open(file, 'r') as f:
+                    self.scoreColumn.findChild(QComboBox, "match").addItems(
+                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
+            except Exception as e:
+                print(f"ERROR: Did not find {file}")
+                print(traceback.format_exc())
+
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.team.{team}.logo",
@@ -496,21 +520,25 @@ class TSHScoreboardWidget(QDockWidget):
         self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
         self.timerLayout.setVisible(True)
 
-        if data and data.get("id"):
-            if data.get("id") != self.lastSetSelected:
-                StateManager.Unset(f'score.stage_strike')
-                self.lastSetSelected = data.get("id")
-                self.ClearScore()
+        if data.get("auto_update") == "set":
+            self.labelAutoUpdate.setText("Auto update (Set)")
+        elif data.get("auto_update") == "stream":
+            self.labelAutoUpdate.setText("Auto update (Stream)")
+        elif data.get("auto_update") == "user":
+            self.labelAutoUpdate.setText("Auto update (User)")
+        else:
+            self.labelAutoUpdate.setText("Auto update")
 
-                if data and data.get("id"):
-                    TSHTournamentDataProvider.instance.GetMatch(
-                        self, data["id"], overwrite=True)
+        if data.get("id") != None and data.get("id") != self.lastSetSelected:
+            StateManager.Unset(f'score.stage_strike')
+            self.lastSetSelected = data.get("id")
+            self.ClearScore()
 
-                self.autoUpdateTimer.timeout.connect(
-                    lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
-            else:
-                TSHTournamentDataProvider.instance.GetMatch(
-                    self, data["id"], overwrite=False)
+            TSHTournamentDataProvider.instance.GetMatch(
+                self, data["id"], overwrite=True)
+
+        self.autoUpdateTimer.timeout.connect(
+            lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
 
         if data.get("auto_update") == "stream":
             self.autoUpdateTimer.timeout.connect(
@@ -597,8 +625,6 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
     def UpdateSetData(self, data):
-        print(data)
-
         if data.get("round_name"):
             self.scoreColumn.findChild(
                 QComboBox, "match").setCurrentText(data.get("round_name"))

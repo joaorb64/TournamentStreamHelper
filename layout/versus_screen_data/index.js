@@ -384,13 +384,21 @@
 
           $(`.p${t + 1}.character`).html(html);
 
+          if (t == 0) characters = characters.reverse();
+          characters.forEach((character, c) => {
+            CenterImage(
+              $(`.p${t + 1}.character .char${c} .portrait`),
+              character.assets[ASSET_TO_USE].eyesight
+            );
+          });
+
           characters.forEach((character, c) => {
             if (character) {
               gsap.timeline().fromTo(
                 [`.p${t + 1}.character .char${c}`],
                 {
                   duration: 1,
-                  x: zIndexMultiplyier * -300 + "px",
+                  x: zIndexMultiplyier * -800 + "px",
                   z: 0,
                   rotationY: zIndexMultiplyier * 15 * (c + 1),
                   ease: "out",

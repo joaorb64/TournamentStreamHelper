@@ -463,7 +463,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for skin in sortedSkins:
             assetData = TSHGameAssetManager.instance.GetCharacterAssets(
                 element.currentData().get("codename"), skin)
-            print(assetData)
             if assetData == None:
                 assetData = {}
             item = QStandardItem()
@@ -480,9 +479,35 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if "icon" in asset.get("type", []):
                     key = k
 
+            pix = QPixmap.fromImage(QImage(assetData[key]["asset"]))
+
+            originalH = pix.height()
+
+            pix = pix.scaledToWidth(
+                64, Qt.TransformationMode.SmoothTransformation)
+
+            if asset.get("eyesight", {}).get("y", 0):
+                newImg = QImage(QSize(64, 48), QImage.Format.Format_RGBA64)
+                newImg.fill(QColor(0, 0, 0, 0))
+                painter = QPainter()
+                painter.begin(newImg)
+
+                moveY = 32/2 - \
+                    asset.get("eyesight").get("y", 0)/originalH*pix.height()
+                moveY = min(moveY, 16)
+                moveY = max(moveY, -16)
+
+                painter.drawPixmap(
+                    0,
+                    moveY,
+                    pix
+                )
+                painter.end()
+
+                pix = QPixmap.fromImage(newImg)
+
             item.setIcon(
-                QIcon(QPixmap.fromImage(QImage(assetData[key]["asset"]).scaledToWidth(
-                    64, Qt.TransformationMode.SmoothTransformation)))
+                QIcon(pix)
             )
             skinModel.appendRow(item)
 

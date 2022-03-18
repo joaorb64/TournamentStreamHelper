@@ -71,42 +71,65 @@
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .name`),
             `
-                        <span class="sponsor">${
-                          player.team ? player.team + "&nbsp;" : ""
-                        }</span>${String(player.name)}
-                    `
+              <span class="sponsor">${
+                player.team ? player.team + "&nbsp;" : ""
+              }</span>${String(player.name)}
+            `
           );
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .flagcountry`),
+            player.country.asset
+              ? `
+              <div class='flag' style='background-image: url(../../${String(
+                player.country.asset
+              ).toLowerCase()})'></div>
             `
-                        <div class='flag' style='background-image: url(../../${String(
-                          player.country.asset
-                        ).toLowerCase()})'></div>
-                    `
+              : ""
           );
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .flagstate`),
+            player.state.asset
+              ? `
+              <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
             `
-                        <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
-                    `
+              : ""
           );
 
           let charactersHtml = "";
 
-          Object.values(player.character).forEach((character) => {
-            if (character.assets["full"]) {
-              charactersHtml += `
-                                <div class='character' style='background-image: url(../../${character.assets["full"].asset})'></div>
-                            `;
-            }
-          });
+          if (
+            !oldData.score ||
+            JSON.stringify(
+              oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+            ) != JSON.stringify(player.character)
+          ) {
+            Object.values(player.character).forEach((character) => {
+              if (character.assets["full"]) {
+                charactersHtml += `
+                <div class='character' style='background-image: url(../../${character.assets["full"].asset})'></div>
+              `;
+              }
+            });
 
-          SetInnerHtml(
-            $(`.${team_id} .p${p + 1} .character_container`),
-            charactersHtml
-          );
+            SetInnerHtml(
+              $(`.${team_id} .p${p + 1} .character_container`),
+              charactersHtml,
+              undefined,
+              0.5,
+              () => {
+                $(
+                  `.${team_id} .p${p + 1} .character_container .character`
+                ).each((i, e) => {
+                  CenterImage(
+                    $(e),
+                    Object.values(player.character)[i].assets["full"].eyesight
+                  );
+                });
+              }
+            );
+          }
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .twitter`),
@@ -130,16 +153,16 @@
     SetInnerHtml(
       $(".info.container.bottom"),
       `
-            <div class="info container_inner">
-                ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-                ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-                ${
-                  data.score.best_of
-                    ? `<div>Best of ${data.score.best_of}</div>`
-                    : ""
-                }
-            </div>
-        `
+        <div class="info container_inner">
+            ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
+            ${data.score.match ? `<div>${data.score.match}</div>` : ""}
+            ${
+              data.score.best_of
+                ? `<div>Best of ${data.score.best_of}</div>`
+                : ""
+            }
+        </div>
+      `
     );
   }
 
