@@ -11,6 +11,7 @@ import string
 from copy import deepcopy
 import datetime
 import os
+import matplotlib.font_manager as fontman
 
 display_phase = True
 use_team_names = False
@@ -505,6 +506,10 @@ def generate(settingsManager, isPreview = False):
     use_sponsors = settings["use_sponsors"]
 
     font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf", "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
+    if settings["font_list"][0]:
+        font_list[0] = settings["font_list"][0]
+    if settings["font_list"][1]:
+        font_list[1] = settings["font_list"][1]
 
     if not isPreview:
         with open(data_path, 'rt', encoding='utf-8') as f:
@@ -526,22 +531,22 @@ def generate(settingsManager, isPreview = False):
         all_eyesight = json.loads(f.read()).get("eyesights")
 
     Path(tmp_path).mkdir(parents=True, exist_ok=True)
-    for i in range(0, len(font_list)):
-        if font_list[i].startswith("http"):
-            tmp_font_dir = f"{tmp_path}/fonts"
-            filename, extension = os.path.splitext(font_list[i])
-            filename = f"font_{i}{extension}"
-            Path(tmp_font_dir).mkdir(parents=True, exist_ok=True)
-            local_font_path = f"{tmp_font_dir}/{filename}"
-            with open(local_font_path, 'wb') as f:
-                font_response = requests.get(font_list[i])
-                f.write(font_response.content)
-                font_list[i] = local_font_path
+    # for i in range(0, len(font_list)):
+    #     if font_list[i]["fontPath"].startswith("http"):
+    #         tmp_font_dir = f"{tmp_path}/fonts"
+    #         filename, extension = os.path.splitext(font_list[i]["fontPath"])
+    #         filename = f"font_{i}{extension}"
+    #         Path(tmp_font_dir).mkdir(parents=True, exist_ok=True)
+    #         local_font_path = f"{tmp_font_dir}/{filename}"
+    #         with open(local_font_path, 'wb') as f:
+    #             font_response = requests.get(font_list[i]["fontPath"])
+    #             f.write(font_response.content)
+    #             font_list[i]["fontPath"] = local_font_path
 
     global font_1
     global font_2
-    font_1 = font_list[0]
-    font_2 = font_list[1]
+    font_1 = font_list[0]["fontPath"]
+    font_2 = font_list[1]["fontPath"]
 
     Path(out_path).mkdir(parents=True, exist_ok=True)
 

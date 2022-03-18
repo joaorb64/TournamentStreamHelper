@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 from pathlib import Path
-import os
+import sys, os
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
@@ -40,10 +40,17 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
 
-        self.phase_name.stateChanged.connect(lambda:self.SaveSettings("display_phase", self.phase_name.isChecked()))
-        self.team_name.stateChanged.connect(lambda:self.SaveSettings("use_team_names", self.team_name.isChecked()))
-        self.sponsor.stateChanged.connect(lambda:self.SaveSettings("use_sponsors", self.sponsor.isChecked()))
+        self.phase_name.stateChanged.connect(lambda: self.SaveSettings("display_phase", self.phase_name.isChecked()))
+        self.team_name.stateChanged.connect(lambda: self.SaveSettings("use_team_names", self.team_name.isChecked()))
+        self.sponsor.stateChanged.connect(lambda: self.SaveSettings("use_sponsors", self.sponsor.isChecked()))
 
+        # FONTS
+        self.selectFontPlayer = self.settings.findChild(QComboBox, "comboBoxFont")
+        self.selectTypeFontPlayer = self.settings.findChild(QComboBox, "comboBoxFontType")
+        self.selectFontPhase = self.settings.findChild(QComboBox, "comboBoxFontPhase")
+        self.selectTypeFontPhase = self.settings.findChild(QComboBox, "comboBoxFontTypePhase")
+
+        # PREVIEW
         self.preview = self.settings.findChild(QLabel, "thumbnailPreview")
 
         # -- load settings at init
@@ -61,11 +68,54 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 "main_icon_path": "./assets/icons/icon.png",
             }
             settings["side_icon_list"] = ["", ""]
+            settings["font_list"] = [{
+                                        "name": "Open Sans",
+                                        "type": "Type 1",
+                                        "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
+                                    }, {
+                                        "name": "Open Sans",
+                                        "type": "Type 2",
+                                        "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
+                                    }]
             SettingsManager.Set("thumbnail", settings)
 
         self.phase_name.setChecked(settings["display_phase"])
         self.team_name.setChecked(settings["use_team_names"])
         self.sponsor.setChecked(settings["use_sponsors"])
+
+        # Load OpenSans
+        QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Bold.ttf")
+        QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Semibold.ttf")
+        font_id = QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Bold.ttf")
+        font_opensans_bold = QFontDatabase.applicationFontFamilies(font_id)[0]
+        font_id = QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Semibold.ttf")
+        font_opensans_semi_bold = QFontDatabase.applicationFontFamilies(font_id)[0]
+
+        unloadable, self.family_to_path = self.getFontPaths()
+        # add Open Sans
+        self.family_to_path["Open Sans"] = ['./assets/font/OpenSans/OpenSans-Bold.ttf', './assets/font/OpenSans/OpenSans-Semibold.ttf']
+        # TODO sort ?
+        # add all fonts available
+        for k, v in self.family_to_path.items():
+            self.selectFontPlayer.addItem(k, v)
+            self.selectFontPhase.addItem(k, v)
+
+        # listener
+        self.selectFontPlayer.currentIndexChanged.connect(lambda: self.SetTypeFont(0, self.selectFontPlayer, self.selectTypeFontPlayer))
+        self.selectFontPhase.currentIndexChanged.connect(lambda: self.SetTypeFont(1, self.selectFontPhase, self.selectTypeFontPhase))
+
+        # select setting
+        self.selectFontPlayer.setCurrentIndex(self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
+        self.selectFontPhase.setCurrentIndex(self.selectFontPhase.findText(settings["font_list"][1]["name"]))
+
+        self.selectTypeFontPlayer.setCurrentIndex(self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
+        self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+
+        # listener type font
+        self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
+                self.selectFontPlayer.currentText(), self.selectTypeFontPlayer.currentText(), self.selectTypeFontPlayer.currentData(), 0))
+        self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
+               self.selectFontPhase.currentText(), self.selectTypeFontPhase.currentText(), self.selectTypeFontPhase.currentData(), 1))
 
         tmp_path = "./tmp/thumbnail"
         tmp_file = f"{tmp_path}/template.jpg"
@@ -91,13 +141,73 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         path = QFileDialog.getOpenFileName()[0]
         self.SaveSettings(key, path)
 
+    def SetTypeFont(self, index, cbFont, cbType):
+        print(f'set type font {cbFont.currentData()}')
+        types = cbFont.currentData()
+        cbType.clear()
+
+        for i in range(len(types)):
+            cbType.addItem(f'Type {i + 1}', types[i])
+
+    def SaveFont(self, key, font, type, fontPath, index):
+        try:
+            if font and fontPath:
+                print(f'\t- save {font} in {key}, index {index}')
+                settings = SettingsManager.Get("thumbnail")
+                settings[key][index] = {
+                    "name": font,
+                    "type": type,
+                    "fontPath": fontPath
+                }
+
+                SettingsManager.Set("thumbnail", settings)
+
+                self.GeneratePreview()
+        except Exception as e:
+            print("error save font")
+            print(e)
+
     def SaveSettings(self, key, val):
-        print(f'\t- save {val} in {key}')
-        settings = SettingsManager.Get("thumbnail")
-        settings[key] = val
-        SettingsManager.Set("thumbnail", settings)
+        try:
+            print(f'\t- save {val} in {key}')
+            settings = SettingsManager.Get("thumbnail")
+            settings[key] = val
+            SettingsManager.Set("thumbnail", settings)
+        except Exception as e:
+            print(e)
 
         self.GeneratePreview()
+
+    def getFontPaths(self):
+        font_paths = QStandardPaths.standardLocations(QStandardPaths.FontsLocation)
+        if sys.platform == "win32":
+            font_paths.append(f"{os.getenv('LOCALAPPDATA')}\\Microsoft\\Windows\\Fonts")
+
+        unloadable = []
+        family_to_path = {}
+
+        db = QFontDatabase()
+        for fpath in font_paths:  # go through all font paths
+            for filename in os.listdir(fpath):  # go through all files at each path
+                path = os.path.join(fpath, filename)
+
+                idx = db.addApplicationFont(path)  # add font path
+
+                if idx < 0:
+                    unloadable.append(path)  # font wasn't loaded if idx is -1
+                else:
+                    names = db.applicationFontFamilies(idx)  # load back font family name
+
+                    for n in names:
+                        if n in family_to_path:
+                            family_to_path[n].append(path)
+                        else:
+                            family_to_path[n] = [path]
+                    # this isn't a 1:1 mapping, for example
+                    # 'C:/Windows/Fonts/HTOWERT.TTF' (regular) and
+                    # 'C:/Windows/Fonts/HTOWERTI.TTF' (italic) are different
+                    # but applicationFontFamilies will return 'High Tower Text' for both
+        return unloadable, family_to_path
 
     # re-generate preview
     def GeneratePreview(self):
