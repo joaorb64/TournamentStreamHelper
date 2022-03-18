@@ -6,17 +6,11 @@ import re
 from copy import deepcopy
 
 tested_assets = {
-    "kofxv": ["full"],
-    "arms": ["full"],
-    "sg": ["full"],
-    "tfh": ["full"],
-    "sms": ["full"],
-    "msc": ["full"],
-    "sdbz": ["full"],
-    "roa": ["full"],
+    "ssbu": ["full"]
 }
 
 main_out_path = "../out/test"
+
 
 def draw_eyesight(game, asset_pack):
     print(game)
@@ -35,29 +29,35 @@ def draw_eyesight(game, asset_pack):
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
     for codename in eyesight_data.keys():
-        
 
         image_regexp = f"{prefix}{codename}{postfix}([0-9]+)\.png"
-        list_png = [f for f in os.listdir(asset_folder) if re.search(image_regexp, f)]
+        list_png = [f for f in os.listdir(
+            asset_folder) if re.search(image_regexp, f)]
         for png_filename in list_png:
             skin_index = re.search(image_regexp, png_filename).group(1)
             png_path = f"{asset_folder}/{png_filename}"
             new_png_path = f"{out_path}/{png_filename}"
 
-            eyesight_coordinates_dict = eyesight_data.get(codename).get(skin_index)
+            eyesight_coordinates_dict = eyesight_data.get(
+                codename).get(str(int(skin_index)))
             if not eyesight_coordinates_dict:
-                eyesight_coordinates_dict = eyesight_data.get(codename).get('0')
+                eyesight_coordinates_dict = eyesight_data.get(
+                    codename).get('0')
 
             if eyesight_coordinates_dict:
-                eyesight_coordinates = (eyesight_coordinates_dict.get("x"), eyesight_coordinates_dict.get("y"))
+                eyesight_coordinates = (eyesight_coordinates_dict.get(
+                    "x"), eyesight_coordinates_dict.get("y"))
 
                 png_image = Image.open(png_path)
                 png_size = png_image.size
                 new_png_image = deepcopy(png_image)
                 draw = ImageDraw.Draw(new_png_image)
-                draw.line([(eyesight_coordinates[0], 0), (eyesight_coordinates[0], png_size[1])], fill=(255,0,0), width=5)
-                draw.line([(0, eyesight_coordinates[1]), (png_size[0], eyesight_coordinates[1])], fill=(255,0,0), width=5)
+                draw.line([(eyesight_coordinates[0], 0), (eyesight_coordinates[0], png_size[1])], fill=(
+                    255, 0, 0), width=5)
+                draw.line([(0, eyesight_coordinates[1]), (png_size[0],
+                          eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
                 new_png_image.save(new_png_path)
+
 
 for game in tested_assets.keys():
     for asset_pack in tested_assets[game]:

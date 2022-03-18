@@ -160,6 +160,14 @@
 
           $(`.p${t + 1}.character`).html(html);
 
+          if (t == 0) characters = characters.reverse();
+          characters.forEach((character, c) => {
+            CenterImage(
+              $(`.p${t + 1}.character .char${c} .portrait`),
+              character.assets[ASSET_TO_USE].eyesight
+            );
+          });
+
           characters.forEach((character, c) => {
             if (character) {
               gsap.timeline().fromTo(
