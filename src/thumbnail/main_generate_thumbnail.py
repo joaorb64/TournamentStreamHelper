@@ -5,7 +5,6 @@ from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
 import requests
-import zipfile
 import shutil
 import string
 from copy import deepcopy
@@ -175,7 +174,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data):
+def paste_characters(thumbnail, data, all_eyesight):
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
     max_size = (max_x_size, max_y_size)
@@ -288,6 +287,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
                 current_data = current_team[key].get("mergedName")
+                current_data = current_data.rstrip("[L]")
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name")
                 if current_data:
@@ -409,9 +409,9 @@ def createFalseData():
     # TODO "player.character" : random ? with asset available
     data = {
         "game": {
-            "codename": "roa",
-            "name": "Rivals of Aether",
-            "smashgg_id": 24
+            "codename": "test",
+            "name": "Test",
+            "smashgg_id": 0
         },
         "score": {
             "best_of": 0,
@@ -419,26 +419,36 @@ def createFalseData():
             "phase": "Pool A",
             "team": {
                 "1": {
-                    #"logo": null,
                     "losers": False,
                     "player": {
                         "1": {
-                            #"avatar": null,
                             "character": {
                                 "1": {
-                                    "assets": {},
-                                    "name": "",
-                                    "skin": ""
+                                    "assets": {
+                                        "full": {
+                                            "asset": "./assets/mock_data/mock_asset/full_character_0.png"
+                                        }
+                                    },
+                                    "codename": "character",
+                                    "name": "Character",
+                                    "skin": "0"
+                                },
+                                "2": {
+                                    "assets": {
+                                        "full": {
+                                            "asset": "./assets/mock_data/mock_asset/full_character_1.png"
+                                        }
+                                    },
+                                    "codename": "character",
+                                    "name": "Character",
+                                    "skin": "1"
                                 }
                             },
                             "country": {},
-                            #"id": null,
-                            "mergedName": "Nintendo | Mario",
-                            "name": "Mario",
-                            #"online_avatar": null,
-                            #"sponsor_logo": null,
+                            "mergedName": "Sponsor 1 | Player 1",
+                            "name": "Player 1",
                             "state": {},
-                            "team": "Nintendo"
+                            "team": "Sponsor 1"
                         }
                     },
                     "score": 0,
@@ -448,22 +458,42 @@ def createFalseData():
                     "losers": False,
                     "player": {
                         "1": {
-                            #"avatar": null,
                             "character": {
                                 "1": {
-                                    "assets": {},
-                                    "name": "",
-                                    "skin": ""
+                                    "assets": {
+                                        "full": {
+                                            "asset": "./assets/mock_data/mock_asset/full_character_2.png"
+                                        }
+                                    },
+                                    "codename": "character",
+                                    "name": "Character",
+                                    "skin": "2"
                                 }
                             },
                             "country": {},
-                            #"id": null,
-                            "mergedName": "Nintendo | Luigi",
-                            "name": "Luigi",
-                            #"online_avatar": null,
-                            #"sponsor_logo": null,
+                            "mergedName": "Sponsor 2 | Player 2 [L]",
+                            "name": "Player 2",
                             "state": {},
-                            "team": "Nintendo"
+                            "team": "Sponsor 2"
+                        },
+                        "2": {
+                            "character": {
+                                "1": {
+                                    "assets": {
+                                        "full": {
+                                            "asset": "./assets/mock_data/mock_asset/full_character_3.png"
+                                        }
+                                    },
+                                    "codename": "character",
+                                    "name": "Character",
+                                    "skin": "3"
+                                }
+                            },
+                            "country": {},
+                            "mergedName": "Sponsor 3 | Player 3",
+                            "name": "Player 3",
+                            "state": {},
+                            "team": "Sponsor 3"
                         }
                     },
                     "score": 0,
@@ -524,10 +554,12 @@ def generate(settingsManager, isPreview = False):
     else:
         data = createFalseData()
 
-    game_codename = data.get("game").get("codename")
-    asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
+    if not isPreview:
+        game_codename = data.get("game").get("codename")
+        asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
+    else:
+        asset_data_path = f"./assets/mock_data/mock_asset/config.json"
     with open(asset_data_path, 'rt', encoding='utf-8') as f:
-        global all_eyesight
         all_eyesight = json.loads(f.read()).get("eyesights")
 
     Path(tmp_path).mkdir(parents=True, exist_ok=True)
@@ -557,7 +589,7 @@ def generate(settingsManager, isPreview = False):
     composite_image = create_composite_image(background, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
-    thumbnail = paste_characters(thumbnail, data)
+    thumbnail = paste_characters(thumbnail, data, all_eyesight)
     composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)
