@@ -1,0 +1,19 @@
+{
+  "name": "Mock Asset",
+  "description": "",
+  "prefix": "full_",
+  "postfix": "_",
+  "type": [
+    "full"
+  ],
+  "credits": "",
+  "version": "1.0",
+  "eyesights": {
+    "character": {
+      "0": {
+        "x": 540,
+        "y": 126
+      }
+    }
+  }
+}

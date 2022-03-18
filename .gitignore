@@ -43,3 +43,5 @@ THS.cxxflags
 THS.files
 
 THS.includes
+
+tmp/*
