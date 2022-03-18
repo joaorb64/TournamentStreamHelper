@@ -10,7 +10,6 @@ import string
 from copy import deepcopy
 import datetime
 import os
-import matplotlib.font_manager as fontman
 
 display_phase = True
 use_team_names = False
@@ -18,8 +17,21 @@ use_sponsors = True
 used_assets = "full"
 all_eyesight = False
 
-separator_h_path = "./assets/thumbnail_base/separator_h.png"
-separator_v_path = "./assets/thumbnail_base/separator_v.png"
+separator_color_code = (127, 127, 127) # Can be either RGB values (ranging from 0 to 255 per channel) or hex code ("#rrggbb")
+separator_width = 5
+
+def generate_separator_images(color_code=(127, 127, 127), width=3):
+    x_size, y_size = 960, 1080
+    x_separator = Image.new("RGBA", (x_size, y_size), (255, 0, 0, 0))
+    y_separator = deepcopy(x_separator)
+
+    x_draw = ImageDraw.Draw(x_separator)
+    x_draw.line([(0, y_size/2), (x_size, y_size/2)], fill=color_code, width=width)
+
+    y_draw = ImageDraw.Draw(y_separator)
+    y_draw.line([(x_size/2, 0), (x_size/2, y_size)], fill=color_code, width=width)
+
+    return(x_separator, y_separator)
 
 def find(element, json):
     keys = element.split('.')
@@ -108,6 +120,7 @@ def create_composite_image(image, size, coordinates):
 
 
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix):
+    separator_h_image, separator_v_image = generate_separator_images(separator_color_code, separator_width)
     num_line = len(path_matrix)
 
     for line_index in range(0, len(path_matrix)):
@@ -133,7 +146,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 character_image, thumbnail.size, individual_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
 
-            separator_v_image = Image.open(separator_v_path).convert('RGBA')
             # crop
             left = round(0)
             top = round(0)
@@ -152,7 +164,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     separator_v_image, thumbnail.size, separator_paste_coordinates)
                 thumbnail = Image.alpha_composite(thumbnail, composite_image)
 
-        separator_h_image = Image.open(separator_h_path).convert('RGBA')
         # crop
         left = round(0)
         top = round(0)
