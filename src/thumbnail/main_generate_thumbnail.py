@@ -298,7 +298,8 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
                 current_data = current_team[key].get("mergedName")
-                current_data = current_data.rstrip("[L]")
+                if current_data:
+                    current_data = current_data.rstrip("[L]")
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name")
                 if current_data:
