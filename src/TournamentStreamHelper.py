@@ -291,6 +291,7 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
+        shutil.rmtree("./tmp")
 
     def ReloadGames(self):
         print("Reload games")
