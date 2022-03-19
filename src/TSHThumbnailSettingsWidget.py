@@ -39,7 +39,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.VSpacer = self.settings.findChild(QSpinBox, "widthSpacer")
         self.VColor = self.settings.findChild(QPushButton, "colorSpacer")
 
-        self.VSpacer.valueChanged.connect(self.SaveSeparator)
+        self.VSpacer.valueChanged.connect(lambda: self.SaveSettings(key="separator", subKey="width", val=self.VSpacer.value()))
         # open color select & save
         self.VColor.clicked.connect(self.ColorPicker)
 
@@ -48,9 +48,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
 
-        self.phase_name.stateChanged.connect(lambda: self.SaveSettings("display_phase", self.phase_name.isChecked()))
-        self.team_name.stateChanged.connect(lambda: self.SaveSettings("use_team_names", self.team_name.isChecked()))
-        self.sponsor.stateChanged.connect(lambda: self.SaveSettings("use_sponsors", self.sponsor.isChecked()))
+        self.phase_name.stateChanged.connect(lambda: self.SaveSettings(key="display_phase", val=self.phase_name.isChecked()))
+        self.team_name.stateChanged.connect(lambda: self.SaveSettings(key="use_team_names", val=self.team_name.isChecked()))
+        self.sponsor.stateChanged.connect(lambda: self.SaveSettings(key="use_sponsors", val=self.sponsor.isChecked()))
 
         # FONTS
         self.selectFontPlayer = self.settings.findChild(QComboBox, "comboBoxFont")
@@ -142,21 +142,56 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
         self.preview.setPixmap(QPixmap(tmp_file))
 
-    # TODO do other way..
     def SaveIcons(self, key, index):
         path = QFileDialog.getOpenFileName()[0]
-        # TODO refactor with SaveSeparator (same code)
-        print(f'\t- save {path} in {key}')
-        settings = SettingsManager.Get("thumbnail")
-        settings[key][index] = path
 
-        SettingsManager.Set("thumbnail", settings)
-
-        self.GeneratePreview()
+        self.SaveSettings(key=key, subKey=index, val=path)
 
     def SaveImage(self, key):
         path = QFileDialog.getOpenFileName()[0]
-        self.SaveSettings(key, path)
+        self.SaveSettings(key=key, val=path)
+
+    def SaveFont(self, key, font, type, fontPath, index):
+        try:
+            if font and fontPath:
+                fontSetting = {
+                    "name": font,
+                    "type": type,
+                    "fontPath": fontPath
+                }
+                self.SaveSettings(key=key, subKey=index, val=fontSetting)
+        except Exception as e:
+            print("error save font")
+            print(e)
+
+    def ColorPicker(self):
+        try:
+            # HEX color
+            color = QColorDialog.getColor().name()
+            # set button color
+            self.VColor.setStyleSheet("background-color: %s" % color)
+
+            self.SaveSettings(key="separator", subKey="color", val=color)
+        except Exception as e:
+            print(e)
+
+    def SaveSettings(self, key, subKey, val, generatePreview = True):
+        try:
+            settings = SettingsManager.Get("thumbnail")
+
+            if subKey:
+                print(f'\t- save {val} in {key}.{subKey}')
+                settings[key][subKey] = val
+            else:
+                print(f'\t- save {val} in {key}')
+                settings[key] = val
+
+            SettingsManager.Set("thumbnail", settings)
+        except Exception as e:
+            print(e)
+
+        if generatePreview:
+            self.GeneratePreview()
 
     def SetTypeFont(self, index, cbFont, cbType):
         print(f'set type font {cbFont.currentData()}')
@@ -165,36 +200,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         for i in range(len(types)):
             cbType.addItem(f'Type {i + 1}', types[i])
-
-    def SaveFont(self, key, font, type, fontPath, index):
-        try:
-            if font and fontPath:
-                print(f'\t- save {font} in {key}, index {index}')
-                settings = SettingsManager.Get("thumbnail")
-                settings[key][index] = {
-                    "name": font,
-                    "type": type,
-                    "fontPath": fontPath
-                }
-
-                SettingsManager.Set("thumbnail", settings)
-
-                self.GeneratePreview()
-        except Exception as e:
-            print("error save font")
-            print(e)
-
-    def SaveSettings(self, key, val, generatePreview = True):
-        try:
-            print(f'\t- save {val} in {key}')
-            settings = SettingsManager.Get("thumbnail")
-            settings[key] = val
-            SettingsManager.Set("thumbnail", settings)
-        except Exception as e:
-            print(e)
-
-        if generatePreview:
-            self.GeneratePreview()
 
     def getFontPaths(self):
         font_paths = QStandardPaths.standardLocations(QStandardPaths.FontsLocation)
@@ -226,33 +231,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     # 'C:/Windows/Fonts/HTOWERTI.TTF' (italic) are different
                     # but applicationFontFamilies will return 'High Tower Text' for both
         return unloadable, family_to_path
-
-    def ColorPicker(self):
-        try:
-            # HEX color
-            color = QColorDialog.getColor().name()
-            # set button color
-            self.VColor.setStyleSheet("background-color: %s" % color)
-
-            # save color separator.(horizontal|vertical).color
-            print(f'\t- save {color} in separator.color')
-            settings = SettingsManager.Get("thumbnail")
-            settings["separator"]["color"] = color
-
-            SettingsManager.Set("thumbnail", settings)
-
-            self.GeneratePreview()
-        except Exception as e:
-            print(e)
-
-    def SaveSeparator(self):
-        print(f'\t- save {self.VSpacer.value()} in separator.width')
-        settings = SettingsManager.Get("thumbnail")
-        settings["separator"]["width"] = self.VSpacer.value()
-
-        SettingsManager.Set("thumbnail", settings)
-        self.GeneratePreview()
-
 
     # re-generate preview
     def GeneratePreview(self):
