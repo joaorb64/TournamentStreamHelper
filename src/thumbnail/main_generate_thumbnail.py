@@ -14,7 +14,6 @@ import os
 display_phase = True
 use_team_names = False
 use_sponsors = True
-used_assets = "full"
 all_eyesight = False
 
 separator_color_code = (127, 127, 127) # Can be either RGB values (ranging from 0 to 255 per channel) or hex code ("#rrggbb")
@@ -185,7 +184,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight):
+def paste_characters(thumbnail, data, all_eyesight, used_assets):
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
     max_size = (max_x_size, max_y_size)
@@ -568,8 +567,10 @@ def generate(settingsManager, isPreview = False):
 
     if not isPreview:
         game_codename = data.get("game").get("codename")
+        used_assets = settings["asset"]
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
     else:
+        used_assets = "full"
         asset_data_path = f"./assets/mock_data/mock_asset/config.json"
     with open(asset_data_path, 'rt', encoding='utf-8') as f:
         all_eyesight = json.loads(f.read()).get("eyesights")
@@ -601,7 +602,7 @@ def generate(settingsManager, isPreview = False):
     composite_image = create_composite_image(background, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
-    thumbnail = paste_characters(thumbnail, data, all_eyesight)
+    thumbnail = paste_characters(thumbnail, data, all_eyesight, used_assets)
     composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)

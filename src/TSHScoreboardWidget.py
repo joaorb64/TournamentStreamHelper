@@ -10,6 +10,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 
 from .thumbnail import main_generate_thumbnail as thumbnail
+from .TSHThumbnailSettingsWidget import *
 
 
 class TSHScoreboardWidgetSignals(QObject):
@@ -98,6 +99,13 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.layout().addWidget(col)
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
+
+        col.layout().addWidget(QLabel("Asset Pack"))
+        self.selectRenderType = QComboBox()
+        col.layout().addWidget(self.selectRenderType, Qt.AlignmentFlag.AlignRight)
+        # add item (assets pack) when choosing game
+        TSHGameAssetManager.instance.signals.onLoad.connect(self.SetAssetPack)
+        self.selectRenderType.currentIndexChanged.connect(self.SetAssetSetting)
 
         self.thumbnailBtn = QPushButton("Generate Thumbnail ")
         self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
@@ -691,3 +699,21 @@ class TSHScoreboardWidget(QDockWidget):
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))
+
+    def SetAssetPack(self):
+        self.selectRenderType.clear()
+        if (TSHGameAssetManager.instance.selectedGame.get("assets")):
+            for assetName in TSHGameAssetManager.instance.selectedGame.get("assets"):
+                # don't use base_files, because don't contains asset, only folder (?)
+                # TODO are there other asset name "forbidden" ?
+                if "base_files" == assetName:
+                    continue
+                self.selectRenderType.addItem(assetName)
+            # select by default first
+            self.selectRenderType.setCurrentIndex(0)
+
+    def SetAssetSetting(self):
+        try:
+            TSHThumbnailSettingsWidget.SaveSettings(self, "asset", self.selectRenderType.currentText(), False)
+        except Exception as e:
+            print(e)

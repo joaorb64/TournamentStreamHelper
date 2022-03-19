@@ -167,7 +167,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             print("error save font")
             print(e)
 
-    def SaveSettings(self, key, val):
+    def SaveSettings(self, key, val, generatePreview = True):
         try:
             print(f'\t- save {val} in {key}')
             settings = SettingsManager.Get("thumbnail")
@@ -176,7 +176,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         except Exception as e:
             print(e)
 
-        self.GeneratePreview()
+        if generatePreview:
+            self.GeneratePreview()
 
     def getFontPaths(self):
         font_paths = QStandardPaths.standardLocations(QStandardPaths.FontsLocation)
