@@ -175,11 +175,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         except Exception as e:
             print(e)
 
-    def SaveSettings(self, key, subKey, val, generatePreview = True):
+    def SaveSettings(self, key, val, subKey=None, generatePreview = True):
         try:
             settings = SettingsManager.Get("thumbnail")
 
-            if subKey:
+            if subKey is not None:
                 print(f'\t- save {val} in {key}.{subKey}')
                 settings[key][subKey] = val
             else:
