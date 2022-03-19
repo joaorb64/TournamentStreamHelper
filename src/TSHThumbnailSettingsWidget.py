@@ -35,6 +35,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.topLeftIcon.clicked.connect(lambda:self.SaveIcons("side_icon_list", 0))
         self.topRightIcon.clicked.connect(lambda:self.SaveIcons("side_icon_list", 1))
 
+        # SEPARATORS
+        self.VSpacer = self.settings.findChild(QSpinBox, "widthSpacer")
+        self.VColor = self.settings.findChild(QPushButton, "colorSpacer")
+
+        self.VSpacer.valueChanged.connect(self.SaveSeparator)
+        # open color select & save
+        self.VColor.clicked.connect(self.ColorPicker)
+
         # CHECK BOX
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
@@ -66,6 +74,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 "use_team_names": False,
                 "use_sponsors": True,
                 "main_icon_path": "./assets/icons/icon.png",
+                "separator": {
+                    "width": 5,
+                    "color": "#7F7F7F"
+                }
             }
             settings["side_icon_list"] = ["", ""]
             settings["font_list"] = [{
@@ -82,6 +94,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.phase_name.setChecked(settings["display_phase"])
         self.team_name.setChecked(settings["use_team_names"])
         self.sponsor.setChecked(settings["use_sponsors"])
+
+        # TODO each one regenarate the preview, move it before signals and do generation once at the end ?
+        self.VSpacer.setValue(settings["separator"]["width"])
+        self.VColor.setStyleSheet("background-color: %s" % settings["separator"]["color"])
 
         # Load OpenSans
         QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Bold.ttf")
@@ -129,6 +145,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     # TODO do other way..
     def SaveIcons(self, key, index):
         path = QFileDialog.getOpenFileName()[0]
+        # TODO refactor with SaveSeparator (same code)
         print(f'\t- save {path} in {key}')
         settings = SettingsManager.Get("thumbnail")
         settings[key][index] = path
@@ -209,6 +226,33 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     # 'C:/Windows/Fonts/HTOWERTI.TTF' (italic) are different
                     # but applicationFontFamilies will return 'High Tower Text' for both
         return unloadable, family_to_path
+
+    def ColorPicker(self):
+        try:
+            # HEX color
+            color = QColorDialog.getColor().name()
+            # set button color
+            self.VColor.setStyleSheet("background-color: %s" % color)
+
+            # save color separator.(horizontal|vertical).color
+            print(f'\t- save {color} in separator.color')
+            settings = SettingsManager.Get("thumbnail")
+            settings["separator"]["color"] = color
+
+            SettingsManager.Set("thumbnail", settings)
+
+            self.GeneratePreview()
+        except Exception as e:
+            print(e)
+
+    def SaveSeparator(self):
+        print(f'\t- save {self.VSpacer.value()} in separator.width')
+        settings = SettingsManager.Get("thumbnail")
+        settings["separator"]["width"] = self.VSpacer.value()
+
+        SettingsManager.Set("thumbnail", settings)
+        self.GeneratePreview()
+
 
     # re-generate preview
     def GeneratePreview(self):

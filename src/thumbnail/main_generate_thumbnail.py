@@ -16,9 +16,6 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 
-separator_color_code = (127, 127, 127) # Can be either RGB values (ranging from 0 to 255 per channel) or hex code ("#rrggbb")
-separator_width = 5
-
 def generate_separator_images(color_code=(127, 127, 127), width=3):
     x_size, y_size = 960, 1080
     x_separator = Image.new("RGBA", (x_size, y_size), (255, 0, 0, 0))
@@ -592,6 +589,11 @@ def generate(settingsManager, isPreview = False):
     global font_2
     font_1 = font_list[0]["fontPath"]
     font_2 = font_list[1]["fontPath"]
+
+    global separator_color_code
+    global separator_width
+    separator_color_code = settings["separator"]["color"]
+    separator_width = settings["separator"]["width"]
 
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
