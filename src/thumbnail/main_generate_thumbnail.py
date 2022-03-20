@@ -619,7 +619,8 @@ def generate(settingsManager, isPreview = False):
         thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
         thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
-        shutil.rmtree(tmp_path)
+        if os.path.isdir(tmp_path):
+            shutil.rmtree(tmp_path)
         print(
             f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
         return f"{out_path}/{thumbnail_filename}.png"
