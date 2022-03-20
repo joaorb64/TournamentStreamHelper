@@ -110,9 +110,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         unloadable, self.family_to_path = self.getFontPaths()
         # add Open Sans
         self.family_to_path["Open Sans"] = ['./assets/font/OpenSans/OpenSans-Bold.ttf', './assets/font/OpenSans/OpenSans-Semibold.ttf']
-        # TODO sort ?
         # add all fonts available
-        for k, v in self.family_to_path.items():
+        for k, v in sorted(self.family_to_path.items()):
             self.selectFontPlayer.addItem(k, v)
             self.selectFontPhase.addItem(k, v)
 
