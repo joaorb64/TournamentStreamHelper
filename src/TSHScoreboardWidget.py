@@ -1,3 +1,6 @@
+import platform
+import subprocess
+
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -375,11 +378,21 @@ class TSHScoreboardWidget(QDockWidget):
             msgBox.setText("The thumbnail has been generated here : ")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
+
+            outThumbDir = f"{os.getcwd()}/out/thumbnails/"
+            if platform.system() == "Windows":
+                thumbnailPath = thumbnailPath[2:].replace("/", "\\")
+                outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
+                #os.startfile(outThumbDir)
+                subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
+            elif platform.system() == "Darwin":
+                subprocess.Popen(["open", outThumbDir])
+            else:
+                subprocess.Popen(["xdg-open", outThumbDir])
         except Exception as e:
             msgBox.setText("Warning")
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
-        finally:
             msgBox.exec()
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
