@@ -703,17 +703,20 @@ class TSHScoreboardWidget(QDockWidget):
     def SetAssetPack(self):
         self.selectRenderType.clear()
         if (TSHGameAssetManager.instance.selectedGame.get("assets")):
-            for assetName in TSHGameAssetManager.instance.selectedGame.get("assets"):
+            for key, val in TSHGameAssetManager.instance.selectedGame.get("assets").items():
                 # don't use base_files, because don't contains asset, only folder (?)
                 # TODO are there other asset name "forbidden" ?
-                if "base_files" == assetName:
+                if "base_files" == key:
                     continue
-                self.selectRenderType.addItem(assetName)
+                if val.get("name"):
+                    self.selectRenderType.addItem(val.get("name"), key)
+                else:
+                    self.selectRenderType.addItem(key, key)
             # select by default first
             self.selectRenderType.setCurrentIndex(0)
 
     def SetAssetSetting(self):
         try:
-            TSHThumbnailSettingsWidget.SaveSettings(self, "asset", self.selectRenderType.currentText(), False)
+            TSHThumbnailSettingsWidget.SaveSettings(self, key="asset", val=self.selectRenderType.currentData(), generatePreview=False)
         except Exception as e:
             print(e)
