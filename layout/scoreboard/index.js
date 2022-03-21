@@ -1,4 +1,6 @@
 (($) => {
+  gsap.config({ nullTargetWarn: false, trialWarn: false });
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".container"], { duration: 1, width: "0", ease: "power2.inOut" }, 0);
