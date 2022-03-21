@@ -130,8 +130,16 @@ body {
   text-transform: uppercase;
 }
 
+.fgc .name_twitter .name {
+  max-width: 60%;
+}
+
 .name_twitter .twitter {
   font-size: 18px;
+}
+
+.fgc .name_twitter .twitter {
+  max-width: 30%;
 }
 
 .twitter_logo {
