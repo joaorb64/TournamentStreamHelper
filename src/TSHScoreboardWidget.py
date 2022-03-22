@@ -117,9 +117,6 @@ class TSHScoreboardWidget(QDockWidget):
             action.toggled.connect(
                 lambda toggled, action=action, element=element: self.ToggleElements(action, element[1]))
 
-        self.eyeBt.menu().addSection("Match data")
-        action: QAction = self.eyeBt.menu().addAction("Test")
-
         self.playerWidgets = []
         self.team1playerWidgets = []
         self.team2playerWidgets = []

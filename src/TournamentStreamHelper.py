@@ -209,6 +209,12 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
+        toggleWidgets = QMenu("Toggle widgets", self.optionsBt.menu())
+        self.optionsBt.menu().addMenu(toggleWidgets)
+        toggleWidgets.addAction(tournamentInfo.toggleViewAction())
+        toggleWidgets.addAction(self.scoreboard.toggleViewAction())
+        toggleWidgets.addAction(commentary.toggleViewAction())
+
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
         self.gameSelect.completer().setFilterMode(Qt.MatchFlag.MatchContains)
