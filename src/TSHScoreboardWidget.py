@@ -469,8 +469,6 @@ class TSHScoreboardWidget(QDockWidget):
         self.teamsSwapped = not self.teamsSwapped
 
     def ResetScore(self):
-        self.scoreColumn.findChild(QComboBox, "match").setCurrentText("")
-        self.scoreColumn.findChild(QComboBox, "phase").setCurrentText("")
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
 
