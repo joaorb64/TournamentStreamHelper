@@ -51,9 +51,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.save_bt.setIcon(QIcon('assets/icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
         self.save_bt.clicked.connect(self.SavePlayerToDB)
-        self.findChild(QLineEdit, "name").textChanged.connect(
+        self.findChild(QLineEdit, "name").editingFinished.connect(
             self.ManageSavePlayerToDBText)
-        self.findChild(QLineEdit, "team").textChanged.connect(
+        self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ManageSavePlayerToDBText)
 
         self.delete_bt = QPushButton("Delete player entry")
@@ -62,9 +62,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         bottom_buttons_layout.addWidget(self.delete_bt)
         self.delete_bt.font().setPointSize(10)
         self.delete_bt.setEnabled(False)
-        self.findChild(QLineEdit, "name").textChanged.connect(
+        self.findChild(QLineEdit, "name").editingFinished.connect(
             self.ManageDeletePlayerFromDBActive)
-        self.findChild(QLineEdit, "team").textChanged.connect(
+        self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ManageDeletePlayerFromDBActive)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
@@ -87,26 +87,26 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.SetIndex(index, teamNumber)
 
-        self.findChild(QLineEdit, "name").textChanged.connect(
+        self.findChild(QLineEdit, "name").editingFinished.connect(
             self.ExportMergedName)
-        self.findChild(QLineEdit, "team").textChanged.connect(
+        self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ExportMergedName)
 
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            lambda x: self.ExportPlayerImages())
-        self.findChild(QLineEdit, "team").textChanged.connect(
-            lambda x: self.ExportPlayerImages())
+        self.findChild(QLineEdit, "name").editingFinished.connect(
+            lambda: self.ExportPlayerImages())
+        self.findChild(QLineEdit, "team").editingFinished.connect(
+            lambda: self.ExportPlayerImages())
 
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            lambda x: self.ExportPlayerId())
-        self.findChild(QLineEdit, "team").textChanged.connect(
-            lambda x: self.ExportPlayerId())
+        self.findChild(QLineEdit, "name").editingFinished.connect(
+            lambda: self.ExportPlayerId())
+        self.findChild(QLineEdit, "team").editingFinished.connect(
+            lambda: self.ExportPlayerId())
 
         for c in self.findChildren(QLineEdit):
-            c.textChanged.connect(
-                lambda text, element=c: [
+            c.editingFinished.connect(
+                lambda element=c: [
                     StateManager.Set(
-                        f"score.team.{self.teamNumber}.player.{self.index}.{element.objectName()}", text)
+                        f"score.team.{self.teamNumber}.player.{self.index}.{element.objectName()}", element.text())
                 ])
 
         for c in self.findChildren(QComboBox):
@@ -230,6 +230,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if widget:
                     if type(widget) == QLineEdit:
                         widget.setText(tmpData[i][objName])
+                        widget.editingFinished.emit()
                     if type(widget) == QComboBox:
                         widget.setCurrentIndex(tmpData[i][objName])
             QCoreApplication.processEvents()
@@ -554,12 +555,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if data.get("gamerTag"):
             self.findChild(QWidget, "name").setText(f'{data.get("gamerTag")}')
+            self.findChild(QWidget, "name").editingFinished.emit()
 
         if data.get("prefix"):
             self.findChild(QWidget, "team").setText(f'{data.get("prefix")}')
+            self.findChild(QWidget, "team").editingFinished.emit()
 
         if data.get("name"):
             self.findChild(QWidget, "real_name").setText(f'{data.get("name")}')
+            self.findChild(QWidget, "real_name").editingFinished.emit()
 
         if data.get("avatar"):
             self.ExportPlayerImages(data.get("avatar"))
@@ -570,6 +574,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         if data.get("twitter"):
             self.findChild(QWidget, "twitter").setText(
                 f'{data.get("twitter")}')
+            self.findChild(QWidget, "twitter").editingFinished.emit()
 
         if data.get("country_code"):
             countryElement: QComboBox = self.findChild(
@@ -698,6 +703,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def Clear(self):
         for c in self.findChildren(QLineEdit):
             c.setText("")
+            c.editingFinished.emit()
 
         for c in self.findChildren(QComboBox):
             c.setCurrentIndex(0)

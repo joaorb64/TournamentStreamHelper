@@ -211,12 +211,12 @@ class TSHScoreboardWidget(QDockWidget):
             QScrollArea).widget().setLayout(QVBoxLayout())
 
         for c in self.team1column.findChildren(QLineEdit):
-            c.textChanged.connect(
-                lambda text, element=c: [
+            c.editingFinished.connect(
+                lambda element=c: [
                     StateManager.Set(
-                        f"score.team.1.{element.objectName()}", text)
+                        f"score.team.1.{element.objectName()}", element.text())
                 ])
-            c.textChanged.emit("")
+            c.editingFinished.emit()
 
         for c in self.team1column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -237,12 +237,12 @@ class TSHScoreboardWidget(QDockWidget):
             QScrollArea).widget().setLayout(QVBoxLayout())
 
         for c in self.team2column.findChildren(QLineEdit):
-            c.textChanged.connect(
-                lambda text, element=c: [
+            c.editingFinished.connect(
+                lambda element=c: [
                     StateManager.Set(
-                        f"score.team.2.{element.objectName()}", text)
+                        f"score.team.2.{element.objectName()}", element.text())
                 ])
-            c.textChanged.emit("")
+            c.editingFinished.emit()
 
         for c in self.team2column.findChildren(QCheckBox):
             c.toggled.connect(
@@ -259,13 +259,19 @@ class TSHScoreboardWidget(QDockWidget):
         self.charNumber.setValue(1)
 
         for c in self.scoreColumn.findChildren(QComboBox):
-            c.editTextChanged.connect(
-                lambda text, element=c: [
+            c.lineEdit().editingFinished.connect(
+                lambda element=c: [
                     StateManager.Set(
                         f"score.{element.objectName()}", element.currentText())
                 ]
             )
-            c.editTextChanged.emit("")
+            c.currentIndexChanged.connect(
+                lambda x, element=c: [
+                    StateManager.Set(
+                        f"score.{element.objectName()}", element.currentText())
+                ]
+            )
+            c.lineEdit().editingFinished.emit()
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
@@ -288,11 +294,13 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(
             QSpinBox, "score_right").valueChanged.emit(0)
 
-        self.team1column.findChild(QLineEdit, "teamName").textChanged.connect(
-            lambda value: self.ExportTeamLogo("1", value)
+        self.team1column.findChild(QLineEdit, "teamName").editingFinished.connect(
+            lambda: self.ExportTeamLogo(
+                "1", self.team1column.findChild(QLineEdit, "teamName").text())
         )
-        self.team2column.findChild(QLineEdit, "teamName").textChanged.connect(
-            lambda value: self.ExportTeamLogo("2", value)
+        self.team2column.findChild(QLineEdit, "teamName").editingFinished.connect(
+            lambda: self.ExportTeamLogo(
+                "2", self.team2column.findChild(QLineEdit, "teamName").text())
         )
 
         self.teamsSwapped = False
@@ -415,8 +423,12 @@ class TSHScoreboardWidget(QDockWidget):
         else:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team1column.findChild(QLineEdit, "teamName").setText("")
+            self.team1column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
             self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team2column.findChild(QLineEdit, "teamName").setText("")
+            self.team2column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
 
     def SwapTeams(self):
         tmpData = [[], []]
@@ -444,6 +456,7 @@ class TSHScoreboardWidget(QDockWidget):
                     if widget:
                         if type(widget) == QLineEdit:
                             widget.setText(tmpData[t][i][objName])
+                            widget.editingFinished.emit()
                         if type(widget) == QComboBox:
                             widget.setCurrentIndex(tmpData[t][i][objName])
                 QCoreApplication.processEvents()
@@ -634,6 +647,8 @@ class TSHScoreboardWidget(QDockWidget):
                     teamNames = [data.get("p1_name"), data.get("p2_name")]
                     teamColumns[t].findChild(
                         QLineEdit, "teamName").setText(teamNames[t])
+                    teamColumns[t].findChild(
+                        QLineEdit, "teamName").editingFinished.emit()
 
                 for p, player in enumerate(team):
                     if data.get("overwrite"):
