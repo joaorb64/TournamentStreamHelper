@@ -588,6 +588,7 @@ class TSHScoreboardWidget(QDockWidget):
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):
             c.setCurrentText("")
+            c.lineEdit().editingFinished.emit()
 
         for c in self.scoreColumn.findChildren(QSpinBox):
             c.setValue(0)
@@ -599,10 +600,14 @@ class TSHScoreboardWidget(QDockWidget):
         if data.get("round_name"):
             self.scoreColumn.findChild(
                 QComboBox, "match").setCurrentText(data.get("round_name"))
+            self.scoreColumn.findChild(
+                QComboBox, "match").lineEdit().editingFinished.emit()
 
         if data.get("tournament_phase"):
             self.scoreColumn.findChild(
                 QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
+            self.scoreColumn.findChild(
+                QComboBox, "phase").lineEdit().editingFinished.emit()
 
         scoreContainers = [
             self.scoreColumn.findChild(QSpinBox, "score_left"),
