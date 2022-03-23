@@ -564,7 +564,7 @@ def generate(settingsManager, isPreview = False):
 
     if not isPreview:
         game_codename = data.get("game").get("codename")
-        used_assets = settings["asset"]
+        used_assets = settings[f"asset/{game_codename}"]
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
     else:
         used_assets = "full"

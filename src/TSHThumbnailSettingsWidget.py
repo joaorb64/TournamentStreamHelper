@@ -292,10 +292,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict["full"]))
                 else:
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict["base_files/icon"]))
+                self.SetAssetSetting(force=True)
             TSHGameAssetManager.instance.thumbnailSettingsLoaded = True
 
-    def SetAssetSetting(self):
-        if TSHGameAssetManager.instance.thumbnailSettingsLoaded:
+    def SetAssetSetting(self, force=False):
+        if TSHGameAssetManager.instance.thumbnailSettingsLoaded or force:
             try:
                 game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
                 if self.selectRenderType.currentData():
