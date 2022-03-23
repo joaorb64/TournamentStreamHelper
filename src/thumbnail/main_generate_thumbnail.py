@@ -115,9 +115,13 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p2=False):
     separator_h_image, separator_v_image = generate_separator_images(separator_color_code, separator_width)
     num_line = len(path_matrix)
+
+    if player_index==1 and flip_p2:
+        paste_coordinates = (round(thumbnail.size[0]-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
@@ -178,10 +182,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 separator_h_image, thumbnail.size, separator_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
 
+    if player_index==1 and flip_p2:
+        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
+
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p2=False):
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
     max_size = (max_x_size, max_y_size)
@@ -227,7 +234,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets):
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p2)
 
     return(thumbnail)
 
