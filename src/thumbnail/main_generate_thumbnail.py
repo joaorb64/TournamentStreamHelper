@@ -549,6 +549,7 @@ def generate(settingsManager, isPreview = False):
     display_phase = settings["display_phase"]
     use_team_names = settings["use_team_names"]
     use_sponsors = settings["use_sponsors"]
+    flip_p2 = settings["flip_p2"]
 
     font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf", "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
     if settings["font_list"][0]:
@@ -611,7 +612,7 @@ def generate(settingsManager, isPreview = False):
     composite_image = create_composite_image(background, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
-    thumbnail = paste_characters(thumbnail, data, all_eyesight, used_assets)
+    thumbnail = paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p2)
     composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)

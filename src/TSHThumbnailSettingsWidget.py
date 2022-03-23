@@ -48,10 +48,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
+        self.flip_p2 = self.settings.findChild(QCheckBox, "flipP2Check")
 
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(key="use_team_names", val=self.team_name.isChecked()))
         self.sponsor.stateChanged.connect(lambda: self.SaveSettings(key="use_sponsors", val=self.sponsor.isChecked()))
+        self.flip_p2.stateChanged.connect(lambda: self.SaveSettings(key="flip_p2", val=self.flip_p2.isChecked()))
 
         # FONTS
         self.selectFontPlayer = self.settings.findChild(QComboBox, "comboBoxFont")
@@ -74,6 +76,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 "display_phase": True,
                 "use_team_names": False,
                 "use_sponsors": True,
+                "flip_p2": False,
                 "main_icon_path": "./assets/icons/icon.png",
                 "separator": {
                     "width": 5,
@@ -95,6 +98,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.phase_name.setChecked(settings["display_phase"])
         self.team_name.setChecked(settings["use_team_names"])
         self.sponsor.setChecked(settings["use_sponsors"])
+        self.flip_p2.setChecked(settings["flip_p2"])
 
         # TODO each one regenarate the preview, move it before signals and do generation once at the end ?
         self.VSpacer.setValue(settings["separator"]["width"])

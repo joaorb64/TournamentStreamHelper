@@ -214,7 +214,7 @@
         <item>
          <widget class="QCheckBox" name="phaseNameCheck">
           <property name="text">
-           <string>Phase name ?</string>
+           <string>Phase name?</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -224,7 +224,7 @@
         <item>
          <widget class="QCheckBox" name="teamNameCheck">
           <property name="text">
-           <string>Teams names ?</string>
+           <string>Teams names?</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -234,10 +234,20 @@
         <item>
          <widget class="QCheckBox" name="sponsorCheck">
           <property name="text">
-           <string>Sponsors ?</string>
+           <string>Sponsors?</string>
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="flipP2Check">
+          <property name="text">
+           <string>Flip P2 assets?</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
