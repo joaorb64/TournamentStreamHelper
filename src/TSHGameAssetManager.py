@@ -29,6 +29,7 @@ class TSHGameAssetManager(QObject):
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
         self.assetsLoaderThread = None
+        self.thumbnailSettingsLoaded = False
 
     def UiMounted(self):
         self.DownloadSmashGGCharacters()
@@ -258,6 +259,7 @@ class TSHGameAssetManager(QObject):
                 finally:
                     self.lock.unlock()
 
+        self.thumbnailSettingsLoaded = False
         self.assetsLoaderThread = AssetsLoaderThread(self)
         self.assetsLoaderThread.game = game
         self.assetsLoaderThread.lock = self.assetsLoaderLock

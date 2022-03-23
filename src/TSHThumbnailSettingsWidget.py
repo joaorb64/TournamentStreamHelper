@@ -7,6 +7,7 @@ import sys, os
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
+from .TSHGameAssetManager import *
 
 class TSHThumbnailSettingsWidget(QDockWidget):
     def __init__(self, *args):
@@ -132,6 +133,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
                self.selectFontPhase.currentText(), self.selectTypeFontPhase.currentText(), self.selectTypeFontPhase.currentData(), 1))
 
+        # Asset Pack
+        self.selectRenderLabel = self.settings.findChild(QLabel, "label_asset")
+        self.selectRenderType = self.settings.findChild(QComboBox, "comboBoxAsset")
+        # add item (assets pack) when choosing game
+        TSHGameAssetManager.instance.signals.onLoad.connect(self.SetAssetPack)
+        self.selectRenderType.currentIndexChanged.connect(self.SetAssetSetting)
+        
+
         tmp_path = "./tmp/thumbnail"
         tmp_file = f"{tmp_path}/template.jpg"
         Path(tmp_path).mkdir(parents=True, exist_ok=True)
@@ -140,6 +149,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         if not os.path.isfile(tmp_file):
             tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
         self.preview.setPixmap(QPixmap(tmp_file))
+    
+
 
     def SaveIcons(self, key, index):
         path = QFileDialog.getOpenFileName()[0]
@@ -245,3 +256,49 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
+    
+    def SetAssetPack(self):
+        self.selectRenderLabel.clear()
+        self.selectRenderType.clear()
+        if (TSHGameAssetManager.instance.selectedGame.get("name")):
+            game_name = TSHGameAssetManager.instance.selectedGame.get("name")
+        else:
+            game_name = "(No game selected)"
+        label_text = f'<html><head/><body><p><span style=" font-weight:700;">{game_name}</span></p></body></html>'
+        self.selectRenderLabel.setText(label_text)
+        if (TSHGameAssetManager.instance.selectedGame.get("assets")):
+            asset_dict = {}
+            for key, val in TSHGameAssetManager.instance.selectedGame.get("assets").items():
+                # don't use base_files, because don't contains asset, only folder (?)
+                # TODO are there other asset name "forbidden" ?
+                if "base_files" == key:
+                    continue
+                if val.get("name"):
+                    self.selectRenderType.addItem(val.get("name"), key)
+                    asset_dict[key] = val.get("name")
+                else:
+                    self.selectRenderType.addItem(key, key)
+                    asset_dict[key] = key
+            # select setting
+            settings = SettingsManager.Get("thumbnail")
+            try:
+                game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+                if game_codename:
+                    self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict[settings[f"asset/{game_codename}"]]))
+                else:
+                    self.selectRenderType.setCurrentIndex(0)
+            except KeyError:
+                if "full" in asset_dict.keys():
+                    self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict["full"]))
+                else:
+                    self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict["base_files/icon"]))
+            TSHGameAssetManager.instance.thumbnailSettingsLoaded = True
+
+    def SetAssetSetting(self):
+        if TSHGameAssetManager.instance.thumbnailSettingsLoaded:
+            try:
+                game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+                if self.selectRenderType.currentData():
+                    TSHThumbnailSettingsWidget.SaveSettings(self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=False)
+            except Exception as e:
+                print(e)
