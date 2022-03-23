@@ -53,6 +53,7 @@ body {
 }
 
 .player.container {
+  bottom: 48px;
   width: 600px;
   height: 210px;
   display: flex;
@@ -99,13 +100,15 @@ body {
 .p1.container {
   background-position: 100% 0;
   left: 0px;
-  bottom: 0px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .p2.container {
   background-position: 0 0;
   right: 0px;
-  bottom: 0px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .container .name {
