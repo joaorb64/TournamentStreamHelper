@@ -397,6 +397,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 # Windows has some weird thing with files named CON.png. In case a state code is CON,
                 # we try to load _CON.png instead
                 path = f'./assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'
+
+                if not os.path.exists(path):
+                    path = None
+
                 states[state_code].update({
                     "asset": path
                 })
