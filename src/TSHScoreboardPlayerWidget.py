@@ -497,8 +497,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 painter = QPainter()
                 painter.begin(newImg)
 
-                moveY = 32/2 - \
-                    asset.get("eyesight").get("y", 0)/originalH*pix.height()
+                moveY = int(32/2 -
+                            float(asset.get("eyesight").get("y", 0)) /
+                            originalH*pix.height())
                 moveY = min(moveY, 16)
                 moveY = max(moveY, -16)
 
