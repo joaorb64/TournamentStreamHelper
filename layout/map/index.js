@@ -94,16 +94,9 @@ baseMap.addTo(map);
             icon: L.divIcon({
               html: '<div class="gps_ring"></div>',
               className: "css-icon",
-              iconAnchor: [128, 128],
+              iconAnchor: [64, 64],
             }),
-          })
-            .addTo(map)
-            .bindTooltip(player.name, {
-              direction: directions[direction],
-              className: "leaflet-tooltip-own",
-              offset: [0, 0],
-            })
-            .openTooltip();
+          }).addTo(map);
 
           markers.push(marker);
           isPrecise.push(false);
@@ -114,70 +107,75 @@ baseMap.addTo(map);
     });
 
     if (!window.NOHUD) {
-      let maxPing = 0;
-
-      servers.forEach((server1) => {
-        servers.forEach((server2) => {
-          if (server1 != server2) {
-            let ping = pingBetweenServers(server1, server2);
-            if (ping > maxPing) {
-              maxPing = ping;
-            }
-          }
-        });
-      });
-
-      console.log("Max Ping: " + maxPing);
-
-      let pingByDistance = 0;
-
-      positions.forEach((pos1) => {
-        positions.forEach((pos2) => {
-          if (pos1 != pos2) {
-            pingByDistance += distanceInKm(pos1, pos2) * 0.0067;
-          }
-        });
-      });
-
-      console.log("Ping by distance: " + pingByDistance);
-
-      let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
-      $("#ping").html("Estimated ping: " + pingString + " ms");
-
-      let maxDistance = 0;
-
-      positions.forEach((pos1) => {
-        positions.forEach((pos2) => {
-          if (pos1 != pos2) {
-            let distance = distanceInKm(pos1, pos2);
-            if (distance > maxDistance) {
-              maxDistance = distance;
-            }
-          }
-        });
-      });
-
-      console.log("Distance: " + maxDistance);
-
-      let distanceString = "";
-
-      if (maxDistance < 100) {
-        distanceString = "< 100 Km / < 62 mi";
+      // Calculate max ping
+      if (isPrecise.some((e) => e == false)) {
+        $("#ping").html("Estimated ping: ???");
+        $("#distance").html("Distance: ???");
       } else {
-        distanceString =
-          maxDistance.toFixed(2) +
-          " Km" +
-          " / " +
-          (maxDistance * 0.621371).toFixed(2) +
-          " mi";
-      }
+        let maxPing = 0;
 
-      if (positions.length == 2) {
-        $("#distance").html("Distance: " + distanceString);
-      } else {
-        $("#distance").html("Max distance: " + distanceString);
-      }
+        servers.forEach((server1) => {
+          servers.forEach((server2) => {
+            if (server1 != server2) {
+              let ping = pingBetweenServers(server1, server2);
+              if (ping > maxPing) {
+                maxPing = ping;
+              }
+            }
+          });
+        });
 
+        console.log("Max Ping: " + maxPing);
+
+        let pingByDistance = 0;
+
+        positions.forEach((pos1) => {
+          positions.forEach((pos2) => {
+            if (pos1 != pos2) {
+              pingByDistance += distanceInKm(pos1, pos2) * 0.0067;
+            }
+          });
+        });
+
+        console.log("Ping by distance: " + pingByDistance);
+
+        let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
+        $("#ping").html("Estimated ping: " + pingString + " ms");
+
+        let maxDistance = 0;
+
+        positions.forEach((pos1) => {
+          positions.forEach((pos2) => {
+            if (pos1 != pos2) {
+              let distance = distanceInKm(pos1, pos2);
+              if (distance > maxDistance) {
+                maxDistance = distance;
+              }
+            }
+          });
+        });
+
+        console.log("Distance: " + maxDistance);
+
+        let distanceString = "";
+
+        if (maxDistance < 100) {
+          distanceString = "< 100 Km / < 62 mi";
+        } else {
+          distanceString =
+            maxDistance.toFixed(2) +
+            " Km" +
+            " / " +
+            (maxDistance * 0.621371).toFixed(2) +
+            " mi";
+        }
+
+        if (positions.length == 2) {
+          $("#distance").html("Distance: " + distanceString);
+        } else {
+          $("#distance").html("Max distance: " + distanceString);
+        }
+      }
       gsap
         .timeline()
         .to([".overlay-element"], { duration: 1, autoAlpha: 1 }, 0);

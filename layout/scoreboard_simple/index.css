@@ -11,6 +11,7 @@
   place-items: center;
   place-content: center;
   height: 100%;
+  flex-direction: inherit;
 }
 
 body {
@@ -230,22 +231,19 @@ body {
 }
 
 .info.material_container {
-  width: 580px;
-  height: 30px;
   color: white;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 8px 16px;
   background-position: center;
   text-transform: uppercase;
   box-sizing: border-box;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .info.material_container_inner {
   display: flex;
   width: 100%;
   font-size: inherit;
-  justify-content: space-around;
+  flex-direction: column;
 }
 
 .info.material_container_inner > div {
@@ -253,18 +251,31 @@ body {
   text-align: center;
 }
 
-.info.material_container.top {
+.info.material_container.middle {
   left: 50%;
   transform: translateX(-50%);
   top: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 580px;
+  /* height: 66px; */
 }
 
-.info.material_container.bottom {
-  left: 50%;
-  transform: translateX(-50%);
-  top: 44px;
-  display: flex;
-  justify-content: space-around;
+.info.material_container.middle .tournament_name {
+  font-size: 26px;
+}
+
+.info.material_container.middle .phase {
+  opacity: 0.6;
+  font-size: 16px;
+  letter-spacing: 4px;
+}
+
+.info.material_container.middle .match {
+  font-size: 22px;
+  letter-spacing: 2px;
+  opacity: 1;
 }
 
 .info.doubles.material_container {
@@ -276,7 +287,9 @@ body {
 }
 
 .info.doubles.material_container .team_name {
-  flex-grow: 1;
+  width: 262px;
+  padding: 0 6px;
+  box-sizing: border-box;
 }
 
 .t1.material_container {
