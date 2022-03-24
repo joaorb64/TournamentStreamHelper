@@ -176,6 +176,7 @@ class Window(QMainWindow):
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         hbox.addWidget(self.btLoadPlayerSet)
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)

@@ -136,6 +136,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.tabScore.layout().addWidget(bottomOptions)
 
         self.btSelectSet = QPushButton("Load set")
+        self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
         self.btSelectSet.clicked.connect(self.LoadSetClicked)
@@ -164,6 +165,7 @@ class TSHScoreboardWidget(QDockWidget):
         bottomOptions.layout().addLayout(hbox)
 
         self.btLoadPlayerSet = QPushButton("Load player set")
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         hbox.addWidget(self.btLoadPlayerSet)
@@ -406,11 +408,13 @@ class TSHScoreboardWidget(QDockWidget):
 
         while len(self.team1playerWidgets) > number:
             team1player = self.team1playerWidgets[-1]
+            StateManager.Unset(team1player.path)
             team1player.setParent(None)
             self.playerWidgets.remove(team1player)
             self.team1playerWidgets.remove(team1player)
 
             team2player = self.team2playerWidgets[-1]
+            StateManager.Unset(team2player.path)
             team2player.setParent(None)
             self.playerWidgets.remove(team2player)
             self.team2playerWidgets.remove(team2player)
