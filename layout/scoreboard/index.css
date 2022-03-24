@@ -1,6 +1,11 @@
 @font-face {
-  font-family: "Roboto";
+  font-family: "RobotoCondensed";
   src: url("../include/RobotoCondensed.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../include/Roboto-Regular.ttf") format("truetype");
 }
 
 .text {
@@ -15,7 +20,7 @@
 }
 
 body {
-  font-family: Roboto;
+  font-family: RobotoCondensed;
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -27,6 +32,24 @@ body {
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
   letter-spacing: 1.1;
+}
+
+.anim_container_outer {
+  position: absolute;
+  overflow: hidden;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1920px;
+  height: 1080px;
+}
+
+.anim_container_inner {
+  position: absolute;
+  overflow: hidden;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1920px;
+  height: 1080px;
 }
 
 .container {
@@ -65,7 +88,7 @@ body {
 
 .fgc .player.container {
   top: 8px;
-  width: 650px;
+  width: 652px;
 }
 
 .fgc.thin .player.container {
@@ -76,33 +99,30 @@ body {
 
 .p1.container {
   background-position: 100% 0;
-  right: 1010px;
+  left: 410px;
   flex-direction: row;
 }
 
 .fgc .p1.container {
-  right: 1116px;
+  left: 154px;
+}
+
+.fgc.thin .p1.container {
+  left: 164px;
 }
 
 .p2.container {
   background-position: 0 0;
-  left: 1010px;
+  right: 410px;
   flex-direction: row-reverse;
 }
 
 .fgc .p2.container {
-  left: 1116px;
+  right: 154px;
 }
 
-.p3.container {
-  background-position: 0 0;
-  right: 1306px;
-}
-
-.p4.container {
-  background-position: 0 0;
-  left: 1306px;
-  flex-direction: row-reverse;
+.fgc.thin .p2.container {
+  right: 164px;
 }
 
 .name_twitter {
@@ -135,7 +155,7 @@ body {
 }
 
 .name_twitter .twitter {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .fgc .name_twitter .twitter {
@@ -168,7 +188,15 @@ body {
 }
 
 .fgc .logo {
-  display: none;
+  top: 162px;
+  width: 90px;
+  height: 90px;
+}
+
+.fgc.thin .logo {
+  top: 140px;
+  width: 80px;
+  height: 80px;
 }
 
 .info.container {
@@ -198,15 +226,27 @@ body {
 }
 
 .info.container.top {
-  top: 4px;
-  width: 500px;
+  top: 2px;
+  width: 320px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 36px;
+  padding: 8px 8px;
+}
+
+.tournament_name {
+  font-size: 18px;
+  padding: 0px 8px;
+  max-width: 100%;
+  height: 100%;
 }
 
 .fgc .info.container.top {
   top: 8px;
-  height: 32px;
+  height: 34px;
   width: 300px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .fgc.thin .info.container.top {
@@ -218,6 +258,25 @@ body {
   top: 116px;
   display: flex;
   justify-content: space-around;
+  height: unset;
+  flex-direction: column;
+  width: 300px;
+  font-size: 20px;
+  padding: 4px 10px;
+}
+
+.phase {
+  font-family: Roboto;
+  opacity: 0.6;
+  font-size: 14px;
+  letter-spacing: 2px;
+  max-width: 100%;
+}
+
+.match {
+  font-size: 16px;
+  letter-spacing: 2px;
+  max-width: 100%;
 }
 
 .fgc .info.container.bottom {
@@ -342,4 +401,24 @@ body {
 
 .p2 .sponsor {
   color: #29b6f6;
+}
+
+.losers {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  font-size: 18px;
+  border-radius: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin: 0 6px;
+}
+
+.p1 .losers {
+  background-color: #ff3837ff;
+}
+
+.p2 .losers {
+  background-color: #308affff;
 }

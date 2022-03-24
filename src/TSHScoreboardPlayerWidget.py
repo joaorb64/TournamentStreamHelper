@@ -87,19 +87,19 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.SetIndex(index, teamNumber)
 
-        self.findChild(QLineEdit, "name").editingFinished.connect(
+        self.findChild(QLineEdit, "name").textChanged.connect(
             self.ExportMergedName)
-        self.findChild(QLineEdit, "team").editingFinished.connect(
+        self.findChild(QLineEdit, "team").textChanged.connect(
             self.ExportMergedName)
 
-        self.findChild(QLineEdit, "name").editingFinished.connect(
+        self.findChild(QLineEdit, "name").textChanged.connect(
             lambda: self.ExportPlayerImages())
-        self.findChild(QLineEdit, "team").editingFinished.connect(
+        self.findChild(QLineEdit, "team").textChanged.connect(
             lambda: self.ExportPlayerImages())
 
-        self.findChild(QLineEdit, "name").editingFinished.connect(
+        self.findChild(QLineEdit, "name").textChanged.connect(
             lambda: self.ExportPlayerId())
-        self.findChild(QLineEdit, "team").editingFinished.connect(
+        self.findChild(QLineEdit, "team").textChanged.connect(
             lambda: self.ExportPlayerId())
 
         for c in self.findChildren(QLineEdit):

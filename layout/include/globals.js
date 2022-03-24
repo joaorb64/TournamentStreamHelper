@@ -81,6 +81,8 @@ function CenterImage(element, eyesight) {
 
   console.log("CenterImage", image);
 
+  if (!eyesight) return;
+
   if (image != undefined && image.includes("url(")) {
     let img = new Image();
     img.src = image.split('url("')[1].split('")')[0];
