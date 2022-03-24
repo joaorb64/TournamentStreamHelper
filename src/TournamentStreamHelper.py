@@ -209,6 +209,12 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
+        action = self.optionsBt.menu().addAction("Light mode")
+        action.setCheckable(True)
+        self.LoadTheme()
+        action.setChecked(SettingsManager.Get("light_mode", False))
+        action.toggled.connect(self.ToggleLightMode)
+
         toggleWidgets = QMenu("Toggle widgets", self.optionsBt.menu())
         self.optionsBt.menu().addMenu(toggleWidgets)
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
@@ -717,12 +723,24 @@ class Window(QMainWindow):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
 
+    def ToggleLightMode(self, checked):
+        if checked:
+            App.setStyleSheet(qdarkstyle.load_stylesheet(
+                palette=qdarkstyle.LightPalette))
+        else:
+            App.setStyleSheet(qdarkstyle.load_stylesheet(
+                palette=qdarkstyle.DarkPalette))
 
-App.setStyleSheet(qdarkstyle.load_stylesheet(
-    palette=qdarkstyle.DarkPalette))
+        SettingsManager.Set("light_mode", checked)
 
-# App.setStyleSheet(qdarkstyle.load_stylesheet(
-#     palette=qdarkstyle.LightPalette))
+    def LoadTheme(self):
+        if SettingsManager.Get("light_mode", False):
+            App.setStyleSheet(qdarkstyle.load_stylesheet(
+                palette=qdarkstyle.LightPalette))
+        else:
+            App.setStyleSheet(qdarkstyle.load_stylesheet(
+                palette=qdarkstyle.DarkPalette))
+
 
 window = Window()
 sys.exit(App.exec_())
