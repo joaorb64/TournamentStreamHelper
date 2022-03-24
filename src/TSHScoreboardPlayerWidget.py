@@ -157,17 +157,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         team = self.findChild(QLineEdit, "team").text()
         name = self.findChild(QLineEdit, "name").text()
         merged = ""
+        nameOnlyMerged = ""
 
         if team != "":
             merged += team+" | "
 
         merged += name
+        nameOnlyMerged += name
 
         if self.losers:
             merged += " [L]"
+            nameOnlyMerged += " [L]"
 
         StateManager.Set(
             f"score.team.{self.teamNumber}.player.{self.index}.mergedName", merged)
+        StateManager.Set(
+            f"score.team.{self.teamNumber}.player.{self.index}.mergedOnlyName", nameOnlyMerged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         team = self.findChild(QLineEdit, "team").text()
