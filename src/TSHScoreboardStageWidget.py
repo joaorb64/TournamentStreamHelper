@@ -203,8 +203,11 @@ class TSHScoreboardStageWidget(QWidget):
         self.ExportCurrentRuleset()
 
         self.btSave = self.findChild(QPushButton, "btSave")
+        self.btSave.setIcon(QIcon('assets/icons/save.svg'))
         self.btDelete = self.findChild(QPushButton, "btDelete")
+        self.btDelete.setIcon(QIcon('assets/icons/cancel.svg'))
         self.btClear = self.findChild(QPushButton, "btClear")
+        self.btClear.setIcon(QIcon('assets/icons/undo.svg'))
 
         self.rulesetName.textChanged.connect(self.UpdateBottomButtons)
         self.btSave.clicked.connect(self.SaveRuleset)

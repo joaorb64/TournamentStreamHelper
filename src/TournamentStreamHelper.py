@@ -125,19 +125,27 @@ class Window(QMainWindow):
         self.setCentralWidget(central_widget)
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
+        self.dockWidgets = []
+
         tournamentInfo = TSHTournamentInfoWidget()
+        tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
         tournamentInfo.setObjectName("Tournament Info")
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
+        self.dockWidgets.append(tournamentInfo)
 
         self.scoreboard = TSHScoreboardWidget()
+        self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
         self.scoreboard.setObjectName("Scoreboard")
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
+        self.dockWidgets.append(self.scoreboard)
 
         commentary = TSHCommentaryWidget()
+        commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
         commentary.setObjectName("Commentary")
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
+        self.dockWidgets.append(commentary)
 
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
@@ -612,8 +620,7 @@ class Window(QMainWindow):
             filesToDownload = assets[game]["assets"][key]["files"]
 
             for f in filesToDownload:
-                filesToDownload[f]["path"] = \
-                    "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
+                filesToDownload[f]["path"] = "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
                     filesToDownload[f]["name"]
                 filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 

@@ -307,9 +307,13 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(
             QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
+        self.scoreColumn.findChild(
+            QPushButton, "btSwapTeams").setIcon(QIcon('assets/icons/swap.svg'))
 
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").clicked.connect(self.ResetScore)
+        self.scoreColumn.findChild(
+            QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
 
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
