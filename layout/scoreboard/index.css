@@ -127,7 +127,7 @@ body {
 
 .name_twitter {
   display: flex;
-  flex-grow: 1;
+  width: 100%;
   flex-direction: column;
   overflow: hidden;
   justify-content: center;
@@ -342,6 +342,7 @@ body {
   display: flex;
   overflow: hidden;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .character_container > div {

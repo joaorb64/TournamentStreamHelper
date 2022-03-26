@@ -157,6 +157,10 @@
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 
+    $(".text").each(function (e) {
+      FitText($($(this)[0].parentNode));
+    });
+
     $(".container div:has(>.text:empty)").css("margin-right", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-right", "");
     $(".container div:has(>.text:empty)").css("margin-left", "0");

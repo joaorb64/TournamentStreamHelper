@@ -27,6 +27,7 @@ class SmashGGDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "SmashGG"
+        self.getMatchThreadPool = QThreadPool()
 
     def GetTournamentData(self):
         finalData = {}
@@ -89,7 +90,7 @@ class SmashGGDataProvider(TournamentDataProvider):
         finalResult = {}
 
         try:
-            pool = self.threadpool
+            pool = self.getMatchThreadPool
 
             result = {}
 
@@ -115,6 +116,9 @@ class SmashGGDataProvider(TournamentDataProvider):
             finalResult = {}
             finalResult.update(result["new"])
             finalResult.update(result["old"])
+
+            if result["new"].get("isOnline") == False:
+                finalResult["bestOf"] = None
 
             finalResult["entrants"] = result["new"]["entrants"]
 
@@ -216,7 +220,8 @@ class SmashGGDataProvider(TournamentDataProvider):
             "tournament_phase": phase_name,
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
-            "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else ""
+            "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else "",
+            "isOnline": deep_get(_set, "event.isOnline"),
         }
 
         players = [[], []]
