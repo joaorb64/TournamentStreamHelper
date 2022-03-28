@@ -242,6 +242,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="flipP1Check">
+          <property name="text">
+           <string>Flip P1 assets?</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QCheckBox" name="flipP2Check">
           <property name="text">
            <string>Flip P2 assets?</string>
