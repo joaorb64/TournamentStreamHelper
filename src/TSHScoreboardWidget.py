@@ -374,7 +374,7 @@ class TSHScoreboardWidget(QDockWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
-            print(self.team1column.findChild(QScrollArea))
+
             self.team1column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
@@ -412,12 +412,14 @@ class TSHScoreboardWidget(QDockWidget):
             team1player.setParent(None)
             self.playerWidgets.remove(team1player)
             self.team1playerWidgets.remove(team1player)
+            team1player.deleteLater()
 
             team2player = self.team2playerWidgets[-1]
             StateManager.Unset(team2player.path)
             team2player.setParent(None)
             self.playerWidgets.remove(team2player)
             self.team2playerWidgets.remove(team2player)
+            team2player.deleteLater()
 
         for team in [1, 2]:
             if StateManager.Get(f'score.team.{team}'):
