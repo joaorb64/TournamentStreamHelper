@@ -11,7 +11,7 @@
 .text {
   white-space: nowrap;
   display: flex;
-  min-width: 100%;
+  min-width: 99%;
   width: fit-content;
   place-items: center;
   place-content: center;
