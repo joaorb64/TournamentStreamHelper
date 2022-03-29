@@ -377,16 +377,20 @@ class TSHScoreboardWidget(QDockWidget):
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
 
-            outThumbDir = f"{os.getcwd()}/out/thumbnails/"
-            if platform.system() == "Windows":
-                thumbnailPath = thumbnailPath[2:].replace("/", "\\")
-                outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
-                #os.startfile(outThumbDir)
-                subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
-            elif platform.system() == "Darwin":
-                subprocess.Popen(["open", outThumbDir])
+            thumbnail_settings = SettingsManager.Get("thumbnail")
+            if thumbnail_settings.get("open_explorer"):
+                outThumbDir = f"{os.getcwd()}/out/thumbnails/"
+                if platform.system() == "Windows":
+                    thumbnailPath = thumbnailPath[2:].replace("/", "\\")
+                    outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
+                    #os.startfile(outThumbDir)
+                    subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
+                elif platform.system() == "Darwin":
+                    subprocess.Popen(["open", outThumbDir])
+                else:
+                    subprocess.Popen(["xdg-open", outThumbDir])
             else:
-                subprocess.Popen(["xdg-open", outThumbDir])
+                msgBox.exec()
         except Exception as e:
             msgBox.setText("Warning")
             msgBox.setInformativeText(str(e))

@@ -50,12 +50,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
         self.flip_p2 = self.settings.findChild(QCheckBox, "flipP2Check")
         self.flip_p1 = self.settings.findChild(QCheckBox, "flipP1Check")
+        self.open_explorer = self.settings.findChild(QCheckBox, "openExplorerCheck")
 
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(key="use_team_names", val=self.team_name.isChecked()))
         self.sponsor.stateChanged.connect(lambda: self.SaveSettings(key="use_sponsors", val=self.sponsor.isChecked()))
         self.flip_p2.stateChanged.connect(lambda: self.SaveSettings(key="flip_p2", val=self.flip_p2.isChecked()))
         self.flip_p1.stateChanged.connect(lambda: self.SaveSettings(key="flip_p1", val=self.flip_p1.isChecked()))
+        self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(key="open_explorer", val=self.open_explorer.isChecked()))
 
         # FONTS
         self.selectFontPlayer = self.settings.findChild(QComboBox, "comboBoxFont")
@@ -80,6 +82,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 "use_sponsors": True,
                 "flip_p1": False,
                 "flip_p2": False,
+                "open_explorer": True,
                 "main_icon_path": "./assets/icons/icon.png",
                 "separator": {
                     "width": 5,
@@ -102,6 +105,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.team_name.setChecked(settings["use_team_names"])
         self.sponsor.setChecked(settings["use_sponsors"])
         self.flip_p2.setChecked(settings["flip_p2"])
+        self.flip_p1.setChecked(settings["flip_p1"])
+        self.open_explorer.setChecked(settings["open_explorer"])
 
         # TODO each one regenarate the preview, move it before signals and do generation once at the end ?
         self.VSpacer.setValue(settings["separator"]["width"])
