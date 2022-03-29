@@ -1,5 +1,5 @@
 import re
-from time import sleep
+import time
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -22,6 +22,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_data_updated = pyqtSignal(dict)
     twitch_username_updated = pyqtSignal()
     user_updated = pyqtSignal()
+    recent_sets_updated = pyqtSignal(dict)
 
 
 class TSHTournamentDataProvider:
@@ -272,6 +273,12 @@ class TSHTournamentDataProvider:
             data.update({"overwrite": overwrite}),
             mainWindow.signals.UpdateSetData.emit(data)
         ])
+        self.threadPool.start(worker)
+
+    def GetRecentSets(self, id1, id2):
+        worker = Worker(self.provider.GetRecentSets, **{
+            "id1": id1, "id2": id2, "callback": self.signals.recent_sets_updated, "requestTime": time.time_ns()
+        })
         self.threadPool.start(worker)
 
     def UiMounted(self):
