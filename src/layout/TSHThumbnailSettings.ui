@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>854</width>
+    <width>962</width>
     <height>753</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QLabel" name="thumbnailPreview">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>380</x>
      <y>40</y>
      <width>640</width>
      <height>360</height>
@@ -35,7 +35,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>380</x>
      <y>10</y>
      <width>101</width>
      <height>31</height>
@@ -50,7 +50,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>301</width>
+     <width>361</width>
      <height>481</height>
     </rect>
    </property>
@@ -62,8 +62,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>282</width>
-      <height>631</height>
+      <width>338</width>
+      <height>678</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_6">
