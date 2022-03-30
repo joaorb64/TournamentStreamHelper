@@ -14,6 +14,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
     characters_changed = pyqtSignal()
+    playerId_changed = pyqtSignal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -25,6 +26,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
+
+        self.instanceSignals = TSHScoreboardPlayerWidgetSignals()
 
         self.path = path
 
@@ -157,17 +160,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         team = self.findChild(QLineEdit, "team").text()
         name = self.findChild(QLineEdit, "name").text()
         merged = ""
+        nameOnlyMerged = ""
 
         if team != "":
             merged += team+" | "
 
         merged += name
+        nameOnlyMerged += name
 
         if self.losers:
             merged += " [L]"
+            nameOnlyMerged += " [L]"
 
         StateManager.Set(
             f"score.team.{self.teamNumber}.player.{self.index}.mergedName", merged)
+        StateManager.Set(
+            f"score.team.{self.teamNumber}.player.{self.index}.mergedOnlyName", nameOnlyMerged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         team = self.findChild(QLineEdit, "team").text()
@@ -203,8 +211,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", None)
 
     def ExportPlayerId(self, id=None):
-        StateManager.Set(
-            f"score.team.{self.teamNumber}.player.{self.index}.id", id)
+        if StateManager.Get(f"score.team.{self.teamNumber}.player.{self.index}.id") != id:
+            StateManager.Set(
+                f"score.team.{self.teamNumber}.player.{self.index}.id", id)
+            self.instanceSignals.playerId_changed.emit()
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         tmpData = []

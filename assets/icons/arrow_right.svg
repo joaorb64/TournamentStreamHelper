@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="24px"
+   viewBox="0 0 24 24"
+   width="24px"
+   fill="#FFFFFF"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="arrow_right.svg"
+   inkscape:version="1.1.2 (76b9e6a115, 2022-02-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="20.75"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="70"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <path
+     d="M0 0h24v24H0V0z"
+     fill="none"
+     id="path2" />
+  <g
+     id="path4">
+    <path
+       style="color:#000000;fill:#000000;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 12,2.5859375 11.292969,3.2929688 9.1757813,5.4101562 13.757813,10 H 3 v 4 H 13.757813 L 9.1757813,18.589844 12,21.414062 21.414062,12 Z M 16.388672,9.8027344 18.585937,12 16.388672,14.197266 18.582031,12 Z"
+       id="path824" />
+    <path
+       style="color:#000000;fill:#ffffff;stroke-width:2;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 12,4 10.59,5.41 16.17,11 H 4 v 2 H 16.17 L 10.59,18.59 12,20 20,12 Z"
+       id="path826" />
+  </g>
+</svg>

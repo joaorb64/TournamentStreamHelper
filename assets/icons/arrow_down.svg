@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M11 5v11.17l-4.88-4.88c-.39-.39-1.03-.39-1.42 0-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L13 16.17V5c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="24px"
+   viewBox="0 0 24 24"
+   width="24px"
+   fill="#FFFFFF"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="arrow_down.svg"
+   inkscape:version="1.1.2 (76b9e6a115, 2022-02-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="20.75"
+     inkscape:cx="9.4939759"
+     inkscape:cy="15.662651"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="70"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <path
+     d="M0 0h24v24H0V0z"
+     fill="none"
+     id="path2" />
+  <g
+     id="path4">
+    <path
+       style="color:#000000;fill:#000000;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="m 12,3 c -1.095453,0 -2,0.9045466 -2,2 v 8.755859 L 6.8261719,10.582031 c -0.7767927,-0.7767924 -2.0571917,-0.7767924 -2.8339844,0 -0.770749,0.770749 -0.770749,2.05347 0,2.824219 l 6.5898435,6.591797 c 0.770749,0.770749 2.05347,0.770749 2.824219,0 l 6.591797,-6.591797 c 0.770749,-0.770749 0.770749,-2.05347 0,-2.824219 -0.770749,-0.7707488 -2.05347,-0.7707488 -2.824219,0 L 14,13.755859 V 5 C 14,3.9045466 13.095453,3 12,3 Z"
+       id="path824" />
+    <path
+       style="color:#000000;fill:#ffffff;stroke-width:2;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 11,5 V 16.17 L 6.12,11.29 c -0.39,-0.39 -1.03,-0.39 -1.42,0 -0.39,0.39 -0.39,1.02 0,1.41 l 6.59,6.59 c 0.39,0.39 1.02,0.39 1.41,0 l 6.59,-6.59 c 0.39,-0.39 0.39,-1.02 0,-1.41 -0.39,-0.39 -1.02,-0.39 -1.41,0 L 13,16.17 V 5 C 13,4.45 12.55,4 12,4 11.45,4 11,4.45 11,5 Z"
+       id="path826" />
+  </g>
+</svg>

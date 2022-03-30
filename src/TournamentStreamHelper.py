@@ -126,24 +126,33 @@ class Window(QMainWindow):
         self.setCentralWidget(central_widget)
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
+        self.dockWidgets = []
+        
         thumbnailSetting = TSHThumbnailSettingsWidget()
         thumbnailSetting.setObjectName("Thumbnail Settings")
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+        self.dockWidgets.append(thumbnailSetting)
 
         tournamentInfo = TSHTournamentInfoWidget()
+        tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
         tournamentInfo.setObjectName("Tournament Info")
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
+        self.dockWidgets.append(tournamentInfo)
 
         self.scoreboard = TSHScoreboardWidget()
+        self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
         self.scoreboard.setObjectName("Scoreboard")
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
+        self.dockWidgets.append(self.scoreboard)
 
         commentary = TSHCommentaryWidget()
+        commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
         commentary.setObjectName("Commentary")
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
+        self.dockWidgets.append(commentary)
 
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
@@ -175,6 +184,7 @@ class Window(QMainWindow):
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         hbox.addWidget(self.btLoadPlayerSet)
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)
@@ -621,8 +631,7 @@ class Window(QMainWindow):
             filesToDownload = assets[game]["assets"][key]["files"]
 
             for f in filesToDownload:
-                filesToDownload[f]["path"] = \
-                    "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
+                filesToDownload[f]["path"] = "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
                     filesToDownload[f]["name"]
                 filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 

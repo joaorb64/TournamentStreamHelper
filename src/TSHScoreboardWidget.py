@@ -25,6 +25,8 @@ class TSHScoreboardWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
 
+        StateManager.Set("score", {})
+
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
@@ -161,6 +163,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.tabScore.layout().addWidget(bottomOptions)
 
         self.btSelectSet = QPushButton("Load set")
+        self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
         self.btSelectSet.clicked.connect(self.LoadSetClicked)
@@ -189,6 +192,7 @@ class TSHScoreboardWidget(QDockWidget):
         bottomOptions.layout().addLayout(hbox)
 
         self.btLoadPlayerSet = QPushButton("Load player set")
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         hbox.addWidget(self.btLoadPlayerSet)
@@ -332,9 +336,16 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(
             QPushButton, "btSwapTeams").clicked.connect(self.SwapTeams)
+        self.scoreColumn.findChild(
+            QPushButton, "btSwapTeams").setIcon(QIcon('assets/icons/swap.svg'))
 
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").clicked.connect(self.ResetScore)
+        self.scoreColumn.findChild(
+            QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
+
+        TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
+            self.UpdateRecentSets)
 
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
@@ -423,7 +434,7 @@ class TSHScoreboardWidget(QDockWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
-            print(self.team1column.findChild(QScrollArea))
+
             self.team1column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
@@ -436,6 +447,9 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team1playerWidgets[index-1 if index > 0 else 0]))
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
+
+            p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
+
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
@@ -453,18 +467,25 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team2playerWidgets[index-1 if index > 0 else 0]))
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
+
+            p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
+
             self.team2playerWidgets.append(p)
 
         while len(self.team1playerWidgets) > number:
             team1player = self.team1playerWidgets[-1]
+            StateManager.Unset(team1player.path)
             team1player.setParent(None)
             self.playerWidgets.remove(team1player)
             self.team1playerWidgets.remove(team1player)
+            team1player.deleteLater()
 
             team2player = self.team2playerWidgets[-1]
+            StateManager.Unset(team2player.path)
             team2player.setParent(None)
             self.playerWidgets.remove(team2player)
             self.team2playerWidgets.remove(team2player)
+            team2player.deleteLater()
 
         for team in [1, 2]:
             if StateManager.Get(f'score.team.{team}'):
@@ -532,6 +553,36 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(losersLeft)
 
         self.teamsSwapped = not self.teamsSwapped
+
+    def GetRecentSets(self):
+        updated = False
+        # Only if 1 player on each side
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "SmashGG":
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+                StateManager.Set(f"score.recent_sets", {
+                    "state": "loading",
+                    "sets": []
+                })
+                TSHTournamentDataProvider.instance.GetRecentSets(p1id, p2id)
+                updated = True
+
+        if not updated:
+            StateManager.Set(f"score.recent_sets", {
+                "state": "done",
+                "sets": []
+            })
+
+    def UpdateRecentSets(self, data):
+        lastUpdateTime = StateManager.Get(f"score.recent_sets.request_time", 0)
+
+        if data.get("request_time", 0) > lastUpdateTime:
+            StateManager.Set(f"score.recent_sets", {
+                "state": "done",
+                "sets": data.get("sets"),
+                "request_time": data.get("request_time")
+            })
 
     def ResetScore(self):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
