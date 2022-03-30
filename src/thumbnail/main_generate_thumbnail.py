@@ -311,7 +311,8 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                     current_data = current_data.rstrip("[L]").strip()
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name")
-                    current_data = current_data.strip()
+                    if current_data:
+                        current_data = current_data.strip()
                 if current_data:
                     player_list.append(current_data)
             player_name = " / ".join(player_list)
