@@ -2,11 +2,6 @@
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
-      [".phase"],
-      { duration: 0.8, opacity: "0", y: "-20px", ease: "power2.inOut" },
-      0
-    )
-    .from(
       [".container"],
       { duration: 0.8, opacity: "0", x: "-20px", ease: "power2.inOut" },
       0
@@ -107,7 +102,7 @@
             player.country.asset
               ? `
                 <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
-            `
+              `
               : ""
           );
 
@@ -116,7 +111,7 @@
             player.state.asset
               ? `
                 <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
-            `
+              `
               : ""
           );
 
@@ -142,24 +137,16 @@
       });
     });
 
+    let phaseTexts = [];
+    if (data.score.phase) phaseTexts.push(data.score.phase);
+    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+
+    SetInnerHtml($(".info.material_container .phase"), phaseTexts.join(" - "));
     SetInnerHtml(
-      $(".info.material_container.top"),
+      $(".info.material_container .tournament_name"),
       data.tournamentInfo.tournamentName
     );
-    SetInnerHtml(
-      $(".info.material_container.bottom"),
-      `
-            <div class="info material_container_inner">
-                ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-                ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-                ${
-                  data.score.best_of
-                    ? `<div>Best of ${data.score.best_of}</div>`
-                    : ""
-                }
-            </div>
-        `
-    );
+    SetInnerHtml($(".info.material_container .match"), data.score.match);
   }
 
   $(window).on("load", () => {

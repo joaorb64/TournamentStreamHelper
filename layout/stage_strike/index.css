@@ -25,7 +25,9 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  place-content: center;
   gap: 16px;
+  height: 100%;
 }
 
 .stage-name {

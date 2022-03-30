@@ -19,7 +19,7 @@
      <x>11</x>
      <y>11</y>
      <width>306</width>
-     <height>452</height>
+     <height>700</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -214,7 +214,7 @@
         <item>
          <widget class="QCheckBox" name="phaseNameCheck">
           <property name="text">
-           <string>Phase name ?</string>
+           <string>Phase name?</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -224,7 +224,7 @@
         <item>
          <widget class="QCheckBox" name="teamNameCheck">
           <property name="text">
-           <string>Teams names ?</string>
+           <string>Teams names?</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -234,10 +234,30 @@
         <item>
          <widget class="QCheckBox" name="sponsorCheck">
           <property name="text">
-           <string>Sponsors ?</string>
+           <string>Sponsors?</string>
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="flipP1Check">
+          <property name="text">
+           <string>Flip P1 assets?</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="flipP2Check">
+          <property name="text">
+           <string>Flip P2 assets?</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -343,6 +363,65 @@
      </layout>
     </item>
     <item>
+     <widget class="Line" name="line_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_9">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:700;&quot;&gt;Asset Pack&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+    <widget class="QLabel" name="label_asset">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;(No game selected)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QComboBox" name="comboBoxAsset"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Line" name="line_5">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:700;&quot;&gt;UI Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+      <widget class="QCheckBox" name="openExplorerCheck">
+      <property name="text">
+        <string>Open File Explorer after generation?</string>
+      </property>
+      <property name="checked">
+        <bool>false</bool>
+      </property>
+      </widget>
+    </item>
+    <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -350,7 +429,7 @@
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>40</height>
+        <height>80</height>
        </size>
       </property>
      </spacer>
@@ -382,7 +461,7 @@
      <x>320</x>
      <y>10</y>
      <width>101</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">

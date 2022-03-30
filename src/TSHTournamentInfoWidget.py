@@ -21,11 +21,12 @@ class TSHTournamentInfoWidget(QDockWidget):
 
         for widget in self.findChildren(QLineEdit):
             if widget.objectName() != "qt_spinbox_lineedit":
-                widget.textChanged.connect(
-                    lambda text, element=widget: [
+                widget.editingFinished.connect(
+                    lambda element=widget: [
                         StateManager.Set(
-                            f"tournamentInfo.{element.objectName()}", text)
+                            f"tournamentInfo.{element.objectName()}", element.text())
                     ])
+                widget.editingFinished.emit()
                 widget.setText(StateManager.Get(
                     f"tournamentInfo.{widget.objectName()}", ""))
 
@@ -43,6 +44,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         if not data.get("initial_load"):
             for widget in self.findChildren(QLineEdit):
                 widget.setText("")
+                widget.editingFinished.emit()
             for widget in self.findChildren(QSpinBox):
                 widget.setValue(0)
 
@@ -52,6 +54,7 @@ class TSHTournamentInfoWidget(QDockWidget):
             if widget:
                 if type(widget) == QLineEdit:
                     widget.setText(data[key])
+                    widget.editingFinished.emit()
 
                 if type(widget) == QSpinBox:
                     widget.setValue(data[key])

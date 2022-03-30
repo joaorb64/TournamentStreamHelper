@@ -69,12 +69,12 @@ class TSHCommentaryWidget(QDockWidget):
             comm.setTitle(f"Commentator {len(self.commentaryWidgets)+1}")
 
             for c in comm.findChildren(QLineEdit):
-                c.textChanged.connect(
-                    lambda text, element=c, index=len(self.commentaryWidgets)+1: [
+                c.editingFinished.connect(
+                    lambda element=c, index=len(self.commentaryWidgets)+1: [
                         StateManager.Set(
-                            f"commentary.{index}.{element.objectName()}", text)
+                            f"commentary.{index}.{element.objectName()}", element.text())
                     ])
-                c.textChanged.emit("")
+                c.editingFinished.emit()
 
             comm.findChild(QPushButton, "btUp").setIcon(
                 QIcon("./assets/icons/arrow_up.svg"))
@@ -86,10 +86,10 @@ class TSHCommentaryWidget(QDockWidget):
             comm.findChild(QPushButton, "btDown").clicked.connect(
                 lambda x, index=len(self.commentaryWidgets): self.MoveDown(index))
 
-            comm.findChild(QLineEdit, "name").textChanged.connect(
-                lambda x, c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
-            comm.findChild(QLineEdit, "team").textChanged.connect(
-                lambda x, c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
+            comm.findChild(QLineEdit, "name").editingFinished.connect(
+                lambda c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
+            comm.findChild(QLineEdit, "team").editingFinished.connect(
+                lambda c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
 
             self.commentaryWidgets.append(comm)
             self.widgetArea.layout().addWidget(comm)
@@ -122,8 +122,11 @@ class TSHCommentaryWidget(QDockWidget):
             for c2 in self.commentaryWidgets[index2].findChildren(QLineEdit):
                 self.commentaryWidgets[index1].findChild(
                     QLineEdit, c.objectName()).setText(c.text())
+                self.commentaryWidgets[index1].findChild(
+                    QLineEdit, c.objectName()).editingFinished.emit()
 
             c.setText(saveState[c.objectName()])
+            c.editingFinished.emit()
 
     def ExportMergedName(self, comm, index):
         team = comm.findChild(QLineEdit, "team").text()
@@ -156,6 +159,10 @@ class TSHCommentaryWidget(QDockWidget):
 
     def SetData(self, widget, data):
         widget.findChild(QLineEdit, "name").setText(data.get("gamerTag"))
+        widget.findChild(QLineEdit, "name").editingFinished.emit()
         widget.findChild(QLineEdit, "team").setText(data.get("prefix"))
+        widget.findChild(QLineEdit, "team").editingFinished.emit()
         widget.findChild(QLineEdit, "real_name").setText(data.get("name"))
+        widget.findChild(QLineEdit, "real_name").editingFinished.emit()
         widget.findChild(QLineEdit, "twitter").setText(data.get("twitter"))
+        widget.findChild(QLineEdit, "twitter").editingFinished.emit()

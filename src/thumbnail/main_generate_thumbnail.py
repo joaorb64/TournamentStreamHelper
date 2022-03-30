@@ -16,18 +16,22 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 
+
 def generate_separator_images(color_code=(127, 127, 127), width=3):
     x_size, y_size = 960, 1080
     x_separator = Image.new("RGBA", (x_size, y_size), (255, 0, 0, 0))
     y_separator = deepcopy(x_separator)
 
     x_draw = ImageDraw.Draw(x_separator)
-    x_draw.line([(0, y_size/2), (x_size, y_size/2)], fill=color_code, width=width)
+    x_draw.line([(0, y_size/2), (x_size, y_size/2)],
+                fill=color_code, width=width)
 
     y_draw = ImageDraw.Draw(y_separator)
-    y_draw.line([(x_size/2, 0), (x_size/2, y_size)], fill=color_code, width=width)
+    y_draw.line([(x_size/2, 0), (x_size/2, y_size)],
+                fill=color_code, width=width)
 
     return(x_separator, y_separator)
+
 
 def find(element, json):
     keys = element.split('.')
@@ -115,9 +119,15 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix):
-    separator_h_image, separator_v_image = generate_separator_images(separator_color_code, separator_width)
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False):
+    separator_h_image, separator_v_image = generate_separator_images(
+        separator_color_code, separator_width)
     num_line = len(path_matrix)
+
+    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+        paste_coordinates = (
+            round(thumbnail.size[0]-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
@@ -178,10 +188,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 separator_h_image, thumbnail.size, separator_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
 
+    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
+
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False):
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
     max_size = (max_x_size, max_y_size)
@@ -227,7 +240,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets):
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2)
 
     return(thumbnail)
 
@@ -297,7 +310,9 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                 if current_data:
                     current_data = current_data.rstrip("[L]").strip()
                 if (not use_sponsors) or (not current_data):
-                    current_data = current_team[key].get("name").strip()
+                    current_data = current_team[key].get("name")
+                    if current_data:
+                        current_data = current_data.strip()
                 if current_data:
                     player_list.append(current_data)
             player_name = " / ".join(player_list)
@@ -386,6 +401,7 @@ def paste_main_icon(thumbnail, icon_path):
         thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
 
+
 def paste_side_icon(thumbnail, icon_path_list):
     if len(icon_path_list) > 2:
         raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
@@ -411,6 +427,7 @@ def paste_side_icon(thumbnail, icon_path_list):
                 icon_image, thumbnail.size, icon_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
     return(thumbnail)
+
 
 def createFalseData():
     # TODO "game" : recup game asset ?
@@ -512,7 +529,8 @@ def createFalseData():
     }
     return data
 
-def generate(settingsManager, isPreview = False):
+
+def generate(settingsManager, isPreview=False):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail")
 
@@ -542,8 +560,11 @@ def generate(settingsManager, isPreview = False):
     display_phase = settings["display_phase"]
     use_team_names = settings["use_team_names"]
     use_sponsors = settings["use_sponsors"]
+    flip_p1 = settings["flip_p1"]
+    flip_p2 = settings["flip_p2"]
 
-    font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf", "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
+    font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf",
+                 "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
     if settings["font_list"][0]:
         font_list[0] = settings["font_list"][0]
     if settings["font_list"][1]:
@@ -564,7 +585,7 @@ def generate(settingsManager, isPreview = False):
 
     if not isPreview:
         game_codename = data.get("game").get("codename")
-        used_assets = settings["asset"]
+        used_assets = settings[f"asset/{game_codename}"]
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
     else:
         used_assets = "full"
@@ -601,11 +622,14 @@ def generate(settingsManager, isPreview = False):
     background = Image.open(background_path).convert('RGBA')
 
     thumbnail = Image.new("RGBA", foreground.size, "PINK")
-    composite_image = create_composite_image(background, thumbnail.size, (0, 0))
+    composite_image = create_composite_image(
+        background, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
-    thumbnail = paste_characters(thumbnail, data, all_eyesight, used_assets)
-    composite_image = create_composite_image(foreground, thumbnail.size, (0, 0))
+    thumbnail = paste_characters(
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2)
+    composite_image = create_composite_image(
+        foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)
     paste_round_text(thumbnail, data, display_phase)
@@ -627,5 +651,6 @@ def generate(settingsManager, isPreview = False):
     else:
         thumbnail_filename = f"template"
         thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
-        print(f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.jpg")
+        print(
+            f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.jpg")
         return f"{out_path}/{thumbnail_filename}.jpg"

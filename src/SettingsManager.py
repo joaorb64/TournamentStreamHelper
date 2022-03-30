@@ -17,8 +17,8 @@ class SettingsManager:
         SettingsManager.settings[key] = value
         SettingsManager.SaveSettings()
 
-    def Get(key: str):
-        return SettingsManager.settings.get(key)
+    def Get(key: str, default=None):
+        return SettingsManager.settings.get(key, default)
 
 
 if not os.path.isfile("./user_data/settings.json"):

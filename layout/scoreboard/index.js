@@ -1,7 +1,36 @@
 (($) => {
+  gsap.config({ nullTargetWarn: false, trialWarn: false });
+
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .from([".container"], { duration: 1, width: "0", ease: "power2.inOut" }, 0);
+    .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
+    .from(
+      [".ssbu .anim_container_outer"],
+      {
+        duration: 1,
+        width: "0",
+        ease: "power2.inOut",
+      },
+      0.5
+    )
+    .from(
+      [".fgc .top", ".fgc .player"],
+      {
+        duration: 1,
+        y: "-100px",
+        ease: "power2.inOut",
+      },
+      0
+    )
+    .from(
+      [".fgc .bottom"],
+      {
+        duration: 1,
+        y: "+100px",
+        ease: "power2.inOut",
+      },
+      0
+    );
 
   function Start() {
     startingAnimation.restart();
@@ -20,13 +49,11 @@
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),
             `
-            <span>
               <span class="sponsor">
                 ${player.team ? player.team : ""}
               </span>
               ${player.name}
-              ${team.losers ? " [L]" : ""}
-            </span>
+              ${team.losers ? "<span class='losers'>L</span>" : ""}
             `
           );
 
@@ -44,20 +71,41 @@
               : ""
           );
 
-          let charactersHtml = "";
-          Object.values(player.character).forEach((character, index) => {
-            if (character.assets["base_files/icon"]) {
-              charactersHtml += `
-                <div class="icon stockicon">
-                    <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
-                </div>
-                `;
-            }
-          });
-          SetInnerHtml(
-            $(`.p${t + 1}.container .character_container`),
-            charactersHtml
-          );
+          if (
+            !oldData.score ||
+            JSON.stringify(player.character) !=
+              JSON.stringify(
+                oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+              )
+          ) {
+            let charactersHtml = "";
+            Object.values(player.character).forEach((character, index) => {
+              if (character.assets["base_files/icon"]) {
+                charactersHtml += `
+                  <div class="icon stockicon">
+                      <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
+                  </div>
+                  `;
+              }
+            });
+            SetInnerHtml(
+              $(`.p${t + 1}.container .character_container`),
+              charactersHtml,
+              undefined,
+              0.5,
+              () => {
+                $(
+                  `.p${t + 1}.container .character_container .stockicon div`
+                ).each((i, e) => {
+                  CenterImage(
+                    $(e),
+                    Object.values(player.character)[i].assets["base_files/icon"]
+                      .eyesight
+                  );
+                });
+              }
+            );
+          }
 
           SetInnerHtml(
             $(`.p${t + 1}.container .sponsor_icon`),
@@ -99,26 +147,15 @@
       });
     });
 
-    SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
+    SetInnerHtml($(".tournament_name"), data.tournamentInfo.tournamentName);
 
-    SetInnerHtml(
-      $(".info.container.bottom"),
-      `
-        <div class="info container_inner">
-            ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-            ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-            ${
-              data.score.best_of
-                ? `<div>Best of ${data.score.best_of}</div>`
-                : ""
-            }
-        </div>
-      `
-    );
+    SetInnerHtml($(".match"), data.score.match);
 
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
+    let phaseTexts = [];
+    if (data.score.phase) phaseTexts.push(data.score.phase);
+    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+
+    SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 
     $(".container div:has(>.text:empty)").css("margin-right", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-right", "");
@@ -126,10 +163,11 @@
     $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   }
 
+  Update();
   $(window).on("load", () => {
     $("body").fadeTo(1, 1, async () => {
       Start();
-      setInterval(Update, 2);
+      setInterval(Update, 100);
     });
   });
 })(jQuery);

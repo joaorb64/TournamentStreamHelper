@@ -40,20 +40,48 @@ body {
 .container {
   position: absolute;
   color: white;
-  z-index: 9;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: #18181b;
+  align-items: center;
+  padding: 20px 40px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.player.container {
+  bottom: 48px;
   width: 600px;
   height: 210px;
-  background-color: #000000df;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-content: center;
   justify-content: flex-start;
   padding-left: 50px;
   padding-right: 50px;
   padding-top: 30px;
   padding-bottom: 30px;
-  border-radius: 8px;
-  box-sizing: border-box;
+  z-index: 9;
+}
+
+.player.container.p2 {
+  flex-direction: row-reverse;
+}
+
+.player.container .column {
+  display: flex;
+  flex-direction: column;
+  padding-left: 40px;
+  padding-right: 40px;
+  width: 340px;
+  overflow: hidden;
+}
+
+.player.container.p2 .column > div {
+  justify-content: flex-end;
 }
 
 .row {
@@ -69,31 +97,35 @@ body {
   justify-content: flex-end;
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-}
-
 .p1.container {
   background-position: 100% 0;
   left: 0px;
-  top: 850px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .p2.container {
   background-position: 0 0;
   right: 0px;
-  top: 850px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .container .name {
-  width: 380px;
-  font-size: 50px;
+  font-size: 46px;
+}
+
+.container .name .text > span {
+  display: flex;
+  align-items: center;
+}
+
+.p2.container .name .text > span {
+  flex-direction: row-reverse;
 }
 
 .container .real_name {
-  width: 380px;
-  font-size: 32px;
+  font-size: 24px;
 }
 
 .twitter_logo {
@@ -107,8 +139,7 @@ body {
 }
 
 .twitter {
-  font-size: 32px;
-  width: 380px;
+  font-size: 26px;
 }
 
 .logo {
@@ -125,60 +156,75 @@ body {
 }
 
 .p1 .sponsor {
-  color: #f99090;
+  color: #ff3837ff;
 }
 
 .p2 .sponsor {
-  color: #29b6f6;
+  color: #308affff;
 }
 
-.phase {
-  position: absolute;
+.losers {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  font-size: 26px;
+  border-radius: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.p1 .losers {
+  background-color: #ff3837ff;
+}
+
+.p2 .losers {
+  background-color: #308affff;
+}
+
+.container.top {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: 800px;
-  height: 46px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: white;
-  font-size: 60px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 40px;
+}
+
+.tournament {
+  top: 20px;
+  width: 800px;
+  font-size: 32px;
   place-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-position: center;
+  max-width: 100%;
 }
 
 .match {
-  position: absolute;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 46px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: white;
-  font-size: 80px;
+  font-size: 64px;
   letter-spacing: 2px;
+  place-content: center;
+  text-transform: uppercase;
+  max-width: 100%;
+}
+
+.best_of .container {
+  top: 20px;
+  right: 64px;
+  width: 320px;
+  font-size: 32px;
   place-content: center;
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
-  text-transform: uppercase;
 }
 
-.best_of {
-  position: absolute;
-  top: 160px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 350px;
-  height: 80px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: white;
-  font-size: 50px;
+.phase .container {
+  top: 20px;
+  left: 64px;
+  width: 320px;
+  font-size: 32px;
   place-content: center;
   padding-left: 20px;
   padding-right: 20px;
@@ -186,16 +232,10 @@ body {
 }
 
 .flagscontainer {
-  position: absolute;
-  top: 32px;
-  right: 48px;
+  width: 60px;
   display: flex;
   flex-direction: column;
-}
-
-.p2 .flagscontainer {
-  left: 48px;
-  right: unset;
+  gap: 8px;
 }
 
 .flag {
@@ -209,68 +249,49 @@ body {
   display: flex;
   justify-content: center;
   border: 2px solid white;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   border-radius: 8px;
 }
 
 .flagname {
   position: absolute;
   text-align: center;
-  font-size: 20px;
+  font-size: 16px;
   padding: 1px 8px;
   border-radius: 2px;
   background-color: #000000ff;
-  top: 32px;
+  top: 28px;
   left: 50%;
   transform: translateX(-50%);
   border: 2px white solid;
   border-radius: 8px;
 }
 
-.score_container {
-  width: 140px;
-  height: 180px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: absolute;
-  background-color: #000000ff;
-  color: white;
-  z-index: 9;
-  display: flex;
-  border-radius: 8px;
-}
-
-.p1.score_container {
-  background-position: 100% 0;
-  left: 680px;
-  top: 780px;
-}
-
-.p2.score_container {
-  background-position: 0 0;
-  right: 680px;
-  top: 780px;
-}
-
 .score {
-  position: absolute;
-  width: 100%;
+  top: 0;
+  width: 60px;
+  right: 42px;
   height: 100%;
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 150px;
+  font-size: 120px;
+}
+
+.p2 .score {
+  right: unset;
+  left: 42px;
 }
 
 .p1.character {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 720px;
+  width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 680px;
-  perspective: 1500px;
+  height: 620px;
+  perspective: 1000px;
   perspective-origin: right;
   z-index: -1;
   display: flex;
@@ -298,17 +319,20 @@ body {
 .bg {
   border-radius: 8px;
   height: 100%;
-  box-shadow: 0 0px 20px 4px rgb(0 0 0);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4));
 }
 
 .p2.character {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 720px;
+  width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 680px;
+  height: 620px;
   perspective: 1000px;
   perspective-origin: left;
   display: flex;
@@ -336,7 +360,6 @@ body {
   background-size: cover;
   background-position: center;
   filter: drop-shadow(-16px 12px 0px rgba(0, 0, 0, 0.8));
-  overflow: hidden;
 }
 
 .invert_shadow {
@@ -348,7 +371,7 @@ body {
   position: absolute;
   color: white;
   left: 50%;
-  top: 50%;
+  top: 80%;
   transform: translate(-50%, -50%);
   font-weight: bold;
   z-index: 999;
@@ -357,9 +380,9 @@ body {
 .sponsor_logo {
   overflow: visible;
   position: fixed;
-  width: 180px;
-  height: 180px;
-  top: -185px;
+  width: 120px;
+  height: 120px;
+  top: -125px;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

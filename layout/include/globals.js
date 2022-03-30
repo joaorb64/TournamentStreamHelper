@@ -21,7 +21,7 @@ function FitText(target) {
   let fontSize = parseFloat(target.css("font-size").split("px")[0]);
 
   while (textElement[0].scrollWidth > target.width() && fontSize > 0) {
-    fontSize -= 0.5;
+    fontSize -= 0.1;
     textElement.css("font-size", fontSize + "px");
   }
 }
@@ -80,6 +80,8 @@ function CenterImage(element, eyesight) {
   let image = element.css("background-image");
 
   console.log("CenterImage", image);
+
+  if (!eyesight) return;
 
   if (image != undefined && image.includes("url(")) {
     let img = new Image();
