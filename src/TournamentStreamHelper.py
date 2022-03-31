@@ -237,6 +237,7 @@ class Window(QMainWindow):
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
+        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
 
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
