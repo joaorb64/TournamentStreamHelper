@@ -1,6 +1,7 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+from cgitb import text
 from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
@@ -16,6 +17,13 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 
+def color_code_to_tuple(color_code):
+    raw_color_code = color_code.lstrip("#")
+    red = int(raw_color_code[0:2], base=16)
+    green = int(raw_color_code[2:4], base=16)
+    blue = int(raw_color_code[4:6], base=16)
+    color = (red, green, blue)
+    return color
 
 def generate_separator_images(color_code=(127, 127, 127), width=3):
     x_size, y_size = 960, 1080
@@ -295,6 +303,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
     font_path = font_1
     text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
+    player_text_color = text_color[0]
 
     draw = ImageDraw.Draw(thumbnail)
 
@@ -331,19 +340,26 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
 
-        outline_color = (0, 0, 0)
-        stroke_width = 4
+        outline_color = player_text_color["outline_color"]
+        if player_text_color["has_outline"]:
+            stroke_width = 4
+        else:
+            stroke_width = 0
 
         draw.text(text_coordinates, player_name,
-                  (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+                  player_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
     phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
     round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
     text_max_dimensions = (480.0/1920.0, 40.0/1080.0)
-    outline_color = (0, 0, 0)
-    stroke_width = 2
+    round_text_color = text_color[1]
+    outline_color = round_text_color["outline_color"]
+    if round_text_color["has_outline"]:
+        stroke_width = 2
+    else:
+        stroke_width = 0
 
     if not display_phase:
         round_text_coordinates_center = (round_text_coordinates_center[0], (
@@ -369,7 +385,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
         text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
         text_coordinates = (text_x, text_y)
         draw.text(text_coordinates, current_phase,
-                  (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+                  round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
     current_round = find(f"score.match", data)
 
@@ -380,13 +396,13 @@ def paste_round_text(thumbnail, data, display_phase=True):
     text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
     text_coordinates = (text_x, text_y)
     draw.text(text_coordinates, current_round,
-              (255, 255, 255), font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+              round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_main_icon(thumbnail, icon_path):
     if icon_path:
-        max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
-        max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+        max_x_size = round(thumbnail.size[0]*(300.0/1920.0))
+        max_y_size = round(thumbnail.size[1]*(200.0/1080.0))
         max_size = (max_x_size, max_y_size)
 
         icon_image = Image.open(icon_path).convert('RGBA')
@@ -406,8 +422,8 @@ def paste_side_icon(thumbnail, icon_path_list):
     if len(icon_path_list) > 2:
         raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
 
-    max_x_size = round(thumbnail.size[0]*(100.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(100.0/1080.0))
+    max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
+    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
     icon_y = round(thumbnail.size[1]*(10.0/1080.0))
 
@@ -569,6 +585,20 @@ def generate(settingsManager, isPreview=False):
         font_list[0] = settings["font_list"][0]
     if settings["font_list"][1]:
         font_list[1] = settings["font_list"][1]
+
+    global text_color
+    text_color = [
+        {
+            "font_color": color_code_to_tuple(settings["font_color"][0]),
+            "has_outline": settings["font_outline_enabled"][0],
+            "outline_color": color_code_to_tuple(settings["font_outline_color"][0])
+        },
+        {
+            "font_color": color_code_to_tuple(settings["font_color"][1]),
+            "has_outline": settings["font_outline_enabled"][1],
+            "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
+        }
+    ]
 
     if not isPreview:
         with open(data_path, 'rt', encoding='utf-8') as f:
