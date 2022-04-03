@@ -401,8 +401,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 def paste_main_icon(thumbnail, icon_path):
     if icon_path:
-        max_x_size = round(thumbnail.size[0]*(150.0/1920.0))
-        max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+        max_x_size = round(thumbnail.size[0]*(300.0/1920.0))
+        max_y_size = round(thumbnail.size[1]*(200.0/1080.0))
         max_size = (max_x_size, max_y_size)
 
         icon_image = Image.open(icon_path).convert('RGBA')
@@ -422,8 +422,8 @@ def paste_side_icon(thumbnail, icon_path_list):
     if len(icon_path_list) > 2:
         raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
 
-    max_x_size = round(thumbnail.size[0]*(100.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(100.0/1080.0))
+    max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
+    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
     max_size = (max_x_size, max_y_size)
     icon_y = round(thumbnail.size[1]*(10.0/1080.0))
 
