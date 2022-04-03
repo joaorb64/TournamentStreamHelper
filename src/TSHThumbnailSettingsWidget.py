@@ -99,6 +99,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                                         "type": "Type 2",
                                         "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
                                     }]
+            settings["font_color"] = [
+                "#FFFFFF", "#FFFFFF"
+            ]
+            settings["font_outline_color"] = [
+                "#000000", "#000000"
+            ]
+            settings["font_outline_enabled"] = [
+                True, True
+            ]
             SettingsManager.Set("thumbnail", settings)
 
         self.phase_name.setChecked(settings["display_phase"])
