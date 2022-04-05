@@ -10,6 +10,65 @@ from .SettingsManager import *
 from .TSHGameAssetManager import *
 
 class TSHThumbnailSettingsWidget(QDockWidget):
+    def resetDisplay(self, settings, force_defaults = False):
+        self.VSpacer.setValue(settings["separator"]["width"])
+        self.VColor.setStyleSheet("background-color: %s" % settings["separator"]["color"])
+        self.phase_name.setChecked(settings["display_phase"])
+        self.team_name.setChecked(settings["use_team_names"])
+        self.sponsor.setChecked(settings["use_sponsors"])
+        self.flip_p2.setChecked(settings["flip_p2"])
+        self.flip_p1.setChecked(settings["flip_p1"])
+        self.open_explorer.setChecked(settings["open_explorer"])
+        self.selectFontPlayer.setCurrentIndex(self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
+        self.selectFontPhase.setCurrentIndex(self.selectFontPhase.findText(settings["font_list"][1]["name"]))
+        self.selectTypeFontPlayer.setCurrentIndex(self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
+        if force_defaults:
+            self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText("Type 2"))
+        else:
+            self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+
+    def setDefaults(self, button_mode=False):
+        settings = {
+            "foreground_path": "./assets/thumbnail_base/foreground.png",
+            "background_path": "./assets/thumbnail_base/background.png",
+            "display_phase": True,
+            "use_team_names": False,
+            "use_sponsors": True,
+            "flip_p1": False,
+            "flip_p2": False,
+            "open_explorer": True,
+            "main_icon_path": "./assets/icons/icon.png",
+            "separator": {
+                "width": 5,
+                "color": "#7F7F7F"
+            }
+        }
+        settings["side_icon_list"] = ["", ""]
+        settings["font_list"] = [{
+                                    "name": "Open Sans",
+                                    "type": "Type 1",
+                                    "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
+                                }, {
+                                    "name": "Open Sans",
+                                    "type": "Type 2",
+                                    "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
+                                }]
+        settings["font_color"] = [
+            "#FFFFFF", "#FFFFFF"
+        ]
+        settings["font_outline_color"] = [
+            "#000000", "#000000"
+        ]
+        settings["font_outline_enabled"] = [
+            True, True
+        ]
+        SettingsManager.Set("thumbnail", settings)
+
+        if button_mode:
+            self.resetDisplay(settings, force_defaults=True)
+            self.SetAssetPack(reset=True)
+            self.GeneratePreview()
+
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -22,6 +81,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.settings = uic.loadUi("src/layout/TSHThumbnailSettings.ui")
         self.widget.layout().addWidget(self.settings)
+
+        # SET DEFAULTS
+        self.setDefaultsButton = self.settings.findChild(QPushButton, "resetToDefault")
+        self.setDefaultsButton.clicked.connect(lambda:self.setDefaults(button_mode=True))
 
         # IMG
         self.foreground = self.settings.findChild(QPushButton, "customForeground")
@@ -72,54 +135,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         settings = SettingsManager.Get("thumbnail")
         if settings is not None :
             print(f'found thumbnail settings ! {settings}')
-            settings = SettingsManager.Get("thumbnail")
         else:
-            settings = {
-                "foreground_path": "./assets/thumbnail_base/foreground.png",
-                "background_path": "./assets/thumbnail_base/background.png",
-                "display_phase": True,
-                "use_team_names": False,
-                "use_sponsors": True,
-                "flip_p1": False,
-                "flip_p2": False,
-                "open_explorer": True,
-                "main_icon_path": "./assets/icons/icon.png",
-                "separator": {
-                    "width": 5,
-                    "color": "#7F7F7F"
-                }
-            }
-            settings["side_icon_list"] = ["", ""]
-            settings["font_list"] = [{
-                                        "name": "Open Sans",
-                                        "type": "Type 1",
-                                        "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
-                                    }, {
-                                        "name": "Open Sans",
-                                        "type": "Type 2",
-                                        "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
-                                    }]
-            settings["font_color"] = [
-                "#FFFFFF", "#FFFFFF"
-            ]
-            settings["font_outline_color"] = [
-                "#000000", "#000000"
-            ]
-            settings["font_outline_enabled"] = [
-                True, True
-            ]
-            SettingsManager.Set("thumbnail", settings)
-
-        self.phase_name.setChecked(settings["display_phase"])
-        self.team_name.setChecked(settings["use_team_names"])
-        self.sponsor.setChecked(settings["use_sponsors"])
-        self.flip_p2.setChecked(settings["flip_p2"])
-        self.flip_p1.setChecked(settings["flip_p1"])
-        self.open_explorer.setChecked(settings["open_explorer"])
-
-        # TODO each one regenarate the preview, move it before signals and do generation once at the end ?
-        self.VSpacer.setValue(settings["separator"]["width"])
-        self.VColor.setStyleSheet("background-color: %s" % settings["separator"]["color"])
+            self.setDefaults()
+        settings = SettingsManager.Get("thumbnail")
 
         # Load OpenSans
         QFontDatabase.addApplicationFont("./assets/font/OpenSans/OpenSans-Bold.ttf")
@@ -141,12 +159,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectFontPlayer.currentIndexChanged.connect(lambda: self.SetTypeFont(0, self.selectFontPlayer, self.selectTypeFontPlayer))
         self.selectFontPhase.currentIndexChanged.connect(lambda: self.SetTypeFont(1, self.selectFontPhase, self.selectTypeFontPhase))
 
-        # select setting
-        self.selectFontPlayer.setCurrentIndex(self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
-        self.selectFontPhase.setCurrentIndex(self.selectFontPhase.findText(settings["font_list"][1]["name"]))
-
-        self.selectTypeFontPlayer.setCurrentIndex(self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
-        self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+        # update display
+        self.resetDisplay(settings)
 
         # listener type font
         self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
@@ -175,12 +189,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def SaveIcons(self, key, index):
         path = QFileDialog.getOpenFileName()[0]
-
-        self.SaveSettings(key=key, subKey=index, val=path)
+        if path:
+            self.SaveSettings(key=key, subKey=index, val=path)
 
     def SaveImage(self, key):
         path = QFileDialog.getOpenFileName()[0]
-        self.SaveSettings(key=key, val=path)
+        if path:
+            self.SaveSettings(key=key, val=path)
 
     def SaveFont(self, key, font, type, fontPath, index):
         try:
@@ -278,7 +293,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
     
-    def SetAssetPack(self):
+    def SetAssetPack(self, reset=False):
         self.selectRenderLabel.clear()
         self.selectRenderType.clear()
         if (TSHGameAssetManager.instance.selectedGame.get("name")):
@@ -303,6 +318,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             # select setting
             settings = SettingsManager.Get("thumbnail")
             try:
+                if reset:
+                    raise(KeyError("Reset to default"))
                 game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
                 if game_codename:
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(asset_dict[settings[f"asset/{game_codename}"]]))
