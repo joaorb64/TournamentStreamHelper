@@ -213,11 +213,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def ColorPicker(self):
         try:
             # HEX color
-            color = QColorDialog.getColor().name()
-            # set button color
-            self.VColor.setStyleSheet("background-color: %s" % color)
+            color_result = QColorDialog.getColor()
+            if color_result.isValid():
+                color = color_result.name()
+                # set button color
+                self.VColor.setStyleSheet("background-color: %s" % color)
 
-            self.SaveSettings(key="separator", subKey="color", val=color)
+                self.SaveSettings(key="separator", subKey="color", val=color)
         except Exception as e:
             print(e)
 
