@@ -210,7 +210,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             print("error save font")
             print(e)
 
-    def ColorPicker(self):
+    def ColorPicker(self, key="separator", subKey="color"):
         try:
             # HEX color
             color_result = QColorDialog.getColor()
@@ -219,7 +219,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 # set button color
                 self.VColor.setStyleSheet("background-color: %s" % color)
 
-                self.SaveSettings(key="separator", subKey="color", val=color)
+                self.SaveSettings(key=key, subKey=subKey, val=color)
         except Exception as e:
             print(e)
 
