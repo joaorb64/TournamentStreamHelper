@@ -396,13 +396,10 @@
             <layout class="QHBoxLayout" name="horizontalLayoutPlayerFontOutline">
              <item>
               <widget class="QCheckBox" name="enablePlayerOutline">
-               <property name="text">
-                <string>Enabled</string>
-               </property>
-               <property name="iconSize">
+               <property name="maximumSize">
                 <size>
                  <width>20</width>
-                 <height>20</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="checkable">
@@ -504,14 +501,14 @@
             <layout class="QHBoxLayout" name="horizontalLayoutPlayerFontOutline_2">
              <item>
               <widget class="QCheckBox" name="enablePhaseOutline">
-               <property name="text">
-                <string>Enabled</string>
-               </property>
-               <property name="iconSize">
+               <property name="maximumSize">
                 <size>
                  <width>20</width>
-                 <height>20</height>
+                 <height>16777215</height>
                 </size>
+               </property>
+               <property name="text">
+                <string/>
                </property>
                <property name="checkable">
                 <bool>true</bool>
