@@ -26,6 +26,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText("Type 2"))
         else:
             self.selectTypeFontPhase.setCurrentIndex(self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+        self.playerFontColor.setStyleSheet("background-color: %s" % settings["font_color"][0])
+        self.phaseFontColor.setStyleSheet("background-color: %s" % settings["font_color"][1])
+        self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
+        if settings["font_outline_enabled"][0]:
+            self.colorPlayerOutline.setStyleSheet("background-color: %s" % settings["font_outline_color"][0])
+            self.colorPlayerOutline.setText("")
+        else:
+            self.colorPlayerOutline.setStyleSheet("")
+            self.colorPlayerOutline.setText("Disabled")
+        self.colorPhaseOutline.setEnabled(settings["font_outline_enabled"][1])
+        if settings["font_outline_enabled"][1]:
+            self.colorPhaseOutline.setStyleSheet("background-color: %s" % settings["font_outline_color"][1])
+            self.colorPhaseOutline.setText("")
+        else:
+            self.colorPhaseOutline.setStyleSheet("")
+            self.colorPhaseOutline.setText("Disabled")
+        self.enablePlayerOutline.setChecked(settings["font_outline_enabled"][0])
+        self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
 
     def setDefaults(self, button_mode=False):
         settings = {
@@ -105,7 +123,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.VSpacer.valueChanged.connect(lambda: self.SaveSettings(key="separator", subKey="width", val=self.VSpacer.value()))
         # open color select & save
-        self.VColor.clicked.connect(self.ColorPicker)
+        self.VColor.clicked.connect(lambda: self.ColorPicker(self.VColor, key="separator", subKey="color"))
 
         # CHECK BOX
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
@@ -127,6 +145,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectTypeFontPlayer = self.settings.findChild(QComboBox, "comboBoxFontType")
         self.selectFontPhase = self.settings.findChild(QComboBox, "comboBoxFontPhase")
         self.selectTypeFontPhase = self.settings.findChild(QComboBox, "comboBoxFontTypePhase")
+        self.playerFontColor = self.settings.findChild(QPushButton, "colorPlayerFontColor")
+        self.phaseFontColor = self.settings.findChild(QPushButton, "colorPhaseFontColor")
+        self.colorPlayerOutline = self.settings.findChild(QPushButton, "colorPlayerOutline")
+        self.colorPhaseOutline = self.settings.findChild(QPushButton, "colorPhaseOutline")
+        self.enablePlayerOutline = self.settings.findChild(QCheckBox, "enablePlayerOutline")
+        self.enablePhaseOutline = self.settings.findChild(QCheckBox, "enablePhaseOutline")
+
+        self.playerFontColor.clicked.connect(lambda: self.ColorPicker(button=self.playerFontColor, key="font_color", subKey=0))
+        self.phaseFontColor.clicked.connect(lambda: self.ColorPicker(button=self.phaseFontColor, key="font_color", subKey=1))
+        self.colorPlayerOutline.clicked.connect(lambda: self.ColorPicker(button=self.colorPlayerOutline, key="font_outline_color", subKey=0))
+        self.colorPhaseOutline.clicked.connect(lambda: self.ColorPicker(button=self.colorPhaseOutline, key="font_outline_color", subKey=1))
+        self.enablePlayerOutline.stateChanged.connect(lambda: self.enableOutline(index=0, val=self.enablePlayerOutline.isChecked()))
+        self.enablePhaseOutline.stateChanged.connect(lambda: self.enableOutline(index=1, val=self.enablePhaseOutline.isChecked()))
 
         # PREVIEW
         self.preview = self.settings.findChild(QLabel, "thumbnailPreview")
@@ -185,7 +216,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             tmp_file = thumbnail.generate(isPreview = True, settingsManager = SettingsManager)
         self.preview.setPixmap(QPixmap(tmp_file))
     
+    def enableOutline(self, index=0, val=True):
+        self.SaveSettings(key="font_outline_enabled", subKey=index, val=val)
 
+        settings = SettingsManager.Get("thumbnail")
+        self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
+        if settings["font_outline_enabled"][0]:
+            self.colorPlayerOutline.setStyleSheet("background-color: %s" % settings["font_outline_color"][0])
+            self.colorPlayerOutline.setText("")
+        else:
+            self.colorPlayerOutline.setStyleSheet("")
+            self.colorPlayerOutline.setText("Disabled")
+        self.colorPhaseOutline.setEnabled(settings["font_outline_enabled"][1])
+        if settings["font_outline_enabled"][1]:
+            self.colorPhaseOutline.setStyleSheet("background-color: %s" % settings["font_outline_color"][1])
+            self.colorPhaseOutline.setText("")
+        else:
+            self.colorPhaseOutline.setStyleSheet("")
+            self.colorPhaseOutline.setText("Disabled")
 
     def SaveIcons(self, key, index):
         path = QFileDialog.getOpenFileName()[0]
@@ -210,15 +258,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             print("error save font")
             print(e)
 
-    def ColorPicker(self, key="separator", subKey="color"):
+    def ColorPicker(self, button, key="separator", subKey="color"):
         try:
             # HEX color
             color_result = QColorDialog.getColor()
             if color_result.isValid():
                 color = color_result.name()
                 # set button color
-                self.VColor.setStyleSheet("background-color: %s" % color)
-
+                button.setStyleSheet("background-color: %s" % color)
                 self.SaveSettings(key=key, subKey=subKey, val=color)
         except Exception as e:
             print(e)
