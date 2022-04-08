@@ -91,10 +91,19 @@ body {
   width: 652px;
 }
 
+.tekken7 .player.container {
+  width: 580px;
+}
+
 .fgc.thin .player.container {
   top: 2px;
   height: 48px;
   width: 640px;
+}
+
+.fgc.thin.strive .player.container {
+  width: 580px;
+  top: 60px;
 }
 
 .p1.container {
@@ -105,6 +114,10 @@ body {
 
 .fgc .p1.container {
   left: 154px;
+}
+
+.tekken7 .p1.container {
+  left: 226px;
 }
 
 .fgc.thin .p1.container {
@@ -119,6 +132,10 @@ body {
 
 .fgc .p2.container {
   right: 154px;
+}
+
+.tekken7 .p2.container {
+  right: 226px;
 }
 
 .fgc.thin .p2.container {
@@ -151,7 +168,15 @@ body {
 }
 
 .fgc .name_twitter .name {
-  max-width: 60%;
+  width: 60%;
+}
+
+.fgc .p1 .name_twitter .name .text {
+  justify-content: flex-start;
+}
+
+.fgc .p2 .name_twitter .name .text {
+  justify-content: flex-end;
 }
 
 .name_twitter .twitter {
@@ -159,7 +184,15 @@ body {
 }
 
 .fgc .name_twitter .twitter {
-  max-width: 30%;
+  width: 40%;
+}
+
+.fgc .p1 .name_twitter .twitter .text {
+  justify-content: flex-end;
+}
+
+.fgc .p2 .name_twitter .twitter .text {
+  justify-content: flex-start;
 }
 
 .twitter_logo {
@@ -188,15 +221,23 @@ body {
 }
 
 .fgc .logo {
-  top: 162px;
-  width: 90px;
-  height: 90px;
+  top: 145px;
+  width: 120px;
+  height: 120px;
 }
 
 .fgc.thin .logo {
   top: 140px;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
+}
+
+.fgc.thin.strive .logo {
+  top: 200px;
+}
+
+.fgc.thin.bblue .logo {
+  top: 970px;
 }
 
 .info.container {
@@ -237,9 +278,9 @@ body {
 
 .tournament_name {
   font-size: 18px;
-  padding: 0px 8px;
-  max-width: 100%;
+  width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .fgc .info.container.top {
@@ -247,6 +288,11 @@ body {
   height: 34px;
   width: 300px;
   font-size: 16px;
+  padding: 8px 16px;
+}
+
+.tekken7 .info.container.top {
+  height: 48px;
 }
 
 .fgc.thin .info.container.top {
@@ -270,18 +316,24 @@ body {
   opacity: 0.6;
   font-size: 14px;
   letter-spacing: 2px;
-  max-width: 100%;
+  width: 100%;
 }
 
 .match {
   font-size: 16px;
   letter-spacing: 2px;
-  max-width: 100%;
+  width: 100%;
 }
 
 .fgc .info.container.bottom {
   top: unset;
   bottom: 6px;
+  padding: 16px 24px;
+}
+
+.bblue .info.container.bottom {
+  top: 180px;
+  bottom: unset;
 }
 
 .icon {
@@ -382,10 +434,14 @@ body {
 }
 
 .fgc.thin .score {
-  font-size: 28px;
+  font-size: 22px;
   width: 38px;
   height: 100%;
   border-radius: 8px;
+}
+
+.sponsor {
+  margin-right: 6px;
 }
 
 .p1 .score {

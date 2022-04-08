@@ -102,8 +102,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.findChild(QLineEdit, "name").textChanged.connect(
             lambda: self.ExportPlayerId())
-        self.findChild(QLineEdit, "team").textChanged.connect(
-            lambda: self.ExportPlayerId())
 
         for c in self.findChildren(QLineEdit):
             c.editingFinished.connect(
@@ -203,9 +201,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"score.team.{self.teamNumber}.player.{self.index}.avatar", None)
 
         # Sponsor logo
-        if os.path.exists(f"./user_data/sponsor_logo/{team}.png"):
+        if os.path.exists(f"./user_data/sponsor_logo/{team.upper()}.png"):
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", f"./user_data/sponsor_logo/{team}.png")
+                f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", f"./user_data/sponsor_logo/{team.upper()}.png")
         else:
             StateManager.Set(
                 f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", None)
