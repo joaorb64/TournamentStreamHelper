@@ -2,33 +2,33 @@
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
-      [".left .container"],
+      [".left .container:not(.cameras)"],
       { duration: 1, x: "-100%", ease: "power2.inOut" },
       0
     )
     .from(
-      [".right .container"],
+      [".right .container:not(.cameras)"],
       { duration: 1, x: "+100%", ease: "power2.inOut" },
       0
     )
     .from([".score"], { duration: 1, autoAlpha: "0", ease: "power2.inOut" }, 0)
     .from(
-      [".left .character_container"],
+      [".left .character_container:not(.cameras)"],
       { duration: 1, x: "+50%", ease: "power2.inOut" },
       0
     )
     .from(
-      [".right .character_container"],
+      [".right .character_container:not(.cameras)"],
       { duration: 1, x: "-50%", ease: "power2.inOut" },
       0
     )
     .from(
-      [".container_top"],
+      [".container.top"],
       { duration: 1, y: "-100%", ease: "power2.inOut" },
       0
     )
     .from(
-      [".container_bottom"],
+      [".container.bottom"],
       { duration: 1, y: "+100%", ease: "power2.inOut" },
       0
     );
@@ -59,11 +59,17 @@
       if (team_size == 1) {
         gsap
           .timeline()
-          .to($(`.${team_id} .p${2}.container`), { height: 0 }, time);
+          .to($(`div:not(.cameras) .${team_id} .p${2}.container`), {
+            height: 0,
+            duration: time,
+          });
       } else {
         gsap
           .timeline()
-          .to($(`.${team_id} .p${2}.container`), { height: "420px" }, time);
+          .to($(`div:not(.cameras) .${team_id} .p${2}.container`), {
+            height: "420px",
+            duration: time,
+          });
       }
 
       Object.values(team.player).forEach((player, p) => {
@@ -150,27 +156,24 @@
 
     SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
 
-    SetInnerHtml(
-      $(".info.container.bottom"),
-      `
-        <div class="info container_inner">
-            ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-            ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-            ${
-              data.score.best_of
-                ? `<div>Best of ${data.score.best_of}</div>`
-                : ""
-            }
-        </div>
-      `
-    );
+    SetInnerHtml($(".match"), data.score.match);
+
+    let phaseTexts = [];
+    if (data.score.phase) phaseTexts.push(data.score.phase);
+    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+
+    SetInnerHtml($(".phase"), phaseTexts.join(" - "));
+
+    $(".text").each(function (e) {
+      FitText($($(this)[0].parentNode));
+    });
   }
 
   Update();
   $(window).on("load", () => {
     $("body").fadeTo(500, 1, async () => {
       Start();
-      setInterval(Update, 1000);
+      setInterval(Update, 500);
     });
   });
 })(jQuery);

@@ -23,13 +23,22 @@
       0
     )
     .from(
-      [".fgc .bottom"],
+      [".fgc:not(.bblue) .bottom"],
       {
         duration: 1,
         y: "+100px",
         ease: "power2.inOut",
       },
       0
+    )
+    .from(
+      [".fgc.bblue .bottom"],
+      {
+        duration: 1,
+        autoAlpha: 0,
+        ease: "power2.inOut",
+      },
+      0.2
     );
 
   function Start() {
@@ -171,7 +180,7 @@
   $(window).on("load", () => {
     $("body").fadeTo(1, 1, async () => {
       Start();
-      setInterval(Update, 100);
+      setInterval(Update, 500);
     });
   });
 })(jQuery);

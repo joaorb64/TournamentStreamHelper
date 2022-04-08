@@ -43,7 +43,6 @@
         SetInnerHtml(
           $(`.commentator${index} .name`),
           `
-            <div class="mic_icon"></div>
             <span class="team">
               ${commentator.team ? commentator.team + "&nbsp;" : ""}
             </span>
@@ -54,7 +53,10 @@
           $(`.commentator${index} .real_name`),
           commentator.real_name
         );
-        SetInnerHtml($(`.commentator${index} .twitter`), commentator.twitter);
+        SetInnerHtml(
+          $(`.commentator${index} .twitter`),
+          commentator.twitter ? "@" + commentator.twitter : ""
+        );
       } else {
         $(`.commentator${index}`).css("display", "none");
       }
@@ -63,9 +65,11 @@
 
   Update();
   $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
+    window.setTimeout(() => {
+      $("body").fadeTo(800, 1, async () => {
+        Start();
+        setInterval(Update, 1000);
+      });
+    }, 1400);
   });
 })(jQuery);
