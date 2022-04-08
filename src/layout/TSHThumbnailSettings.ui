@@ -611,6 +611,13 @@
        <layout class="QVBoxLayout" name="verticalLayout_12"/>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btUpdatePreview">
+       <property name="text">
+        <string>Update Preview</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

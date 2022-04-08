@@ -239,6 +239,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.preview = PreviewWidget()
         previewContainer.layout().addWidget(self.preview)
 
+        self.updatePreview = self.settings.findChild(
+            QPushButton, "btUpdatePreview")
+        self.updatePreview.clicked.connect(self.GeneratePreview)
+
         # -- load settings at init
         settings = SettingsManager.Get("thumbnail")
         if settings is not None:
