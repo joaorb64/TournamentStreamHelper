@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Roboto";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
+  src: url("../include/integral-cf-bold.otf") format("truetype");
 }
 
 .text {
@@ -23,10 +23,6 @@ body {
   margin: 0;
   width: 1920px;
   height: 1080px;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .container {
@@ -37,6 +33,10 @@ body {
   position: absolute;
   color: white;
   z-index: 9;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .container .bg {
@@ -124,7 +124,7 @@ body {
   top: 22px;
   width: 160px;
   height: 20px;
-  font-size: 18px;
+  font-size: 14px;
   padding-left: 4px;
   padding-right: 4px;
   display: flex;
@@ -140,19 +140,18 @@ body {
   width: 18px;
   height: 18px;
   margin-right: 6px;
+  flex-shrink: 0;
 }
 
 .logo {
-  position: absolute;
-  top: 900px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 150px;
-  /* background-image: url("./logo.png"); */
+  width: 100px;
+  height: 100px;
+  margin: 8px;
+  background-image: url("./logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  flex-grow: 0;
 }
 
 .t1 .sponsor {
@@ -193,8 +192,8 @@ body {
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 32px;
-  top: 2px;
+  font-size: 28px;
+  top: 1px;
   right: 18px;
   color: white;
 }
@@ -226,8 +225,12 @@ body {
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
-  border-radius: 8px;
-  background-color: #121212ff;
+  border-radius: 12px;
+  background-color: #18181b;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .info.material_container {
@@ -252,29 +255,43 @@ body {
 }
 
 .info.material_container.middle {
-  left: 50%;
-  transform: translateX(-50%);
-  top: 8px;
+  left: 16px;
+  top: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+}
+
+.info.material_container.middle .info {
+  left: 16px;
+  top: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  width: 580px;
-  /* height: 66px; */
+  justify-content: center;
+  width: 320px;
+  text-align: justify;
+  align-items: center;
+  overflow: hidden;
+  margin: 0 24px;
+  gap: 2px;
 }
 
 .info.material_container.middle .tournament_name {
+  width: 100%;
   font-size: 26px;
 }
 
 .info.material_container.middle .phase {
+  width: 100%;
   opacity: 0.6;
   font-size: 16px;
   letter-spacing: 4px;
 }
 
 .info.material_container.middle .match {
+  width: 100%;
   font-size: 22px;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   opacity: 1;
 }
 
@@ -293,12 +310,12 @@ body {
 }
 
 .t1.material_container {
-  left: 326px;
+  left: 600px;
 }
 
 .t2.material_container {
   left: unset;
-  right: 326px;
+  right: 600px;
   flex-direction: row-reverse;
 }
 
@@ -312,6 +329,10 @@ body {
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
+}
+
+.material_container .doubles_score .text {
+  margin-top: -3px;
 }
 
 .t1 .doubles_score {

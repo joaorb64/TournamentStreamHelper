@@ -56,9 +56,9 @@
 
   Update();
   $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
+    $("body").fadeTo(1000, 1, async () => {
       Start();
-      setInterval(Update, 1000);
+      setInterval(Update, 500);
     });
   });
 })(jQuery);

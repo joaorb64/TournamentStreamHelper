@@ -21,7 +21,7 @@ function FitText(target) {
   let fontSize = parseFloat(target.css("font-size").split("px")[0]);
 
   while (textElement[0].scrollWidth > target.width() && fontSize > 0) {
-    fontSize -= 0.1;
+    fontSize -= 1;
     textElement.css("font-size", fontSize + "px");
   }
 }
@@ -99,4 +99,23 @@ function CenterImage(element, eyesight) {
       );
     });
   }
+}
+
+async function FindImages(folder = "") {
+  let flag = true;
+  let counter = 1;
+  const files = [];
+
+  while (flag) {
+    const filename = `${folder}/${counter}.png`;
+    try {
+      await $.get(filename);
+      files.push(filename);
+      counter += 1;
+    } catch (e) {
+      flag = false;
+    }
+  }
+
+  return files;
 }

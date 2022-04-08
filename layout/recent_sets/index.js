@@ -31,7 +31,7 @@
       playersRecentSets == null ||
       (playersRecentSets.state == "done" && playersRecentSets.sets.length == 0)
     ) {
-      recentSetsHtml += `No sets found`;
+      recentSetsHtml += `-`;
     } else if (playersRecentSets.state != "done") {
       recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
     } else {
@@ -50,7 +50,7 @@
                   ${new Date(_set.timestamp * 1000).toLocaleDateString(
                     "en-US",
                     {
-                      month: "2-digit",
+                      month: "short",
                       day: "2-digit",
                       year: "numeric",
                     }
@@ -74,7 +74,7 @@
   $(window).on("load", () => {
     $("body").fadeTo(0, 1, async () => {
       Start();
-      setInterval(Update, 1000);
+      setInterval(Update, 500);
     });
   });
 })(jQuery);

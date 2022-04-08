@@ -696,8 +696,8 @@ class TSHScoreboardWidget(QDockWidget):
             c.setCurrentText("")
             c.lineEdit().editingFinished.emit()
 
-        for c in self.scoreColumn.findChildren(QSpinBox):
-            c.setValue(0)
+        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
+        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
 
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
