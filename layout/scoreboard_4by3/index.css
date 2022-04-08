@@ -45,11 +45,13 @@ body {
 }
 
 .bg.left {
+  overflow: hidden;
 }
 
 .bg.right {
   right: 0;
   background-position: right;
+  overflow: hidden;
 }
 
 .container {

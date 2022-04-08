@@ -57,19 +57,15 @@
       let time = firstRun ? 0 : 1;
 
       if (team_size == 1) {
-        gsap
-          .timeline()
-          .to($(`div:not(.cameras) .${team_id} .p${2}.container`), {
-            height: 0,
-            duration: time,
-          });
+        gsap.timeline().to($(`.${team_id} .p${2}.container`), {
+          height: 0,
+          duration: time,
+        });
       } else {
-        gsap
-          .timeline()
-          .to($(`div:not(.cameras) .${team_id} .p${2}.container`), {
-            height: "420px",
-            duration: time,
-          });
+        gsap.timeline().to($(`.${team_id} .p${2}.container`), {
+          height: "420px",
+          duration: time,
+        });
       }
 
       Object.values(team.player).forEach((player, p) => {
@@ -106,10 +102,11 @@
           let charactersHtml = "";
 
           if (
-            !oldData.score ||
-            JSON.stringify(
-              oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-            ) != JSON.stringify(player.character)
+            $(".cameras").length == 0 &&
+            (!oldData.score ||
+              JSON.stringify(
+                oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+              ) != JSON.stringify(player.character))
           ) {
             Object.values(player.character).forEach((character) => {
               if (character.assets["full"]) {
