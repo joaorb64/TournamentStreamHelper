@@ -402,9 +402,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         for fpath in font_paths:  # go through all font paths
             if os.path.exists(fpath):
                 # go through all files at each path
-                for path, currentDirectory, files in os.walk(fpath):
+                for root, dirs, files in os.walk(fpath):
                     for file in files:
-                        path = os.path.join(fpath, path, file)
+                        path = os.path.join(root, file)
 
                         idx = db.addApplicationFont(path)  # add font path
 
