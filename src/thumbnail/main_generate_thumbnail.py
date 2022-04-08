@@ -17,6 +17,7 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 
+
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
     red = int(raw_color_code[0:2], base=16)
@@ -24,6 +25,7 @@ def color_code_to_tuple(color_code):
     blue = int(raw_color_code[4:6], base=16)
     color = (red, green, blue)
     return color
+
 
 def generate_separator_images(color_code=(127, 127, 127), width=3):
     x_size, y_size = 960, 1080
@@ -600,7 +602,7 @@ def generate(settingsManager, isPreview=False):
         }
     ]
 
-    if not isPreview:
+    try:
         with open(data_path, 'rt', encoding='utf-8') as f:
             data = json.loads(f.read())
         # if data missing
@@ -610,16 +612,16 @@ def generate(settingsManager, isPreview=False):
         for i in [1, 2]:
             if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
                 raise Exception(f"Player {i} tag missing")
-    else:
-        data = createFalseData()
 
-    if not isPreview:
         game_codename = data.get("game").get("codename")
         used_assets = settings[f"asset/{game_codename}"]
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
-    else:
+    except Exception as e:
+        print(e)
+        data = createFalseData()
         used_assets = "full"
         asset_data_path = f"./assets/mock_data/mock_asset/config.json"
+
     with open(asset_data_path, 'rt', encoding='utf-8') as f:
         all_eyesight = json.loads(f.read()).get("eyesights")
 
