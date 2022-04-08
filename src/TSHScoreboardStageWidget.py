@@ -1,5 +1,3 @@
-from asyncio import start_server
-import os
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -7,14 +5,10 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
 import requests
-from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
+from .TSHWebServer import WebServer
 from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from flask import Flask, send_from_directory, request
-from .Workers import Worker
 import socket
 import logging
 
@@ -37,130 +31,6 @@ class Ruleset():
         self.banCount = 0
         self.strikeOrder = []
         self.videogame = ""
-
-
-class WebServer(QThread):
-    app = Flask(__name__, static_folder=os.path.curdir)
-    scoreboard = None
-
-    def __init__(self, parent=None, scoreboard=None) -> None:
-        super().__init__(parent)
-        WebServer.scoreboard = scoreboard
-        self.host_name = "0.0.0.0"
-        self.port = 5000
-
-    @app.route("/ruleset")
-    def main():
-        data = {}
-
-        data["ruleset"] = StateManager.Get(f"score.ruleset", {})
-
-        # Add webserver base path
-        data.update({
-            "basedir": os.path.abspath(".")
-        })
-
-        # Add player names
-        teams = [1, 2]
-        if WebServer.scoreboard.teamsSwapped:
-            teams.reverse()
-
-        for i, t in enumerate(teams):
-            if StateManager.Get(f"score.team.{i+1}.teamName"):
-                data.update({
-                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
-                })
-            else:
-                names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
-
-                data.update({
-                    f"p{t}": " / ".join(names)
-                })
-
-        # Add set data
-        data.update({
-            "best_of": StateManager.Get(f"score.best_of"),
-            "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase")
-        })
-
-        return data
-
-    @app.route('/post', methods=['POST'])
-    def post_route():
-        StateManager.Set(f"score.stage_strike", json.loads(request.get_data()))
-        return "OK"
-
-    @app.route('/score', methods=['POST'])
-    def post_score():
-        score = json.loads(request.get_data())
-        WebServer.scoreboard.signals.UpdateSetData.emit(score)
-        return "OK"
-    
-    # Ticks score of Team specified up by 1 point
-    @app.route('/team<team>-scoreup')
-    def team_scoreup(team):
-        score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") + 1}
-        WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
-        return "OK"
-    
-    # Ticks score of Team specified down by 1 point (Stops at 1)
-    @app.route('/team<team>-scoredown')
-    def team_scoredown(team):
-        score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
-        WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
-        return "OK"
-    
-    # Dynamic endpoint to allow flexible sets of information
-    # Ex. http://192.168.1.2:5000/set?best-of=5
-    #
-    # Test Scenario that was used
-    # Ex. http://192.168.4.34:5000/set?best-of=5&phase=Top 32&match=Winners Finals
-    @app.route('/set')
-    def set_route():
-        if request.args.get('best-of') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
-                    json.dumps({'bestOf': request.args.get('best-of', default = '0', type = int)})
-                )
-            )
-        if request.args.get('phase') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
-                    json.dumps({'tournament_phase': request.args.get('phase', default = 'Pools', type = str)})
-                )
-            )
-        if request.args.get('match') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
-                    json.dumps({'round_name': request.args.get('match', default = 'Pools', type = str)})
-                )
-            )
-        return "OK"
-    
-    # Resets scores
-    @app.route('/reset-scores')
-    def reset_scores():
-        WebServer.scoreboard.ResetScore()
-        return "OK"
-    
-    # Resets scores, match, phase, and losers status
-    @app.route('/reset-match')
-    def clear():
-        WebServer.scoreboard.ClearScore()
-        return "OK"
-
-    @app.route('/', defaults=dict(filename=None))
-    @app.route('/<path:filename>', methods=['GET', 'POST'])
-    def test(filename):
-        filename = filename or 'stage_strike_app/build/index.html'
-        print(os.path.abspath("."), filename)
-        return send_from_directory(os.path.abspath("."), filename)
-
-    def run(self):
-        self.app.run(host=self.host_name, port=self.port,
-                     debug=True, use_reloader=False)
 
 
 class TSHScoreboardStageWidget(QWidget):
