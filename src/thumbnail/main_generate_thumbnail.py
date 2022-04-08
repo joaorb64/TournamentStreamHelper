@@ -617,10 +617,13 @@ def generate(settingsManager, isPreview=False):
         used_assets = settings[f"asset/{game_codename}"]
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
     except Exception as e:
-        print(e)
-        data = createFalseData()
-        used_assets = "full"
-        asset_data_path = f"./assets/mock_data/mock_asset/config.json"
+        if isPreview:
+            print(e)
+            data = createFalseData()
+            used_assets = "full"
+            asset_data_path = f"./assets/mock_data/mock_asset/config.json"
+        else:
+            raise e
 
     with open(asset_data_path, 'rt', encoding='utf-8') as f:
         all_eyesight = json.loads(f.read()).get("eyesights")
