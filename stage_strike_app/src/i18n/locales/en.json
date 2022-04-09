@@ -1,0 +1,11 @@
+{
+    "initial_explanation": "Play rock-paper-scissors to decide who starts the Stage Strike process, or use the randomize button.",
+    "won": "won",
+    "randomize": "Randomize",
+    "ban": "ban",
+    "confirm": "confirm",
+    "reset": "reset",
+    "report_results": "Report Results",
+    "pick_a_stage": "pick a stage",
+    "rock_paper_scissors": "Rock-Paper-Scissors"
+}

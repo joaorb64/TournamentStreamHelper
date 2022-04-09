@@ -1,0 +1,11 @@
+{
+    "initial_explanation": "Joguem pedra, papel ou tesoura para decidir quem começa o processo de Stage Strike, ou use o botão de sortear.",
+    "won": "ganhou",
+    "randomize": "Sortear",
+    "ban": "elimine",
+    "confirm": "confirmar",
+    "reset": "resetar",
+    "report_results": "Reportar Resultados",
+    "pick_a_stage": "selecione um stage",
+    "rock_paper_scissors": "Pedra, Papel ou Tesoura"
+}
