@@ -493,41 +493,6 @@ class App extends Component {
                   justifyItems="center"
                   style={{ flexGrow: 0 }}
                 >
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    spacing={2}
-                    justifyContent="center"
-                  >
-                    <Grid item xs={4}>
-                      <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        color="success"
-                        variant={this.CanConfirm() ? "contained" : "outlined"}
-                        onClick={() => this.ConfirmClicked()}
-                      >
-                        Confirm
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => this.Initialize()}
-                      >
-                        Reset
-                      </Button>
-                    </Grid>
-                  </Grid>
                   {this.state.selectedStage ? (
                     <Grid
                       container
@@ -566,6 +531,41 @@ class App extends Component {
                       </Grid>
                     </Grid>
                   ) : null}
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    spacing={2}
+                    justifyContent="center"
+                  >
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        color="success"
+                        variant={this.CanConfirm() ? "contained" : "outlined"}
+                        onClick={() => this.ConfirmClicked()}
+                      >
+                        Confirm
+                      </Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => this.Initialize()}
+                      >
+                        Reset
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Box>
             </Container>
