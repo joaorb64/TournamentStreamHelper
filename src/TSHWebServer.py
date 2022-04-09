@@ -1,5 +1,4 @@
 import os
-from pickle import FALSE
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -87,22 +86,50 @@ class WebServer(QThread):
     # Ex. http://192.168.4.34:5000/set?best-of=5&phase=Top 32&match=Winners Finals
     @app.route('/set')
     def set_route():
+        # Best Of argument
+        # best-of=<Best Of Amount>
         if request.args.get('best-of') is not None:
             WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
+                json.loads(
                     json.dumps({'bestOf': request.args.get('best-of', default = '0', type = int)})
                 )
             )
+        
+        # Phase argument
+        # phase=<Phase Name>
         if request.args.get('phase') is not None:
             WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
+                json.loads(
                     json.dumps({'tournament_phase': request.args.get('phase', default = 'Pools', type = str)})
                 )
             )
+        
+        # Match argument
+        # match=<Match Name>
         if request.args.get('match') is not None:
             WebServer.scoreboard.signals.UpdateSetData.emit(
-                eval(
+                json.loads(
                     json.dumps({'round_name': request.args.get('match', default = 'Pools', type = str)})
+                )
+            )
+        
+        # Players argument
+        # players=<Amount of Players>
+        if request.args.get('players') is not None:
+            WebServer.scoreboard.playerNumber.setValue(request.args.get('players', default = 1, type = int))
+        
+        # Characters argument
+        # characters=<Amount of Characters>
+        if request.args.get('characters') is not None:
+            WebServer.scoreboard.charNumber.setValue(request.args.get('characters', default = 1, type = int))
+        
+        # Losers argument
+        # losers=<True/False>&team=<Team Number>
+        if request.args.get('losers') is not None:
+            losers = request.args.get('losers', default = False, type = bool)
+            WebServer.scoreboard.signals.UpdateSetData.emit(
+                json.loads(
+                    json.dumps({'team' + request.args.get('team', default = '1', type = str) + 'losers': bool(losers)})
                 )
             )
         return "OK"
@@ -115,9 +142,18 @@ class WebServer(QThread):
     
     # Resets scores, match, phase, and losers status
     @app.route('/reset-match')
-    def clear():
+    def reset_match():
         WebServer.scoreboard.ClearScore()
         WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "best_of").setValue(0)
+        return "OK"
+    
+    # Resets all values
+    @app.route('/clear-all')
+    def clear_all():
+        WebServer.scoreboard.ClearScore()
+        WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "best_of").setValue(0)
+        WebServer.scoreboard.playerNumber.setValue(1)
+        WebServer.scoreboard.charNumber.setValue(1)
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))
