@@ -1,5 +1,3 @@
-from asyncio import start_server
-import os
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -7,14 +5,10 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
 import requests
-from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
+from .TSHWebServer import WebServer
 from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from flask import Flask, send_from_directory, request
-from .Workers import Worker
 import socket
 import logging
 
@@ -37,77 +31,6 @@ class Ruleset():
         self.banCount = 0
         self.strikeOrder = []
         self.videogame = ""
-
-
-class WebServer(QThread):
-    app = Flask(__name__, static_folder=os.path.curdir)
-    scoreboard = None
-
-    def __init__(self, parent=None, scoreboard=None) -> None:
-        super().__init__(parent)
-        WebServer.scoreboard = scoreboard
-        self.host_name = "0.0.0.0"
-        self.port = 5000
-
-    @app.route("/ruleset")
-    def main():
-        data = {}
-
-        data["ruleset"] = StateManager.Get(f"score.ruleset", {})
-
-        # Add webserver base path
-        data.update({
-            "basedir": os.path.abspath(".")
-        })
-
-        # Add player names
-        teams = [1, 2]
-        if WebServer.scoreboard.teamsSwapped:
-            teams.reverse()
-
-        for i, t in enumerate(teams):
-            if StateManager.Get(f"score.team.{i+1}.teamName"):
-                data.update({
-                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
-                })
-            else:
-                names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
-
-                data.update({
-                    f"p{t}": " / ".join(names)
-                })
-
-        # Add set data
-        data.update({
-            "best_of": StateManager.Get(f"score.best_of"),
-            "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase")
-        })
-
-        return data
-
-    @app.route('/post', methods=['POST'])
-    def post_route():
-        StateManager.Set(f"score.stage_strike", json.loads(request.get_data()))
-        return "OK"
-
-    @app.route('/score', methods=['POST'])
-    def post_score():
-        score = json.loads(request.get_data())
-        WebServer.scoreboard.signals.UpdateSetData.emit(score)
-        return "OK"
-
-    @app.route('/', defaults=dict(filename=None))
-    @app.route('/<path:filename>', methods=['GET', 'POST'])
-    def test(filename):
-        filename = filename or 'stage_strike_app/build/index.html'
-        print(os.path.abspath("."), filename)
-        return send_from_directory(os.path.abspath("."), filename)
-
-    def run(self):
-        self.app.run(host=self.host_name, port=self.port,
-                     debug=True, use_reloader=False)
 
 
 class TSHScoreboardStageWidget(QWidget):
