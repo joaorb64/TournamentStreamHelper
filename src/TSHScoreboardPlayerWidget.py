@@ -4,7 +4,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
-import json
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
@@ -107,14 +106,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c.editingFinished.connect(
                 lambda element=c: [
                     StateManager.Set(
-                        f"score.team.{self.teamNumber}.player.{self.index}.{element.objectName()}", element.text())
+                        f"{self.path}.{element.objectName()}", element.text())
                 ])
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
                 lambda text, element=c: [
                     StateManager.Set(
-                        f"score.team.{self.teamNumber}.player.{self.index}.{element.objectName()}", element.currentData(
+                        f"{self.path}.{element.objectName()}", element.currentData(
                         )
                     )
                 ]
@@ -148,7 +147,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             characters[i+1] = data
 
         StateManager.Set(
-            f"score.team.{self.teamNumber}.player.{self.index}.character", characters)
+            f"{self.path}.character", characters)
 
     def SetLosers(self, value):
         self.losers = value
@@ -171,9 +170,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             nameOnlyMerged += " [L]"
 
         StateManager.Set(
-            f"score.team.{self.teamNumber}.player.{self.index}.mergedName", merged)
+            f"{self.path}.mergedName", merged)
         StateManager.Set(
-            f"score.team.{self.teamNumber}.player.{self.index}.mergedOnlyName", nameOnlyMerged)
+            f"{self.path}.mergedOnlyName", nameOnlyMerged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         team = self.findChild(QLineEdit, "team").text()
@@ -190,28 +189,28 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         # Online avatar
         StateManager.Set(
-            f"score.team.{self.teamNumber}.player.{self.index}.online_avatar", onlineAvatar)
+            f"{self.path}.online_avatar", onlineAvatar)
 
         # Local avatar
         if os.path.exists(f"./user_data/player_avatar{merged}.png"):
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.avatar", f"./user_data/player_avatar{merged}.png")
+                f"{self.path}.avatar", f"./user_data/player_avatar{merged}.png")
         else:
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.avatar", None)
+                f"{self.path}.avatar", None)
 
         # Sponsor logo
         if os.path.exists(f"./user_data/sponsor_logo/{team.upper()}.png"):
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", f"./user_data/sponsor_logo/{team.upper()}.png")
+                f"{self.path}.sponsor_logo", f"./user_data/sponsor_logo/{team.upper()}.png")
         else:
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.sponsor_logo", None)
+                f"{self.path}.sponsor_logo", None)
 
     def ExportPlayerId(self, id=None):
-        if StateManager.Get(f"score.team.{self.teamNumber}.player.{self.index}.id") != id:
+        if StateManager.Get(f"{self.path}.id") != id:
             StateManager.Set(
-                f"score.team.{self.teamNumber}.player.{self.index}.id", id)
+                f"{self.path}.id", id)
             self.instanceSignals.playerId_changed.emit()
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
