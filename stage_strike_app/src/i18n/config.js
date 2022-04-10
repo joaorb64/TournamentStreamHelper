@@ -16,6 +16,9 @@ i18n.use(LanguageDetector).init({
     ja: {
       translations: require("./locales/jp.json"),
     },
+    fr: {
+      translations: require("./locales/fr.json"),
+    },
   },
   detection: {
     order: ["querystring", "navigator"],
