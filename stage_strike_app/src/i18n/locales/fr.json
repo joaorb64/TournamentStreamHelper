@@ -1,0 +1,13 @@
+{
+    "title": "Phase de bans",
+    "initial_explanation": "Jouez à Pierre-Feuille-Ciseaux pour commencer la phase de bans, ou appuyez sur le bouton \"Tirage Aléatoire\"",
+    "won": "a gagné",
+    "randomize": "Tirage Aléatoire",
+    "ban": "veuillez bannir",
+    "stage": "terrain(s)",
+    "confirm": "confirmer",
+    "reset": "réinitialiser",
+    "report_results": "Veuillez déclarer le résultat",
+    "pick_a_stage": "veuillez choisir un terrain",
+    "rock_paper_scissors": "Pierre-Feuille-Ciseaux"
+}
