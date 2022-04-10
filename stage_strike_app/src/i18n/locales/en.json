@@ -9,5 +9,7 @@
     "reset": "reset",
     "report_results": "Report Results",
     "pick_a_stage": "pick a stage",
-    "rock_paper_scissors": "Rock-Paper-Scissors"
+    "rock_paper_scissors": "Rock-Paper-Scissors",
+    "p1": "P1",
+    "p2": "P2"
 }

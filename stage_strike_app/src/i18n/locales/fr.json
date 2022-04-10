@@ -9,5 +9,7 @@
     "reset": "réinitialiser",
     "report_results": "Veuillez déclarer le résultat",
     "pick_a_stage": "veuillez choisir un terrain",
-    "rock_paper_scissors": "Pierre-Feuille-Ciseaux"
+    "rock_paper_scissors": "Pierre-Feuille-Ciseaux",
+    "p1": "J1",
+    "p2": "J2"
 }
