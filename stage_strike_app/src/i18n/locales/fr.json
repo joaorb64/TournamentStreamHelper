@@ -11,5 +11,6 @@
     "pick_a_stage": "veuillez choisir un terrain",
     "rock_paper_scissors": "Pierre-Feuille-Ciseaux",
     "p1": "J1",
-    "p2": "J2"
+    "p2": "J2",
+    "no_ruleset_error": "Aucun règlement selectionné. Veuillez demander à un régisseur ou un TO de sélectionner un règlement."
 }
