@@ -28,6 +28,6 @@ i18n.use(LanguageDetector).init({
   defaultNS: "translations",
 });
 
-i18n.languages = ["en", "pt", "es", "ja"];
+i18n.languages = ["en", "pt", "es", "ja", "fr"];
 
 export default i18n;
