@@ -5,3 +5,4 @@ deepdiff
 qdarkstyle
 Pillow
 Flask
+pyside

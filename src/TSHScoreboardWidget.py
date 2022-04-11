@@ -1,3 +1,6 @@
+import platform
+import subprocess
+
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,6 +11,9 @@ from .SettingsManager import *
 from .StateManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
+
+from .thumbnail import main_generate_thumbnail as thumbnail
+from .TSHThumbnailSettingsWidget import *
 
 
 class TSHScoreboardWidgetSignals(QObject):
@@ -82,6 +88,7 @@ class TSHScoreboardWidget(QDockWidget):
         col = QWidget()
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
+        topOptions.layout().addStretch()
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.playerNumber = QSpinBox()
@@ -89,6 +96,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(self.SetPlayersPerTeam)
 
+        # THUMBNAIL
         col = QWidget()
         col.setLayout(QVBoxLayout())
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -96,6 +104,23 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.layout().addWidget(col)
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
+
+        self.thumbnailBtn = QPushButton("Generate Thumbnail ")
+        self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
+        self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
+        #self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
+        self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
+
+        # VISIBILITY
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        topOptions.layout().addWidget(col)
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
+
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
         self.eyeBt.setSizePolicy(
@@ -352,6 +377,36 @@ class TSHScoreboardWidget(QDockWidget):
                              f"./user_data/team_logo/{value.lower()}.png")
         else:
             StateManager.Set(f"score.team.{team}.logo", None)
+
+    def GenerateThumbnail(self):
+        msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+        msgBox.setWindowTitle("THS - Thumbnail")
+        try:
+            thumbnailPath = thumbnail.generate(settingsManager = SettingsManager)
+            msgBox.setText("The thumbnail has been generated here : ")
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setInformativeText(thumbnailPath)
+
+            thumbnail_settings = SettingsManager.Get("thumbnail")
+            if thumbnail_settings.get("open_explorer"):
+                outThumbDir = f"{os.getcwd()}/out/thumbnails/"
+                if platform.system() == "Windows":
+                    thumbnailPath = thumbnailPath[2:].replace("/", "\\")
+                    outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
+                    #os.startfile(outThumbDir)
+                    subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
+                elif platform.system() == "Darwin":
+                    subprocess.Popen(["open", outThumbDir])
+                else:
+                    subprocess.Popen(["xdg-open", outThumbDir])
+            else:
+                msgBox.exec()
+        except Exception as e:
+            msgBox.setText("Warning")
+            msgBox.setInformativeText(str(e))
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.exec()
 
     def ToggleElements(self, action: QAction, elements: list[QWidget]):
         for pw in self.playerWidgets:

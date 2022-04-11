@@ -3,6 +3,7 @@
 
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+from .TSHThumbnailSettingsWidget import *
 from .TSHScoreboardWidget import *
 from .Workers import *
 from .TSHPlayerDB import TSHPlayerDB
@@ -127,6 +128,12 @@ class Window(QMainWindow):
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
         self.dockWidgets = []
+        
+        thumbnailSetting = TSHThumbnailSettingsWidget()
+        thumbnailSetting.setObjectName("Thumbnail Settings")
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+        self.dockWidgets.append(thumbnailSetting)
 
         tournamentInfo = TSHTournamentInfoWidget()
         tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
@@ -156,6 +163,7 @@ class Window(QMainWindow):
 
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
+        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
         self.scoreboard.raise_()
 
@@ -236,6 +244,7 @@ class Window(QMainWindow):
         self.optionsBt.menu().addMenu(toggleWidgets)
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
+        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
 
@@ -314,6 +323,8 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
+        if os.path.isdir("./tmp"):
+            shutil.rmtree("./tmp")
 
     def ReloadGames(self):
         print("Reload games")
