@@ -42,7 +42,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
             p = self.playerWidgets[-1]
             p.setParent(None)
             self.playerWidgets.remove(p)
-            p.Delete()
+            StateManager.Unset(p.path)
+            p.deleteLater()
 
         # if number > 1:
         #     self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
