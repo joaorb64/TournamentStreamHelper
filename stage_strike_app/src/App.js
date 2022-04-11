@@ -24,6 +24,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import i18n from "./i18n/config";
 
 const defaultTheme = createTheme({
   palette: {
@@ -287,6 +288,8 @@ class App extends Component {
   }
 
   UpdateStream() {
+    if (!this.state.ruleset) return;
+
     let allStages =
       this.state.currGame === 0
         ? this.state.ruleset.neutralStages
@@ -361,9 +364,13 @@ class App extends Component {
                     >
                       {this.state.phase ? this.state.phase + " / " : ""}
                       {this.state.match ? this.state.match + " / " : ""}
-                      Game {this.state.currGame + 1}
+                      {i18n.t("game")} {this.state.currGame + 1}
                       {this.state.bestOf
-                        ? " (Best of " + this.state.bestOf + ")"
+                        ? " (" +
+                          i18n.t("best_of") +
+                          " " +
+                          this.state.bestOf +
+                          ")"
                         : ""}
                     </Typography>
                   </Grid>
@@ -383,7 +390,7 @@ class App extends Component {
                         component="div"
                       >
                         {this.state.selectedStage ? (
-                          <>Report Results</>
+                          <>{i18n.t("report_results")}</>
                         ) : this.state.currGame > 0 &&
                           this.state.currStep > 0 ? (
                           <>
@@ -397,7 +404,7 @@ class App extends Component {
                             >
                               {this.state.playerNames[this.state.currPlayer]}
                             </span>
-                            , pick a stage
+                            , {i18n.t("pick_a_stage")}
                           </>
                         ) : (
                           <>
@@ -411,7 +418,7 @@ class App extends Component {
                             >
                               {this.state.playerNames[this.state.currPlayer]}
                             </span>
-                            , ban {this.GetStrikeNumber()} stage(s)
+                            , {i18n.t("ban")} {this.GetStrikeNumber()} stage(s)
                           </>
                         )}
                       </Typography>
@@ -493,41 +500,6 @@ class App extends Component {
                   justifyItems="center"
                   style={{ flexGrow: 0 }}
                 >
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    spacing={2}
-                    justifyContent="center"
-                  >
-                    <Grid item xs={4}>
-                      <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        color="success"
-                        variant={this.CanConfirm() ? "contained" : "outlined"}
-                        onClick={() => this.ConfirmClicked()}
-                      >
-                        Confirm
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => this.Initialize()}
-                      >
-                        Reset
-                      </Button>
-                    </Grid>
-                  </Grid>
                   {this.state.selectedStage ? (
                     <Grid
                       container
@@ -547,7 +519,7 @@ class App extends Component {
                           variant="contained"
                           onClick={() => this.MatchWinner(0)}
                         >
-                          {this.state.playerNames[0]} won
+                          {this.state.playerNames[0]} {i18n.t("won")}
                         </Button>
                       </Grid>
                       <Grid item xs={4}>
@@ -561,11 +533,46 @@ class App extends Component {
                           variant="contained"
                           onClick={() => this.MatchWinner(1)}
                         >
-                          {this.state.playerNames[1]} won
+                          {this.state.playerNames[1]} {i18n.t("won")}
                         </Button>
                       </Grid>
                     </Grid>
                   ) : null}
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    spacing={2}
+                    justifyContent="center"
+                  >
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        color="success"
+                        variant={this.CanConfirm() ? "contained" : "outlined"}
+                        onClick={() => this.ConfirmClicked()}
+                      >
+                        {i18n.t("confirm")}
+                      </Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => this.Initialize()}
+                      >
+                        {i18n.t("reset")}
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Box>
             </Container>
@@ -576,7 +583,7 @@ class App extends Component {
               aria-describedby="modal-modal-description"
             >
               <DialogTitle id="responsive-dialog-title">
-                {"Stage Strike"}
+                {i18n.t("title")}
               </DialogTitle>
               <DialogContent>
                 <Box
@@ -585,16 +592,13 @@ class App extends Component {
                   display="flex"
                   flexDirection={"column"}
                 >
-                  <Typography>
-                    Play rock-paper-scissors to decide who starts the stage
-                    strike process, or use the randomize button.
-                  </Typography>
+                  <Typography>{i18n.t("initial_explanation")}</Typography>
 
                   <Typography
                     sx={{ typography: { xs: "h6", sm: "h5" } }}
                     align="center"
                   >
-                    Rock-Paper-Scissors
+                    {i18n.t("rock_paper_scissors")}
                   </Typography>
                   <Grid
                     container
@@ -614,7 +618,7 @@ class App extends Component {
                         variant="contained"
                         onClick={() => this.setState({ currPlayer: 0 })}
                       >
-                        {this.state.playerNames[0]} won
+                        {this.state.playerNames[0]} {i18n.t("won")}
                       </Button>
                     </Grid>
                     <Grid item xs>
@@ -628,7 +632,7 @@ class App extends Component {
                         variant="contained"
                         onClick={() => this.setState({ currPlayer: 1 })}
                       >
-                        {this.state.playerNames[1]} won
+                        {this.state.playerNames[1]} {i18n.t("won")}
                       </Button>
                     </Grid>
                   </Grid>
@@ -636,7 +640,7 @@ class App extends Component {
                     sx={{ typography: { xs: "h6", sm: "h5" } }}
                     align="center"
                   >
-                    Randomize
+                    {i18n.t("randomize")}
                   </Typography>
                   <Button
                     size={darkTheme.breakpoints.up("md") ? "large" : "small"}
@@ -648,7 +652,7 @@ class App extends Component {
                       this.setState({ currPlayer: Math.random() > 0.5 ? 1 : 0 })
                     }
                   >
-                    Randomize
+                    {i18n.t("randomize")}
                   </Button>
                 </Box>
               </DialogContent>
@@ -666,7 +670,7 @@ class App extends Component {
               aria-describedby="modal-modal-description"
             >
               <DialogTitle id="responsive-dialog-title">
-                {"Stage Strike"}
+                {i18n.t("title")}
               </DialogTitle>
               <DialogContent>
                 <Box
@@ -675,10 +679,7 @@ class App extends Component {
                   display="flex"
                   flexDirection={"column"}
                 >
-                  <Typography>
-                    No ruleset is selected. Please notify production/TO to
-                    select a ruleset.
-                  </Typography>
+                  <Typography>{i18n.t("no_ruleset_error")}</Typography>
                 </Box>
               </DialogContent>
             </Dialog>

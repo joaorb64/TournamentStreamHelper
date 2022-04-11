@@ -13,6 +13,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
+from .TSHPlayerListWidget import TSHPlayerListWidget
 from qdarkstyle import palette
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -154,9 +155,16 @@ class Window(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
         self.dockWidgets.append(commentary)
 
+        playerList = TSHPlayerListWidget()
+        playerList.setWindowIcon(QIcon('assets/icons/list.svg'))
+        playerList.setObjectName("Player List")
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, playerList)
+        self.dockWidgets.append(playerList)
+
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
         self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
+        self.tabifyDockWidget(self.scoreboard, playerList)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
@@ -234,10 +242,11 @@ class Window(QMainWindow):
 
         toggleWidgets = QMenu("Toggle widgets", self.optionsBt.menu())
         self.optionsBt.menu().addMenu(toggleWidgets)
-        toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
+        toggleWidgets.addAction(tournamentInfo.toggleViewAction())
+        toggleWidgets.addAction(playerList.toggleViewAction())
 
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
