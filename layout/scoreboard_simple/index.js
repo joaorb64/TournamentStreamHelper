@@ -1,15 +1,23 @@
 (($) => {
+  gsap.config({ nullTargetWarn: false, trialWarn: false });
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
       [".container"],
-      { duration: 0.8, opacity: "0", x: "-20px", ease: "power2.inOut" },
+      { duration: 1, opacity: "0", x: "-40px", ease: "power2.inOut" },
       0
     )
     .from(
       [".twitter-container"],
-      { duration: 0.8, opacity: "0", x: "+40px", ease: "power2.inOut" },
+      { duration: 1, opacity: "0", x: "+40px", ease: "power2.inOut" },
       0
+    )
+    .from(".mask", { width: 0, duration: 1, ease: "power2.inOut" }, 0)
+    .from(
+      ".doubles .info",
+      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
+      0.8
     );
 
   function Start() {
@@ -147,13 +155,18 @@
       data.tournamentInfo.tournamentName
     );
     SetInnerHtml($(".info.material_container .match"), data.score.match);
+
+    $(".text").each(function (e) {
+      FitText($($(this)[0].parentNode));
+    });
   }
 
+  Update();
   $(window).on("load", () => {
     Update();
-    $("body").fadeTo(500, 1, async () => {
+    $("body").fadeTo(1, 1, async () => {
       Start();
-      setInterval(Update, 1000);
+      setInterval(Update, 500);
     });
   });
 })(jQuery);
