@@ -364,9 +364,13 @@ class App extends Component {
                     >
                       {this.state.phase ? this.state.phase + " / " : ""}
                       {this.state.match ? this.state.match + " / " : ""}
-                      Game {this.state.currGame + 1}
+                      {i18n.t("game")} {this.state.currGame + 1}
                       {this.state.bestOf
-                        ? " (Best of " + this.state.bestOf + ")"
+                        ? " (" +
+                          i18n.t("best_of") +
+                          " " +
+                          this.state.bestOf +
+                          ")"
                         : ""}
                     </Typography>
                   </Grid>
@@ -579,7 +583,7 @@ class App extends Component {
               aria-describedby="modal-modal-description"
             >
               <DialogTitle id="responsive-dialog-title">
-                {"Stage Strike"}
+                {i18n.t("title")}
               </DialogTitle>
               <DialogContent>
                 <Box
@@ -666,7 +670,7 @@ class App extends Component {
               aria-describedby="modal-modal-description"
             >
               <DialogTitle id="responsive-dialog-title">
-                {"Stage Strike"}
+                {i18n.t("title")}
               </DialogTitle>
               <DialogContent>
                 <Box
@@ -675,10 +679,7 @@ class App extends Component {
                   display="flex"
                   flexDirection={"column"}
                 >
-                  <Typography>
-                    No ruleset is selected. Please notify production/TO to
-                    select a ruleset.
-                  </Typography>
+                  <Typography>{i18n.t("no_ruleset_error")}</Typography>
                 </Box>
               </DialogContent>
             </Dialog>

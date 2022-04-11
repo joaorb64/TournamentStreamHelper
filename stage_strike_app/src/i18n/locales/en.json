@@ -13,5 +13,6 @@
     "p1": "P1",
     "p2": "P2",
     "no_ruleset_error": "No ruleset is selected. Please notify production/TO to select a ruleset.",
-    "game": "Game"
+    "game": "Game",
+    "best_of": "Best of"
 }
