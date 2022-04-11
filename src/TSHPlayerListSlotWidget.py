@@ -18,7 +18,20 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.index = index
         self.playerList = playerList
 
-        self.setLayout(QHBoxLayout())
+        self.setLayout(QVBoxLayout())
+        self.slotName = QLineEdit()
+        self.layout().addWidget(self.slotName)
+
+        self.slotName.editingFinished.connect(
+            lambda: [
+                StateManager.Set(
+                    f"player_list.slot.{self.index}.name", self.slotName.text())
+            ]
+        )
+
+        self.list = QWidget()
+        self.list.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.list)
 
         self.playerWidgets = []
 
@@ -27,7 +40,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.playerWidgets)+1, teamNumber=1, path=f'player_list.slot.{self.index}.player.{len(self.playerWidgets)+1}')
             self.playerWidgets.append(p)
-            self.layout().addWidget(p)
+            self.list.layout().addWidget(p)
 
             p.SetCharactersPerPlayer(self.playerList.charNumber.value())
 

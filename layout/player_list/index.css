@@ -54,6 +54,12 @@ body {
   gap: 2px;
 }
 
+.slot .title {
+  width: 100%;
+  font-size: 32px;
+  margin: 8px 0;
+}
+
 .player.container > div:not(:last-child) {
   margin-right: 8px;
 }

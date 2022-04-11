@@ -24,6 +24,7 @@
 
       Object.values(data.player_list.slot).forEach((slot, i) => {
         html += `<div class="slot slot${i + 1}">`;
+        html += `<div class="title"></div>`;
         Object.values(slot.player).forEach((player, p) => {
           html += `
             <div class="p${p + 1} player container">
@@ -47,6 +48,7 @@
     }
 
     Object.values(data.player_list.slot).forEach((slot, t) => {
+      SetInnerHtml($(`.slot${t + 1} .title`), slot.name);
       Object.values(slot.player).forEach((player, p) => {
         if (player) {
           SetInnerHtml(
