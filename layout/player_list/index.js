@@ -24,7 +24,7 @@
 
       Object.values(data.player_list.slot).forEach((slot, i) => {
         html += `<div class="slot slot${i + 1}">`;
-        html += `<div class="title"></div>`;
+        html += `<div class="container title"></div>`;
         Object.values(slot.player).forEach((player, p) => {
           html += `
             <div class="p${p + 1} player container">
@@ -36,7 +36,8 @@
               <div class="name_twitter">
                 <div class="name"></div>
                 <div class="twitter"></div>
-              </div>
+                </div>
+              <div class="filler"></div>
               <div class="character_container"></div>
             </div>
           `;
@@ -153,23 +154,6 @@
       });
     });
 
-    SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
-
-    SetInnerHtml(
-      $(".info.container.bottom"),
-      `
-        <div class="info container_inner">
-            ${data.score.phase ? `<div>${data.score.phase}</div>` : ""}
-            ${data.score.match ? `<div>${data.score.match}</div>` : ""}
-            ${
-              data.score.best_of
-                ? `<div>Best of ${data.score.best_of}</div>`
-                : ""
-            }
-        </div>
-      `
-    );
-
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));
     });
@@ -180,6 +164,7 @@
     $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   }
 
+  Update();
   $(window).on("load", () => {
     $("body").fadeTo(1, 1, async () => {
       Start();

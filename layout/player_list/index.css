@@ -1,12 +1,17 @@
 @font-face {
-  font-family: "Roboto";
+  font-family: "RobotoCondensed";
   src: url("../include/RobotoCondensed.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../include/Roboto-Regular.ttf") format("truetype");
 }
 
 .text {
   white-space: nowrap;
   display: flex;
-  min-width: 100%;
+  min-width: 99%;
   width: fit-content;
   place-items: center;
   place-content: center;
@@ -15,7 +20,7 @@
 }
 
 body {
-  font-family: Roboto;
+  font-family: RobotoCondensed;
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -51,13 +56,15 @@ body {
 .slot {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .slot .title {
   width: 100%;
-  font-size: 32px;
-  margin: 8px 0;
+  font-size: 34px;
+  margin: 0px 0;
+  padding: 8px 8px;
+  height: 70px;
 }
 
 .player.container > div:not(:last-child) {
@@ -83,13 +90,19 @@ body {
 
 .name_twitter {
   display: flex;
-  flex-grow: 1;
+  width: 480px;
   flex-direction: column;
   overflow: hidden;
   justify-content: center;
   padding-left: 8px;
   padding-right: 8px;
   box-sizing: border-box;
+  position: absolute;
+}
+
+.filler {
+  display: flex;
+  width: 100%;
 }
 
 .fgc .name_twitter {
@@ -249,6 +262,7 @@ body {
   display: flex;
   overflow: hidden;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .character_container > div {
@@ -294,18 +308,7 @@ body {
   border-radius: 8px;
 }
 
-.p1 .score {
-  background-color: #ff3837ff;
-}
-
-.p1 .sponsor {
-  color: #f99090;
-}
-
-.p2 .score {
-  background-color: #1255a3ff;
-}
-
-.p2 .sponsor {
-  color: #29b6f6;
+.sponsor {
+  color: yellow;
+  opacity: 0.8;
 }
