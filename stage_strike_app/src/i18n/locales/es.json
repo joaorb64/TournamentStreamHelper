@@ -7,5 +7,10 @@
     "reset": "restabelecer",
     "report_results": "Informar Resultados",
     "pick_a_stage": "selecciona un stage",
-    "rock_paper_scissors": "Piedra, Papel o Tijera"
+    "rock_paper_scissors": "Piedra, Papel o Tijera",
+    "p1": "P1",
+    "p2": "P2",
+    "no_ruleset_error": "Reglas no seleccionadas. Notificar a producción o organizadores para seleccionar las reglas.",
+    "game": "Game",
+    "best_of": "Mejor de"
 }

@@ -16,6 +16,9 @@ i18n.use(LanguageDetector).init({
     ja: {
       translations: require("./locales/jp.json"),
     },
+    fr: {
+      translations: require("./locales/fr.json"),
+    },
   },
   detection: {
     order: ["querystring", "navigator"],
@@ -23,8 +26,9 @@ i18n.use(LanguageDetector).init({
   },
   ns: ["translations"],
   defaultNS: "translations",
+  debug: true,
 });
 
-i18n.languages = ["en", "pt", "es", "ja"];
+i18n.languages = ["en", "pt", "es", "ja", "fr"];
 
 export default i18n;
