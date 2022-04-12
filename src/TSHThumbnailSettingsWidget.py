@@ -493,6 +493,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     "codename")
                 if self.selectRenderType.currentData():
                     TSHThumbnailSettingsWidget.SaveSettings(
-                        self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=False)
+                        self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=True)
             except Exception as e:
                 print(e)
