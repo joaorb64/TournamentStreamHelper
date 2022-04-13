@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from flask import Flask, send_from_directory, request
 import json
 from .StateManager import StateManager
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
@@ -75,8 +76,14 @@ class WebServer(QThread):
     # Ticks score of Team specified down by 1 point (Stops at 1)
     @app.route('/team<team>-scoredown')
     def team_scoredown(team):
-        score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
-        WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
+        if StateManager.Get(f"score.team." + team + ".score") - 1 < 1:
+            if team == "1":
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
+            else:
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+        else:
+            score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
+            WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
         return "OK"
     
     # Dynamic endpoint to allow flexible sets of information
@@ -154,6 +161,12 @@ class WebServer(QThread):
         WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "best_of").setValue(0)
         WebServer.scoreboard.playerNumber.setValue(1)
         WebServer.scoreboard.charNumber.setValue(1)
+        return "OK"
+    
+    # Opens Select Set Window
+    @app.route('/open-sets')
+    def open_select():
+        TSHTournamentDataProvider.instance.LoadSets(WebServer.scoreboard)
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))
