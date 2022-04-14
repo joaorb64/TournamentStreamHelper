@@ -408,7 +408,7 @@ class TSHScoreboardWidget(QDockWidget):
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
 
-    def ToggleElements(self, action: QAction, elements: list[QWidget]):
+    def ToggleElements(self, action: QAction, elements):
         for pw in self.playerWidgets:
             for element in elements:
                 pw.findChild(QWidget, element).setVisible(action.isChecked())
