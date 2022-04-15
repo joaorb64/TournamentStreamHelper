@@ -37,6 +37,10 @@
         elements += `<div class="index_display"></div>`;
 
         $(".container").html(elements);
+        
+        characterAssets.forEach((a, i) => {
+          CenterImage($(`#character${i}`), a.eyesight);
+        });
 
         imgs = $.makeArray($(".icon"));
 
