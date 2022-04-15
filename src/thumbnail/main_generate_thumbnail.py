@@ -670,7 +670,7 @@ def generate(settingsManager, isPreview=False):
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
     thumbnail = paste_characters(
-        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2)
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True)
     composite_image = create_composite_image(
         foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
