@@ -663,8 +663,9 @@ def generate(settingsManager, isPreview=False):
 
     foreground = Image.open(foreground_path).convert('RGBA')
     background = Image.open(background_path).convert('RGBA')
+    foreground = foreground.resize(background.size, Image.BICUBIC)
 
-    thumbnail = Image.new("RGBA", foreground.size, "PINK")
+    thumbnail = Image.new("RGBA", background.size, "PINK")
     composite_image = create_composite_image(
         background, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
