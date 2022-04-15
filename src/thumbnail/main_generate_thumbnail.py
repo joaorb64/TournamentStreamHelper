@@ -2,6 +2,7 @@
 # Run as python ./src/generate_thumbnail in order to test it
 
 from cgitb import text
+from textwrap import fill
 from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
@@ -69,7 +70,7 @@ def calculate_new_dimensions(current_size, max_size):
     return((round(new_x), round(new_y)))
 
 
-def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None):
+def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True):
     current_size = image.size
     x_ratio = max_size[0]/current_size[0]
     y_ratio = max_size[1]/current_size[1]
@@ -79,7 +80,7 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None):
             msg=f"Size cannot be negative, given max size is {max_size}")
 
     resized_eyesight = None
-    if (x_ratio < y_ratio):
+    if (x_ratio < y_ratio and fill_x and fill_y) or (fill_y and not fill_x) or ((not fill_x) and (not fill_y) and (x_ratio > y_ratio)):
         new_x = y_ratio*current_size[0]
         new_y = max_size[1]
         if eyesight_coordinates:
@@ -118,6 +119,13 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None):
         if bottom > new_y:
             bottom = new_y
             top = new_y - max_size[1]
+        if max_size[0] > new_x:
+            left = round(-(max_size[0] - new_x)/2)
+            right = round((max_size[0] + new_x)/2)
+        if max_size[1] > new_y:
+            top = round(-(max_size[1] - new_y)/2)
+            bottom = round((max_size[1] + new_y)/2)
+
     image = image.crop((left, top, right, bottom))
 
     return(image)
@@ -129,7 +137,7 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True):
     separator_h_image, separator_v_image = generate_separator_images(
         separator_color_code, separator_width)
     num_line = len(path_matrix)
@@ -157,7 +165,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 individual_paste_x, individual_paste_y)
             character_image = Image.open("./"+image_path).convert('RGBA')
             character_image = resize_image_to_max_size(
-                character_image, individual_max_size, eyesight_coordinates)
+                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y)
             composite_image = create_composite_image(
                 character_image, thumbnail.size, individual_paste_coordinates)
             thumbnail = Image.alpha_composite(thumbnail, composite_image)
@@ -204,7 +212,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True):
     max_x_size = round(thumbnail.size[0]/2)
     max_y_size = thumbnail.size[1]
     max_size = (max_x_size, max_y_size)
@@ -250,7 +258,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y)
 
     return(thumbnail)
 
@@ -662,7 +670,7 @@ def generate(settingsManager, isPreview=False):
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
     thumbnail.paste(background, (0, 0), mask=background)
     thumbnail = paste_characters(
-        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2)
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True)
     composite_image = create_composite_image(
         foreground, thumbnail.size, (0, 0))
     thumbnail = Image.alpha_composite(thumbnail, composite_image)
