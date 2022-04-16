@@ -72,11 +72,17 @@ class WebServer(QThread):
         WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
         return "OK"
     
-    # Ticks score of Team specified down by 1 point (Stops at 1)
+    # Ticks score of Team specified down by 1 point
     @app.route('/team<team>-scoredown')
     def team_scoredown(team):
-        score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
-        WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
+        if StateManager.Get(f"score.team." + team + ".score") - 1 < 1:
+            if team == "1":
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
+            else:
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+        else:
+            score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
+            WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
         return "OK"
     
     # Dynamic endpoint to allow flexible sets of information
