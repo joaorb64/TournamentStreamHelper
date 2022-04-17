@@ -84,6 +84,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.enablePlayerOutline.setChecked(
             settings["font_outline_enabled"][0])
         self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
+        self.zoom.setValue(100)
 
     def setDefaults(self, button_mode=False):
         settings = {
@@ -186,6 +187,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.open_explorer = self.settings.findChild(
             QCheckBox, "openExplorerCheck")
 
+        self.zoom = self.settings.findChild(QSpinBox, "zoom")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -198,6 +201,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             key="flip_p1", val=self.flip_p1.isChecked()))
         self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(
             key="open_explorer", val=self.open_explorer.isChecked()))
+
+        self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting())
 
         # FONTS
         self.selectFontPlayer = self.settings.findChild(
@@ -283,10 +288,20 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.resetDisplay(settings)
 
         # listener type font
-        self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
-                                                                                    self.selectFontPlayer.currentText(), self.selectTypeFontPlayer.currentText(), self.selectTypeFontPlayer.currentData(), 0))
-        self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont("font_list",
-                                                                                   self.selectFontPhase.currentText(), self.selectTypeFontPhase.currentText(), self.selectTypeFontPhase.currentData(), 1))
+        self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont(
+            "font_list",
+            self.selectFontPlayer.currentText(),
+            self.selectTypeFontPlayer.currentText(),
+            self.selectTypeFontPlayer.currentData(),
+            0
+        ))
+        self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont(
+            "font_list",
+            self.selectFontPhase.currentText(),
+            self.selectTypeFontPhase.currentText(),
+            self.selectTypeFontPhase.currentData(),
+            1
+        ))
 
         # Asset Pack
         self.selectRenderLabel = self.settings.findChild(QLabel, "label_asset")
@@ -455,8 +470,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             asset_dict = {}
             for key, val in TSHGameAssetManager.instance.selectedGame.get("assets").items():
                 # don't use base_files, because don't contains asset, only folder (?)
-                # TODO are there other asset name "forbidden" ?
-                if "base_files" == key:
+                if key == "base_files":
+                    continue
+                # Skip stage icon assets
+                if isinstance(val.get("type"), list) and "stage_icon" in val.get("type"):
                     continue
                 if val.get("name"):
                     self.selectRenderType.addItem(val.get("name"), key)
@@ -474,6 +491,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 if game_codename:
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(
                         asset_dict[settings[f"asset/{game_codename}"]]))
+                    self.zoom.setValue(
+                        settings.get(f"zoom/{game_codename}", 100))
                 else:
                     self.selectRenderType.setCurrentIndex(0)
             except KeyError:
@@ -485,6 +504,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         self.selectRenderType.findText(asset_dict["base_files/icon"]))
                 self.SetAssetSetting(force=True)
             TSHGameAssetManager.instance.thumbnailSettingsLoaded = True
+
+    def SetZoomSetting(self, force=False):
+        if TSHGameAssetManager.instance.thumbnailSettingsLoaded or force:
+            try:
+                game_codename = TSHGameAssetManager.instance.selectedGame.get(
+                    "codename")
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self, key=f"zoom/{game_codename}", val=self.zoom.value(), generatePreview=True)
+            except Exception as e:
+                print(e)
 
     def SetAssetSetting(self, force=False):
         if TSHGameAssetManager.instance.thumbnailSettingsLoaded or force:

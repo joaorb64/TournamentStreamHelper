@@ -73,7 +73,7 @@ class WebServer(QThread):
         WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
         return "OK"
     
-    # Ticks score of Team specified down by 1 point (Stops at 1)
+    # Ticks score of Team specified down by 1 point
     @app.route('/team<team>-scoredown')
     def team_scoredown(team):
         if StateManager.Get(f"score.team." + team + ".score") - 1 < 1:
