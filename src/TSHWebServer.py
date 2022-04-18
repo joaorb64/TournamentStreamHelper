@@ -140,6 +140,12 @@ class WebServer(QThread):
             )
         return "OK"
     
+    # Swaps teams
+    @app.route('/swap-teams')
+    def open_select():
+        WebServer.scoreboard.SwapTeams()
+        return "OK"
+    
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():
