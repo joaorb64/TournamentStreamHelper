@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.8"
 
-      - run: pip install -r dependencies/requirements.txt pyinstaller
+      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
           set PYTHONUTF8=1
           chcp 65001
