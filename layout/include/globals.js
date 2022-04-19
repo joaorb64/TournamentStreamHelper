@@ -91,10 +91,13 @@ function CenterImage(element, eyesight, customZoom = 1) {
         };
       }
 
-      if (element.innerWidth() > element.innerHeight()) {
-        zoom = element.innerWidth() / img.naturalWidth;
+      zoom_x = element.innerWidth() / img.naturalWidth;
+	    zoom_y = element.innerHeight() / img.naturalHeight;
+
+      if (zoom_x > zoom_y) {
+        zoom = zoom_x;
       } else {
-        zoom = element.innerHeight() / img.naturalHeight;
+        zoom = zoom_y;
       }
 
       zoom *= customZoom;
