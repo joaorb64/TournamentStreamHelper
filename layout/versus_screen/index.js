@@ -1,11 +1,14 @@
 (($) => {
   // Change this to the name of the assets pack you want to use
   // It's basically the folder name: user_data/games/game/ASSETPACK
-  var ASSET_TO_USE = "full";
+  var ASSET_TO_USE = "webm";
 
   // Change this to select wether to flip P2 character asset or not
   // Set it to true or false
   var FLIP_P2_ASSET = true;
+
+  // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
+  var zoom = 1;
 
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -391,7 +394,8 @@
             if (character.assets[ASSET_TO_USE]) {
               CenterImage(
                 $(`.p${t + 1}.character .char${c} .portrait`),
-                character.assets[ASSET_TO_USE].eyesight
+                character.assets[ASSET_TO_USE].eyesight,
+                zoom
               );
             }
           });

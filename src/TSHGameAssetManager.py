@@ -325,12 +325,21 @@ class TSHGameAssetManager(QObject):
                             "type": asset.get("type", [])
                         }
 
+                        # If skin exists, load it
                         if skin in skinFiles:
                             charFiles[assetKey]["asset"] = assetPath + \
                                 skinFiles[skin]
                         else:
-                            charFiles[assetKey]["asset"] = assetPath + \
-                                list(skinFiles.values())[0]
+                            # If skin remap exists, load remap
+                            if asset.get("skin_mapping", {}).get(characterCodename, {}).get(str(skin)):
+                                target = int(asset.get("skin_mapping", {}).get(
+                                    characterCodename, {}).get(str(skin)))
+                                charFiles[assetKey]["asset"] = assetPath + \
+                                    skinFiles[target]
+                            # If none is found, default to skin 0
+                            else:
+                                charFiles[assetKey]["asset"] = assetPath + \
+                                    skinFiles[0]
 
                     if asset.get("eyesights"):
                         eyesights = asset.get("eyesights", {}).get(
