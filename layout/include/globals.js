@@ -76,27 +76,68 @@ function SetInnerHtml(
   });
 }
 
-function CenterImage(element, eyesight) {
+function CenterImage(element, eyesight, customZoom = 1) {
   let image = element.css("background-image");
-
-  console.log("CenterImage", image);
-
-  if (!eyesight) return;
 
   if (image != undefined && image.includes("url(")) {
     let img = new Image();
     img.src = image.split('url("')[1].split('")')[0];
 
     $(img).on("load", () => {
-      console.log(element);
-      console.log(eyesight.x, img.naturalWidth);
-      console.log(eyesight.x / img.naturalWidth);
+      if (!eyesight) {
+        eyesight = {
+          x: img.naturalWidth / 2,
+          y: img.naturalHeight / 2,
+        };
+      }
+
+      if (element.innerWidth() > element.innerHeight()) {
+        zoom = element.innerWidth() / img.naturalWidth;
+      } else {
+        zoom = element.innerHeight() / img.naturalHeight;
+      }
+
+      zoom *= customZoom;
+
+      let xx = 0;
+      let yy = 0;
+
+      xx = -eyesight.x * zoom + element.innerWidth() / 2;
+
+      let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom);
+
+      if (xx > maxMoveX) xx = maxMoveX;
+      if (xx < -maxMoveX) xx = -maxMoveX;
+
+      yy = -eyesight.y * zoom + element.innerHeight() / 2;
+
+      let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom);
+
+      if (yy > maxMoveY) yy = maxMoveY;
+      if (yy < -maxMoveY) yy = -maxMoveY;
+
+      console.log("zoom", zoom);
+
       element.css(
         "background-position",
-        `${(eyesight.x / img.naturalWidth) * 100}% ${
-          (eyesight.y / img.naturalHeight) * 100
-        }%`
+        `
+          ${xx}px
+          ${yy}px
+        `
       );
+
+      element.css(
+        "background-size",
+        `
+          ${img.naturalWidth * zoom}px
+          ${img.naturalHeight * zoom}px
+        `
+      );
+
+      //element.css("background-position", "initial");
+      //element.css("position", "fixed");
+      //element.css("width", img.naturalWidth * zoom);
+      //element.css("height", img.naturalHeight * zoom);
     });
   }
 }

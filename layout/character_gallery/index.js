@@ -17,7 +17,7 @@
       TweenMax.to(".container", 0.1, { autoAlpha: 0 }).then(() => {
         oldCharacters = characters;
 
-        assetToUse = "base_files/icon";
+        assetToUse = "full";
         characterAssets = [];
 
         Object.values(characters).forEach((character) => {
@@ -37,7 +37,7 @@
         elements += `<div class="index_display"></div>`;
 
         $(".container").html(elements);
-        
+
         characterAssets.forEach((a, i) => {
           CenterImage($(`#character${i}`), a.eyesight);
         });

@@ -388,10 +388,7 @@
 
           if (t == 0) characters = characters.reverse();
           characters.forEach((character, c) => {
-            if (
-              character.assets[ASSET_TO_USE] &&
-              character.assets[ASSET_TO_USE].eyesight
-            ) {
+            if (character.assets[ASSET_TO_USE]) {
               CenterImage(
                 $(`.p${t + 1}.character .char${c} .portrait`),
                 character.assets[ASSET_TO_USE].eyesight
