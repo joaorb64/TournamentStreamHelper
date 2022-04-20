@@ -132,7 +132,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_completer = QCompleter()
         self.findChild(QLineEdit, "pronoun").setCompleter(self.pronoun_completer)
         self.pronoun_list = []
-        for file in ['./assets/pronouns_list.txt', './user_data/pronouns_list.txt']:
+        for file in ['./user_data/pronouns_list.txt']:
             try:
                 with open(file, 'r') as f:
                     for l in f.readlines():

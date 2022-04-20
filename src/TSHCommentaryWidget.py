@@ -160,7 +160,7 @@ class TSHCommentaryWidget(QDockWidget):
                 c.pronoun_completer = QCompleter()
                 c.findChild(QLineEdit, "pronoun").setCompleter(c.pronoun_completer)
                 c.pronoun_list = []
-                for file in ['./assets/pronouns_list.txt', './user_data/pronouns_list.txt']:
+                for file in ['./user_data/pronouns_list.txt']:
                     try:
                         with open(file, 'r') as f:
                             for l in f.readlines():
