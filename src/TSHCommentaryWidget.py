@@ -166,3 +166,5 @@ class TSHCommentaryWidget(QDockWidget):
         widget.findChild(QLineEdit, "real_name").editingFinished.emit()
         widget.findChild(QLineEdit, "twitter").setText(data.get("twitter"))
         widget.findChild(QLineEdit, "twitter").editingFinished.emit()
+        widget.findChild(QLineEdit, "pronoun").setText(data.get("pronoun"))
+        widget.findChild(QLineEdit, "pronoun").editingFinished.emit()

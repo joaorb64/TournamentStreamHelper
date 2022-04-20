@@ -135,7 +135,8 @@ class TSHScoreboardWidget(QDockWidget):
             ["Real Name", ["real_name", "real_nameLabel"]],
             ["Twitter", ["twitter", "twitterLabel"]],
             ["Location", ["locationLabel", "state", "country"]],
-            ["Characters", ["characters"]]
+            ["Characters", ["characters"]],
+            ["Pronouns", ["pronoun", "pronounLabel"]],
         ]
         for element in elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
