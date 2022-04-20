@@ -1,3 +1,4 @@
+from rlcompleter import Completer
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -156,6 +157,22 @@ class TSHCommentaryWidget(QDockWidget):
                         c,
                         x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection
                 )
+                c.pronoun_completer = QCompleter()
+                c.findChild(QLineEdit, "pronoun").setCompleter(c.pronoun_completer)
+                c.pronoun_list = []
+                for file in ['./assets/pronouns_list.txt', './user_data/pronouns_list.txt']:
+                    try:
+                        with open(file, 'r') as f:
+                            for l in f.readlines():
+                                processed_line = l.replace("\n", "").strip()
+                                if processed_line and processed_line not in c.pronoun_list:
+                                    c.pronoun_list.append(processed_line)
+                    except Exception as e:
+                        print(f"ERROR: Did not find {file}")
+                        print(traceback.format_exc())
+                c.pronoun_model = QStringListModel()
+                c.pronoun_completer.setModel(c.pronoun_model)
+                c.pronoun_model.setStringList(c.pronoun_list)
 
     def SetData(self, widget, data):
         widget.findChild(QLineEdit, "name").setText(data.get("gamerTag"))
