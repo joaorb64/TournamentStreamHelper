@@ -132,7 +132,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_completer = QCompleter()
         self.findChild(QLineEdit, "pronoun").setCompleter(self.pronoun_completer)
         self.pronoun_list = []
-        for file in ['./assets/pronouns_list.txt', './user_data/pronouns_list.txt']:
+        for file in ['./user_data/pronouns_list.txt']:
             try:
                 with open(file, 'r') as f:
                     for l in f.readlines():
@@ -714,6 +714,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 QComboBox, "state").currentData(Qt.ItemDataRole.UserRole).get("code")
 
         TSHPlayerDB.AddPlayers([playerData], overwrite=True)
+        
+        if playerData["pronoun"] not in self.pronoun_list:
+            with open("./user_data/pronouns_list.txt", 'at') as pronouns_file:
+                pronouns_file.write(playerData["pronoun"] + "\n")
+                self.pronoun_list.append(playerData["pronoun"])
+                self.pronoun_model.setStringList(self.pronoun_list)
 
     def ManageSavePlayerToDBText(self):
         tag = self.GetCurrentPlayerTag()
