@@ -68,21 +68,25 @@ class WebServer(QThread):
     # Ticks score of Team specified up by 1 point
     @app.route('/team<team>-scoreup')
     def team_scoreup(team):
-        score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") + 1}
-        WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
+        if team == "1":
+            WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").setValue(WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").value() + 1)
+        else:
+            WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").value() + 1)
         return "OK"
     
     # Ticks score of Team specified down by 1 point
     @app.route('/team<team>-scoredown')
     def team_scoredown(team):
-        if StateManager.Get(f"score.team." + team + ".score") - 1 < 1:
-            if team == "1":
+        if team == "1":
+            if WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").value() -1 < 1:
                 WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
             else:
-                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").setValue(WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_left").value() - 1)
         else:
-            score = {'team' + team +'score': StateManager.Get(f"score.team." + team + ".score") - 1}
-            WebServer.scoreboard.signals.UpdateSetData.emit(eval(json.dumps(score)))
+            if WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").value() -1 < 1:
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+            else:
+                WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").setValue(WebServer.scoreboard.scoreColumn.findChild(QSpinBox, "score_right").value() - 1)
         return "OK"
     
     # Dynamic endpoint to allow flexible sets of information
