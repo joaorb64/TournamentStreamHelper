@@ -21,6 +21,7 @@ query SetQuery($id: ID!) {
                         id
                         slug
                         name
+                        genderPronoun
                         authorizations(types: [TWITTER]) {
                             type
                             externalUsername

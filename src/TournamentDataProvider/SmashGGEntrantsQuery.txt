@@ -43,6 +43,7 @@ query EventEntrantsListQuery($eventSlug: String!, $videogameId: Int, $page: Int!
             id
             prefix
             name
+            genderPronoun
             location {
               country
               state
