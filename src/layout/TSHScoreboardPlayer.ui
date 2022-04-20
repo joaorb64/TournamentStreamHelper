@@ -97,6 +97,29 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="pronounLabel">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>PRONOUNS</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" colspan="2">
+    <widget class="QLineEdit" name="pronoun">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
    <item row="7" column="0" colspan="4">
     <widget class="QGroupBox" name="characters">
      <property name="font">
@@ -241,6 +264,7 @@
  <tabstops>
   <tabstop>real_name</tabstop>
   <tabstop>twitter</tabstop>
+  <tabstop>pronoun</tabstop>
  </tabstops>
  <resources/>
  <connections/>

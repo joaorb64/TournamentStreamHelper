@@ -129,6 +129,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.SetupAutocomplete)
         self.SetupAutocomplete()
 
+        self.pronoun_completer = QCompleter()
+        self.findChild(QLineEdit, "pronoun").setCompleter(self.pronoun_completer)
+        self.pronoun_list = []
+        for file in ['./assets/pronouns_list.txt', './user_data/pronouns_list.txt']:
+            try:
+                with open(file, 'r') as f:
+                    for l in f.readlines():
+                        processed_line = l.replace("\n", "").strip()
+                        if processed_line and processed_line not in self.pronoun_list:
+                            self.pronoun_list.append(processed_line)
+            except Exception as e:
+                print(f"ERROR: Did not find {file}")
+                print(traceback.format_exc())
+        self.pronoun_model = QStringListModel()
+        self.pronoun_completer.setModel(self.pronoun_model)
+        self.pronoun_model.setStringList(self.pronoun_list)
+
     def CharactersChanged(self):
         characters = {}
 
@@ -588,6 +605,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f'{data.get("twitter")}')
             self.findChild(QWidget, "twitter").editingFinished.emit()
 
+        if data.get("pronoun"):
+            self.findChild(QWidget, "pronoun").setText(
+                f'{data.get("pronoun")}')
+            self.findChild(QWidget, "pronoun").editingFinished.emit()
+
         if data.get("country_code"):
             countryElement: QComboBox = self.findChild(
                 QComboBox, "country")
@@ -656,7 +678,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             "prefix": self.findChild(QWidget, "team").text(),
             "gamerTag": self.findChild(QWidget, "name").text(),
             "name": self.findChild(QWidget, "real_name").text(),
-            "twitter": self.findChild(QWidget, "twitter").text()
+            "twitter": self.findChild(QWidget, "twitter").text(),
+            "pronoun": self.findChild(QWidget, "pronoun").text()
         }
 
         if TSHGameAssetManager.instance.selectedGame.get("codename"):
