@@ -106,17 +106,21 @@ function CenterImage(element, eyesight, customZoom = 1) {
       let yy = 0;
 
       xx = -eyesight.x * zoom + element.innerWidth() / 2;
+	    console.log("xx", xx);
 
       let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom);
+	    console.log("maxMoveX", maxMoveX);
 
-      if (xx > maxMoveX) xx = maxMoveX;
+      if (xx > 0) xx = 0;
       if (xx < -maxMoveX) xx = -maxMoveX;
 
       yy = -eyesight.y * zoom + element.innerHeight() / 2;
+	    console.log("yy", yy);
 
       let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom);
+	    console.log("maxMoveY", maxMoveY);
 
-      if (yy > maxMoveY) yy = maxMoveY;
+      if (yy > 0) yy = 0;
       if (yy < -maxMoveY) yy = -maxMoveY;
 
       console.log("zoom", zoom);
