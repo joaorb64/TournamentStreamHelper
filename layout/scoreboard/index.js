@@ -5,13 +5,22 @@
     .timeline({ paused: true })
     .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
     .from(
-      [".ssbu .anim_container_outer"],
+      [".anim_container_outer"],
       {
         duration: 1,
         width: "0",
         ease: "power2.inOut",
       },
-      0.5
+      1
+    )
+    .from(
+      [".bottom"],
+      {
+        duration: 1,
+        autoAlpha: 0,
+        ease: "power2.inOut",
+      },
+      1
     )
     .from(
       [".fgc .top", ".fgc .player"],

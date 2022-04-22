@@ -42,7 +42,7 @@ body {
   color: white;
   display: flex;
   box-sizing: border-box;
-  border-radius: 12px;
+  border-radius: 24px;
   background-color: #18181b;
   align-items: center;
   padding: 20px 40px;
@@ -250,7 +250,7 @@ body {
   justify-content: center;
   border: 2px solid white;
   margin-bottom: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .flagname {
@@ -264,7 +264,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   border: 2px white solid;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .score {
@@ -290,7 +290,7 @@ body {
   width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 620px;
+  height: 640px;
   perspective: 1000px;
   perspective-origin: right;
   z-index: -1;
@@ -317,7 +317,7 @@ body {
 }
 
 .bg {
-  border-radius: 8px;
+  border-radius: 24px;
   height: 100%;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
@@ -332,7 +332,7 @@ body {
   width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 620px;
+  height: 640px;
   perspective: 1000px;
   perspective-origin: left;
   display: flex;
