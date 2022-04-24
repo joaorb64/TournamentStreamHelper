@@ -82,7 +82,7 @@ body {
   display: flex;
   box-sizing: border-box;
   border-radius: 16px;
-  background-color: var(--bg-color);
+  background: var(--bg-color);
   align-items: center;
 }
 
@@ -369,7 +369,7 @@ body {
   background-size: contain;
   border-radius: 16px;
   overflow: hidden;
-  background-color: #3f3f46;
+  background: #3f3f46;
 }
 
 .thin .icon {
@@ -382,7 +382,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #3f3f46;
+  background: #3f3f46;
 }
 
 .fgc.thin .icon div:not(.text) {
@@ -469,7 +469,7 @@ body {
 
 .p1 .score {
   color: var(--p1-score-color);
-  background-color: var(--p1-score-bg-color);
+  background: var(--p1-score-bg-color);
 }
 
 .p1 .sponsor {
@@ -480,7 +480,7 @@ body {
   color: var(--p2-score-color);
   margin-left: -8px;
   margin-right: 0;
-  background-color: var(--p2-score-bg-color);
+  background: var(--p2-score-bg-color);
 }
 
 .p2 .sponsor {
@@ -500,9 +500,9 @@ body {
 }
 
 .p1 .losers {
-  background-color: #ff3837ff;
+  background: #ff3837ff;
 }
 
 .p2 .losers {
-  background-color: #308affff;
+  background: #308affff;
 }
