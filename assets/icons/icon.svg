@@ -9,11 +9,12 @@
    id="svg5"
    sodipodi:docname="icon.svg"
    inkscape:export-filename="/home/joao/SmashStreamHelper/assets/icons/icon.png"
-   inkscape:export-xdpi="3072.0002"
-   inkscape:export-ydpi="3072.0002"
-   inkscape:version="1.1.2 (76b9e6a115, 2022-02-25)"
+   inkscape:export-xdpi="1536.0001"
+   inkscape:export-ydpi="1536.0001"
+   inkscape:version="1.1.2 (08b2f3d93c, 2022-04-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -38,18 +39,30 @@
      inkscape:snap-object-midpoints="true"
      inkscape:snap-center="true"
      inkscape:snap-page="true"
-     inkscape:snap-global="true"
-     inkscape:zoom="19.78125"
-     inkscape:cx="7.4818325"
-     inkscape:cy="11.576619"
-     inkscape:window-width="1850"
+     inkscape:snap-global="false"
+     inkscape:zoom="27.974912"
+     inkscape:cx="8.7935933"
+     inkscape:cy="10.294939"
+     inkscape:window-width="1846"
      inkscape:window-height="1016"
-     inkscape:window-x="70"
+     inkscape:window-x="74"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient836">
+      <stop
+         style="stop-color:#ba2037;stop-opacity:1"
+         offset="0"
+         id="stop832" />
+      <stop
+         style="stop-color:#ba1897;stop-opacity:1"
+         offset="1"
+         id="stop834" />
+    </linearGradient>
     <rect
        x="-37.634092"
        y="-26.062011"
@@ -68,29 +81,38 @@
        width="83.570503"
        height="60.759575"
        id="rect10114-6" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient836"
+       id="linearGradient838"
+       x1="0"
+       y1="0"
+       x2="4.2333331"
+       y2="4.2333331"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <g
      inkscape:label="Camada 1"
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="color:#000000;overflow:visible;fill:#ff3837;fill-rule:evenodd;stroke-width:0.264583;stroke-linejoin:round"
+       style="color:#000000;overflow:visible;fill:url(#linearGradient838);fill-rule:evenodd;stroke-width:0.264583;stroke-linejoin:round;fill-opacity:1"
        id="path5973"
        cx="2.1166666"
        cy="2.1166666"
        r="2.1166666" />
     <text
        xml:space="preserve"
-       transform="matrix(0.16561721,0,0,0.1836315,6.7860528,5.8667859)"
+       transform="matrix(0.18006607,0,0,0.17571674,7.2863239,5.7078415)"
        id="text10112"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Bold';letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect10114);fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.303435;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed,  Bold';letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect10114);fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.297489;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"><tspan
          x="-37.634766"
          y="-16.867295"
-         id="tspan2982"><tspan
-           style="font-family:Roboto;-inkscape-font-specification:'Roboto Bold'"
-           id="tspan2980">TSH</tspan></tspan></text>
+         id="tspan857"><tspan
+           style="font-family:'Noto Sans Mono';-inkscape-font-specification:'Noto Sans Mono Bold'"
+           id="tspan855">TSH</tspan></tspan></text>
     <path
-       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers"
+       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers;stroke-linecap:butt"
        id="path2068"
        inkscape:transform-center-y="-1.4781284"
        sodipodi:type="arc"
@@ -105,7 +127,7 @@
        transform="rotate(-135)"
        sodipodi:open="true" />
     <path
-       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.318084;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers"
+       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.31808437;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers;stroke-linecap:butt"
        id="path2068-6"
        inkscape:transform-center-y="-1.1035697"
        sodipodi:type="arc"
@@ -120,7 +142,7 @@
        sodipodi:open="true"
        d="M -1.7836514,0.16574647 A 1.0159887,1.0159887 0 0 1 -2.7072248,1.0893198" />
     <path
-       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers"
+       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.3175;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers;stroke-linecap:butt"
        id="path2068-7"
        inkscape:transform-center-y="1.4781284"
        sodipodi:type="arc"
@@ -135,7 +157,7 @@
        sodipodi:open="true"
        d="M 4.6463934,0.07876047 A 1.7317352,1.7317352 0 0 1 3.0721786,1.6529753" />
     <path
-       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.318084;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers"
+       style="color:#000000;overflow:visible;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.31808437;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke fill markers;stroke-linecap:butt"
        id="path2068-6-5"
        inkscape:transform-center-y="1.1035697"
        sodipodi:type="arc"

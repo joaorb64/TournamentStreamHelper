@@ -7,6 +7,28 @@
   --p2-sponsor-color: #29b6f6;
   --p1-score-color: white;
   --p2-score-color: white;
+  --border-radius: 16px;
+}
+
+:root {
+  --text-color: white;
+  --bg-color: #18181b;
+  --p1-score-bg-color: rgb(189, 63, 50);
+  --p1-score-bg-color: linear-gradient(
+    135deg,
+    rgba(189, 63, 50, 1) 0%,
+    rgba(203, 53, 107, 1) 100%
+  );
+  --p2-score-bg-color: rgb(47, 128, 237);
+  --p2-score-bg-color: linear-gradient(
+    225deg,
+    rgba(47, 128, 237, 1) 0%,
+    rgba(60, 139, 166, 1) 100%
+  );
+  --p1-sponsor-color: #ff3837ff;
+  --p2-sponsor-color: #29b6f6;
+  --p1-score-color: white;
+  --p2-score-color: white;
 }
 
 :root .light {
@@ -81,7 +103,7 @@ body {
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
-  border-radius: 16px;
+  border-radius: var(--border-radius);
   background: var(--bg-color);
   align-items: center;
 }
@@ -238,11 +260,11 @@ body {
   transform: translateX(-50%);
   width: 100px;
   height: 100px;
-  background-image: url("./logo.png");
+  background-image: url("../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  border-radius: 16px;
+  border-radius: var(--border-radius);
   z-index: 9;
 }
 
@@ -331,7 +353,7 @@ body {
   justify-content: center;
   height: unset;
   flex-direction: column;
-  width: 260px;
+  width: 280px;
   height: 64px;
   font-size: 20px;
   padding: 4px 10px;
@@ -339,14 +361,14 @@ body {
 
 .phase {
   font-family: NotoSans;
-  opacity: 0.6;
+  opacity: 0.8;
   font-size: 14px;
   letter-spacing: 2px;
   width: 100%;
 }
 
 .match {
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 2px;
   width: 100%;
 }
@@ -367,9 +389,9 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  border-radius: 16px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  background: #3f3f46;
+  background-color: #3f3f46;
 }
 
 .thin .icon {
@@ -382,7 +404,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background: #3f3f46;
+  background-color: #3f3f46;
 }
 
 .fgc.thin .icon div:not(.text) {
@@ -408,7 +430,7 @@ body {
   background-position: center;
   width: 48px;
   height: 48px;
-  border-radius: 16px;
+  border-radius: var(--border-radius);
 }
 
 .fgc.thin .sponsor_icon > div > div {

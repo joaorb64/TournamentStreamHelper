@@ -149,7 +149,7 @@ body {
   transform: translateX(-50%);
   width: 150px;
   height: 150px;
-  background-image: url("./logo.png");
+  background-image: url("../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

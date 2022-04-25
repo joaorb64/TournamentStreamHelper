@@ -130,7 +130,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.SetupAutocomplete()
 
         self.pronoun_completer = QCompleter()
-        self.findChild(QLineEdit, "pronoun").setCompleter(self.pronoun_completer)
+        self.findChild(QLineEdit, "pronoun").setCompleter(
+            self.pronoun_completer)
         self.pronoun_list = []
         for file in ['./user_data/pronouns_list.txt']:
             try:
@@ -209,9 +210,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             f"{self.path}.online_avatar", onlineAvatar)
 
         # Local avatar
-        if os.path.exists(f"./user_data/player_avatar{merged}.png"):
+        if os.path.exists(f"./user_data/player_avatar/{merged}.png"):
             StateManager.Set(
-                f"{self.path}.avatar", f"./user_data/player_avatar{merged}.png")
+                f"{self.path}.avatar", f"./user_data/player_avatar/{merged}.png")
         else:
             StateManager.Set(
                 f"{self.path}.avatar", None)
@@ -714,7 +715,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 QComboBox, "state").currentData(Qt.ItemDataRole.UserRole).get("code")
 
         TSHPlayerDB.AddPlayers([playerData], overwrite=True)
-        
+
         if playerData["pronoun"] not in self.pronoun_list:
             with open("./user_data/pronouns_list.txt", 'at') as pronouns_file:
                 pronouns_file.write(playerData["pronoun"] + "\n")
