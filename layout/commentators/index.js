@@ -1,4 +1,10 @@
 (($) => {
+  if (!window.config) {
+    window.config = {
+      size: "normal",
+    };
+  }
+
   function Start() {}
 
   var data = {};
@@ -65,11 +71,9 @@
 
   Update();
   $(window).on("load", () => {
-    window.setTimeout(() => {
-      $("body").fadeTo(800, 1, async () => {
-        Start();
-        setInterval(Update, 1000);
-      });
-    }, 1400);
+    $("body").fadeTo(800, 1, async () => {
+      Start();
+      setInterval(Update, 1000);
+    });
   });
 })(jQuery);

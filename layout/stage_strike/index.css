@@ -1,20 +1,5 @@
-@font-face {
-  font-family: "Roboto";
-  src: url("../include/Roboto-Regular.ttf") format("truetype");
-}
-
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: center;
-  height: 100%;
-}
-
 body {
-  font-family: "Roboto";
+  font-family: var(--font);
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -31,9 +16,9 @@ body {
 }
 
 .stage-name {
-  color: white;
+  color: var(--text-color);
   width: 200px;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2;
   height: 28px;
@@ -59,8 +44,8 @@ body {
   position: relative;
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
     0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
-  border-radius: 8px;
-  background-color: #121212ff;
+  border-radius: var(--border-radius);
+  background: var(--bg-color);
   overflow: hidden;
 }
 
@@ -72,11 +57,11 @@ body {
   height: 64px;
 }
 .stamp.stage-striked {
-  background-image: url(../../assets/icons/stage_strike.svg);
+  background-image: url(./stage_strike.svg);
 }
 .stamp.stage-dsr {
-  background-image: url(../../assets/icons/stage_dsr.svg);
+  background-image: url(./stage_dsr.svg);
 }
 .stamp.stage-selected {
-  background-image: url(../../assets/icons/stage_select.svg);
+  background-image: url(./stage_select.svg);
 }

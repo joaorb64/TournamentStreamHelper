@@ -1,20 +1,5 @@
-@font-face {
-  font-family: "Roboto Condensed";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
-}
-
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: inherit;
-  height: 100%;
-}
-
 body {
-  font-family: "Roboto Condensed";
+  font-family: var(--font);
   letter-spacing: 1.2px;
   font-weight: bold;
   opacity: 0;
@@ -24,11 +9,11 @@ body {
 
 .container {
   position: absolute;
-  color: white;
+  color: var(--text-color);
   display: flex;
   box-sizing: border-box;
-  border-radius: 12px;
-  background-color: #18181b;
+  border-radius: var(--border-radius);
+  background: var(--bg-color);
   align-items: center;
   padding: 20px 40px;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
@@ -40,8 +25,8 @@ body {
 .recent_sets {
   position: absolute;
   width: 100%;
-  height: 540px;
-  color: white;
+  height: 580px;
+  color: var(--text-color);
   font-size: 50px;
   place-content: flex-start;
   padding-left: 20px;
@@ -58,7 +43,7 @@ body {
 .recent_sets .text {
   flex-direction: column;
   max-width: 100%;
-  gap: 12px;
+  gap: 8px;
 }
 
 .recent_sets_title {
@@ -73,7 +58,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: row;
-  color: white;
+  color: var(--text-color);
   align-content: center;
   padding-left: 26px;
   padding-right: 26px;
@@ -93,7 +78,11 @@ body {
   text-align: center;
   flex-grow: 1;
   font-size: 22px;
-  color: #ffffffaa;
+  color: var(--text-color);
+}
+
+.set_date {
+  opacity: 0.6;
 }
 
 .set_title {
@@ -102,14 +91,16 @@ body {
   font-size: 28px;
   padding-left: 20px;
   padding-right: 20px;
-  color: white;
+  color: var(--text-color);
+  opacity: 1;
 }
 
 .wifi_icon {
-  background-image: url(./wifi.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(./wifi.svg);
+  background-color: var(--text-color);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
   vertical-align: middle;
   width: 24px;
   height: 24px;
@@ -119,12 +110,26 @@ body {
 
 .set_winner {
   font-size: 42px;
-  color: #29b548;
+  width: 64px;
+  height: 64px;
+  text-align: center;
+  line-height: 64px;
+  border-radius: 100%;
+  background: #29b548;
+  color: var(--text-color);
+  flex-shrink: 0;
 }
 
 .set_loser {
   font-size: 42px;
-  color: #ff3837;
+  width: 64px;
+  height: 64px;
+  text-align: center;
+  line-height: 64px;
+  border-radius: 100%;
+  background: #ff3837;
+  color: var(--text-color);
+  flex-shrink: 0;
 }
 
 .lds-ring {
@@ -141,10 +146,10 @@ body {
   width: 80px;
   height: 80px;
   margin: 12px;
-  border: 12px solid #fff;
+  border: 12px solid var(--text-color);
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #fff transparent transparent transparent;
+  border-color: var(--text-color) transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;

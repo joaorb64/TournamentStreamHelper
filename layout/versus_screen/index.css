@@ -3,18 +3,8 @@
   src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: inherit;
-  height: 100%;
-}
-
 body {
-  font-family: "Roboto Condensed";
+  font-family: var(--font);
   letter-spacing: 1.2px;
   font-weight: bold;
   opacity: 0;
@@ -39,11 +29,11 @@ body {
 
 .container {
   position: absolute;
-  color: white;
+  color: var(--text-color);
   display: flex;
   box-sizing: border-box;
-  border-radius: 24px;
-  background-color: #18181b;
+  border-radius: var(--border-radius);
+  background-color: var(--bg-color);
   align-items: center;
   padding: 20px 40px;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
@@ -129,10 +119,11 @@ body {
 }
 
 .twitter_logo {
-  background-image: url(./twitter.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
   width: 24px;
   height: 24px;
   margin-right: 6px;
@@ -156,11 +147,11 @@ body {
 }
 
 .p1 .sponsor {
-  color: #ff3837ff;
+  color: var(--p1-sponsor-color);
 }
 
 .p2 .sponsor {
-  color: #308affff;
+  color: var(--p2-sponsor-color);
 }
 
 .losers {
@@ -265,6 +256,7 @@ body {
   transform: translateX(-50%);
   border: 2px white solid;
   border-radius: 10px;
+  color: white;
 }
 
 .score {
@@ -313,11 +305,11 @@ body {
 .p1.character .bg {
   width: 100%;
   transform: rotateY(10deg);
-  background-color: #ff3837ff;
+  background: var(--p1-score-bg-color);
 }
 
 .bg {
-  border-radius: 24px;
+  border-radius: var(--border-radius);
   height: 100%;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
@@ -341,7 +333,7 @@ body {
 .p2.character .bg {
   width: 100%;
   transform: rotateY(-10deg);
-  background-color: #308affff;
+  background: var(--p2-score-bg-color);
 }
 
 .portrait_container {

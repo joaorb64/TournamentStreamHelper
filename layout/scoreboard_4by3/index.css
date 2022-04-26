@@ -3,17 +3,6 @@
   src: url("../include/RobotoCondensed.ttf") format("truetype");
 }
 
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: center;
-  height: 100%;
-  flex-direction: inherit;
-}
-
 body {
   font-family: Roboto;
   font-weight: bold;

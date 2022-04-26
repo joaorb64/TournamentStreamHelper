@@ -46,7 +46,7 @@
                   ${_set.online ? `<div class="wifi_icon"></div>` : ""}
                   ${_set.tournament}
                 </div>
-                <div>
+                <div class="set_date">
                   ${new Date(_set.timestamp * 1000).toLocaleDateString(
                     "en-US",
                     {

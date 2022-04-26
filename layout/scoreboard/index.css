@@ -1,43 +1,3 @@
-:root {
-  --text-color: white;
-  --bg-color: #18181b;
-  --p1-score-bg-color: #ff3837ff;
-  --p2-score-bg-color: #1255a3ff;
-  --p1-sponsor-color: #ff3837ff;
-  --p2-sponsor-color: #29b6f6;
-  --p1-score-color: white;
-  --p2-score-color: white;
-  --border-radius: 16px;
-}
-
-:root {
-  --text-color: white;
-  --bg-color: #18181b;
-  --p1-score-bg-color: rgb(189, 63, 50);
-  --p1-score-bg-color: linear-gradient(
-    135deg,
-    rgba(189, 63, 50, 1) 0%,
-    rgba(203, 53, 107, 1) 100%
-  );
-  --p2-score-bg-color: rgb(47, 128, 237);
-  --p2-score-bg-color: linear-gradient(
-    225deg,
-    rgba(47, 128, 237, 1) 0%,
-    rgba(60, 139, 166, 1) 100%
-  );
-  --p1-sponsor-color: #ff3837ff;
-  --p2-sponsor-color: #29b6f6;
-  --p1-score-color: white;
-  --p2-score-color: white;
-}
-
-:root .light {
-  --text-color: black;
-  --bg-color: #e2ebf0ff;
-  --p1-sponsor-color: #ff3837ff;
-  --p2-sponsor-color: #1255a3ff;
-}
-
 @font-face {
   font-family: "NotoSans";
   src: url("../include/NotoSans-Regular.ttf") format("truetype");
@@ -51,17 +11,6 @@
 @font-face {
   font-family: "Roboto";
   src: url("../include/Roboto-Regular.ttf") format("truetype");
-}
-
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: center;
-  height: 100%;
-  gap: inherit;
 }
 
 body {
@@ -240,10 +189,11 @@ body {
 }
 
 .twitter_logo {
-  background-image: url(./twitter.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
   width: 18px;
   height: 18px;
   margin-right: 6px;
@@ -360,8 +310,6 @@ body {
 }
 
 .phase {
-  font-family: NotoSans;
-  opacity: 0.8;
   font-size: 14px;
   letter-spacing: 2px;
   width: 100%;
@@ -377,6 +325,8 @@ body {
   top: unset;
   bottom: 6px;
   padding: 16px 24px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .bblue .info.container.bottom {

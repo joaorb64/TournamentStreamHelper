@@ -1,0 +1,54 @@
+@font-face {
+  font-family: "NotoSans";
+  src: url("./include/NotoSans-Regular.ttf") format("truetype");
+}
+
+:root {
+  --text-color: white;
+  --bg-color: #18181b;
+  --p1-score-bg-color: #ff3837ff;
+  --p2-score-bg-color: #1255a3ff;
+  --p1-sponsor-color: #ff3837ff;
+  --p2-sponsor-color: #29b6f6;
+  --p1-score-color: white;
+  --p2-score-color: white;
+  --border-radius: 16px;
+  --font: "NotoSans";
+}
+
+:root {
+  --text-color: white;
+  --bg-color: #18181b;
+  --p1-score-bg-color: linear-gradient(
+    135deg,
+    rgba(189, 63, 50, 1) 0%,
+    rgba(203, 53, 107, 1) 100%
+  );
+  --p2-score-bg-color: linear-gradient(
+    225deg,
+    rgba(47, 128, 237, 1) 0%,
+    rgba(60, 139, 166, 1) 100%
+  );
+  --p1-sponsor-color: #ff3837ff;
+  --p2-sponsor-color: #29b6f6;
+  --p1-score-color: white;
+  --p2-score-color: white;
+}
+
+:root .light {
+  --text-color: black;
+  --bg-color: #e2ebf0ff;
+  --p1-sponsor-color: #ff3837ff;
+  --p2-sponsor-color: #1255a3ff;
+}
+
+.text {
+  white-space: nowrap;
+  display: flex;
+  min-width: 99%;
+  width: fit-content;
+  place-items: center;
+  place-content: center;
+  height: 100%;
+  gap: inherit;
+}

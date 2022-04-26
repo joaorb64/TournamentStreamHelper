@@ -8,17 +8,6 @@
   src: url("../include/Roboto-Regular.ttf") format("truetype");
 }
 
-.text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 99%;
-  width: fit-content;
-  place-items: center;
-  place-content: center;
-  height: 100%;
-  gap: inherit;
-}
-
 body {
   font-family: RobotoCondensed;
   font-weight: bold;

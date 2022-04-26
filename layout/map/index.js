@@ -109,8 +109,8 @@ baseMap.addTo(map);
     if (!window.NOHUD) {
       // Calculate max ping
       if (isPrecise.some((e) => e == false)) {
-        $("#ping").html("Estimated ping: ???");
-        $("#distance").html("Distance: ???");
+        $("#ping").html("ESTIMATED PING: ???");
+        $("#distance").html("DISTANCE: ???");
       } else {
         let maxPing = 0;
 
@@ -140,7 +140,7 @@ baseMap.addTo(map);
         console.log("Ping by distance: " + pingByDistance);
 
         let pingString = maxPing < 20 ? "< 20" : maxPing.toFixed(2);
-        $("#ping").html("Estimated ping: " + pingString + " ms");
+        $("#ping").html("ESTIMATED PING: " + pingString + " ms");
 
         let maxDistance = 0;
 
@@ -171,9 +171,9 @@ baseMap.addTo(map);
         }
 
         if (positions.length == 2) {
-          $("#distance").html("Distance: " + distanceString);
+          $("#distance").html("DISTANCE: " + distanceString);
         } else {
-          $("#distance").html("Max distance: " + distanceString);
+          $("#distance").html("MAX DISTANCE: " + distanceString);
         }
       }
       gsap
