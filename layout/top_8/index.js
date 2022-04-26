@@ -33,13 +33,15 @@
               <div class="score">${i + 1}</div>
               <div class="icon avatar"></div>
               <div class="icon online_avatar"></div>
-              <div class="flagcountry"></div>
-              <div class="flagstate"></div>
-              <div class="sponsor_icon"></div>
+              <div class="flags">
+                <div class="flagcountry"></div>
+                ${player.state.asset ? `<div class="flagstate"></div>` : ""}
+              </div>
               <div class="name_twitter">
-                <div class="name"></div>
-                <div class="twitter"></div>
-                </div>
+              <div class="name"></div>
+              <div class="twitter"></div>
+              </div>
+              <div class="sponsor_icon"></div>
               <div class="filler"></div>
               <div class="character_container"></div>
             </div>
@@ -123,7 +125,7 @@
               $(`.slot${t + 1} .p${p + 1}.container .sponsor_icon`),
               player.sponsor_logo
                 ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                : "",
+                : "<div></div>",
               undefined,
               0
             );

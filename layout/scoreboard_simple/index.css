@@ -37,10 +37,10 @@ body {
   width: 100%;
   height: 100%;
   clip-path: polygon(
-    26px 2px,
-    calc(100% - 46px) 2px,
-    calc(100% - 66px) calc(100% - 2px),
-    4px calc(100% - 2px)
+    27px 4px,
+    calc(100% - 46px) 4px,
+    calc(100% - 66px) calc(100% - 4px),
+    7px calc(100% - 4px)
   );
 }
 
