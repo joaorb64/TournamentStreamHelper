@@ -1,4 +1,7 @@
 (($) => {
+  var ASSET_TO_USE = "full";
+  var ZOOM = 1;
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -24,10 +27,10 @@
 
       Object.values(data.player_list.slot).forEach((slot, i) => {
         html += `<div class="slot slot${i + 1}">`;
-        html += `<div class="container title"></div>`;
         Object.values(slot.player).forEach((player, p) => {
           html += `
             <div class="p${p + 1} player container">
+              <div class="score">${i + 1}</div>
               <div class="icon avatar"></div>
               <div class="icon online_avatar"></div>
               <div class="flagcountry"></div>
@@ -86,10 +89,10 @@
             let charactersHtml = "";
 
             Object.values(player.character).forEach((character, index) => {
-              if (character.assets["portrait"]) {
+              if (character.assets[ASSET_TO_USE]) {
                 charactersHtml += `
                   <div class="icon stockicon">
-                      <div style='background-image: url(../../${character.assets["portrait"].asset})'></div>
+                      <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
                   </div>
                   `;
               }
@@ -105,10 +108,11 @@
                     p + 1
                   }.container .character_container .icon.stockicon div`
                 ).each((e, i) => {
-                  if (player.character[e + 1].assets["portrait"] != null) {
+                  if (player.character[e + 1].assets[ASSET_TO_USE] != null) {
                     CenterImage(
                       $(i),
-                      player.character[e + 1].assets["portrait"].eyesight
+                      player.character[e + 1].assets[ASSET_TO_USE].eyesight,
+                      ZOOM
                     );
                   }
                 });

@@ -1,11 +1,6 @@
-@font-face {
-  font-family: "Roboto";
-  src: url("../include/integral-cf-bold.otf") format("truetype");
-}
-
 body {
-  font-family: "Roboto";
-  letter-spacing: 1.4px;
+  font-family: var(--font);
+  letter-spacing: 1px;
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -20,7 +15,7 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   position: absolute;
-  color: white;
+  color: var(--text-color);
   z-index: 9;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
@@ -34,16 +29,27 @@ body {
   right: 0;
   width: 100%;
   height: 100%;
+  clip-path: polygon(24px 0%, 100% 0%, calc(100% - 24px) 100%, 0% 100%);
+}
+
+.container .bg > div {
+  background: var(--bg-color);
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(
+    26px 2px,
+    calc(100% - 46px) 2px,
+    calc(100% - 66px) calc(100% - 2px),
+    4px calc(100% - 2px)
+  );
 }
 
 .container.t1 .bg {
-  background-position: 0 0;
-  background-image: url("./player_container_top_1.png");
+  background: var(--p1-score-bg-color);
 }
 
 .container.t2 .bg {
-  background-position: 0 0;
-  background-image: url("./player_container_top_2.png");
+  background: var(--p2-score-bg-color);
 }
 
 .doubles .container {
@@ -81,13 +87,13 @@ body {
 }
 
 .container .name {
-  color: white;
+  color: var(--text-color);
   position: absolute;
-  left: 38px;
+  left: 30px;
   top: 2px;
-  width: 194px;
+  width: 210px;
   height: 34px;
-  font-size: 20px;
+  font-size: 22px;
   padding-left: 4px;
   padding-right: 4px;
   justify-content: left;
@@ -103,15 +109,16 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   position: absolute;
-  color: white;
-  background-image: url("./player_container_bottom.png");
+  color: var(--text-color);
+  background: var(--bg-color);
+  clip-path: polygon(30px 0%, 100% 0%, calc(100% - 30px) 100%, 0% 100%);
 }
 
 .twitter {
   position: absolute;
-  left: 38px;
+  left: 26px;
   top: 22px;
-  width: 160px;
+  width: 170px;
   height: 20px;
   font-size: 14px;
   padding-left: 4px;
@@ -122,10 +129,11 @@ body {
 }
 
 .twitter_logo {
-  background-image: url(./twitter.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background-color: var(--text-color);
   width: 18px;
   height: 18px;
   margin-right: 6px;
@@ -144,11 +152,11 @@ body {
 }
 
 .t1 .sponsor {
-  color: #f99090;
+  color: var(--p1-sponsor-color);
 }
 
 .t2 .sponsor {
-  color: #29b6f6;
+  color: var(--p2-sponsor-color);
 }
 
 .flag {
@@ -159,7 +167,7 @@ body {
   width: 38px;
   height: 26px;
   border: 2px solid white;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .flagcountry {
@@ -184,7 +192,7 @@ body {
   font-size: 28px;
   top: 1px;
   right: 18px;
-  color: white;
+  color: var(--p1-score-color);
 }
 
 .sponsor-container {
@@ -210,12 +218,12 @@ body {
 
 .material_container {
   position: absolute;
-  color: white;
+  color: var(--text-color);
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
-  border-radius: 12px;
-  background-color: #18181b;
+  border-radius: var(--border-radius);
+  background: var(--bg-color);
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
@@ -223,7 +231,7 @@ body {
 }
 
 .info.material_container {
-  color: white;
+  color: var(--text-color);
   padding: 8px 16px;
   background-position: center;
   text-transform: uppercase;
@@ -272,7 +280,6 @@ body {
 
 .info.material_container.middle .phase {
   width: 100%;
-  opacity: 0.6;
   font-size: 16px;
   letter-spacing: 4px;
 }
@@ -280,31 +287,31 @@ body {
 .info.material_container.middle .match {
   width: 100%;
   font-size: 22px;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   opacity: 1;
 }
 
 .info.doubles.material_container {
-  top: 8px;
-  width: 340px;
+  top: 16px;
+  width: 360px;
   height: 66px;
   padding: 10px;
   gap: 10px;
 }
 
 .info.doubles.material_container .team_name {
-  width: 262px;
+  width: 282px;
   padding: 0 6px;
   box-sizing: border-box;
 }
 
 .t1.material_container {
-  left: 600px;
+  left: 580px;
 }
 
 .t2.material_container {
   left: unset;
-  right: 600px;
+  right: 580px;
   flex-direction: row-reverse;
 }
 
@@ -313,20 +320,18 @@ body {
   width: 48px;
   height: 100%;
   font-size: 38px;
-  color: white;
-  border-radius: 8px;
+  color: var(--p1-score-color);
+  border-radius: var(--border-radius);
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
 }
 
-.material_container .doubles_score .text {
-  margin-top: -3px;
-}
-
 .t1 .doubles_score {
-  background-color: #ff3837ff;
+  color: var(--p1-score-color);
+  background: var(--p1-score-bg-color);
 }
 .t2 .doubles_score {
-  background-color: #1255a3ff;
+  color: var(--p2-score-color);
+  background: var(--p2-score-bg-color);
 }

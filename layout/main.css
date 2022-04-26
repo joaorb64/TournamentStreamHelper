@@ -14,7 +14,7 @@
   gap: inherit;
 }
 
-// Main theme -- Dark Gradient
+/* Main theme -- Dark Gradient */
 :root {
   --font: "NotoSans";
   --border-radius: 16px;
@@ -36,9 +36,9 @@
   --p2-score-color: white;
 }
 
-// Uncomment for themes
+/* Uncomment for themes */
 
-// Dark Solid Theme
+/* Dark Solid Theme */
 /* :root {
   --text-color: white;
   --bg-color: #18181b;
@@ -50,7 +50,7 @@
   --p2-score-color: white;
 } */
 
-// Light Gradient Theme
+/* Light Gradient Theme */
 /* :root {
   --text-color: black;
   --bg-color: #e2ebf0ff;

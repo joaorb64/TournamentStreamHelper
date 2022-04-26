@@ -10,7 +10,7 @@
     )
     .from(
       [".twitter-container"],
-      { duration: 1, opacity: "0", x: "+40px", ease: "power2.inOut" },
+      { duration: 1, opacity: "0", x: "+80px", ease: "power2.inOut" },
       0
     )
     .from(".mask", { width: 0, duration: 1, ease: "power2.inOut" }, 0)
@@ -81,7 +81,6 @@
       } else {
         teamName = team.teamName;
       }
-      console.log(teamName);
 
       SetInnerHtml(
         $(`.info.doubles.t${t + 1} .team_name`),
