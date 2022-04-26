@@ -1,10 +1,5 @@
-@font-face {
-  font-family: "Roboto";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
-}
-
 body {
-  font-family: Roboto;
+  font-family: var(--font);
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -23,10 +18,9 @@ body {
   justify-content: center;
   align-items: center;
   gap: 32px;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  overflow: hidden;
+  box-shadow: 0 0 2px 2px rgb(0 0 0 / 12%), 0 0 3px 1px rgb(0 0 0 / 14%),
+    0 0 1px 5px rgb(0 0 0 / 12%), 0 0 1px 2px rgb(0 0 0 / 10%);
 }
 
 .smash64 .bg {
@@ -44,7 +38,7 @@ body {
 }
 
 .container {
-  color: white;
+  color: var(--text-color);
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
@@ -53,8 +47,8 @@ body {
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
-  border-radius: 8px;
-  background-color: #121212ff;
+  border-radius: var(--border-radius);
+  background-color: var(--bg-color);
 }
 
 .player.container {
@@ -63,7 +57,7 @@ body {
   height: 420px;
   background-size: cover;
   background-repeat: no-repeat;
-  color: white;
+  color: var(--text-color);
   overflow: hidden;
 }
 
@@ -90,7 +84,7 @@ body {
   height: 70px;
   font-size: 32px;
   box-sizing: border-box;
-  background-color: #121212ff;
+  background-color: var(--bg-color);
   overflow: hidden;
 }
 
@@ -103,22 +97,19 @@ body {
   height: 47px;
   font-size: 25px;
   box-sizing: border-box;
-  background-color: #121212ff;
+  background-color: var(--bg-color);
   overflow: hidden;
 }
 
 .twitter_logo {
-  background-image: url(./twitter.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
   width: 20px;
   height: 20px;
   margin-right: 6px;
-}
-
-.sponsor {
-  color: yellow;
 }
 
 .info.container {
@@ -127,7 +118,7 @@ body {
   transform: translateX(-50%);
   width: 600px;
   height: 30px;
-  color: white;
+  color: var(--text-color);
   padding-left: 30px;
   padding-right: 30px;
   background-position: center;
@@ -152,7 +143,7 @@ body {
 .info.container.top {
   top: 4px;
   height: 50px;
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .info.container.bottom {
@@ -170,7 +161,6 @@ body {
 }
 
 .phase {
-  opacity: 0.6;
   font-size: 14px;
   letter-spacing: 2px;
   width: 100%;
@@ -207,30 +197,30 @@ body {
   width: 38px;
   height: 26px;
   border: 2px solid white;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .character_container {
   position: absolute;
   overflow: hidden;
   top: 70px;
-  height: 300px;
+  height: 304px;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .left .character_container {
-  background-color: #ff3837ff;
+  background: var(--p1-score-bg-color);
 }
 
 .right .character_container {
-  background-color: #1255a3ff;
+  background: var(--p2-score-bg-color);
   transform: scaleX(-1);
 }
 
 .character_container.cameras {
-  background-color: transparent !important;
+  background: transparent !important;
 }
 
 .character {
@@ -264,19 +254,19 @@ body {
 }
 
 .left .score {
-  background-color: #ff3837ff;
+  background: var(--p1-score-bg-color);
 }
 
 .left .sponsor {
-  color: #f99090;
+  color: var(--p1-sponsor-color);
 }
 
 .right .score {
-  background-color: #1255a3ff;
+  background: var(--p2-score-bg-color);
 }
 
 .right .sponsor {
-  color: #29b6f6;
+  color: var(--p2-sponsor-color);
 }
 
 .sponsor_logo {
