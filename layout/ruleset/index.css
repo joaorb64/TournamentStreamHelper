@@ -20,6 +20,9 @@ body {
   margin-right: 32px;
   margin-top: 32px;
   margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .container > div {

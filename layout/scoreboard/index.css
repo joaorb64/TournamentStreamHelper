@@ -363,14 +363,23 @@ body {
   background-size: cover;
 }
 
+.flags_container {
+  display: flex;
+  flex-direction: column;
+}
+
 .flag {
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 36px;
-  height: 28px;
-  border-radius: 10px;
+  width: 32px;
+  height: 22px;
+  border-radius: 8px;
+}
+
+.ssbu .flagstate .text div {
+  margin-top: 4px;
 }
 
 .sponsor_icon > div > div {
@@ -438,11 +447,18 @@ body {
 .pronoun {
   font-size: 12px;
   text-transform: uppercase;
+  margin-top: auto;
+  margin-left: 6px;
+  letter-spacing: normal;
 }
 
 .p1 .score {
   color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
+}
+
+.sponsor {
+  margin-right: 6px;
 }
 
 .p1 .sponsor {

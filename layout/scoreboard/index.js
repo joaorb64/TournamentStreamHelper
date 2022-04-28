@@ -71,6 +71,9 @@
                 ${player.team ? player.team : ""}
               </span>
               ${player.name}
+              <span class="pronoun">
+                ${player.pronoun ? player.pronoun : ""}
+              </span>
               ${team.losers ? "<span class='losers'>L</span>" : ""}
             `
           );
