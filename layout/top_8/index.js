@@ -30,7 +30,10 @@
         Object.values(slot.player).forEach((player, p) => {
           html += `
             <div class="p${p + 1} player container">
-              <div class="score">${i + 1}</div>
+              <div class="score">${
+                // TODO: Standings formula
+                Array(1, 2, 3, 4, 5, 5, 7, 7, 17, 17, 17, 17, 21, 21, 21, 21)[i]
+              }</div>
               <div class="icon avatar"></div>
               <div class="icon online_avatar"></div>
               <div class="flags">

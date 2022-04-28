@@ -66,7 +66,8 @@
 
       if (data.score.ruleset.strikeOrder) {
         rules.push(
-          "First match strike order: " + data.score.ruleset.strikeOrder
+          "First match strike order: " +
+            data.score.ruleset.strikeOrder.map((a) => "P" + a).join(", ")
         );
       }
 
