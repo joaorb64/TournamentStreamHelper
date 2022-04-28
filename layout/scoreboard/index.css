@@ -435,8 +435,9 @@ body {
   width: 48px;
 }
 
-.sponsor {
-  margin-right: 6px;
+.pronoun {
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 .p1 .score {
@@ -448,6 +449,10 @@ body {
   color: var(--p1-sponsor-color);
 }
 
+.p1 .pronoun {
+  color: var(--p1-sponsor-color);
+}
+
 .p2 .score {
   color: var(--p2-score-color);
   margin-left: -8px;
@@ -456,6 +461,10 @@ body {
 }
 
 .p2 .sponsor {
+  color: var(--p2-sponsor-color);
+}
+
+.p2 .pronoun {
   color: var(--p2-sponsor-color);
 }
 
