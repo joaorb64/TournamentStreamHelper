@@ -25,6 +25,13 @@ query RecentSetsQuery($pid1: ID!, $pid2: ID!, $uid1: ID!, $uid2: ID! $page: Int!
                         entrant1Score
                         entrant2Score
                         winnerId
+        				fullRoundText
+                        phaseGroup {
+            				displayIdentifier
+            				phase {
+              					name
+            				}
+       					}
                     }
                 }
             }
