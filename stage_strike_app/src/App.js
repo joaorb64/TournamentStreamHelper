@@ -1,6 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Component } from "react";
+import "./NoSleep";
 import {
   useTheme,
   ThemeProvider,
@@ -55,6 +56,7 @@ class App extends Component {
     currPlayer: -1,
     currStep: 0,
     strikedStages: [],
+    strikedBy: [[], []],
     stagesWon: [[], []],
     stagesPicked: [],
     selectedStage: null,
@@ -63,6 +65,8 @@ class App extends Component {
     phase: null,
     match: null,
     bestOf: null,
+    timestamp: 0,
+    serverTimestamp: 0
   };
 
   Initialize() {
@@ -71,10 +75,12 @@ class App extends Component {
       currPlayer: -1,
       currStep: 0,
       strikedStages: [[]],
+      strikedBy: [[], []],
       stagesWon: [[], []],
       stagesPicked: [],
       selectedStage: null,
       lastWinner: -1,
+      serverTimestamp: 0
     });
   }
 
@@ -135,6 +141,7 @@ class App extends Component {
       if (!this.IsStageBanned(stage.name) && !this.IsStageStriked(stage.name)) {
         this.state.selectedStage = stage.name;
         this.setState(this.state);
+        this.setState({timestamp: new Date().getTime()});
       }
     } else if (
       !this.IsStageStriked(stage.name, true) &&
@@ -150,11 +157,18 @@ class App extends Component {
           this.GetStrikeNumber()
         ) {
           this.state.strikedStages[this.state.currStep].push(stage.name);
+          this.state.strikedBy[this.state.currPlayer].push(stage.name);
         }
       } else {
         this.state.strikedStages[this.state.currStep].splice(foundIndex, 1);
+
+        foundIndex = this.state.strikedBy[this.state.currPlayer].findIndex(
+          (e) => e === stage.name
+        );
+        this.state.strikedBy[this.state.currPlayer].splice(foundIndex, 1);
       }
       this.setState(this.state);
+      this.setState({timestamp: new Date().getTime()});
     }
   }
 
@@ -213,6 +227,7 @@ class App extends Component {
     }
 
     this.setState(this.state);
+    this.setState({timestamp: new Date().getTime()});
     console.log(this.state);
   }
 
@@ -226,6 +241,7 @@ class App extends Component {
     this.state.currPlayer = id;
     this.state.strikedStages = [[]];
     this.state.selectedStage = null;
+    this.state.strikedBy = [[], []];
 
     this.state.lastWinner = id;
 
@@ -236,6 +252,7 @@ class App extends Component {
 
     this.setState(this.state);
     this.UpdateStreamScore();
+    this.setState({timestamp: new Date().getTime()});
   }
 
   GetStrikeNumber() {
@@ -261,8 +278,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    window.setInterval(() => this.FetchRuleset(), 1000);
-    window.setInterval(() => this.UpdateStream(), 1000);
+    window.setInterval(() => this.FetchRuleset(), 100);
+    window.setInterval(() => this.UpdateStream(), 100);
   }
 
   FetchRuleset() {
@@ -283,12 +300,30 @@ class App extends Component {
         if (JSON.stringify(oldRuleset) !== JSON.stringify(this.state.ruleset)) {
           this.Initialize();
         }
+
+        if(data.state && (this.state.timestamp == 0 || (this.state.timestamp < data.state.timestamp))){
+          this.setState({
+            currGame: data.state.currGame,
+            currPlayer: data.state.currPlayer,
+            currStep: data.state.currStep,
+            strikedStages: data.state.strikedStages,
+            strikedBy: data.state.strikedBy,
+            stagesWon: data.state.stagesWon,
+            stagesPicked: data.state.stagesPicked,
+            selectedStage: data.state.selectedStage,
+            lastWinner: data.state.lastWinner,
+            serverTimestamp: data.state.timestamp,
+            timestamp: data.state.timestamp
+          })
+        }
       })
       .catch(console.log);
   }
 
   UpdateStream() {
     if (!this.state.ruleset) return;
+
+    if(this.state.timestamp <= this.state.serverTimestamp) return;
 
     let allStages =
       this.state.currGame === 0
@@ -311,6 +346,18 @@ class App extends Component {
         .concat(this.state.ruleset.counterpickStages)
         .filter((stage) => this.IsStageStriked(stage.name))
         .map((stage) => stage.codename),
+      state: {
+        currGame: this.state.currGame,
+        currPlayer: this.state.currPlayer,
+        currStep: this.state.currStep,
+        strikedStages: this.state.strikedStages,
+        strikedBy: this.state.strikedBy,
+        stagesWon: this.state.stagesWon,
+        stagesPicked: this.state.stagesPicked,
+        selectedStage: this.state.selectedStage,
+        lastWinner: this.state.lastWinner,
+        timestamp: this.state.timestamp
+      }
     };
 
     fetch("http://" + window.location.hostname + ":5000/post", {
@@ -460,13 +507,42 @@ class App extends Component {
                               onClick={() => this.StageClicked(stage)}
                             >
                               {this.IsStageStriked(stage.name) ? (
-                                <div className="stamp stage-striked"></div>
+                                <>
+                                  <div className="stamp stage-striked"></div>
+                                  <div className="banned_by">
+                                    <Typography
+                                      variant="button"
+                                      component="div"
+                                      fontWeight={"bold"}
+                                      noWrap
+                                      fontSize={{ xs: 8, md: "" }}
+                                    >
+                                      {this.state.strikedBy[0].findIndex((s)=>s==stage.name) != -1 ?
+                                        this.state.playerNames[0] :
+                                        this.state.playerNames[1]
+                                      }
+                                    </Typography>
+                                  </div>
+                                </>
                               ) : null}
                               {this.IsStageBanned(stage.name) ? (
                                 <div className="stamp stage-dsr"></div>
                               ) : null}
                               {this.state.selectedStage === stage.name ? (
-                                <div className="stamp stage-selected"></div>
+                                <>  
+                                  <div className="stamp stage-selected"></div>
+                                  <div className="banned_by">
+                                    <Typography
+                                      variant="button"
+                                      component="div"
+                                      fontWeight={"bold"}
+                                      noWrap
+                                      fontSize={{ xs: 8, md: "" }}
+                                    >
+                                      {this.state.playerNames[this.state.currPlayer]}
+                                    </Typography>
+                                  </div>
+                                </>
                               ) : null}
                               <CardMedia
                                 component="img"
@@ -567,7 +643,7 @@ class App extends Component {
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
                         variant="outlined"
-                        onClick={() => this.Initialize()}
+                        onClick={() => {this.Initialize(); this.setState({ timestamp: new Date().getTime() });}}
                       >
                         {i18n.t("reset")}
                       </Button>
@@ -616,7 +692,7 @@ class App extends Component {
                         fullWidth
                         color="p1color"
                         variant="contained"
-                        onClick={() => this.setState({ currPlayer: 0 })}
+                        onClick={() => this.setState({ currPlayer: 0, timestamp: new Date().getTime() })}
                       >
                         {this.state.playerNames[0]} {i18n.t("won")}
                       </Button>
@@ -630,7 +706,7 @@ class App extends Component {
                         fullWidth
                         color="p2color"
                         variant="contained"
-                        onClick={() => this.setState({ currPlayer: 1 })}
+                        onClick={() => this.setState({ currPlayer: 1, timestamp: new Date().getTime() })}
                       >
                         {this.state.playerNames[1]} {i18n.t("won")}
                       </Button>
@@ -649,7 +725,7 @@ class App extends Component {
                     color="success"
                     variant="outlined"
                     onClick={() =>
-                      this.setState({ currPlayer: Math.random() > 0.5 ? 1 : 0 })
+                      this.setState({ currPlayer: Math.random() > 0.5 ? 1 : 0, timestamp: new Date().getTime() })
                     }
                   >
                     {i18n.t("randomize")}
