@@ -17,12 +17,12 @@ function FitText(target) {
     textElement.html("");
   }
 
-  textElement.css("font-size", "");
-  let fontSize = parseFloat(target.css("font-size").split("px")[0]);
+  textElement.css("transform", "");
+  let scaleX = 1;
 
-  while (textElement[0].scrollWidth > target.width() && fontSize > 0) {
-    fontSize -= 1;
-    textElement.css("font-size", fontSize + "px");
+  while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
+    scaleX -= 0.01;
+    textElement.css("transform", "scaleX(" + scaleX + ")");
   }
 }
 
@@ -92,7 +92,7 @@ function CenterImage(element, eyesight, customZoom = 1) {
       }
 
       zoom_x = element.innerWidth() / img.naturalWidth;
-	    zoom_y = element.innerHeight() / img.naturalHeight;
+      zoom_y = element.innerHeight() / img.naturalHeight;
 
       if (zoom_x > zoom_y) {
         zoom = zoom_x;
@@ -106,19 +106,19 @@ function CenterImage(element, eyesight, customZoom = 1) {
       let yy = 0;
 
       xx = -eyesight.x * zoom + element.innerWidth() / 2;
-	    console.log("xx", xx);
+      console.log("xx", xx);
 
       let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom);
-	    console.log("maxMoveX", maxMoveX);
+      console.log("maxMoveX", maxMoveX);
 
       if (xx > 0) xx = 0;
       if (xx < -maxMoveX) xx = -maxMoveX;
 
       yy = -eyesight.y * zoom + element.innerHeight() / 2;
-	    console.log("yy", yy);
+      console.log("yy", yy);
 
       let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom);
-	    console.log("maxMoveY", maxMoveY);
+      console.log("maxMoveY", maxMoveY);
 
       if (yy > 0) yy = 0;
       if (yy < -maxMoveY) yy = -maxMoveY;

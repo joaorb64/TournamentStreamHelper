@@ -5,4 +5,5 @@ deepdiff
 qdarkstyle
 Pillow
 Flask
+flask-cors
 PySide2
