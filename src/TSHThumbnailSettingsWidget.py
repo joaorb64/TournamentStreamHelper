@@ -20,6 +20,7 @@ class PreviewWidget(QLabel):
             QSizePolicy.Ignored,
             QSizePolicy.Ignored
         )
+        self._pixmap = None
 
     def setPixmap(self, pixmap):
         self._pixmap = pixmap
@@ -27,17 +28,14 @@ class PreviewWidget(QLabel):
         super().setPixmap(self._pixmap.scaled(
             self.width(),
             self.height(),
-            Qt.KeepAspectRatio
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
         ))
 
     def resizeEvent(self, QResizeEvent):
         super().resizeEvent(QResizeEvent)
         if self._pixmap:
-            super().setPixmap(self._pixmap.scaled(
-                self.width(),
-                self.height(),
-                Qt.KeepAspectRatio
-            ))
+            self.setPixmap(self._pixmap)
 
 
 class TSHThumbnailSettingsWidgetSignals(QObject):
@@ -141,6 +139,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.signals.updatePreview.connect(self.UpdatePreview)
 
         self.thumbnailGenerationThread = QThreadPool()
+        self.thumbnailGenerationThread.setMaxThreadCount(1)
         self.lock = Lock()
 
         self.setWindowTitle("Thumbnail Settings")
@@ -475,7 +474,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         with self.lock:
             tmp_file = thumbnail.generate(
                 isPreview=True, settingsManager=SettingsManager)
-
             self.signals.updatePreview.emit(tmp_file)
 
     def UpdatePreview(self, file):
