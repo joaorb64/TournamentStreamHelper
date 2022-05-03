@@ -1,3 +1,4 @@
+from multiprocessing import Lock
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -9,6 +10,7 @@ import os
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
 from .TSHGameAssetManager import *
+from .Workers import Worker
 
 
 class PreviewWidget(QLabel):
@@ -36,6 +38,10 @@ class PreviewWidget(QLabel):
                 self.height(),
                 Qt.KeepAspectRatio
             ))
+
+
+class TSHThumbnailSettingsWidgetSignals(QObject):
+    updatePreview = pyqtSignal(str)
 
 
 class TSHThumbnailSettingsWidget(QDockWidget):
@@ -130,6 +136,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def __init__(self, *args):
         super().__init__(*args)
+
+        self.signals = TSHThumbnailSettingsWidgetSignals()
+        self.signals.updatePreview.connect(self.UpdatePreview)
+
+        self.thumbnailGenerationThread = QThreadPool()
+        self.lock = Lock()
 
         self.setWindowTitle("Thumbnail Settings")
         self.setFloating(True)
@@ -444,9 +456,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     # re-generate preview
     def GeneratePreview(self):
         try:
-            tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager)
-            self.preview.setPixmap(QPixmap(tmp_file))
+            worker = Worker(self.GeneratePreviewDo)
+            self.thumbnailGenerationThread.start(worker)
         except Exception as e:
             print(e)
             msgBox = QMessageBox()
@@ -456,6 +467,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
+
+    def GeneratePreviewDo(self, progress_callback):
+        if self.thumbnailGenerationThread.activeThreadCount() > 1:
+            return
+
+        with self.lock:
+            tmp_file = thumbnail.generate(
+                isPreview=True, settingsManager=SettingsManager)
+
+            self.signals.updatePreview.emit(tmp_file)
+
+    def UpdatePreview(self, file):
+        self.preview.setPixmap(QPixmap(file))
 
     def SetAssetPack(self, reset=False):
         self.selectRenderLabel.clear()

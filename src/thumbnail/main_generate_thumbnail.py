@@ -666,6 +666,10 @@ def generate(settingsManager, isPreview=False):
 
     foreground = Image.open(foreground_path).convert('RGBA')
     background = Image.open(background_path).convert('RGBA')
+
+    if isPreview:
+        background = background.reduce(2)
+
     foreground = foreground.resize(background.size, Image.BICUBIC)
 
     thumbnail = Image.new("RGBA", background.size, "PINK")
