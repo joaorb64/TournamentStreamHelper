@@ -1,9 +1,11 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from cgitb import text
 from textwrap import fill
-from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import json
 import requests
@@ -28,21 +30,32 @@ def color_code_to_tuple(color_code):
     return color
 
 
-def generate_separator_images(thumbnail, color_code=(127, 127, 127), width=3):
-    x_size, y_size = round(thumbnail.size[0]/2), thumbnail.size[1]
-    x_separator = Image.new("RGBA", (x_size, y_size), (255, 0, 0, 0))
-    y_separator = deepcopy(x_separator)
+def generate_separator_images(thumbnail, color_code="#888888", width=3):
+    x_size, y_size = round(thumbnail.width()/2), int(thumbnail.height())
+    x_separator = QPixmap(x_size, y_size)
+    x_separator.fill(QColor(0, 0, 0, 0))
+    y_separator = x_separator.copy(x_separator.rect())
 
-    actual_width_y = round(width*(thumbnail.size[0]/1920))
-    actual_width_x = round(width*(thumbnail.size[1]/1080))
+    actual_width_y = round(width*(thumbnail.width()/1920))
+    actual_width_x = round(width*(thumbnail.height()/1080))
 
-    x_draw = ImageDraw.Draw(x_separator)
-    x_draw.line([(0, y_size/2), (x_size, y_size/2)],
-                fill=color_code, width=actual_width_x)
+    painter = QPainter(x_separator)
 
-    y_draw = ImageDraw.Draw(y_separator)
-    y_draw.line([(x_size/2, 0), (x_size/2, y_size)],
-                fill=color_code, width=actual_width_y)
+    painter.setPen(
+        QPen(QColor(color_code), actual_width_x))
+
+    painter.drawLine(0, int(y_size/2), x_size, int(y_size/2))
+
+    painter.end()
+
+    painter = QPainter(y_separator)
+
+    painter.setPen(
+        QPen(QColor(color_code), actual_width_y))
+
+    painter.drawLine(int(x_size/2), 0, int(x_size/2), y_size)
+
+    painter.end()
 
     return(x_separator, y_separator)
 
@@ -73,10 +86,10 @@ def calculate_new_dimensions(current_size, max_size):
     return((round(new_x), round(new_y)))
 
 
-def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1):
-    current_size = image.size
-    x_ratio = max_size[0]/current_size[0]
-    y_ratio = max_size[1]/current_size[1]
+def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1):
+    current_size = image.size()
+    x_ratio = max_size[0]/current_size.width()
+    y_ratio = max_size[1]/current_size.height()
 
     if max_size[0] < 0 or max_size[1] < 0:
         raise ValueError(
@@ -84,20 +97,20 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None, 
 
     resized_eyesight = None
     if (x_ratio < y_ratio and fill_x and fill_y) or (fill_y and not fill_x) or ((not fill_x) and (not fill_y) and (x_ratio > y_ratio)):
-        new_x = y_ratio*current_size[0]*zoom
+        new_x = y_ratio*current_size.width()*zoom
         new_y = max_size[1]*zoom
         if eyesight_coordinates:
             resized_eyesight = (
                 round(eyesight_coordinates[0]*y_ratio*zoom), round(eyesight_coordinates[1]*y_ratio*zoom))
     else:
         new_x = max_size[0]*zoom
-        new_y = x_ratio*current_size[1]*zoom
+        new_y = x_ratio*current_size.height()*zoom
         if eyesight_coordinates:
             resized_eyesight = (
                 round(eyesight_coordinates[0]*x_ratio*zoom), round(eyesight_coordinates[1]*x_ratio*zoom))
 
     new_size = (round(new_x), round(new_y))
-    image = image.resize(new_size, resample=Image.LANCZOS)
+    image = image.scaled(new_size[0], new_size[1])
 
     # crop
     if not resized_eyesight:
@@ -129,14 +142,22 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None, 
             top = round(-(max_size[1] - new_y)/2)
             bottom = round((max_size[1] + new_y)/2)
 
-    image = image.crop((left, top, right, bottom))
+    image = image.copy(
+        int(left),
+        int(top),
+        int(right-left),
+        int(bottom-top)
+    )
 
     return(image)
 
 
 def create_composite_image(image, size, coordinates):
-    background = Image.new('RGBA', size, (0, 0, 0, 0))
-    background.paste(image, coordinates, image)
+    background = QPixmap(size)
+    background.fill(QColor(0, 0, 0, 0))
+    painter = QPainter(background)
+    painter.drawPixmap(coordinates[0], coordinates[1], image)
+    painter.end()
     return(background)
 
 
@@ -148,7 +169,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
         paste_coordinates = (
             round(thumbnail.size[0]-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
-        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
+        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
@@ -166,58 +187,64 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 paste_coordinates[1] + line_index*individual_max_size[1])
             individual_paste_coordinates = (
                 individual_paste_x, individual_paste_y)
-            character_image = Image.open("./"+image_path).convert('RGBA')
+            character_image = QPixmap("./"+image_path, 'RGBA')
             character_image = resize_image_to_max_size(
                 character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
             composite_image = create_composite_image(
-                character_image, thumbnail.size, individual_paste_coordinates)
-            thumbnail = Image.alpha_composite(thumbnail, composite_image)
+                character_image, thumbnail.size(), individual_paste_coordinates)
+            painter = QPainter(thumbnail)
+            painter.drawPixmap(0, 0, composite_image)
+            painter.end()
 
             # crop
             left = round(0)
             top = round(0)
-            right = round(separator_v_image.size[0])
+            right = round(separator_v_image.width())
             bottom = round(individual_max_size[1])
-            separator_v_image = separator_v_image.crop(
-                ((left, top, right, bottom)))
+            separator_v_image = separator_v_image.copy(
+                left, top, right-left, bottom-top)
             separator_v_offset = max_size[0]/num_col
             for i in range(1, num_col):
                 separator_paste_x = round(
-                    paste_coordinates[0]-(separator_v_image.size[0]/2)+i*separator_v_offset)
+                    paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
                 separator_paste_y = individual_paste_y
                 separator_paste_coordinates = (
                     separator_paste_x, separator_paste_y)
                 composite_image = create_composite_image(
-                    separator_v_image, thumbnail.size, separator_paste_coordinates)
-                thumbnail = Image.alpha_composite(thumbnail, composite_image)
+                    separator_v_image, thumbnail.size(), separator_paste_coordinates)
+                painter = QPainter(thumbnail)
+                painter.drawPixmap(0, 0, composite_image)
+                painter.end()
 
         # crop
         left = round(0)
         top = round(0)
         right = round(max_size[0])
-        bottom = round(separator_h_image.size[1])
-        separator_h_image = separator_h_image.crop(
-            ((left, top, right, bottom)))
+        bottom = round(separator_h_image.height())
+        separator_h_image = separator_h_image.copy(
+            left, top, right-left, bottom-top)
         separator_h_offset = max_size[1]/num_line
         for i in range(1, num_line):
             separator_paste_x = paste_coordinates[0]
             separator_paste_y = round(
-                paste_coordinates[1]-(separator_h_image.size[1]/2)+i*separator_h_offset)
+                paste_coordinates[1]-(separator_h_image.height()/2)+i*separator_h_offset)
             separator_paste_coordinates = (
                 separator_paste_x, separator_paste_y)
             composite_image = create_composite_image(
-                separator_h_image, thumbnail.size, separator_paste_coordinates)
-            thumbnail = Image.alpha_composite(thumbnail, composite_image)
+                separator_h_image, thumbnail.size(), separator_paste_coordinates)
+            painter = QPainter(thumbnail)
+            painter.drawPixmap(0, 0, composite_image)
+            painter.end()
 
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        thumbnail = thumbnail.transpose(Image.FLIP_LEFT_RIGHT)
+        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
     return(thumbnail)
 
 
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
-    max_x_size = round(thumbnail.size[0]/2)
-    max_y_size = thumbnail.size[1]
+    max_x_size = round(thumbnail.width()/2)
+    max_y_size = thumbnail.height()
     max_size = (max_x_size, max_y_size)
     origin_x_coordinates = [0, max_x_size]
     origin_y_coordinates = [0, 0]
@@ -267,197 +294,203 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
 
 
 def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval=None, recursion_level=0):
-    if pixel_height <= 1:
-        raise ValueError("pixel_height too small")
+    pass
+    # if pixel_height <= 1:
+    #     raise ValueError("pixel_height too small")
 
-    tolerance = 0
-    thumbnail_copy = deepcopy(thumbnail)
-    draw = ImageDraw.Draw(thumbnail_copy)
-    if not search_interval:
-        search_interval = [0, pixel_height*2]
-    current_size = round((search_interval[0] + search_interval[1])/2)
-    font = ImageFont.truetype(font_path, current_size)
-    bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
-    calculated_height = bbox[-1]
+    # tolerance = 0
+    # thumbnail_copy = QPixmap(thumbnail)
+    # draw = ImageDraw.Draw(thumbnail_copy)
+    # if not search_interval:
+    #     search_interval = [0, pixel_height*2]
+    # current_size = round((search_interval[0] + search_interval[1])/2)
+    # font = ImageFont.truetype(font_path, current_size)
+    # bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
+    # calculated_height = bbox[-1]
 
-    if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level > 100:
-        return(current_size)
-    elif calculated_height < pixel_height:
-        result = get_text_size_for_height(
-            thumbnail, font_path, pixel_height, [current_size, search_interval[1]], recursion_level+1)
-        return(result)
-    else:
-        result = get_text_size_for_height(
-            thumbnail, font_path, pixel_height, [search_interval[0], current_size], recursion_level+1)
-        return(result)
+    # if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level > 100:
+    #     return(current_size)
+    # elif calculated_height < pixel_height:
+    #     result = get_text_size_for_height(
+    #         thumbnail, font_path, pixel_height, [current_size, search_interval[1]], recursion_level+1)
+    #     return(result)
+    # else:
+    #     result = get_text_size_for_height(
+    #         thumbnail, font_path, pixel_height, [search_interval[0], current_size], recursion_level+1)
+    #     return(result)
 
 
 def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, recursion_level=0):
-    if max_width <= 1:
-        raise ValueError("max_width too small")
-    if text_size <= 1:
-        raise ValueError("text_size too small")
-    thumbnail_copy = deepcopy(thumbnail)
-    draw = ImageDraw.Draw(thumbnail_copy)
-    font = ImageFont.truetype(font_path, text_size)
-    bbox = draw.textbbox((0, 0), text, font=font)
-    calculated_width = bbox[-2]
-    if calculated_width <= max_width or recursion_level > 100:
-        return(text_size)
-    else:
-        return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
+    pass
+    # if max_width <= 1:
+    #     raise ValueError("max_width too small")
+    # if text_size <= 1:
+    #     raise ValueError("text_size too small")
+    # thumbnail_copy = deepcopy(thumbnail)
+    # draw = ImageDraw.Draw(thumbnail_copy)
+    # font = ImageFont.truetype(font_path, text_size)
+    # bbox = draw.textbbox((0, 0), text, font=font)
+    # calculated_width = bbox[-2]
+    # if calculated_width <= max_width or recursion_level > 100:
+    #     return(text_size)
+    # else:
+    #     return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
-    text_player_coordinates_center = [
-        (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
-    text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
-    pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
-    max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
-    font_path = font_1
-    text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
-    player_text_color = text_color[0]
+    pass
+    # text_player_coordinates_center = [
+    #     (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
+    # text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
+    # pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
+    # max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
+    # font_path = font_1
+    # text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
+    # player_text_color = text_color[0]
 
-    draw = ImageDraw.Draw(thumbnail)
+    # draw = ImageDraw.Draw(thumbnail)
 
-    for i in [0, 1]:
-        team_index = i+1
-        player_list = []
-        if use_team_names:
-            player_name = find(f"score.team.{team_index}.teamName", data)
-        else:
-            current_team = find(f"score.team.{team_index}.player", data)
-            for key in current_team.keys():
-                current_data = current_team[key].get("mergedName")
-                if current_data:
-                    current_data = current_data.rstrip("[L]").strip()
-                if (not use_sponsors) or (not current_data):
-                    current_data = current_team[key].get("name")
-                    if current_data:
-                        current_data = current_data.strip()
-                if current_data:
-                    player_list.append(current_data)
-            player_name = " / ".join(player_list)
+    # for i in [0, 1]:
+    #     team_index = i+1
+    #     player_list = []
+    #     if use_team_names:
+    #         player_name = find(f"score.team.{team_index}.teamName", data)
+    #     else:
+    #         current_team = find(f"score.team.{team_index}.player", data)
+    #         for key in current_team.keys():
+    #             current_data = current_team[key].get("mergedName")
+    #             if current_data:
+    #                 current_data = current_data.rstrip("[L]").strip()
+    #             if (not use_sponsors) or (not current_data):
+    #                 current_data = current_team[key].get("name")
+    #                 if current_data:
+    #                     current_data = current_data.strip()
+    #             if current_data:
+    #                 player_list.append(current_data)
+    #         player_name = " / ".join(player_list)
 
-        if use_team_names or len(player_list) > 1:
-            player_type = "team"
-        else:
-            player_type = "player"
+    #     if use_team_names or len(player_list) > 1:
+    #         player_type = "team"
+    #     else:
+    #         player_type = "player"
 
-        print(f"Processing {player_type}: {player_name}")
+    #     print(f"Processing {player_type}: {player_name}")
 
-        actual_text_size = reduce_text_size_to_width(
-            thumbnail, font_path, text_size, player_name, max_width)
-        font = ImageFont.truetype(font_path, actual_text_size)
-        text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
-        text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
-        text_coordinates = (text_x, text_y)
+    #     actual_text_size = reduce_text_size_to_width(
+    #         thumbnail, font_path, text_size, player_name, max_width)
+    #     font = ImageFont.truetype(font_path, actual_text_size)
+    #     text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
+    #     text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
+    #     text_coordinates = (text_x, text_y)
 
-        outline_color = player_text_color["outline_color"]
-        if player_text_color["has_outline"]:
-            stroke_width = round(4*(thumbnail.size[1]/1080))
-        else:
-            stroke_width = 0
+    #     outline_color = player_text_color["outline_color"]
+    #     if player_text_color["has_outline"]:
+    #         stroke_width = round(4*(thumbnail.size[1]/1080))
+    #     else:
+    #         stroke_width = 0
 
-        draw.text(text_coordinates, player_name,
-                  player_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+    #     draw.text(text_coordinates, player_name,
+    #               player_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
-    phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
-    round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
-    text_max_dimensions = (480.0/1920.0, 40.0/1080.0)
-    round_text_color = text_color[1]
-    outline_color = round_text_color["outline_color"]
-    if round_text_color["has_outline"]:
-        stroke_width = 2*(thumbnail.size[1]/1080)
-    else:
-        stroke_width = 0
+    pass
+    # phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
+    # round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
+    # text_max_dimensions = (480.0/1920.0, 40.0/1080.0)
+    # round_text_color = text_color[1]
+    # outline_color = round_text_color["outline_color"]
+    # if round_text_color["has_outline"]:
+    #     stroke_width = 2*(thumbnail.height()/1080)
+    # else:
+    #     stroke_width = 0
 
-    if not display_phase:
-        round_text_coordinates_center = (round_text_coordinates_center[0], (
-            round_text_coordinates_center[1] + phase_text_coordinates_center[1])/2)
-        text_max_dimensions = (
-            text_max_dimensions[0], text_max_dimensions[1]*2)
-        stroke_width = stroke_width*2
-    
-    stroke_width = round(stroke_width)
+    # if not display_phase:
+    #     round_text_coordinates_center = (round_text_coordinates_center[0], (
+    #         round_text_coordinates_center[1] + phase_text_coordinates_center[1])/2)
+    #     text_max_dimensions = (
+    #         text_max_dimensions[0], text_max_dimensions[1]*2)
+    #     stroke_width = stroke_width*2
 
-    pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
-    max_width = round(text_max_dimensions[0]*thumbnail.size[0])
-    font_path = font_2
-    text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
+    # stroke_width = round(stroke_width)
 
-    draw = ImageDraw.Draw(thumbnail)
+    # pixel_height = round(text_max_dimensions[1]*thumbnail.height())
+    # max_width = round(text_max_dimensions[0]*thumbnail.width())
+    # font_path = font_2
+    # text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
 
-    if display_phase:
-        current_phase = find(f"score.phase", data)
+    # draw = ImageDraw.Draw(thumbnail)
 
-        actual_text_size = reduce_text_size_to_width(
-            thumbnail, font_path, text_size, current_phase, max_width)
-        font = ImageFont.truetype(font_path, actual_text_size)
-        text_x = round(phase_text_coordinates_center[0]*thumbnail.size[0])
-        text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
-        text_coordinates = (text_x, text_y)
-        draw.text(text_coordinates, current_phase,
-                  round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+    # if display_phase:
+    #     current_phase = find(f"score.phase", data)
 
-    current_round = find(f"score.match", data)
+    #     actual_text_size = reduce_text_size_to_width(
+    #         thumbnail, font_path, text_size, current_phase, max_width)
+    #     font = ImageFont.truetype(font_path, actual_text_size)
+    #     text_x = round(phase_text_coordinates_center[0]*thumbnail.size[0])
+    #     text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
+    #     text_coordinates = (text_x, text_y)
+    #     draw.text(text_coordinates, current_phase,
+    #               round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
-    actual_text_size = reduce_text_size_to_width(
-        thumbnail, font_path, text_size, current_round, max_width)
-    font = ImageFont.truetype(font_path, actual_text_size)
-    text_x = round(round_text_coordinates_center[0]*thumbnail.size[0])
-    text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
-    text_coordinates = (text_x, text_y)
-    draw.text(text_coordinates, current_round,
-              round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+    # current_round = find(f"score.match", data)
+
+    # actual_text_size = reduce_text_size_to_width(
+    #     thumbnail, font_path, text_size, current_round, max_width)
+    # font = ImageFont.truetype(font_path, actual_text_size)
+    # text_x = round(round_text_coordinates_center[0]*thumbnail.size[0])
+    # text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
+    # text_coordinates = (text_x, text_y)
+    # draw.text(text_coordinates, current_round,
+    #           round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
 
 
 def paste_main_icon(thumbnail, icon_path):
-    if icon_path:
-        max_x_size = round(thumbnail.size[0]*(300.0/1920.0))
-        max_y_size = round(thumbnail.size[1]*(200.0/1080.0))
-        max_size = (max_x_size, max_y_size)
+    pass
+    # if icon_path:
+    #     max_x_size = round(thumbnail.width()*(300.0/1920.0))
+    #     max_y_size = round(thumbnail.height()*(200.0/1080.0))
+    #     max_size = (max_x_size, max_y_size)
 
-        icon_image = Image.open(icon_path).convert('RGBA')
-        icon_size = calculate_new_dimensions(icon_image.size, max_size)
-        icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
+    #     icon_image = Image.open(icon_path).convert('RGBA')
+    #     icon_size = calculate_new_dimensions(icon_image.size, max_size)
+    #     icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
 
-        icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
-        icon_y = round(thumbnail.size[1]*(6.0/1080.0))
-        icon_coordinates = (icon_x, icon_y)
-        composite_image = create_composite_image(
-            icon_image, thumbnail.size, icon_coordinates)
-        thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    return(thumbnail)
+    #     icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
+    #     icon_y = round(thumbnail.size[1]*(6.0/1080.0))
+    #     icon_coordinates = (icon_x, icon_y)
+    #     composite_image = create_composite_image(
+    #         icon_image, thumbnail.size, icon_coordinates)
+    #     thumbnail = Image.alpha_composite(thumbnail, composite_image)
+    # return(thumbnail)
 
 
 def paste_side_icon(thumbnail, icon_path_list):
-    if len(icon_path_list) > 2:
-        raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
+    pass
+    # if len(icon_path_list) > 2:
+    #     raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
 
-    max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
-    max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
-    max_size = (max_x_size, max_y_size)
-    icon_y = round(thumbnail.size[1]*(10.0/1080.0))
+    # max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
+    # max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
+    # max_size = (max_x_size, max_y_size)
+    # icon_y = round(thumbnail.size[1]*(10.0/1080.0))
 
-    for index in range(0, len(icon_path_list)):
-        icon_path = icon_path_list[index]
-        if icon_path:
-            icon_image = Image.open(icon_path).convert('RGBA')
-            icon_size = calculate_new_dimensions(icon_image.size, max_size)
-            icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
+    # for index in range(0, len(icon_path_list)):
+    #     icon_path = icon_path_list[index]
+    #     if icon_path:
+    #         icon_image = Image.open(icon_path).convert('RGBA')
+    #         icon_size = calculate_new_dimensions(icon_image.size, max_size)
+    #         icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
 
-            icon_x = index*round(thumbnail.size[0] - icon_size[0])
-            x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
-            icon_x = icon_x + x_offset
+    #         icon_x = index*round(thumbnail.size[0] - icon_size[0])
+    #         x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
+    #         icon_x = icon_x + x_offset
 
-            icon_coordinates = (icon_x, icon_y)
-            composite_image = create_composite_image(
-                icon_image, thumbnail.size, icon_coordinates)
-            thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    return(thumbnail)
+    #         icon_coordinates = (icon_x, icon_y)
+    #         composite_image = create_composite_image(
+    #             icon_image, thumbnail.size, icon_coordinates)
+    #         thumbnail = Image.alpha_composite(thumbnail, composite_image)
+    # return(thumbnail)
 
 
 def createFalseData():
@@ -669,29 +702,39 @@ def generate(settingsManager, isPreview=False):
 
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
-    foreground = Image.open(foreground_path).convert('RGBA')
-    background = Image.open(background_path).convert('RGBA')
+    foreground = QPixmap(foreground_path, "RGBA")
+    background = QPixmap(foreground_path, "RGBA")
+    foreground = foreground.scaled(
+        background.width(),
+        background.height(),
+        Qt.AspectRatioMode.KeepAspectRatio,
+        Qt.TransformationMode.SmoothTransformation
+    )
 
-    if isPreview:
-        reduced_size = (round(background.size[0]/2), round(background.size[1]/2))
-        background = background.resize(reduced_size, resample=Image.LANCZOS)
+    thumbnail = QPixmap(background.width(), background.height())
+    thumbnail.fill(QColor(255, 0, 255))
 
-    foreground = foreground.resize(background.size, resample=Image.LANCZOS)
-
-    thumbnail = Image.new("RGBA", background.size, "PINK")
     composite_image = create_composite_image(
-        background, thumbnail.size, (0, 0))
-    thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    thumbnail.paste(background, (0, 0), mask=background)
+        background, thumbnail.size(), (0, 0))
+
+    painter = QPainter(thumbnail)
+    painter.drawPixmap(0, 0, composite_image)
+    painter.drawPixmap(0, 0, background)
+    painter.end()
+
     thumbnail = paste_characters(
         thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom)
     composite_image = create_composite_image(
-        foreground, thumbnail.size, (0, 0))
-    thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    paste_player_text(thumbnail, data, use_team_names, use_sponsors)
-    paste_round_text(thumbnail, data, display_phase)
-    thumbnail = paste_main_icon(thumbnail, main_icon_path)
-    thumbnail = paste_side_icon(thumbnail, side_icon_list)
+        foreground, thumbnail.size(), (0, 0))
+
+    painter = QPainter(thumbnail)
+    painter.drawPixmap(0, 0, composite_image)
+    painter.end()
+
+    # paste_player_text(thumbnail, data, use_team_names, use_sponsors)
+    # paste_round_text(thumbnail, data, display_phase)
+    # thumbnail = paste_main_icon(thumbnail, main_icon_path)
+    # thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
     if not isPreview:
@@ -707,7 +750,7 @@ def generate(settingsManager, isPreview=False):
         return f"{out_path}/{thumbnail_filename}.png"
     else:
         thumbnail_filename = f"template"
-        thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
+        thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
         print(
-            f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.jpg")
-        return f"{out_path}/{thumbnail_filename}.jpg"
+            f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png")
+        return f"{out_path}/{thumbnail_filename}.png"
