@@ -70,19 +70,19 @@ def find(element, json):
 
 def calculate_new_dimensions(current_size, max_size):
     # Use -1 if you do not want to constrain in that dimension
-    x_ratio = max_size[0]/current_size[0]
-    y_ratio = max_size[1]/current_size[1]
+    x_ratio = max_size[0]/current_size.width()
+    y_ratio = max_size[1]/current_size.height()
 
     if max_size[0] < 0 and max_size[1] < 0:
         raise ValueError(
             msg=f"Size cannot be negative, given max size is {max_size}")
 
-    if (x_ratio*current_size[1] > max_size[1]) or x_ratio < 0:
-        new_x = y_ratio*current_size[0]
+    if (x_ratio*current_size.height() > max_size[1]) or x_ratio < 0:
+        new_x = y_ratio*current_size.width()
         new_y = max_size[1]
     else:
         new_x = max_size[0]
-        new_y = x_ratio*current_size[1]
+        new_y = x_ratio*current_size.height()
     return((round(new_x), round(new_y)))
 
 
@@ -446,23 +446,26 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 
 def paste_main_icon(thumbnail, icon_path):
-    pass
-    # if icon_path:
-    #     max_x_size = round(thumbnail.width()*(300.0/1920.0))
-    #     max_y_size = round(thumbnail.height()*(200.0/1080.0))
-    #     max_size = (max_x_size, max_y_size)
+    if icon_path:
+        max_x_size = round(thumbnail.width()*(300.0/1920.0))
+        max_y_size = round(thumbnail.height()*(200.0/1080.0))
+        max_size = (max_x_size, max_y_size)
 
-    #     icon_image = Image.open(icon_path).convert('RGBA')
-    #     icon_size = calculate_new_dimensions(icon_image.size, max_size)
-    #     icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
+        icon_image = QPixmap(icon_path, 'RGBA')
+        icon_size = calculate_new_dimensions(icon_image.size(), max_size)
+        icon_image = icon_image.transformed(
+            QTransform().scale(icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()))
 
-    #     icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
-    #     icon_y = round(thumbnail.size[1]*(6.0/1080.0))
-    #     icon_coordinates = (icon_x, icon_y)
-    #     composite_image = create_composite_image(
-    #         icon_image, thumbnail.size, icon_coordinates)
-    #     thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    # return(thumbnail)
+        icon_x = round(thumbnail.width()/2 - icon_size[0]/2)
+        icon_y = round(thumbnail.height()*(6.0/1080.0))
+        icon_coordinates = (icon_x, icon_y)
+        composite_image = create_composite_image(
+            icon_image, thumbnail.size(), icon_coordinates)
+
+        painter = QPainter(thumbnail)
+        painter.drawPixmap(0, 0, composite_image)
+        painter.end()
+    return(thumbnail)
 
 
 def paste_side_icon(thumbnail, icon_path_list):
@@ -703,7 +706,15 @@ def generate(settingsManager, isPreview=False):
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
     foreground = QPixmap(foreground_path, "RGBA")
-    background = QPixmap(foreground_path, "RGBA")
+    background = QPixmap(background_path, "RGBA")
+
+    if isPreview:
+        background = background.scaled(
+            int(background.width()/2),
+            int(background.height()/2),
+            transformMode=Qt.TransformationMode.SmoothTransformation
+        )
+
     foreground = foreground.scaled(
         background.width(),
         background.height(),
@@ -712,7 +723,7 @@ def generate(settingsManager, isPreview=False):
     )
 
     thumbnail = QPixmap(background.width(), background.height())
-    thumbnail.fill(QColor(255, 0, 255))
+    thumbnail.fill(QColor(0, 0, 0, 0))
 
     composite_image = create_composite_image(
         background, thumbnail.size(), (0, 0))
@@ -733,7 +744,7 @@ def generate(settingsManager, isPreview=False):
 
     # paste_player_text(thumbnail, data, use_team_names, use_sponsors)
     # paste_round_text(thumbnail, data, display_phase)
-    # thumbnail = paste_main_icon(thumbnail, main_icon_path)
+    thumbnail = paste_main_icon(thumbnail, main_icon_path)
     # thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
