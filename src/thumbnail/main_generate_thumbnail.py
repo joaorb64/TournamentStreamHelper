@@ -28,18 +28,21 @@ def color_code_to_tuple(color_code):
     return color
 
 
-def generate_separator_images(color_code=(127, 127, 127), width=3):
-    x_size, y_size = 960, 1080
+def generate_separator_images(thumbnail, color_code=(127, 127, 127), width=3):
+    x_size, y_size = round(thumbnail.size[0]/2), thumbnail.size[1]
     x_separator = Image.new("RGBA", (x_size, y_size), (255, 0, 0, 0))
     y_separator = deepcopy(x_separator)
 
+    actual_width_y = round(width*(thumbnail.size[0]/1920))
+    actual_width_x = round(width*(thumbnail.size[1]/1080))
+
     x_draw = ImageDraw.Draw(x_separator)
     x_draw.line([(0, y_size/2), (x_size, y_size/2)],
-                fill=color_code, width=width)
+                fill=color_code, width=actual_width_x)
 
     y_draw = ImageDraw.Draw(y_separator)
     y_draw.line([(x_size/2, 0), (x_size/2, y_size)],
-                fill=color_code, width=width)
+                fill=color_code, width=actual_width_y)
 
     return(x_separator, y_separator)
 
@@ -94,7 +97,7 @@ def resize_image_to_max_size(image: Image, max_size, eyesight_coordinates=None, 
                 round(eyesight_coordinates[0]*x_ratio*zoom), round(eyesight_coordinates[1]*x_ratio*zoom))
 
     new_size = (round(new_x), round(new_y))
-    image = image.resize(new_size, resample=Image.BICUBIC)
+    image = image.resize(new_size, resample=Image.LANCZOS)
 
     # crop
     if not resized_eyesight:
@@ -139,7 +142,7 @@ def create_composite_image(image, size, coordinates):
 
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
     separator_h_image, separator_v_image = generate_separator_images(
-        separator_color_code, separator_width)
+        thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
@@ -352,7 +355,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 
         outline_color = player_text_color["outline_color"]
         if player_text_color["has_outline"]:
-            stroke_width = 4
+            stroke_width = round(4*(thumbnail.size[1]/1080))
         else:
             stroke_width = 0
 
@@ -367,7 +370,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
     round_text_color = text_color[1]
     outline_color = round_text_color["outline_color"]
     if round_text_color["has_outline"]:
-        stroke_width = 2
+        stroke_width = 2*(thumbnail.size[1]/1080)
     else:
         stroke_width = 0
 
@@ -377,6 +380,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
         text_max_dimensions = (
             text_max_dimensions[0], text_max_dimensions[1]*2)
         stroke_width = stroke_width*2
+    
+    stroke_width = round(stroke_width)
 
     pixel_height = round(text_max_dimensions[1]*thumbnail.size[1])
     max_width = round(text_max_dimensions[0]*thumbnail.size[0])
@@ -417,7 +422,7 @@ def paste_main_icon(thumbnail, icon_path):
 
         icon_image = Image.open(icon_path).convert('RGBA')
         icon_size = calculate_new_dimensions(icon_image.size, max_size)
-        icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+        icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
 
         icon_x = round(thumbnail.size[0]/2 - icon_size[0]/2)
         icon_y = round(thumbnail.size[1]*(6.0/1080.0))
@@ -442,7 +447,7 @@ def paste_side_icon(thumbnail, icon_path_list):
         if icon_path:
             icon_image = Image.open(icon_path).convert('RGBA')
             icon_size = calculate_new_dimensions(icon_image.size, max_size)
-            icon_image = icon_image.resize(icon_size, resample=Image.BICUBIC)
+            icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
 
             icon_x = index*round(thumbnail.size[0] - icon_size[0])
             x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
@@ -668,9 +673,10 @@ def generate(settingsManager, isPreview=False):
     background = Image.open(background_path).convert('RGBA')
 
     if isPreview:
-        background = background.reduce(2)
+        reduced_size = (round(background.size[0]/2), round(background.size[1]/2))
+        background = background.resize(reduced_size, resample=Image.LANCZOS)
 
-    foreground = foreground.resize(background.size, Image.BICUBIC)
+    foreground = foreground.resize(background.size, resample=Image.LANCZOS)
 
     thumbnail = Image.new("RGBA", background.size, "PINK")
     composite_image = create_composite_image(
