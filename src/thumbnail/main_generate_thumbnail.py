@@ -718,7 +718,7 @@ def generate(settingsManager, isPreview=False):
     foreground = foreground.scaled(
         background.width(),
         background.height(),
-        Qt.AspectRatioMode.KeepAspectRatio,
+        Qt.AspectRatioMode.IgnoreAspectRatio,
         Qt.TransformationMode.SmoothTransformation
     )
 
@@ -753,7 +753,7 @@ def generate(settingsManager, isPreview=False):
         tag_player2 = find("score.team.2.player.1.name", data)
         thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
-        thumbnail.convert("RGB").save(f"{out_path}/{thumbnail_filename}.jpg")
+        thumbnail.save(f"{out_path}/{thumbnail_filename}.jpg")
         if os.path.isdir(tmp_path):
             shutil.rmtree(tmp_path)
         print(
