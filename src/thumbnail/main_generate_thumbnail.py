@@ -110,7 +110,8 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
                 round(eyesight_coordinates[0]*x_ratio*zoom), round(eyesight_coordinates[1]*x_ratio*zoom))
 
     new_size = (round(new_x), round(new_y))
-    image = image.scaled(new_size[0], new_size[1])
+    image = image.scaled(
+        new_size[0], new_size[1], transformMode=Qt.TransformationMode.SmoothTransformation)
 
     # crop
     if not resized_eyesight:
@@ -168,7 +169,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
         paste_coordinates = (
-            round(thumbnail.size[0]-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+            round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
         thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
     for line_index in range(0, len(path_matrix)):
@@ -245,9 +246,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
     max_x_size = round(thumbnail.width()/2)
     max_y_size = thumbnail.height()
-    max_size = (max_x_size, max_y_size)
+    max_size = (max_x_size, max_y_size-118/1080*thumbnail.height())
     origin_x_coordinates = [0, max_x_size]
-    origin_y_coordinates = [0, 0]
+    origin_y_coordinates = [
+        118/1080*thumbnail.height(),
+        118/1080*thumbnail.height()
+    ]
 
     for i in [0, 1]:
         team_index = i+1
@@ -281,6 +285,11 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                 except KeyError:
                     None
             if character_list:
+                # For team 1, characters must come from the center
+                # so we have to reverse the array
+                if i == 0:
+                    character_list.reverse()
+                    eyesight_list.reverse()
                 path_matrix.append(character_list)
                 eyesight_matrix.append(eyesight_list)
 
@@ -337,21 +346,83 @@ def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, 
     #     return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
 
 
+def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color):
+    painter = QPainter(thumbnail)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+    font = QFont(font, max_font_size)
+
+    fontMetrics = QFontMetricsF(font)
+
+    while(fontMetrics.height() > int(container_size[1]*thumbnail.height())):
+        max_font_size -= 1
+        font.setPixelSize(max_font_size)
+        fontMetrics = QFontMetricsF(font)
+
+    while(fontMetrics.width(text) > int(container_size[0]*thumbnail.width())):
+        max_font_size -= 1
+        font.setPixelSize(max_font_size)
+        fontMetrics = QFontMetricsF(font)
+
+    text_x = round(pos[0]*thumbnail.width())
+    text_y = round(pos[1]*thumbnail.height())
+    text_coordinates = (text_x, text_y)
+
+    if outline:
+        stroke_width = round(8*(thumbnail.height()/1080))
+    else:
+        stroke_width = 0
+
+    path = QPainterPath()
+
+    painter.setFont(font)
+
+    pen = QPen()
+    pen.setWidth(stroke_width)
+    pen.setColor(QColor(
+        outline_color[0],
+        outline_color[1],
+        outline_color[2]
+    ))
+    painter.setPen(pen)
+
+    painter.setBrush(QColor(
+        color[0],
+        color[1],
+        color[2]
+    ))
+
+    path.addText(
+        int(text_coordinates[0]) +
+        container_size[0]*thumbnail.width() /
+        2 - fontMetrics.width(text)/2,
+        int(text_coordinates[1]) + fontMetrics.height()/4 +
+        container_size[1]*thumbnail.height()/2,
+        font,
+        text
+    )
+
+    painter.drawPath(path)
+
+    pen.setWidth(0)
+    pen.setColor(QColor(0, 0, 0, 0))
+    painter.setPen(pen)
+    painter.drawPath(path)
+
+    painter.end()
+
+
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_coordinates = [
-        (17/1920, 849/1080),
-        (978/1920, 849/1080)
+        (30/1920, 928/1080),
+        (990/1920, 928/1080)
     ]
-    text_player_max_dimensions = (925/1920, 110/1080)
-    pixel_height = round(text_player_max_dimensions[1]*thumbnail.height())
-    max_width = round(text_player_max_dimensions[0]*thumbnail.width())
+    text_player_max_dimensions = (900/1920, 120/1080)
+
     font_path = font_1
     # get_text_size_for_height(thumbnail, font_path, pixel_height)
     text_size = 40
     player_text_color = text_color[0]
-
-    painter = QPainter(thumbnail)
-    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
     for i in [0, 1]:
         team_index = i+1
@@ -379,116 +450,68 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 
         print(f"Processing {player_type}: {player_name}")
 
-        # actual_text_size = reduce_text_size_to_width(
-        #     thumbnail, font_path, text_size, player_name, max_width)
-        actual_text_size = 40
-        font = QFont(font_path, actual_text_size)
-
-        fontMetrics = QFontMetricsF(font)
-
-        while(fontMetrics.width(player_name) > int(text_player_max_dimensions[0]*thumbnail.width())):
-            actual_text_size -= 1
-            font.setPixelSize(actual_text_size)
-            fontMetrics = QFontMetricsF(font)
-
-        text_x = round(text_player_coordinates[i][0]*thumbnail.width())
-        text_y = round(text_player_coordinates[i][1]*thumbnail.height())
-        text_coordinates = (text_x, text_y)
-
-        outline_color = player_text_color["outline_color"]
-        if player_text_color["has_outline"]:
-            stroke_width = round(8*(thumbnail.height()/1080))
-        else:
-            stroke_width = 0
-
-        path = QPainterPath()
-
-        painter.setFont(font)
-
-        pen = QPen()
-        pen.setWidth(stroke_width)
-        pen.setColor(QColor(
-            player_text_color["outline_color"][0],
-            player_text_color["outline_color"][1],
-            player_text_color["outline_color"][2]
-        ))
-        painter.setPen(pen)
-
-        painter.setBrush(QColor(
-            player_text_color["font_color"][0],
-            player_text_color["font_color"][1],
-            player_text_color["font_color"][2]
-        ))
-
-        path.addText(
-            int(text_coordinates[0]) +
-            text_player_max_dimensions[0]*thumbnail.width() /
-            2 - fontMetrics.width(player_name)/2,
-            int(text_coordinates[1]) + fontMetrics.height()/4 +
-            text_player_max_dimensions[1]*thumbnail.height()/2,
-            font,
-            player_name
+        draw_text(
+            thumbnail,
+            player_name,
+            font_path,
+            text_size,
+            player_text_color["font_color"],
+            text_player_coordinates[i],
+            text_player_max_dimensions,
+            player_text_color["has_outline"],
+            player_text_color["outline_color"]
         )
-
-        painter.drawPath(path)
-
-        pen.setWidth(0)
-        pen.setColor(QColor(0, 0, 0, 0))
-        painter.setPen(pen)
-        painter.drawPath(path)
-    painter.end()
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
-    pass
-    # phase_text_coordinates_center = (960.0/1920.0, 1008.0/1080.0)
-    # round_text_coordinates_center = (960.0/1920.0, 1052.0/1080.0)
-    # text_max_dimensions = (480.0/1920.0, 40.0/1080.0)
-    # round_text_color = text_color[1]
-    # outline_color = round_text_color["outline_color"]
-    # if round_text_color["has_outline"]:
-    #     stroke_width = 2*(thumbnail.height()/1080)
-    # else:
-    #     stroke_width = 0
+    if display_phase:
+        phase_text_pos = (0.0/1920.0, 0.0/1080.0)
+        round_text_pos = (960.0/1920.0, 0.0/1080.0)
 
-    # if not display_phase:
-    #     round_text_coordinates_center = (round_text_coordinates_center[0], (
-    #         round_text_coordinates_center[1] + phase_text_coordinates_center[1])/2)
-    #     text_max_dimensions = (
-    #         text_max_dimensions[0], text_max_dimensions[1]*2)
-    #     stroke_width = stroke_width*2
+        text_max_dimensions = (960.0/1920.0, 150.0/1080.0)
 
-    # stroke_width = round(stroke_width)
+        text_size = 40
 
-    # pixel_height = round(text_max_dimensions[1]*thumbnail.height())
-    # max_width = round(text_max_dimensions[0]*thumbnail.width())
-    # font_path = font_2
-    # text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
+        draw_text(
+            thumbnail,
+            find(f"score.phase", data),
+            font_2,
+            text_size,
+            text_color[1]["font_color"],
+            phase_text_pos,
+            text_max_dimensions,
+            text_color[1]["has_outline"],
+            text_color[1]["outline_color"]
+        )
 
-    # draw = ImageDraw.Draw(thumbnail)
+        draw_text(
+            thumbnail,
+            find(f"score.match", data),
+            font_2,
+            text_size,
+            text_color[1]["font_color"],
+            round_text_pos,
+            text_max_dimensions,
+            text_color[1]["has_outline"],
+            text_color[1]["outline_color"]
+        )
+    else:
+        round_text_pos = (0.0/1920.0, 0.0/1080.0)
+        text_max_dimensions = (1920.0/1920.0, 150.0/1080.0)
 
-    # if display_phase:
-    #     current_phase = find(f"score.phase", data)
+        text_size = 40
 
-    #     actual_text_size = reduce_text_size_to_width(
-    #         thumbnail, font_path, text_size, current_phase, max_width)
-    #     font = ImageFont.truetype(font_path, actual_text_size)
-    #     text_x = round(phase_text_coordinates_center[0]*thumbnail.size[0])
-    #     text_y = round(phase_text_coordinates_center[1]*thumbnail.size[1])
-    #     text_coordinates = (text_x, text_y)
-    #     draw.text(text_coordinates, current_phase,
-    #               round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
-
-    # current_round = find(f"score.match", data)
-
-    # actual_text_size = reduce_text_size_to_width(
-    #     thumbnail, font_path, text_size, current_round, max_width)
-    # font = ImageFont.truetype(font_path, actual_text_size)
-    # text_x = round(round_text_coordinates_center[0]*thumbnail.size[0])
-    # text_y = round(round_text_coordinates_center[1]*thumbnail.size[1])
-    # text_coordinates = (text_x, text_y)
-    # draw.text(text_coordinates, current_round,
-    #           round_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+        draw_text(
+            thumbnail,
+            find(f"score.match", data),
+            font_2,
+            text_size,
+            text_color[1]["font_color"],
+            round_text_pos,
+            text_max_dimensions,
+            text_color[1]["has_outline"],
+            text_color[1]["outline_color"]
+        )
 
 
 def paste_main_icon(thumbnail, icon_path):
@@ -500,10 +523,12 @@ def paste_main_icon(thumbnail, icon_path):
         icon_image = QPixmap(icon_path, 'RGBA')
         icon_size = calculate_new_dimensions(icon_image.size(), max_size)
         icon_image = icon_image.transformed(
-            QTransform().scale(icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()))
+            QTransform().scale(
+                icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()),
+            Qt.TransformationMode.SmoothTransformation)
 
         icon_x = round(thumbnail.width()/2 - icon_size[0]/2)
-        icon_y = round(thumbnail.height()*(6.0/1080.0))
+        icon_y = round(thumbnail.height()*(200.0/1080.0))
         icon_coordinates = (icon_x, icon_y)
         composite_image = create_composite_image(
             icon_image, thumbnail.size(), icon_coordinates)
@@ -789,7 +814,7 @@ def generate(settingsManager, isPreview=False):
     painter.end()
 
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)
-    # paste_round_text(thumbnail, data, display_phase)
+    paste_round_text(thumbnail, data, display_phase)
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
     # thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
