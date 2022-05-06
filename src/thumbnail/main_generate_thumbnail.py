@@ -499,7 +499,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
         round_text_pos = (0.0/1920.0, 0.0/1080.0)
         text_max_dimensions = (1920.0/1920.0, 150.0/1080.0)
 
-        text_size = 40*(thumbnail.height()/1080)
+        text_size = 200*(thumbnail.height()/1080)
 
         draw_text(
             thumbnail,
