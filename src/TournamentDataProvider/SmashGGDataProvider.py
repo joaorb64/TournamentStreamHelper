@@ -662,6 +662,15 @@ class SmashGGDataProvider(TournamentDataProvider):
                 sets = deep_get(event, "sets.nodes")
 
                 for _set in sets:
+                    phaseName = ""
+                    phaseIdentifier = ""
+                    
+                    # This is because a display identifier at a major (Ex. Pools C12) will return C12,
+                    # otherwise SmashGG will just return a string containing "1"
+                    if deep_get(_set, "phaseGroup.displayIdentifier") != "1":
+                        phaseIdentifier = deep_get(_set, "phaseGroup.displayIdentifier") 
+                    phaseName = deep_get(_set, "phaseGroup.phase.name")
+
                     p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
                         "participants", [{}])[0].get("player", {}).get("id")
                     p2id = _set.get("slots", [{}])[1].get("entrant", {}).get(
@@ -717,7 +726,10 @@ class SmashGGDataProvider(TournamentDataProvider):
                         "online": event.get("isOnline"),
                         "score": score,
                         "timestamp": event.get("startAt"),
-                        "winner": winner
+                        "winner": winner,
+                        "round": _set.get("fullRoundText"),
+                        "phase_name": phaseName,
+                        "phase_id": phaseIdentifier
                     }
                     recentSets.append(entry)
             return recentSets
