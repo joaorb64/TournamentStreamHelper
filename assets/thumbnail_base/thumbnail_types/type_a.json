@@ -1,5 +1,6 @@
 {
     "name": "Standard",
+    "default_foreground": "./assets/thumbnail_base/foreground.png",
     "base_ratio": {
         "x": 1920,
         "y": 1080
