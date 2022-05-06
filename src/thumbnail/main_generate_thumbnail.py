@@ -37,8 +37,8 @@ def generate_separator_images(thumbnail, color_code="#888888", width=3):
     x_separator.fill(QColor(0, 0, 0, 0))
     y_separator = x_separator.copy(x_separator.rect())
 
-    actual_width_y = round(width*(thumbnail.width()/1920))
-    actual_width_x = round(width*(thumbnail.height()/1080))
+    actual_width_y = round(width*ratio[0])
+    actual_width_x = round(width*ratio[1])
 
     painter = QPainter(x_separator)
 
