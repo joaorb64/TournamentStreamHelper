@@ -338,59 +338,105 @@ def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, 
 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
-    pass
-    # text_player_coordinates_center = [
-    #     (480.0/1920.0, 904.0/1080.0), (1440./1920.0, 904.0/1080.0)]
-    # text_player_max_dimensions = (920.0/1920.0, 100.0/1080.0)
-    # pixel_height = round(text_player_max_dimensions[1]*thumbnail.size[1])
-    # max_width = round(text_player_max_dimensions[0]*thumbnail.size[0])
-    # font_path = font_1
-    # text_size = get_text_size_for_height(thumbnail, font_path, pixel_height)
-    # player_text_color = text_color[0]
+    text_player_coordinates = [
+        (17/1920, 849/1080),
+        (978/1920, 849/1080)
+    ]
+    text_player_max_dimensions = (925/1920, 110/1080)
+    pixel_height = round(text_player_max_dimensions[1]*thumbnail.height())
+    max_width = round(text_player_max_dimensions[0]*thumbnail.width())
+    font_path = font_1
+    # get_text_size_for_height(thumbnail, font_path, pixel_height)
+    text_size = 40
+    player_text_color = text_color[0]
 
-    # draw = ImageDraw.Draw(thumbnail)
+    painter = QPainter(thumbnail)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-    # for i in [0, 1]:
-    #     team_index = i+1
-    #     player_list = []
-    #     if use_team_names:
-    #         player_name = find(f"score.team.{team_index}.teamName", data)
-    #     else:
-    #         current_team = find(f"score.team.{team_index}.player", data)
-    #         for key in current_team.keys():
-    #             current_data = current_team[key].get("mergedName")
-    #             if current_data:
-    #                 current_data = current_data.rstrip("[L]").strip()
-    #             if (not use_sponsors) or (not current_data):
-    #                 current_data = current_team[key].get("name")
-    #                 if current_data:
-    #                     current_data = current_data.strip()
-    #             if current_data:
-    #                 player_list.append(current_data)
-    #         player_name = " / ".join(player_list)
+    for i in [0, 1]:
+        team_index = i+1
+        player_list = []
+        if use_team_names:
+            player_name = find(f"score.team.{team_index}.teamName", data)
+        else:
+            current_team = find(f"score.team.{team_index}.player", data)
+            for key in current_team.keys():
+                current_data = current_team[key].get("mergedName")
+                if current_data:
+                    current_data = current_data.rstrip("[L]").strip()
+                if (not use_sponsors) or (not current_data):
+                    current_data = current_team[key].get("name")
+                    if current_data:
+                        current_data = current_data.strip()
+                if current_data:
+                    player_list.append(current_data)
+            player_name = " / ".join(player_list)
 
-    #     if use_team_names or len(player_list) > 1:
-    #         player_type = "team"
-    #     else:
-    #         player_type = "player"
+        if use_team_names or len(player_list) > 1:
+            player_type = "team"
+        else:
+            player_type = "player"
 
-    #     print(f"Processing {player_type}: {player_name}")
+        print(f"Processing {player_type}: {player_name}")
 
-    #     actual_text_size = reduce_text_size_to_width(
-    #         thumbnail, font_path, text_size, player_name, max_width)
-    #     font = ImageFont.truetype(font_path, actual_text_size)
-    #     text_x = round(text_player_coordinates_center[i][0]*thumbnail.size[0])
-    #     text_y = round(text_player_coordinates_center[i][1]*thumbnail.size[1])
-    #     text_coordinates = (text_x, text_y)
+        # actual_text_size = reduce_text_size_to_width(
+        #     thumbnail, font_path, text_size, player_name, max_width)
+        actual_text_size = 40
+        font = QFont(font_path, actual_text_size)
 
-    #     outline_color = player_text_color["outline_color"]
-    #     if player_text_color["has_outline"]:
-    #         stroke_width = round(4*(thumbnail.size[1]/1080))
-    #     else:
-    #         stroke_width = 0
+        fontMetrics = QFontMetricsF(font)
 
-    #     draw.text(text_coordinates, player_name,
-    #               player_text_color["font_color"], font=font, anchor="mm", stroke_width=round(stroke_width*(actual_text_size/text_size)), stroke_fill=outline_color)
+        while(fontMetrics.width(player_name) > int(text_player_max_dimensions[0]*thumbnail.width())):
+            actual_text_size -= 1
+            font.setPixelSize(actual_text_size)
+            fontMetrics = QFontMetricsF(font)
+
+        text_x = round(text_player_coordinates[i][0]*thumbnail.width())
+        text_y = round(text_player_coordinates[i][1]*thumbnail.height())
+        text_coordinates = (text_x, text_y)
+
+        outline_color = player_text_color["outline_color"]
+        if player_text_color["has_outline"]:
+            stroke_width = round(8*(thumbnail.height()/1080))
+        else:
+            stroke_width = 0
+
+        path = QPainterPath()
+
+        painter.setFont(font)
+
+        pen = QPen()
+        pen.setWidth(stroke_width)
+        pen.setColor(QColor(
+            player_text_color["outline_color"][0],
+            player_text_color["outline_color"][1],
+            player_text_color["outline_color"][2]
+        ))
+        painter.setPen(pen)
+
+        painter.setBrush(QColor(
+            player_text_color["font_color"][0],
+            player_text_color["font_color"][1],
+            player_text_color["font_color"][2]
+        ))
+
+        path.addText(
+            int(text_coordinates[0]) +
+            text_player_max_dimensions[0]*thumbnail.width() /
+            2 - fontMetrics.width(player_name)/2,
+            int(text_coordinates[1]) + fontMetrics.height()/4 +
+            text_player_max_dimensions[1]*thumbnail.height()/2,
+            font,
+            player_name
+        )
+
+        painter.drawPath(path)
+
+        pen.setWidth(0)
+        pen.setColor(QColor(0, 0, 0, 0))
+        painter.setPen(pen)
+        painter.drawPath(path)
+    painter.end()
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
@@ -742,7 +788,7 @@ def generate(settingsManager, isPreview=False):
     painter.drawPixmap(0, 0, composite_image)
     painter.end()
 
-    # paste_player_text(thumbnail, data, use_team_names, use_sponsors)
+    paste_player_text(thumbnail, data, use_team_names, use_sponsors)
     # paste_round_text(thumbnail, data, display_phase)
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
     # thumbnail = paste_side_icon(thumbnail, side_icon_list)
