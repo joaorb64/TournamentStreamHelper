@@ -414,14 +414,14 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_coordinates = [
-        (30/1920, 928/1080),
-        (990/1920, 928/1080)
+        (30/1920, 900/1080),
+        (990/1920, 900/1080)
     ]
-    text_player_max_dimensions = (900/1920, 120/1080)
+    text_player_max_dimensions = (900/1920, 150/1080)
 
     font_path = font_1
     # get_text_size_for_height(thumbnail, font_path, pixel_height)
-    text_size = 40
+    text_size = 200*(thumbnail.height()/1080)
     player_text_color = text_color[0]
 
     for i in [0, 1]:
@@ -470,7 +470,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
         text_max_dimensions = (960.0/1920.0, 150.0/1080.0)
 
-        text_size = 40
+        text_size = 200*(thumbnail.height()/1080)
 
         draw_text(
             thumbnail,
@@ -499,7 +499,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
         round_text_pos = (0.0/1920.0, 0.0/1080.0)
         text_max_dimensions = (1920.0/1920.0, 150.0/1080.0)
 
-        text_size = 40
+        text_size = 200*(thumbnail.height()/1080)
 
         draw_text(
             thumbnail,
