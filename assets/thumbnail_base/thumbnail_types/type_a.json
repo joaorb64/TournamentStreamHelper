@@ -1,0 +1,51 @@
+{
+    "name": "Standard",
+    "base_ratio": {
+        "x": 1920,
+        "y": 1080
+    },
+    "character_images": {
+        "position": {
+            "x": 0,
+            "y": 118
+        },
+        "dimensions": {
+            "x": 1920,
+            "y": 1013
+        }
+    },
+    "player_text": {
+        "dimensions": {
+            "x": 875,
+            "y": 150
+        },
+        "height_center": 968
+    },
+    "info_text": {
+        "dimensions": {
+            "y": 140
+        },
+        "height_center": 75,
+        "horizontal": true,
+        "always_align_center": true
+    },
+    "icons_position": {
+        "align": "top",
+        "bind_to_character_images": true,
+        "y_offset": 40,
+        "main": {
+            "dimensions": {
+                "x": 300,
+                "y": 200
+            }
+        },
+        "side": {
+            "x_offset": 10,
+            "dimensions": {
+                "x": 200,
+                "y": 150
+            }
+        }
+    },
+    "initial_font_size": 200
+}
