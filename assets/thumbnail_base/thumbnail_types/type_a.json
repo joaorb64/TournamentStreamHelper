@@ -26,6 +26,7 @@
         "dimensions": {
             "y": 140
         },
+        "x_offset": 10,
         "height_center": 75,
         "horizontal": true,
         "always_align_center": true
