@@ -245,12 +245,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
     max_x_size = round(thumbnail.width()/2)
-    max_y_size = thumbnail.height()
-    max_size = (max_x_size, max_y_size-118/1080*thumbnail.height())
+    max_y_size = 780/1080*thumbnail.height()
+    max_size = (max_x_size, max_y_size)
     origin_x_coordinates = [0, max_x_size]
     origin_y_coordinates = [
-        118/1080*thumbnail.height(),
-        118/1080*thumbnail.height()
+        150/1080*thumbnail.height(),
+        150/1080*thumbnail.height()
     ]
 
     for i in [0, 1]:
@@ -346,26 +346,26 @@ def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, 
     #     return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
 
 
-def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color):
+def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
     painter = QPainter(thumbnail)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-    font = QFont(font, max_font_size)
+    font = QFont(font, int(max_font_size))
 
     fontMetrics = QFontMetricsF(font)
 
-    while(fontMetrics.height() > int(container_size[1]*thumbnail.height())):
+    while(fontMetrics.height()+2*padding[1] > int(container_size[1]*thumbnail.height())):
         max_font_size -= 1
-        font.setPixelSize(max_font_size)
+        font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
 
-    while(fontMetrics.width(text) > int(container_size[0]*thumbnail.width())):
+    while(fontMetrics.width(text)+2*padding[0] > int(container_size[0]*thumbnail.width())):
         max_font_size -= 1
-        font.setPixelSize(max_font_size)
+        font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
 
-    text_x = round(pos[0]*thumbnail.width())
-    text_y = round(pos[1]*thumbnail.height())
+    text_x = round((pos[0]+padding[0])*thumbnail.width())
+    text_y = round((pos[1]+padding[1])*thumbnail.height())
     text_coordinates = (text_x, text_y)
 
     if outline:
@@ -394,10 +394,10 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
     path.addText(
         int(text_coordinates[0]) +
-        container_size[0]*thumbnail.width() /
+        (container_size[0]-padding[0]*2)*thumbnail.width() /
         2 - fontMetrics.width(text)/2,
         int(text_coordinates[1]) + fontMetrics.height()/4 +
-        container_size[1]*thumbnail.height()/2,
+        (container_size[1]-padding[1]*2)*thumbnail.height()/2,
         font,
         text
     )
@@ -414,10 +414,10 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_coordinates = [
-        (30/1920, 900/1080),
-        (990/1920, 900/1080)
+        (0/1920, 930/1080),
+        (960/1920, 930/1080)
     ]
-    text_player_max_dimensions = (900/1920, 150/1080)
+    text_player_max_dimensions = (960/1920, 150/1080)
 
     font_path = font_1
     # get_text_size_for_height(thumbnail, font_path, pixel_height)
