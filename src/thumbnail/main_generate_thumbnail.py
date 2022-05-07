@@ -245,10 +245,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
 
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
-    max_x_size = round(template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
-    max_y_size = round(template_data["character_images"]["dimensions"]["y"]*ratio[1])
+    max_x_size = round(
+        template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
+    max_y_size = round(
+        template_data["character_images"]["dimensions"]["y"]*ratio[1])
     max_size = (max_x_size, max_y_size)
-    origin_x_coordinates = [round(template_data["character_images"]["position"]["x"]*ratio[0]), round(template_data["character_images"]["position"]["x"]*ratio[0])+max_x_size]
+    origin_x_coordinates = [round(template_data["character_images"]["position"]["x"]*ratio[0]), round(
+        template_data["character_images"]["position"]["x"]*ratio[0])+max_x_size]
     origin_y_coordinates = [
         round(template_data["character_images"]["position"]["y"]*ratio[1]),
         round(template_data["character_images"]["position"]["y"]*ratio[1])
@@ -301,50 +304,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
             thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
 
     return(thumbnail)
-
-
-def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval=None, recursion_level=0):
-    pass
-    # if pixel_height <= 1:
-    #     raise ValueError("pixel_height too small")
-
-    # tolerance = 0
-    # thumbnail_copy = QPixmap(thumbnail)
-    # draw = ImageDraw.Draw(thumbnail_copy)
-    # if not search_interval:
-    #     search_interval = [0, pixel_height*2]
-    # current_size = round((search_interval[0] + search_interval[1])/2)
-    # font = ImageFont.truetype(font_path, current_size)
-    # bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
-    # calculated_height = bbox[-1]
-
-    # if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level > 100:
-    #     return(current_size)
-    # elif calculated_height < pixel_height:
-    #     result = get_text_size_for_height(
-    #         thumbnail, font_path, pixel_height, [current_size, search_interval[1]], recursion_level+1)
-    #     return(result)
-    # else:
-    #     result = get_text_size_for_height(
-    #         thumbnail, font_path, pixel_height, [search_interval[0], current_size], recursion_level+1)
-    #     return(result)
-
-
-def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, recursion_level=0):
-    pass
-    # if max_width <= 1:
-    #     raise ValueError("max_width too small")
-    # if text_size <= 1:
-    #     raise ValueError("text_size too small")
-    # thumbnail_copy = deepcopy(thumbnail)
-    # draw = ImageDraw.Draw(thumbnail_copy)
-    # font = ImageFont.truetype(font_path, text_size)
-    # bbox = draw.textbbox((0, 0), text, font=font)
-    # calculated_width = bbox[-2]
-    # if calculated_width <= max_width or recursion_level > 100:
-    #     return(text_size)
-    # else:
-    #     return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
 
 
 def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color):
@@ -415,10 +374,13 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
-    text_player_max_dimensions = (round(template_data["player_text"]["dimensions"]["x"]*ratio[0]), round(template_data["player_text"]["dimensions"]["y"]*ratio[1]))
+    text_player_max_dimensions = (round(template_data["player_text"]["dimensions"]["x"]*ratio[0]), round(
+        template_data["player_text"]["dimensions"]["y"]*ratio[1]))
     text_player_coordinates = [
-        (round((template_data["character_images"]["position"]["x"]+(template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
-        (round((template_data["character_images"]["position"]["x"]+(3*template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        (round((template_data["character_images"]["position"]["x"]+(template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
+         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
+        (round((template_data["character_images"]["position"]["x"]+(3*template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
+         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
     ]
 
     font_path = font_1
@@ -467,10 +429,13 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 
 def paste_round_text(thumbnail, data, display_phase=True):
     if display_phase:
-        phase_text_pos = (0, round((template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
-        round_text_pos = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round((template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        phase_text_pos = (0, round((template_data["info_text"]["height_center"]-(
+            template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        round_text_pos = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round(
+            (template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
 
-        text_max_dimensions = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round(template_data["info_text"]["dimensions"]["y"]*ratio[1]))
+        text_max_dimensions = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round(
+            template_data["info_text"]["dimensions"]["y"]*ratio[1]))
 
         text_size = template_data["initial_font_size"]*ratio[1]
 
@@ -498,8 +463,10 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_color[1]["outline_color"]
         )
     else:
-        round_text_pos = (0, round((template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
-        text_max_dimensions = (round((template_data["base_ratio"]["x"])*ratio[0]), round(template_data["info_text"]["dimensions"]["y"]*ratio[1]))
+        round_text_pos = (0, round((template_data["info_text"]["height_center"]-(
+            template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        text_max_dimensions = (round((template_data["base_ratio"]["x"])*ratio[0]), round(
+            template_data["info_text"]["dimensions"]["y"]*ratio[1]))
 
         text_size = template_data["initial_font_size"]*ratio[1]
 
@@ -518,8 +485,10 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 def paste_main_icon(thumbnail, icon_path):
     if icon_path:
-        max_x_size = round(template_data["icons_position"]["main"]["dimensions"]["x"]*ratio[0])
-        max_y_size = round(template_data["icons_position"]["main"]["dimensions"]["y"]*ratio[1])
+        max_x_size = round(
+            template_data["icons_position"]["main"]["dimensions"]["x"]*ratio[0])
+        max_y_size = round(
+            template_data["icons_position"]["main"]["dimensions"]["y"]*ratio[1])
         max_size = (max_x_size, max_y_size)
 
         icon_image = QPixmap(icon_path, 'RGBA')
@@ -531,12 +500,13 @@ def paste_main_icon(thumbnail, icon_path):
 
         x_offset = template_data["base_ratio"]["x"] / 2.0
         if template_data["icons_position"]["bind_to_character_images"]:
-            x_offset = template_data["character_images"]["dimensions"]["x"]/2.0 + template_data["character_images"]["position"]["x"]
-
+            x_offset = template_data["character_images"]["dimensions"]["x"] / \
+                2.0 + template_data["character_images"]["position"]["x"]
 
         y_offset = template_data["icons_position"]["y_offset"]
         if template_data["icons_position"]["bind_to_character_images"]:
-            y_offset = y_offset + template_data["character_images"]["position"]["y"]
+            y_offset = y_offset + \
+                template_data["character_images"]["position"]["y"]
 
         icon_x = round(x_offset*ratio[0] - icon_size[0]/2)
         icon_y = y_offset*ratio[1]
@@ -802,7 +772,8 @@ def generate(settingsManager, isPreview=False):
         )
 
     global ratio
-    ratio = (background.width()/template_data["base_ratio"]["x"], background.height()/template_data["base_ratio"]["y"])
+    ratio = (background.width()/template_data["base_ratio"]["x"],
+             background.height()/template_data["base_ratio"]["y"])
 
     foreground = foreground.scaled(
         background.width(),
