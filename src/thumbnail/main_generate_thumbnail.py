@@ -1,6 +1,7 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+from numbers import Rational
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -36,8 +37,8 @@ def generate_separator_images(thumbnail, color_code="#888888", width=3):
     x_separator.fill(QColor(0, 0, 0, 0))
     y_separator = x_separator.copy(x_separator.rect())
 
-    actual_width_y = round(width*(thumbnail.width()/1920))
-    actual_width_x = round(width*(thumbnail.height()/1080))
+    actual_width_y = round(width*ratio[0])
+    actual_width_x = round(width*ratio[1])
 
     painter = QPainter(x_separator)
 
@@ -157,7 +158,7 @@ def create_composite_image(image, size, coordinates):
     background = QPixmap(size)
     background.fill(QColor(0, 0, 0, 0))
     painter = QPainter(background)
-    painter.drawPixmap(coordinates[0], coordinates[1], image)
+    painter.drawPixmap(int(coordinates[0]), int(coordinates[1]), image)
     painter.end()
     return(background)
 
@@ -244,13 +245,16 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
 
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
-    max_x_size = round(thumbnail.width()/2)
-    max_y_size = 780/1080*thumbnail.height()
+    max_x_size = round(
+        template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
+    max_y_size = round(
+        template_data["character_images"]["dimensions"]["y"]*ratio[1])
     max_size = (max_x_size, max_y_size)
-    origin_x_coordinates = [0, max_x_size]
+    origin_x_coordinates = [round(template_data["character_images"]["position"]["x"]*ratio[0]), round(
+        template_data["character_images"]["position"]["x"]*ratio[0])+max_x_size]
     origin_y_coordinates = [
-        150/1080*thumbnail.height(),
-        150/1080*thumbnail.height()
+        round(template_data["character_images"]["position"]["y"]*ratio[1]),
+        round(template_data["character_images"]["position"]["y"]*ratio[1])
     ]
 
     for i in [0, 1]:
@@ -302,50 +306,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     return(thumbnail)
 
 
-def get_text_size_for_height(thumbnail, font_path, pixel_height, search_interval=None, recursion_level=0):
-    pass
-    # if pixel_height <= 1:
-    #     raise ValueError("pixel_height too small")
-
-    # tolerance = 0
-    # thumbnail_copy = QPixmap(thumbnail)
-    # draw = ImageDraw.Draw(thumbnail_copy)
-    # if not search_interval:
-    #     search_interval = [0, pixel_height*2]
-    # current_size = round((search_interval[0] + search_interval[1])/2)
-    # font = ImageFont.truetype(font_path, current_size)
-    # bbox = draw.textbbox((0, 0), string.ascii_letters, font=font)
-    # calculated_height = bbox[-1]
-
-    # if (calculated_height <= pixel_height+tolerance and calculated_height >= pixel_height-tolerance) or recursion_level > 100:
-    #     return(current_size)
-    # elif calculated_height < pixel_height:
-    #     result = get_text_size_for_height(
-    #         thumbnail, font_path, pixel_height, [current_size, search_interval[1]], recursion_level+1)
-    #     return(result)
-    # else:
-    #     result = get_text_size_for_height(
-    #         thumbnail, font_path, pixel_height, [search_interval[0], current_size], recursion_level+1)
-    #     return(result)
-
-
-def reduce_text_size_to_width(thumbnail, font_path, text_size, text, max_width, recursion_level=0):
-    pass
-    # if max_width <= 1:
-    #     raise ValueError("max_width too small")
-    # if text_size <= 1:
-    #     raise ValueError("text_size too small")
-    # thumbnail_copy = deepcopy(thumbnail)
-    # draw = ImageDraw.Draw(thumbnail_copy)
-    # font = ImageFont.truetype(font_path, text_size)
-    # bbox = draw.textbbox((0, 0), text, font=font)
-    # calculated_width = bbox[-2]
-    # if calculated_width <= max_width or recursion_level > 100:
-    #     return(text_size)
-    # else:
-    #     return(reduce_text_size_to_width(thumbnail, font_path, text_size-1, text, max_width, recursion_level+1))
-
-
 def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
     painter = QPainter(thumbnail)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -354,22 +314,23 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
     fontMetrics = QFontMetricsF(font)
 
-    while(fontMetrics.height()+2*padding[1] > int(container_size[1]*thumbnail.height())):
+    while(fontMetrics.height()+2*padding[1] > int(container_size[1])):
         max_font_size -= 1
         font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
 
-    while(fontMetrics.width(text)+2*padding[0] > int(container_size[0]*thumbnail.width())):
+    while(fontMetrics.width(text)+2*padding[0] > int(container_size[0])):
         max_font_size -= 1
         font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
 
-    text_x = round((pos[0]+padding[0])*thumbnail.width())
-    text_y = round((pos[1]+padding[1])*thumbnail.height())
+    text_x = round((pos[0]+padding[0]))
+    text_y = round((pos[1]+padding[1]))
     text_coordinates = (text_x, text_y)
+    print(text_coordinates)
 
     if outline:
-        stroke_width = round(8*(thumbnail.height()/1080))
+        stroke_width = round(8*ratio[1])
     else:
         stroke_width = 0
 
@@ -394,10 +355,10 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
     path.addText(
         int(text_coordinates[0]) +
-        (container_size[0]-padding[0]*2)*thumbnail.width() /
+        (container_size[0] - padding[0]*2) /
         2 - fontMetrics.width(text)/2,
         int(text_coordinates[1]) + fontMetrics.height()/4 +
-        (container_size[1]-padding[1]*2)*thumbnail.height()/2,
+        (container_size[1]-padding[1]*2)/2,
         font,
         text
     )
@@ -413,15 +374,18 @@ def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, 
 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
+    text_player_max_dimensions = (round(template_data["player_text"]["dimensions"]["x"]*ratio[0]), round(
+        template_data["player_text"]["dimensions"]["y"]*ratio[1]))
     text_player_coordinates = [
-        (0/1920, 930/1080),
-        (960/1920, 930/1080)
+        (round((template_data["character_images"]["position"]["x"]+(template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
+         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
+        (round((template_data["character_images"]["position"]["x"]+(3*template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
+         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
     ]
-    text_player_max_dimensions = (960/1920, 150/1080)
 
     font_path = font_1
     # get_text_size_for_height(thumbnail, font_path, pixel_height)
-    text_size = 200*(thumbnail.height()/1080)
+    text_size = template_data["initial_font_size"]*ratio[1]
     player_text_color = text_color[0]
 
     for i in [0, 1]:
@@ -465,12 +429,15 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 
 def paste_round_text(thumbnail, data, display_phase=True):
     if display_phase:
-        phase_text_pos = (0.0/1920.0, 0.0/1080.0)
-        round_text_pos = (960.0/1920.0, 0.0/1080.0)
+        phase_text_pos = (0, round((template_data["info_text"]["height_center"]-(
+            template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        round_text_pos = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round(
+            (template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
 
-        text_max_dimensions = (960.0/1920.0, 150.0/1080.0)
+        text_max_dimensions = (round((template_data["base_ratio"]["x"]/2.0)*ratio[0]), round(
+            template_data["info_text"]["dimensions"]["y"]*ratio[1]))
 
-        text_size = 200*(thumbnail.height()/1080)
+        text_size = template_data["initial_font_size"]*ratio[1]
 
         draw_text(
             thumbnail,
@@ -496,10 +463,12 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_color[1]["outline_color"]
         )
     else:
-        round_text_pos = (0.0/1920.0, 0.0/1080.0)
-        text_max_dimensions = (1920.0/1920.0, 150.0/1080.0)
+        round_text_pos = (0, round((template_data["info_text"]["height_center"]-(
+            template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        text_max_dimensions = (round((template_data["base_ratio"]["x"])*ratio[0]), round(
+            template_data["info_text"]["dimensions"]["y"]*ratio[1]))
 
-        text_size = 200*(thumbnail.height()/1080)
+        text_size = template_data["initial_font_size"]*ratio[1]
 
         draw_text(
             thumbnail,
@@ -516,8 +485,10 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 def paste_main_icon(thumbnail, icon_path):
     if icon_path:
-        max_x_size = round(thumbnail.width()*(300.0/1920.0))
-        max_y_size = round(thumbnail.height()*(200.0/1080.0))
+        max_x_size = round(
+            template_data["icons_position"]["main"]["dimensions"]["x"]*ratio[0])
+        max_y_size = round(
+            template_data["icons_position"]["main"]["dimensions"]["y"]*ratio[1])
         max_size = (max_x_size, max_y_size)
 
         icon_image = QPixmap(icon_path, 'RGBA')
@@ -527,8 +498,18 @@ def paste_main_icon(thumbnail, icon_path):
                 icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()),
             Qt.TransformationMode.SmoothTransformation)
 
-        icon_x = round(thumbnail.width()/2 - icon_size[0]/2)
-        icon_y = round(thumbnail.height()*(200.0/1080.0))
+        x_offset = template_data["base_ratio"]["x"] / 2.0
+        if template_data["icons_position"]["bind_to_character_images"]:
+            x_offset = template_data["character_images"]["dimensions"]["x"] / \
+                2.0 + template_data["character_images"]["position"]["x"]
+
+        y_offset = template_data["icons_position"]["y_offset"]
+        if template_data["icons_position"]["bind_to_character_images"]:
+            y_offset = y_offset + \
+                template_data["character_images"]["position"]["y"]
+
+        icon_x = round(x_offset*ratio[0] - icon_size[0]/2)
+        icon_y = y_offset*ratio[1]
         icon_coordinates = (icon_x, icon_y)
         composite_image = create_composite_image(
             icon_image, thumbnail.size(), icon_coordinates)
@@ -778,6 +759,10 @@ def generate(settingsManager, isPreview=False):
 
     foreground = QPixmap(foreground_path, "RGBA")
     background = QPixmap(background_path, "RGBA")
+    global template_data
+    with open("./assets/thumbnail_base/thumbnail_types/type_a.json", 'rt') as template_data_file:
+        template_data = template_data_file.read()
+        template_data = json.loads(template_data)
 
     if isPreview:
         background = background.scaled(
@@ -785,6 +770,10 @@ def generate(settingsManager, isPreview=False):
             int(background.height()/2),
             transformMode=Qt.TransformationMode.SmoothTransformation
         )
+
+    global ratio
+    ratio = (background.width()/template_data["base_ratio"]["x"],
+             background.height()/template_data["base_ratio"]["y"])
 
     foreground = foreground.scaled(
         background.width(),
