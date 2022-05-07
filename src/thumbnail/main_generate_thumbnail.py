@@ -423,11 +423,13 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             text_player_coordinates[i],
             text_player_max_dimensions,
             player_text_color["has_outline"],
-            player_text_color["outline_color"]
+            player_text_color["outline_color"],
+            (0,0)
         )
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
+    # TODO: Implement vertical behavior if template_data["info_text"]["horizontal"] == False
     if display_phase:
         phase_text_pos = (0, round((template_data["info_text"]["height_center"]-(
             template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
@@ -448,7 +450,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             phase_text_pos,
             text_max_dimensions,
             text_color[1]["has_outline"],
-            text_color[1]["outline_color"]
+            text_color[1]["outline_color"],
+            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), 0)
         )
 
         draw_text(
@@ -460,7 +463,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             round_text_pos,
             text_max_dimensions,
             text_color[1]["has_outline"],
-            text_color[1]["outline_color"]
+            text_color[1]["outline_color"],
+            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), 0)
         )
     else:
         round_text_pos = (0, round((template_data["info_text"]["height_center"]-(
@@ -479,7 +483,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             round_text_pos,
             text_max_dimensions,
             text_color[1]["has_outline"],
-            text_color[1]["outline_color"]
+            text_color[1]["outline_color"],
+            (round(template_data["info_text"]["x_offset"]*ratio[0]), 0)
         )
 
 
