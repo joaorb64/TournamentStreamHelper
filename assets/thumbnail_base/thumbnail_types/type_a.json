@@ -8,19 +8,19 @@
     "character_images": {
         "position": {
             "x": 0,
-            "y": 118
+            "y": 130
         },
         "dimensions": {
             "x": 1920,
-            "y": 1013
+            "y": 812
         }
     },
     "player_text": {
         "dimensions": {
-            "x": 875,
+            "x": 940,
             "y": 150
         },
-        "height_center": 968
+        "height_center": 1001
     },
     "info_text": {
         "dimensions": {
