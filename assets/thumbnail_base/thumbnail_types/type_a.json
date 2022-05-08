@@ -24,9 +24,11 @@
     },
     "info_text": {
         "dimensions": {
+            "x": 1920,
             "y": 140
         },
-        "x_offset": 10,
+        "x_position": 0,
+        "x_offset": 100,
         "height_center": 75,
         "horizontal": true,
         "always_align_center": true
