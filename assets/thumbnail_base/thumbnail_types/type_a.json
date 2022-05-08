@@ -8,11 +8,11 @@
     "character_images": {
         "position": {
             "x": 0,
-            "y": 130
+            "y": 145
         },
         "dimensions": {
             "x": 1920,
-            "y": 812
+            "y": 790
         }
     },
     "player_text": {
@@ -36,7 +36,7 @@
     "icons_position": {
         "align": "top",
         "bind_to_character_images": true,
-        "y_offset": 40,
+        "y_offset": 20,
         "main": {
             "dimensions": {
                 "x": 300,
