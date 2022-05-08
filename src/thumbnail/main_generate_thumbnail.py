@@ -424,7 +424,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             text_player_max_dimensions,
             player_text_color["has_outline"],
             player_text_color["outline_color"],
-            (0,0)
+            (0, 0)
         )
 
 
@@ -439,10 +439,13 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions = (round((template_data["info_text"]["dimensions"]["x"]/2.0)*ratio[0]), round(
                 template_data["info_text"]["dimensions"]["y"]*ratio[1]))
         else:
-            y_0 = template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0)
+            y_0 = template_data["info_text"]["height_center"] - \
+                (template_data["info_text"]["dimensions"]["y"]/2.0)
             y_1 = template_data["info_text"]["height_center"]
-            phase_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round(y_0*ratio[1]))
-            round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round(y_1*ratio[1]))
+            phase_text_pos = (
+                round(template_data["info_text"]["x_position"]*ratio[0]), round(y_0*ratio[1]))
+            round_text_pos = (
+                round(template_data["info_text"]["x_position"]*ratio[0]), round(y_1*ratio[1]))
 
             text_max_dimensions = (round((template_data["info_text"]["dimensions"]["x"])*ratio[0]), round(
                 (template_data["info_text"]["dimensions"]["y"]/2.0)*ratio[1]))
