@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/stage_strike_app/build/static/css/main.82dbf9bd.css",
+    "main.js": "/stage_strike_app/build/static/js/main.f8ded5e9.js",
+    "static/js/787.38693322.chunk.js": "/stage_strike_app/build/static/js/787.38693322.chunk.js",
+    "static/media/logo.svg": "/stage_strike_app/build/static/media/logo.0672973db86abe0e1002e2348284f0e9.svg",
+    "static/media/stage_dsr.svg": "/stage_strike_app/build/static/media/stage_dsr.b691229038cc875107cc.svg",
+    "static/media/stage_strike.svg": "/stage_strike_app/build/static/media/stage_strike.2a63ee3027ea819a797a.svg",
+    "static/media/stage_select.svg": "/stage_strike_app/build/static/media/stage_select.93f1de5f83321b0d15a0.svg",
+    "index.html": "/stage_strike_app/build/index.html",
+    "main.82dbf9bd.css.map": "/stage_strike_app/build/static/css/main.82dbf9bd.css.map",
+    "main.f8ded5e9.js.map": "/stage_strike_app/build/static/js/main.f8ded5e9.js.map",
+    "787.38693322.chunk.js.map": "/stage_strike_app/build/static/js/787.38693322.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.82dbf9bd.css",
+    "static/js/main.f8ded5e9.js"
+  ]
+}
