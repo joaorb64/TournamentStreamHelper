@@ -57,14 +57,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
         self.selectFontPhase.setCurrentIndex(
             self.selectFontPhase.findText(settings["font_list"][1]["name"]))
-        self.selectTypeFontPlayer.setCurrentIndex(
-            self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
         if force_defaults:
             self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText("Type 2"))
+                self.selectTypeFontPhase.findText("Bold Italic"))
+            self.selectTypeFontPlayer.setCurrentIndex(
+                self.selectTypeFontPlayer.findText("Bold"))
         else:
             self.selectTypeFontPhase.setCurrentIndex(
                 self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+            self.selectTypeFontPlayer.setCurrentIndex(
+                self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
         self.phaseFontColor.setStyleSheet(
@@ -112,11 +114,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
             "name": "Open Sans",
-            "type": "Regular",
+            "type": "Bold",
             "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
         }, {
             "name": "Open Sans",
-            "type": "Regular",
+            "type": "Bold Italic",
             "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
         }]
         settings["font_color"] = [
