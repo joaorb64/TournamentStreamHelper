@@ -523,6 +523,15 @@ def paste_main_icon(thumbnail, icon_path):
         if template_data["icons_position"]["bind_to_character_images"]:
             y_offset = y_offset + \
                 template_data["character_images"]["position"]["y"]
+        if template_data["icons_position"]["align"].lower() == "bottom":
+            y_offset = template_data["base_ratio"]["y"] - \
+                template_data["icons_position"]["y_offset"] - \
+                icon_image.height()/ratio[1]
+            print(y_offset)
+            if template_data["icons_position"]["bind_to_character_images"]:
+                y_offset = template_data["character_images"]["position"]["y"] + template_data["character_images"]["dimensions"]["y"] - \
+                    template_data["icons_position"]["y_offset"] - \
+                    icon_image.height()/ratio[1]
 
         icon_x = round(x_offset*ratio[0] - icon_size[0]/2)
         icon_y = y_offset*ratio[1]
@@ -776,7 +785,7 @@ def generate(settingsManager, isPreview=False):
     foreground = QPixmap(foreground_path, "RGBA")
     background = QPixmap(background_path, "RGBA")
     global template_data
-    with open("./assets/thumbnail_base/thumbnail_types/type_a.json", 'rt') as template_data_file:
+    with open(settings["thumbnail_type"], 'rt') as template_data_file:
         template_data = template_data_file.read()
         template_data = json.loads(template_data)
 
