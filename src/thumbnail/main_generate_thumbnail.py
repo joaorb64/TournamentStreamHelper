@@ -649,6 +649,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
 
             chars.append({
                 "name": key,
+                "team": gameAssetManager.instance.selectedGame.get("codename").upper(),
                 "asset": {
                     "assets": {
                         "full": asset
@@ -662,6 +663,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
         for i in range(4):
             chars.append({
                 "name": f"Player {i+1}",
+                "team": f"Sponsor {i+1}",
                 "asset": {
                     "assets": {
                         "full": {
@@ -700,10 +702,10 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                                 "2": chars[1]["asset"]
                             },
                             "country": {},
-                            "mergedName": f"Sponsor 1 | {chars[0]['name']}",
+                            "mergedName": f"{chars[0]['team']} | {chars[0]['name']}",
                             "name": chars[0]["name"],
                             "state": {},
-                            "team": "Sponsor 1"
+                            "team": chars[0]["team"]
                         }
                     },
                     "score": 0,
@@ -717,20 +719,20 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                                 "1": chars[2]["asset"]
                             },
                             "country": {},
-                            "mergedName": f"Sponsor 2 | {chars[2]['name']}",
-                            "name": "Player 2",
+                            "mergedName": f"{chars[2]['team']} | {chars[2]['name']}",
+                            "name": chars[2]["name"],
                             "state": {},
-                            "team": "Sponsor 2"
+                            "team": chars[2]["team"]
                         },
                         "2": {
                             "character": {
                                 "1": chars[3]["asset"]
                             },
                             "country": {},
-                            "mergedName": f"Sponsor 3 | {chars[3]['name']}",
-                            "name": "Player 3",
+                            "mergedName": f"{chars[3]['team']} | {chars[3]['name']}",
+                            "name": chars[3]["name"],
                             "state": {},
-                            "team": "Sponsor 3"
+                            "team": chars[3]["team"]
                         }
                     },
                     "score": 0,
