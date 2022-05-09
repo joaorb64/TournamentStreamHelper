@@ -9,6 +9,7 @@ from cgitb import text
 from textwrap import fill
 from pathlib import Path
 import json
+from click import style
 import requests
 import shutil
 import string
@@ -306,22 +307,40 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     return(thumbnail)
 
 
-def draw_text(thumbnail, text, font, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
+def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
     painter = QPainter(thumbnail)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-    font = QFont(font, int(max_font_size))
+    font = QFont()
+    family = font_data["name"]
+    font.setFamily(family)
+    font.setPixelSize(int(max_font_size))
+    type = font_data["type"]
+    if "bold" in type.lower():
+        font.setBold(True)
+    if "italic" in type.lower():
+        font.setItalic(True)
 
     fontMetrics = QFontMetricsF(font)
 
     while(fontMetrics.height()+2*padding[1] > int(container_size[1])):
         max_font_size -= 1
+        if max_font_size <= 0:
+            raise ValueError("Text too small, size cannot be negative")
         font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
 
+    stretch = 100
+
     while(fontMetrics.width(text)+2*padding[0] > int(container_size[0])):
-        max_font_size -= 1
-        font.setPixelSize(int(max_font_size))
+        if stretch <= template_data["lower_text_stretch_limit"]:
+            max_font_size -= 1
+            if max_font_size <= 0:
+                raise ValueError("Text too small, size cannot be negative")
+            font.setPixelSize(int(max_font_size))
+        else:
+            stretch -= 1
+            font.setStretch(stretch)
         fontMetrics = QFontMetricsF(font)
 
     text_x = round((pos[0]+padding[0]))
@@ -772,8 +791,8 @@ def generate(settingsManager, isPreview=False):
 
     global font_1
     global font_2
-    font_1 = font_list[0]["fontPath"]
-    font_2 = font_list[1]["fontPath"]
+    font_1 = font_list[0]
+    font_2 = font_list[1]
 
     global separator_color_code
     global separator_width
