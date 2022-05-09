@@ -66,7 +66,7 @@ class App extends Component {
     match: null,
     bestOf: null,
     timestamp: 0,
-    serverTimestamp: 0
+    serverTimestamp: 0,
   };
 
   Initialize() {
@@ -80,7 +80,7 @@ class App extends Component {
       stagesPicked: [],
       selectedStage: null,
       lastWinner: -1,
-      serverTimestamp: 0
+      serverTimestamp: 0,
     });
   }
 
@@ -119,7 +119,7 @@ class App extends Component {
     if (this.state.ruleset.useDSR) {
       banList = this.state.stagesPicked;
     } else if (this.state.ruleset.useMDSR && this.state.lastWinner !== -1) {
-      banList = this.state.stagesWon[(this.state.lastWinner + 1) % 2];
+      banList = this.state.stagesWon[(this.state.lastWinner + 1) % 2] || [];
     }
 
     return banList;
@@ -141,7 +141,7 @@ class App extends Component {
       if (!this.IsStageBanned(stage.name) && !this.IsStageStriked(stage.name)) {
         this.state.selectedStage = stage.name;
         this.setState(this.state);
-        this.setState({timestamp: new Date().getTime()});
+        this.setState({ timestamp: new Date().getTime() });
       }
     } else if (
       !this.IsStageStriked(stage.name, true) &&
@@ -157,18 +157,18 @@ class App extends Component {
           this.GetStrikeNumber()
         ) {
           this.state.strikedStages[this.state.currStep].push(stage.name);
-          this.state.strikedBy[this.state.currPlayer].push(stage.name);
+          this.state.strikedBy[this.state.currPlayer].push(stage.codename);
         }
       } else {
         this.state.strikedStages[this.state.currStep].splice(foundIndex, 1);
 
         foundIndex = this.state.strikedBy[this.state.currPlayer].findIndex(
-          (e) => e === stage.name
+          (e) => e === stage.codename
         );
         this.state.strikedBy[this.state.currPlayer].splice(foundIndex, 1);
       }
       this.setState(this.state);
-      this.setState({timestamp: new Date().getTime()});
+      this.setState({ timestamp: new Date().getTime() });
     }
   }
 
@@ -227,7 +227,7 @@ class App extends Component {
     }
 
     this.setState(this.state);
-    this.setState({timestamp: new Date().getTime()});
+    this.setState({ timestamp: new Date().getTime() });
     console.log(this.state);
   }
 
@@ -252,7 +252,7 @@ class App extends Component {
 
     this.setState(this.state);
     this.UpdateStreamScore();
-    this.setState({timestamp: new Date().getTime()});
+    this.setState({ timestamp: new Date().getTime() });
   }
 
   GetStrikeNumber() {
@@ -301,7 +301,11 @@ class App extends Component {
           this.Initialize();
         }
 
-        if(data.state && (this.state.timestamp == 0 || (this.state.timestamp < data.state.timestamp))){
+        if (
+          data.state &&
+          (this.state.timestamp == 0 ||
+            this.state.timestamp < data.state.timestamp)
+        ) {
           this.setState({
             currGame: data.state.currGame,
             currPlayer: data.state.currPlayer,
@@ -313,8 +317,8 @@ class App extends Component {
             selectedStage: data.state.selectedStage,
             lastWinner: data.state.lastWinner,
             serverTimestamp: data.state.timestamp,
-            timestamp: data.state.timestamp
-          })
+            timestamp: data.state.timestamp,
+          });
         }
       })
       .catch(console.log);
@@ -323,7 +327,7 @@ class App extends Component {
   UpdateStream() {
     if (!this.state.ruleset) return;
 
-    if(this.state.timestamp <= this.state.serverTimestamp) return;
+    if (this.state.timestamp <= this.state.serverTimestamp) return;
 
     let allStages =
       this.state.currGame === 0
@@ -346,6 +350,8 @@ class App extends Component {
         .concat(this.state.ruleset.counterpickStages)
         .filter((stage) => this.IsStageStriked(stage.name))
         .map((stage) => stage.codename),
+      strikedBy: this.state.strikedBy,
+      currPlayer: this.state.currPlayer,
       state: {
         currGame: this.state.currGame,
         currPlayer: this.state.currPlayer,
@@ -356,8 +362,8 @@ class App extends Component {
         stagesPicked: this.state.stagesPicked,
         selectedStage: this.state.selectedStage,
         lastWinner: this.state.lastWinner,
-        timestamp: this.state.timestamp
-      }
+        timestamp: this.state.timestamp,
+      },
     };
 
     fetch("http://" + window.location.hostname + ":5000/post", {
@@ -384,7 +390,9 @@ class App extends Component {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {this.state.ruleset && this.state.ruleset.neutralStages.length > 0 ? (
+        {this.state.ruleset &&
+        this.state.ruleset.neutralStages.length > 0 &&
+        this.state.state ? (
           <>
             <Container>
               <Box
@@ -426,8 +434,14 @@ class App extends Component {
                       sx={{ typography: { xs: "h7", sm: "h4" } }}
                       component="div"
                     >
-                      {this.state.stagesWon[0].length} -{" "}
-                      {this.state.stagesWon[1].length}
+                      {console.log(this.state.stagesWon)}
+                      {this.state.stagesWon && this.state.stagesWon.length > 0
+                        ? this.state.stagesWon[0].length
+                        : 0}{" "}
+                      -{" "}
+                      {this.state.stagesWon && this.state.stagesWon.length > 0
+                        ? this.state.stagesWon[1].length
+                        : 0}
                     </Typography>
                   </Grid>
                   {this.state.currPlayer != -1 ? (
@@ -517,10 +531,11 @@ class App extends Component {
                                       noWrap
                                       fontSize={{ xs: 8, md: "" }}
                                     >
-                                      {this.state.strikedBy[0].findIndex((s)=>s==stage.name) != -1 ?
-                                        this.state.playerNames[0] :
-                                        this.state.playerNames[1]
-                                      }
+                                      {this.state.strikedBy[0].findIndex(
+                                        (s) => s == stage.codename
+                                      ) != -1
+                                        ? this.state.playerNames[0]
+                                        : this.state.playerNames[1]}
                                     </Typography>
                                   </div>
                                 </>
@@ -529,7 +544,7 @@ class App extends Component {
                                 <div className="stamp stage-dsr"></div>
                               ) : null}
                               {this.state.selectedStage === stage.name ? (
-                                <>  
+                                <>
                                   <div className="stamp stage-selected"></div>
                                   <div className="banned_by">
                                     <Typography
@@ -539,7 +554,11 @@ class App extends Component {
                                       noWrap
                                       fontSize={{ xs: 8, md: "" }}
                                     >
-                                      {this.state.playerNames[this.state.currPlayer]}
+                                      {
+                                        this.state.playerNames[
+                                          this.state.currPlayer
+                                        ]
+                                      }
                                     </Typography>
                                   </div>
                                 </>
@@ -643,7 +662,10 @@ class App extends Component {
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
                         variant="outlined"
-                        onClick={() => {this.Initialize(); this.setState({ timestamp: new Date().getTime() });}}
+                        onClick={() => {
+                          this.Initialize();
+                          this.setState({ timestamp: new Date().getTime() });
+                        }}
                       >
                         {i18n.t("reset")}
                       </Button>
@@ -692,7 +714,12 @@ class App extends Component {
                         fullWidth
                         color="p1color"
                         variant="contained"
-                        onClick={() => this.setState({ currPlayer: 0, timestamp: new Date().getTime() })}
+                        onClick={() =>
+                          this.setState({
+                            currPlayer: 0,
+                            timestamp: new Date().getTime(),
+                          })
+                        }
                       >
                         {this.state.playerNames[0]} {i18n.t("won")}
                       </Button>
@@ -706,7 +733,12 @@ class App extends Component {
                         fullWidth
                         color="p2color"
                         variant="contained"
-                        onClick={() => this.setState({ currPlayer: 1, timestamp: new Date().getTime() })}
+                        onClick={() =>
+                          this.setState({
+                            currPlayer: 1,
+                            timestamp: new Date().getTime(),
+                          })
+                        }
                       >
                         {this.state.playerNames[1]} {i18n.t("won")}
                       </Button>
@@ -725,7 +757,10 @@ class App extends Component {
                     color="success"
                     variant="outlined"
                     onClick={() =>
-                      this.setState({ currPlayer: Math.random() > 0.5 ? 1 : 0, timestamp: new Date().getTime() })
+                      this.setState({
+                        currPlayer: Math.random() > 0.5 ? 1 : 0,
+                        timestamp: new Date().getTime(),
+                      })
                     }
                   >
                     {i18n.t("randomize")}
@@ -737,7 +772,8 @@ class App extends Component {
         ) : null}
 
         {this.state.ruleset != null &&
-        this.state.ruleset.neutralStages.length == 0 ? (
+        this.state.ruleset.neutralStages.length == 0 &&
+        this.state.state ? (
           <>
             <Dialog
               open={this.state.currPlayer == -1}
