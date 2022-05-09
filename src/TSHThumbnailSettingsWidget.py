@@ -112,11 +112,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
             "name": "Open Sans",
-            "type": "Type 1",
+            "type": "Regular",
             "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
         }, {
             "name": "Open Sans",
-            "type": "Type 2",
+            "type": "Regular",
             "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
         }]
         settings["font_color"] = [
@@ -411,11 +411,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def SetTypeFont(self, index, cbFont, cbType):
         print(f'set type font {cbFont.currentData()}')
-        types = cbFont.currentData()
+        types = ["Regular", "Bold", "Italic", "Bold Italic"]
         cbType.clear()
 
         for i in range(len(types)):
-            cbType.addItem(f'Type {i + 1}', types[i])
+            cbType.addItem(types[i], types[i])
 
     def getFontPaths(self):
         font_paths = QStandardPaths.standardLocations(
@@ -465,6 +465,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
                 settings["background_path"] = thumbnail_type_desc["default_background"]
             SettingsManager.Set("thumbnail", settings)
+        for font_index in range(len(settings["font_list"])):
+            if "type" in settings["font_list"][font_index]["type"].lower():
+                settings["font_list"][font_index]["type"] = "Bold"
+                SettingsManager.Set("thumbnail", settings)
+
         try:
             worker = Worker(self.GeneratePreviewDo)
             self.thumbnailGenerationThread.start(worker)
