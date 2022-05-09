@@ -92,8 +92,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def setDefaults(self, button_mode=False):
         settings = {
-            "foreground_path": "./assets/thumbnail_base/foreground.png",
-            "background_path": "./assets/thumbnail_base/background.png",
             "display_phase": True,
             "use_team_names": False,
             "use_sponsors": True,
@@ -104,8 +102,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "separator": {
                 "width": 5,
                 "color": "#7F7F7F"
-            }
+            },
+            "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
         }
+        with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
+            thumbnail_type_desc = json.loads(thumbnail_type_file.read())
+            settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
+            settings["background_path"] = thumbnail_type_desc["default_background"]
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
             "name": "Open Sans",
@@ -454,6 +457,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     # re-generate preview
     def GeneratePreview(self):
+        settings = SettingsManager.Get("thumbnail")
+        if not settings.get("thumbnail_type"):
+            settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
+            with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
+                thumbnail_type_desc = json.loads(thumbnail_type_file.read())
+                settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
+                settings["background_path"] = thumbnail_type_desc["default_background"]
+            SettingsManager.Set("thumbnail", settings)
         try:
             worker = Worker(self.GeneratePreviewDo)
             self.thumbnailGenerationThread.start(worker)

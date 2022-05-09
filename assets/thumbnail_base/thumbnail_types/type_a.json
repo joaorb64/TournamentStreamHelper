@@ -1,7 +1,7 @@
 {
     "name": "Standard",
-    "default_foreground": "./assets/thumbnail_base/type_a/foreground.svg",
-    "default_background": "./assets/thumbnail_base/type_a/background.svg",
+    "default_foreground": "./assets/thumbnail_base/thumbnail_types/type_a/foreground.svg",
+    "default_background": "./assets/thumbnail_base/thumbnail_types/type_a/background.svg",
     "base_ratio": {
         "x": 1920,
         "y": 1080

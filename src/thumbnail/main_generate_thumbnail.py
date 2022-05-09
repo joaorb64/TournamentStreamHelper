@@ -785,7 +785,7 @@ def generate(settingsManager, isPreview=False):
     foreground = QPixmap(foreground_path, "RGBA")
     background = QPixmap(background_path, "RGBA")
     global template_data
-    with open("./assets/thumbnail_base/thumbnail_types/type_a.json", 'rt') as template_data_file:
+    with open(settings["thumbnail_type"], 'rt') as template_data_file:
         template_data = template_data_file.read()
         template_data = json.loads(template_data)
 
