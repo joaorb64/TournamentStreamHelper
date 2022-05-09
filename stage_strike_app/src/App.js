@@ -119,7 +119,10 @@ class App extends Component {
     if (this.state.ruleset.useDSR) {
       banList = this.state.stagesPicked;
     } else if (this.state.ruleset.useMDSR && this.state.lastWinner !== -1) {
-      banList = this.state.stagesWon[(this.state.lastWinner + 1) % 2] || [];
+      banList =
+        this.state.stagesWon && this.state.stagesWon.length > 0
+          ? this.state.stagesWon[(this.state.lastWinner + 1) % 2]
+          : [];
     }
 
     return banList;
@@ -303,6 +306,7 @@ class App extends Component {
 
         if (
           data.state &&
+          data.state.state &&
           (this.state.timestamp == 0 ||
             this.state.timestamp < data.state.timestamp)
         ) {
