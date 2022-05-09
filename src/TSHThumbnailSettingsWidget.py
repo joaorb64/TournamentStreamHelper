@@ -1,3 +1,4 @@
+from multiprocessing import Lock
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -9,6 +10,7 @@ import os
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
 from .TSHGameAssetManager import *
+from .Workers import Worker
 
 
 class PreviewWidget(QLabel):
@@ -18,6 +20,7 @@ class PreviewWidget(QLabel):
             QSizePolicy.Ignored,
             QSizePolicy.Ignored
         )
+        self._pixmap = None
 
     def setPixmap(self, pixmap):
         self._pixmap = pixmap
@@ -25,17 +28,18 @@ class PreviewWidget(QLabel):
         super().setPixmap(self._pixmap.scaled(
             self.width(),
             self.height(),
-            Qt.KeepAspectRatio
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
         ))
 
     def resizeEvent(self, QResizeEvent):
         super().resizeEvent(QResizeEvent)
         if self._pixmap:
-            super().setPixmap(self._pixmap.scaled(
-                self.width(),
-                self.height(),
-                Qt.KeepAspectRatio
-            ))
+            self.setPixmap(self._pixmap)
+
+
+class TSHThumbnailSettingsWidgetSignals(QObject):
+    updatePreview = pyqtSignal(str)
 
 
 class TSHThumbnailSettingsWidget(QDockWidget):
@@ -53,14 +57,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
         self.selectFontPhase.setCurrentIndex(
             self.selectFontPhase.findText(settings["font_list"][1]["name"]))
-        self.selectTypeFontPlayer.setCurrentIndex(
-            self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
         if force_defaults:
             self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText("Type 2"))
+                self.selectTypeFontPhase.findText("Bold Italic"))
+            self.selectTypeFontPlayer.setCurrentIndex(
+                self.selectTypeFontPlayer.findText("Bold"))
         else:
             self.selectTypeFontPhase.setCurrentIndex(
                 self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+            self.selectTypeFontPlayer.setCurrentIndex(
+                self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
         self.phaseFontColor.setStyleSheet(
@@ -84,12 +90,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.enablePlayerOutline.setChecked(
             settings["font_outline_enabled"][0])
         self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
-        self.zoom.setValue(100)
+        game_codename = TSHGameAssetManager.instance.selectedGame.get(
+            "codename")
+        if game_codename:
+            self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
 
     def setDefaults(self, button_mode=False):
         settings = {
-            "foreground_path": "./assets/thumbnail_base/foreground.png",
-            "background_path": "./assets/thumbnail_base/background.png",
             "display_phase": True,
             "use_team_names": False,
             "use_sponsors": True,
@@ -99,17 +106,22 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "main_icon_path": "./assets/icons/icon.png",
             "separator": {
                 "width": 5,
-                "color": "#7F7F7F"
-            }
+                "color": "#18181b"
+            },
+            "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
         }
+        with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
+            thumbnail_type_desc = json.loads(thumbnail_type_file.read())
+            settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
+            settings["background_path"] = thumbnail_type_desc["default_background"]
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
             "name": "Open Sans",
-            "type": "Type 1",
+            "type": "Bold",
             "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
         }, {
             "name": "Open Sans",
-            "type": "Type 2",
+            "type": "Bold Italic",
             "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
         }]
         settings["font_color"] = [
@@ -130,6 +142,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def __init__(self, *args):
         super().__init__(*args)
+
+        self.signals = TSHThumbnailSettingsWidgetSignals()
+        self.signals.updatePreview.connect(self.UpdatePreview)
+
+        self.thumbnailGenerationThread = QThreadPool()
+        self.thumbnailGenerationThread.setMaxThreadCount(1)
+        self.lock = Lock()
 
         self.setWindowTitle("Thumbnail Settings")
         self.setFloating(True)
@@ -318,7 +337,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # if preview not there
         if not os.path.isfile(tmp_file):
             tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager)
+                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
         self.preview.setPixmap(QPixmap(tmp_file))
 
     def enableOutline(self, index=0, val=True):
@@ -397,11 +416,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def SetTypeFont(self, index, cbFont, cbType):
         print(f'set type font {cbFont.currentData()}')
-        types = cbFont.currentData()
+        types = ["Regular", "Bold", "Italic", "Bold Italic"]
         cbType.clear()
 
         for i in range(len(types)):
-            cbType.addItem(f'Type {i + 1}', types[i])
+            cbType.addItem(types[i], types[i])
 
     def getFontPaths(self):
         font_paths = QStandardPaths.standardLocations(
@@ -443,10 +462,22 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     # re-generate preview
     def GeneratePreview(self):
+        settings = SettingsManager.Get("thumbnail")
+        if not settings.get("thumbnail_type"):
+            settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
+            with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
+                thumbnail_type_desc = json.loads(thumbnail_type_file.read())
+                settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
+                settings["background_path"] = thumbnail_type_desc["default_background"]
+            SettingsManager.Set("thumbnail", settings)
+        for font_index in range(len(settings["font_list"])):
+            if "type" in settings["font_list"][font_index]["type"].lower():
+                settings["font_list"][font_index]["type"] = "Bold"
+                SettingsManager.Set("thumbnail", settings)
+
         try:
-            tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager)
-            self.preview.setPixmap(QPixmap(tmp_file))
+            worker = Worker(self.GeneratePreviewDo)
+            self.thumbnailGenerationThread.start(worker)
         except Exception as e:
             print(e)
             msgBox = QMessageBox()
@@ -456,6 +487,18 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
+
+    def GeneratePreviewDo(self, progress_callback):
+        if self.thumbnailGenerationThread.activeThreadCount() > 1:
+            return
+
+        with self.lock:
+            tmp_file = thumbnail.generate(
+                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
+            self.signals.updatePreview.emit(tmp_file)
+
+    def UpdatePreview(self, file):
+        self.preview.setPixmap(QPixmap(file))
 
     def SetAssetPack(self, reset=False):
         self.selectRenderLabel.clear()

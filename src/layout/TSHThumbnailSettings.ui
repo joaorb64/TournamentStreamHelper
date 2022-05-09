@@ -125,14 +125,14 @@
                <item>
                 <widget class="QPushButton" name="customTopLeftIcon">
                  <property name="text">
-                  <string>Top Left</string>
+                  <string>Left</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="customTopRightIcon">
                  <property name="text">
-                  <string>Top Right</string>
+                  <string>Right</string>
                  </property>
                 </widget>
                </item>
