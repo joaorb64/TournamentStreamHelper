@@ -407,6 +407,8 @@ class Window(QMainWindow):
                     buttonReply.show()
 
                     def Update():
+                        db = QFontDatabase()
+                        db.removeAllApplicationFonts()
                         self.downloadDialogue = QProgressDialog(
                             "Downloading update... ", "Cancel", 0, 0, self)
                         self.downloadDialogue.setWindowModality(

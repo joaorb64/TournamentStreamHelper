@@ -1,0 +1,59 @@
+{
+    "name": "Standard",
+    "default_foreground": "./assets/thumbnail_base/thumbnail_types/type_a/foreground.svg",
+    "default_background": "./assets/thumbnail_base/thumbnail_types/type_a/background.svg",
+    "base_ratio": {
+        "x": 1920,
+        "y": 1080
+    },
+    "character_images": {
+        "position": {
+            "x": 0,
+            "y": 145
+        },
+        "dimensions": {
+            "x": 1920,
+            "y": 790
+        }
+    },
+    "player_text": {
+        "dimensions": {
+            "y": 150
+        },
+        "x_offset": 25,
+        "y_padding": 0,
+        "height_center": 1001
+    },
+    "info_text": {
+        "dimensions": {
+            "x": 1920,
+            "y": 140
+        },
+        "x_position": 0,
+        "x_offset": 100,
+        "y_padding": 0,
+        "height_center": 75,
+        "horizontal": true,
+        "always_align_center": true
+    },
+    "icons_position": {
+        "align": "bottom",
+        "bind_to_character_images": true,
+        "y_offset": 20,
+        "main": {
+            "dimensions": {
+                "x": 300,
+                "y": 200
+            }
+        },
+        "side": {
+            "x_offset": 10,
+            "dimensions": {
+                "x": 200,
+                "y": 150
+            }
+        }
+    },
+    "initial_font_size": 200,
+    "lower_text_stretch_limit": 80
+}
