@@ -37,7 +37,7 @@
         "always_align_center": true
     },
     "icons_position": {
-        "align": "top",
+        "align": "bottom",
         "bind_to_character_images": true,
         "y_offset": 20,
         "main": {
