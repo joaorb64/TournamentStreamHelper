@@ -31,7 +31,7 @@
     rgba(47, 128, 237, 1) 0%,
     rgba(60, 139, 166, 1) 100%
   );
-  --p1-sponsor-color: #ff3837ff;
+  --p1-sponsor-color: #ff7a6d;
   --p2-sponsor-color: #29b6f6;
   --p1-score-color: white;
   --p2-score-color: white;
@@ -45,8 +45,6 @@
   --bg-color: #18181b;
   --p1-score-bg-color: #ff3837ff;
   --p2-score-bg-color: #1255a3ff;
-  --p1-sponsor-color: #ff3837ff;
-  --p2-sponsor-color: #29b6f6;
   --p1-score-color: white;
   --p2-score-color: white;
 } */
@@ -55,6 +53,6 @@
 /* :root {
   --text-color: black;
   --bg-color: #e2ebf0ff;
-  --p1-sponsor-color: #ff3837ff;
+  --p1-sponsor-color: #a31212;
   --p2-sponsor-color: #1255a3ff;
 } */
