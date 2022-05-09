@@ -565,31 +565,54 @@ def paste_main_icon(thumbnail, icon_path):
 
 
 def paste_side_icon(thumbnail, icon_path_list):
-    pass
-    # if len(icon_path_list) > 2:
-    #     raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
+    if len(icon_path_list) > 2:
+        raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
 
-    # max_x_size = round(thumbnail.size[0]*(200.0/1920.0))
-    # max_y_size = round(thumbnail.size[1]*(150.0/1080.0))
-    # max_size = (max_x_size, max_y_size)
-    # icon_y = round(thumbnail.size[1]*(10.0/1080.0))
+    max_x_size = round(template_data["icons_position"]["side"]["dimensions"]["x"]*ratio[0])
+    max_y_size = round(template_data["icons_position"]["side"]["dimensions"]["y"]*ratio[0])
+    max_size = (max_x_size, max_y_size)
 
-    # for index in range(0, len(icon_path_list)):
-    #     icon_path = icon_path_list[index]
-    #     if icon_path:
-    #         icon_image = Image.open(icon_path).convert('RGBA')
-    #         icon_size = calculate_new_dimensions(icon_image.size, max_size)
-    #         icon_image = icon_image.resize(icon_size, resample=Image.LANCZOS)
 
-    #         icon_x = index*round(thumbnail.size[0] - icon_size[0])
-    #         x_offset = -round(thumbnail.size[0]*(10.0/1920.0)) * ((index*2)-1)
-    #         icon_x = icon_x + x_offset
 
-    #         icon_coordinates = (icon_x, icon_y)
-    #         composite_image = create_composite_image(
-    #             icon_image, thumbnail.size, icon_coordinates)
-    #         thumbnail = Image.alpha_composite(thumbnail, composite_image)
-    # return(thumbnail)
+    for index in range(0, len(icon_path_list)):
+        icon_path = icon_path_list[index]
+        if icon_path:
+            icon_image = QPixmap(icon_path, 'RGBA')
+            icon_size = calculate_new_dimensions(icon_image.size(), max_size)
+            icon_image = icon_image.transformed(
+                QTransform().scale(
+                    icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()),
+                Qt.TransformationMode.SmoothTransformation)
+
+            y_offset = template_data["icons_position"]["y_offset"]
+            if template_data["icons_position"]["bind_to_character_images"]:
+                y_offset = y_offset + \
+                    template_data["character_images"]["position"]["y"]
+            if template_data["icons_position"]["align"].lower() == "bottom":
+                y_offset = template_data["base_ratio"]["y"] - \
+                    template_data["icons_position"]["y_offset"] - \
+                    icon_image.height()/ratio[1]
+                print(y_offset)
+                if template_data["icons_position"]["bind_to_character_images"]:
+                    y_offset = template_data["character_images"]["position"]["y"] + template_data["character_images"]["dimensions"]["y"] - \
+                        template_data["icons_position"]["y_offset"] - \
+                        icon_image.height()/ratio[1]
+
+            x_offset = index*template_data["base_ratio"]["x"]
+            if template_data["icons_position"]["bind_to_character_images"]:
+                x_offset = template_data["character_images"]["position"]["x"] + index*template_data["character_images"]["dimensions"]["x"]
+            x_offset = x_offset - round(template_data["icons_position"]["side"]["x_offset"]) * ((index*2)-1)
+            icon_x = x_offset*ratio[0] - index*icon_size[0]
+            icon_y = y_offset*ratio[1]
+
+            icon_coordinates = (round(icon_x), round(icon_y))
+            composite_image = create_composite_image(
+                icon_image, thumbnail.size(), icon_coordinates)
+
+            painter = QPainter(thumbnail)
+            painter.drawPixmap(0, 0, composite_image)
+            painter.end()
+    return(thumbnail)
 
 
 def createFalseData():
@@ -849,7 +872,7 @@ def generate(settingsManager, isPreview=False):
     paste_player_text(thumbnail, data, use_team_names, use_sponsors)
     paste_round_text(thumbnail, data, display_phase)
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
-    # thumbnail = paste_side_icon(thumbnail, side_icon_list)
+    thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
     if not isPreview:
