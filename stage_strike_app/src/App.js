@@ -304,8 +304,6 @@ class App extends Component {
           this.Initialize();
         }
 
-        console.log(data);
-
         if (
           data.state &&
           (this.state.timestamp == 0 ||
