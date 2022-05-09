@@ -304,9 +304,10 @@ class App extends Component {
           this.Initialize();
         }
 
+        console.log(data);
+
         if (
           data.state &&
-          data.state.state &&
           (this.state.timestamp == 0 ||
             this.state.timestamp < data.state.timestamp)
         ) {
