@@ -90,7 +90,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.enablePlayerOutline.setChecked(
             settings["font_outline_enabled"][0])
         self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
-        self.zoom.setValue(100)
+        game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+        if game_codename:
+            self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
 
     def setDefaults(self, button_mode=False):
         settings = {
