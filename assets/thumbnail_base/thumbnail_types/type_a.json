@@ -52,5 +52,6 @@
             }
         }
     },
-    "initial_font_size": 200
+    "initial_font_size": 200,
+    "lower_text_stretch_limit": 80
 }

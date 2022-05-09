@@ -311,7 +311,6 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     painter = QPainter(thumbnail)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-    #Example of font init
     font = QFont()
     family = font_data["name"]
     font.setFamily(family)
@@ -326,21 +325,23 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
 
     while(fontMetrics.height()+2*padding[1] > int(container_size[1])):
         max_font_size -= 1
-        if max_font_size <=0:
+        if max_font_size <= 0:
             raise ValueError("Text too small, size cannot be negative")
         font.setPixelSize(int(max_font_size))
         fontMetrics = QFontMetricsF(font)
-        print(max_font_size)
 
     stretch = 100
 
     while(fontMetrics.width(text)+2*padding[0] > int(container_size[0])):
-        stretch -= 1
-        if stretch <=0:
-            raise ValueError("Text too long, cannot fit in the thumbnail")
-        font.setStretch(stretch)
+        if stretch <= template_data["lower_text_stretch_limit"]:
+            max_font_size -= 1
+            if max_font_size <= 0:
+                raise ValueError("Text too small, size cannot be negative")
+            font.setPixelSize(int(max_font_size))
+        else:
+            stretch -= 1
+            font.setStretch(stretch)
         fontMetrics = QFontMetricsF(font)
-        print(stretch, fontMetrics.width(text)+2*padding[0])
 
     text_x = round((pos[0]+padding[0]))
     text_y = round((pos[1]+padding[1]))
