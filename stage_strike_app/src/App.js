@@ -390,9 +390,7 @@ class App extends Component {
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {this.state.ruleset &&
-        this.state.ruleset.neutralStages.length > 0 &&
-        this.state.state ? (
+        {this.state.ruleset && this.state.ruleset.neutralStages.length > 0 ? (
           <>
             <Container>
               <Box
@@ -434,7 +432,6 @@ class App extends Component {
                       sx={{ typography: { xs: "h7", sm: "h4" } }}
                       component="div"
                     >
-                      {console.log(this.state.stagesWon)}
                       {this.state.stagesWon && this.state.stagesWon.length > 0
                         ? this.state.stagesWon[0].length
                         : 0}{" "}
@@ -772,8 +769,7 @@ class App extends Component {
         ) : null}
 
         {this.state.ruleset != null &&
-        this.state.ruleset.neutralStages.length == 0 &&
-        this.state.state ? (
+        this.state.ruleset.neutralStages.length == 0 ? (
           <>
             <Dialog
               open={this.state.currPlayer == -1}
