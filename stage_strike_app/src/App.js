@@ -306,6 +306,7 @@ class App extends Component {
 
         if (
           data.state &&
+          Object.keys(data.state).length > 0 &&
           (this.state.timestamp == 0 ||
             this.state.timestamp < data.state.timestamp)
         ) {
