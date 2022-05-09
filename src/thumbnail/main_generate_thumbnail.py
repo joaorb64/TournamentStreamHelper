@@ -393,13 +393,11 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
 
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
-    text_player_max_dimensions = (round(template_data["player_text"]["dimensions"]["x"]*ratio[0]), round(
+    text_player_max_dimensions = (round(template_data["character_images"]["dimensions"]["x"]*ratio[0]/2.0), round(
         template_data["player_text"]["dimensions"]["y"]*ratio[1]))
     text_player_coordinates = [
-        (round((template_data["character_images"]["position"]["x"]+(template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
-         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
-        (round((template_data["character_images"]["position"]["x"]+(3*template_data["character_images"]["dimensions"]["x"]/4.0)-(template_data["player_text"]
-         ["dimensions"]["x"]/2.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        (round((template_data["character_images"]["position"]["x"])*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
+        (round((template_data["character_images"]["position"]["x"]+(2*template_data["character_images"]["dimensions"]["x"]/4.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
     ]
 
     font_path = font_1
@@ -443,7 +441,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             text_player_max_dimensions,
             player_text_color["has_outline"],
             player_text_color["outline_color"],
-            (0, 0)
+            (round(template_data["player_text"]["x_offset"]*ratio[0]), round(template_data["player_text"]["y_padding"]*ratio[1]))
         )
 
 
@@ -470,6 +468,9 @@ def paste_round_text(thumbnail, data, display_phase=True):
                 (template_data["info_text"]["dimensions"]["y"]/2.0)*ratio[1]))
 
         text_size = template_data["initial_font_size"]*ratio[1]
+        y_padding = round(template_data["info_text"]["y_padding"]*ratio[1])
+        if not template_data["info_text"]["horizontal"]:
+            y_padding = round(y_padding/2.0)
 
         draw_text(
             thumbnail,
@@ -481,7 +482,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), 0)
+            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), y_padding)
         )
 
         draw_text(
@@ -494,7 +495,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), 0)
+            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), y_padding)
         )
     else:
         round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
@@ -514,7 +515,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]), 0)
+            (round(template_data["info_text"]["x_offset"]*ratio[0]), round(template_data["info_text"]["y_padding"]*ratio[1]))
         )
 
 
