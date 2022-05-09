@@ -90,7 +90,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.enablePlayerOutline.setChecked(
             settings["font_outline_enabled"][0])
         self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
-        game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+        game_codename = TSHGameAssetManager.instance.selectedGame.get(
+            "codename")
         if game_codename:
             self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
 
@@ -105,7 +106,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "main_icon_path": "./assets/icons/icon.png",
             "separator": {
                 "width": 5,
-                "color": "#7F7F7F"
+                "color": "#18181b"
             },
             "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
         }
@@ -336,7 +337,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # if preview not there
         if not os.path.isfile(tmp_file):
             tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager)
+                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
         self.preview.setPixmap(QPixmap(tmp_file))
 
     def enableOutline(self, index=0, val=True):
@@ -493,7 +494,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         with self.lock:
             tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager)
+                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
             self.signals.updatePreview.emit(tmp_file)
 
     def UpdatePreview(self, file):

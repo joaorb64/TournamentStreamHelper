@@ -2,6 +2,7 @@
 # Run as python ./src/generate_thumbnail in order to test it
 
 from numbers import Rational
+import random
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -16,6 +17,8 @@ import string
 from copy import deepcopy
 import datetime
 import os
+
+from src.TSHGameAssetManager import TSHGameAssetManager
 
 display_phase = True
 use_team_names = False
@@ -272,17 +275,14 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     image_path = find(
                         f"{character_key}.assets.{used_assets}.asset", characters)
                     eyesight_coordinates = None
-                    if all_eyesight:
-                        character_codename = find(
-                            f"{character_key}.codename", characters)
-                        skin_index = find(f"{character_key}.skin", characters)
-                        eyesight_coordinates_dict = all_eyesight.get(
-                            character_codename).get(skin_index)
-                        if not eyesight_coordinates_dict:
-                            eyesight_coordinates_dict = all_eyesight.get(
-                                character_codename).get("0")
-                        eyesight_coordinates = (eyesight_coordinates_dict.get(
-                            "x"), eyesight_coordinates_dict.get("y"))
+
+                    character_path = find(
+                        f"{character_key}.assets.{used_assets}", characters)
+
+                    if character_path.get("eyesight"):
+                        eyesight_coordinates = (
+                            character_path.get("eyesight")["x"], character_path.get("eyesight")["y"])
+
                     print(eyesight_coordinates)
                     if image_path:
                         character_list.append(image_path)
@@ -396,8 +396,10 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_max_dimensions = (round(template_data["character_images"]["dimensions"]["x"]*ratio[0]/2.0), round(
         template_data["player_text"]["dimensions"]["y"]*ratio[1]))
     text_player_coordinates = [
-        (round((template_data["character_images"]["position"]["x"])*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
-        (round((template_data["character_images"]["position"]["x"]+(2*template_data["character_images"]["dimensions"]["x"]/4.0))*ratio[0]), round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
+        (round((template_data["character_images"]["position"]["x"])*ratio[0]), round(
+            (template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1])),
+        (round((template_data["character_images"]["position"]["x"]+(2*template_data["character_images"]["dimensions"]["x"]/4.0))*ratio[0]),
+         round((template_data["player_text"]["height_center"]-(template_data["player_text"]["dimensions"]["y"]/2.0))*ratio[1]))
     ]
 
     font_path = font_1
@@ -441,7 +443,8 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             text_player_max_dimensions,
             player_text_color["has_outline"],
             player_text_color["outline_color"],
-            (round(template_data["player_text"]["x_offset"]*ratio[0]), round(template_data["player_text"]["y_padding"]*ratio[1]))
+            (round(template_data["player_text"]["x_offset"]*ratio[0]),
+             round(template_data["player_text"]["y_padding"]*ratio[1]))
         )
 
 
@@ -482,7 +485,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), y_padding)
+            (round(template_data["info_text"]
+             ["x_offset"]*ratio[0]/2.0), y_padding)
         )
 
         draw_text(
@@ -495,7 +499,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]/2.0), y_padding)
+            (round(template_data["info_text"]
+             ["x_offset"]*ratio[0]/2.0), y_padding)
         )
     else:
         round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
@@ -515,7 +520,8 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]["x_offset"]*ratio[0]), round(template_data["info_text"]["y_padding"]*ratio[1]))
+            (round(template_data["info_text"]["x_offset"]*ratio[0]),
+             round(template_data["info_text"]["y_padding"]*ratio[1]))
         )
 
 
@@ -569,11 +575,11 @@ def paste_side_icon(thumbnail, icon_path_list):
     if len(icon_path_list) > 2:
         raise(ValueError(msg="Error: icon_path_list has 3 or more elements"))
 
-    max_x_size = round(template_data["icons_position"]["side"]["dimensions"]["x"]*ratio[0])
-    max_y_size = round(template_data["icons_position"]["side"]["dimensions"]["y"]*ratio[0])
+    max_x_size = round(
+        template_data["icons_position"]["side"]["dimensions"]["x"]*ratio[0])
+    max_y_size = round(
+        template_data["icons_position"]["side"]["dimensions"]["y"]*ratio[0])
     max_size = (max_x_size, max_y_size)
-
-
 
     for index in range(0, len(icon_path_list)):
         icon_path = icon_path_list[index]
@@ -601,8 +607,11 @@ def paste_side_icon(thumbnail, icon_path_list):
 
             x_offset = index*template_data["base_ratio"]["x"]
             if template_data["icons_position"]["bind_to_character_images"]:
-                x_offset = template_data["character_images"]["position"]["x"] + index*template_data["character_images"]["dimensions"]["x"]
-            x_offset = x_offset - round(template_data["icons_position"]["side"]["x_offset"]) * ((index*2)-1)
+                x_offset = template_data["character_images"]["position"]["x"] + \
+                    index*template_data["character_images"]["dimensions"]["x"]
+            x_offset = x_offset - \
+                round(template_data["icons_position"]
+                      ["side"]["x_offset"]) * ((index*2)-1)
             icon_x = x_offset*ratio[0] - index*icon_size[0]
             icon_y = y_offset*ratio[1]
 
@@ -616,9 +625,61 @@ def paste_side_icon(thumbnail, icon_path_list):
     return(thumbnail)
 
 
-def createFalseData():
-    # TODO "game" : recup game asset ?
-    # TODO "player.character" : random ? with asset available
+def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: str = None):
+    # Array [{"name", "asset"}]
+    chars = []
+
+    if gameAssetManager and len(gameAssetManager.instance.characters.keys()) > 0:
+
+        for i in range(4):
+            key = list(gameAssetManager.instance.characters.keys())[
+                random.randint(0, len(gameAssetManager.instance.characters)-1)]
+
+            character = gameAssetManager.instance.characters[key]
+
+            data = gameAssetManager.instance.GetCharacterAssets(
+                character.get("codename"), 0)
+
+            asset = data.get(used_assets)
+
+            if not asset:
+                asset = data.get("full")
+            if not asset:
+                asset = data.get("portrait")
+
+            chars.append({
+                "name": key,
+                "asset": {
+                    "assets": {
+                        "full": asset
+                    },
+                    "codename": character["codename"],
+                    "name": key,
+                    "skin": "0"
+                }
+            })
+    else:
+        for i in range(4):
+            chars.append({
+                "name": f"Player {i+1}",
+                "asset": {
+                    "assets": {
+                        "full": {
+                            "asset": f"./assets/mock_data/mock_asset/full_character_{i}.png",
+                            "eyesight": {
+                                "x": 540,
+                                "y": 126
+                            }
+                        }
+                    },
+                    "codename": "character",
+                    "name": "Character",
+                    "skin": "0"
+                },
+            })
+
+    print(chars)
+
     data = {
         "game": {
             "codename": "test",
@@ -635,30 +696,12 @@ def createFalseData():
                     "player": {
                         "1": {
                             "character": {
-                                "1": {
-                                    "assets": {
-                                        "full": {
-                                            "asset": "./assets/mock_data/mock_asset/full_character_0.png"
-                                        }
-                                    },
-                                    "codename": "character",
-                                    "name": "Character",
-                                    "skin": "0"
-                                },
-                                "2": {
-                                    "assets": {
-                                        "full": {
-                                            "asset": "./assets/mock_data/mock_asset/full_character_1.png"
-                                        }
-                                    },
-                                    "codename": "character",
-                                    "name": "Character",
-                                    "skin": "1"
-                                }
+                                "1": chars[0]["asset"],
+                                "2": chars[1]["asset"]
                             },
                             "country": {},
-                            "mergedName": "Sponsor 1 | Player 1",
-                            "name": "Player 1",
+                            "mergedName": f"Sponsor 1 | {chars[0]['name']}",
+                            "name": chars[0]["name"],
                             "state": {},
                             "team": "Sponsor 1"
                         }
@@ -671,38 +714,20 @@ def createFalseData():
                     "player": {
                         "1": {
                             "character": {
-                                "1": {
-                                    "assets": {
-                                        "full": {
-                                            "asset": "./assets/mock_data/mock_asset/full_character_2.png"
-                                        }
-                                    },
-                                    "codename": "character",
-                                    "name": "Character",
-                                    "skin": "2"
-                                }
+                                "1": chars[2]["asset"]
                             },
                             "country": {},
-                            "mergedName": "Sponsor 2 | Player 2 [L]",
+                            "mergedName": f"Sponsor 2 | {chars[2]['name']}",
                             "name": "Player 2",
                             "state": {},
                             "team": "Sponsor 2"
                         },
                         "2": {
                             "character": {
-                                "1": {
-                                    "assets": {
-                                        "full": {
-                                            "asset": "./assets/mock_data/mock_asset/full_character_3.png"
-                                        }
-                                    },
-                                    "codename": "character",
-                                    "name": "Character",
-                                    "skin": "3"
-                                }
+                                "1": chars[3]["asset"]
                             },
                             "country": {},
-                            "mergedName": "Sponsor 3 | Player 3",
+                            "mergedName": f"Sponsor 3 | {chars[3]['name']}",
                             "name": "Player 3",
                             "state": {},
                             "team": "Sponsor 3"
@@ -717,7 +742,7 @@ def createFalseData():
     return data
 
 
-def generate(settingsManager, isPreview=False):
+def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail")
 
@@ -790,10 +815,12 @@ def generate(settingsManager, isPreview=False):
         zoom = settings.get(f"zoom/{game_codename}", 100)/100
     except Exception as e:
         if isPreview:
-            print(e)
-            data = createFalseData()
+            game_codename = data.get("game").get("codename")
+            data = createFalseData(
+                gameAssetManager, settings.get(f"asset/{game_codename}"))
             used_assets = "full"
             asset_data_path = f"./assets/mock_data/mock_asset/config.json"
+            zoom = settings.get(f"zoom/{game_codename}", 100)/100
         else:
             raise e
 
