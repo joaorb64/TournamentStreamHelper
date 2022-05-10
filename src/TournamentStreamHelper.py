@@ -70,7 +70,9 @@ class Window(QMainWindow):
         super().__init__()
 
         self.translator = QTranslator()
-        self.translator.load("./src/TournamentStreamHelper_pt_br.qm")
+        for f in os.listdir("./src/i18n/"):
+            if f.endswith(".qm"):
+                self.translator.load("./src/i18n/"+f)
         App.installTranslator(self.translator)
 
         self.signals = WindowSignals()
@@ -193,7 +195,8 @@ class Window(QMainWindow):
         hbox = QHBoxLayout()
         group_box.layout().addLayout(hbox)
 
-        self.btLoadPlayerSet = QPushButton("Load SmashGG user set")
+        self.btLoadPlayerSet = QPushButton(
+            QApplication.translate("app", "Load SmashGG user set"))
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
@@ -228,24 +231,29 @@ class Window(QMainWindow):
         self.optionsBt.setFixedSize(QSize(32, 32))
         self.optionsBt.setIconSize(QSize(32, 32))
         self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction("Always on top")
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Always on top"))
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction("Check for updates")
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Check for updates"))
         self.updateAction = action
         action.setIcon(QIcon('assets/icons/undo.svg'))
         action.triggered.connect(self.CheckForUpdates)
-        action = self.optionsBt.menu().addAction("Download assets")
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Download assets"))
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(self.DownloadAssets)
 
-        action = self.optionsBt.menu().addAction("Light mode")
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Light mode"))
         action.setCheckable(True)
         self.LoadTheme()
         action.setChecked(SettingsManager.Get("light_mode", False))
         action.toggled.connect(self.ToggleLightMode)
 
-        toggleWidgets = QMenu("Toggle widgets", self.optionsBt.menu())
+        toggleWidgets = QMenu(QApplication.translate(
+            "app", "Toggle widgets"), self.optionsBt.menu())
         self.optionsBt.menu().addMenu(toggleWidgets)
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
@@ -303,11 +311,11 @@ class Window(QMainWindow):
     def UpdateUserSetButton(self):
         if SettingsManager.Get("SmashGG_user"):
             self.btLoadPlayerSet.setText(
-                f"Load tournament and sets from SmashGG user ({SettingsManager.Get('SmashGG_user')})")
+                QApplication.translate("app", "Load tournament and sets from SmashGG user")+f"({SettingsManager.Get('SmashGG_user')})")
             self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btLoadPlayerSet.setText(
-                "Load tournament and sets from SmashGG user")
+                QApplication.translate("app", "Load tournament and sets from SmashGG user"))
             self.btLoadPlayerSet.setEnabled(False)
 
     def LoadUserSetClicked(self):
@@ -507,7 +515,8 @@ class Window(QMainWindow):
             return
 
         self.preDownloadDialogue = QDialog(self)
-        self.preDownloadDialogue.setWindowTitle("Download assets")
+        self.preDownloadDialogue.setWindowTitle(
+            QApplication.translate("app", "Download assets"))
         self.preDownloadDialogue.setWindowModality(Qt.WindowModal)
         self.preDownloadDialogue.setLayout(QVBoxLayout())
         self.preDownloadDialogue.show()
@@ -534,7 +543,8 @@ class Window(QMainWindow):
             proxyModel.setFilterFixedString(text)
 
         searchBar = QLineEdit()
-        searchBar.setPlaceholderText("Filter...")
+        searchBar.setPlaceholderText(
+            QApplication.translate("app", "Filter..."))
         self.preDownloadDialogue.layout().addWidget(searchBar)
         searchBar.textEdited.connect(filterList)
 
