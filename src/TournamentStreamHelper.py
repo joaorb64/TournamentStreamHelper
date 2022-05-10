@@ -69,6 +69,10 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.translator = QTranslator()
+        self.translator.load("./src/TournamentStreamHelper_pt_br.qm")
+        App.installTranslator(self.translator)
+
         self.signals = WindowSignals()
 
         splash = QSplashScreen(self, QPixmap(
@@ -128,7 +132,7 @@ class Window(QMainWindow):
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
         self.dockWidgets = []
-        
+
         thumbnailSetting = TSHThumbnailSettingsWidget()
         thumbnailSetting.setObjectName("Thumbnail Settings")
         self.addDockWidget(
@@ -179,7 +183,8 @@ class Window(QMainWindow):
             QSizePolicy.Minimum, QSizePolicy.Maximum)
         base_layout.layout().addWidget(group_box)
 
-        self.setTournamentBt = QPushButton("Set tournament")
+        self.setTournamentBt = QPushButton(
+            QApplication.translate("app", "Set tournament"))
         group_box.layout().addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
             lambda bt, s=self: TSHTournamentDataProvider.instance.SetSmashggEventSlug(s))
