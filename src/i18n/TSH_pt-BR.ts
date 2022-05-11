@@ -528,9 +528,8 @@
         <translation>Definir torneio</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="217"/>
         <source>Load SmashGG user set</source>
-        <translation>Carregar set de usuário do SmashGG</translation>
+        <translation type="vanished">Carregar set de usuário do SmashGG</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="253"/>
@@ -560,6 +559,7 @@
         <translation>Ativar/Desativar widgets</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="217"/>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TournamentStreamHelper.py" line="336"/>
         <source>Load tournament and sets from SmashGG user</source>
@@ -979,12 +979,14 @@
         <translation>]</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>)</source>

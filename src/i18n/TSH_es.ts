@@ -547,11 +547,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="217"/>
-        <source>Load SmashGG user set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../TournamentStreamHelper.py" line="253"/>
         <source>Always on top</source>
         <translation type="unfinished"></translation>
@@ -579,6 +574,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="217"/>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TournamentStreamHelper.py" line="336"/>
         <source>Load tournament and sets from SmashGG user</source>
@@ -931,12 +927,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>(</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>)</source>
