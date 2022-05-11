@@ -138,6 +138,11 @@ class TSHScoreboardWidget(QDockWidget):
             ["Characters", ["characters"]],
             ["Pronouns", ["pronoun", "pronounLabel"]],
         ]
+        elements[0][0] = QApplication.translate("app","Real Name")
+        elements[1][0] = QApplication.translate("app","Twitter")
+        elements[2][0] = QApplication.translate("app","Location")
+        elements[3][0] = QApplication.translate("app","Characters")
+        elements[4][0] = QApplication.translate("app","Pronouns")
         for element in elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
             action.setCheckable(True)
