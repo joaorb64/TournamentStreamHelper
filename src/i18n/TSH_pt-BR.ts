@@ -227,7 +227,7 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="80"/>
         <source>Background</source>
-        <translation>Fundo</translation>
+        <translation>Plano de Fundo</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="118"/>
@@ -800,22 +800,22 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="168"/>
         <source>Stream</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="169"/>
         <source>Phase</source>
-        <translation type="unfinished"></translation>
+        <translation>Fase</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="170"/>
         <source>Match</source>
-        <translation type="unfinished"></translation>
+        <translation>Partida</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="203"/>
         <source>Select a set</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um set</translation>
     </message>
     <message>
         <source>Twitch Username</source>
@@ -926,7 +926,7 @@
         <location filename="../TSHScoreboardWidget.py" line="418"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="486"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="431"/>
@@ -958,12 +958,12 @@
     <message>
         <location filename="../TSHAlertNotification.py" line="71"/>
         <source>Notifications ({0}/{1})</source>
-        <translation type="unfinished"></translation>
+        <translation>Notificações ({0}/{1})</translation>
     </message>
     <message>
         <location filename="../TSHAlertNotification.py" line="79"/>
         <source>Remind later</source>
-        <translation type="unfinished"></translation>
+        <translation>Lembrar mais tarde</translation>
     </message>
 </context>
 <context>
@@ -971,24 +971,24 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="530"/>
         <source>[</source>
-        <translation type="unfinished"></translation>
+        <translation>[</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="530"/>
         <source>]</source>
-        <translation type="unfinished"></translation>
+        <translation>]</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>(</source>
-        <translation type="unfinished"></translation>
+        <translation>(</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
         <location filename="../TSHScoreboardWidget.py" line="676"/>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
 </context>
 <context>
@@ -1007,7 +1007,7 @@
         <location filename="../TSHScoreboardWidget.py" line="396"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="485"/>
         <source>TSH - Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 </TS>
