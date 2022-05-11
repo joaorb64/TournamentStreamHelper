@@ -1,0 +1,10 @@
+Arbre Winner
+Arbre Loser
+Quarts de finale Winner
+Demi-Finale Winner
+Finale Winner
+Quarts de finale Loser
+Demi-Finale Loser
+Finale Loser
+Grande Finale
+Grande Finale Reset

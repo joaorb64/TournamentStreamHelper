@@ -164,8 +164,13 @@ class TSHTournamentDataProvider:
         sets = TSHTournamentDataProvider.instance.provider.GetMatches()
 
         model = QStandardItemModel()
-        model.setHorizontalHeaderLabels(
-            ["Stream", "Wave", "Title", "Player 1", "Player 2"])
+        horizontal_labels = ["Stream", "Wave", "Title", "Player 1", "Player 2"]
+        horizontal_labels[0] = QApplication.translate("app", "Stream")
+        horizontal_labels[1] = QApplication.translate("app", "Phase")
+        horizontal_labels[2] = QApplication.translate("app", "Match")
+        horizontal_labels[3] = QApplication.translate("app", "Player {0}").format(1)
+        horizontal_labels[4] = QApplication.translate("app", "Player {0}").format(2)
+        model.setHorizontalHeaderLabels(horizontal_labels)
 
         if sets is not None:
             for s in sets:
@@ -181,7 +186,7 @@ class TSHTournamentDataProvider:
                             pnames = []
                             for p, player in enumerate(s.get("entrants")[t]):
                                 pnames.append(player.get("gamerTag"))
-                            player_names[t] += " ("+", ".join(pnames)+")"
+                            player_names[t] += " "+QApplication.translate("punctuation", "(")+", ".join(pnames)+QApplication.translate("punctuation", ")")
                 except Exception as e:
                     traceback.print_exc()
 
@@ -195,7 +200,7 @@ class TSHTournamentDataProvider:
                 ])
 
         mainWindow.smashGGSetSelecDialog = QDialog(mainWindow)
-        mainWindow.smashGGSetSelecDialog.setWindowTitle("Select a set")
+        mainWindow.smashGGSetSelecDialog.setWindowTitle(QApplication.translate("app", "Select a set"))
         mainWindow.smashGGSetSelecDialog.setWindowModality(Qt.WindowModal)
 
         layout = QVBoxLayout()

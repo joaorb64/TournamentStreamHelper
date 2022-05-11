@@ -107,7 +107,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.layout().setSpacing(0)
 
         self.thumbnailBtn = QPushButton(
-            QApplication.translate("app", "Generate Thumbnail"))
+            QApplication.translate("app", "Generate Thumbnail") + " ")
         self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
         self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
@@ -393,7 +393,7 @@ class TSHScoreboardWidget(QDockWidget):
     def GenerateThumbnail(self):
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-        msgBox.setWindowTitle("TSH - Thumbnail")
+        msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
         try:
             thumbnailPath = thumbnail.generate(settingsManager=SettingsManager)
             msgBox.setText("The thumbnail has been generated here : ")
@@ -415,7 +415,7 @@ class TSHScoreboardWidget(QDockWidget):
             else:
                 msgBox.exec()
         except Exception as e:
-            msgBox.setText("Warning")
+            msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
@@ -673,7 +673,7 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateStreamButton(self):
         if SettingsManager.Get("twitch_username"):
             self.btLoadStreamSet.setText(
-                QApplication.translate("app",  "Load current stream set") + " ("+SettingsManager.Get("twitch_username")+")")
+                QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
             self.btLoadStreamSet.setEnabled(True)
         else:
             self.btLoadStreamSet.setText(
