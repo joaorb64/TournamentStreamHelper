@@ -806,7 +806,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>Set Twitch username</source>
-        <translation>Définit le nom d&apos;utilisateur Twitch</translation>
+        <translation>Définir le nom d&apos;utilisateur Twitch</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="134"/>
@@ -831,7 +831,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="153"/>
         <source>Set player</source>
-        <translation>Définit le joueur</translation>
+        <translation>Définir le joueur</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="666"/>
