@@ -63,22 +63,22 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="55"/>
         <source>Stagelist</source>
-        <translation>Liste des Terrains</translation>
+        <translation>Liste des Stages</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="65"/>
         <source>All stages</source>
-        <translation>Tous les terrains</translation>
+        <translation>Tous les stages</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="164"/>
         <source>Neutral stages</source>
-        <translation>Terrains Neutres</translation>
+        <translation>Stages Neutres</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="250"/>
         <source>Counterpick stages</source>
-        <translation>Terrains Counterpick</translation>
+        <translation>Stages Counterpick</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="271"/>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="313"/>
         <source>Stage striking</source>
-        <translation>Ban des terrains</translation>
+        <translation>Ban des stages</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="321"/>
@@ -358,7 +358,7 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="774"/>
         <source>Open File Explorer after generation?</source>
-        <translation>Ouvrir l&apos;Explorateur de Fichier après la génération ?</translation>
+        <translation>Ouvrir l&apos;Explorateur de Fichiers après la génération ?</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="791"/>
