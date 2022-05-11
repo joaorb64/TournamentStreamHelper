@@ -69,11 +69,22 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # HAS TO GO TO ITS OWN CLASS IN THIS PR!
+
+        current_locale = QtCore.QLocale().uiLanguages()
+        print("Current locale", current_locale)
+
         self.translator = QTranslator()
-        for f in os.listdir("./src/i18n/"):
-            if f.endswith(".qm"):
-                self.translator.load("./src/i18n/"+f)
+        for locale in current_locale:
+            for f in os.listdir("./src/i18n/"):
+                if f.endswith(".qm"):
+                    lang = f.split("_", 1)[1].split(".")[0]
+                    if lang == locale:
+                        self.translator.load(QLocale(lang), "./src/i18n/"+f)
+                        break
         App.installTranslator(self.translator)
+
+        # TODO
 
         self.signals = WindowSignals()
 
