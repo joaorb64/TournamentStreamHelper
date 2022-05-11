@@ -80,7 +80,8 @@ class TSHTournamentDataProvider:
         inp.setLayout(layout)
 
         inp.layout().addWidget(QLabel(
-            QApplication.translate("app","Paste the tournament URL.")+"\n" + QApplication.translate("app","For SmashGG, the link must contain the /event/ part")
+            QApplication.translate("app", "Paste the tournament URL.")+"\n" + QApplication.translate(
+                "app", "For SmashGG, the link must contain the /event/ part")
         ))
 
         lineEdit = QLineEdit()
@@ -106,7 +107,7 @@ class TSHTournamentDataProvider:
         okButton.setDisabled(True)
         inp.layout().addWidget(okButton)
 
-        inp.setWindowTitle(QApplication.translate("app","Set tournament URL"))
+        inp.setWindowTitle(QApplication.translate("app", "Set tournament URL"))
         inp.resize(600, 10)
 
         if inp.exec_() == QDialog.Accepted:
@@ -131,7 +132,7 @@ class TSHTournamentDataProvider:
 
     def SetTwitchUsername(self, window):
         text, okPressed = QInputDialog.getText(
-            window, QApplication.translate("app","Set Twitch username"), QApplication.translate("app","Twitch Username: "), QLineEdit.Normal, "")
+            window, QApplication.translate("app", "Set Twitch username"), QApplication.translate("app", "Twitch Username")+": ", QLineEdit.Normal, "")
         if okPressed:
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
@@ -141,16 +142,19 @@ class TSHTournamentDataProvider:
         window_text = ""
 
         if (self.provider and self.provider.url and "smash.gg" in self.provider.url) or smashgg:
-            window_text = QApplication.translate("app","Paste the URL to the player's SmashGG profile")
+            window_text = QApplication.translate(
+                "app", "Paste the URL to the player's SmashGG profile")
         elif self.provider and self.provider.url and "challonge" in self.provider.url:
-            window_text = QApplication.translate("app","Insert the player's name in bracket")
+            window_text = QApplication.translate(
+                "app", "Insert the player's name in bracket")
             providerName = self.provider.name
         else:
-            print(QApplication.translate("app","Invalid tournament data provider"))
+            print(QApplication.translate(
+                "app", "Invalid tournament data provider"))
             return
 
         text, okPressed = QInputDialog.getText(
-            window, QApplication.translate("app","Set player"), window_text, QLineEdit.Normal, "")
+            window, QApplication.translate("app", "Set player"), window_text, QLineEdit.Normal, "")
 
         if okPressed:
             SettingsManager.Set(providerName+"_user", text)
