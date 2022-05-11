@@ -132,7 +132,7 @@ class TSHTournamentDataProvider:
 
     def SetTwitchUsername(self, window):
         text, okPressed = QInputDialog.getText(
-            window, QApplication.translate("app", "Set Twitch username"), QApplication.translate("app", "Twitch Username")+": ", QLineEdit.Normal, "")
+            window, QApplication.translate("app", "Set Twitch username"), QApplication.translate("app", "Twitch Username:")+" ", QLineEdit.Normal, "")
         if okPressed:
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()

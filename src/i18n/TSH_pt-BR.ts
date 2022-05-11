@@ -566,9 +566,8 @@
         <translation>Carregar torneio e sets de usuário do SmashGG</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="399"/>
         <source>Failed to fetch version from github</source>
-        <translation>Falhou em obter versão do github</translation>
+        <translation type="vanished">Falhou em obter versão do github</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="416"/>
@@ -585,9 +584,8 @@
         <translation>Atualizar para a versão mais recente?</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="425"/>
         <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/</source>
-        <translation>NOTA: UM BACKUP DE /layout/ SERÁ FEITO, MAS TODOS OS DADOS EM /assets/ SERÃO SUBSTITUIDOS</translation>
+        <translation type="vanished">NOTA: UM BACKUP DE /layout/ SERÁ FEITO, MAS TODOS OS DADOS EM /assets/ SERÃO SUBSTITUIDOS</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="188"/>
@@ -604,9 +602,8 @@
         <translation type="vanished">Atualização disponível</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="422"/>
         <source>New version available</source>
-        <translation>Nova versão disponível</translation>
+        <translation type="vanished">Nova versão disponível</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="434"/>
@@ -617,13 +614,28 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="443"/>
+        <location filename="../TournamentStreamHelper.py" line="472"/>
         <source>Downloading update...</source>
         <translation>Baixando atualização...</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="472"/>
         <source>Downloading update</source>
-        <translation>Baixando atualização</translation>
+        <translation type="vanished">Baixando atualização</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="399"/>
+        <source>Failed to fetch version from github:</source>
+        <translation>Falhou em obter a versão do github:</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="422"/>
+        <source>New version available:</source>
+        <translation>Nova versão disponível:</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="425"/>
+        <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
+        <translation>OBS: IRÁ FAZER UM BACKUP DE /layout/ E SUBSTITUIR OS DADOS EM TODAS AS OUTRAS PASTAS</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="499"/>
@@ -780,8 +792,12 @@
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
+        <source>Twitch Username:</source>
+        <translation>Nome de usuário no Twitch:</translation>
+    </message>
+    <message>
         <source>Twitch Username</source>
-        <translation>Nome de usuário do Twitch</translation>
+        <translation type="vanished">Nome de usuário do Twitch</translation>
     </message>
     <message>
         <source>Twitch Username: </source>

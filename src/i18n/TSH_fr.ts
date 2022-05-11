@@ -558,9 +558,8 @@
         <translation>Charger un tournoi et des sets depuis un utilisateur Start.gg</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="399"/>
         <source>Failed to fetch version from github</source>
-        <translation>Échec de la récupération de la version depuis Github</translation>
+        <translation type="vanished">Échec de la récupération de la version depuis Github</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="416"/>
@@ -577,9 +576,8 @@
         <translation>Voulez-vous installer la nouvelle version ?</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="425"/>
         <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/</source>
-        <translation>NOTE : CRÉERA UNE COPIE DU DOSSIER /layout/ ET ÉCRASERA LES DONNÉES PRÉSENTES DANS /assets/</translation>
+        <translation type="vanished">NOTE : CRÉERA UNE COPIE DU DOSSIER /layout/ ET ÉCRASERA LES DONNÉES PRÉSENTES DANS /assets/</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="188"/>
@@ -592,11 +590,6 @@
         <translation type="vanished">Téléchargement de la mise à jour... </translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="422"/>
-        <source>New version available</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../TournamentStreamHelper.py" line="434"/>
         <location filename="../TournamentStreamHelper.py" line="443"/>
         <location filename="../TournamentStreamHelper.py" line="703"/>
@@ -605,12 +598,23 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="443"/>
+        <location filename="../TournamentStreamHelper.py" line="472"/>
         <source>Downloading update...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="472"/>
-        <source>Downloading update</source>
+        <location filename="../TournamentStreamHelper.py" line="399"/>
+        <source>Failed to fetch version from github:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="422"/>
+        <source>New version available:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="425"/>
+        <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -826,7 +830,7 @@
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
-        <source>Twitch Username</source>
+        <source>Twitch Username:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

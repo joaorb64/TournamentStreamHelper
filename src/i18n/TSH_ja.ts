@@ -558,28 +558,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="399"/>
-        <source>Failed to fetch version from github</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../TournamentStreamHelper.py" line="416"/>
         <source>Updater</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="422"/>
-        <source>New version available</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../TournamentStreamHelper.py" line="425"/>
         <source>Update to latest version?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="425"/>
-        <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -597,12 +582,23 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="443"/>
+        <location filename="../TournamentStreamHelper.py" line="472"/>
         <source>Downloading update...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="472"/>
-        <source>Downloading update</source>
+        <location filename="../TournamentStreamHelper.py" line="399"/>
+        <source>Failed to fetch version from github:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="422"/>
+        <source>New version available:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="425"/>
+        <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -760,7 +756,7 @@
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
-        <source>Twitch Username</source>
+        <source>Twitch Username:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

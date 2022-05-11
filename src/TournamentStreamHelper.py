@@ -396,7 +396,7 @@ class Window(QMainWindow):
             if silent == False:
                 messagebox = QMessageBox()
                 messagebox.setText(
-                    QApplication.translate("app", "Failed to fetch version from github")+":\n"+str(e))
+                    QApplication.translate("app", "Failed to fetch version from github:")+"\n"+str(e))
                 messagebox.exec()
 
         try:
@@ -419,10 +419,10 @@ class Window(QMainWindow):
                     buttonReply.setLayout(vbox)
 
                     buttonReply.layout().addWidget(
-                        QLabel(QApplication.translate("app", "New version available")+": "+myVersion+" → "+currVersion))
+                        QLabel(QApplication.translate("app", "New version available:")+" "+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        QApplication.translate("app", "Update to latest version?")+"\n"+QApplication.translate("app", "NOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/")))
+                        QApplication.translate("app", "Update to latest version?")+"\n"+QApplication.translate("app", "NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES")))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)
@@ -469,7 +469,7 @@ class Window(QMainWindow):
 
                         def progress(downloaded):
                             self.downloadDialogue.setLabelText(
-                                QApplication.translate("app", "Downloading update")+"... "+str(downloaded/1024/1024)+" MB")
+                                QApplication.translate("app", "Downloading update...")+" "+str(downloaded/1024/1024)+" MB")
 
                         def finished():
                             self.downloadDialogue.close()
