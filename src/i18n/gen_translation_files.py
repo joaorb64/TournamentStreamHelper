@@ -15,7 +15,8 @@ print(file_list)
 languages = [
     "pt-BR",
     "fr",
-    "ja"
+    "ja",
+    "es"
 ]
 
 output = [f'src/i18n/TSH_{lang}.ts' for lang in languages]
