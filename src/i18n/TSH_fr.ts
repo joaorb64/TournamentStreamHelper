@@ -32,11 +32,11 @@
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation>Formulaire</translation>
     </message>
@@ -346,7 +346,7 @@
         <translation>(Aucun jeu selectionné)</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="761"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="767"/>
         <source>UI Options</source>
         <translation>Options d&apos;Interface</translation>
     </message>
@@ -415,14 +415,14 @@
 <context>
     <name>GroupBox</name>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <location filename="../layout/TSHCommentary.ui" line="23"/>
+        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <source>GroupBox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <location filename="../layout/TSHCommentary.ui" line="26"/>
+        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <source>Commentator 1</source>
         <translation>Commentateur 1</translation>
     </message>
@@ -447,38 +447,38 @@
         <translation>Sponsor</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="96"/>
         <location filename="../layout/TSHCommentary.ui" line="90"/>
+        <location filename="../layout/TSHCommentator.ui" line="96"/>
         <source>GamerTag</source>
         <translation>Pseudo</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="114"/>
         <location filename="../layout/TSHCommentary.ui" line="108"/>
+        <location filename="../layout/TSHCommentator.ui" line="114"/>
         <source>REAL NAME</source>
         <translation>NOM RÉEL</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="130"/>
         <location filename="../layout/TSHCommentary.ui" line="124"/>
+        <location filename="../layout/TSHCommentator.ui" line="130"/>
         <source>Real Name</source>
         <translation>Nom Réel</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="146"/>
         <location filename="../layout/TSHCommentary.ui" line="140"/>
+        <location filename="../layout/TSHCommentator.ui" line="146"/>
         <source>TWITTER</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="162"/>
         <location filename="../layout/TSHCommentary.ui" line="156"/>
+        <location filename="../layout/TSHCommentator.ui" line="162"/>
         <source>Handle Only</source>
         <translation>Pseudo Seulement</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <location filename="../layout/TSHCommentary.ui" line="170"/>
+        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <source>PRONOUNS</source>
         <translation>PRONOMS</translation>
     </message>
@@ -531,6 +531,23 @@
         <location filename="../TournamentStreamHelper.py" line="547"/>
         <source>Filter...</source>
         <translation>Filtrer...</translation>
+    </message>
+</context>
+<context>
+    <name>thumb_app</name>
+    <message>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="808"/>
+        <source>Please select a game first</source>
+        <translation>Veuillez sélectionner un jeu</translation>
+    </message>
+    <message>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
+        <source>Player {0} tag missing</source>
+        <translation>Le pseudo du joueur {0} est absent</translation>
+    </message>
+    <message>
+        <source>Thumbnail successfully saved as {0}/{1}.png and {0}/{1}.jpg</source>
+        <translation type="vanished">Miniature sauvegardée sous {0}/{1}.png et {0}/{1}.jpg</translation>
     </message>
 </context>
 </TS>

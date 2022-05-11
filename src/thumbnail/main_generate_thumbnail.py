@@ -805,11 +805,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             data = json.loads(f.read())
         # if data missing
         if not data.get("game").get("codename"):
-            raise Exception("Please select a game first")
+            raise Exception(QApplication.translate("thumb_app", "Please select a game first"))
         # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
         for i in [1, 2]:
             if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
-                raise Exception(f"Player {i} tag missing")
+                raise Exception(QApplication.translate("thumb_app", "Player {0} tag missing").format(i))
 
         game_codename = data.get("game").get("codename")
         used_assets = settings[f"asset/{game_codename}"]

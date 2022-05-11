@@ -32,11 +32,11 @@
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
@@ -415,14 +415,14 @@
 <context>
     <name>GroupBox</name>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <location filename="../layout/TSHCommentary.ui" line="23"/>
+        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <source>GroupBox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <location filename="../layout/TSHCommentary.ui" line="26"/>
+        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <source>Commentator 1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -447,38 +447,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="96"/>
         <location filename="../layout/TSHCommentary.ui" line="90"/>
+        <location filename="../layout/TSHCommentator.ui" line="96"/>
         <source>GamerTag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="114"/>
         <location filename="../layout/TSHCommentary.ui" line="108"/>
+        <location filename="../layout/TSHCommentator.ui" line="114"/>
         <source>REAL NAME</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="130"/>
         <location filename="../layout/TSHCommentary.ui" line="124"/>
+        <location filename="../layout/TSHCommentator.ui" line="130"/>
         <source>Real Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="146"/>
         <location filename="../layout/TSHCommentary.ui" line="140"/>
+        <location filename="../layout/TSHCommentator.ui" line="146"/>
         <source>TWITTER</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="162"/>
         <location filename="../layout/TSHCommentary.ui" line="156"/>
+        <location filename="../layout/TSHCommentator.ui" line="162"/>
         <source>Handle Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <location filename="../layout/TSHCommentary.ui" line="170"/>
+        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <source>PRONOUNS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -530,6 +530,19 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="547"/>
         <source>Filter...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>thumb_app</name>
+    <message>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="808"/>
+        <source>Please select a game first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
+        <source>Player {0} tag missing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
