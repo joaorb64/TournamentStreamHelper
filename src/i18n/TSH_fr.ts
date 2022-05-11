@@ -920,6 +920,16 @@
         <source>Pronouns</source>
         <translation>Pronoms</translation>
     </message>
+    <message>
+        <location filename="../TSHAlertNotification.py" line="71"/>
+        <source>Notifications ({0}/{1})</source>
+        <translation>Alertes ({0}/{1})</translation>
+    </message>
+    <message>
+        <location filename="../TSHAlertNotification.py" line="79"/>
+        <source>Remind later</source>
+        <translation>Rappeler plus tard</translation>
+    </message>
 </context>
 <context>
     <name>punctuation</name>
@@ -961,6 +971,12 @@
     <message>
         <source>Thumbnail successfully saved as {0}/{1}.png and {0}/{1}.jpg</source>
         <translation type="vanished">Miniature sauvegardée sous {0}/{1}.png et {0}/{1}.jpg</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="396"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="485"/>
+        <source>TSH - Thumbnail</source>
+        <translation type="unfinished">TSH - Miniature</translation>
     </message>
 </context>
 </TS>

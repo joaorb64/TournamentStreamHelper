@@ -896,6 +896,16 @@
         <source>Load user set</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../TSHAlertNotification.py" line="71"/>
+        <source>Notifications ({0}/{1})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHAlertNotification.py" line="79"/>
+        <source>Remind later</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>punctuation</name>
@@ -932,6 +942,12 @@
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
         <source>Player {0} tag missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="396"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="485"/>
+        <source>TSH - Thumbnail</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

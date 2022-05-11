@@ -200,7 +200,7 @@ class TSHTournamentDataProvider:
                 ])
 
         mainWindow.smashGGSetSelecDialog = QDialog(mainWindow)
-        mainWindow.smashGGSetSelecDialog.setWindowTitle("Select a set")
+        mainWindow.smashGGSetSelecDialog.setWindowTitle(QApplication.translate("Select a set"))
         mainWindow.smashGGSetSelecDialog.setWindowModality(Qt.WindowModal)
 
         layout = QVBoxLayout()
