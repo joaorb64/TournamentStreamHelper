@@ -483,7 +483,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             msgBox = QMessageBox()
             msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
             msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
-            msgBox.setText("Warning")
+            msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()

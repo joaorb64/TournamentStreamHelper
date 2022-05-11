@@ -415,7 +415,7 @@ class TSHScoreboardWidget(QDockWidget):
             else:
                 msgBox.exec()
         except Exception as e:
-            msgBox.setText("Warning")
+            msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()

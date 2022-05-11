@@ -796,6 +796,12 @@
         <translation>ÉQUIPE {0}</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="418"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="486"/>
+        <source>Warning</source>
+        <translation>Attention</translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardWidget.py" line="431"/>
         <source>Load set from {0}</source>
         <translation>Charger un set depuis {0}</translation>
@@ -976,7 +982,7 @@
         <location filename="../TSHScoreboardWidget.py" line="396"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="485"/>
         <source>TSH - Thumbnail</source>
-        <translation type="unfinished">TSH - Miniature</translation>
+        <translation>TSH - Miniature</translation>
     </message>
 </context>
 </TS>

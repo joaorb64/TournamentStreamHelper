@@ -918,6 +918,12 @@
         <translation>TIME {0}</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="418"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="486"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardWidget.py" line="431"/>
         <source>Load set from {0}</source>
         <translation>Carregar set do {0}</translation>
