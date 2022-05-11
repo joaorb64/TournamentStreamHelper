@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>175</height>
+    <height>199</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,7 +67,7 @@
       </font>
      </property>
      <property name="text">
-      <string>TEAM/NAME</string>
+      <string>SPONSOR/TAG</string>
      </property>
     </widget>
    </item>
@@ -117,6 +117,9 @@
       <font>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="placeholderText">
+      <string/>
      </property>
     </widget>
    </item>
@@ -186,7 +189,7 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="placeholderText">
-        <string>Team</string>
+        <string>Sponsor</string>
        </property>
       </widget>
      </item>

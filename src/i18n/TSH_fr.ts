@@ -158,8 +158,8 @@
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="70"/>
-        <source>TEAM/NAME</source>
-        <translation>EQUIPE/NOM</translation>
+        <source>SPONSOR/TAG</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="84"/>
@@ -177,37 +177,37 @@
         <translation>PRONOMS</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="133"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="136"/>
         <source>CHARACTERS</source>
         <translation>PERSONNAGES</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="152"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="155"/>
         <source>REAL NAME</source>
         <translation>NOM RÉEL</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="166"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="169"/>
         <source>PLAYER</source>
         <translation>JOUEUR</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="189"/>
-        <source>Team</source>
-        <translation>Équipe</translation>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="192"/>
+        <source>Sponsor</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="201"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="204"/>
         <source>GamerTag</source>
         <translation>Pseudo</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="232"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="235"/>
         <source>Region</source>
         <translation>Région</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="256"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="259"/>
         <source>Country</source>
         <translation>Pays</translation>
     </message>
@@ -341,32 +341,32 @@
         <translation>Pack d'Images</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="761"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="732"/>
+        <source>(No game selected)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="767"/>
         <source>UI Options</source>
-        <translation>Options d'Interface</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="819"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="825"/>
         <source>Preview</source>
-        <translation>Aperçu</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="726"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;(No game selected)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>(Aucun jeu sélectionné)</translation>
-    </message>
-    <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="768"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="774"/>
         <source>Open File Explorer after generation?</source>
         <translation>Ouvrir l'Explorateur de Fichier après la génération ?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="785"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="791"/>
         <source>Reset to Defaults</source>
         <translation>Réinitialiser par Défaut</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="837"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="843"/>
         <source>Update Preview</source>
         <translation>Mettre à jour l'Aperçu</translation>
     </message>
@@ -427,16 +427,24 @@
         <translation>Commentateur 1</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="53"/>
         <location filename="../layout/TSHCommentary.ui" line="47"/>
         <source>TEAM/NAME</source>
         <translation>ÉQUIPE/NOM</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="80"/>
         <location filename="../layout/TSHCommentary.ui" line="74"/>
         <source>Team</source>
         <translation>Équipe</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHCommentator.ui" line="53"/>
+        <source>SPONSOR/TAG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHCommentator.ui" line="80"/>
+        <source>Sponsor</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../layout/TSHCommentator.ui" line="96"/>
@@ -469,7 +477,7 @@
         <translation>Pseudo Seulement</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="176"/>
+        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <location filename="../layout/TSHCommentary.ui" line="170"/>
         <source>PRONOUNS</source>
         <translation>PRONOMS</translation>
