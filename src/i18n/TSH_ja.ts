@@ -797,6 +797,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TSHTournamentDataProvider.py" line="203"/>
+        <source>Select a set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="666"/>
         <source>Sponsor {0}</source>
         <translation type="unfinished"></translation>

@@ -857,6 +857,11 @@
         <translation>Match</translation>
     </message>
     <message>
+        <location filename="../TSHTournamentDataProvider.py" line="203"/>
+        <source>Select a set</source>
+        <translation>Sélectionner un set</translation>
+    </message>
+    <message>
         <source>Twitch Username: </source>
         <translation type="vanished">Nom d&apos;utilisateur Twitch : </translation>
     </message>

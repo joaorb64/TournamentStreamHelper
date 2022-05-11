@@ -813,6 +813,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TSHTournamentDataProvider.py" line="203"/>
+        <source>Select a set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Twitch Username</source>
         <translation type="vanished">Nome de usuário do Twitch</translation>
     </message>
