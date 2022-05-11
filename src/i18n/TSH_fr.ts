@@ -194,7 +194,7 @@
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="192"/>
         <source>Sponsor</source>
-        <translation type="unfinished"></translation>
+        <translation>Sponsor</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="204"/>
@@ -343,7 +343,7 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="732"/>
         <source>(No game selected)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Aucun jeu selectionné)</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="761"/>
@@ -353,7 +353,7 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="825"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Aperçu</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="774"/>
@@ -439,12 +439,12 @@
     <message>
         <location filename="../layout/TSHCommentator.ui" line="53"/>
         <source>SPONSOR/TAG</source>
-        <translation type="unfinished"></translation>
+        <translation>SPONSOR/NOM</translation>
     </message>
     <message>
         <location filename="../layout/TSHCommentator.ui" line="80"/>
         <source>Sponsor</source>
-        <translation type="unfinished"></translation>
+        <translation>Sponsor</translation>
     </message>
     <message>
         <location filename="../layout/TSHCommentator.ui" line="96"/>
