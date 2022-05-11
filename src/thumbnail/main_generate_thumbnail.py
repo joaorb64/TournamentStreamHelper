@@ -662,8 +662,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     else:
         for i in range(4):
             chars.append({
-                "name": f"Player {i+1}",
-                "team": f"Sponsor {i+1}",
+                "name": QApplication.translate("app","Player {0}").format(i+1),
+                "team": QApplication.translate("app","Sponsor {0}").format(i+1),
                 "asset": {
                     "assets": {
                         "full": {
@@ -690,8 +690,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
         },
         "score": {
             "best_of": 0,
-            "match": "Winners Finals",
-            "phase": "Pool A",
+            "match": QApplication.translate("app","Winners Finals"),
+            "phase": QApplication.translate("app","Pool {0}").format("A"),
             "team": {
                 "1": {
                     "losers": False,
@@ -709,7 +709,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team A"
+                    "teamName": QApplication.translate("app","Team {0}").format("A")
                 },
                 "2": {
                     "losers": False,
@@ -736,7 +736,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team B"
+                    "teamName": QApplication.translate("app","Team {0}").format("B")
                 }
             }
         }
@@ -805,11 +805,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             data = json.loads(f.read())
         # if data missing
         if not data.get("game").get("codename"):
-            raise Exception("Please select a game first")
+            raise Exception(QApplication.translate("thumb_app", "Please select a game first"))
         # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
         for i in [1, 2]:
             if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
-                raise Exception(f"Player {i} tag missing")
+                raise Exception(QApplication.translate("thumb_app", "Player {0} tag missing").format(i))
 
         game_codename = data.get("game").get("codename")
         used_assets = settings[f"asset/{game_codename}"]

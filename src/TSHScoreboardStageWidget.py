@@ -113,7 +113,7 @@ class TSHScoreboardStageWidget(QWidget):
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
-            f"Open <a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a> in a browser to stage strike.")
+            QApplication.translate("app","Open {0} in a browser to stage strike.").format("<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
         self.signals.rulesets_changed.connect(self.LoadRulesets)
@@ -185,7 +185,7 @@ class TSHScoreboardStageWidget(QWidget):
                     "codename") and ruleset.get("name") == self.rulesetName.text()), None)
 
         if found:
-            self.btSave.setText("Update")
+            self.btSave.setText(QApplication.translate("app","Update"))
             self.btDelete.setEnabled(True)
         else:
             self.btSave.setText("Save new")

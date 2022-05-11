@@ -150,7 +150,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.thumbnailGenerationThread.setMaxThreadCount(1)
         self.lock = Lock()
 
-        self.setWindowTitle("Thumbnail Settings")
+        self.setWindowTitle(QApplication.translate("app","Thumbnail Settings"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -482,7 +482,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             print(e)
             msgBox = QMessageBox()
             msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-            msgBox.setWindowTitle("THS - Thumbnail")
+            msgBox.setWindowTitle(f"TSH - {QApplication.translate('thumb_app', 'Thumbnail')}")
             msgBox.setText("Warning")
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
