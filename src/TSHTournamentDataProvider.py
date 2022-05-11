@@ -181,7 +181,7 @@ class TSHTournamentDataProvider:
                             pnames = []
                             for p, player in enumerate(s.get("entrants")[t]):
                                 pnames.append(player.get("gamerTag"))
-                            player_names[t] += " ("+", ".join(pnames)+")"
+                            player_names[t] += " "+QApplication.translate("punctuation", "(")+", ".join(pnames)+QApplication.translate("punctuation", ")")
                 except Exception as e:
                     traceback.print_exc()
 

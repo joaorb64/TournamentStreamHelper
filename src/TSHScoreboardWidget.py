@@ -107,7 +107,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.layout().setSpacing(0)
 
         self.thumbnailBtn = QPushButton(
-            QApplication.translate("app", "Generate Thumbnail"))
+            QApplication.translate("app", "Generate Thumbnail") + " ")
         self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
         self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
@@ -673,7 +673,7 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateStreamButton(self):
         if SettingsManager.Get("twitch_username"):
             self.btLoadStreamSet.setText(
-                QApplication.translate("app",  "Load current stream set") + " ("+SettingsManager.Get("twitch_username")+")")
+                QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
             self.btLoadStreamSet.setEnabled(True)
         else:
             self.btLoadStreamSet.setText(

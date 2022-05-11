@@ -82,6 +82,10 @@ class Window(QMainWindow):
                     if lang == locale:
                         self.translator.load(QLocale(lang), "./src/i18n/"+f)
                         break
+                    elif lang == locale.split("-")[0]:
+                        self.translator.load(QLocale(lang), "./src/i18n/"+f)
+                        break
+
         App.installTranslator(self.translator)
 
         # TODO
@@ -523,7 +527,7 @@ class Window(QMainWindow):
                     p.end()
                     self.optionsBt.setIcon(QIcon(baseIcon))
                     self.updateAction.setText(
-                        QApplication.translate("app", "Check for updates") + " [" + QApplication.translate("app", "Update available!") + "]")
+                        QApplication.translate("app", "Check for updates") + " " + QApplication.translate("punctuation", "[") + QApplication.translate("app", "Update available!") + QApplication.translate("punctuation", "]"))
 
     def DownloadAssets(self):
         assets = self.DownloadAssetsFetch()
