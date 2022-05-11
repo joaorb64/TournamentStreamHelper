@@ -214,7 +214,7 @@ class Window(QMainWindow):
         group_box.layout().addLayout(hbox)
 
         self.btLoadPlayerSet = QPushButton(
-            QApplication.translate("app", "Load SmashGG user set"))
+            QApplication.translate("app", "Load tournament and sets from SmashGG user"))
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
@@ -329,7 +329,7 @@ class Window(QMainWindow):
     def UpdateUserSetButton(self):
         if SettingsManager.Get("SmashGG_user"):
             self.btLoadPlayerSet.setText(
-                QApplication.translate("app", "Load tournament and sets from SmashGG user")+f"({SettingsManager.Get('SmashGG_user')})")
+                QApplication.translate("app", "Load tournament and sets from SmashGG user")+" "+f"({SettingsManager.Get('SmashGG_user')})")
             self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btLoadPlayerSet.setText(

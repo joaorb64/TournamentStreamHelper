@@ -520,9 +520,8 @@
         <translation>Définir le tournoi</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="218"/>
         <source>Load SmashGG user set</source>
-        <translation>Charger le set d&apos;un utilisateur Start.gg</translation>
+        <translation type="vanished">Charger le set d&apos;un utilisateur Start.gg</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="254"/>
@@ -552,6 +551,7 @@
         <translation>Activer des gadgets</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="218"/>
         <location filename="../TournamentStreamHelper.py" line="333"/>
         <location filename="../TournamentStreamHelper.py" line="337"/>
         <source>Load tournament and sets from SmashGG user</source>
