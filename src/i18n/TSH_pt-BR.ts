@@ -157,9 +157,13 @@
         <translation>Nome Real</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="70"/>
         <source>TEAM/NAME</source>
-        <translation>EQUIPE/TAG</translation>
+        <translation type="vanished">EQUIPE/TAG</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="70"/>
+        <source>SPONSOR/TAG</source>
+        <translation>PATROCINADOR/TAG</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="84"/>
@@ -177,37 +181,41 @@
         <translation>PRONOMES</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="133"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="136"/>
         <source>CHARACTERS</source>
         <translation>PERSONAGENS</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="152"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="155"/>
         <source>REAL NAME</source>
         <translation>NOME REAL</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="166"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="169"/>
         <source>PLAYER</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="189"/>
-        <source>Team</source>
-        <translation>Equipe</translation>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="192"/>
+        <source>Sponsor</source>
+        <translation>Patrocinador</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="201"/>
+        <source>Team</source>
+        <translation type="vanished">Equipe</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="204"/>
         <source>GamerTag</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="232"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="235"/>
         <source>Region</source>
         <translation>País</translation>
     </message>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="256"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="259"/>
         <source>Country</source>
         <translation>Região</translation>
     </message>
@@ -341,32 +349,32 @@
         <translation>Pacote de Gráficos</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="761"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="732"/>
+        <source>(No game selected)</source>
+        <translation>(Nenhum jogo selecionado)</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="767"/>
         <source>UI Options</source>
         <translation>Opções da interface</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="819"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="825"/>
         <source>Preview</source>
         <translation>Pré-visualização</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="726"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;(No game selected)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="768"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="774"/>
         <source>Open File Explorer after generation?</source>
         <translation>Abrir pasta destino após gerar thumbnail?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="785"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="791"/>
         <source>Reset to Defaults</source>
         <translation>Resetar para padrões</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="837"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="843"/>
         <source>Update Preview</source>
         <translation>Atualizar pré-visualização</translation>
     </message>
@@ -427,16 +435,24 @@
         <translation>Comentarista 1</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="53"/>
         <location filename="../layout/TSHCommentary.ui" line="47"/>
         <source>TEAM/NAME</source>
         <translation>EQUIPE/TAG</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="80"/>
         <location filename="../layout/TSHCommentary.ui" line="74"/>
         <source>Team</source>
         <translation>Equipe</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHCommentator.ui" line="53"/>
+        <source>SPONSOR/TAG</source>
+        <translation>PATROCINADOR/TAG</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHCommentator.ui" line="80"/>
+        <source>Sponsor</source>
+        <translation>Patrocinador</translation>
     </message>
     <message>
         <location filename="../layout/TSHCommentator.ui" line="96"/>
@@ -469,7 +485,7 @@
         <translation>Somente o handle</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="176"/>
+        <location filename="../layout/TSHCommentator.ui" line="178"/>
         <location filename="../layout/TSHCommentary.ui" line="170"/>
         <source>PRONOUNS</source>
         <translation>PRONOMES</translation>
