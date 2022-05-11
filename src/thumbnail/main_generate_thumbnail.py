@@ -662,8 +662,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     else:
         for i in range(4):
             chars.append({
-                "name": f"Player {i+1}",
-                "team": f"Sponsor {i+1}",
+                "name": QApplication.translate("app","Player {0}").format(i+1),
+                "team": QApplication.translate("app","Sponsor {0}").format(i+1),
                 "asset": {
                     "assets": {
                         "full": {
@@ -690,8 +690,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
         },
         "score": {
             "best_of": 0,
-            "match": "Winners Finals",
-            "phase": "Pool A",
+            "match": QApplication.translate("app","Winners Finals"),
+            "phase": QApplication.translate("app","Pool {0}").format("A"),
             "team": {
                 "1": {
                     "losers": False,
@@ -709,7 +709,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team A"
+                    "teamName": QApplication.translate("app","Team {0}").format("A")
                 },
                 "2": {
                     "losers": False,
@@ -736,7 +736,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team B"
+                    "teamName": QApplication.translate("app","Team {0}").format("B")
                 }
             }
         }

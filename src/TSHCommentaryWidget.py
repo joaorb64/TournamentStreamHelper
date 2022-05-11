@@ -10,7 +10,7 @@ from .TSHScoreboardPlayerWidget import *
 class TSHCommentaryWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
-        self.setWindowTitle("Commentary")
+        self.setWindowTitle(QApplication.translate("app","Commentary"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -38,7 +38,7 @@ class TSHCommentaryWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.commentatorNumber = QSpinBox()
-        col.layout().addWidget(QLabel("Number of commentators"))
+        col.layout().addWidget(QLabel(QApplication.translate("app","Number of commentators")))
         col.layout().addWidget(self.commentatorNumber)
         self.commentatorNumber.valueChanged.connect(self.SetCommentatorNumber)
 
@@ -67,7 +67,7 @@ class TSHCommentaryWidget(QDockWidget):
         while len(self.commentaryWidgets) < number:
             comm = QGroupBox()
             uic.loadUi("src/layout/TSHCommentator.ui", comm)
-            comm.setTitle(f"Commentator {len(self.commentaryWidgets)+1}")
+            comm.setTitle(QApplication.translate("app","Commentator {0}").format(len(self.commentaryWidgets)+1))
 
             for c in comm.findChildren(QLineEdit):
                 c.editingFinished.connect(

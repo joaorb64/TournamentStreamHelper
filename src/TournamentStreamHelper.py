@@ -136,34 +136,34 @@ class Window(QMainWindow):
         self.dockWidgets = []
 
         thumbnailSetting = TSHThumbnailSettingsWidget()
-        thumbnailSetting.setObjectName("Thumbnail Settings")
+        thumbnailSetting.setObjectName(QApplication.translate("app","Thumbnail Settings"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
         self.dockWidgets.append(thumbnailSetting)
 
         tournamentInfo = TSHTournamentInfoWidget()
         tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
-        tournamentInfo.setObjectName("Tournament Info")
+        tournamentInfo.setObjectName(QApplication.translate("app","Tournament Info"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
 
         self.scoreboard = TSHScoreboardWidget()
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
-        self.scoreboard.setObjectName("Scoreboard")
+        self.scoreboard.setObjectName(QApplication.translate("app","Scoreboard"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
 
         commentary = TSHCommentaryWidget()
         commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
-        commentary.setObjectName("Commentary")
+        commentary.setObjectName(QApplication.translate("app","Commentary"))
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
         self.dockWidgets.append(commentary)
 
         playerList = TSHPlayerListWidget()
         playerList.setWindowIcon(QIcon('assets/icons/list.svg'))
-        playerList.setObjectName("Player List")
+        playerList.setObjectName(QApplication.translate("app","Player List"))
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, playerList)
         self.dockWidgets.append(playerList)
 
@@ -382,7 +382,7 @@ class Window(QMainWindow):
             if silent == False:
                 messagebox = QMessageBox()
                 messagebox.setText(
-                    "Failed to fetch version from github:\n"+str(e))
+                    QApplication.translate("app","Failed to fetch version from github")+":\n"+str(e))
                 messagebox.exec()
 
         try:
@@ -398,23 +398,23 @@ class Window(QMainWindow):
             if silent == False:
                 if myVersion < currVersion:
                     buttonReply = QDialog(self)
-                    buttonReply.setWindowTitle("Updater")
+                    buttonReply.setWindowTitle(QApplication.translate("app","Updater"))
                     buttonReply.setWindowModality(Qt.WindowModal)
                     vbox = QVBoxLayout()
                     buttonReply.setLayout(vbox)
 
                     buttonReply.layout().addWidget(
-                        QLabel("New update available: "+myVersion+" → "+currVersion))
+                        QLabel(QApplication.translate("app","New update available: ")+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        "Update to latest version?\nNOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/"))
+                        QApplication.translate("app","Update to latest version?")+"\n"+QApplication.translate("app","NOTE: WILL BACKUP /layout/ AND OVERWRITE ALL OTHER DATA INSIDE /assets/")))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)
 
-                    btUpdate = QPushButton("Update")
+                    btUpdate = QPushButton(QApplication.translate("app","Update"))
                     hbox.addWidget(btUpdate)
-                    btCancel = QPushButton("Cancel")
+                    btCancel = QPushButton(QApplication.translate("app","Cancel"))
                     hbox.addWidget(btCancel)
 
                     buttonReply.show()
@@ -423,7 +423,7 @@ class Window(QMainWindow):
                         db = QFontDatabase()
                         db.removeAllApplicationFonts()
                         self.downloadDialogue = QProgressDialog(
-                            "Downloading update... ", "Cancel", 0, 0, self)
+                            QApplication.translate("app","Downloading update... "), QApplication.translate("app","Cancel"), 0, 0, self)
                         self.downloadDialogue.setWindowModality(
                             Qt.WindowModality.WindowModal)
                         self.downloadDialogue.show()
@@ -452,7 +452,7 @@ class Window(QMainWindow):
 
                         def progress(downloaded):
                             self.downloadDialogue.setLabelText(
-                                "Downloading update... "+str(downloaded/1024/1024)+" MB")
+                                QApplication.translate("app","Downloading update... ")+str(downloaded/1024/1024)+" MB")
 
                         def finished():
                             self.downloadDialogue.close()
@@ -479,7 +479,7 @@ class Window(QMainWindow):
 
                             messagebox = QMessageBox()
                             messagebox.setText(
-                                "Update complete. The program will now close.")
+                                QApplication.translate("app","Update complete. The program will now close."))
                             messagebox.finished.connect(QApplication.exit)
                             messagebox.exec()
 
@@ -493,7 +493,7 @@ class Window(QMainWindow):
                 else:
                     messagebox = QMessageBox()
                     messagebox.setText(
-                        "You're already using the latest version")
+                        QApplication.translate("app","You're already using the latest version"))
                     messagebox.exec()
             else:
                 if myVersion < currVersion:
@@ -506,7 +506,7 @@ class Window(QMainWindow):
                     p.end()
                     self.optionsBt.setIcon(QIcon(baseIcon))
                     self.updateAction.setText(
-                        "Check for updates [Update available!]")
+                        QApplication.translate("app","Check for updates")+ " [" + QApplication.translate("app","Update available!") + "]")
 
     def DownloadAssets(self):
         assets = self.DownloadAssetsFetch()
@@ -575,9 +575,27 @@ class Window(QMainWindow):
                 index = select.currentIndex()
 
             model.clear()
-            model.setHorizontalHeaderLabels([
-                "game", "asset_id", "Name", "Description", "Credits", "Installed version", "Latest version", "Size", "Stage data", "Eyesight data"
-            ])
+            header_labels = [
+                "game",
+                "asset_id",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"
+            ]
+            header_labels[2] = QApplication.translate("app","Name of the game")
+            header_labels[3] = QApplication.translate("app","Description")
+            header_labels[4] = QApplication.translate("app","Credits")
+            header_labels[5] = QApplication.translate("app","Installed version")
+            header_labels[6] = QApplication.translate("app","Latest version")
+            header_labels[7] = QApplication.translate("app","Size")
+            header_labels[8] = QApplication.translate("app","Stage data")
+            header_labels[9] = QApplication.translate("app","Eyesight data")
+            model.setHorizontalHeaderLabels(header_labels)
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
             downloadList.horizontalHeader().setStretchLastSection(True)
@@ -642,7 +660,7 @@ class Window(QMainWindow):
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             ReloadGameAssets)
 
-        btOk = QPushButton("Download")
+        btOk = QPushButton(QApplication.translate("app","Download"))
         self.preDownloadDialogue.layout().addWidget(btOk)
 
         def DownloadStart():
@@ -663,7 +681,7 @@ class Window(QMainWindow):
                 filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 
             self.downloadDialogue = QProgressDialog(
-                "Downloading assets", "Cancel", 0, 100, self)
+                QApplication.translate("app","Downloading assets"), QApplication.translate("app","Cancel"), 0, 100, self)
             self.downloadDialogue.setMinimumWidth(500)
             self.downloadDialogue.setWindowModality(
                 Qt.WindowModality.WindowModal)
@@ -695,7 +713,7 @@ class Window(QMainWindow):
         for f in files:
             with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+f["name"])
-                progress_callback.emit("Downloading "+f["name"]+"...")
+                progress_callback.emit(QApplication.translate("app","Downloading {0}...").format(f["name"]))
 
                 response = urllib.request.urlopen(f["path"])
 
