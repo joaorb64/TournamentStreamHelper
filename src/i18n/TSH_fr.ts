@@ -498,6 +498,7 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="153"/>
+        <location filename="../TSHScoreboardWidget.py" line="39"/>
         <source>Scoreboard</source>
         <translation>Tableau des scores</translation>
     </message>
@@ -697,6 +698,7 @@
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
+        <location filename="../TSHScoreboardWidget.py" line="84"/>
         <source>Characters per player</source>
         <translation>Nombre de personnages par joueur</translation>
     </message>
@@ -733,44 +735,58 @@
         <translation>Ouvrez {0} dans un navigateur web pour effectuer le ban des stages.</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="59"/>
         <source>Score</source>
-        <translation type="vanished">Score</translation>
+        <translation>Score</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="62"/>
         <source>Stage</source>
-        <translation type="vanished">Stage</translation>
+        <translation>Stage</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="95"/>
         <source>Players per team</source>
-        <translation type="vanished">Nombre de joueurs par équipe</translation>
+        <translation>Nombre de joueurs par équipe</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="108"/>
         <source>Generate Thumbnail </source>
-        <translation type="vanished">Générer la miniature</translation>
+        <translation>Générer la miniature</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="171"/>
+        <location filename="../TSHScoreboardWidget.py" line="431"/>
         <source>Load set</source>
-        <translation type="vanished">Charger un set</translation>
+        <translation>Charger un set</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="180"/>
+        <location filename="../TSHScoreboardWidget.py" line="670"/>
+        <location filename="../TSHScoreboardWidget.py" line="673"/>
         <source>Load current stream set</source>
-        <translation type="vanished">Charger le set actuel du stream</translation>
+        <translation>Charger le set actuel du stream</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="243"/>
+        <location filename="../TSHScoreboardWidget.py" line="269"/>
         <source>TEAM {0}</source>
-        <translation type="vanished">ÉQUIPE {0}</translation>
+        <translation>ÉQUIPE {0}</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="425"/>
         <source>Load set from {0}</source>
-        <translation type="vanished">Charger un set depuis {0}</translation>
+        <translation>Charger un set depuis {0}</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="682"/>
         <source>Load user set ({0})</source>
-        <translation type="vanished">Charger le set de l&apos;utilisateur {0}</translation>
+        <translation>Charger le set de l&apos;utilisateur {0}</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="685"/>
         <source>Load user set</source>
-        <translation type="vanished">Charger un set utilisateur</translation>
+        <translation>Charger un set utilisateur</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>

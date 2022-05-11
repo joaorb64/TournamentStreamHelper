@@ -498,6 +498,7 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="153"/>
+        <location filename="../TSHScoreboardWidget.py" line="39"/>
         <source>Scoreboard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -697,6 +698,7 @@
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
+        <location filename="../TSHScoreboardWidget.py" line="84"/>
         <source>Characters per player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -799,6 +801,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="59"/>
+        <source>Score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="62"/>
+        <source>Stage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="95"/>
+        <source>Players per team</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="108"/>
+        <source>Generate Thumbnail </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardWidget.py" line="141"/>
         <source>Real Name</source>
         <translation type="unfinished"></translation>
@@ -821,6 +843,40 @@
     <message>
         <location filename="../TSHScoreboardWidget.py" line="145"/>
         <source>Pronouns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="171"/>
+        <location filename="../TSHScoreboardWidget.py" line="431"/>
+        <source>Load set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="243"/>
+        <location filename="../TSHScoreboardWidget.py" line="269"/>
+        <source>TEAM {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="425"/>
+        <source>Load set from {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="180"/>
+        <location filename="../TSHScoreboardWidget.py" line="670"/>
+        <location filename="../TSHScoreboardWidget.py" line="673"/>
+        <source>Load current stream set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="682"/>
+        <source>Load user set ({0})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="685"/>
+        <source>Load user set</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
