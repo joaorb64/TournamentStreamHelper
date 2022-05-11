@@ -16,7 +16,7 @@
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="63"/>
         <source>Event Name</source>
-        <translation>Nom de l'Événement</translation>
+        <translation>Nom de l&apos;Événement</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="77"/>
@@ -48,7 +48,7 @@
     <message>
         <location filename="../layout/TSHScoreboardTeam.ui" line="56"/>
         <source>Team Name</source>
-        <translation>Nom de l'Équipe</translation>
+        <translation>Nom de l&apos;Équipe</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardTeam.ui" line="78"/>
@@ -58,27 +58,27 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="45"/>
         <source>Ruleset Name</source>
-        <translation>Nom du Ruleset</translation>
+        <translation>Nom du Règlement</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="55"/>
         <source>Stagelist</source>
-        <translation>Liste des Stages</translation>
+        <translation>Liste des Terrains</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="65"/>
         <source>All stages</source>
-        <translation>Tous les stages</translation>
+        <translation>Tous les terrains</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="164"/>
         <source>Neutral stages</source>
-        <translation>Stages Neutres</translation>
+        <translation>Terrains Neutres</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="250"/>
         <source>Counterpick stages</source>
-        <translation>Stages Counterpick</translation>
+        <translation>Terrains Counterpick</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="271"/>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="313"/>
         <source>Stage striking</source>
-        <translation>Ban des stages</translation>
+        <translation>Ban des terrains</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="321"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="362"/>
         <source>Ban count by max games (games:bans,games:bans)</source>
-        <translation>Nombre de ban max par matchs (matchs:bans, matchs:bans)</translation>
+        <translation>Nombre maximal de bans par matchs (matchs:bans, matchs:bans)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
@@ -149,7 +149,7 @@
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
         <source>LOCATION</source>
-        <translation>LOCALISATION</translation>
+        <translation>LIEU</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="56"/>
@@ -159,7 +159,7 @@
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="70"/>
         <source>SPONSOR/TAG</source>
-        <translation type="unfinished"></translation>
+        <translation>SPONSOR/NOM</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="84"/>
@@ -169,7 +169,7 @@
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="96"/>
         <source>Handle Only</source>
-        <translation>Pseudo Seulement</translation>
+        <translation>Nom d&apos;utilisateur seulement</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="110"/>
@@ -239,12 +239,12 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="66"/>
         <source>Image</source>
-        <translation></translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="111"/>
         <source>Custom Icon</source>
-        <translation>Icône Personnalisée</translation>
+        <translation>Icônes Personnalisées</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="198"/>
@@ -304,41 +304,41 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="429"/>
         <source>Tag font</source>
-        <translation>Police d'écriture des pseudos</translation>
+        <translation>Police d&apos;écriture des pseudos</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="450"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="590"/>
         <source>Fonts</source>
-        <translation>Polices d'écriture</translation>
+        <translation>Police</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="474"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="614"/>
         <source>Font Type</source>
-        <translation>Type de Police</translation>
+        <translation>Style</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="499"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="639"/>
         <source>Font Color</source>
-        <translation>Couleur de la Police</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="524"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="664"/>
         <source>Font Outline</source>
-        <translation>Contour de la Police</translation>
+        <translation>Contour</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="569"/>
         <source>Phase font</source>
-        <translation>Police d'écriture des phases</translation>
+        <translation>Police d&apos;écriture des phases</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="719"/>
         <source>Asset Pack</source>
-        <translation>Pack d'Images</translation>
+        <translation>Pack de ressources</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="732"/>
@@ -346,9 +346,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="767"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="761"/>
         <source>UI Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Options d&apos;Interface</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="825"/>
@@ -358,17 +358,17 @@
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="774"/>
         <source>Open File Explorer after generation?</source>
-        <translation>Ouvrir l'Explorateur de Fichier après la génération ?</translation>
+        <translation>Ouvrir l&apos;Explorateur de Fichier après la génération ?</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="791"/>
         <source>Reset to Defaults</source>
-        <translation>Réinitialiser par Défaut</translation>
+        <translation>Réinitialiser les réglages</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="843"/>
         <source>Update Preview</source>
-        <translation>Mettre à jour l'Aperçu</translation>
+        <translation>Mettre à jour l&apos;Aperçu</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="43"/>
@@ -384,7 +384,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="78"/>
         <source>Pool A, Bracket, Top 8, etc</source>
-        <translation></translation>
+        <translation>Poule A, Arbre principal, etc</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="96"/>
@@ -394,7 +394,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="113"/>
         <source>Winners Finals, Losers Semis, etc</source>
-        <translation></translation>
+        <translation>Finale des Gagnants, Demi-finale des Perdants, etc</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="134"/>
@@ -493,7 +493,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="199"/>
         <source>Load SmashGG user set</source>
-        <translation>Charger le set d'un utilisateur SmashGG</translation>
+        <translation>Charger le set d&apos;un utilisateur SmashGG</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="235"/>
@@ -509,17 +509,17 @@
         <location filename="../TournamentStreamHelper.py" line="244"/>
         <location filename="../TournamentStreamHelper.py" line="519"/>
         <source>Download assets</source>
-        <translation>Télécharger des ressources/images</translation>
+        <translation>Télécharger des ressources</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="249"/>
         <source>Light mode</source>
-        <translation>Mode lumière</translation>
+        <translation>Mode clair</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="255"/>
         <source>Toggle widgets</source>
-        <translation>Activer des widgets</translation>
+        <translation>Activer des gadgets</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="314"/>
@@ -530,7 +530,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="547"/>
         <source>Filter...</source>
-        <translation>Filtre...</translation>
+        <translation>Filtrer...</translation>
     </message>
 </context>
 </TS>
