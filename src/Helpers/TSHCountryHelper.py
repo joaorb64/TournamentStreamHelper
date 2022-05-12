@@ -6,6 +6,7 @@ import os
 import traceback
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
+from .TSHLocaleHelper import TSHLocaleHelper
 import json
 
 
@@ -15,6 +16,7 @@ class TSHCountryHelper(QObject):
     countries_json = {}
     countries = {}
     cities = {}
+    countryModel = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -45,19 +47,56 @@ class TSHCountryHelper(QObject):
         countries_json = json.loads(f.read())
         TSHCountryHelper.countries_json = countries_json
 
+        # Setup countries - states
         for c in countries_json:
+            country_name = c["name"]
+
+            # Load translated name
+            for locale in TSHLocaleHelper.currentLocale:
+                if locale in c["translations"]:
+                    country_name = c["translations"][locale]
+                    break
+
             TSHCountryHelper.countries[c["iso2"]] = {
-                "name": c["name"],
+                "name": country_name,
                 "code": c["iso2"],
+                "latitude": c.get("latitude"),
+                "longitude": c.get("longitude"),
                 "states": {}
             }
 
             for s in c["states"]:
                 TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
-                    "state_code": s["state_code"],
-                    "state_name": s["name"]
+                    "name": s["name"],
+                    "code": s["state_code"],
+                    "latitude": s.get("latitude"),
+                    "longitude": s.get("longitude"),
                 }
 
+        # Setup model
+        TSHCountryHelper.countryModel = QStandardItemModel()
+
+        noCountry = QStandardItem()
+        noCountry.setData({}, Qt.ItemDataRole.UserRole)
+        TSHCountryHelper.countryModel.appendRow(noCountry)
+
+        for i, country_code in enumerate(TSHCountryHelper.countries.keys()):
+            item = QStandardItem()
+            item.setIcon(
+                QIcon(f'./assets/country_flag/{country_code.lower()}.png'))
+            countryData = {
+                "name": TSHCountryHelper.countries[country_code]["name"],
+                "code": TSHCountryHelper.countries[country_code]["code"],
+                "latitude": TSHCountryHelper.countries[country_code]["latitude"],
+                "longitude": TSHCountryHelper.countries[country_code]["longitude"],
+                "asset": f'./assets/country_flag/{country_code.lower()}.png'
+            }
+            item.setData(countryData, Qt.ItemDataRole.UserRole)
+            item.setData(
+                f'{TSHCountryHelper.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
+            TSHCountryHelper.countryModel.appendRow(item)
+
+        # Setup cities - states for reverse search
         for country in countries_json:
             for state in country["states"]:
                 for c in state["cities"]:
@@ -93,4 +132,3 @@ class TSHCountryHelper(QObject):
 
 
 TSHCountryHelper.instance = TSHCountryHelper()
-TSHCountryHelper.LoadCountries()

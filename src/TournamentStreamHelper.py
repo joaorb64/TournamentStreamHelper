@@ -3,6 +3,8 @@
 
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .TSHThumbnailSettingsWidget import *
 from .TSHScoreboardWidget import *
 from .Workers import *
@@ -69,26 +71,7 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # HAS TO GO TO ITS OWN CLASS IN THIS PR!
-
-        current_locale = QtCore.QLocale().uiLanguages()
-        print("Current locale", current_locale)
-
-        self.translator = QTranslator()
-        for locale in current_locale:
-            for f in os.listdir("./src/i18n/"):
-                if f.endswith(".qm"):
-                    lang = f.split("_", 1)[1].split(".")[0]
-                    if lang == locale:
-                        self.translator.load(QLocale(lang), "./src/i18n/"+f)
-                        break
-                    elif lang == locale.split("-")[0]:
-                        self.translator.load(QLocale(lang), "./src/i18n/"+f)
-                        break
-
-        App.installTranslator(self.translator)
-
-        # TODO
+        TSHLocaleHelper.LoadLocale()
 
         self.signals = WindowSignals()
 
@@ -315,6 +298,7 @@ class Window(QMainWindow):
         splash.finish(self)
         self.show()
 
+        TSHCountryHelper.LoadCountries()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
