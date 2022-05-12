@@ -361,10 +361,21 @@ class TSHScoreboardWidget(QDockWidget):
 
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
+        default_tournament_phases_file = './assets/tournament_phases.txt'
+        for locale in TSHLocaleHelper.currentLocale:
+            path_to_localized_assets = f"./assets/locale/{locale}"
+            if os.path.isdir(path_to_localized_assets):
+                default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
+                break
+            else:
+                path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
+                if os.path.isdir(path_to_localized_assets):
+                    default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
+                    break
 
-        for file in ['./assets/tournament_phases.txt', './user_data/tournament_phases.txt']:
+        for file in [default_tournament_phases_file, './user_data/tournament_phases.txt']:
             try:
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding="utf-8") as f:
                     self.scoreColumn.findChild(QComboBox, "phase").addItems(
                         [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
             except Exception as e:
@@ -374,9 +385,21 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
         # Add default and user tournament match title files
-        for file in ['./assets/tournament_matches.txt', './user_data/tournament_matches.txt']:
+        default_tournament_match_file = './assets/tournament_matches.txt'
+        for locale in TSHLocaleHelper.currentLocale:
+            path_to_localized_assets = f"./assets/locale/{locale}"
+            if os.path.isdir(path_to_localized_assets):
+                default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
+                break
+            else:
+                path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
+                if os.path.isdir(path_to_localized_assets):
+                    default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
+                    break
+
+        for file in [default_tournament_match_file, './user_data/tournament_matches.txt']:
             try:
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding="utf-8") as f:
                     self.scoreColumn.findChild(QComboBox, "match").addItems(
                         [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
             except Exception as e:
