@@ -424,9 +424,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
                         if TSHGameAssetManager.instance.characters[c].get("locale"):
                             for locale in TSHLocaleHelper.currentLocale:
-                                if locale in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
                                     translated_name = TSHGameAssetManager.instance.characters[
-                                        c]["locale"][locale]
+                                        c]["locale"][locale.replace("-", "_")]
                                     item.setData(translated_name,
                                                  Qt.ItemDataRole.EditRole)
                                     break
