@@ -49,16 +49,17 @@ class TSHCountryHelper(QObject):
 
         # Setup countries - states
         for c in countries_json:
-            country_name = c["name"]
+            translated_name = c["name"]
 
             # Load translated name
             for locale in TSHLocaleHelper.currentLocale:
                 if locale in c["translations"]:
-                    country_name = c["translations"][locale]
+                    translated_name = c["translations"][locale]
                     break
 
             TSHCountryHelper.countries[c["iso2"]] = {
-                "name": country_name,
+                "name": c["name"],
+                "translated_name": translated_name,
                 "code": c["iso2"],
                 "latitude": c.get("latitude"),
                 "longitude": c.get("longitude"),
@@ -93,7 +94,7 @@ class TSHCountryHelper(QObject):
             }
             item.setData(countryData, Qt.ItemDataRole.UserRole)
             item.setData(
-                f'{TSHCountryHelper.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
+                f'{TSHCountryHelper.countries[country_code]["translated_name"]} ({country_code})', Qt.ItemDataRole.EditRole)
             TSHCountryHelper.countryModel.appendRow(item)
 
         # Setup cities - states for reverse search
@@ -115,11 +116,11 @@ class TSHCountryHelper(QObject):
         for part in split:
             state = next(
                 (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
-                ) if TSHCountryHelper.remove_accents_lower(st["state_code"]) == TSHCountryHelper.remove_accents_lower(part)),
+                ) if TSHCountryHelper.remove_accents_lower(st["code"]) == TSHCountryHelper.remove_accents_lower(part)),
                 None
             )
             if state is not None:
-                return state["state_code"]
+                return state["code"]
 
         # No, so get by City
         state = TSHCountryHelper.cities.get(countryCode, {}).get(

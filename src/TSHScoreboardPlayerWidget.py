@@ -9,6 +9,7 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -418,8 +419,21 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
                                 32, Qt.TransformationMode.SmoothTransformation))
                         )
+
+                        translated_name = c
+
+                        if TSHGameAssetManager.instance.characters[c].get("locale"):
+                            for locale in TSHLocaleHelper.currentLocale:
+                                if locale in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                    translated_name = TSHGameAssetManager.instance.characters[
+                                        c]["locale"][locale]
+                                    item.setData(translated_name,
+                                                 Qt.ItemDataRole.EditRole)
+                                    break
+
                         data = {
                             "name": c,
+                            "translated_name": translated_name,
                             "codename": TSHGameAssetManager.instance.characters[c].get("codename")
                         }
                         item.setData(data, Qt.ItemDataRole.UserRole)
@@ -577,8 +591,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             countryElement: QComboBox = self.findChild(
                 QComboBox, "country")
             countryIndex = 0
-            for i in range(self.countryModel.rowCount()):
-                item = self.countryModel.item(
+            for i in range(TSHCountryHelper.countryModel.rowCount()):
+                item = TSHCountryHelper.countryModel.item(
                     i).data(Qt.ItemDataRole.UserRole)
                 if item:
                     if data.get("country_code") == item.get("code"):
