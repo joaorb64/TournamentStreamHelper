@@ -69,7 +69,7 @@ class App extends Component {
     serverTimestamp: 0,
   };
 
-  Initialize() {
+  Initialize(resetStreamScore = false) {
     this.setState({
       currGame: 0,
       currPlayer: -1,
@@ -82,6 +82,7 @@ class App extends Component {
       lastWinner: -1,
       serverTimestamp: 0,
     });
+    if (resetStreamScore) this.ResetStreamScore();
   }
 
   GetStage(stage) {
@@ -390,6 +391,12 @@ class App extends Component {
     });
   }
 
+  ResetStreamScore() {
+    fetch("http://" + window.location.hostname + ":5000/reset-scores", {
+      method: "GET",
+    });
+  }
+
   render() {
     return (
       <ThemeProvider theme={darkTheme}>
@@ -664,7 +671,7 @@ class App extends Component {
                         fullWidth
                         variant="outlined"
                         onClick={() => {
-                          this.Initialize();
+                          this.Initialize(true);
                           this.setState({ timestamp: new Date().getTime() });
                         }}
                       >
