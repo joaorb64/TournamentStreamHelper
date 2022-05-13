@@ -53,7 +53,8 @@ class WebServer(QThread):
         data.update({
             "best_of": StateManager.Get(f"score.best_of"),
             "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase")
+            "phase": StateManager.Get(f"score.phase"),
+            "state": StateManager.Get(f"score.stage_strike.state", {})
         })
 
         return data

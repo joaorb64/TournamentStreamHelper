@@ -77,7 +77,7 @@ body {
 .stage-container {
   flex-shrink: 0;
   position: relative;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   padding-bottom: 28px;
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
@@ -101,4 +101,11 @@ body {
 }
 .stamp.stage-selected {
   background-image: url(../../assets/icons/stage_select.svg);
+}
+
+.banned_by {
+  background-color: #000000aa;
+  position: absolute;
+  width: 100%;
+  top: 0;
 }
