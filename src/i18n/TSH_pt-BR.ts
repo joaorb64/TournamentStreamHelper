@@ -739,31 +739,31 @@
         <translation>Personagens por jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="52"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="709"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="53"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="716"/>
         <source>Save new player</source>
         <translation>Salvar novo jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="64"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="65"/>
         <source>Delete player entry</source>
         <translation>Deletar jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="76"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="77"/>
         <source>Clear</source>
         <translation>Limpar</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <location filename="../TSHTournamentDataProvider.py" line="172"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="270"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="271"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="665"/>
         <source>Player {0}</source>
         <translation>Jogador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="706"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="713"/>
         <source>Update player</source>
         <translation>Atualizar jogador</translation>
     </message>
@@ -912,7 +912,7 @@
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="174"/>
-        <location filename="../TSHScoreboardWidget.py" line="437"/>
+        <location filename="../TSHScoreboardWidget.py" line="460"/>
         <source>Load set</source>
         <translation>Carregar set</translation>
     </message>
@@ -923,20 +923,20 @@
         <translation>TIME {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="418"/>
+        <location filename="../TSHScoreboardWidget.py" line="441"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="486"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="431"/>
+        <location filename="../TSHScoreboardWidget.py" line="454"/>
         <source>Load set from {0}</source>
         <translation>Carregar set do {0}</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="184"/>
-        <location filename="../TSHScoreboardWidget.py" line="676"/>
-        <location filename="../TSHScoreboardWidget.py" line="680"/>
+        <location filename="../TSHScoreboardWidget.py" line="699"/>
+        <location filename="../TSHScoreboardWidget.py" line="703"/>
         <source>Load current stream set</source>
         <translation>Carregar set atual do stream</translation>
     </message>
@@ -946,12 +946,12 @@
         <translation>Gerar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="689"/>
+        <location filename="../TSHScoreboardWidget.py" line="712"/>
         <source>Load user set ({0})</source>
         <translation>Carregar set do usuário ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="693"/>
+        <location filename="../TSHScoreboardWidget.py" line="716"/>
         <source>Load user set</source>
         <translation>Carregar set do usuário</translation>
     </message>
@@ -981,14 +981,14 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
-        <location filename="../TSHScoreboardWidget.py" line="676"/>
+        <location filename="../TSHScoreboardWidget.py" line="699"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TSHTournamentDataProvider.py" line="189"/>
-        <location filename="../TSHScoreboardWidget.py" line="676"/>
+        <location filename="../TSHScoreboardWidget.py" line="699"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -1006,7 +1006,7 @@
         <translation>Tag do jogador {0} não está presente</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="396"/>
+        <location filename="../TSHScoreboardWidget.py" line="419"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="485"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
