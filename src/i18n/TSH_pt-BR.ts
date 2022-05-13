@@ -495,7 +495,7 @@
     <name>app</name>
     <message>
         <location filename="../TournamentStreamHelper.py" line="138"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="155"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="153"/>
         <source>Thumbnail Settings</source>
         <translation>Configurações de Thumbnail</translation>
     </message>
@@ -924,7 +924,7 @@
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="441"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="494"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="493"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
@@ -966,24 +966,25 @@
         <translation>Lembrar mais tarde</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="64"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="426"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="62"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="424"/>
         <source>Bold Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="66"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="424"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="64"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="422"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="481"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="423"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="421"/>
         <source>Regular</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="425"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="423"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1029,7 +1030,7 @@
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="419"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="493"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="492"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
