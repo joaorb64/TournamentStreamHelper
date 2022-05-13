@@ -353,6 +353,8 @@ class SmashGGDataProvider(TournamentDataProvider):
         for task in reversed(tasks):
             if len(task.get("metadata", [])) == 0:
                 continue
+            if task.get("active"):
+                continue
             if task.get("metadata", {}).get("report", {}).get("winnerId", None) is not None:
                 latestWinner = int(task.get("metadata", {}).get(
                     "report", {}).get("winnerId"))
