@@ -315,7 +315,7 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     family = font_data["name"]
     font.setFamily(family)
     font.setPixelSize(int(max_font_size))
-    type = font_data["type"]
+    type = font_data["fontPath"]
     if "bold" in type.lower():
         font.setBold(True)
     if "italic" in type.lower():

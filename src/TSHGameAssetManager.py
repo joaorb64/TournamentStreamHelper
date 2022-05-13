@@ -89,9 +89,15 @@ class TSHGameAssetManager(QObject):
                         # Load translated names
                         # Translate game name
                         for locale in TSHLocaleHelper.currentLocale:
-                            if locale in self.parent().games[game].get("locale", {}):
+                            if locale.replace('-', '_') in self.parent().games[game].get("locale", {}):
                                 game_name = self.parent(
-                                ).games[game]["locale"][locale].get("name")
+                                ).games[game]["locale"][locale.replace('-', '_')].get("name")
+                                if game_name:
+                                    self.parent(
+                                    ).games[game]["name"] = game_name
+                            elif locale.split('-')[0] in self.parent().games[game].get("locale", {}):
+                                game_name = self.parent(
+                                ).games[game]["locale"][locale.split('-')[0]].get("name")
                                 if game_name:
                                     self.parent(
                                     ).games[game]["name"] = game_name
