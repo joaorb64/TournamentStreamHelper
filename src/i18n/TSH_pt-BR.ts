@@ -589,7 +589,7 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="419"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="188"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
         <source>Update</source>
         <translation>Atualizar</translation>
     </message>
@@ -768,9 +768,14 @@
         <translation>Atualizar jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="116"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="118"/>
         <source>Open {0} in a browser to stage strike.</source>
         <translation>Abra {0} em um navegador de internet para realizar o stage strike.</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <source>Save new</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
