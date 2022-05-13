@@ -105,7 +105,7 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="321"/>
         <source>Strike order, numbers separated by comma (game 1)</source>
-        <translation>プレイヤー同士が交互にBANするステージの数をコンマで分けて記入(最初の試合のみ)</translation>
+        <translation>プレイヤーたちが交互に拒否するステージの数をコンマで分けて記入(最初の試合のみ)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
@@ -115,12 +115,12 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
         <source>Fixed ban count (how many stages winner bans)</source>
-        <translation>固定BAN数(1つ前の試合の勝者がBANするステージの数)</translation>
+        <translation>固定拒否数(1つ前の試合の勝者が拒否するステージの数)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="362"/>
         <source>Ban count by max games (games:bans,games:bans)</source>
-        <translation>最大試合数:1つ前の試合の勝者がBANするステージの数(コンマで分けて記入)</translation>
+        <translation>最大試合数:1つ前の試合の勝者が拒否するステージの数(コンマで分けて記入)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
