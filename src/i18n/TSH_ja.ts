@@ -836,7 +836,7 @@
     <message>
         <location filename="../TSHScoreboardWidget.py" line="96"/>
         <source>Players per team</source>
-        <translation>各チームのプレイヤーたち</translation>
+        <translation>各チームのプレイヤー数</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="143"/>
