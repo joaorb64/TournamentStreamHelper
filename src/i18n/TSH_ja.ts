@@ -330,7 +330,7 @@
         <location filename="../layout/TSHThumbnailSettings.ui" line="524"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="664"/>
         <source>Font Outline</source>
-        <translation>フォントのアウトライン</translation>
+        <translation>アウトライン</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="569"/>
@@ -392,7 +392,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="96"/>
         <source>MATCH</source>
-        <translation>対戦カード</translation>
+        <translation>対戦局面</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="113"/>
@@ -413,7 +413,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="208"/>
         <source>SWAP TEAMS</source>
-        <translation>チームの情報を入れ換える</translation>
+        <translation>入れ換える</translation>
     </message>
 </context>
 <context>
@@ -549,14 +549,14 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="273"/>
         <source>Toggle widgets</source>
-        <translation>ウィジェットを切り替える</translation>
+        <translation>ツールを切り替える</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="217"/>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TournamentStreamHelper.py" line="336"/>
         <source>Load tournament and sets from SmashGG user</source>
-        <translation>大会と対戦データをSmashGGのユーザーからロードする</translation>
+        <translation>大会と対戦データをユーザーのSmashGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="420"/>
@@ -695,19 +695,19 @@
     <message>
         <location filename="../TSHPlayerListWidget.py" line="62"/>
         <source>Players per slot</source>
-        <translation>各スロットのプレイヤーたち</translation>
+        <translation>各スロットのプレイヤー数</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
         <location filename="../TSHScoreboardWidget.py" line="85"/>
         <source>Characters per player</source>
-        <translation>各プレイヤーの使用キャラクター</translation>
+        <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="50"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="731"/>
         <source>Save new player</source>
-        <translation>新しいプレイヤー情報を保存</translation>
+        <translation>プレイヤー情報を保存</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="61"/>
