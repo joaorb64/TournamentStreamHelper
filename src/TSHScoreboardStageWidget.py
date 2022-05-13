@@ -190,7 +190,7 @@ class TSHScoreboardStageWidget(QWidget):
             self.btSave.setText(QApplication.translate("app", "Update"))
             self.btDelete.setEnabled(True)
         else:
-            self.btSave.setText("Save new")
+            self.btSave.setText(QApplication.translate("app", "Save new"))
             self.btDelete.setEnabled(False)
 
     def SaveRuleset(self):

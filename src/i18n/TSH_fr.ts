@@ -581,7 +581,7 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="419"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="188"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
         <source>Update</source>
         <translation>Mettre à jour</translation>
     </message>
@@ -748,9 +748,14 @@
         <translation>Mettre à jour le joueur</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="116"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="118"/>
         <source>Open {0} in a browser to stage strike.</source>
         <translation>Ouvrez {0} dans un navigateur web pour effectuer le ban des stages.</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <source>Save new</source>
+        <translation>Sauvegarder le règlement</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="60"/>
