@@ -516,7 +516,7 @@
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="116"/>
         <source>Open {0} in a browser to stage strike.</source>
-        <translation>Abre {0} en un navegador para realizar el stage strike.</translation>
+        <translation>Abre {0} en un navegador para realizar el baneo de escenarios</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="188"/>
@@ -555,7 +555,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="236"/>
         <source>Always on top</source>
-        <translation>Siempre en la cima</translation>
+        <translation>Siempre arriba</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="240"/>
@@ -567,7 +567,7 @@
         <location filename="../TournamentStreamHelper.py" line="245"/>
         <location filename="../TournamentStreamHelper.py" line="524"/>
         <source>Download assets</source>
-        <translation>Descargar activos</translation>
+        <translation>Descargar archivos</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="250"/>
@@ -584,7 +584,7 @@
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Load tournament and sets from SmashGG user</source>
-        <translation>Cargar torneo y partido de usuario de SmashGG</translation>
+        <translation>Cargar torneo y sets de usuario de SmashGG</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="387"/>
@@ -677,12 +677,12 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="603"/>
         <source>Stage data</source>
-        <translation>Datos de escenario</translation>
+        <translation>Datos del escenario</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="604"/>
         <source>Eyesight data</source>
-        <translation>Posición de los ojos</translation>
+        <translation>Posición de los vista</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="670"/>
@@ -692,7 +692,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="691"/>
         <source>Downloading assets</source>
-        <translation>Descargando activos</translation>
+        <translation>Descargando archivos</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="723"/>
@@ -707,7 +707,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
         <source>For SmashGG, the link must contain the /event/ part</source>
-        <translation>Para SmashGG, el link debe contener la parte /evento/</translation>
+        <translation>Para pegar desde SmashGG, el link debe contener la parte /evento/</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="110"/>
@@ -717,12 +717,12 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
         <source>Set Twitch username</source>
-        <translation>Establecer nombre de usuario de Twitch</translation>
+        <translation>Establecer usuario de Twitch</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
         <source>Twitch Username:</source>
-        <translation>Nombre de usuario de Twitch:</translation>
+        <translation>Usuario de Twitch:</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>

@@ -1,4 +1,5 @@
 import os
+import re
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -427,6 +428,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
                                     translated_name = TSHGameAssetManager.instance.characters[
                                         c]["locale"][locale.replace("-", "_")]
+                                    item.setData(translated_name,
+                                                 Qt.ItemDataRole.EditRole)
+                                    break
+                                elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                    translated_name = TSHGameAssetManager.instance.characters[
+                                        c]["locale"][re.split("-|_", locale)[0]]
                                     item.setData(translated_name,
                                                  Qt.ItemDataRole.EditRole)
                                     break
