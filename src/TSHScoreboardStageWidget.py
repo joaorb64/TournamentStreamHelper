@@ -5,6 +5,8 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
 import requests
+
+from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
 from .TSHWebServer import WebServer
@@ -113,7 +115,7 @@ class TSHScoreboardStageWidget(QWidget):
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
-            QApplication.translate("app","Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
+            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
         self.signals.rulesets_changed.connect(self.LoadRulesets)
@@ -185,7 +187,7 @@ class TSHScoreboardStageWidget(QWidget):
                     "codename") and ruleset.get("name") == self.rulesetName.text()), None)
 
         if found:
-            self.btSave.setText(QApplication.translate("app","Update"))
+            self.btSave.setText(QApplication.translate("app", "Update"))
             self.btDelete.setEnabled(True)
         else:
             self.btSave.setText("Save new")
@@ -233,11 +235,27 @@ class TSHScoreboardStageWidget(QWidget):
         self.LoadRulesets()
 
         self.stagesModel = QStandardItemModel()
+
         for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
-            item = QStandardItem(stage[1].get("name"))
+            # Translate stage name
+            translated_name = stage[1].get("name")
+
+            for locale in TSHLocaleHelper.currentLocale:
+                if locale.replace('-', '_') in stage[1].get("locale", {}):
+                    translated_name = stage[1].get("locale", {})[
+                        locale.replace('-', '_')]
+                elif locale.split('-')[0] in stage[1].get("locale", {}):
+                    translated_name = stage[1].get("locale", {})[
+                        locale.split('-')[0]]
+
+            stage[1]["translated_name"] = translated_name
+
+            item = QStandardItem(f'{stage[1].get("translated_name")} ({stage[1].get("name")})' if stage[1].get(
+                "name") != stage[1].get("translated_name") else stage[1].get("name"))
             item.setData(stage[1], Qt.ItemDataRole.UserRole)
             item.setIcon(QIcon(stage[1].get("path")))
             self.stagesModel.appendRow(item)
+
         self.stagesModel.sort(0)
         self.stagesView.setModel(self.stagesModel)
 
