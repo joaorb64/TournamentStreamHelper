@@ -18,17 +18,35 @@ body {
 .stage-name {
   color: var(--text-color);
   width: 200px;
-  font-size: 12px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 2;
   height: 28px;
   bottom: 0;
   padding-top: 5px;
   padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+.banned-by-name {
+  color: var(--text-color);
+  width: 200px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2;
+  height: 28px;
+  top: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 16px;
+  padding-right: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: absolute;
+  background: var(--bg-color);
 }
 
 .stage-icon {
@@ -51,10 +69,11 @@ body {
 
 .stamp {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  width: 64px;
-  height: 64px;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
 }
 .stamp.stage-striked {
   background-image: url(./stage_strike.svg);
