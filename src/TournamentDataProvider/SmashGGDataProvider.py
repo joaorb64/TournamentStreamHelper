@@ -360,9 +360,10 @@ class SmashGGDataProvider(TournamentDataProvider):
 
         allStages = None
         strikedStages = None
+        strikedBy = [[], []]
         selectedStage = None
         dsrStages = None
-        playerTurn = None
+        currPlayer = 0
 
         for task in reversed(tasks):
             if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
@@ -389,8 +390,15 @@ class SmashGGDataProvider(TournamentDataProvider):
                 elif base.get("stageId", None) is not None:
                     selectedStage = base.get("stageId")
 
-                if (base.get("useDSR") or base.get("useMDSR")) and base.get("stageWins"):
+                # cannot repeat stages in the set
+                if base.get("useDSR") and base.get("stageWins"):
+                    dsrStages = []
 
+                    for stage_array in base.get("stageWins").values():
+                        for stage in stage_array:
+                            dsrStages.append(int(stage))
+                # cannot pick stage where you won
+                elif base.get("useMDSR") and base.get("stageWins"):
                     loser = next(
                         (p for p in base.get("stageWins").keys()
                             if int(p) != int(latestWinner)),
@@ -401,6 +409,50 @@ class SmashGGDataProvider(TournamentDataProvider):
                         dsrStages = []
                         dsrStages = [int(s) for s in base.get(
                             "stageWins")[loser]]
+
+                if base.get("strikeList"):
+                    for stage_code, entrant in base.get("strikeList").items():
+                        stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                            int(stage_code))
+
+                        if stage:
+                            codename = stage[1].get("codename")
+
+                            if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                                strikedBy[0].append(codename)
+                            if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                                strikedBy[1].append(codename)
+                else:
+                    banPlayer = 0
+
+                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                        banPlayer = 0
+                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                        banPlayer = 1
+
+                    if base.get("banList", None) is not None:
+                        for stage_code in base.get("banList"):
+                            stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                                int(stage_code))
+                            if stage:
+                                codename = stage[1].get("codename")
+                                strikedBy[banPlayer].append(codename)
+
+                if latestWinner:
+                    lastLoserSlot = 0
+
+                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                        lastLoserSlot = 1
+                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                        lastLoserSlot = 0
+
+                    currPlayer = lastLoserSlot
+                elif base.get("turn"):
+                    for entrant, value in base.get("turn").items():
+                        if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")) and value == True:
+                            currPlayer = 1
+                        if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")) and value == True:
+                            currPlayer = 0
 
                 if allStages == None and strikedStages == None and selectedStage == None:
                     continue
@@ -427,10 +479,11 @@ class SmashGGDataProvider(TournamentDataProvider):
                         striked.append(stage[1].get("codename"))
 
             selected = ""
-            selectedStage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
-                selectedStage)
-            if selectedStage:
-                selected = selectedStage[1]
+            if selectedStage is not None:
+                selectedStage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                    selectedStage)
+                if selectedStage:
+                    selected = selectedStage[1]
 
             dsr = []
             if dsrStages:
@@ -442,13 +495,20 @@ class SmashGGDataProvider(TournamentDataProvider):
 
             stageStrikeState = {
                 "stages": allStagesFinal,
+                "strikedBy": strikedBy,
                 "striked": striked,
                 "selected": selected,
                 "dsr": dsr,
-                "playerTurn": playerTurn
+                "currPlayer": currPlayer
             }
         except:
             print(traceback.format_exc())
+            allStages = None
+            strikedStages = None
+            strikedBy = [[], []]
+            selectedStage = None
+            dsrStages = None
+            currPlayer = 0
             stageStrikeState = {}
 
         entrants = [[], []]
@@ -472,12 +532,14 @@ class SmashGGDataProvider(TournamentDataProvider):
 
         return({
             "stage_strike": stageStrikeState,
+            "strikedBy": strikedBy,
             "entrants": entrants if len(entrants[0]) > 0 and len(entrants[1]) > 0 else None,
             "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
             "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
             "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
             "team1losers": team1losers,
-            "team2losers": team2losers
+            "team2losers": team2losers,
+            "currPlayer": currPlayer
         })
 
     def GetStreamMatchId(self, streamName):
@@ -664,11 +726,12 @@ class SmashGGDataProvider(TournamentDataProvider):
                 for _set in sets:
                     phaseName = ""
                     phaseIdentifier = ""
-                    
+
                     # This is because a display identifier at a major (Ex. Pools C12) will return C12,
                     # otherwise SmashGG will just return a string containing "1"
                     if deep_get(_set, "phaseGroup.displayIdentifier") != "1":
-                        phaseIdentifier = deep_get(_set, "phaseGroup.displayIdentifier") 
+                        phaseIdentifier = deep_get(
+                            _set, "phaseGroup.displayIdentifier")
                     phaseName = deep_get(_set, "phaseGroup.phase.name")
 
                     p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
