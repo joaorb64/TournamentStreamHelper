@@ -105,7 +105,7 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="321"/>
         <source>Strike order, numbers separated by comma (game 1)</source>
-        <translation>プレイヤー同士が交互にBANするステージの数をコンマで分けて記入(最初の試合のみ)</translation>
+        <translation>プレイヤーたちが交互に拒否するステージの数をコンマで分けて記入(最初の試合のみ)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
@@ -115,12 +115,12 @@
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
         <source>Fixed ban count (how many stages winner bans)</source>
-        <translation>固定BAN数(1つ前の試合の勝者がBANするステージの数)</translation>
+        <translation>固定拒否数(1つ前の試合の勝者が拒否するステージの数)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="362"/>
         <source>Ban count by max games (games:bans,games:bans)</source>
-        <translation>最大試合数:1つ前の試合の勝者がBANするステージの数(コンマで分けて記入)</translation>
+        <translation>最大試合数:1つ前の試合の勝者が拒否するステージの数(コンマで分けて記入)</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
@@ -330,7 +330,7 @@
         <location filename="../layout/TSHThumbnailSettings.ui" line="524"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="664"/>
         <source>Font Outline</source>
-        <translation>フォントのアウトライン</translation>
+        <translation>アウトライン</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="569"/>
@@ -392,7 +392,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="96"/>
         <source>MATCH</source>
-        <translation>対戦カード</translation>
+        <translation>対戦局面</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="113"/>
@@ -413,7 +413,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="208"/>
         <source>SWAP TEAMS</source>
-        <translation>チームの情報を入れ換える</translation>
+        <translation>入れ換える</translation>
     </message>
 </context>
 <context>
@@ -549,14 +549,14 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="256"/>
         <source>Toggle widgets</source>
-        <translation>ウィジェットを切り替える</translation>
+        <translation>ツールを切り替える</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="200"/>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Load tournament and sets from SmashGG user</source>
-        <translation>大会と対戦データをSmashGGのユーザーからロードする</translation>
+        <translation>大会と対戦データをユーザーのSmashGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="404"/>
@@ -695,19 +695,19 @@
     <message>
         <location filename="../TSHPlayerListWidget.py" line="62"/>
         <source>Players per slot</source>
-        <translation>各スロットのプレイヤーたち</translation>
+        <translation>各スロットのプレイヤー数</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
         <location filename="../TSHScoreboardWidget.py" line="85"/>
         <source>Characters per player</source>
-        <translation>各プレイヤーの使用キャラクター</translation>
+        <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="52"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="709"/>
         <source>Save new player</source>
-        <translation>新しいプレイヤー情報を保存</translation>
+        <translation>プレイヤー情報を保存</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="64"/>
