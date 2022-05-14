@@ -311,7 +311,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                                 playerData["state_code"] = user.get(
                                     "location").get("state")
                         # State -- from city
-                        elif user.get("location").get("city"):
+                        elif user.get("location").get("city") and playerData.get("country_code"):
                             stateCode = TSHCountryHelper.FindState(
                                 playerData["country_code"], user.get("location").get("city"))
                             if stateCode:

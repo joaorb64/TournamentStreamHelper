@@ -282,11 +282,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "./assets/font/OpenSans/OpenSans-Semibold.ttf")
         font_id = QFontDatabase.addApplicationFont(
             "./assets/font/OpenSans/OpenSans-Bold.ttf")
-        font_opensans_bold = QFontDatabase.applicationFontFamilies(font_id)[0]
-        font_id = QFontDatabase.addApplicationFont(
-            "./assets/font/OpenSans/OpenSans-Semibold.ttf")
-        font_opensans_semi_bold = QFontDatabase.applicationFontFamilies(font_id)[
-            0]
 
         unloadable, self.family_to_path = self.getFontPaths()
         # add Open Sans
