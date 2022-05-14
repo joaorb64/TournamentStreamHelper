@@ -551,6 +551,11 @@
         <translation>ツールの表示</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="595"/>
+        <source>Asset pack name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="200"/>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
@@ -622,9 +627,8 @@
         <translation>フィルター...</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="595"/>
         <source>Name of the game</source>
-        <translation>ゲームのタイトル</translation>
+        <translation type="vanished">ゲームのタイトル</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="597"/>

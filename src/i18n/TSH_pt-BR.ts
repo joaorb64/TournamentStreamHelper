@@ -658,9 +658,13 @@
         <translation>Filtrar...</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="595"/>
         <source>Name of the game</source>
-        <translation>Nome do jogo</translation>
+        <translation type="vanished">Nome do jogo</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="595"/>
+        <source>Asset pack name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="597"/>

@@ -593,7 +593,7 @@ class Window(QMainWindow):
                 "9"
             ]
             header_labels[2] = QApplication.translate(
-                "app", "Name of the game")
+                "app", "Asset pack name")
             header_labels[3] = QApplication.translate("app", "Description")
             header_labels[4] = QApplication.translate("app", "Credits")
             header_labels[5] = QApplication.translate(

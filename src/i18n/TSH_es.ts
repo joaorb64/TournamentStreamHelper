@@ -651,8 +651,12 @@
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="595"/>
+        <source>Asset pack name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Name of the game</source>
-        <translation>Nombre del juego</translation>
+        <translation type="vanished">Nombre del juego</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="597"/>
