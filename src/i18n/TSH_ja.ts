@@ -330,7 +330,7 @@
         <location filename="../layout/TSHThumbnailSettings.ui" line="524"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="664"/>
         <source>Font Outline</source>
-        <translation>アウトライン</translation>
+        <translation>アウトラインの色</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="569"/>
@@ -376,12 +376,11 @@
         <location filename="../layout/TSHScoreboardScore.ui" line="43"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="162"/>
         <source>SCORE</source>
-        <translation>点数</translation>
+        <translation>スコア</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="61"/>
         <source>PHASE</source>
-        <translatorcomment>勝者側、敗者側の何回戦かを示す</translatorcomment>
         <translation>フェーズ</translation>
     </message>
     <message>
@@ -392,7 +391,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="96"/>
         <source>MATCH</source>
-        <translation>対戦局面</translation>
+        <translation>ラウンド</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="113"/>
@@ -408,7 +407,7 @@
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="201"/>
         <source>RESET SCORE</source>
-        <translation>点数をリセット</translation>
+        <translation>スコアをリセット</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="208"/>
@@ -517,7 +516,7 @@
         <location filename="../TSHPlayerListWidget.py" line="19"/>
         <location filename="../TournamentStreamHelper.py" line="184"/>
         <source>Player List</source>
-        <translation>プレイヤーのリスト</translation>
+        <translation>プレイヤーリスト</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="207"/>
@@ -549,14 +548,14 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="273"/>
         <source>Toggle widgets</source>
-        <translation>ツールを切り替える</translation>
+        <translation>ツールの表示</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="217"/>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <location filename="../TournamentStreamHelper.py" line="336"/>
         <source>Load tournament and sets from SmashGG user</source>
-        <translation>大会と対戦データをユーザーのSmashGGからロードする</translation>
+        <translation>大会と対戦データをSmashGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="420"/>
@@ -625,7 +624,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="611"/>
         <source>Name of the game</source>
-        <translation>ゲーム名</translation>
+        <translation>ゲームのタイトル</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="613"/>
@@ -635,12 +634,12 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="614"/>
         <source>Credits</source>
-        <translation>このソフトに携わってきた方々</translation>
+        <translation>製作者</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="615"/>
         <source>Installed version</source>
-        <translation>現在インストールされているバージョン</translation>
+        <translation>インストールされているバージョン</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="617"/>
@@ -650,7 +649,7 @@
     <message>
         <location filename="../TournamentStreamHelper.py" line="618"/>
         <source>Size</source>
-        <translation>サイズ</translation>
+        <translation>容量</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="619"/>
@@ -735,7 +734,7 @@
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="116"/>
         <source>Open {0} in a browser to stage strike.</source>
-        <translation>ステージのBAN/PICKをするために{0}をブラウザで開く</translation>
+        <translation>ステージのBAN/PICKブラウザ{0}を開く</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
@@ -755,12 +754,12 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
         <source>Set Twitch username</source>
-        <translation>Twitchでのユーザー名を入れる</translation>
+        <translation>Twitchでのユーザー名を入力</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
         <source>Twitch Username:</source>
-        <translation>Twitchでのユーザー名</translation>
+        <translation>Twitchでのユーザー名:</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
@@ -795,7 +794,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="170"/>
         <source>Match</source>
-        <translation>対戦カード</translation>
+        <translation>ラウンド</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="203"/>
@@ -826,7 +825,7 @@
     <message>
         <location filename="../TSHScoreboardWidget.py" line="60"/>
         <source>Score</source>
-        <translation>点数</translation>
+        <translation>スコア</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="63"/>
