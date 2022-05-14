@@ -552,6 +552,11 @@
         <translation>ツールを切り替える</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="595"/>
+        <source>Asset pack name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="200"/>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
@@ -623,9 +628,8 @@
         <translation>フィルター...</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="595"/>
         <source>Name of the game</source>
-        <translation>ゲーム名</translation>
+        <translation type="vanished">ゲーム名</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="597"/>
