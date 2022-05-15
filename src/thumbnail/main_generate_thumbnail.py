@@ -17,8 +17,10 @@ import string
 from copy import deepcopy
 import datetime
 import os
+import re
 
 from src.TSHGameAssetManager import TSHGameAssetManager
+from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 display_phase = True
 use_team_names = False
@@ -632,23 +634,35 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     if gameAssetManager and len(gameAssetManager.instance.characters.keys()) > 0:
 
         for i in range(4):
-            key = list(gameAssetManager.instance.characters.keys())[
-                random.randint(0, len(gameAssetManager.instance.characters)-1)]
+            asset = None
+            while (not asset):
+                key = list(gameAssetManager.instance.characters.keys())[
+                    random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
-            character = gameAssetManager.instance.characters[key]
+                character = gameAssetManager.instance.characters[key]
 
-            data = gameAssetManager.instance.GetCharacterAssets(
-                character.get("codename"), 0)
+                data = gameAssetManager.instance.GetCharacterAssets(
+                    character.get("codename"), 0)
 
-            asset = data.get(used_assets)
+                asset = data.get(used_assets)
 
-            if not asset:
-                asset = data.get("full")
-            if not asset:
-                asset = data.get("portrait")
+                if not asset:
+                    asset = data.get("full")
+                if not asset:
+                    asset = data.get("portrait")
+
+            name = key
+            if character.get("locale"):
+                for locale in TSHLocaleHelper.currentLocale:
+                    if locale.replace("-", "_") in character["locale"]:
+                        name = character["locale"][locale.replace("-", "_")]
+                        break
+                    elif re.split("-|_", locale)[0] in character["locale"]:
+                        name = character["locale"][re.split("-|_", locale)[0]]
+                        break
 
             chars.append({
-                "name": key,
+                "name": name,
                 "team": gameAssetManager.instance.selectedGame.get("codename").upper(),
                 "asset": {
                     "assets": {
