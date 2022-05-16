@@ -109,7 +109,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
         self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
-        #self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
+        # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
 
         # VISIBILITY
@@ -384,7 +384,7 @@ class TSHScoreboardWidget(QDockWidget):
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle("THS - Thumbnail")
         try:
-            thumbnailPath = thumbnail.generate(settingsManager = SettingsManager)
+            thumbnailPath = thumbnail.generate(settingsManager=SettingsManager)
             msgBox.setText("The thumbnail has been generated here : ")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
@@ -395,7 +395,7 @@ class TSHScoreboardWidget(QDockWidget):
                 if platform.system() == "Windows":
                     thumbnailPath = thumbnailPath[2:].replace("/", "\\")
                     outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
-                    #os.startfile(outThumbDir)
+                    # os.startfile(outThumbDir)
                     subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
                 elif platform.system() == "Darwin":
                     subprocess.Popen(["open", outThumbDir])
@@ -558,7 +558,7 @@ class TSHScoreboardWidget(QDockWidget):
     def GetRecentSets(self):
         updated = False
         # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "SmashGG":
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "startgg":
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             p2id = StateManager.Get(f"score.team.2.player.1.id")
             if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
