@@ -15,7 +15,6 @@ class TSHLocaleHelper(QObject):
     def LoadLocale():
         current_locale = QtCore.QLocale().uiLanguages()
         print("Current locale", current_locale)
-        current_locale = ["fr-CA"]
 
         TSHLocaleHelper.currentLocale = current_locale
 
