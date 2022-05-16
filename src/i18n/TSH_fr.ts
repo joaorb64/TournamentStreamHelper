@@ -520,7 +520,7 @@
         <translation>Définir le tournoi</translation>
     </message>
     <message>
-        <source>Load SmashGG user set</source>
+        <source>Load StartGG user set</source>
         <translation type="vanished">Charger le set d&apos;un utilisateur Start.gg</translation>
     </message>
     <message>
@@ -551,8 +551,11 @@
         <translation>Activer des gadgets</translation>
     </message>
     <message>
-        <source>Load tournament and sets from SmashGG user</source>
-        <translation type="vanished">Charger un tournoi et des sets depuis un utilisateur Start.gg</translation>
+        <location filename="../TournamentStreamHelper.py" line="200"/>
+        <location filename="../TournamentStreamHelper.py" line="316"/>
+        <location filename="../TournamentStreamHelper.py" line="320"/>
+        <source>Load tournament and sets from StartGG user</source>
+        <translation>Charger un tournoi et des sets depuis un utilisateur Start.gg</translation>
     </message>
     <message>
         <source>Failed to fetch version from github</source>
@@ -603,13 +606,6 @@
         <location filename="../TournamentStreamHelper.py" line="387"/>
         <source>Failed to fetch version from github:</source>
         <translation>Échec de la récupération de la version depuis Github :</translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="200"/>
-        <location filename="../TournamentStreamHelper.py" line="316"/>
-        <location filename="../TournamentStreamHelper.py" line="320"/>
-        <source>Load tournament and sets from StartGG user</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="410"/>
@@ -746,7 +742,7 @@
         <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <location filename="../TSHTournamentDataProvider.py" line="173"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="271"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="665"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="679"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
     </message>
@@ -835,13 +831,9 @@
         <translation>Entrez l&apos;URL du tournoi.</translation>
     </message>
     <message>
-        <source>For SmashGG, the link must contain the /event/ part</source>
-        <translation type="vanished">Pour Start.gg, le lien doit contenir la partie /event/</translation>
-    </message>
-    <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="unfinished"></translation>
+        <translation>Pour Start.gg, le lien doit contenir la partie /event/</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="110"/>
@@ -857,6 +849,15 @@
         <location filename="../TSHTournamentDataProvider.py" line="135"/>
         <source>Twitch Username:</source>
         <translation>Nom d&apos;utilisateur Twitch :</translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentDataProvider.py" line="145"/>
+        <source>Paste the URL to the player&apos;s SmashGG profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste the URL to the player&apos;s StartGG profile</source>
+        <translation type="obsolete">Entrez l&apos;URL du profil joueur Start.gg</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="168"/>
@@ -883,11 +884,6 @@
         <translation type="vanished">Nom d&apos;utilisateur Twitch : </translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="145"/>
-        <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation>Entrez l&apos;URL du profil joueur Start.gg</translation>
-    </message>
-    <message>
         <location filename="../TSHTournamentDataProvider.py" line="148"/>
         <source>Insert the player&apos;s name in bracket</source>
         <translation>Entrez le nom du joueur tel qu&apos;affiché dans l&apos;arbre de tournoi</translation>
@@ -903,23 +899,23 @@
         <translation>Définir le joueur</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="666"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="680"/>
         <source>Sponsor {0}</source>
         <translation>Sponsor {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="693"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="707"/>
         <source>Winners Finals</source>
         <translation>Finale Winner</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="694"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="708"/>
         <source>Pool {0}</source>
         <translation>Poule {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="712"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="739"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="726"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="753"/>
         <source>Team {0}</source>
         <translation>Équipe {0}</translation>
     </message>
@@ -1012,12 +1008,12 @@
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="808"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="822"/>
         <source>Please select a game first</source>
         <translation>Veuillez sélectionner un jeu</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="826"/>
         <source>Player {0} tag missing</source>
         <translation>Le pseudo du joueur {0} est absent</translation>
     </message>

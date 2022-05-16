@@ -528,7 +528,7 @@
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Load tournament and sets from StartGG user</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">大会と対戦データをStartGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="236"/>
@@ -561,10 +561,6 @@
         <location filename="../TournamentStreamHelper.py" line="595"/>
         <source>Asset pack name</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load tournament and sets from SmashGG user</source>
-        <translation type="vanished">大会と対戦データをSmashGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="404"/>
@@ -730,7 +726,7 @@
         <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <location filename="../TSHTournamentDataProvider.py" line="173"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="271"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="665"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="679"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
@@ -755,13 +751,9 @@
         <translation>大会のURLをここに貼って下さい</translation>
     </message>
     <message>
-        <source>For SmashGG, the link must contain the /event/ part</source>
-        <translation type="vanished">SmashGGのリンクには/event/partを含めて下さい</translation>
-    </message>
-    <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="unfinished"></translation>
+        <translation>StartGGのリンクには/event/partを含めて下さい</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="110"/>
@@ -779,9 +771,13 @@
         <translation>Twitchでのユーザー名:</translation>
     </message>
     <message>
+        <source>Paste the URL to the player&apos;s StartGG profile</source>
+        <translation type="vanished">プレイヤーのStartGGのプロフィールへのURLをここに貼ってください</translation>
+    </message>
+    <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
         <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation>プレイヤーのSmashGGのプロフィールへのURLをここに貼ってください</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="148"/>
@@ -819,23 +815,23 @@
         <translation>対戦を選ぶ</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="666"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="680"/>
         <source>Sponsor {0}</source>
         <translation>スポンサー{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="693"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="707"/>
         <source>Winners Finals</source>
         <translation>勝者側決勝</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="694"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="708"/>
         <source>Pool {0}</source>
         <translation>予選プール{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="712"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="739"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="726"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="753"/>
         <source>Team {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -988,12 +984,12 @@
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="808"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="822"/>
         <source>Please select a game first</source>
         <translation>ゲームを選んで下さい</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="826"/>
         <source>Player {0} tag missing</source>
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>

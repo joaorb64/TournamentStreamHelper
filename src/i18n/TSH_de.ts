@@ -553,15 +553,11 @@
         <translation>Turnier auswählen</translation>
     </message>
     <message>
-        <source>Load tournament and sets from SmashGG user</source>
-        <translation type="vanished">Turnier und Sets von smash.gg-User laden</translation>
-    </message>
-    <message>
         <location filename="../TournamentStreamHelper.py" line="200"/>
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Load tournament and sets from StartGG user</source>
-        <translation type="unfinished"></translation>
+        <translation>Turnier und Sets von smash.gg-User laden</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="236"/>
@@ -713,13 +709,9 @@
         <translation>URL des Turniers einfügen.</translation>
     </message>
     <message>
-        <source>For SmashGG, the link must contain the /event/ part</source>
-        <translation type="vanished">Wird smash.gg verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
-    </message>
-    <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="unfinished"></translation>
+        <translation>Wird smash.gg verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="110"/>
@@ -737,9 +729,13 @@
         <translation>Twitch-Username:</translation>
     </message>
     <message>
+        <source>Paste the URL to the player&apos;s StartGG profile</source>
+        <translation type="vanished">URL des Spielerprofils auf smash.gg einfügen</translation>
+    </message>
+    <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
         <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation>URL des Spielerprofils auf smash.gg einfügen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="148"/>
@@ -775,7 +771,7 @@
         <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <location filename="../TSHTournamentDataProvider.py" line="173"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="271"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="665"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="679"/>
         <source>Player {0}</source>
         <translation>Spieler {0}</translation>
     </message>
@@ -911,23 +907,23 @@
         <translation>Später erinnern</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="666"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="680"/>
         <source>Sponsor {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="693"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="707"/>
         <source>Winners Finals</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="694"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="708"/>
         <source>Pool {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="712"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="739"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="726"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="753"/>
         <source>Team {0}</source>
         <translation></translation>
     </message>
@@ -991,12 +987,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="808"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="822"/>
         <source>Please select a game first</source>
         <translation>Bitte zuerst ein Spiel wählen</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="812"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="826"/>
         <source>Player {0} tag missing</source>
         <translation>Spieler {0}: Name fehlt</translation>
     </message>
