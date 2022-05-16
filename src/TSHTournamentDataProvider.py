@@ -137,7 +137,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
     def SetUserAccount(self, window, startgg=False):
-        providerName = "startgg"
+        providerName = "StartGG"
         window_text = ""
 
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:

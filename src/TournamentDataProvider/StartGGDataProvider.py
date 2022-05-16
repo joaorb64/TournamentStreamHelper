@@ -27,7 +27,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
-        self.name = "startgg"
+        self.name = "StartGG"
         self.getMatchThreadPool = QThreadPool()
         self.getRecentSetsThreadPool = QThreadPool()
 
@@ -38,7 +38,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -152,7 +152,7 @@ class StartGGDataProvider(TournamentDataProvider):
         data = requests.post(
             "https://www.start.gg/api/-/gql",
             headers={
-                "client-version": "19",
+                "client-version": "20",
                 'Content-Type': 'application/json'
             },
             json={
@@ -171,7 +171,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -551,7 +551,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -599,7 +599,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -697,7 +697,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -814,7 +814,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 data = requests.post(
                     "https://www.start.gg/api/-/gql",
                     headers={
-                        "client-version": "19",
+                        "client-version": "20",
                         'Content-Type': 'application/json'
                     },
                     json={
