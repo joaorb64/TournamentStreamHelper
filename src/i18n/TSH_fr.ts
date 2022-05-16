@@ -853,7 +853,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="unfinished">Entrez l&apos;URL du profil joueur StartGG</translation>
+        <translation>Entrez l&apos;URL du profil joueur StartGG</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="168"/>
