@@ -808,12 +808,8 @@
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
-        <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="obsolete">Cole a URL para o perfil do jogador no StartGG</translation>
+        <translation type="unfinished">Cole a URL para o perfil do jogador no StartGG</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="168"/>

@@ -143,7 +143,7 @@ class TSHTournamentDataProvider:
 
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
             window_text = QApplication.translate(
-                "app", "Paste the URL to the player's SmashGG profile")
+                "app", "Paste the URL to the player's StartGG profile")
         elif self.provider and self.provider.url and "challonge" in self.provider.url:
             window_text = QApplication.translate(
                 "app", "Insert the player's name in bracket")

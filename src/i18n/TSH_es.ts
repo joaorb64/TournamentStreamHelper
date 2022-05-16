@@ -734,13 +734,9 @@
         <translation>Usuario de Twitch:</translation>
     </message>
     <message>
-        <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="vanished">Pega la URL del perfil de StartGG del jugador</translation>
-    </message>
-    <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
-        <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation type="unfinished"></translation>
+        <source>Paste the URL to the player&apos;s StartGG profile</source>
+        <translation>Pega la URL del perfil de StartGG del jugador</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="148"/>

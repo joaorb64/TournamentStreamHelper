@@ -852,12 +852,8 @@
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
-        <source>Paste the URL to the player&apos;s SmashGG profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="obsolete">Entrez l&apos;URL du profil joueur Start.gg</translation>
+        <translation type="unfinished">Entrez l&apos;URL du profil joueur Start.gg</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="168"/>
