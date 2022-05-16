@@ -296,9 +296,9 @@ class Window(QMainWindow):
             self.gameSelect.setCurrentIndex(index)
 
     def UpdateUserSetButton(self):
-        if SettingsManager.Get("StartGG_user"):
+        if SettingsManager.Get("SmashGG_user"):
             self.btLoadPlayerSet.setText(
-                f"Load tournament and sets from startgg user ({SettingsManager.Get('StartGG_user')})")
+                f"Load tournament and sets from startgg user ({SettingsManager.Get('SmashGG_user')})")
             self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btLoadPlayerSet.setText(
@@ -307,14 +307,14 @@ class Window(QMainWindow):
 
     def LoadUserSetClicked(self):
         self.scoreboard.lastSetSelected = None
-        if SettingsManager.Get("StartGG_user"):
+        if SettingsManager.Get("SmashGG_user"):
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 "start.gg/",
                 TSHTournamentDataProvider.instance.threadPool,
                 TSHTournamentDataProvider.instance
             )
             TSHTournamentDataProvider.instance.LoadUserSet(
-                self.scoreboard, SettingsManager.Get("StartGG_user"))
+                self.scoreboard, SettingsManager.Get("SmashGG_user"))
 
     def LoadUserSetOptionsClicked(self):
         TSHTournamentDataProvider.instance.SetUserAccount(
