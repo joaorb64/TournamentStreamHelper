@@ -48,7 +48,7 @@ class TSHScoreboardStageWidget(QWidget):
         uic.loadUi("src/layout/TSHScoreboardStage.ui", self)
 
         self.userRulesets = []
-        self.smashggRulesets = []
+        self.startggRulesets = []
         self.stagesModel = QStandardItemModel()
 
         self.rulesetsBox = self.findChild(QComboBox, "rulesetSelect")
@@ -117,7 +117,7 @@ class TSHScoreboardStageWidget(QWidget):
         self.webappLabel.setOpenExternalLinks(True)
 
         self.signals.rulesets_changed.connect(self.LoadRulesets)
-        self.LoadSmashggRulesets()
+        self.LoadStartggRulesets()
         self.LoadRuleset()
 
         TSHGameAssetManager.instance.signals.onLoad.connect(self.SetupOptions)
@@ -278,8 +278,8 @@ class TSHScoreboardStageWidget(QWidget):
             self.userRulesets = []
             traceback.print_exc()
 
-        # Load SmashGG rulesets
-        for ruleset in self.smashggRulesets:
+        # Load startgg rulesets
+        for ruleset in self.startggRulesets:
             myRuleset = Ruleset()
             if str(ruleset.get("videogameId")) == str(TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")):
                 if not ruleset.get("settings"):
@@ -319,7 +319,7 @@ class TSHScoreboardStageWidget(QWidget):
 
                 item = QStandardItem(ruleset.get("name"))
                 item.setData(myRuleset, Qt.ItemDataRole.UserRole)
-                item.setIcon(QIcon("./assets/icons/smashgg.svg"))
+                item.setIcon(QIcon("./assets/icons/startgg.svg"))
                 rulesetsModel.appendRow(item)
 
         # Update list
@@ -429,24 +429,24 @@ class TSHScoreboardStageWidget(QWidget):
 
         return ruleset
 
-    def LoadSmashggRulesets(self):
+    def LoadStartggRulesets(self):
         try:
             class DownloadThread(QThread):
                 def run(self):
                     data = requests.get(
-                        "https://smash.gg/api/-/gg_api./rulesets"
+                        "https://www.start.gg/api/-/gg_api./rulesets"
                     )
                     data = json.loads(data.text)
                     rulesets = deep_get(data, "entities.ruleset")
-                    self.parent().smashggRulesets = rulesets
-                    print("SmashGG Rulesets loaded")
+                    self.parent().startggRulesets = rulesets
+                    print("startgg Rulesets loaded")
                     self.parent().signals.rulesets_changed.emit()
             downloadThread = DownloadThread(self)
             downloadThread.start()
         except Exception as e:
             traceback.print_exc()
 
-        # https://smash.gg/api/-/gg_api./rulesets
+        # https://www.start.gg/api/-/gg_api./rulesets
         # entities > ruleset[]
 
         # description: null

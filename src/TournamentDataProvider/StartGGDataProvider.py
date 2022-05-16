@@ -16,7 +16,7 @@ import json
 from ..Workers import Worker
 
 
-class SmashGGDataProvider(TournamentDataProvider):
+class StartGGDataProvider(TournamentDataProvider):
     SetsQuery = None
     SetQuery = None
     UserSetQuery = None
@@ -27,7 +27,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
-        self.name = "SmashGG"
+        self.name = "StartGG"
         self.getMatchThreadPool = QThreadPool()
         self.getRecentSetsThreadPool = QThreadPool()
 
@@ -36,17 +36,17 @@ class SmashGGDataProvider(TournamentDataProvider):
 
         try:
             data = requests.post(
-                "https://smash.gg/api/-/gql",
+                "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
                     "operationName": "TournamentDataQuery",
                     "variables": {
-                        "eventSlug": self.url.split("smash.gg/")[1]
+                        "eventSlug": self.url.split("start.gg/")[1]
                     },
-                    "query": SmashGGDataProvider.TournamentDataQuery
+                    "query": StartGGDataProvider.TournamentDataQuery
                 }
 
             )
@@ -55,7 +55,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
             videogame = deep_get(data, "data.event.videogame.id", None)
             if videogame:
-                TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                TSHGameAssetManager.instance.SetGameFromStartGGId(
                     videogame)
                 self.videogame = videogame
 
@@ -75,7 +75,7 @@ class SmashGGDataProvider(TournamentDataProvider):
     def GetMatch(self, setId):
         try:
             r = requests.get(
-                f'https://smash.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+                f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
                 {
                     "extensions": {"cacheControl": {"version": 1, "noCache": True}},
                     "cacheControl": {"version": 1, "noCache": True},
@@ -137,7 +137,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
     def _GetMatchTasks(self, setId, progress_callback):
         r = requests.get(
-            f'https://smash.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+            f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
             {
                 "extensions": {"cacheControl": {"version": 1, "noCache": True}},
                 "cacheControl": {"version": 1, "noCache": True},
@@ -150,9 +150,9 @@ class SmashGGDataProvider(TournamentDataProvider):
 
     def _GetMatchNewApi(self, setId, progress_callback):
         data = requests.post(
-            "https://smash.gg/api/-/gql",
+            "https://www.start.gg/api/-/gql",
             headers={
-                "client-version": "19",
+                "client-version": "20",
                 'Content-Type': 'application/json'
             },
             json={
@@ -160,7 +160,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                 "variables": {
                     "id": setId
                 },
-                "query": SmashGGDataProvider.SetQuery
+                "query": StartGGDataProvider.SetQuery
             }
         )
         data = json.loads(data.text)
@@ -169,9 +169,9 @@ class SmashGGDataProvider(TournamentDataProvider):
     def GetMatches(self):
         try:
             data = requests.post(
-                "https://smash.gg/api/-/gql",
+                "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -186,9 +186,9 @@ class SmashGGDataProvider(TournamentDataProvider):
                             ],
                             "hideEmpty": True
                         },
-                        "eventSlug": self.url.split("smash.gg/")[1]
+                        "eventSlug": self.url.split("start.gg/")[1]
                     },
-                    "query": SmashGGDataProvider.SetsQuery
+                    "query": StartGGDataProvider.SetsQuery
                 }
 
             )
@@ -273,7 +273,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                     main = playerSelections.most_common(1)
 
                     if len(main) > 0:
-                        playerData["smashggMain"] = main[0][0]
+                        playerData["startggMain"] = main[0][0]
 
                 if user:
                     if len(user.get("authorizations", [])) > 0:
@@ -317,9 +317,9 @@ class SmashGGDataProvider(TournamentDataProvider):
                             if stateCode:
                                 playerData["state_code"] = stateCode
 
-                    if playerData.get("smashggMain"):
-                        main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
-                            playerData.get("smashggMain"))
+                    if playerData.get("startggMain"):
+                        main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
+                            playerData.get("startggMain"))
                         if main:
                             playerData["mains"] = main[0]
 
@@ -414,7 +414,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
                 if base.get("strikeList"):
                     for stage_code, entrant in base.get("strikeList").items():
-                        stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                        stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                             int(stage_code))
 
                         if stage:
@@ -434,7 +434,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
                     if base.get("banList", None) is not None:
                         for stage_code in base.get("banList"):
-                            stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                            stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                                 int(stage_code))
                             if stage:
                                 codename = stage[1].get("codename")
@@ -467,7 +467,7 @@ class SmashGGDataProvider(TournamentDataProvider):
         try:
             allStagesFinal = {}
             for st in allStages:
-                stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                     st)
                 if stage:
                     allStagesFinal[stage[1].get("codename")] = stage[1]
@@ -475,14 +475,14 @@ class SmashGGDataProvider(TournamentDataProvider):
             striked = []
             if strikedStages is not None:
                 for stage in strikedStages:
-                    stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                    stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                         stage)
                     if stage:
                         striked.append(stage[1].get("codename"))
 
             selected = ""
             if selectedStage is not None:
-                selectedStage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                selectedStage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                     selectedStage)
                 if selectedStage:
                     selected = selectedStage[1]
@@ -490,7 +490,7 @@ class SmashGGDataProvider(TournamentDataProvider):
             dsr = []
             if dsrStages:
                 for stage in dsrStages:
-                    stage = TSHGameAssetManager.instance.GetStageFromSmashGGId(
+                    stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                         stage)
                     if stage:
                         dsr.append(stage[1].get("codename"))
@@ -518,7 +518,7 @@ class SmashGGDataProvider(TournamentDataProvider):
         for i, entrantChars in enumerate(selectedChars):
             for char in entrantChars:
                 entrants[i].append({
-                    "mains": [TSHGameAssetManager.instance.GetCharacterFromSmashGGId(char)[0], 0]
+                    "mains": [TSHGameAssetManager.instance.GetCharacterFromStartGGId(char)[0], 0]
                 })
 
         team1losers = False
@@ -549,17 +549,17 @@ class SmashGGDataProvider(TournamentDataProvider):
 
         try:
             data = requests.post(
-                "https://smash.gg/api/-/gql",
+                "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
                     "operationName": "StreamSetsQuery",
                     "variables": {
-                        "eventSlug": self.url.split("smash.gg/")[1]
+                        "eventSlug": self.url.split("start.gg/")[1]
                     },
-                    "query": SmashGGDataProvider.StreamSetsQuery
+                    "query": StartGGDataProvider.StreamSetsQuery
                 }
             )
             data = json.loads(data.text)
@@ -587,7 +587,7 @@ class SmashGGDataProvider(TournamentDataProvider):
 
     def GetUserMatchId(self, user):
         matches = re.match(
-            r".*smash.gg/(user/[^/]*)", user)
+            r".*start.gg/(user/[^/]*)", user)
         print(matches)
         if matches:
             user = matches.groups()[0]
@@ -597,9 +597,9 @@ class SmashGGDataProvider(TournamentDataProvider):
         try:
             print(user)
             data = requests.post(
-                "https://smash.gg/api/-/gql",
+                "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -607,7 +607,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                     "variables": {
                         "userSlug": user
                     },
-                    "query": SmashGGDataProvider.UserSetQuery
+                    "query": StartGGDataProvider.UserSetQuery
                 }
             )
             data = json.loads(data.text)
@@ -620,12 +620,12 @@ class SmashGGDataProvider(TournamentDataProvider):
 
                 videogame = deep_get(userSet, "event.videogame.id", None)
                 if videogame:
-                    TSHGameAssetManager.instance.SetGameFromSmashGGId(
+                    TSHGameAssetManager.instance.SetGameFromStartGGId(
                         videogame)
                     self.videogame = videogame
 
                 self.parent.SetTournament(
-                    "https://smash.gg/"+deep_get(userSet, "event.slug"))
+                    "https://start.gg/"+deep_get(userSet, "event.slug"))
 
                 playerId = deep_get(data, "data.user.player.id")
                 slots = userSet.get("slots", [])
@@ -649,7 +649,7 @@ class SmashGGDataProvider(TournamentDataProvider):
     def GetEntrants(self):
         worker = Worker(self.GetEntrantsWorker, **{
             "gameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id"),
-            "eventSlug": self.url.split("smash.gg/")[1]
+            "eventSlug": self.url.split("start.gg/")[1]
         })
         self.threadpool.start(worker)
 
@@ -695,9 +695,9 @@ class SmashGGDataProvider(TournamentDataProvider):
             recentSets = []
 
             data = requests.post(
-                "https://smash.gg/api/-/gql",
+                "https://www.start.gg/api/-/gql",
                 headers={
-                    "client-version": "19",
+                    "client-version": "20",
                     'Content-Type': 'application/json'
                 },
                 json={
@@ -710,7 +710,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                         "page": page,
                         "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
                     },
-                    "query": SmashGGDataProvider.RecentSetsQuery
+                    "query": StartGGDataProvider.RecentSetsQuery
                 }
             )
             data = json.loads(data.text)
@@ -730,7 +730,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                     phaseIdentifier = ""
 
                     # This is because a display identifier at a major (Ex. Pools C12) will return C12,
-                    # otherwise SmashGG will just return a string containing "1"
+                    # otherwise startgg will just return a string containing "1"
                     if deep_get(_set, "phaseGroup.displayIdentifier") != "1":
                         phaseIdentifier = deep_get(
                             _set, "phaseGroup.displayIdentifier")
@@ -812,9 +812,9 @@ class SmashGGDataProvider(TournamentDataProvider):
             while page <= totalPages:
                 print(page, "/", totalPages)
                 data = requests.post(
-                    "https://smash.gg/api/-/gql",
+                    "https://www.start.gg/api/-/gql",
                     headers={
-                        "client-version": "19",
+                        "client-version": "20",
                         'Content-Type': 'application/json'
                     },
                     json={
@@ -824,7 +824,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                             "videogameId": gameId,
                             "page": page,
                         },
-                        "query": SmashGGDataProvider.EntrantsQuery
+                        "query": StartGGDataProvider.EntrantsQuery
                     }
 
                 )
@@ -873,7 +873,7 @@ class SmashGGDataProvider(TournamentDataProvider):
                             mains = playerSelections.most_common()
 
                             if len(mains) > 0:
-                                playerData["smashggMains"] = mains
+                                playerData["startggMains"] = mains
 
                         if user:
                             playerData["id"] = [
@@ -916,15 +916,15 @@ class SmashGGDataProvider(TournamentDataProvider):
                                     if stateCode:
                                         playerData["state_code"] = stateCode
 
-                            if playerData.get("smashggMains"):
+                            if playerData.get("startggMains"):
                                 if TSHGameAssetManager.instance.selectedGame:
                                     gameCodename = TSHGameAssetManager.instance.selectedGame.get(
                                         "codename")
 
                                     mains = []
 
-                                    for sggmain in playerData.get("smashggMains"):
-                                        main = TSHGameAssetManager.instance.GetCharacterFromSmashGGId(
+                                    for sggmain in playerData.get("startggMains"):
+                                        main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
                                             sggmain[0])
                                         if main:
                                             mains.append([main[0]])
@@ -945,23 +945,23 @@ class SmashGGDataProvider(TournamentDataProvider):
             traceback.print_exc()
 
 
-f = open("src/TournamentDataProvider/SmashGGSetsQuery.txt", 'r')
-SmashGGDataProvider.SetsQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGSetsQuery.txt", 'r')
+StartGGDataProvider.SetsQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGSetQuery.txt", 'r')
-SmashGGDataProvider.SetQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGSetQuery.txt", 'r')
+StartGGDataProvider.SetQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGUserSetQuery.txt", 'r')
-SmashGGDataProvider.UserSetQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGUserSetQuery.txt", 'r')
+StartGGDataProvider.UserSetQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGStreamSetsQuery.txt", 'r')
-SmashGGDataProvider.StreamSetsQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGStreamSetsQuery.txt", 'r')
+StartGGDataProvider.StreamSetsQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGEntrantsQuery.txt", 'r')
-SmashGGDataProvider.EntrantsQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGEntrantsQuery.txt", 'r')
+StartGGDataProvider.EntrantsQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGTournamentDataQuery.txt", 'r')
-SmashGGDataProvider.TournamentDataQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGTournamentDataQuery.txt", 'r')
+StartGGDataProvider.TournamentDataQuery = f.read()
 
-f = open("src/TournamentDataProvider/SmashGGRecentSetsQuery.txt", 'r')
-SmashGGDataProvider.RecentSetsQuery = f.read()
+f = open("src/TournamentDataProvider/StartGGRecentSetsQuery.txt", 'r')
+StartGGDataProvider.RecentSetsQuery = f.read()
