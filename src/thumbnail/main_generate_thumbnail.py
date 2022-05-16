@@ -653,13 +653,11 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
 
             name = key
             if character.get("locale"):
-                for locale in TSHLocaleHelper.currentLocale:
-                    if locale.replace("-", "_") in character["locale"]:
-                        name = character["locale"][locale.replace("-", "_")]
-                        break
-                    elif re.split("-|_", locale)[0] in character["locale"]:
-                        name = character["locale"][re.split("-|_", locale)[0]]
-                        break
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace("-", "_") in character["locale"]:
+                    name = character["locale"][locale.replace("-", "_")]
+                elif re.split("-|_", locale)[0] in character["locale"]:
+                    name = character["locale"][re.split("-|_", locale)[0]]
 
             chars.append({
                 "name": name,

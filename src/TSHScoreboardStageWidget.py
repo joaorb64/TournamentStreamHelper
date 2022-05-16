@@ -240,13 +240,13 @@ class TSHScoreboardStageWidget(QWidget):
             # Translate stage name
             translated_name = stage[1].get("name")
 
-            for locale in TSHLocaleHelper.currentLocale:
-                if locale.replace('-', '_') in stage[1].get("locale", {}):
-                    translated_name = stage[1].get("locale", {})[
-                        locale.replace('-', '_')]
-                elif locale.split('-')[0] in stage[1].get("locale", {}):
-                    translated_name = stage[1].get("locale", {})[
-                        locale.split('-')[0]]
+            locale = TSHLocaleHelper.programLocale
+            if locale.replace('-', '_') in stage[1].get("locale", {}):
+                translated_name = stage[1].get("locale", {})[
+                    locale.replace('-', '_')]
+            elif locale.split('-')[0] in stage[1].get("locale", {}):
+                translated_name = stage[1].get("locale", {})[
+                    locale.split('-')[0]]
 
             stage[1]["translated_name"] = translated_name
 
