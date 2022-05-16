@@ -10,7 +10,7 @@ from .TSHScoreboardWidget import *
 from .Workers import *
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHAlertNotification import TSHAlertNotification
-from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHGameAssetManager import TSHGameAssetManager
@@ -190,18 +190,18 @@ class Window(QMainWindow):
             QApplication.translate("app", "Set tournament"))
         group_box.layout().addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
-            lambda bt, s=self: TSHTournamentDataProvider.instance.SetSmashggEventSlug(s))
+            lambda bt, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
 
-        # Follow smashgg user
+        # Follow startgg user
         hbox = QHBoxLayout()
         group_box.layout().addLayout(hbox)
 
         self.btLoadPlayerSet = QPushButton(
-            QApplication.translate("app", "Load tournament and sets from SmashGG user"))
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
+            QApplication.translate("app", "Load tournament and sets from StartGG user"))
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
         self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/smashgg.svg"))
+        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
         hbox.addWidget(self.btLoadPlayerSet)
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)
@@ -311,29 +311,29 @@ class Window(QMainWindow):
             self.gameSelect.setCurrentIndex(index)
 
     def UpdateUserSetButton(self):
-        if SettingsManager.Get("SmashGG_user"):
+        if SettingsManager.Get("StartGG_user"):
             self.btLoadPlayerSet.setText(
-                QApplication.translate("app", "Load tournament and sets from SmashGG user")+" "+QApplication.translate("punctuation", "(")+f"{SettingsManager.Get('SmashGG_user')}"+QApplication.translate("punctuation", ")"))
+                QApplication.translate("app", "Load tournament and sets from StartGG user")+" "+QApplication.translate("punctuation", "(")+f"{SettingsManager.Get('StartGG_user')}"+QApplication.translate("punctuation", ")"))
             self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btLoadPlayerSet.setText(
-                QApplication.translate("app", "Load tournament and sets from SmashGG user"))
+                QApplication.translate("app", "Load tournament and sets from StartGG user"))
             self.btLoadPlayerSet.setEnabled(False)
 
     def LoadUserSetClicked(self):
         self.scoreboard.lastSetSelected = None
-        if SettingsManager.Get("SmashGG_user"):
-            TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
-                "smash.gg/",
+        if SettingsManager.Get("StartGG_user"):
+            TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
+                "start.gg/",
                 TSHTournamentDataProvider.instance.threadPool,
                 TSHTournamentDataProvider.instance
             )
             TSHTournamentDataProvider.instance.LoadUserSet(
-                self.scoreboard, SettingsManager.Get("SmashGG_user"))
+                self.scoreboard, SettingsManager.Get("StartGG_user"))
 
     def LoadUserSetOptionsClicked(self):
         TSHTournamentDataProvider.instance.SetUserAccount(
-            self.scoreboard, smashgg=True)
+            self.scoreboard, startgg=True)
 
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())

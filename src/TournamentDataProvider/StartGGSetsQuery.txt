@@ -1,0 +1,43 @@
+query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}) {
+  event(slug: $eventSlug) {
+    sets(page: $page, perPage: 999, sortType: MAGIC, filters: $filters) {
+      pageInfo {
+        page
+        total
+        perPage
+        totalPages
+        sortBy
+      }
+      nodes {
+        id
+        identifier
+        fullRoundText
+        state
+        entrant1Score
+        entrant2Score
+        slots {
+            entrant {
+                name
+                participants {
+                    player {
+                        gamerTag
+                        prefix
+                    }
+                }
+            }
+        }
+        phaseGroup {
+            displayIdentifier
+            phase {
+              name
+              groupCount
+            }
+        }
+        stream {
+            streamName
+            streamSource
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ from .SettingsManager import SettingsManager
 from .TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
-from .TournamentDataProvider.SmashGGDataProvider import SmashGGDataProvider
+from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 import json
 
 from .Workers import Worker
@@ -41,8 +41,8 @@ class TSHTournamentDataProvider:
         if not self.provider or not self.provider.videogame:
             return
 
-        if "smash.gg" in self.provider.url:
-            TSHGameAssetManager.instance.SetGameFromSmashGGId(
+        if "start.gg" in self.provider.url:
+            TSHGameAssetManager.instance.SetGameFromStartGGId(
                 self.provider.videogame)
         elif "challonge.com" in self.provider.url:
             TSHGameAssetManager.instance.SetGameFromChallongeId(
@@ -54,8 +54,8 @@ class TSHTournamentDataProvider:
         if self.provider and self.provider.url == url:
             return
 
-        if "smash.gg" in url:
-            TSHTournamentDataProvider.instance.provider = SmashGGDataProvider(
+        if "start.gg" in url:
+            TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
         elif "challonge.com" in url:
             TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
@@ -73,7 +73,7 @@ class TSHTournamentDataProvider:
 
         SettingsManager.Set("TOURNAMENT_URL", url)
 
-    def SetSmashggEventSlug(self, mainWindow):
+    def SetStartggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)
 
         layout = QVBoxLayout()
@@ -81,13 +81,13 @@ class TSHTournamentDataProvider:
 
         inp.layout().addWidget(QLabel(
             QApplication.translate("app", "Paste the tournament URL.")+"\n" + QApplication.translate(
-                "app", "For SmashGG, the link must contain the /event/ part")
+                "app", "For StartGG, the link must contain the /event/ part")
         ))
 
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
-            QRegularExpression("smash.gg/tournament/[^/]+/event/[^/]+"),
+            QRegularExpression("start.gg/tournament/[^/]+/event/[^/]+"),
             QRegularExpression("challonge.com/.+/.+")
         ]
 
@@ -113,9 +113,9 @@ class TSHTournamentDataProvider:
         if inp.exec_() == QDialog.Accepted:
             url = lineEdit.text()
 
-            if "smash.gg" in url:
+            if "start.gg" in url:
                 matches = re.match(
-                    "(.*smash.gg/tournament/[^/]*/event/[^/]*)", url)
+                    "(.*start.gg/tournament/[^/]*/event/[^/]*)", url)
                 if matches:
                     url = matches.group(0)
             if "challonge" in url:
@@ -137,11 +137,11 @@ class TSHTournamentDataProvider:
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
-    def SetUserAccount(self, window, smashgg=False):
-        providerName = "SmashGG"
+    def SetUserAccount(self, window, startgg=False):
+        providerName = "StartGG"
         window_text = ""
 
-        if (self.provider and self.provider.url and "smash.gg" in self.provider.url) or smashgg:
+        if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
             window_text = QApplication.translate(
                 "app", "Paste the URL to the player's SmashGG profile")
         elif self.provider and self.provider.url and "challonge" in self.provider.url:
@@ -168,8 +168,10 @@ class TSHTournamentDataProvider:
         horizontal_labels[0] = QApplication.translate("app", "Stream")
         horizontal_labels[1] = QApplication.translate("app", "Phase")
         horizontal_labels[2] = QApplication.translate("app", "Match")
-        horizontal_labels[3] = QApplication.translate("app", "Player {0}").format(1)
-        horizontal_labels[4] = QApplication.translate("app", "Player {0}").format(2)
+        horizontal_labels[3] = QApplication.translate(
+            "app", "Player {0}").format(1)
+        horizontal_labels[4] = QApplication.translate(
+            "app", "Player {0}").format(2)
         model.setHorizontalHeaderLabels(horizontal_labels)
 
         if sets is not None:
@@ -186,7 +188,8 @@ class TSHTournamentDataProvider:
                             pnames = []
                             for p, player in enumerate(s.get("entrants")[t]):
                                 pnames.append(player.get("gamerTag"))
-                            player_names[t] += " "+QApplication.translate("punctuation", "(")+", ".join(pnames)+QApplication.translate("punctuation", ")")
+                            player_names[t] += " "+QApplication.translate(
+                                "punctuation", "(")+", ".join(pnames)+QApplication.translate("punctuation", ")")
                 except Exception as e:
                     traceback.print_exc()
 
@@ -199,12 +202,13 @@ class TSHTournamentDataProvider:
                     dataItem
                 ])
 
-        mainWindow.smashGGSetSelecDialog = QDialog(mainWindow)
-        mainWindow.smashGGSetSelecDialog.setWindowTitle(QApplication.translate("app", "Select a set"))
-        mainWindow.smashGGSetSelecDialog.setWindowModality(Qt.WindowModal)
+        mainWindow.startGGSetSelecDialog = QDialog(mainWindow)
+        mainWindow.startGGSetSelecDialog.setWindowTitle(
+            QApplication.translate("app", "Select a set"))
+        mainWindow.startGGSetSelecDialog.setWindowModality(Qt.WindowModal)
 
         layout = QVBoxLayout()
-        mainWindow.smashGGSetSelecDialog.setLayout(layout)
+        mainWindow.startGGSetSelecDialog.setLayout(layout)
 
         proxyModel = QSortFilterProxyModel()
         proxyModel.setSourceModel(model)
@@ -219,19 +223,19 @@ class TSHTournamentDataProvider:
         layout.addWidget(searchBar)
         searchBar.textEdited.connect(filterList)
 
-        mainWindow.smashggSetSelectionItemList = QTableView()
-        layout.addWidget(mainWindow.smashggSetSelectionItemList)
-        mainWindow.smashggSetSelectionItemList.setSortingEnabled(True)
-        mainWindow.smashggSetSelectionItemList.setSelectionBehavior(
+        mainWindow.startggSetSelectionItemList = QTableView()
+        layout.addWidget(mainWindow.startggSetSelectionItemList)
+        mainWindow.startggSetSelectionItemList.setSortingEnabled(True)
+        mainWindow.startggSetSelectionItemList.setSelectionBehavior(
             QAbstractItemView.SelectRows)
-        mainWindow.smashggSetSelectionItemList.setEditTriggers(
+        mainWindow.startggSetSelectionItemList.setEditTriggers(
             QAbstractItemView.NoEditTriggers)
-        mainWindow.smashggSetSelectionItemList.setModel(proxyModel)
-        mainWindow.smashggSetSelectionItemList.setColumnHidden(5, True)
-        mainWindow.smashggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
-        mainWindow.smashggSetSelectionItemList.horizontalHeader(
+        mainWindow.startggSetSelectionItemList.setModel(proxyModel)
+        mainWindow.startggSetSelectionItemList.setColumnHidden(5, True)
+        mainWindow.startggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
+        mainWindow.startggSetSelectionItemList.horizontalHeader(
         ).setSectionResizeMode(QHeaderView.Stretch)
-        mainWindow.smashggSetSelectionItemList.resizeColumnsToContents()
+        mainWindow.startggSetSelectionItemList.resizeColumnsToContents()
 
         btOk = QPushButton("OK")
         layout.addWidget(btOk)
@@ -240,8 +244,8 @@ class TSHTournamentDataProvider:
                 mainWindow)
         )
 
-        mainWindow.smashGGSetSelecDialog.show()
-        mainWindow.smashGGSetSelecDialog.resize(1200, 500)
+        mainWindow.startGGSetSelecDialog.show()
+        mainWindow.startGGSetSelecDialog.resize(1200, 500)
 
     def LoadStreamSet(self, mainWindow, streamName):
         streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
@@ -265,12 +269,12 @@ class TSHTournamentDataProvider:
     def LoadSelectedSet(self, mainWindow):
         row = 0
 
-        if len(mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()) > 0:
-            row = mainWindow.smashggSetSelectionItemList.selectionModel().selectedRows()[
+        if len(mainWindow.startggSetSelectionItemList.selectionModel().selectedRows()) > 0:
+            row = mainWindow.startggSetSelectionItemList.selectionModel().selectedRows()[
                 0].row()
-        setId = mainWindow.smashggSetSelectionItemList.model().index(
+        setId = mainWindow.startggSetSelectionItemList.model().index(
             row, 5).data(Qt.ItemDataRole.UserRole)
-        mainWindow.smashGGSetSelecDialog.close()
+        mainWindow.startGGSetSelecDialog.close()
 
         setId["auto_update"] = "set"
         mainWindow.signals.NewSetSelected.emit(setId)
