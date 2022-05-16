@@ -558,7 +558,7 @@ class TSHScoreboardWidget(QDockWidget):
     def GetRecentSets(self):
         updated = False
         # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "startgg":
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             p2id = StateManager.Get(f"score.team.2.player.1.id")
             if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
