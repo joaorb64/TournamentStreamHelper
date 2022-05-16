@@ -557,7 +557,7 @@
         <location filename="../TournamentStreamHelper.py" line="316"/>
         <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Load tournament and sets from StartGG user</source>
-        <translation>Turnier und Sets von smash.gg-User laden</translation>
+        <translation>Turnier und Sets von StartGG-User laden</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="236"/>
@@ -711,7 +711,7 @@
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="83"/>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation>Wird smash.gg verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
+        <translation>Wird StartGG verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="110"/>
@@ -730,7 +730,7 @@
     </message>
     <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="vanished">URL des Spielerprofils auf smash.gg einfügen</translation>
+        <translation type="vanished">URL des Spielerprofils auf StartGG einfügen</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="145"/>
