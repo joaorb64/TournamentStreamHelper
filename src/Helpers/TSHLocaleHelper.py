@@ -18,6 +18,8 @@ class TSHLocaleHelper(QObject):
 
         TSHLocaleHelper.currentLocale = current_locale
 
+        TSHLocaleHelper.programLocale = "en-US"
+
         TSHLocaleHelper.translator = QTranslator()
         for locale in current_locale:
             for f in os.listdir("./src/i18n/"):
@@ -26,10 +28,12 @@ class TSHLocaleHelper(QObject):
                     if lang == locale:
                         TSHLocaleHelper.translator.load(
                             QLocale(lang), "./src/i18n/"+f)
+                        TSHLocaleHelper.programLocale = locale
                         break
                     elif lang == locale.split("-")[0]:
                         TSHLocaleHelper.translator.load(
                             QLocale(lang), "./src/i18n/"+f)
+                        TSHLocaleHelper.programLocale = locale
                         break
 
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)
