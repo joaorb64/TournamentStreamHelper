@@ -40,34 +40,37 @@ class TSHCountryHelper(QObject):
         return u"".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
     def LoadCountries():
-        f = open("./assets/countries+states+cities.json",
-                 'r', encoding='utf-8')
-        countries_json = json.loads(f.read())
-        TSHCountryHelper.countries_json = countries_json
+        try:
+            f = open("./assets/countries+states+cities.json",
+                     'r', encoding='utf-8')
+            countries_json = json.loads(f.read())
+            TSHCountryHelper.countries_json = countries_json
 
-        for c in countries_json:
-            TSHCountryHelper.countries[c["iso2"]] = {
-                "name": c["name"],
-                "code": c["iso2"],
-                "states": {}
-            }
-
-            for s in c["states"]:
-                TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
-                    "state_code": s["state_code"],
-                    "state_name": s["name"]
+            for c in countries_json:
+                TSHCountryHelper.countries[c["iso2"]] = {
+                    "name": c["name"],
+                    "code": c["iso2"],
+                    "states": {}
                 }
 
-        for country in countries_json:
-            for state in country["states"]:
-                for c in state["cities"]:
-                    if country["iso2"] not in TSHCountryHelper.cities:
-                        TSHCountryHelper.cities[country["iso2"]] = {}
-                    city_name = TSHCountryHelper.remove_accents_lower(
-                        c["name"])
-                    if city_name not in TSHCountryHelper.cities[country["iso2"]]:
-                        TSHCountryHelper.cities[country["iso2"]
-                                                ][city_name] = state["state_code"]
+                for s in c["states"]:
+                    TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
+                        "state_code": s["state_code"],
+                        "state_name": s["name"]
+                    }
+
+            for country in countries_json:
+                for state in country["states"]:
+                    for c in state["cities"]:
+                        if country["iso2"] not in TSHCountryHelper.cities:
+                            TSHCountryHelper.cities[country["iso2"]] = {}
+                        city_name = TSHCountryHelper.remove_accents_lower(
+                            c["name"])
+                        if city_name not in TSHCountryHelper.cities[country["iso2"]]:
+                            TSHCountryHelper.cities[country["iso2"]
+                                                    ][city_name] = state["state_code"]
+        except:
+            print(traceback.format_exc())
 
     def FindState(countryCode, city):
         # State explicit?
