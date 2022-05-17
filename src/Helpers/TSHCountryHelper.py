@@ -9,12 +9,17 @@ from ..TournamentDataProvider import TournamentDataProvider
 import json
 
 
+class TSHCountryHelperSignals(QObject):
+    countriesUpdated = pyqtSignal()
+
+
 class TSHCountryHelper(QObject):
     instance: "TSHCountryHelper" = None
 
     countries_json = {}
     countries = {}
     cities = {}
+    signals = TSHCountryHelperSignals()
 
     def __init__(self) -> None:
         super().__init__()
@@ -29,6 +34,7 @@ class TSHCountryHelper(QObject):
                     open('./assets/countries+states+cities.json',
                          'wb').write(r.content)
                     print("Countries file updated")
+                    TSHCountryHelper.LoadCountries()
                 except Exception as e:
                     print(
                         "Could not update /assets/countries+states+cities.json: "+str(e))
@@ -69,6 +75,8 @@ class TSHCountryHelper(QObject):
                         if city_name not in TSHCountryHelper.cities[country["iso2"]]:
                             TSHCountryHelper.cities[country["iso2"]
                                                     ][city_name] = state["state_code"]
+
+            TSHCountryHelper.signals.countriesUpdated.emit()
         except:
             print(traceback.format_exc())
 
