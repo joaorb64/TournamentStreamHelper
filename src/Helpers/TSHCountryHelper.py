@@ -53,15 +53,13 @@ class TSHCountryHelper(QObject):
             translated_name = c["name"]
 
             # Load translated name
-            for locale in TSHLocaleHelper.currentLocale:
-                if locale.replace("-", "_") in c["translations"]:
-                    translated_name = c["translations"][locale.replace(
-                        "-", "_")]
-                    break
-                elif re.split("-|_", locale)[0] in c["translations"]:
-                    translated_name = c["translations"][re.split(
-                        "-|_", locale)[0]]
-                    break
+            locale = TSHLocaleHelper.programLocale
+            if locale.replace("-", "_") in c["translations"]:
+                translated_name = c["translations"][locale.replace(
+                    "-", "_")]
+            elif re.split("-|_", locale)[0] in c["translations"]:
+                translated_name = c["translations"][re.split(
+                    "-|_", locale)[0]]
 
             TSHCountryHelper.countries[c["iso2"]] = {
                 "name": c["name"],
