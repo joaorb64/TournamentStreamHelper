@@ -29,7 +29,8 @@ jobs:
         id: extract_branch
 
       - run: |
-          sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+          sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
+          lrelease -version
       - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
           python3 src/i18n/gen_translation_files.py
