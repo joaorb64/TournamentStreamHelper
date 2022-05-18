@@ -49,7 +49,7 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     strategy:
       fail-fast: false
       matrix:
