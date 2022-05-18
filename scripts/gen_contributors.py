@@ -22,7 +22,8 @@ try:
     # Add extra contributors that didn't commit to the repo
     contributors_final.extend([
         "@kipferlkipferl",
-        "@Luiro_"
+        "@Luiro_",
+        "@wl_mint"
     ])
 
     with open("assets/contributors.txt", 'w') as out:
