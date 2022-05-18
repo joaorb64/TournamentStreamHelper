@@ -43,6 +43,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.LoadCountries()
 
+        TSHCountryHelper.signals.countriesUpdated.connect(self.LoadCountries)
+
         self.character_elements = []
 
         bottom_buttons_layout = QHBoxLayout()

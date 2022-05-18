@@ -62,6 +62,7 @@ class TSHTournamentDataProvider:
                 url, self.threadPool, self)
         else:
             print("Unsupported provider...")
+            return
 
         tournamentData = TSHTournamentDataProvider.instance.provider.GetTournamentData()
         tournamentData.update({"initial_load": initialLoading})
