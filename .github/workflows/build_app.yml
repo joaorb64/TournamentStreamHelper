@@ -23,6 +23,11 @@ jobs:
         with:
           python-version: "3.8"
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
           python3 src/i18n/gen_translation_files.py
@@ -39,7 +44,7 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: ${{ steps.extract_branch.outputs.branch }}
 
   build:
     name: Generate Windows Release
@@ -49,6 +54,8 @@ jobs:
       fail-fast: false
       matrix:
         os: ["windows-latest"]
+    needs:
+    - locale_build
 
     steps:
       - uses: actions/checkout@v2
