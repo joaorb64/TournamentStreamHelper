@@ -5,6 +5,7 @@ import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from src.TSHAboutWidget import TSHAboutWidget
 from .TSHThumbnailSettingsWidget import *
 from .TSHScoreboardWidget import *
 from .Workers import *
@@ -261,6 +262,11 @@ class Window(QMainWindow):
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
+
+        self.aboutWidget = TSHAboutWidget()
+        action = self.optionsBt.menu().addAction("About")
+        action.setIcon(QIcon('assets/icons/info.svg'))
+        action.triggered.connect(lambda: self.aboutWidget.show())
 
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
