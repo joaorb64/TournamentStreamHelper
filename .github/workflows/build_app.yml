@@ -36,6 +36,7 @@ jobs:
           python3 src/i18n/gen_translation_files.py
           python3 src/i18n/gen_translation_binaries.py
 
+      - run: git pull
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
@@ -66,18 +67,22 @@ jobs:
         with:
           python-version: "3.8"
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
-          git pull
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
           pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
+      - run: git pull
       - name: commit files
         run: |
-          git pull
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add TSH.exe
@@ -87,4 +92,4 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: ${{ steps.extract_branch.outputs.branch }}
