@@ -2,6 +2,28 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>About</name>
+    <message>
+        <location filename="../layout/TSHAbout.ui" line="23"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHAbout.ui" line="64"/>
+        <source>Contributors:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHAbout.ui" line="77"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DockWidget</name>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="17"/>
@@ -33,11 +55,11 @@
 <context>
     <name>Form</name>
     <message>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="14"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation>フォーム</translation>
     </message>
@@ -418,14 +440,14 @@
 <context>
     <name>GroupBox</name>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="23"/>
         <location filename="../layout/TSHCommentator.ui" line="29"/>
+        <location filename="../layout/TSHCommentary.ui" line="23"/>
         <source>GroupBox</source>
         <translation>実況者</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="26"/>
         <location filename="../layout/TSHCommentator.ui" line="32"/>
+        <location filename="../layout/TSHCommentary.ui" line="26"/>
         <source>Commentator 1</source>
         <translation>実況者1</translation>
     </message>
@@ -450,38 +472,38 @@
         <translation>スポンサー</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="90"/>
         <location filename="../layout/TSHCommentator.ui" line="96"/>
+        <location filename="../layout/TSHCommentary.ui" line="90"/>
         <source>GamerTag</source>
         <translation>ハンドルネーム</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="108"/>
         <location filename="../layout/TSHCommentator.ui" line="114"/>
+        <location filename="../layout/TSHCommentary.ui" line="108"/>
         <source>REAL NAME</source>
         <translation>本名</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="124"/>
         <location filename="../layout/TSHCommentator.ui" line="130"/>
+        <location filename="../layout/TSHCommentary.ui" line="124"/>
         <source>Real Name</source>
         <translation>本名</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="140"/>
         <location filename="../layout/TSHCommentator.ui" line="146"/>
+        <location filename="../layout/TSHCommentary.ui" line="140"/>
         <source>TWITTER</source>
         <translation>ツイッター</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="156"/>
         <location filename="../layout/TSHCommentator.ui" line="162"/>
+        <location filename="../layout/TSHCommentary.ui" line="156"/>
         <source>Handle Only</source>
         <translation>ユーザー名のみ</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="170"/>
         <location filename="../layout/TSHCommentator.ui" line="178"/>
+        <location filename="../layout/TSHCommentary.ui" line="170"/>
         <source>PRONOUNS</source>
         <translatorcomment>he/him、she/her、they/themなど</translatorcomment>
         <translation>代名詞</translation>
@@ -490,139 +512,139 @@
 <context>
     <name>app</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="138"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="153"/>
+        <location filename="../TournamentStreamHelper.py" line="139"/>
         <source>Thumbnail Settings</source>
         <translation>サムネイルの設定</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="146"/>
+        <location filename="../TournamentStreamHelper.py" line="147"/>
         <source>Tournament Info</source>
         <translation>大会情報</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="154"/>
         <location filename="../TSHScoreboardWidget.py" line="39"/>
+        <location filename="../TournamentStreamHelper.py" line="155"/>
         <source>Scoreboard</source>
         <translation>スコアボード</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="161"/>
+        <location filename="../TournamentStreamHelper.py" line="162"/>
         <location filename="../TSHCommentaryWidget.py" line="13"/>
         <source>Commentary</source>
         <translation>解説/実況</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="167"/>
         <location filename="../TSHPlayerListWidget.py" line="19"/>
+        <location filename="../TournamentStreamHelper.py" line="168"/>
         <source>Player List</source>
         <translation>プレイヤーリスト</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="190"/>
+        <location filename="../TournamentStreamHelper.py" line="191"/>
         <source>Set tournament</source>
         <translation>大会を選ぶ</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="200"/>
-        <location filename="../TournamentStreamHelper.py" line="316"/>
-        <location filename="../TournamentStreamHelper.py" line="320"/>
+        <location filename="../TournamentStreamHelper.py" line="201"/>
+        <location filename="../TournamentStreamHelper.py" line="322"/>
+        <location filename="../TournamentStreamHelper.py" line="326"/>
         <source>Load tournament and sets from StartGG user</source>
         <translation type="unfinished">大会と対戦データをStartGGからロードする</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="236"/>
+        <location filename="../TournamentStreamHelper.py" line="237"/>
         <source>Always on top</source>
         <translation>常に上に表示</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="240"/>
-        <location filename="../TournamentStreamHelper.py" line="514"/>
+        <location filename="../TournamentStreamHelper.py" line="241"/>
+        <location filename="../TournamentStreamHelper.py" line="520"/>
         <source>Check for updates</source>
         <translation>更新情報を調べる</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="245"/>
-        <location filename="../TournamentStreamHelper.py" line="524"/>
+        <location filename="../TournamentStreamHelper.py" line="246"/>
+        <location filename="../TournamentStreamHelper.py" line="530"/>
         <source>Download assets</source>
         <translation>アセットをダウンロードする</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="250"/>
+        <location filename="../TournamentStreamHelper.py" line="251"/>
         <source>Light mode</source>
         <translation>ライトモード</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="256"/>
+        <location filename="../TournamentStreamHelper.py" line="257"/>
         <source>Toggle widgets</source>
         <translation>ツールの表示</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="595"/>
+        <location filename="../TournamentStreamHelper.py" line="601"/>
         <source>Asset pack name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="404"/>
+        <location filename="../TournamentStreamHelper.py" line="410"/>
         <source>Updater</source>
         <translation>アップデータ</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="413"/>
+        <location filename="../TournamentStreamHelper.py" line="419"/>
         <source>Update to latest version?</source>
         <translation>最新のバージョンに更新しますか?</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="419"/>
         <location filename="../TSHScoreboardStageWidget.py" line="190"/>
+        <location filename="../TournamentStreamHelper.py" line="425"/>
         <source>Update</source>
         <translation>アップデート</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="422"/>
-        <location filename="../TournamentStreamHelper.py" line="431"/>
-        <location filename="../TournamentStreamHelper.py" line="691"/>
+        <location filename="../TournamentStreamHelper.py" line="428"/>
+        <location filename="../TournamentStreamHelper.py" line="437"/>
+        <location filename="../TournamentStreamHelper.py" line="697"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="431"/>
-        <location filename="../TournamentStreamHelper.py" line="460"/>
+        <location filename="../TournamentStreamHelper.py" line="437"/>
+        <location filename="../TournamentStreamHelper.py" line="466"/>
         <source>Downloading update...</source>
         <translation>アップデートをダウンロードしています…</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="387"/>
+        <location filename="../TournamentStreamHelper.py" line="393"/>
         <source>Failed to fetch version from github:</source>
         <translation>最新のバージョンをGitHubから読み込むのに失敗しました</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="410"/>
+        <location filename="../TournamentStreamHelper.py" line="416"/>
         <source>New version available:</source>
         <translation>新しいバージョンがあります</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="413"/>
+        <location filename="../TournamentStreamHelper.py" line="419"/>
         <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
         <translation>注意:/layout/に入っているファイルは保存されますが、他のディレクトリのデータは上書きされます</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="487"/>
+        <location filename="../TournamentStreamHelper.py" line="493"/>
         <source>Update complete. The program will now close.</source>
         <translation>更新が完了しました。ソフトを閉じます。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="501"/>
+        <location filename="../TournamentStreamHelper.py" line="507"/>
         <source>You&apos;re already using the latest version</source>
         <translation>このソフトはすでに最新のバージョンです</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="514"/>
+        <location filename="../TournamentStreamHelper.py" line="520"/>
         <source>Update available!</source>
         <translation>アップデートがあります!</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="552"/>
+        <location filename="../TournamentStreamHelper.py" line="558"/>
         <source>Filter...</source>
         <translation>フィルター...</translation>
     </message>
@@ -631,52 +653,52 @@
         <translation type="vanished">ゲームのタイトル</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="597"/>
+        <location filename="../TournamentStreamHelper.py" line="603"/>
         <source>Description</source>
         <translation>概要</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="598"/>
+        <location filename="../TournamentStreamHelper.py" line="604"/>
         <source>Credits</source>
         <translation>製作者</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="599"/>
+        <location filename="../TournamentStreamHelper.py" line="605"/>
         <source>Installed version</source>
         <translation>インストールされているバージョン</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="601"/>
+        <location filename="../TournamentStreamHelper.py" line="607"/>
         <source>Latest version</source>
         <translation>最新バージョン</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="602"/>
+        <location filename="../TournamentStreamHelper.py" line="608"/>
         <source>Size</source>
         <translation>容量</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="603"/>
+        <location filename="../TournamentStreamHelper.py" line="609"/>
         <source>Stage data</source>
         <translation>ステージデータ</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="604"/>
+        <location filename="../TournamentStreamHelper.py" line="610"/>
         <source>Eyesight data</source>
         <translation>アイサイトデータ</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="670"/>
+        <location filename="../TournamentStreamHelper.py" line="676"/>
         <source>Download</source>
         <translation>ダウンロード</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="691"/>
+        <location filename="../TournamentStreamHelper.py" line="697"/>
         <source>Downloading assets</source>
         <translation>アセットをダウンロードしています</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="723"/>
+        <location filename="../TournamentStreamHelper.py" line="729"/>
         <source>Downloading {0}...</source>
         <translation>{0}をダウンロード中...</translation>
     </message>
@@ -707,26 +729,26 @@
         <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="53"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="55"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="715"/>
         <source>Save new player</source>
         <translation>プレイヤー情報を保存</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="65"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="67"/>
         <source>Delete player entry</source>
         <translation>プレイヤーエントリーを削除する</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="77"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="79"/>
         <source>Clear</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="271"/>
-        <location filename="../TSHTournamentDataProvider.py" line="171"/>
-        <location filename="../TSHTournamentDataProvider.py" line="173"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="679"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="273"/>
+        <location filename="../TSHTournamentDataProvider.py" line="172"/>
+        <location filename="../TSHTournamentDataProvider.py" line="174"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="677"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
@@ -746,88 +768,88 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="83"/>
+        <location filename="../TSHTournamentDataProvider.py" line="84"/>
         <source>Paste the tournament URL.</source>
         <translation>大会のURLをここに貼って下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="83"/>
+        <location filename="../TSHTournamentDataProvider.py" line="84"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation>StartGGのリンクには/event/partを含めて下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="110"/>
+        <location filename="../TSHTournamentDataProvider.py" line="111"/>
         <source>Set tournament URL</source>
         <translation>大会のURLを貼る</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="135"/>
+        <location filename="../TSHTournamentDataProvider.py" line="136"/>
         <source>Set Twitch username</source>
         <translation>Twitchでのユーザー名を入力</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="135"/>
+        <location filename="../TSHTournamentDataProvider.py" line="136"/>
         <source>Twitch Username:</source>
         <translation>Twitchでのユーザー名:</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="145"/>
+        <location filename="../TSHTournamentDataProvider.py" line="146"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation>プレイヤーのStartGGのプロフィールへのURLをここに貼ってください</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="148"/>
+        <location filename="../TSHTournamentDataProvider.py" line="149"/>
         <source>Insert the player&apos;s name in bracket</source>
         <translation>ブラケット表にプレイヤー名を記入して下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="152"/>
+        <location filename="../TSHTournamentDataProvider.py" line="153"/>
         <source>Invalid tournament data provider</source>
         <translation>無効な大会データプロバイダです</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="157"/>
+        <location filename="../TSHTournamentDataProvider.py" line="158"/>
         <source>Set player</source>
         <translation>プレイヤーを選ぶ</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="168"/>
+        <location filename="../TSHTournamentDataProvider.py" line="169"/>
         <source>Stream</source>
         <translation>配信</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="169"/>
+        <location filename="../TSHTournamentDataProvider.py" line="170"/>
         <source>Phase</source>
         <translation>フェーズ</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="170"/>
+        <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <source>Match</source>
         <translation>ラウンド</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="207"/>
+        <location filename="../TSHTournamentDataProvider.py" line="208"/>
         <source>Select a set</source>
         <translation>対戦を選ぶ</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="680"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="678"/>
         <source>Sponsor {0}</source>
         <translation>スポンサー{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="707"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="705"/>
         <source>Winners Finals</source>
         <translation>勝者側決勝</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="708"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="706"/>
         <source>Pool {0}</source>
         <translation>予選プール{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="726"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="753"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="724"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="751"/>
         <source>Team {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -873,7 +895,7 @@
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="174"/>
-        <location filename="../TSHScoreboardWidget.py" line="460"/>
+        <location filename="../TSHScoreboardWidget.py" line="456"/>
         <source>Load set</source>
         <translation>対戦データをロードする</translation>
     </message>
@@ -884,20 +906,20 @@
         <translation>チーム{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="441"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="488"/>
+        <location filename="../TSHScoreboardWidget.py" line="437"/>
         <source>Warning</source>
         <translation>注意</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="454"/>
+        <location filename="../TSHScoreboardWidget.py" line="450"/>
         <source>Load set from {0}</source>
         <translation>{0}から対戦データをロードする</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="184"/>
+        <location filename="../TSHScoreboardWidget.py" line="695"/>
         <location filename="../TSHScoreboardWidget.py" line="699"/>
-        <location filename="../TSHScoreboardWidget.py" line="703"/>
         <source>Load current stream set</source>
         <translation>配信中の対戦データをロードする</translation>
     </message>
@@ -907,12 +929,12 @@
         <translation>サムネイルを作成する</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="712"/>
+        <location filename="../TSHScoreboardWidget.py" line="708"/>
         <source>Load user set ({0})</source>
         <translation>ユーザーの対戦データ({0})をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="716"/>
+        <location filename="../TSHScoreboardWidget.py" line="712"/>
         <source>Load user set</source>
         <translation>ユーザーの対戦データをロードする</translation>
     </message>
@@ -953,26 +975,26 @@
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="514"/>
+        <location filename="../TournamentStreamHelper.py" line="520"/>
         <source>[</source>
         <translation>[</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="514"/>
+        <location filename="../TournamentStreamHelper.py" line="520"/>
         <source>]</source>
         <translation>]</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="316"/>
-        <location filename="../TSHScoreboardWidget.py" line="699"/>
-        <location filename="../TSHTournamentDataProvider.py" line="191"/>
+        <location filename="../TSHScoreboardWidget.py" line="695"/>
+        <location filename="../TournamentStreamHelper.py" line="322"/>
+        <location filename="../TSHTournamentDataProvider.py" line="192"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="316"/>
-        <location filename="../TSHScoreboardWidget.py" line="699"/>
-        <location filename="../TSHTournamentDataProvider.py" line="192"/>
+        <location filename="../TSHScoreboardWidget.py" line="695"/>
+        <location filename="../TournamentStreamHelper.py" line="322"/>
+        <location filename="../TSHTournamentDataProvider.py" line="193"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -980,18 +1002,18 @@
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="822"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="820"/>
         <source>Please select a game first</source>
         <translation>ゲームを選んで下さい</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="826"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="824"/>
         <source>Player {0} tag missing</source>
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="419"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="487"/>
+        <location filename="../TSHScoreboardWidget.py" line="415"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>
     </message>
