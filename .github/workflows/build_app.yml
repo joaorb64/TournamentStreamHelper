@@ -28,6 +28,8 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
+      - run: |
+          sudo apt install lupdate
       - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
           python3 src/i18n/gen_translation_files.py
