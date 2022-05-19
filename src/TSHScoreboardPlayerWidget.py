@@ -423,23 +423,35 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 32, Qt.TransformationMode.SmoothTransformation))
                         )
 
-                        translated_name = c
+                        # Load translations
+                        display_name = c
+                        export_name = c
 
                         if TSHGameAssetManager.instance.characters[c].get("locale"):
                             locale = TSHLocaleHelper.programLocale
                             if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
-                                translated_name = TSHGameAssetManager.instance.characters[
+                                display_name = TSHGameAssetManager.instance.characters[
                                     c]["locale"][locale.replace("-", "_")]
                             elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
-                                translated_name = TSHGameAssetManager.instance.characters[
+                                display_name = TSHGameAssetManager.instance.characters[
                                     c]["locale"][re.split("-|_", locale)[0]]
-                            if translated_name != c:
+
+                            locale = TSHLocaleHelper.exportLocale
+                            if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][locale.replace("-", "_")]
+                            elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][re.split("-|_", locale)[0]]
+
+                            if display_name != c:
                                 item.setData(
-                                    f"{translated_name} ({c})", Qt.ItemDataRole.EditRole)
+                                    f"{display_name} / {c}", Qt.ItemDataRole.EditRole)
 
                         data = {
-                            "name": c,
-                            "translated_name": translated_name,
+                            "name": export_name,
+                            "en_name": c,
+                            "display_name": display_name,
                             "codename": TSHGameAssetManager.instance.characters[c].get("codename")
                         }
                         item.setData(data, Qt.ItemDataRole.UserRole)
@@ -463,7 +475,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if characterData:
             skins = TSHGameAssetManager.instance.skins.get(
-                element.currentData().get("name"), {})
+                element.currentData().get("en_name"), {})
 
         sortedSkins = [int(k) for k in skins.keys()]
         sortedSkins.sort()
@@ -627,7 +639,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     for i in range(character_element.model().rowCount()):
                         item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                         if item:
-                            if item.get("name") == data.get("mains")[0]:
+                            if item.get("en_name") == data.get("mains")[0]:
                                 characterIndex = i
                                 break
                     character_element.setCurrentIndex(characterIndex)
@@ -643,7 +655,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         for i in range(character_element.model().rowCount()):
                             item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                             if item:
-                                if item.get("name") == main[0]:
+                                if item.get("en_name") == main[0]:
                                     characterIndex = i
                                     break
                         character_element.setCurrentIndex(characterIndex)
@@ -672,7 +684,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 data = {}
 
                 if character.currentData() is not None:
-                    data["name"] = character.currentData().get("name")
+                    data["name"] = character.currentData().get("en_name")
                 else:
                     data["name"] = ""
 
@@ -681,8 +693,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if data["skin"] == None:
                     data["skin"] = 0
 
-                if data["name"] != "":
-                    mains.append([data.get("name"), data.get("skin")])
+                if data["en_name"] != "":
+                    mains.append([data.get("en_name"), data.get("skin")])
 
             playerData["mains"] = {
                 TSHGameAssetManager.instance.selectedGame.get("codename"): mains

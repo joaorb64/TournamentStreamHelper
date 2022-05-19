@@ -1,3 +1,4 @@
+import json
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -9,16 +10,23 @@ class TSHLocaleHelperSignals(QObject):
 
 
 class TSHLocaleHelper(QObject):
-    currentLocale = []
+    exportLocale = "ja"
+    programLocale = "en-US"
     translator = None
+    languages = []
 
-    def LoadLocale():
-        current_locale = QtCore.QLocale().uiLanguages()
-        print("Current locale", current_locale)
+    def LoadLocale(programLocale: str = None):
+        if not programLocale:
+            current_locale = QtCore.QLocale().uiLanguages()
+        else:
+            current_locale = [programLocale]
 
-        TSHLocaleHelper.currentLocale = current_locale
+        print("OS locale", current_locale)
 
-        TSHLocaleHelper.programLocale = "en-US"
+        oldTranslator = TSHLocaleHelper.translator
+
+        if oldTranslator:
+            QGuiApplication.instance().removeTranslator(oldTranslator)
 
         TSHLocaleHelper.translator = QTranslator()
         for locale in current_locale:
@@ -36,4 +44,16 @@ class TSHLocaleHelper(QObject):
                         TSHLocaleHelper.programLocale = locale
                         break
 
+        print(TSHLocaleHelper.programLocale)
+
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)
+
+    def LoadLanguages():
+        try:
+            languages_json = json.load(open("./src/i18n/mapping.json"))
+            TSHLocaleHelper.languages = languages_json.get("languages")
+        except:
+            print("Error loading languages")
+
+
+TSHLocaleHelper.LoadLanguages()

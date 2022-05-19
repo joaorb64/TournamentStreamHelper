@@ -62,10 +62,7 @@
                   </div>
                   <div class="stage-name">
                       <div class="text">
-                          ${
-                            data.score.stage_strike.stages[stage]
-                              .translated_name
-                          }
+                          ${data.score.stage_strike.stages[stage].name}
                       </div>
                   </div>
                   ${

@@ -72,7 +72,9 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        TSHLocaleHelper.LoadLocale()
+        TSHLocaleHelper.LoadLocale(
+            SettingsManager.Get("ProgramLang", None)
+        )
 
         self.signals = WindowSignals()
 
@@ -262,6 +264,21 @@ class Window(QMainWindow):
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
+
+        languageSelect = QMenu(QApplication.translate(
+            "app", "Program Language"), self.optionsBt.menu())
+        self.optionsBt.menu().addMenu(languageSelect)
+        for code, language in TSHLocaleHelper.languages.items():
+            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action.triggered.connect(lambda x, c=code: [
+                TSHLocaleHelper.LoadLocale(c)
+            ])
+
+        languageSelect = QMenu(QApplication.translate(
+            "app", "Export Language"), self.optionsBt.menu())
+        self.optionsBt.menu().addMenu(languageSelect)
+        for code, language in TSHLocaleHelper.languages.items():
+            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
 
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction("About")
