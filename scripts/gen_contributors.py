@@ -14,19 +14,20 @@ try:
 
     contributors_final = []
 
-    for c in contributorsAssets:
-        # Skip buildbot
-        if c.get("name") == "Buildbot":
+    for c in contributorsTool:
+        # Skip buildbot and actions-user
+        if c.get("name") == "Buildbot" or c.get("login") == "actions-user":
             continue
         if c.get("login"):
             contributors_final.append(c.get("login"))
         elif c.get("name"):
             contributors_final.append(c.get("name"))
-            
-    for c in contributorsTool:
-        # Skip buildbot and actions-user
-        if c.get("name") == "Buildbot" or c.get("login") == "actions-user":
+
+    for c in contributorsAssets:
+        # Skip buildbot
+        if c.get("name") == "Buildbot":
             continue
+        # Do not add duplicates
         if c.get("name") in contributors_final or c.get("login") in contributors_final:
             continue
         if c.get("login"):
