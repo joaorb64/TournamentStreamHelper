@@ -72,9 +72,7 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        TSHLocaleHelper.LoadLocale(
-            SettingsManager.Get("ProgramLang", None)
-        )
+        TSHLocaleHelper.LoadLocale()
 
         self.signals = WindowSignals()
 
@@ -268,17 +266,52 @@ class Window(QMainWindow):
         languageSelect = QMenu(QApplication.translate(
             "app", "Program Language"), self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
+
+        languageSelectGroup = QActionGroup(languageSelect)
+        languageSelectGroup.setExclusive(True)
+
+        action = languageSelect.addAction("System language")
+        languageSelectGroup.addAction(action)
+        action.setCheckable(True)
+        action.setChecked(True)
+        action.triggered.connect(lambda x: [
+            SettingsManager.Set("program_language", "default")
+        ])
+
         for code, language in TSHLocaleHelper.languages.items():
             action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action.setCheckable(True)
+            languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                TSHLocaleHelper.LoadLocale(c)
+                SettingsManager.Set("program_language", c)
             ])
+            if SettingsManager.Get("program_language") == code:
+                action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
             "app", "Export Language"), self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
+
+        languageSelectGroup = QActionGroup(languageSelect)
+        languageSelectGroup.setExclusive(True)
+
+        action = languageSelect.addAction("Same as program language")
+        languageSelectGroup.addAction(action)
+        action.setCheckable(True)
+        action.setChecked(True)
+        action.triggered.connect(lambda x: [
+            SettingsManager.Set("export_language", "default")
+        ])
+
         for code, language in TSHLocaleHelper.languages.items():
             action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action.setCheckable(True)
+            languageSelectGroup.addAction(action)
+            action.triggered.connect(lambda x, c=code: [
+                SettingsManager.Set("export_language", c)
+            ])
+            if SettingsManager.Get("export_language") == code:
+                action.setChecked(True)
 
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction("About")

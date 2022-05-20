@@ -4,22 +4,28 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os
 
+from src.SettingsManager import SettingsManager
+
 
 class TSHLocaleHelperSignals(QObject):
     localeChanged = pyqtSignal()
 
 
 class TSHLocaleHelper(QObject):
-    exportLocale = "ja"
+    exportLocale = "en-US"
     programLocale = "en-US"
     translator = None
     languages = []
+    remapping = {}
 
-    def LoadLocale(programLocale: str = None):
-        if not programLocale:
-            current_locale = QtCore.QLocale().uiLanguages()
+    def LoadLocale():
+        settingsProgramLocale = SettingsManager.Get("program_language", None)
+        settingsExportLocale = SettingsManager.Get("export_language", None)
+
+        if settingsProgramLocale and settingsProgramLocale != "default":
+            current_locale = [settingsProgramLocale]
         else:
-            current_locale = [programLocale]
+            current_locale = QtCore.QLocale().uiLanguages()
 
         print("OS locale", current_locale)
 
@@ -44,16 +50,27 @@ class TSHLocaleHelper(QObject):
                         TSHLocaleHelper.programLocale = locale
                         break
 
-        print(TSHLocaleHelper.programLocale)
-
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)
+
+        if settingsExportLocale and settingsExportLocale != "default":
+            TSHLocaleHelper.exportLocale = settingsExportLocale
+        else:
+            TSHLocaleHelper.exportLocale = current_locale[0]
 
     def LoadLanguages():
         try:
             languages_json = json.load(open("./src/i18n/mapping.json"))
             TSHLocaleHelper.languages = languages_json.get("languages")
+            TSHLocaleHelper.remapping = languages_json.get("remapping")
         except:
             print("Error loading languages")
+
+    def GetRemaps(language: str):
+        for remap, langs in TSHLocaleHelper.remapping.items():
+            if language.replace('-', '_') in langs:
+                print("Loaded remap: ", remap)
+                return remap
+        return None
 
 
 TSHLocaleHelper.LoadLanguages()

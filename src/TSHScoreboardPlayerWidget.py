@@ -435,6 +435,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
                                 display_name = TSHGameAssetManager.instance.characters[
                                     c]["locale"][re.split("-|_", locale)[0]]
+                            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                display_name = TSHGameAssetManager.instance.characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                    TSHLocaleHelper.programLocale)]
 
                             locale = TSHLocaleHelper.exportLocale
                             if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
@@ -443,6 +446,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
                                 export_name = TSHGameAssetManager.instance.characters[
                                     c]["locale"][re.split("-|_", locale)[0]]
+                            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                    TSHLocaleHelper.exportLocale)]
 
                             if display_name != c:
                                 item.setData(

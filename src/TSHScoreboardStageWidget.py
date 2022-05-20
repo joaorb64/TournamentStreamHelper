@@ -250,6 +250,9 @@ class TSHScoreboardStageWidget(QWidget):
             elif locale.split('-')[0] in stage[1].get("locale", {}):
                 display_name = stage[1].get("locale", {})[
                     locale.split('-')[0]]
+            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in stage[1].get("locale", {}):
+                display_name = stage[1].get("locale", {})[
+                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale)]
 
             stage[1]["display_name"] = display_name
 
@@ -263,6 +266,9 @@ class TSHScoreboardStageWidget(QWidget):
             elif locale.split('-')[0] in stage[1].get("locale", {}):
                 export_name = stage[1].get("locale", {})[
                     locale.split('-')[0]]
+            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in stage[1].get("locale", {}):
+                export_name = stage[1].get("locale", {})[
+                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale)]
 
             stage[1]["name"] = export_name
 
