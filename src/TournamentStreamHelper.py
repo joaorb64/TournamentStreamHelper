@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+App = QApplication(sys.argv)
+print("QApplication successfully initialized")
 
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.TSHAboutWidget import TSHAboutWidget
@@ -18,9 +24,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from qdarkstyle import palette
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 
 import shutil
 import tarfile
@@ -32,7 +35,6 @@ import requests
 import urllib
 import json
 import traceback
-import sys
 import time
 import os
 import threading
@@ -46,7 +48,6 @@ from collections import Counter
 
 import unicodedata
 
-App = QApplication(sys.argv)
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
@@ -270,7 +271,8 @@ class Window(QMainWindow):
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        action = languageSelect.addAction("System language")
+        action = languageSelect.addAction(
+            QApplication.translate("app", "System language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
@@ -279,7 +281,7 @@ class Window(QMainWindow):
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
@@ -295,7 +297,8 @@ class Window(QMainWindow):
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        action = languageSelect.addAction("Same as program language")
+        action = languageSelect.addAction(
+            QApplication.translate("app", "Same as program language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
@@ -304,7 +307,7 @@ class Window(QMainWindow):
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [

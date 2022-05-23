@@ -59,11 +59,11 @@ class TSHLocaleHelper(QObject):
 
     def LoadLanguages():
         try:
-            languages_json = json.load(open("./src/i18n/mapping.json"))
+            languages_json = json.load(open("./src/i18n/mapping.json", 'rt', encoding='utf-8'))
             TSHLocaleHelper.languages = languages_json.get("languages")
             TSHLocaleHelper.remapping = languages_json.get("remapping")
-        except:
-            print("Error loading languages")
+        except Exception as e:
+            raise Exception(f"Error loading languages") from e
 
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():
