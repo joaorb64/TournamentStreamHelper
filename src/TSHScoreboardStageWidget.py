@@ -237,21 +237,43 @@ class TSHScoreboardStageWidget(QWidget):
         self.stagesModel = QStandardItemModel()
 
         for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
-            # Translate stage name
-            translated_name = stage[1].get("name")
+            # Load stage name translations
+            stage[1]["en_name"] = stage[1].get("name")
+
+            # Display name
+            display_name = stage[1].get("name")
 
             locale = TSHLocaleHelper.programLocale
             if locale.replace('-', '_') in stage[1].get("locale", {}):
-                translated_name = stage[1].get("locale", {})[
+                display_name = stage[1].get("locale", {})[
                     locale.replace('-', '_')]
             elif locale.split('-')[0] in stage[1].get("locale", {}):
-                translated_name = stage[1].get("locale", {})[
+                display_name = stage[1].get("locale", {})[
                     locale.split('-')[0]]
+            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in stage[1].get("locale", {}):
+                display_name = stage[1].get("locale", {})[
+                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale)]
 
-            stage[1]["translated_name"] = translated_name
+            stage[1]["display_name"] = display_name
 
-            item = QStandardItem(f'{stage[1].get("translated_name")} ({stage[1].get("name")})' if stage[1].get(
-                "name") != stage[1].get("translated_name") else stage[1].get("name"))
+            # Export name
+            export_name = stage[1].get("name")
+
+            locale = TSHLocaleHelper.exportLocale
+            if locale.replace('-', '_') in stage[1].get("locale", {}):
+                export_name = stage[1].get("locale", {})[
+                    locale.replace('-', '_')]
+            elif locale.split('-')[0] in stage[1].get("locale", {}):
+                export_name = stage[1].get("locale", {})[
+                    locale.split('-')[0]]
+            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in stage[1].get("locale", {}):
+                export_name = stage[1].get("locale", {})[
+                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale)]
+
+            stage[1]["name"] = export_name
+
+            item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
+                "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
             item.setData(stage[1], Qt.ItemDataRole.UserRole)
             item.setIcon(QIcon(stage[1].get("path")))
             self.stagesModel.appendRow(item)
@@ -378,8 +400,8 @@ class TSHScoreboardStageWidget(QWidget):
         neutralModel = QStandardItemModel()
         if data.neutralStages:
             for stage in data.neutralStages:
-                item = QStandardItem(f'{stage.get("translated_name")} ({stage.get("name")})' if stage.get(
-                    "name") != stage.get("translated_name") else stage.get("name"))
+                item = QStandardItem(f'{stage.get("display_name")} / {stage.get("en_name")}' if stage.get(
+                    "display_name") != stage.get("en_name") else stage.get("display_name"))
                 item.setData(stage, Qt.ItemDataRole.UserRole)
                 item.setIcon(QIcon(stage.get("path")))
                 neutralModel.appendRow(item)
@@ -388,8 +410,8 @@ class TSHScoreboardStageWidget(QWidget):
         counterpickModel = QStandardItemModel()
         if data.counterpickStages:
             for stage in data.counterpickStages:
-                item = QStandardItem(f'{stage.get("translated_name")} ({stage.get("name")})' if stage.get(
-                    "name") != stage.get("translated_name") else stage.get("name"))
+                item = QStandardItem(f'{stage.get("display_name")} / {stage.get("en_name")}' if stage.get(
+                    "display_name") != stage.get("en_name") else stage.get("display_name"))
                 item.setData(stage, Qt.ItemDataRole.UserRole)
                 item.setIcon(QIcon(stage.get("path")))
                 counterpickModel.appendRow(item)

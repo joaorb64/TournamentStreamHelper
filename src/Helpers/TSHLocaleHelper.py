@@ -1,7 +1,10 @@
+import json
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os
+
+from src.SettingsManager import SettingsManager
 
 
 class TSHLocaleHelperSignals(QObject):
@@ -9,16 +12,27 @@ class TSHLocaleHelperSignals(QObject):
 
 
 class TSHLocaleHelper(QObject):
-    currentLocale = []
+    exportLocale = "en-US"
+    programLocale = "en-US"
     translator = None
+    languages = []
+    remapping = {}
 
     def LoadLocale():
-        current_locale = QtCore.QLocale().uiLanguages()
-        print("Current locale", current_locale)
+        settingsProgramLocale = SettingsManager.Get("program_language", None)
+        settingsExportLocale = SettingsManager.Get("export_language", None)
 
-        TSHLocaleHelper.currentLocale = current_locale
+        if settingsProgramLocale and settingsProgramLocale != "default":
+            current_locale = [settingsProgramLocale]
+        else:
+            current_locale = QtCore.QLocale().uiLanguages()
 
-        TSHLocaleHelper.programLocale = "en-US"
+        print("OS locale", current_locale)
+
+        oldTranslator = TSHLocaleHelper.translator
+
+        if oldTranslator:
+            QGuiApplication.instance().removeTranslator(oldTranslator)
 
         TSHLocaleHelper.translator = QTranslator()
         for locale in current_locale:
@@ -37,3 +51,26 @@ class TSHLocaleHelper(QObject):
                         break
 
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)
+
+        if settingsExportLocale and settingsExportLocale != "default":
+            TSHLocaleHelper.exportLocale = settingsExportLocale
+        else:
+            TSHLocaleHelper.exportLocale = current_locale[0]
+
+    def LoadLanguages():
+        try:
+            languages_json = json.load(open("./src/i18n/mapping.json", 'rt', encoding='utf-8'))
+            TSHLocaleHelper.languages = languages_json.get("languages")
+            TSHLocaleHelper.remapping = languages_json.get("remapping")
+        except Exception as e:
+            raise Exception(f"Error loading languages") from e
+
+    def GetRemaps(language: str):
+        for remap, langs in TSHLocaleHelper.remapping.items():
+            if language.replace('-', '_') in langs:
+                print("Loaded remap: ", remap)
+                return remap
+        return None
+
+
+TSHLocaleHelper.LoadLanguages()

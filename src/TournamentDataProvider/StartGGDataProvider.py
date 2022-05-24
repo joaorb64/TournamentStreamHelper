@@ -298,7 +298,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         # Country to country code
                         if user.get("location").get("country"):
                             for country in TSHCountryHelper.countries.values():
-                                if user.get("location").get("country") == country.get("name"):
+                                if user.get("location").get("country") == country.get("en_name"):
                                     playerData["country_code"] = country.get(
                                         "code")
                                     break
@@ -434,6 +434,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
                     if base.get("banList", None) is not None:
                         for stage_code in base.get("banList"):
+                            if stage == None:
+                                continue
                             stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                                 int(stage_code))
                             if stage:
@@ -897,7 +899,7 @@ class StartGGDataProvider(TournamentDataProvider):
                                 # Country to country code
                                 if user.get("location").get("country"):
                                     for country in TSHCountryHelper.countries.values():
-                                        if user.get("location").get("country") == country.get("name"):
+                                        if user.get("location").get("country") == country.get("en_name"):
                                             playerData["country_code"] = country.get(
                                                 "code")
                                             break

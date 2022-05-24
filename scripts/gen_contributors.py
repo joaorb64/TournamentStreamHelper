@@ -6,13 +6,29 @@ import requests
 try:
     fetch = requests.get(
         "https://api.github.com/repos/joaorb64/StreamHelperAssets/contributors?anon=1")
-    contributors = json.loads(fetch.text)
+    contributorsAssets = json.loads(fetch.text)
+
+    fetch = requests.get(
+        "https://api.github.com/repos/joaorb64/TournamentStreamHelper/contributors?anon=1")
+    contributorsTool = json.loads(fetch.text)
 
     contributors_final = []
 
-    for c in contributors:
+    for c in contributorsTool:
+        # Skip buildbot and actions-user
+        if c.get("name") == "Buildbot" or c.get("login") == "actions-user":
+            continue
+        if c.get("login"):
+            contributors_final.append(c.get("login"))
+        elif c.get("name"):
+            contributors_final.append(c.get("name"))
+
+    for c in contributorsAssets:
         # Skip buildbot
         if c.get("name") == "Buildbot":
+            continue
+        # Do not add duplicates
+        if c.get("name") in contributors_final or c.get("login") in contributors_final:
             continue
         if c.get("login"):
             contributors_final.append(c.get("login"))
