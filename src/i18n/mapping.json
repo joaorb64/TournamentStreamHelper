@@ -1,5 +1,5 @@
 {
-    "languages": {
+    "unsupported_languages": {
         "af-ZA": [
             "Afrikaans",
             "Afrikaans"
@@ -28,41 +28,9 @@
             "Dansk",
             "Danish"
         ],
-        "de-AT": [
-            "Deutsch (Österreich)",
-            "German (Austria)"
-        ],
-        "de-CH": [
-            "Deutsch (Schweiz)",
-            "German (Switzerland)"
-        ],
-        "de-DE": [
-            "Deutsch (Deutschland)",
-            "German (Germany)"
-        ],
         "el-GR": [
             "Ελληνικά",
             "Greek"
-        ],
-        "en-GB": [
-            "English (UK)",
-            "English (UK)"
-        ],
-        "en-US": [
-            "English (US)",
-            "English (US)"
-        ],
-        "es-CL": [
-            "Español (Chile)",
-            "Spanish (Chile)"
-        ],
-        "es-ES": [
-            "Español (España)",
-            "Spanish (Spain)"
-        ],
-        "es-MX": [
-            "Español (México)",
-            "Spanish (Mexico)"
         ],
         "et-EE": [
             "Eesti keel",
@@ -79,14 +47,6 @@
         "fi-FI": [
             "Suomi",
             "Finnish"
-        ],
-        "fr-CA": [
-            "Français (Canada)",
-            "French (Canada)"
-        ],
-        "fr-FR": [
-            "Français (France)",
-            "French (France)"
         ],
         "he-IL": [
             "עברית",
@@ -115,10 +75,6 @@
         "it-IT": [
             "Italiano",
             "Italian"
-        ],
-        "ja-JP": [
-            "日本語",
-            "Japanese"
         ],
         "km-KH": [
             "ភាសាខ្មែរ",
@@ -159,10 +115,6 @@
         "pl-PL": [
             "Polski",
             "Polish"
-        ],
-        "pt-BR": [
-            "Português (Brasil)",
-            "Portuguese (Brazil)"
         ],
         "pt-PT": [
             "Português (Portugal)",
@@ -215,6 +167,56 @@
         "zh-TW": [
             "中文 (台灣)",
             "Chinese (Taiwan)"
+        ]
+    },
+    "languages": {
+        "de-AT": [
+            "Deutsch (Österreich)",
+            "German (Austria)"
+        ],
+        "de-CH": [
+            "Deutsch (Schweiz)",
+            "German (Switzerland)"
+        ],
+        "de-DE": [
+            "Deutsch (Deutschland)",
+            "German (Germany)"
+        ],
+        "en-GB": [
+            "English (UK)",
+            "English (UK)"
+        ],
+        "en-US": [
+            "English (US)",
+            "English (US)"
+        ],
+        "es-CL": [
+            "Español (Chile)",
+            "Spanish (Chile)"
+        ],
+        "es-ES": [
+            "Español (España)",
+            "Spanish (Spain)"
+        ],
+        "es-MX": [
+            "Español (México)",
+            "Spanish (Mexico)"
+        ],
+        "fr-CA": [
+            "Français (Canada)",
+            "French (Canada)"
+        ],
+        "fr-FR": [
+            "Français (France)",
+            "French (France)"
+        ],
+        "ja-JP": [
+            "日本語",
+            "Japanese"
+        ],
+        "pt-BR": [
+            "Português (Brasil)",
+            "Portuguese (Brazil)"
         ]
     },
     "remapping": {

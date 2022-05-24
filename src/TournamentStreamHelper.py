@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+App = QApplication(sys.argv)
+print("QApplication successfully initialized")
 
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.TSHAboutWidget import TSHAboutWidget
@@ -18,9 +24,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from qdarkstyle import palette
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 
 import shutil
 import tarfile
@@ -32,7 +35,6 @@ import requests
 import urllib
 import json
 import traceback
-import sys
 import time
 import os
 import threading
@@ -46,11 +48,18 @@ from collections import Counter
 
 import unicodedata
 
-App = QApplication(sys.argv)
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
     sys.stdout = open('./assets/log.txt', 'w', encoding="utf-8")
+
+def generate_restart_messagebox(main_txt):
+    messagebox = QMessageBox()
+    messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
+    messagebox.setText(
+        main_txt + "\n" + QApplication.translate("app", "The program will now close."))
+    messagebox.finished.connect(QApplication.exit)
+    return(messagebox)
 
 
 def remove_accents_lower(input_str):
@@ -270,20 +279,25 @@ class Window(QMainWindow):
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        action = languageSelect.addAction("System language")
+        program_language_messagebox = generate_restart_messagebox(QApplication.translate("app", "Program language changed succsssfully."))
+
+        action = languageSelect.addAction(
+            QApplication.translate("app", "System language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
         action.triggered.connect(lambda x: [
-            SettingsManager.Set("program_language", "default")
+            SettingsManager.Set("program_language", "default"),
+                program_language_messagebox.exec()
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("program_language", c)
+                SettingsManager.Set("program_language", c),
+                program_language_messagebox.exec()
             ])
             if SettingsManager.Get("program_language") == code:
                 action.setChecked(True)
@@ -295,26 +309,31 @@ class Window(QMainWindow):
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        action = languageSelect.addAction("Same as program language")
+        export_language_messagebox = generate_restart_messagebox(QApplication.translate("app", "Export language changed succsssfully."))
+
+        action = languageSelect.addAction(
+            QApplication.translate("app", "Same as program language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
         action.triggered.connect(lambda x: [
-            SettingsManager.Set("export_language", "default")
+            SettingsManager.Set("export_language", "default"),
+                export_language_messagebox.exec()
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} ({language[1]})")
+            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("export_language", c)
+                SettingsManager.Set("export_language", c),
+                export_language_messagebox.exec()
             ])
             if SettingsManager.Get("export_language") == code:
                 action.setChecked(True)
 
         self.aboutWidget = TSHAboutWidget()
-        action = self.optionsBt.menu().addAction("About")
+        action = self.optionsBt.menu().addAction(QApplication.translate("About", "About"))
         action.setIcon(QIcon('assets/icons/info.svg'))
         action.triggered.connect(lambda: self.aboutWidget.show())
 
@@ -439,6 +458,7 @@ class Window(QMainWindow):
         except Exception as e:
             if silent == False:
                 messagebox = QMessageBox()
+                messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
                 messagebox.setText(
                     QApplication.translate("app", "Failed to fetch version from github:")+"\n"+str(e))
                 messagebox.exec()
@@ -538,10 +558,7 @@ class Window(QMainWindow):
                                 versions["program"] = currVersion
                                 json.dump(versions, outfile)
 
-                            messagebox = QMessageBox()
-                            messagebox.setText(
-                                QApplication.translate("app", "Update complete. The program will now close."))
-                            messagebox.finished.connect(QApplication.exit)
+                            messagebox = generate_restart_messagebox(QApplication.translate("app", "Update complete."))
                             messagebox.exec()
 
                         worker = Worker(worker)
@@ -553,6 +570,7 @@ class Window(QMainWindow):
                     btCancel.clicked.connect(lambda: buttonReply.close())
                 else:
                     messagebox = QMessageBox()
+                    messagebox.setWindowTitle(QApplication.translate("app", "Info"))
                     messagebox.setText(
                         QApplication.translate("app", "You're already using the latest version"))
                     messagebox.exec()
@@ -765,7 +783,8 @@ class Window(QMainWindow):
             assets = json.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
-            messagebox.setText("Failed to fetch github:\n"+str(e))
+            messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
+            messagebox.setText(QApplication.translate("app", "Failed to fetch assets from github:")+"\n"+str(e))
             messagebox.exec()
         return assets
 
