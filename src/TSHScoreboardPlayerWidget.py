@@ -699,8 +699,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if data["skin"] == None:
                     data["skin"] = 0
 
-                if data["en_name"] != "":
-                    mains.append([data.get("en_name"), data.get("skin")])
+                if data["name"] != "":
+                    mains.append([data.get("name"), data.get("skin")])
 
             playerData["mains"] = {
                 TSHGameAssetManager.instance.selectedGame.get("codename"): mains
