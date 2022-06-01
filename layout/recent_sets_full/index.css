@@ -70,12 +70,12 @@ body {
   overflow: hidden;
   align-items: center;
   flex-grow: 0;
+  margin-left: 2px;
   margin-bottom: 20px;
 }
 
 .player_1 {
 	width: 50%;
-	margin-left: 20px;
 	text-align: left;
 	justify-content: left;
   padding: 10px;
@@ -83,7 +83,6 @@ body {
 
 .player_2 {
 	width: 50%;
-	margin-right: 10px;
 	text-align: right;
 	justify-content: right;
   padding: 10px;
@@ -104,6 +103,7 @@ body {
   flex-direction: row;
   color: var(--text-color);
   align-content: center;
+  margin-left: 40px;
   padding-left: 26px;
   padding-right: 26px;
   padding-top: 8px;
@@ -208,10 +208,11 @@ body {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: 80px;
-  height: 80px;
+  top: 35%;
+  width: 256px;
+  height: 256px;
   margin: 12px;
-  border: 12px solid var(--text-color);
+  border: 48px solid var(--text-color);
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: var(--text-color) transparent transparent transparent;

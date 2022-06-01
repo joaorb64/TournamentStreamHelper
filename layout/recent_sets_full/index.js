@@ -47,6 +47,7 @@
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
+                <br>
                 ${player.name}
               </div>
             `;
