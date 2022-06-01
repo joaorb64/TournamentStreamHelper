@@ -553,6 +553,16 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2column.findChild(QCheckBox, "losers").isChecked())
         self.team2column.findChild(QCheckBox, "losers").setChecked(losersLeft)
 
+        # Team Names
+        teamNameLeft = self.team1column.findChild(QLineEdit, "teamName").text()
+        self.team1column.findChild(QLineEdit, "teamName").setText(
+            self.team2column.findChild(QLineEdit, "teamName").text())
+        self.team2column.findChild(QLineEdit, "teamName").setText(teamNameLeft)
+        self.team1column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
+        self.team2column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
+
         self.teamsSwapped = not self.teamsSwapped
 
     def GetRecentSets(self):

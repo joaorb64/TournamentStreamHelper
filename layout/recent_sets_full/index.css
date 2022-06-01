@@ -61,7 +61,6 @@ body {
 
 .recent_sets_players {
   width: 100%;
-  padding: 10px;
   display: flex;
   color: var(--text-color);
   align-content: center;

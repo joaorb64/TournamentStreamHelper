@@ -27,32 +27,33 @@
     }
 
     players = "";
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.player["1"]].forEach((player, p) => {
-        if (player) {
-          players += `
-            <div class="player_${t + 1}">
-              <span class="sponsor">
-                ${player.team ? player.team : ""}
-              </span>
-              ${player.name}
-            </div>
-          `;
-        }
-      });
-    });
-    SetInnerHtml($(`.recent_sets_players`), players);
-
     recentSetsHtml = "";
 
     if (
       playersRecentSets == null ||
       (playersRecentSets.state == "done" && playersRecentSets.sets.length == 0)
     ) {
-      recentSetsHtml += `-`;
+      recentSetsHtml += ``;
+      players += ``;
     } else if (playersRecentSets.state != "done") {
       recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
+      players = "";
     } else {
+      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+        [team.player["1"]].forEach((player, p) => {
+          if (player) {
+            players += `
+              <div class="player_${t + 1}">
+                <span class="sponsor">
+                  ${player.team ? player.team : ""}
+                </span>
+                ${player.name}
+              </div>
+            `;
+          }
+        });
+      });
+
       playersRecentSets.sets.slice(0, 5).forEach((_set) => {
         recentSetsHtml += `
             <div class="set_container">
@@ -93,6 +94,7 @@
       });
     }
 
+    SetInnerHtml($(`.recent_sets_players`), players);
     SetInnerHtml($(`.recent_sets_content`), recentSetsHtml);
   }
 
