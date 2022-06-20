@@ -151,7 +151,7 @@ class TSHCountryHelper(QObject):
             if state is None:
                 state = next(
                     (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
-                    ) if TSHCountryHelper.remove_accents_lower(st["state_name"]) == TSHCountryHelper.remove_accents_lower(part)),
+                    ) if TSHCountryHelper.remove_accents_lower(st["name"]) == TSHCountryHelper.remove_accents_lower(part)),
                     None
                 )
             if state is not None:
