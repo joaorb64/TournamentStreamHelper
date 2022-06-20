@@ -43,6 +43,7 @@ body {
 .recent_sets .text {
   flex-direction: column;
   max-width: 100%;
+  width: 100%;
   gap: 8px;
 }
 
@@ -75,25 +76,25 @@ body {
 }
 
 .player_1 {
-	width: 50%;
-	text-align: left;
-	justify-content: left;
+  width: 50%;
+  text-align: left;
+  justify-content: left;
   padding: 10px;
 }
 
 .player_2 {
-	width: 50%;
-	text-align: right;
-	justify-content: right;
+  width: 50%;
+  text-align: right;
+  justify-content: right;
   padding: 10px;
 }
 
 .player_1 .sponsor {
-	color: var(--p1-sponsor-color);
+  color: var(--p1-sponsor-color);
 }
 
 .player_2 .sponsor {
-	color: var(--p2-sponsor-color);
+  color: var(--p2-sponsor-color);
 }
 
 /* Recent Sets Section */

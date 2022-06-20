@@ -43,6 +43,7 @@ body {
 .recent_sets .text {
   flex-direction: column;
   max-width: 100%;
+  width: 100%;
   gap: 8px;
 }
 
