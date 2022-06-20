@@ -84,12 +84,18 @@ class TSHCountryHelper(QObject):
         # State explicit?
         split = city.split(" ")
 
-        for part in split:
+        for part in split[::-1]:
             state = next(
                 (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
                 ) if TSHCountryHelper.remove_accents_lower(st["state_code"]) == TSHCountryHelper.remove_accents_lower(part)),
                 None
             )
+            if state is None:
+                state = next(
+                    (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
+                    ) if TSHCountryHelper.remove_accents_lower(st["state_name"]) == TSHCountryHelper.remove_accents_lower(part)),
+                    None
+                )
             if state is not None:
                 return state["state_code"]
 
