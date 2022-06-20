@@ -25,7 +25,7 @@ body {
 .recent_sets {
   position: absolute;
   width: 100%;
-  height: 600px;
+  height: 758px;
   color: var(--text-color);
   font-size: 50px;
   place-content: flex-start;
@@ -55,12 +55,56 @@ body {
   margin-bottom: 20px;
 }
 
+/* Players Section */
+.recent_sets_players .text {
+  flex-direction: row;
+}
+
+.recent_sets_players {
+  width: 100%;
+  display: flex;
+  color: var(--text-color);
+  align-content: center;
+  justify-content: center;
+  font-size: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  align-items: center;
+  flex-grow: 0;
+  margin-left: 2px;
+  margin-bottom: 20px;
+}
+
+.player_1 {
+  width: 50%;
+  text-align: left;
+  justify-content: left;
+  padding: 10px;
+}
+
+.player_2 {
+  width: 50%;
+  text-align: right;
+  justify-content: right;
+  padding: 10px;
+}
+
+.player_1 .sponsor {
+  color: var(--p1-sponsor-color);
+}
+
+.player_2 .sponsor {
+  color: var(--p2-sponsor-color);
+}
+
+/* Recent Sets Section */
 .set_container {
   width: 100%;
   display: flex;
   flex-direction: row;
   color: var(--text-color);
   align-content: center;
+  margin-left: 40px;
   padding-left: 26px;
   padding-right: 26px;
   padding-top: 8px;
@@ -76,24 +120,45 @@ body {
 
 .set_info {
   overflow: hidden;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
   flex-grow: 1;
   font-size: 22px;
   color: var(--text-color);
+  justify-content: center;
+  width: 100%;
 }
 
 .set_date {
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 .set_title {
   text-overflow: ellipsis;
+  text-align: right;
+  justify-content: right;
   overflow: hidden;
   font-size: 28px;
   padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 40px;
   color: var(--text-color);
-  opacity: 1;
+  width: 50%;
+}
+
+.set_data {
+  text-overflow: ellipsis;
+  text-align: left;
+  justify-content: left;
+  overflow: hidden;
+  font-size: 28px;
+  padding-right: 20px;
+  padding-left: 40px;
+  color: var(--text-color);
+  width: 50%;
+}
+
+.set_round {
+  opacity: 0.75;
 }
 
 .wifi_icon {
@@ -144,7 +209,7 @@ body {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  top: 30%;
+  top: 35%;
   width: 256px;
   height: 256px;
   margin: 12px;
