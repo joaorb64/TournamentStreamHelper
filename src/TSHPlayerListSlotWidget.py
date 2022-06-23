@@ -13,10 +13,11 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHPlayerListSlotWidget(QGroupBox):
-    def __init__(self, index, playerList, *args):
+    def __init__(self, index, playerList, state_path="player_list", *args):
         super().__init__(*args)
         self.index = index
         self.playerList = playerList
+        self.state_path = state_path
 
         self.setLayout(QVBoxLayout())
         self.slotName = QLineEdit()
@@ -25,7 +26,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.slotName.editingFinished.connect(
             lambda: [
                 StateManager.Set(
-                    f"player_list.slot.{self.index}.name", self.slotName.text())
+                    f"{self.state_path}.slot.{self.index}.name", self.slotName.text())
             ]
         )
 
@@ -38,7 +39,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
     def SetPlayersPerTeam(self, number):
         while len(self.playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
-                index=len(self.playerWidgets)+1, teamNumber=1, path=f'player_list.slot.{self.index}.player.{len(self.playerWidgets)+1}')
+                index=len(self.playerWidgets)+1, teamNumber=1, path=f'{self.state_path}.slot.{self.index}.player.{len(self.playerWidgets)+1}')
             self.playerWidgets.append(p)
             self.list.layout().addWidget(p)
 

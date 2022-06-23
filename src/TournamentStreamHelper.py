@@ -16,6 +16,7 @@ from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
+from .TSHTop8Widget import TSHTop8Widget
 from qdarkstyle import palette
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -163,10 +164,17 @@ class Window(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, playerList)
         self.dockWidgets.append(playerList)
 
+        top8 = TSHTop8Widget()
+        # top8.setWindowIcon(QIcon('assets/icons/list.svg'))
+        top8.setObjectName("Top 8")
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, top8)
+        self.dockWidgets.append(top8)
+
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
         self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
+        self.tabifyDockWidget(self.scoreboard, top8)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
