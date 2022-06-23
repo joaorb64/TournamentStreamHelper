@@ -87,8 +87,9 @@ class TSHTop8Widget(QDockWidget):
         # self.SetSlotNumber(4)
 
         bracket_names = ["Winners Bracket", "Losers Bracket"]
+        bracket_codes = ["winner", "loser"]
         for bracket_index in range(len(bracket_names)):
-            s = BracketGroup(self, bracket_index, bracket_names[bracket_index])
+            s = BracketGroup(self, bracket_codes[bracket_index], bracket_names[bracket_index])
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playerPerTeam.value())
@@ -125,7 +126,7 @@ class TSHTop8Widget(QDockWidget):
             s.SetPlayersPerTeam(number)
 
 class MatchGroup(QWidget):
-    def __init__(self, player_list, match_index=0, *args):
+    def __init__(self, player_list, match_index="winner_r1_m1", *args):
         super().__init__(*args)
         self.characters_per_player = 1
         self.players_per_team = 1
@@ -142,7 +143,7 @@ class MatchGroup(QWidget):
         self.layout().addWidget(self.widgetArea)
 
         for i in range(2):
-            player_index = (match_index+1)*10 + i+1
+            player_index = f"{match_index}_p{i+1}"
             s = TSHPlayerListSlotWidget(player_index, player_list, state_path="top_8")
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
@@ -167,7 +168,7 @@ class MatchGroup(QWidget):
             s.SetPlayersPerTeam(number)
 
 class BracketGroup(QWidget):
-    def __init__(self, player_list, bracket_index=0, bracket_name="dummy", *args):
+    def __init__(self, player_list, bracket_index="winner", bracket_name="dummy", *args):
         super().__init__(*args)
         self.characters_per_player = 1
         self.players_per_team = 1
@@ -186,7 +187,7 @@ class BracketGroup(QWidget):
         self.layout().addWidget(self.label)
 
         for i in range(2):
-            match_index = (bracket_index+1)*10 + i
+            match_index = f"{bracket_index}_r1_m{i+1}"
             s = MatchGroup(player_list, match_index)
             self.slotWidgets.append(s)
             self.layout().addWidget(s)
