@@ -94,29 +94,6 @@ class TSHTop8Widget(QDockWidget):
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playerPerTeam.value())
 
-
-    def SetSlotNumber(self, number):
-        while len(self.slotWidgets) < number:
-            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self, state_path="top_8")
-            self.slotWidgets.append(s)
-            self.widgetArea.layout().addWidget(s)
-            s.SetPlayersPerTeam(self.playerPerTeam.value())
-
-            # s.SetCharactersPerPlayer(self.charNumber.value())
-
-            # index = len(self.team1playerWidgets)
-
-            # p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
-            #     self.team1playerWidgets[index-1 if index > 0 else 0]))
-            # p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
-            #     self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
-
-        while len(self.slotWidgets) > number:
-            s = self.slotWidgets[-1]
-            s.setParent(None)
-            self.slotWidgets.remove(s)
-            StateManager.Unset(f'top_8.slot.{s.index}')
-
     def SetCharactersPerPlayer(self, value):
         for s in self.slotWidgets:
             s.SetCharactersPerPlayer(value)
