@@ -119,20 +119,32 @@ class MatchGroup(QWidget):
             QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.layout().addWidget(self.widgetArea)
 
+        self.score_widgets = []
+        self.win_widgets = []
+
+        self.result_area = QWidget()
+        self.result_area.setLayout(QVBoxLayout())
+        self.result_area.setContentsMargins(0, 0, 0, 0)
+        self.result_area.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        self.layout().addWidget(self.result_area)
+
         for i in range(2):
             player_index = f"{match_index}_p{i+1}"
             s = TSHPlayerListSlotWidget(player_index, player_list, state_path="top_8")
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
-        
-        self.label = QLabel("Insert winner\nlogic here")
-        label_font = QFont()
-        label_font.setPointSize(10)
-        label_font.setWeight(75)
-        label_font.setBold(True)
-        self.label.setFont(label_font)
-        self.layout().addWidget(self.label)
+            
+            group = QWidget()
+            group.setLayout(QHBoxLayout())
+            group.setContentsMargins(0,0,0,0)
+            win_widget = QPushButton()
+            self.win_widgets.append(win_widget)
+            group.layout().addWidget(win_widget)
+            score_widget = QSpinBox()
+            self.score_widgets.append(score_widget)
+            group.layout().addWidget(score_widget)
+            self.result_area.layout().addWidget(group)
     
     def SetCharactersPerPlayer(self, value):
         self.characters_per_player = value
@@ -169,6 +181,10 @@ class BracketGroup(QWidget):
             self.slotWidgets.append(s)
             self.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
+            if i<1:
+                line = QFrame()
+                line.setFrameShape(QFrame.HLine)
+                self.layout().addWidget(line)
     
     def SetCharactersPerPlayer(self, value):
         self.characters_per_player = value
