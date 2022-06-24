@@ -15,8 +15,9 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHTop8Widget(QDockWidget):
-    def __init__(self, *args):
+    def __init__(self, match_index, player_index, *args):
         super().__init__(*args)
+        self.match_index, self.player_index = match_index, player_index
         self.setWindowTitle("Top 8")
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
@@ -161,7 +162,7 @@ class MatchGroup(QWidget):
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
 
-            score_group = ScoreGroup()
+            score_group = ScoreGroup(match_index, player_index)
             self.result_area.layout().addWidget(score_group)
             self.score_widgets.append(score_group)
     
