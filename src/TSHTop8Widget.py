@@ -102,6 +102,33 @@ class TSHTop8Widget(QDockWidget):
         for s in self.slotWidgets:
             s.SetPlayersPerTeam(number)
 
+class ScoreGroup(QWidget):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.setLayout(QHBoxLayout())
+        self.setContentsMargins(0,0,0,0)
+        self.win_widget = QPushButton()
+        self.layout().addWidget(self.win_widget)
+        self.score_widget = QSpinBox()
+        self.layout().addWidget(self.score_widget)
+        self.win_value = False
+        self.win_widget.clicked.connect(lambda: self.SetWinner(self.win_widget))
+
+    def SetWinner(self, button: QPushButton):
+        self.win_value = not self.win_value
+        if self.win_value:
+            button.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : green;"
+                             "}"
+                             "QPushButton::pressed"
+                             "{"
+                             "background-color : darkGreen;"
+                             "}"
+                             )
+        else:
+            button.setStyleSheet("")
+
 class MatchGroup(QWidget):
     def __init__(self, player_list, match_index="winner_r1_m1", *args):
         super().__init__(*args)
@@ -120,7 +147,6 @@ class MatchGroup(QWidget):
         self.layout().addWidget(self.widgetArea)
 
         self.score_widgets = []
-        self.win_widgets = []
 
         self.result_area = QWidget()
         self.result_area.setLayout(QVBoxLayout())
@@ -134,17 +160,10 @@ class MatchGroup(QWidget):
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
-            
-            group = QWidget()
-            group.setLayout(QHBoxLayout())
-            group.setContentsMargins(0,0,0,0)
-            win_widget = QPushButton()
-            self.win_widgets.append(win_widget)
-            group.layout().addWidget(win_widget)
-            score_widget = QSpinBox()
-            self.score_widgets.append(score_widget)
-            group.layout().addWidget(score_widget)
-            self.result_area.layout().addWidget(group)
+
+            score_group = ScoreGroup()
+            self.result_area.layout().addWidget(score_group)
+            self.score_widgets.append(score_group)
     
     def SetCharactersPerPlayer(self, value):
         self.characters_per_player = value
