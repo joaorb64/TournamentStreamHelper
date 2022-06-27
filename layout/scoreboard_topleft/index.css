@@ -116,33 +116,9 @@ body {
   flex-direction: row;
 }
 
-.fgc .p1.container {
-  left: 154px;
-}
-
-.tekken7 .p1.container {
-  left: 226px;
-}
-
-.fgc.thin .p1.container {
-  left: 164px;
-}
-
 .p2.container {
   background-position: 0 0;
   flex-direction: row;
-}
-
-.fgc .p2.container {
-  right: 154px;
-}
-
-.tekken7 .p2.container {
-  right: 226px;
-}
-
-.fgc.thin .p2.container {
-  right: 164px;
 }
 
 .name_twitter {
@@ -158,40 +134,12 @@ body {
   justify-content: space-between;
 }
 
-.fgc .p2 .name_twitter {
-  flex-direction: row-reverse;
-}
-
 .name_twitter .name {
   font-size: 18px;
 }
 
-.fgc .name_twitter .name {
-  width: 60%;
-}
-
-.fgc .p1 .name_twitter .name .text {
-  justify-content: flex-start;
-}
-
-.fgc .p2 .name_twitter .name .text {
-  justify-content: flex-end;
-}
-
 .name_twitter .twitter {
   font-size: 14px;
-}
-
-.fgc .name_twitter .twitter {
-  width: 40%;
-}
-
-.fgc .p1 .name_twitter .twitter .text {
-  justify-content: flex-end;
-}
-
-.fgc .p2 .name_twitter .twitter .text {
-  justify-content: flex-start;
 }
 
 .twitter_logo {
@@ -222,26 +170,6 @@ body {
   background-position: center;
   border-radius: var(--border-radius);
   z-index: 9;
-}
-
-.fgc .logo {
-  top: 145px;
-  width: 120px;
-  height: 120px;
-}
-
-.fgc.thin .logo {
-  top: 140px;
-  width: 100px;
-  height: 100px;
-}
-
-.fgc.thin.strive .logo {
-  top: 200px;
-}
-
-.fgc.thin.bblue .logo {
-  top: 970px;
 }
 
 .info.container {
@@ -285,23 +213,6 @@ body {
   overflow: hidden;
 }
 
-.fgc .info.container.top {
-  top: 8px;
-  height: 34px;
-  width: 300px;
-  font-size: 16px;
-  padding: 8px 16px;
-}
-
-.tekken7 .info.container.top {
-  height: 48px;
-}
-
-.fgc.thin .info.container.top {
-  top: 2px;
-  height: 48px;
-}
-
 .info.container.bottom {
   top: 42px;
   left: 42px;
@@ -326,19 +237,6 @@ body {
   width: 100%;
 }
 
-.fgc .info.container.bottom {
-  top: unset;
-  bottom: 6px;
-  padding: 16px 24px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.bblue .info.container.bottom {
-  top: 180px;
-  bottom: unset;
-}
-
 .icon {
   flex-shrink: 0;
   background-position: center;
@@ -349,22 +247,12 @@ body {
   background: #3f3f46;
 }
 
-.thin .icon {
-  border-radius: 8px;
-}
-
 .icon div:not(.text) {
   width: 32px;
   height: 32px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-}
-
-.fgc.thin .icon div:not(.text) {
-  height: 38px;
-  width: 38px;
-  background-size: cover;
 }
 
 .flags_container {
@@ -394,11 +282,6 @@ body {
   width: 32px;
   height: 32px;
   border-radius: var(--border-radius);
-}
-
-.fgc.thin .sponsor_icon > div > div {
-  width: 38px;
-  height: 38px;
 }
 
 .character_container {
