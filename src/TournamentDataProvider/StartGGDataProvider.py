@@ -434,7 +434,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
                     if base.get("banList", None) is not None:
                         for stage_code in base.get("banList"):
-                            if stage == None:
+                            if stage_code == None:
                                 continue
                             stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                                 int(stage_code))
