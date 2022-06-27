@@ -686,47 +686,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="60"/>
         <source>The program will now close.</source>
-        <translation type="unfinished"></translation>
+        <translation>O programa será fechado agora.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="275"/>
         <source>Program Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma do programa</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="282"/>
         <source>Program language changed succsssfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma do programa modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="285"/>
         <source>System language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma do sistema</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="305"/>
         <source>Export Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma de exportação</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="312"/>
         <source>Export language changed succsssfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma de exportação modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="315"/>
         <source>Same as program language</source>
-        <translation type="unfinished"></translation>
+        <translation>Igual ao idioma do programa</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="561"/>
         <source>Update complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualização completa.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="573"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informação</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="669"/>
@@ -781,7 +781,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="787"/>
         <source>Failed to fetch assets from github:</source>
-        <translation type="unfinished"></translation>
+        <translation>Falhou ao baixar os dados do github:</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="798"/>
