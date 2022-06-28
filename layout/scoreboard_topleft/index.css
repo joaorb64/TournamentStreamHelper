@@ -250,7 +250,7 @@ body {
   background: #3f3f46;
 }
 
-.portraits .icon {
+.portraits .character_container .icon {
   border-radius: 0;
 }
 
@@ -262,7 +262,7 @@ body {
   background-repeat: no-repeat;
 }
 
-.portraits .icon div:not(.text) {
+.portraits .character_container .icon div:not(.text) {
   width: 100%;
   height: 100%;
 }

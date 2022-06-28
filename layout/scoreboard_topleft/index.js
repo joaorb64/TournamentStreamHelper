@@ -125,9 +125,8 @@
                   ).each((i, e) => {
                     CenterImage(
                       $(e),
-                      Object.values(player.character)[i].assets[
-                        "base_files/icon"
-                      ].eyesight
+                      Object.values(player.character)[i].assets[ASSET_TO_USE]
+                        .eyesight
                     );
                   });
                 }
