@@ -556,7 +556,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="387"/>
         <location filename="../TournamentStreamHelper.py" line="391"/>
         <source>Load tournament and sets from StartGG user</source>
-        <translation>大会と対戦のデータをStartGGからロードする</translation>
+        <translation>大会と対戦データをStartGGからロードする</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="239"/>
