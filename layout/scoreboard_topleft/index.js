@@ -1,4 +1,8 @@
 (($) => {
+  var ASSET_TO_USE = "base_files/icon";
+
+  if (window.PORTRAITS) ASSET_TO_USE = "portrait";
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -102,10 +106,10 @@
             ) {
               let charactersHtml = "";
               Object.values(player.character).forEach((character, index) => {
-                if (character.assets["base_files/icon"]) {
+                if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
                     <div class="icon stockicon">
-                        <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
+                        <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
                     </div>
                     `;
                 }
@@ -121,9 +125,8 @@
                   ).each((i, e) => {
                     CenterImage(
                       $(e),
-                      Object.values(player.character)[i].assets[
-                        "base_files/icon"
-                      ].eyesight
+                      Object.values(player.character)[i].assets[ASSET_TO_USE]
+                        .eyesight
                     );
                   });
                 }
@@ -218,10 +221,10 @@
         if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
           let charactersHtml = "";
           characters.forEach((character, index) => {
-            if (character.assets["base_files/icon"]) {
+            if (character.assets[ASSET_TO_USE]) {
               charactersHtml += `
                 <div class="icon stockicon">
-                    <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
+                    <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
                 </div>
                 `;
             }
@@ -235,10 +238,7 @@
               $(
                 `.p${t + 1}.container .character_container .stockicon div`
               ).each((i, e) => {
-                CenterImage(
-                  $(e),
-                  characters[i].assets["base_files/icon"].eyesight
-                );
+                CenterImage($(e), characters[i].assets[ASSET_TO_USE].eyesight);
               });
             }
           );
@@ -277,17 +277,13 @@
       });
     }
 
-    SetInnerHtml(
-      $(".tournament_name"),
-      data.tournamentInfo.tournamentName + " - " + data.tournamentInfo.eventName
-    );
+    SetInnerHtml($(".tournament_name"), data.tournamentInfo.tournamentName);
 
-    let phaseTexts = [];
-    if (data.score.phase) phaseTexts.push(data.score.phase);
-    if (data.score.match) phaseTexts.push(data.score.match);
-    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+    SetInnerHtml($(".event_name"), data.tournamentInfo.eventName);
 
-    SetInnerHtml($(".phase"), phaseTexts.join(" - "));
+    SetInnerHtml($(".phase"), data.score.phase);
+    SetInnerHtml($(".match"), data.score.match);
+    SetInnerHtml($(".best_of"), `Best of ${data.score.best_of}`);
 
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));
