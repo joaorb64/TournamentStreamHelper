@@ -598,7 +598,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Export Language</source>
-        <translation>エクスポート言語</translation>
+        <translation>エクスポート物の言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="310"/>
@@ -638,7 +638,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="307"/>
         <source>Export language changed successfully.</source>
-        <translation>エクスポート言語を変更しました。</translation>
+        <translation>エクスポート物の言語を変更しました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="486"/>
