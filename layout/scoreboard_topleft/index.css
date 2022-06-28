@@ -84,8 +84,11 @@ body {
 .base_container .line {
   background: var(--bg-color);
   overflow: hidden;
-  padding: 8px;
+  padding: 8px 16px;
   width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  justify-content: space-between;
 }
 
 .p1.container > div:not(:last-child) {
@@ -208,8 +211,6 @@ body {
 
 .tournament_name {
   font-size: 18px;
-  width: 100%;
-  height: 100%;
   overflow: hidden;
 }
 
@@ -228,13 +229,15 @@ body {
 
 .phase {
   font-size: 16px;
-  width: 100%;
 }
 
 .match {
   font-size: 18px;
-  letter-spacing: 2px;
-  width: 100%;
+  flex-grow: 1;
+}
+
+.best_of {
+  font-size: 16px;
 }
 
 .icon {
@@ -247,12 +250,21 @@ body {
   background: #3f3f46;
 }
 
+.portraits .icon {
+  border-radius: 0;
+}
+
 .icon div:not(.text) {
   width: 32px;
   height: 32px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.portraits .icon div:not(.text) {
+  width: 100%;
+  height: 100%;
 }
 
 .flags_container {
@@ -291,12 +303,21 @@ body {
   flex-shrink: 0;
 }
 
+.portraits .character_container {
+  height: calc(100% + 8px);
+  margin-right: 0 !important;
+}
+
 .p1 .character_container .icon {
   background: var(--p1-score-bg-color);
 }
 
 .p2 .character_container .icon {
   background: var(--p2-score-bg-color);
+}
+
+.portraits .character_container .icon {
+  background: #3f3f46 !important;
 }
 
 .character_container > div {
@@ -317,6 +338,11 @@ body {
   height: 32px;
   display: flex;
   align-items: center;
+}
+
+.portraits .character_container > div > div {
+  width: 92px;
+  height: 100%;
 }
 
 .character_container > div > div:not(:last-child) {
