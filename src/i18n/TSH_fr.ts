@@ -699,12 +699,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="276"/>
         <source>Program language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>La langue du programme a été modifiée.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="307"/>
         <source>Export language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>La langue d&apos;export a été changée.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="559"/>
