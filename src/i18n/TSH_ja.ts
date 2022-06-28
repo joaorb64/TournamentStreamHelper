@@ -787,7 +787,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardPlayerWidget.py" line="55"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="733"/>
         <source>Save new player</source>
-        <translation>新プレイヤーエントリーとして保存</translation>
+        <translation>プレイヤーエントリーを保存</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="67"/>
