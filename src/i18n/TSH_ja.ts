@@ -598,7 +598,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Export Language</source>
-        <translation>エクスポートファイルの言語</translation>
+        <translation>エクスポート言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="310"/>
@@ -638,7 +638,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="307"/>
         <source>Export language changed successfully.</source>
-        <translation>エクスポートファイルの言語を変更しました。</translation>
+        <translation>エクスポート言語を変更しました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="486"/>
@@ -1004,7 +1004,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAlertNotification.py" line="79"/>
         <source>Remind later</source>
-        <translation>後で通知</translation>
+        <translation>プログラムを再度実行した時にこの通知を表示する</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="62"/>
