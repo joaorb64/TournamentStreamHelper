@@ -7,12 +7,12 @@
         <location filename="../layout/TSHAbout.ui" line="23"/>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Acerca de:</translation>
     </message>
     <message>
         <location filename="../layout/TSHAbout.ui" line="64"/>
         <source>Contributors:</source>
-        <translation type="unfinished"></translation>
+        <translation>Colaboradores:</translation>
     </message>
     <message>
         <location filename="../layout/TSHAbout.ui" line="77"/>
@@ -544,7 +544,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="193"/>
         <source>Save new</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar nuevo</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="190"/>
@@ -561,7 +561,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="53"/>
         <source>The program will now close.</source>
-        <translation type="unfinished"></translation>
+        <translation>El programa está a punto de cerrar</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="149"/>
@@ -590,7 +590,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="387"/>
         <location filename="../TournamentStreamHelper.py" line="391"/>
         <source>Load tournament and sets from StartGG user</source>
-        <translation type="unfinished">Cargar torneo y sets de usuario de StartGG</translation>
+        <translation>Cargar torneo y sets de usuario de StartGG</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="239"/>
@@ -622,22 +622,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="268"/>
         <source>Program Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma del programa</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="279"/>
         <source>System language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma del sistema</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Export Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar idioma</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="310"/>
         <source>Same as program language</source>
-        <translation type="unfinished"></translation>
+        <translation>Igual al idioma del programa</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="460"/>
@@ -680,12 +680,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="559"/>
         <source>Update complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualización completada</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="572"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Update complete. The program will now close.</source>
@@ -709,7 +709,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="668"/>
         <source>Asset pack name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del paquete de archivos</translation>
     </message>
     <message>
         <source>Name of the game</source>
@@ -718,12 +718,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="276"/>
         <source>Program language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>El idioma del programa ha sido cambiado exitosamente</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="307"/>
         <source>Export language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>El idioma de exportación de archivos ha sido cambiado existosamente</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="670"/>
@@ -773,7 +773,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="786"/>
         <source>Failed to fetch assets from github:</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al buscar los archivos en Github</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="798"/>
@@ -1007,24 +1007,24 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHThumbnailSettingsWidget.py" line="62"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="419"/>
         <source>Bold Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Negrita Itálica</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="64"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="417"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="476"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Negrita</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="416"/>
         <source>Regular</source>
-        <translation type="unfinished"></translation>
+        <translation>Regular</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="418"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Itálica</translation>
     </message>
 </context>
 <context>
