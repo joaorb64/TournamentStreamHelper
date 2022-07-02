@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+import PyQt5
+from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+App = QApplication(sys.argv)
+print("QApplication successfully initialized")
+
 import unicodedata
 from collections import Counter
 import copy
@@ -31,14 +40,6 @@ from .TSHScoreboardWidget import *
 from .TSHThumbnailSettingsWidget import *
 from src.TSHAboutWidget import TSHAboutWidget
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
-import sys
-import PyQt5
-from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-App = QApplication(sys.argv)
-print("QApplication successfully initialized")
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
