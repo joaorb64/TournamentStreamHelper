@@ -225,6 +225,7 @@ class Window(QMainWindow):
         hbox.addWidget(self.btLoadPlayerSetOptions)
 
         # Settings
+        menu_margin = " "*6
         self.optionsBt = QToolButton()
         self.optionsBt.setIcon(QIcon('assets/icons/menu.svg'))
         self.optionsBt.setToolButtonStyle(
@@ -258,7 +259,7 @@ class Window(QMainWindow):
         action.toggled.connect(self.ToggleLightMode)
 
         toggleWidgets = QMenu(QApplication.translate(
-            "app", "Toggle widgets"), self.optionsBt.menu())
+            "app", "Toggle widgets") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(toggleWidgets)
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
@@ -266,8 +267,10 @@ class Window(QMainWindow):
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
 
+        self.optionsBt.menu().addSeparator()
+
         languageSelect = QMenu(QApplication.translate(
-            "app", "Program Language"), self.optionsBt.menu())
+            "app", "Program Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
@@ -298,7 +301,7 @@ class Window(QMainWindow):
                 action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
-            "app", "Export Language"), self.optionsBt.menu())
+            "app", "Export Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
@@ -328,6 +331,40 @@ class Window(QMainWindow):
             if SettingsManager.Get("export_language") == code:
                 action.setChecked(True)
 
+
+        languageSelect = QMenu(QApplication.translate(
+            "app", "Default Phase Name Language") + menu_margin, self.optionsBt.menu())
+        self.optionsBt.menu().addMenu(languageSelect)
+
+        languageSelectGroup = QActionGroup(languageSelect)
+        languageSelectGroup.setExclusive(True)
+
+        round_language_messagebox = generate_restart_messagebox(
+            QApplication.translate("app", "Default phase name language changed successfully."))
+
+        action = languageSelect.addAction(
+            QApplication.translate("app", "Same as program language"))
+        languageSelectGroup.addAction(action)
+        action.setCheckable(True)
+        action.setChecked(True)
+        action.triggered.connect(lambda x: [
+            SettingsManager.Set("round_language", "default"),
+            round_language_messagebox.exec()
+        ])
+
+        for code, language in TSHLocaleHelper.languages.items():
+            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
+            action.setCheckable(True)
+            languageSelectGroup.addAction(action)
+            action.triggered.connect(lambda x, c=code: [
+                SettingsManager.Set("round_language", c),
+                round_language_messagebox.exec()
+            ])
+            if SettingsManager.Get("round_language") == code:
+                action.setChecked(True)
+
+        self.optionsBt.menu().addSeparator()
+        
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(
             QApplication.translate("About", "About"))

@@ -25,11 +25,6 @@ class TSHLocaleHelper(QObject):
         settingsExportLocale = SettingsManager.Get("export_language", None)
         settingsRoundLocale = SettingsManager.Get("round_language", None)
 
-        # Temporary workaround until round menu and translations are done
-        if not settingsRoundLocale:
-            SettingsManager.Set("round_language", TSHLocaleHelper.roundLocale)
-            settingsRoundLocale = SettingsManager.Get("round_language", None)
-        
         if settingsProgramLocale and settingsProgramLocale != "default":
             current_locale = [settingsProgramLocale]
         else:
