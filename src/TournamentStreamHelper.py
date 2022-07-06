@@ -295,6 +295,7 @@ class Window(QMainWindow):
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
+        TSHAssetDownloader.instance.UiMounted()
         TSHPlayerDB.LoadDB()
 
     def SetGame(self):

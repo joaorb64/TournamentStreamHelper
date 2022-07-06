@@ -13,6 +13,12 @@ import json
 import os
 
 
+class IconDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.decorationSize = option.rect.size()
+
+
 class TSHAssetDownloader(QObject):
     instance: "TSHAssetDownloader" = None
 
@@ -21,7 +27,8 @@ class TSHAssetDownloader(QObject):
         self.threadpool = QThreadPool()
 
     def UiMounted(self):
-        pass
+        self.iconUpdateAvailable = QIcon('assets/icons/update_available.svg')
+        self.iconInstalled = QIcon('assets/icons/installed.svg')
 
     def DownloadAssets(self):
         assets = self.DownloadAssetsFetch()
@@ -74,6 +81,8 @@ class TSHAssetDownloader(QObject):
         downloadList.setWordWrap(True)
         downloadList.resizeColumnsToContents()
         downloadList.resizeRowsToContents()
+        delegate = IconDelegate(downloadList)
+        downloadList.setItemDelegate(delegate)
 
         for i, game in enumerate(assets):
             select.addItem(assets[game]["name"], i)
@@ -90,7 +99,7 @@ class TSHAssetDownloader(QObject):
 
             model.clear()
             model.setHorizontalHeaderLabels([
-                "game", "asset_id", "Name", "Installed version", "Latest version", "Size", "Stage data", "Eyesight data", "Description", "Credits"
+                "game", "asset_id", "State", "Name", "Installed version", "Latest version", "Size", "Stage data", "Eyesight data", "Description", "Credits"
             ])
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
@@ -121,30 +130,36 @@ class TSHAssetDownloader(QObject):
 
                 version = str(assets[key]["assets"][asset].get("version"))
 
-                if currVersion != version and currVersion != "":
-                    version += " [!]"
-
                 items = [
                     QStandardItem(key),
                     QStandardItem(asset),
+                    QStandardItem(),
                     QStandardItem(assets[key]["assets"][asset].get("name")),
                     QStandardItem(currVersion),
                     QStandardItem(version),
                     QStandardItem(dlSize),
-                    QStandardItem("☑" if assets[key]["assets"][asset].get(
-                        "has_stage_data", False) else ""),
-                    QStandardItem("☑" if assets[key]["assets"][asset].get(
-                        "has_eyesight_data", False) else ""),
+                    QStandardItem(),
+                    QStandardItem(),
                     QStandardItem(assets[key]["assets"]
                                   [asset].get("description")),
                     QStandardItem(assets[key]["assets"][asset].get("credits"))
                 ]
 
+                items[2].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 items[3].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 items[4].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 items[5].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 items[6].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 items[7].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                items[8].setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+                if assets[key]["assets"][asset].get("has_stage_data", False):
+                    items[7].setData(self.iconInstalled.pixmap(
+                        24, 24), Qt.ItemDataRole.DecorationRole)
+
+                if assets[key]["assets"][asset].get("has_eyesight_data", False):
+                    items[8].setData(self.iconInstalled.pixmap(
+                        24, 24), Qt.ItemDataRole.DecorationRole)
 
                 model.appendRow(items)
 
@@ -156,24 +171,24 @@ class TSHAssetDownloader(QObject):
 
                 if currVersion == version:
                     for col in range(model.columnCount()):
-                        model.item(model.rowCount()-1,
-                                   col).setBackground(QColor(0, 255, 0, 120))
-
+                        items[2].setData(self.iconInstalled.pixmap(
+                            24, 24), Qt.ItemDataRole.DecorationRole)
                 if currVersion != version and currVersion != "":
                     for col in range(model.columnCount()):
-                        model.item(model.rowCount()-1,
-                                   col).setBackground(QColor(255, 255, 0, 120))
+                        items[2].setData(self.iconUpdateAvailable.pixmap(
+                            24, 24), Qt.ItemDataRole.DecorationRole)
 
             downloadList.horizontalHeader().setStretchLastSection(True)
             # downloadList.resizeColumnsToContents()
             downloadList.resizeRowsToContents()
-            downloadList.setColumnWidth(2, 200)
-            downloadList.setColumnWidth(3, 120)
+            downloadList.setColumnWidth(2, 60)
+            downloadList.setColumnWidth(3, 200)
             downloadList.setColumnWidth(4, 120)
             downloadList.setColumnWidth(5, 120)
             downloadList.setColumnWidth(6, 120)
             downloadList.setColumnWidth(7, 120)
-            downloadList.setColumnWidth(8, 400)
+            downloadList.setColumnWidth(8, 120)
+            downloadList.setColumnWidth(9, 400)
 
         self.reloadDownloadsList = ReloadGameAssets
         select.activated.connect(ReloadGameAssets)
