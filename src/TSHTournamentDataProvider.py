@@ -232,8 +232,15 @@ class TSHTournamentDataProvider:
                 mainWindow)
         )
 
-        mainWindow.startGGSetSelecDialog.show()
         mainWindow.startGGSetSelecDialog.resize(1200, 500)
+
+        qr = mainWindow.startGGSetSelecDialog.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        print(qr, cp)
+        mainWindow.startGGSetSelecDialog.move(qr.topLeft())
+
+        mainWindow.startGGSetSelecDialog.show()
 
     def LoadStreamSet(self, mainWindow, streamName):
         streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
