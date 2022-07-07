@@ -1083,5 +1083,10 @@ p, li { white-space: pre-wrap; }
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="418"/>
+        <source>The thumbnail has been generated here:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

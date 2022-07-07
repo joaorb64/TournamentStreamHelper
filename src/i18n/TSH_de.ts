@@ -1069,6 +1069,11 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="418"/>
+        <source>The thumbnail has been generated here:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="820"/>
         <source>Please select a game first</source>
         <translation>Bitte zuerst ein Spiel wählen</translation>

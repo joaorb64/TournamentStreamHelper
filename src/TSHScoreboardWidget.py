@@ -415,7 +415,7 @@ class TSHScoreboardWidget(QDockWidget):
         msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
         try:
             thumbnailPath = thumbnail.generate(settingsManager=SettingsManager)
-            msgBox.setText("The thumbnail has been generated here : ")
+            msgBox.setText(QApplication.translate("thumb_app", "The thumbnail has been generated here:") + " ")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
 
