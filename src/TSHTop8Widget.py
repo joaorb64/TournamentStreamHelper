@@ -103,7 +103,7 @@ class TSHTop8Widget(QDockWidget):
             s.SetPlayersPerTeam(number)
 
 class ScoreGroup(QWidget):
-    def __init__(self, match_index, player_index, *args):
+    def __init__(self, match_index, player_index, player_label, state_path, *args):
         super().__init__(*args)
         self.match_index, self.player_index = match_index, player_index
         self.setLayout(QHBoxLayout())
@@ -114,9 +114,19 @@ class ScoreGroup(QWidget):
         self.layout().addWidget(self.score_widget)
         self.win_value = False
         self.win_widget.clicked.connect(lambda: self.SetWinner(self.win_widget))
+        self.player_label = player_label
+        self.state_path = state_path
+        self.score_widget.valueChanged.connect(lambda: self.UpdateLabel())
+
+    def UpdateLabel(self):
+        text = StateManager.Get(f"{self.state_path}.slot.{self.player_index}.player.1.name")
+        if not text:
+            text = "<Blank>"
+        self.player_label.setText(text)
 
     def SetWinner(self, button: QPushButton):
         self.win_value = not self.win_value
+        self.UpdateLabel()
         if self.win_value:
             button.setStyleSheet("QPushButton"
                              "{"
@@ -131,8 +141,9 @@ class ScoreGroup(QWidget):
             button.setStyleSheet("")
 
 class MatchGroup(QWidget):
-    def __init__(self, player_list, match_index="winner_r1_m1", *args):
+    def __init__(self, player_list, match_index="winner_r1_m1", players_editable=True, *args):
         super().__init__(*args)
+        self.state_path = "top_8"
         self.characters_per_player = 1
         self.players_per_team = 1
         self.player_list = player_list
@@ -159,13 +170,20 @@ class MatchGroup(QWidget):
             player_index = f"{match_index}_p{i+1}"
             s = TSHPlayerListSlotWidget(player_index, player_list, state_path="top_8")
             self.slotWidgets.append(s)
-            self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
+            s.setVisible(players_editable)
+            if players_editable:
+                self.widgetArea.layout().addWidget(s)
+            player_label = QLabel()
+            player_label.setText("<Blank>")
+            if not players_editable:
+                self.widgetArea.layout().addWidget(player_label)
+            player_label.setVisible(not players_editable)
 
-            score_group = ScoreGroup(match_index, player_index)
+            score_group = ScoreGroup(match_index, player_index, player_label, self.state_path)
             self.result_area.layout().addWidget(score_group)
             self.score_widgets.append(score_group)
-    
+
     def SetCharactersPerPlayer(self, value):
         self.characters_per_player = value
         for s in self.slotWidgets:
