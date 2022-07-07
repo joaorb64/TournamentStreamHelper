@@ -30,6 +30,25 @@ class TSHAssetDownloader(QObject):
         self.iconUpdateAvailable = QIcon('assets/icons/update_available.svg')
         self.iconInstalled = QIcon('assets/icons/installed.svg')
 
+    def CheckAssetUpdates(self, game_codename=None):
+        assets = self.DownloadAssetsFetch()
+
+        updates = {}
+
+        for game_code, game in assets.items():
+            for asset_code, asset in game["assets"].items():
+                currVersion = str(TSHGameAssetManager.instance.games.get(game_code, {}).get(
+                    "assets", {}).get(asset_code, {}).get("version", ""))
+
+                version = str(assets[game_code]["assets"]
+                              [asset_code].get("version"))
+
+                if currVersion != version and currVersion != "":
+                    if not game_code in updates:
+                        updates[game_code] = []
+                    updates[game_code].append(asset_code)
+        return updates
+
     def DownloadAssets(self):
         assets = self.DownloadAssetsFetch()
 

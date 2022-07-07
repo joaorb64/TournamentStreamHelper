@@ -236,6 +236,7 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction("Download assets")
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
+        self.downloadAssetsAction = action
 
         action = self.optionsBt.menu().addAction("Light mode")
         action.setCheckable(True)
@@ -272,6 +273,9 @@ class Window(QMainWindow):
             self.SetGame)
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.ReloadGames)
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.CheckForAssetUpdates
+        )
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.SetGame)
 
@@ -503,6 +507,30 @@ class Window(QMainWindow):
                     self.optionsBt.setIcon(QIcon(baseIcon))
                     self.updateAction.setText(
                         "Check for updates [Update available!]")
+
+    # Checks for asset updates after game assets are loaded
+    # If updates are available, edit action icon
+    # TODO: Parallelize
+    def CheckForAssetUpdates(self):
+        try:
+            updates = TSHAssetDownloader.instance.CheckAssetUpdates()
+
+            print(updates)
+
+            if len(updates) > 0:
+                baseIcon = self.downloadAssetsAction.icon().pixmap(32, 32)
+                updateIcon = QImage(
+                    "./assets/icons/update_circle.svg").scaled(12, 12)
+                p = QPainter(baseIcon)
+                p.drawImage(QPoint(20, 0), updateIcon)
+                p.end()
+                self.downloadAssetsAction.setIcon(QIcon(baseIcon))
+        except:
+            print(traceback.format_exc())
+
+        TSHGameAssetManager.instance.signals.onLoad.disconnect(
+            self.CheckForAssetUpdates
+        )
 
     def ToggleAlwaysOnTop(self, checked):
         if checked:
