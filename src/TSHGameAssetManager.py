@@ -41,7 +41,9 @@ class TSHGameAssetManager(QObject):
                 def run(self):
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    open('./assets/characters.json', 'wb').write(r.content)
+                    content = json.loads(r.text)
+                    content = json.dumps(content, indent=2)
+                    open('./assets/characters.json', 'wt', encoding="utf-8").write(content)
                     print("startgg characters file updated")
             thread = DownloaderThread(self)
             thread.start()
