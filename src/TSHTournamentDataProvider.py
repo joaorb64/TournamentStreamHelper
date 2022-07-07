@@ -88,7 +88,7 @@ class TSHTournamentDataProvider:
         okButton = QPushButton("OK")
         validators = [
             QRegularExpression("start.gg/tournament/[^/]+/event/[^/]+"),
-            QRegularExpression("challonge.com/.+/.+")
+            QRegularExpression("challonge.com/.+")
         ]
 
         def validateText():
