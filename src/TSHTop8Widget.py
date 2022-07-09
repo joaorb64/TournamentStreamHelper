@@ -130,6 +130,7 @@ class ScoreGroup(QWidget):
         self.win_value = not self.win_value
         self.UpdateLabel()
         if self.win_value:
+            button.setText("✓")
             button.setStyleSheet("QPushButton"
                              "{"
                              "background-color : green;"
@@ -140,6 +141,7 @@ class ScoreGroup(QWidget):
                              "}"
                              )
         else:
+            button.setText("")
             button.setStyleSheet("")
 
 class MatchGroup(QWidget):
