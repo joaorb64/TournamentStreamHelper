@@ -36,7 +36,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.autoUpdateTimer: QTimer = None
         self.timeLeftTimer: QTimer = None
 
-        self.setWindowTitle("Scoreboard")
+        self.setWindowTitle(QApplication.translate("app", "Scoreboard"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -56,10 +56,11 @@ class TSHScoreboardWidget(QDockWidget):
             "QTabWidget::pane { margin: 0px,0px,0px,0px }")
 
         self.tabScore.setLayout(QVBoxLayout())
-        self.tabs.addTab(self.scrollArea, "Score")
+        self.tabs.addTab(
+            self.scrollArea, QApplication.translate("app", "Score"))
         self.tabStage = QWidget()
         self.tabStage.setLayout(QVBoxLayout())
-        self.tabs.addTab(self.tabStage, "Stage")
+        self.tabs.addTab(self.tabStage, QApplication.translate("app", "Stage"))
         self.tabStage.layout().addWidget(TSHScoreboardStageWidget(scoreboard=self))
 
         # StateManager.Set("score", {})
@@ -81,7 +82,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
-        col.layout().addWidget(QLabel("Characters per player"))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Characters per player")))
         col.layout().addWidget(self.charNumber)
         self.charNumber.valueChanged.connect(self.SetCharacterNumber)
 
@@ -92,7 +93,7 @@ class TSHScoreboardWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.playerNumber = QSpinBox()
-        col.layout().addWidget(QLabel("Players per team"))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Players per team")))
         col.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(self.SetPlayersPerTeam)
 
@@ -105,7 +106,8 @@ class TSHScoreboardWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
 
-        self.thumbnailBtn = QPushButton("Generate Thumbnail ")
+        self.thumbnailBtn = QPushButton(
+            QApplication.translate("app", "Generate Thumbnail") + " ")
         self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
         self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
@@ -138,6 +140,11 @@ class TSHScoreboardWidget(QDockWidget):
             ["Characters", ["characters"]],
             ["Pronouns", ["pronoun", "pronounLabel"]],
         ]
+        elements[0][0] = QApplication.translate("app", "Real Name")
+        elements[1][0] = QApplication.translate("app", "Twitter")
+        elements[2][0] = QApplication.translate("app", "Location")
+        elements[3][0] = QApplication.translate("app", "Characters")
+        elements[4][0] = QApplication.translate("app", "Pronouns")
         for element in elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
             action.setCheckable(True)
@@ -163,7 +170,8 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.tabScore.layout().addWidget(bottomOptions)
 
-        self.btSelectSet = QPushButton("Load set")
+        self.btSelectSet = QPushButton(
+            QApplication.translate("app", "Load set"))
         self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
@@ -172,7 +180,8 @@ class TSHScoreboardWidget(QDockWidget):
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
 
-        self.btLoadStreamSet = QPushButton("Load current stream set")
+        self.btLoadStreamSet = QPushButton(
+            QApplication.translate("app", "Load current stream set"))
         self.btLoadStreamSet.setIcon(QIcon("./assets/icons/twitch.svg"))
         self.btLoadStreamSet.setEnabled(False)
         hbox.addWidget(self.btLoadStreamSet)
@@ -235,7 +244,8 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.team1column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team1column)
-        self.team1column.findChild(QLabel, "teamLabel").setText("TEAM 1")
+        self.team1column.findChild(QLabel, "teamLabel").setText(
+            QApplication.translate("app", "TEAM {0}").format(1))
         self.team1column.findChild(QScrollArea).setWidget(QWidget())
         self.team1column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -261,7 +271,8 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.team2column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
         self.columns.layout().addWidget(self.team2column)
-        self.team2column.findChild(QLabel, "teamLabel").setText("TEAM 2")
+        self.team2column.findChild(QLabel, "teamLabel").setText(
+            QApplication.translate("app", "TEAM {0}").format(2))
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
         self.team2column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -350,10 +361,19 @@ class TSHScoreboardWidget(QDockWidget):
 
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
+        default_tournament_phases_file = './assets/tournament_phases.txt'
+        locale = TSHLocaleHelper.roundLocale
+        path_to_localized_assets = f"./assets/locale/{locale}"
+        if os.path.isdir(path_to_localized_assets):
+            default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
+        else:
+            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
+            if os.path.isdir(path_to_localized_assets):
+                default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
 
-        for file in ['./assets/tournament_phases.txt', './user_data/tournament_phases.txt']:
+        for file in [default_tournament_phases_file, './user_data/tournament_phases.txt']:
             try:
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding="utf-8") as f:
                     self.scoreColumn.findChild(QComboBox, "phase").addItems(
                         [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
             except Exception as e:
@@ -363,9 +383,19 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
         # Add default and user tournament match title files
-        for file in ['./assets/tournament_matches.txt', './user_data/tournament_matches.txt']:
+        default_tournament_match_file = './assets/tournament_matches.txt'
+        locale = TSHLocaleHelper.roundLocale
+        path_to_localized_assets = f"./assets/locale/{locale}"
+        if os.path.isdir(path_to_localized_assets):
+            default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
+        else:
+            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
+            if os.path.isdir(path_to_localized_assets):
+                default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
+
+        for file in [default_tournament_match_file, './user_data/tournament_matches.txt']:
             try:
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding="utf-8") as f:
                     self.scoreColumn.findChild(QComboBox, "match").addItems(
                         [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
             except Exception as e:
@@ -382,10 +412,10 @@ class TSHScoreboardWidget(QDockWidget):
     def GenerateThumbnail(self):
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-        msgBox.setWindowTitle("THS - Thumbnail")
+        msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
         try:
             thumbnailPath = thumbnail.generate(settingsManager=SettingsManager)
-            msgBox.setText("The thumbnail has been generated here : ")
+            msgBox.setText(QApplication.translate("thumb_app", "The thumbnail has been generated here:") + " ")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
 
@@ -404,7 +434,7 @@ class TSHScoreboardWidget(QDockWidget):
             else:
                 msgBox.exec()
         except Exception as e:
-            msgBox.setText("Warning")
+            msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
@@ -417,13 +447,13 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateBottomButtons(self):
         if TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.url:
             self.btSelectSet.setText(
-                "Load set from "+TSHTournamentDataProvider.instance.provider.url)
+                QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
             self.btSelectSet.setEnabled(True)
             self.btLoadStreamSet.setEnabled(True)
             self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btSelectSet.setText(
-                "Load set")
+                QApplication.translate("app", "Load set"))
             self.btSelectSet.setEnabled(False)
 
     def SetCharacterNumber(self, value):
@@ -672,10 +702,11 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateStreamButton(self):
         if SettingsManager.Get("twitch_username"):
             self.btLoadStreamSet.setText(
-                "Load current stream set ("+SettingsManager.Get("twitch_username")+")")
+                QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
             self.btLoadStreamSet.setEnabled(True)
         else:
-            self.btLoadStreamSet.setText("Load current stream set")
+            self.btLoadStreamSet.setText(
+                QApplication.translate("app", "Load current stream set"))
             self.btLoadStreamSet.setEnabled(False)
 
     def UpdateUserSetButton(self):
@@ -684,10 +715,11 @@ class TSHScoreboardWidget(QDockWidget):
             provider = TSHTournamentDataProvider.instance.provider.name
         if provider and SettingsManager.Get(provider+"_user"):
             self.btLoadPlayerSet.setText(
-                f"Load user set ({SettingsManager.Get(provider+'_user')})")
+                QApplication.translate("app", "Load user set ({0})").format(SettingsManager.Get(provider+'_user')))
             self.btLoadPlayerSet.setEnabled(True)
         else:
-            self.btLoadPlayerSet.setText("Load user set")
+            self.btLoadPlayerSet.setText(
+                QApplication.translate("app", "Load user set"))
             self.btLoadPlayerSet.setEnabled(False)
 
     def LoadUserSetClicked(self):
