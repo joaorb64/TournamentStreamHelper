@@ -117,9 +117,20 @@ class TSHAssetDownloader(QObject):
                 index = select.currentIndex()
 
             model.clear()
-            model.setHorizontalHeaderLabels([
-                "game", "asset_id", "State", "Name", "Installed version", "Latest version", "Size", "Stage data", "Eyesight data", "Description", "Credits"
-            ])
+            header_labels = [
+                "game",
+                "asset_id",
+                QApplication.translate("app", "State"),
+                QApplication.translate("app", "Asset pack name"),
+                QApplication.translate("app", "Installed version"),
+                QApplication.translate("app", "Latest version"),
+                QApplication.translate("app", "Size"),
+                QApplication.translate("app", "Stage data"),
+                QApplication.translate("app", "Eyesight data"),
+                QApplication.translate("app", "Description"),
+                QApplication.translate("app", "Credits")
+            ]
+            model.setHorizontalHeaderLabels(header_labels)
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
             downloadList.horizontalHeader().setStretchLastSection(True)
@@ -216,7 +227,7 @@ class TSHAssetDownloader(QObject):
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             ReloadGameAssets)
 
-        btOk = QPushButton("Download")
+        btOk = QPushButton(QApplication.translate("app", "Download"))
         self.preDownloadDialogue.layout().addWidget(btOk)
 
         def DownloadStart():
@@ -237,7 +248,11 @@ class TSHAssetDownloader(QObject):
                 filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 
             self.downloadDialogue = QProgressDialog(
-                "Downloading assets", "Cancel", 0, 100)
+                QApplication.translate("app", "Downloading assets"),
+                QApplication.translate("app", "Cancel"),
+                0,
+                100
+            )
             self.downloadDialogue.setMinimumWidth(1200)
             self.downloadDialogue.setWindowModality(
                 Qt.WindowModality.WindowModal)
@@ -257,8 +272,9 @@ class TSHAssetDownloader(QObject):
                 "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/assets.json")
             assets = json.loads(response.text)
         except Exception as e:
-            messagebox = QMessageBox()
-            messagebox.setText("Failed to fetch github:\n"+str(e))
+            messagebox = QMessageBox(QApplication.translate("app", "Warning"))
+            messagebox.setText(QApplication.translate(
+                "app", "Failed to fetch assets from github:")+"\n"+str(e))
             messagebox.exec()
         return assets
 

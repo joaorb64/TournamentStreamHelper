@@ -68,7 +68,7 @@ class TSHAlertNotification(QObject):
             vbox = QVBoxLayout()
             message.setLayout(vbox)
             message.setWindowTitle(
-                f"Notifications ({i}/{len(alerts.keys())})")
+                QApplication.translate("app", "Notifications ({0}/{1})").format(i, len(alerts.keys())))
             message.layout().addWidget(QLabel(alert.get("alert")))
 
             hbox = QHBoxLayout()
@@ -76,7 +76,7 @@ class TSHAlertNotification(QObject):
 
             btOk = QPushButton("OK")
             hbox.addWidget(btOk)
-            btRemindLater = QPushButton("Remind later")
+            btRemindLater = QPushButton(QApplication.translate("app", "Remind later"))
             hbox.addWidget(btRemindLater)
 
             message.setMinimumWidth(500)

@@ -1,4 +1,5 @@
 import os
+import re
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -9,6 +10,7 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -49,7 +51,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         bottom_buttons_layout.setSpacing(4)
         self.layout().addLayout(bottom_buttons_layout, 99, 0, 1, 3)
 
-        self.save_bt = QPushButton("Save new player")
+        self.save_bt = QPushButton(
+            QApplication.translate("app", "Save new player"))
         self.save_bt.font().setPointSize(10)
         # self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('assets/icons/save.svg'))
@@ -60,7 +63,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ManageSavePlayerToDBText)
 
-        self.delete_bt = QPushButton("Delete player entry")
+        self.delete_bt = QPushButton(
+            QApplication.translate("app", "Delete player entry"))
         # self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('assets/icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
@@ -72,7 +76,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageDeletePlayerFromDBActive)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
 
-        self.clear_bt = QPushButton("Clear")
+        self.clear_bt = QPushButton(QApplication.translate("app", "Clear"))
         self.clear_bt.font().setPointSize(10)
         # self.clear_bt.setFont(self.parent.font_small)
         self.clear_bt.setIcon(QIcon('assets/icons/undo.svg'))
@@ -265,7 +269,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             w.ExportPlayerId(tmpData[i]["id"])
 
     def SetIndex(self, index: int, team: int):
-        self.findChild(QWidget, "title").setText(f"Player {index}")
+        self.findChild(QWidget, "title").setText(
+            QApplication.translate("app", "Player {0}").format(index))
         self.index = index
         self.teamNumber = team
 
@@ -331,52 +336,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def LoadCountries(self):
         try:
-            if TSHScoreboardPlayerWidget.countryModel == None:
-                countries_json = TSHCountryHelper.countries_json
-
-                TSHScoreboardPlayerWidget.countries = {}
-
-                for c in countries_json:
-                    TSHScoreboardPlayerWidget.countries[c["iso2"]] = {
-                        "name": c["name"],
-                        "code": c["iso2"],
-                        "latitude": c.get("latitude"),
-                        "longitude": c.get("longitude"),
-                        "states": {}
-                    }
-
-                    for s in c["states"]:
-                        TSHScoreboardPlayerWidget.countries[c["iso2"]]["states"][s["state_code"]] = {
-                            "code": s["state_code"],
-                            "name": s["name"],
-                            "latitude": s.get("latitude"),
-                            "longitude": s.get("longitude"),
-                        }
-
-                TSHScoreboardPlayerWidget.countryModel = QStandardItemModel()
-
-                noCountry = QStandardItem()
-                noCountry.setData({}, Qt.ItemDataRole.UserRole)
-                TSHScoreboardPlayerWidget.countryModel.appendRow(noCountry)
-
-                for i, country_code in enumerate(TSHScoreboardPlayerWidget.countries.keys()):
-                    item = QStandardItem()
-                    item.setIcon(
-                        QIcon(f'./assets/country_flag/{country_code.lower()}.png'))
-                    countryData = {
-                        "name": TSHScoreboardPlayerWidget.countries[country_code]["name"],
-                        "code": TSHScoreboardPlayerWidget.countries[country_code]["code"],
-                        "latitude": TSHScoreboardPlayerWidget.countries[country_code]["latitude"],
-                        "longitude": TSHScoreboardPlayerWidget.countries[country_code]["longitude"],
-                        "asset": f'./assets/country_flag/{country_code.lower()}.png'
-                    }
-                    item.setData(countryData, Qt.ItemDataRole.UserRole)
-                    item.setData(
-                        f'{TSHScoreboardPlayerWidget.countries[country_code]["name"]} ({country_code})', Qt.ItemDataRole.EditRole)
-                    TSHScoreboardPlayerWidget.countryModel.appendRow(item)
+            if TSHCountryHelper.countryModel == None:
+                TSHCountryHelper.LoadCountries()
 
             countryCompleter = QCompleter(
-                TSHScoreboardPlayerWidget.countryModel)
+                TSHCountryHelper.countryModel)
 
             country: QComboBox = self.findChild(QComboBox, "country")
             country.setCompleter(countryCompleter)
@@ -386,7 +350,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country.view().setMinimumWidth(300)
             country.completer().setCompletionMode(QCompleter.PopupCompletion)
             country.completer().popup().setMinimumWidth(300)
-            country.setModel(TSHScoreboardPlayerWidget.countryModel)
+            country.setModel(TSHCountryHelper.countryModel)
 
             country.currentIndexChanged.connect(self.LoadStates)
 
@@ -407,7 +371,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         countryData = None
         if country.currentData(Qt.ItemDataRole.UserRole) != None:
-            countryData = TSHScoreboardPlayerWidget.countries.get(country.currentData(
+            countryData = TSHCountryHelper.countries.get(country.currentData(
                 Qt.ItemDataRole.UserRole).get("code"), {})
 
         stateModel = QStandardItemModel()
@@ -458,8 +422,42 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             QIcon(QPixmap.fromImage(TSHGameAssetManager.instance.stockIcons[c][0]).scaledToWidth(
                                 32, Qt.TransformationMode.SmoothTransformation))
                         )
+
+                        # Load translations
+                        display_name = c
+                        export_name = c
+
+                        if TSHGameAssetManager.instance.characters[c].get("locale"):
+                            locale = TSHLocaleHelper.programLocale
+                            if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                display_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][locale.replace("-", "_")]
+                            elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                display_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][re.split("-|_", locale)[0]]
+                            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                display_name = TSHGameAssetManager.instance.characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                    TSHLocaleHelper.programLocale)]
+
+                            locale = TSHLocaleHelper.exportLocale
+                            if locale.replace("-", "_") in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][locale.replace("-", "_")]
+                            elif re.split("-|_", locale)[0] in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[
+                                    c]["locale"][re.split("-|_", locale)[0]]
+                            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in TSHGameAssetManager.instance.characters[c]["locale"]:
+                                export_name = TSHGameAssetManager.instance.characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                    TSHLocaleHelper.exportLocale)]
+
+                            if display_name != c:
+                                item.setData(
+                                    f"{display_name} / {c}", Qt.ItemDataRole.EditRole)
+
                         data = {
-                            "name": c,
+                            "name": export_name,
+                            "en_name": c,
+                            "display_name": display_name,
                             "codename": TSHGameAssetManager.instance.characters[c].get("codename")
                         }
                         item.setData(data, Qt.ItemDataRole.UserRole)
@@ -483,7 +481,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if characterData:
             skins = TSHGameAssetManager.instance.skins.get(
-                element.currentData().get("name"), {})
+                element.currentData().get("en_name"), {})
 
         sortedSkins = [int(k) for k in skins.keys()]
         sortedSkins.sort()
@@ -617,8 +615,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             countryElement: QComboBox = self.findChild(
                 QComboBox, "country")
             countryIndex = 0
-            for i in range(self.countryModel.rowCount()):
-                item = self.countryModel.item(
+            for i in range(TSHCountryHelper.countryModel.rowCount()):
+                item = TSHCountryHelper.countryModel.item(
                     i).data(Qt.ItemDataRole.UserRole)
                 if item:
                     if data.get("country_code") == item.get("code"):
@@ -647,7 +645,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     for i in range(character_element.model().rowCount()):
                         item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                         if item:
-                            if item.get("name") == data.get("mains")[0]:
+                            if item.get("en_name") == data.get("mains")[0]:
                                 characterIndex = i
                                 break
                     character_element.setCurrentIndex(characterIndex)
@@ -663,7 +661,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         for i in range(character_element.model().rowCount()):
                             item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                             if item:
-                                if item.get("name") == main[0]:
+                                if item.get("en_name") == main[0]:
                                     characterIndex = i
                                     break
                         character_element.setCurrentIndex(characterIndex)
@@ -692,7 +690,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 data = {}
 
                 if character.currentData() is not None:
-                    data["name"] = character.currentData().get("name")
+                    data["name"] = character.currentData().get("en_name")
                 else:
                     data["name"] = ""
 
@@ -728,9 +726,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         tag = self.GetCurrentPlayerTag()
 
         if tag in TSHPlayerDB.database:
-            self.save_bt.setText("Update player")
+            self.save_bt.setText(
+                QApplication.translate("app", "Update player"))
         else:
-            self.save_bt.setText("Save new player")
+            self.save_bt.setText(
+                QApplication.translate("app", "Save new player"))
 
     def ManageDeletePlayerFromDBActive(self):
         tag = self.GetCurrentPlayerTag()

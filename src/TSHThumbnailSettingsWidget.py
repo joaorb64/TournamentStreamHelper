@@ -59,14 +59,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.selectFontPhase.findText(settings["font_list"][1]["name"]))
         if force_defaults:
             self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText("Bold Italic"))
+                self.selectTypeFontPhase.findText(QApplication.translate("app","Bold Italic")))
             self.selectTypeFontPlayer.setCurrentIndex(
-                self.selectTypeFontPlayer.findText("Bold"))
+                self.selectTypeFontPlayer.findText(QApplication.translate("app","Bold")))
         else:
             self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText(settings["font_list"][1]["type"]))
+                self.selectTypeFontPhase.findText(QApplication.translate("app",settings["font_list"][1]["fontPath"])))
             self.selectTypeFontPlayer.setCurrentIndex(
-                self.selectTypeFontPlayer.findText(settings["font_list"][0]["type"]))
+                self.selectTypeFontPlayer.findText(QApplication.translate("app",settings["font_list"][0]["fontPath"])))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
         self.phaseFontColor.setStyleSheet(
@@ -118,11 +118,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         settings["font_list"] = [{
             "name": "Open Sans",
             "type": "Bold",
-            "fontPath": "./assets/font/OpenSans/OpenSans-Bold.ttf"
+            "fontPath": "Bold"
         }, {
             "name": "Open Sans",
             "type": "Bold Italic",
-            "fontPath": "./assets/font/OpenSans/OpenSans-Semibold.ttf"
+            "fontPath": "Bold Italic"
         }]
         settings["font_color"] = [
             "#FFFFFF", "#FFFFFF"
@@ -150,7 +150,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.thumbnailGenerationThread.setMaxThreadCount(1)
         self.lock = Lock()
 
-        self.setWindowTitle("Thumbnail Settings")
+        self.setWindowTitle(QApplication.translate("app","Thumbnail Settings"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -412,10 +412,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def SetTypeFont(self, index, cbFont, cbType):
         print(f'set type font {cbFont.currentData()}')
         types = ["Regular", "Bold", "Italic", "Bold Italic"]
+        types_localised = ["Regular", "Bold", "Italic", "Bold Italic"]
+        types_localised[0] = QApplication.translate("app","Regular")
+        types_localised[1] = QApplication.translate("app","Bold")
+        types_localised[2] = QApplication.translate("app","Italic")
+        types_localised[3] = QApplication.translate("app","Bold Italic")
+
         cbType.clear()
 
         for i in range(len(types)):
-            cbType.addItem(types[i], types[i])
+            cbType.addItem(types_localised[i], types[i])
 
     def getFontPaths(self):
         font_paths = QStandardPaths.standardLocations(
@@ -467,7 +473,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             SettingsManager.Set("thumbnail", settings)
         for font_index in range(len(settings["font_list"])):
             if "type" in settings["font_list"][font_index]["type"].lower():
-                settings["font_list"][font_index]["type"] = "Bold"
+                settings["font_list"][font_index]["type"] = QApplication.translate("app","Bold")
+                settings["font_list"][font_index]["filePath"] = "Bold"
                 SettingsManager.Set("thumbnail", settings)
 
         try:
@@ -477,8 +484,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             print(e)
             msgBox = QMessageBox()
             msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-            msgBox.setWindowTitle("THS - Thumbnail")
-            msgBox.setText("Warning")
+            msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
+            msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()

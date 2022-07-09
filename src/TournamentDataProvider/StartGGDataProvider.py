@@ -298,7 +298,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         # Country to country code
                         if user.get("location").get("country"):
                             for country in TSHCountryHelper.countries.values():
-                                if user.get("location").get("country") == country.get("name"):
+                                if user.get("location").get("country") == country.get("en_name"):
                                     playerData["country_code"] = country.get(
                                         "code")
                                     break
@@ -899,7 +899,7 @@ class StartGGDataProvider(TournamentDataProvider):
                                 # Country to country code
                                 if user.get("location").get("country"):
                                     for country in TSHCountryHelper.countries.values():
-                                        if user.get("location").get("country") == country.get("name"):
+                                        if user.get("location").get("country") == country.get("en_name"):
                                             playerData["country_code"] = country.get(
                                                 "code")
                                             break
