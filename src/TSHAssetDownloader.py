@@ -285,7 +285,8 @@ class TSHAssetDownloader(QObject):
         for f in files:
             with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+f["name"])
-                progress_callback.emit("Downloading "+f["name"]+"...")
+                progress_callback.emit(QApplication.translate(
+                    "app", "Downloading {0}...").format(f["name"]))
 
                 response = urllib.request.urlopen(f["path"])
 
