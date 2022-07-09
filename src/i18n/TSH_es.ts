@@ -7,7 +7,7 @@
         <location filename="../layout/TSHAbout.ui" line="23"/>
         <location filename="../TournamentStreamHelper.py" line="370"/>
         <source>About</source>
-        <translation>Acerca de:</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <location filename="../layout/TSHAbout.ui" line="64"/>
@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -643,12 +643,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="335"/>
         <source>Default Phase Name Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma predeterminado del nombre de la fase</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
         <source>Default phase name language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma de nombre de fase modificado con éxito.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="498"/>
@@ -1086,7 +1086,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="418"/>
         <source>The thumbnail has been generated here:</source>
-        <translation type="unfinished"></translation>
+        <translation>La miniatura se generó aquí:</translation>
     </message>
 </context>
 </TS>

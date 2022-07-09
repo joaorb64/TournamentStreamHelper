@@ -714,12 +714,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="280"/>
         <source>Program language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma do programa modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="311"/>
         <source>Export language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma de exportação modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="314"/>
@@ -730,12 +730,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="335"/>
         <source>Default Phase Name Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma padrão de nome de fase</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
         <source>Default phase name language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma de nome de fase modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="597"/>
@@ -1140,7 +1140,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="418"/>
         <source>The thumbnail has been generated here:</source>
-        <translation type="unfinished"></translation>
+        <translation>A miniatura foi gerada aqui:</translation>
     </message>
 </context>
 </TS>
