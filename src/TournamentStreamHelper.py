@@ -30,6 +30,7 @@ from qdarkstyle import palette
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHTop8Widget import TSHTop8Widget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
@@ -174,7 +175,7 @@ class Window(QMainWindow):
 
         top8 = TSHTop8Widget()
         # top8.setWindowIcon(QIcon('assets/icons/list.svg'))
-        top8.setObjectName("Top 8")
+        top8.setObjectName(QApplication.translate("app", "Top 8"))
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, top8)
         self.dockWidgets.append(top8)
 

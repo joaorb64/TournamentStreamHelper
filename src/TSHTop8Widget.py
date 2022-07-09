@@ -17,7 +17,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 class TSHTop8Widget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
-        self.setWindowTitle("Top 8")
+        self.setWindowTitle(QApplication.translate("app", "Top 8"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -50,7 +50,7 @@ class TSHTop8Widget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.playerPerTeam = QSpinBox()
-        col.layout().addWidget(QLabel("Players per slot"))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Players per slot")))
         col.layout().addWidget(self.playerPerTeam)
         self.playerPerTeam.valueChanged.connect(self.SetPlayersPerTeam)
         row.layout().addWidget(col)
@@ -60,7 +60,7 @@ class TSHTop8Widget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
-        col.layout().addWidget(QLabel("Characters per player"))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Characters per player")))
         col.layout().addWidget(self.charNumber)
         self.charNumber.valueChanged.connect(self.SetCharactersPerPlayer)
         row.layout().addWidget(col)
@@ -86,7 +86,9 @@ class TSHTop8Widget(QDockWidget):
         self.charNumber.setValue(1)
         # self.SetSlotNumber(4)
 
-        bracket_names = ["Winners Bracket", "Losers Bracket"]
+        winners_name = QApplication.translate("app", "Winners Bracket")
+        losers_name = QApplication.translate("app", "Losers Bracket")
+        bracket_names = [winners_name, losers_name]
         bracket_codes = ["winner", "loser"]
         for bracket_index in range(len(bracket_names)):
             s = BracketGroup(self, bracket_codes[bracket_index], bracket_names[bracket_index])
