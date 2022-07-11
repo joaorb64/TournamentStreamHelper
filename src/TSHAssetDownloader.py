@@ -79,16 +79,23 @@ class TSHAssetDownloader(QObject):
         self.preDownloadDialogue.resize(1400, 500)
         self.preDownloadDialogue.show()
 
-        select = QComboBox()
+        self.select = QComboBox()
         selectProxy = QSortFilterProxyModel()
-        selectProxy.setSourceModel(select.model())
-        select.model().setParent(selectProxy)
+        selectProxy.setSourceModel(self.select.model())
+        self.select.model().setParent(selectProxy)
         selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        select.setModel(selectProxy)
-        select.setEditable(True)
-        select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-        select.completer().setCompletionMode(QCompleter.PopupCompletion)
-        self.preDownloadDialogue.layout().addWidget(select)
+        self.select.setModel(selectProxy)
+        self.select.setEditable(True)
+        self.select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.select.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.preDownloadDialogue.layout().addWidget(self.select)
+
+        self.select.setIconSize(QSize(64, 64))
+        self.select.setFixedHeight(32)
+        view = QListView()
+        view.setIconSize(QSize(64, 64))
+        view.setStyleSheet("QListView::item { height: 32px; }")
+        self.select.setView(view)
 
         model = QStandardItemModel()
 
@@ -120,17 +127,22 @@ class TSHAssetDownloader(QObject):
         downloadList.setItemDelegate(delegate)
 
         for i, game in enumerate(assets):
-            select.addItem(assets[game]["name"], i)
+            self.select.addItem(
+                QIcon(), assets[game]["name"], i)
 
-        select.model().sort(0)
+            worker = Worker(self.DownloadGameIcon, *[game], i)
+            worker.signals.result.connect(self.DownloadGameIconComplete)
+            self.threadpool.start(worker)
+
+        self.select.model().sort(0)
 
         def ReloadGameAssets(index=None):
             nonlocal self
 
-            index = select.currentData()
+            index = self.select.currentData()
 
             if index == None:
-                index = select.currentIndex()
+                index = self.select.currentIndex()
 
             model.clear()
             header_labels = [
@@ -237,7 +249,7 @@ class TSHAssetDownloader(QObject):
             downloadList.setColumnWidth(9, 400)
 
         self.reloadDownloadsList = ReloadGameAssets
-        select.activated.connect(ReloadGameAssets)
+        self.select.activated.connect(ReloadGameAssets)
         ReloadGameAssets(0)
 
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
@@ -293,6 +305,23 @@ class TSHAssetDownloader(QObject):
                 "app", "Failed to fetch assets from github:")+"\n"+str(e))
             messagebox.exec()
         return assets
+
+    def DownloadGameIcon(self, game_code, index, progress_callback):
+        try:
+            response = urllib.request.urlopen(
+                f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo.png")
+            data = response.read()
+            return([index, data])
+        except Exception as e:
+            print(traceback.format_exc())
+            return(None)
+
+    def DownloadGameIconComplete(self, result):
+        pix = QPixmap()
+        pix.loadFromData(result[1], "png")
+        for i in range(self.select.model().rowCount()):
+            if self.select.model().index(i, 0).data(Qt.ItemDataRole.UserRole) == result[0]:
+                self.select.setItemIcon(i, QIcon(pix))
 
     def DownloadAssetsWorker(self, files, progress_callback):
         totalSize = sum(f["size"] for f in files)
