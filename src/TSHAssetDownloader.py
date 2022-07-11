@@ -148,16 +148,29 @@ class TSHAssetDownloader(QObject):
             header_labels = [
                 "game",
                 "asset_id",
-                QApplication.translate("app", "State"),
-                QApplication.translate("app", "Asset pack name"),
-                QApplication.translate("app", "Installed version"),
-                QApplication.translate("app", "Latest version"),
-                QApplication.translate("app", "Size"),
-                QApplication.translate("app", "Stage data"),
-                QApplication.translate("app", "Eyesight data"),
-                QApplication.translate("app", "Description"),
-                QApplication.translate("app", "Credits")
+                "State",
+                "Asset pack name",
+                "Installed version",
+                "Latest version",
+                "Size",
+                "Stage data",
+                "Eyesight data",
+                "Description",
+                "Credits"
             ]
+
+            header_labels[2] = QApplication.translate("app", "State")
+            header_labels[3] = QApplication.translate(
+                "app", "Asset pack name")
+            header_labels[4] = QApplication.translate(
+                "app", "Installed version")
+            header_labels[5] = QApplication.translate("app", "Latest version")
+            header_labels[6] = QApplication.translate("app", "Size")
+            header_labels[7] = QApplication.translate("app", "Stage data")
+            header_labels[8] = QApplication.translate("app", "Eyesight data")
+            header_labels[9] = QApplication.translate("app", "Description")
+            header_labels[10] = QApplication.translate("app", "Credits")
+
             model.setHorizontalHeaderLabels(header_labels)
             downloadList.hideColumn(0)
             downloadList.hideColumn(1)
