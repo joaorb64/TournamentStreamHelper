@@ -1,45 +1,46 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+import shutil
+import tarfile
+import py7zr
+import qdarkstyle
+import requests
+import urllib
+import json
+import traceback
+import time
+import os
+import threading
+import re
+import csv
+import copy
+from collections import Counter
+import unicodedata
 import sys
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+
+from src.TSHAboutWidget import TSHAboutWidget
+from src.TSHAssetDownloader import TSHAssetDownloader
+from .TSHThumbnailSettingsWidget import *
+from .TSHScoreboardWidget import *
+from .Workers import *
+from .TSHPlayerDB import TSHPlayerDB
+from .TSHAlertNotification import TSHAlertNotification
+from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHCommentaryWidget import TSHCommentaryWidget
+from .TSHPlayerListWidget import TSHPlayerListWidget
+from qdarkstyle import palette
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
-
-import unicodedata
-from collections import Counter
-import copy
-import csv
-import re
-import threading
-import os
-import time
-import traceback
-import json
-import urllib
-import requests
-import qdarkstyle
-import py7zr
-import tarfile
-import shutil
-from qdarkstyle import palette
-from .TSHPlayerListWidget import TSHPlayerListWidget
-from .TSHCommentaryWidget import TSHCommentaryWidget
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-from .TSHAlertNotification import TSHAlertNotification
-from .TSHPlayerDB import TSHPlayerDB
-from .Workers import *
-from .TSHScoreboardWidget import *
-from .TSHThumbnailSettingsWidget import *
-from src.TSHAboutWidget import TSHAboutWidget
-from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -249,7 +250,8 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Download assets"))
         action.setIcon(QIcon('assets/icons/download.svg'))
-        action.triggered.connect(self.DownloadAssets)
+        action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
+        self.downloadAssetsAction = action
 
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Light mode"))
@@ -331,7 +333,6 @@ class Window(QMainWindow):
             if SettingsManager.Get("export_language") == code:
                 action.setChecked(True)
 
-
         languageSelect = QMenu(QApplication.translate(
             "app", "Default Phase Name Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
@@ -364,7 +365,7 @@ class Window(QMainWindow):
                 action.setChecked(True)
 
         self.optionsBt.menu().addSeparator()
-        
+
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(
             QApplication.translate("About", "About"))
@@ -387,6 +388,12 @@ class Window(QMainWindow):
             self.SetGame)
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.ReloadGames)
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            TSHAssetDownloader.instance.CheckAssetUpdates
+        )
+        TSHAssetDownloader.instance.signals.AssetUpdates.connect(
+            self.OnAssetUpdates
+        )
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.SetGame)
 
@@ -411,6 +418,7 @@ class Window(QMainWindow):
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
+        TSHAssetDownloader.instance.UiMounted()
         TSHPlayerDB.LoadDB()
 
     def SetGame(self):
@@ -624,281 +632,20 @@ class Window(QMainWindow):
                     self.updateAction.setText(
                         QApplication.translate("app", "Check for updates") + " " + QApplication.translate("punctuation", "[") + QApplication.translate("app", "Update available!") + QApplication.translate("punctuation", "]"))
 
-    def DownloadAssets(self):
-        assets = self.DownloadAssetsFetch()
-
-        if assets is None:
-            return
-
-        self.preDownloadDialogue = QDialog(self)
-        self.preDownloadDialogue.setWindowTitle(
-            QApplication.translate("app", "Download assets"))
-        self.preDownloadDialogue.setWindowModality(Qt.WindowModal)
-        self.preDownloadDialogue.setLayout(QVBoxLayout())
-        self.preDownloadDialogue.show()
-
-        select = QComboBox()
-        selectProxy = QSortFilterProxyModel()
-        selectProxy.setSourceModel(select.model())
-        select.model().setParent(selectProxy)
-        selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        select.setModel(selectProxy)
-        select.setEditable(True)
-        select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-        select.completer().setCompletionMode(QCompleter.PopupCompletion)
-        self.preDownloadDialogue.layout().addWidget(select)
-
-        model = QStandardItemModel()
-
-        proxyModel = QSortFilterProxyModel()
-        proxyModel.setSourceModel(model)
-        proxyModel.setFilterKeyColumn(-1)
-        proxyModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-
-        def filterList(text):
-            proxyModel.setFilterFixedString(text)
-
-        searchBar = QLineEdit()
-        searchBar.setPlaceholderText(
-            QApplication.translate("app", "Filter..."))
-        self.preDownloadDialogue.layout().addWidget(searchBar)
-        searchBar.textEdited.connect(filterList)
-
-        downloadList = QTableView()
-        self.preDownloadDialogue.layout().addWidget(downloadList)
-        downloadList.setSortingEnabled(True)
-        downloadList.setSelectionBehavior(QAbstractItemView.SelectRows)
-        downloadList.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        downloadList.setModel(proxyModel)
-        downloadList.verticalHeader().hide()
-        self.preDownloadDialogue.resize(1200, 500)
-        downloadList.horizontalHeader().setStretchLastSection(True)
-        downloadList.setWordWrap(True)
-        downloadList.resizeColumnsToContents()
-        downloadList.resizeRowsToContents()
-
-        for i, game in enumerate(assets):
-            select.addItem(assets[game]["name"], i)
-
-        select.model().sort(0)
-
-        def ReloadGameAssets(index=None):
-            nonlocal self
-
-            index = select.currentData()
-
-            if index == None:
-                index = select.currentIndex()
-
-            model.clear()
-            header_labels = [
-                "game",
-                "asset_id",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9"
-            ]
-            header_labels[2] = QApplication.translate(
-                "app", "Asset pack name")
-            header_labels[3] = QApplication.translate("app", "Description")
-            header_labels[4] = QApplication.translate("app", "Credits")
-            header_labels[5] = QApplication.translate(
-                "app", "Installed version")
-            header_labels[6] = QApplication.translate("app", "Latest version")
-            header_labels[7] = QApplication.translate("app", "Size")
-            header_labels[8] = QApplication.translate("app", "Stage data")
-            header_labels[9] = QApplication.translate("app", "Eyesight data")
-            model.setHorizontalHeaderLabels(header_labels)
-            downloadList.hideColumn(0)
-            downloadList.hideColumn(1)
-            downloadList.horizontalHeader().setStretchLastSection(True)
-            downloadList.setWordWrap(True)
-            downloadList.resizeColumnsToContents()
-            downloadList.resizeRowsToContents()
-            downloadList.setStyleSheet("QTableView::item { padding: 6px; }")
-
-            key = list(assets.keys())[index]
-
-            hasBaseFiles = TSHGameAssetManager.instance.games.get(
-                key, {}).get("assets", {}).get("base_files", None) != None
-
-            sortedKeys = list(assets[key]["assets"].keys())
-            sortedKeys.sort(
-                key=lambda x: chr(0) if x == "base_files" else x)
-
-            for asset in sortedKeys:
-                dlSize = "{:.2f}".format(sum(
-                    [f.get("size", 0) for f in list(
-                        assets[key]["assets"][asset]["files"].values())]
-                )/1024/1024) + " MB"
-
-                currVersion = str(TSHGameAssetManager.instance.games.get(key, {}).get(
-                    "assets", {}).get(asset, {}).get("version"))
-
-                version = str(assets[key]["assets"][asset].get("version"))
-
-                if currVersion != version:
-                    version += " [!]"
-
-                model.appendRow([
-                    QStandardItem(key),
-                    QStandardItem(asset),
-                    QStandardItem(assets[key]["assets"][asset].get("name")),
-                    QStandardItem(assets[key]["assets"]
-                                  [asset].get("description")),
-                    QStandardItem(assets[key]["assets"][asset].get("credits")),
-                    QStandardItem(currVersion),
-                    QStandardItem(version),
-                    QStandardItem(dlSize),
-                    QStandardItem("☑" if assets[key]["assets"][asset].get(
-                        "has_stage_data", False) else ""),
-                    QStandardItem("☑" if assets[key]["assets"][asset].get(
-                        "has_eyesight_data", False) else "")
-                ])
-
-                if not hasBaseFiles and asset != "base_files":
-                    for col in range(model.columnCount()):
-                        item = model.item(model.rowCount()-1, col)
-                        item.setEnabled(False)
-                        item.setSelectable(False)
-
-            downloadList.horizontalHeader().setStretchLastSection(True)
-            downloadList.resizeColumnsToContents()
-            downloadList.resizeRowsToContents()
-
-        self.reloadDownloadsList = ReloadGameAssets
-        select.activated.connect(ReloadGameAssets)
-        ReloadGameAssets(0)
-
-        TSHGameAssetManager.instance.signals.onLoadAssets.connect(
-            ReloadGameAssets)
-
-        btOk = QPushButton(QApplication.translate("app", "Download"))
-        self.preDownloadDialogue.layout().addWidget(btOk)
-
-        def DownloadStart():
-            nonlocal self
-
-            if len(downloadList.selectionModel().selectedRows()) == 0:
-                return
-
-            row = downloadList.selectionModel().selectedRows()[0].row()
-            game = downloadList.model().index(row, 0).data()
-            key = downloadList.model().index(row, 1).data()
-
-            filesToDownload = assets[game]["assets"][key]["files"]
-
-            for f in filesToDownload:
-                filesToDownload[f]["path"] = "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
-                    filesToDownload[f]["name"]
-                filesToDownload[f]["extractpath"] = "./user_data/games/"+game
-
-            self.downloadDialogue = QProgressDialog(
-                QApplication.translate("app", "Downloading assets"), QApplication.translate("app", "Cancel"), 0, 100, self)
-            self.downloadDialogue.setMinimumWidth(500)
-            self.downloadDialogue.setWindowModality(
-                Qt.WindowModality.WindowModal)
-            self.downloadDialogue.show()
-            worker = Worker(self.DownloadAssetsWorker, *
-                            [list(filesToDownload.values())])
-            worker.signals.progress.connect(self.DownloadAssetsProgress)
-            worker.signals.finished.connect(self.DownloadAssetsFinished)
-            self.threadpool.start(worker)
-
-        btOk.clicked.connect(DownloadStart)
-
-    def DownloadAssetsFetch(self):
-        assets = None
+    # Checks for asset updates after game assets are loaded
+    # If updates are available, edit QAction icon
+    def OnAssetUpdates(self, updates):
         try:
-            response = requests.get(
-                "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/assets.json")
-            assets = json.loads(response.text)
-        except Exception as e:
-            messagebox = QMessageBox()
-            messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
-            messagebox.setText(QApplication.translate(
-                "app", "Failed to fetch assets from github:")+"\n"+str(e))
-            messagebox.exec()
-        return assets
-
-    def DownloadAssetsWorker(self, files, progress_callback):
-        totalSize = sum(f["size"] for f in files)
-        downloaded = 0
-
-        for f in files:
-            with open("user_data/games/"+f["name"], 'wb') as downloadFile:
-                print("Downloading "+f["name"])
-                progress_callback.emit(QApplication.translate(
-                    "app", "Downloading {0}...").format(f["name"]))
-
-                response = urllib.request.urlopen(f["path"])
-
-                while(True):
-                    chunk = response.read(1024*1024)
-
-                    if not chunk:
-                        break
-
-                    downloaded += len(chunk)
-                    downloadFile.write(chunk)
-
-                    if self.downloadDialogue.wasCanceled():
-                        return
-
-                    progress_callback.emit(int(downloaded/totalSize*100))
-                downloadFile.close()
-
-                print("OK")
-
-        progress_callback.emit(100)
-
-        filenames = ["./user_data/games/"+f["name"] for f in files]
-        mergedFile = "./user_data/games/"+files[0]["name"].split(".")[0]+'.7z'
-
-        is7z = next((f for f in files if ".7z" in f["name"]), None)
-
-        if is7z:
-            with open(mergedFile, 'ab') as outfile:
-                for fname in filenames:
-                    with open(fname, 'rb') as infile:
-                        outfile.write(infile.read())
-
-            print("Extracting "+mergedFile)
-            progress_callback.emit("Extracting "+mergedFile)
-
-            with py7zr.SevenZipFile(mergedFile, 'r') as parent_zip:
-                parent_zip.extractall(files[0]["extractpath"])
-
-            for f in files:
-                os.remove("./user_data/games/"+f["name"])
-
-            os.remove(mergedFile)
-        else:
-            for f in files:
-                if os.path.isfile(f["extractpath"]+"/"+f["name"]):
-                    os.remove(f["extractpath"]+"/"+f["name"])
-                shutil.move("./user_data/games/"+f["name"], f["extractpath"])
-
-        print("OK")
-
-    def DownloadAssetsProgress(self, n):
-        if type(n) == int:
-            self.downloadDialogue.setValue(n)
-
-            if n == 100:
-                self.downloadDialogue.setMaximum(0)
-                self.downloadDialogue.setValue(0)
-        else:
-            self.downloadDialogue.setLabelText(n)
-
-    def DownloadAssetsFinished(self):
-        self.downloadDialogue.close()
-        TSHGameAssetManager.instance.LoadGames()
+            if len(updates) > 0:
+                baseIcon = self.downloadAssetsAction.icon().pixmap(32, 32)
+                updateIcon = QImage(
+                    "./assets/icons/update_circle.svg").scaled(12, 12)
+                p = QPainter(baseIcon)
+                p.drawImage(QPoint(20, 0), updateIcon)
+                p.end()
+                self.downloadAssetsAction.setIcon(QIcon(baseIcon))
+        except:
+            print(traceback.format_exc())
 
     def ToggleAlwaysOnTop(self, checked):
         if checked:
