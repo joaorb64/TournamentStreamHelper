@@ -103,7 +103,7 @@ class TSHGameAssetManager(QObject):
                                 ).games[game]["name"] = game_name
                     else:
                         print("Game config for "+game+" doesn't exist.")
-                print(self.parent().games)
+                # print(self.parent().games)
                 self.parent().signals.onLoadAssets.emit()
 
         gameLoaderThread = GameLoaderThread(self)

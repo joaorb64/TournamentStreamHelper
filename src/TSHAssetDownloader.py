@@ -1,3 +1,4 @@
+import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -19,35 +20,50 @@ class IconDelegate(QStyledItemDelegate):
         option.decorationSize = option.rect.size()
 
 
+class TSHAssetDownloaderSignals(QObject):
+    AssetUpdates = pyqtSignal(dict)
+
+
 class TSHAssetDownloader(QObject):
     instance: "TSHAssetDownloader" = None
 
     def __init__(self) -> None:
         super().__init__()
         self.threadpool = QThreadPool()
+        self.signals = TSHAssetDownloaderSignals()
 
     def UiMounted(self):
         self.iconUpdateAvailable = QIcon('assets/icons/update_available.svg')
         self.iconInstalled = QIcon('assets/icons/installed.svg')
 
     def CheckAssetUpdates(self, game_codename=None):
-        assets = self.DownloadAssetsFetch()
+        class AssetUpdatesThread(QThread):
+            def run(self):
+                try:
+                    assets = TSHAssetDownloader.instance.DownloadAssetsFetch()
 
-        updates = {}
+                    updates = {}
 
-        for game_code, game in assets.items():
-            for asset_code, asset in game["assets"].items():
-                currVersion = str(TSHGameAssetManager.instance.games.get(game_code, {}).get(
-                    "assets", {}).get(asset_code, {}).get("version", ""))
+                    for game_code, game in assets.items():
+                        for asset_code, asset in game["assets"].items():
+                            currVersion = str(TSHGameAssetManager.instance.games.get(game_code, {}).get(
+                                "assets", {}).get(asset_code, {}).get("version", ""))
 
-                version = str(assets[game_code]["assets"]
-                              [asset_code].get("version"))
+                            version = str(assets[game_code]["assets"]
+                                          [asset_code].get("version"))
 
-                if currVersion != version and currVersion != "":
-                    if not game_code in updates:
-                        updates[game_code] = []
-                    updates[game_code].append(asset_code)
-        return updates
+                            if currVersion != version and currVersion != "":
+                                if not game_code in updates:
+                                    updates[game_code] = []
+                                updates[game_code].append(asset_code)
+
+                    TSHAssetDownloader.instance.signals.AssetUpdates.emit(
+                        updates)
+                except:
+                    print(traceback.format_exc())
+
+        thread = AssetUpdatesThread(self)
+        thread.start()
 
     def DownloadAssets(self):
         assets = self.DownloadAssetsFetch()

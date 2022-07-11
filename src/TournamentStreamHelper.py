@@ -389,7 +389,10 @@ class Window(QMainWindow):
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.ReloadGames)
         TSHGameAssetManager.instance.signals.onLoad.connect(
-            self.CheckForAssetUpdates
+            TSHAssetDownloader.instance.CheckAssetUpdates
+        )
+        TSHAssetDownloader.instance.signals.AssetUpdates.connect(
+            self.OnAssetUpdates
         )
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.SetGame)
@@ -630,13 +633,9 @@ class Window(QMainWindow):
                         QApplication.translate("app", "Check for updates") + " " + QApplication.translate("punctuation", "[") + QApplication.translate("app", "Update available!") + QApplication.translate("punctuation", "]"))
 
     # Checks for asset updates after game assets are loaded
-    # If updates are available, edit action icon
-    # TODO: Parallelize
-    def CheckForAssetUpdates(self):
+    # If updates are available, edit QAction icon
+    def OnAssetUpdates(self, updates):
         try:
-            updates = TSHAssetDownloader.instance.CheckAssetUpdates()
-            print(updates)
-
             if len(updates) > 0:
                 baseIcon = self.downloadAssetsAction.icon().pixmap(32, 32)
                 updateIcon = QImage(
@@ -647,10 +646,6 @@ class Window(QMainWindow):
                 self.downloadAssetsAction.setIcon(QIcon(baseIcon))
         except:
             print(traceback.format_exc())
-
-        TSHGameAssetManager.instance.signals.onLoad.disconnect(
-            self.CheckForAssetUpdates
-        )
 
     def ToggleAlwaysOnTop(self, checked):
         if checked:
