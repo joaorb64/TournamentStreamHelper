@@ -21,6 +21,11 @@ import unicodedata
 import sys
 import PyQt5
 from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+App = QApplication(sys.argv)
+print("QApplication successfully initialized")
 
 from src.TSHAboutWidget import TSHAboutWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
@@ -36,11 +41,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from qdarkstyle import palette
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-App = QApplication(sys.argv)
-print("QApplication successfully initialized")
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
