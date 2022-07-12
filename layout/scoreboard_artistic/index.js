@@ -1,4 +1,8 @@
 (($) => {
+  let ASSET_TO_USE = "full";
+  let ZOOM = 1;
+  let FLIP_P2_ASSET = true;
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -61,6 +65,26 @@
     oldData = data;
     data = await getData();
 
+    if (data.game) {
+      if (data.game.codename == "ssbu") {
+        ASSET_TO_USE = "mural_art";
+        ZOOM = 1;
+        FLIP_P2_ASSET = true;
+      } else if (data.game.codename == "ssbm") {
+        ASSET_TO_USE = "full";
+        ZOOM = 2.4;
+        FLIP_P2_ASSET = true;
+      } else if (data.game.codename == "ssb64") {
+        ASSET_TO_USE = "full";
+        ZOOM = 1.0;
+        FLIP_P2_ASSET = true;
+      } else {
+        ASSET_TO_USE = "full";
+        ZOOM = 1.5;
+        FLIP_P2_ASSET = true;
+      }
+    }
+
     if (Object.keys(data.score.team["1"].player).length == 1) {
       [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
         [team.player["1"]].forEach((player, p) => {
@@ -119,10 +143,18 @@
             ) {
               let charactersHtml = "";
               Object.values(player.character).forEach((character, index) => {
-                if (character.assets["portrait"]) {
+                if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
                     <div class="icon stockicon">
-                        <div style='background-image: url(../../${character.assets["portrait"].asset})'></div>
+                        <div style='
+                          ${
+                            t == 1 && FLIP_P2_ASSET
+                              ? "transform: scaleX(-1);"
+                              : ""
+                          }
+                          background-image: url(../../${
+                            character.assets[ASSET_TO_USE].asset
+                          })'></div>
                     </div>
                     `;
                 }
@@ -137,8 +169,9 @@
                     (i, e) => {
                       CenterImage(
                         $(e),
-                        Object.values(player.character)[i].assets["portrait"]
-                          .eyesight
+                        Object.values(player.character)[i].assets[ASSET_TO_USE]
+                          .eyesight,
+                        ZOOM
                       );
                     }
                   );
@@ -234,10 +267,14 @@
         if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
           let charactersHtml = "";
           characters.forEach((character, index) => {
-            if (character.assets["portrait"]) {
+            if (character.assets[ASSET_TO_USE]) {
               charactersHtml += `
                 <div class="icon stockicon">
-                    <div style='background-image: url(../../${character.assets["portrait"].asset})'></div>
+                    <div style='
+                      ${t == 1 && FLIP_P2_ASSET ? "transform: scaleX(-1);" : ""}
+                      background-image: url(../../${
+                        character.assets[ASSET_TO_USE].asset
+                      })'></div>
                 </div>
                 `;
             }
@@ -250,7 +287,11 @@
             () => {
               $(`.p${t + 1}.character_container .stockicon div`).each(
                 (i, e) => {
-                  CenterImage($(e), characters[i].assets["portrait"].eyesight);
+                  CenterImage(
+                    $(e),
+                    characters[i].assets[ASSET_TO_USE].eyesight,
+                    ZOOM
+                  );
                 }
               );
             }
@@ -299,7 +340,10 @@
 
     SetInnerHtml($(".phase"), data.score.phase);
     SetInnerHtml($(".match"), data.score.match);
-    SetInnerHtml($(".best_of"), `Best of ${data.score.best_of}`);
+    SetInnerHtml(
+      $(".best_of"),
+      data.score.best_of ? `Best of ${data.score.best_of}` : ""
+    );
 
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));
