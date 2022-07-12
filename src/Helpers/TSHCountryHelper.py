@@ -140,9 +140,12 @@ class TSHCountryHelper(QObject):
 
     def FindState(countryCode, city):
         # State explicit?
-        split = city.split(" ")
+        # Normalize parts of city string
+        split = city.replace(" - ", ",").split(",")
 
         for part in split[::-1]:
+            part = part.strip()
+
             state = next(
                 (st for st in TSHCountryHelper.countries.get(countryCode, {}).get("states", {}).values(
                 ) if TSHCountryHelper.remove_accents_lower(st["code"]) == TSHCountryHelper.remove_accents_lower(part)),
@@ -158,11 +161,14 @@ class TSHCountryHelper(QObject):
                 return state["code"]
 
         # No, so get by City
-        state = TSHCountryHelper.cities.get(countryCode, {}).get(
-            TSHCountryHelper.remove_accents_lower(city), None)
+        for part in split[::-1]:
+            part = part.strip()
 
-        if state is not None:
-            return state
+            state = TSHCountryHelper.cities.get(countryCode, {}).get(
+                TSHCountryHelper.remove_accents_lower(part), None)
+
+            if state is not None:
+                return state
 
         return None
 
