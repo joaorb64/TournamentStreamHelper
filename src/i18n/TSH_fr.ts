@@ -1085,6 +1085,11 @@ p, li { white-space: pre-wrap; }
         <source>Losers Bracket</source>
         <translation>Arbre Loser</translation>
     </message>
+    <message>
+        <location filename="../TSHTop8Widget.py" line="249"/>
+        <source>Grand Finals</source>
+        <translation>Grande Finale</translation>
+    </message>
 </context>
 <context>
     <name>punctuation</name>

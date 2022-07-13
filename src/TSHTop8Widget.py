@@ -217,16 +217,85 @@ class BracketGroup(QWidget):
         self.label.setFont(label_font)
         self.layout().addWidget(self.label)
 
+        self.round_widgets = QWidget()
+        self.round_widgets.setLayout(QHBoxLayout())
+        self.layout().addWidget(self.round_widgets)
+        self.round_1_widget = QWidget()
+        self.round_1_widget.setLayout(QVBoxLayout())
+        self.round_widgets.layout().addWidget(self.round_1_widget)
+
         for i in range(2):
             match_index = f"{bracket_index}_r1_m{i+1}"
             s = MatchGroup(player_list, match_index)
             self.slotWidgets.append(s)
-            self.layout().addWidget(s)
+            self.round_1_widget.layout().addWidget(s)
             s.SetPlayersPerTeam(self.players_per_team)
             if i<1:
                 line = QFrame()
                 line.setFrameShape(QFrame.HLine)
-                self.layout().addWidget(line)
+                self.round_1_widget.layout().addWidget(line)
+        
+        if bracket_index=="winner":
+            match_index = f"{bracket_index}_r2_m1"
+            s = MatchGroup(player_list, match_index, players_editable=False)
+            self.slotWidgets.append(s)
+            self.round_widgets.layout().addWidget(s)
+            s.SetPlayersPerTeam(self.players_per_team)
+        
+            grands_widget = QWidget()
+            grands_widget.setLayout(QVBoxLayout())
+            grands_widget.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+            self.round_widgets.layout().addWidget(grands_widget)
+            grands_label = QLabel(QApplication.translate("app", "Grand Finals"))
+            grands_label_font = QFont()
+            grands_label_font.setBold(True)
+            grands_label_font.setPointSize(10)
+            grands_label.setFont(grands_label_font)
+            grands_label.setAlignment(Qt.AlignCenter)
+            grands_widget.layout().addWidget(grands_label)
+            grands_group = QWidget()
+            grands_group.setLayout(QHBoxLayout())
+            grands_widget.layout().addWidget(grands_group)
+            
+            match_index = f"{bracket_index}_r3_m1"
+            s = MatchGroup(player_list, match_index, players_editable=False)
+            self.slotWidgets.append(s)
+            grands_group.layout().addWidget(s)
+            s.SetPlayersPerTeam(self.players_per_team)
+
+            match_index = f"{bracket_index}_r4_m1"
+            s = MatchGroup(player_list, match_index, players_editable=False)
+            self.slotWidgets.append(s)
+            grands_group.layout().addWidget(s)
+            s.SetPlayersPerTeam(self.players_per_team)
+
+        if bracket_index=="loser":
+            self.round_2_widget = QWidget()
+            self.round_2_widget.setLayout(QVBoxLayout())
+            self.round_widgets.layout().addWidget(self.round_2_widget)
+            for i in range(2):
+                match_index = f"{bracket_index}_r2_m{i+1}"
+                s = MatchGroup(player_list, match_index, players_editable=False)
+                self.slotWidgets.append(s)
+                self.round_2_widget.layout().addWidget(s)
+                s.SetPlayersPerTeam(self.players_per_team)
+                if i<1:
+                    line = QFrame()
+                    line.setFrameShape(QFrame.HLine)
+                    self.round_2_widget.layout().addWidget(line)
+        
+            match_index = f"{bracket_index}_r3_m1"
+            s = MatchGroup(player_list, match_index, players_editable=False)
+            self.slotWidgets.append(s)
+            self.round_widgets.layout().addWidget(s)
+            s.SetPlayersPerTeam(self.players_per_team)
+
+            match_index = f"{bracket_index}_r4_m1"
+            s = MatchGroup(player_list, match_index, players_editable=False)
+            self.slotWidgets.append(s)
+            self.round_widgets.layout().addWidget(s)
+            s.SetPlayersPerTeam(self.players_per_team)
+
     
     def SetCharactersPerPlayer(self, value):
         self.characters_per_player = value
