@@ -7,6 +7,7 @@ from .StateManager import StateManager
 import re
 import traceback
 import threading
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 import requests
 
@@ -32,17 +33,17 @@ class TSHGameAssetManager(QObject):
         self.thumbnailSettingsLoaded = False
 
     def UiMounted(self):
-        self.DownloadSmashGGCharacters()
+        self.DownloadStartGGCharacters()
         self.LoadGames()
 
-    def DownloadSmashGGCharacters(self):
+    def DownloadStartGGCharacters(self):
         try:
             class DownloaderThread(QThread):
                 def run(self):
-                    url = 'https://api.smash.gg/characters'
+                    url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
                     open('./assets/characters.json', 'wb').write(r.content)
-                    print("SmashGG characters file updated")
+                    print("startgg characters file updated")
             thread = DownloaderThread(self)
             thread.start()
         except Exception as e:
@@ -84,15 +85,31 @@ class TSHGameAssetManager(QObject):
                                         json.load(f)
                                 else:
                                     print("No config file for "+game+" - "+dir)
+
+                        # Load translated names
+                        # Translate game name
+                        locale = TSHLocaleHelper.programLocale
+                        if locale.replace('-', '_') in self.parent().games[game].get("locale", {}):
+                            game_name = self.parent(
+                            ).games[game]["locale"][locale.replace('-', '_')].get("name")
+                            if game_name:
+                                self.parent(
+                                ).games[game]["name"] = game_name
+                        elif locale.split('-')[0] in self.parent().games[game].get("locale", {}):
+                            game_name = self.parent(
+                            ).games[game]["locale"][locale.split('-')[0]].get("name")
+                            if game_name:
+                                self.parent(
+                                ).games[game]["name"] = game_name
                     else:
                         print("Game config for "+game+" doesn't exist.")
-                print(self.parent().games)
+                # print(self.parent().games)
                 self.parent().signals.onLoadAssets.emit()
 
         gameLoaderThread = GameLoaderThread(self)
         gameLoaderThread.start()
 
-    def SetGameFromSmashGGId(self, gameid):
+    def SetGameFromStartGGId(self, gameid):
         if len(self.games.keys()) == 0:
             return
 
@@ -357,22 +374,22 @@ class TSHGameAssetManager(QObject):
 
         return(charFiles)
 
-    def GetCharacterFromSmashGGId(self, smashgg_id: int):
+    def GetCharacterFromStartGGId(self, smashgg_id: int):
         sggcharacters = json.loads(
             open('./assets/characters.json', 'r').read())
 
-        smashggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
+        startggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
             "character", []) if str(c.get("id")) == str(smashgg_id)), None)
 
-        if smashggcharacter:
+        if startggcharacter:
             character = next((c for c in self.characters.items() if c[1].get(
-                "smashgg_name") == smashggcharacter.get("name")), None)
+                "smashgg_name") == startggcharacter.get("name")), None)
             if character:
                 return character
 
         return None
 
-    def GetStageFromSmashGGId(self, smashgg_id: int):
+    def GetStageFromStartGGId(self, smashgg_id: int):
         stage = next((s for s in self.stages.items() if str(
             s[1].get("smashgg_id")) == str(smashgg_id)), None)
         return stage

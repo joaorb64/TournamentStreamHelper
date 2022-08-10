@@ -16,11 +16,15 @@ class StateManager:
 
     def SaveState():
         with open("./out/program_state.json", 'w', encoding='utf-8') as file:
-            json.dump(StateManager.state, file, indent=4, sort_keys=True)
+            json.dump(StateManager.state, file, indent=4, sort_keys=False)
 
     def LoadState():
-        with open("./out/program_state.json", 'r', encoding='utf-8') as file:
-            StateManager.state = json.load(file)
+        try:
+            with open("./out/program_state.json", 'r', encoding='utf-8') as file:
+                StateManager.state = json.load(file)
+        except:
+            StateManager.state = {}
+            StateManager.SaveState()
 
     def Set(key: str, value):
         oldState = copy.deepcopy(StateManager.state)

@@ -1,0 +1,98 @@
+name: Build the application
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ui-translations
+      - locale/*
+  workflow_dispatch:
+
+jobs:
+  locale_build:
+    name: Build locale files
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - run: |
+          sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
+          lrelease -version
+      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
+      - run: |
+          python3 src/i18n/gen_translation_files.py
+          python3 src/i18n/gen_translation_binaries.py
+
+      - run: git pull
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add *
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Update locale files" -a
+          fi
+
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.extract_branch.outputs.branch }}
+
+  build:
+    name: Generate Windows Release
+    runs-on: ${{ matrix.os }}
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
+    needs:
+    - locale_build
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
+      - run: |
+          set PYTHONUTF8=1
+          chcp 65001
+          set PYTHONIOENCODING=utf-8
+          python scripts/gen_contributors.py
+          pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+          copy dist\main.exe TSH.exe
+
+      - run: git pull
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add TSH.exe
+          git commit -m "Update exe" -a
+
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.extract_branch.outputs.branch }}

@@ -7,23 +7,25 @@ function getData() {
 }
 
 function FitText(target) {
-  if (target == null) return;
-  if (target.css("font-size") == null) return;
-  if (target.css("width") == null) return;
+  document.fonts.ready.then(() => {
+    if (target == null) return;
+    if (target.css("font-size") == null) return;
+    if (target.css("width") == null) return;
 
-  let textElement = target.find(".text");
+    let textElement = target.find(".text");
 
-  if (textElement.text().trim().toLowerCase() == "undefined") {
-    textElement.html("");
-  }
+    if (textElement.text().trim().toLowerCase() == "undefined") {
+      textElement.html("");
+    }
 
-  textElement.css("transform", "");
-  let scaleX = 1;
+    textElement.css("transform", "");
+    let scaleX = 1;
 
-  while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
-    scaleX -= 0.01;
-    textElement.css("transform", "scaleX(" + scaleX + ")");
-  }
+    while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
+      scaleX -= 0.01;
+      textElement.css("transform", "scaleX(" + scaleX + ")");
+    }
+  });
 }
 
 function SetInnerHtml(

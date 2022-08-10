@@ -17,8 +17,10 @@ import string
 from copy import deepcopy
 import datetime
 import os
+import re
 
 from src.TSHGameAssetManager import TSHGameAssetManager
+from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 display_phase = True
 use_team_names = False
@@ -315,7 +317,7 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     family = font_data["name"]
     font.setFamily(family)
     font.setPixelSize(int(max_font_size))
-    type = font_data["type"]
+    type = font_data["fontPath"]
     if "bold" in type.lower():
         font.setBold(True)
     if "italic" in type.lower():
@@ -632,23 +634,33 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     if gameAssetManager and len(gameAssetManager.instance.characters.keys()) > 0:
 
         for i in range(4):
-            key = list(gameAssetManager.instance.characters.keys())[
-                random.randint(0, len(gameAssetManager.instance.characters)-1)]
+            asset = None
+            while (not asset):
+                key = list(gameAssetManager.instance.characters.keys())[
+                    random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
-            character = gameAssetManager.instance.characters[key]
+                character = gameAssetManager.instance.characters[key]
 
-            data = gameAssetManager.instance.GetCharacterAssets(
-                character.get("codename"), 0)
+                data = gameAssetManager.instance.GetCharacterAssets(
+                    character.get("codename"), 0)
 
-            asset = data.get(used_assets)
+                asset = data.get(used_assets)
 
-            if not asset:
-                asset = data.get("full")
-            if not asset:
-                asset = data.get("portrait")
+                if not asset:
+                    asset = data.get("full")
+                if not asset:
+                    asset = data.get("portrait")
+
+            name = key
+            if character.get("locale"):
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace("-", "_") in character["locale"]:
+                    name = character["locale"][locale.replace("-", "_")]
+                elif re.split("-|_", locale)[0] in character["locale"]:
+                    name = character["locale"][re.split("-|_", locale)[0]]
 
             chars.append({
-                "name": key,
+                "name": name,
                 "team": gameAssetManager.instance.selectedGame.get("codename").upper(),
                 "asset": {
                     "assets": {
@@ -662,8 +674,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     else:
         for i in range(4):
             chars.append({
-                "name": f"Player {i+1}",
-                "team": f"Sponsor {i+1}",
+                "name": QApplication.translate("app","Player {0}").format(i+1),
+                "team": QApplication.translate("app","Sponsor {0}").format(i+1),
                 "asset": {
                     "assets": {
                         "full": {
@@ -690,8 +702,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
         },
         "score": {
             "best_of": 0,
-            "match": "Winners Finals",
-            "phase": "Pool A",
+            "match": QApplication.translate("app","Winners Finals"),
+            "phase": QApplication.translate("app","Pool {0}").format("A"),
             "team": {
                 "1": {
                     "losers": False,
@@ -709,7 +721,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team A"
+                    "teamName": QApplication.translate("app","Team {0}").format("A")
                 },
                 "2": {
                     "losers": False,
@@ -736,7 +748,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                         }
                     },
                     "score": 0,
-                    "teamName": "Team B"
+                    "teamName": QApplication.translate("app","Team {0}").format("B")
                 }
             }
         }
@@ -805,11 +817,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             data = json.loads(f.read())
         # if data missing
         if not data.get("game").get("codename"):
-            raise Exception("Please select a game first")
+            raise Exception(QApplication.translate("thumb_app", "Please select a game first"))
         # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
         for i in [1, 2]:
             if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
-                raise Exception(f"Player {i} tag missing")
+                raise Exception(QApplication.translate("thumb_app", "Player {0} tag missing").format(i))
 
         game_codename = data.get("game").get("codename")
         used_assets = settings[f"asset/{game_codename}"]
