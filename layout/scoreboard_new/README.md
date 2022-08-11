@@ -1,4 +1,4 @@
-# New Overlay (Inspired by VGBC Double Down Overlay):
+# VGBC Style Overlay:
 - Go to OBS and add a new Browser.
 - Select the /layout/scoreboard_new/ssbultimate.html as the local file and set its width and height to 1920 and 1080 respectively.
 - Run TSH and enter the players' information.
