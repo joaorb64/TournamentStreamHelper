@@ -51,9 +51,11 @@
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),
             `
-              <span class="sponsor">${
-                player.team.toUpperCase() ? player.team.toUpperCase() : ""
-              }</span>${player.name.toUpperCase()}`
+              <span class="sponsor">
+                ${player.team ? player.team.toUpperCase() : ""}
+              </span>
+              ${player.name ? player.name.toUpperCase() : ""}
+            `
           );
 
           SetInnerHtml(
@@ -80,11 +82,6 @@
           let score = [data.score.score_left, data.score.score_right];
 
           SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
-          );
         }
       });
     });
