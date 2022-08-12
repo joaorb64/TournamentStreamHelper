@@ -80,19 +80,19 @@
               : ""
           );
 
-          if (player.twitter == "") {
-            SetInnerHtml(
-              $(`.p${t + 1}.twitter`),
-              `
-                ${player.name ? player.name.toUpperCase() : ""}
-              `
-            );
-          } else {
+          if (player.twitter) {
             SetInnerHtml(
               $(`.p${t + 1}.twitter`),
               `<span class="twitter_logo"></span>${
                 "@" + String(player.twitter).toUpperCase()
               }`
+            );
+          } else {
+            SetInnerHtml(
+              $(`.p${t + 1}.twitter`),
+              `
+                ${player.name ? player.name.toUpperCase() : ""}
+              `
             );
           }
 
