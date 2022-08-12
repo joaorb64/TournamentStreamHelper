@@ -41,8 +41,8 @@ body {
   height: 91px;
   top: 14px;
   background: #ffefdb;
-  border-radius: 12px;
-  padding-top: 4px;
+  border-radius: 15px;
+  padding-top: 3px;
 }
 
 .p1.container {
@@ -83,7 +83,7 @@ body {
   position: static;
   width: 488px;
   height: 53px;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex;
   flex-direction: row;
   align-items: center;
