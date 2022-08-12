@@ -81,7 +81,7 @@ body {
 
 .inner_container {
   position: static;
-  width: 488px;
+  width: 490px;
   height: 53px;
   border-radius: 12px;
   display: flex;
@@ -130,8 +130,8 @@ body {
   justify-content: center;
   box-sizing: border-box;
   top: 821px;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .p1.twitter {
