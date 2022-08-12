@@ -80,14 +80,21 @@
               : ""
           );
 
-          SetInnerHtml(
-            $(`.p${t + 1}.twitter`),
-            player.twitter
-              ? `<span class="twitter_logo"></span>${
-                  "@" + String(player.twitter).toUpperCase()
-                }`
-              : ""
-          );
+          if (player.twitter == "") {
+            SetInnerHtml(
+              $(`.p${t + 1}.twitter`),
+              `
+                ${player.name ? player.name.toUpperCase() : ""}
+              `
+            );
+          } else {
+            SetInnerHtml(
+              $(`.p${t + 1}.twitter`),
+              `<span class="twitter_logo"></span>${
+                "@" + String(player.twitter).toUpperCase()
+              }`
+            );
+          }
 
           let score = [data.score.score_left, data.score.score_right];
 
