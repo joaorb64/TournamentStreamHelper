@@ -41,8 +41,8 @@ body {
   height: 91px;
   top: 14px;
   background: #ffefdb;
-  border-radius: 15px;
-  padding-top: 3px;
+  border-radius: 12px;
+  padding-top: 4px;
 }
 
 .p1.container {
@@ -55,11 +55,35 @@ body {
   right: 380px;
 }
 
+.tournament_container {
+  position: absolute;
+  border-radius: 12px;
+  left: 67px;
+  top: 51px;
+  width: 246px;
+  height: 54px;
+  padding-top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #18181b;
+}
+
+.tournament_name {
+  color: white;
+  height: 100%;
+  font-size: 20px;
+  width: 216px;
+}
+
 .inner_container {
   position: static;
-  width: 490px;
+  width: 488px;
   height: 53px;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -67,7 +91,7 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   background: #18181b;
-  margin-bottom: 13px;
+  margin-bottom: 17px;
 }
 
 .p1 .inner_container {
@@ -99,7 +123,7 @@ body {
   overflow: hidden;
   width: 348px;
   height: 43px;
-  border-radius: 9px;
+  border-radius: 12px;
   color: white;
   font-size: 20px;
   text-align: center;
@@ -158,12 +182,27 @@ body {
   z-index: 9;
 }
 
+/* Name a PNG image tournament_logo.png to have it be displayed at the bottom center */
+.tournament_logo {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 268px;
+  height: 162px;
+  /* background-image: url("./tournament_logo.png"); */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--border-radius);
+  z-index: 9;
+}
+
 .phase_container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row-reverse;
-  padding-top: 3px;
   width: 100%;
   height: 1%;
 }
@@ -173,7 +212,6 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  padding-top: 3px;
   width: 100%;
   height: 1%;
 }
@@ -201,7 +239,6 @@ body {
   height: 1%;
   color: #18181b;
   font-size: 20px;
-  letter-spacing: 1;
 }
 
 .match {
@@ -210,7 +247,6 @@ body {
   height: 1%;
   color: #18181b;
   font-size: 20px;
-  letter-spacing: 1;
 }
 
 .losers {

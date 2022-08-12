@@ -18,7 +18,7 @@
       {
         duration: 0.75,
         x: "-373px",
-        opacity: 0,
+        autoAlpha: 0,
         ease: "power2.inOut",
       },
       "<"
@@ -28,9 +28,19 @@
       {
         duration: 0.75,
         x: "373px",
-        opacity: 0,
+        autoAlpha: 0,
         ease: "power2.inOut",
       },
+      "<"
+    )
+    .from(
+      ".tournament_container",
+      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
+      "<70%"
+    )
+    .from(
+      ".tournament_logo",
+      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
       "<"
     );
 
@@ -40,6 +50,8 @@
 
   var data = {};
   var oldData = {};
+
+  const tournamentContainer = document.querySelector(".tournament_container");
 
   async function Update() {
     oldData = data;
@@ -85,6 +97,11 @@
         }
       });
     });
+
+    SetInnerHtml(
+      $(".tournament_name"),
+      data.tournamentInfo.tournamentName.toUpperCase()
+    );
 
     SetInnerHtml($(".match"), data.score.match.toUpperCase());
 
