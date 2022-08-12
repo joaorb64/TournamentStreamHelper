@@ -41,8 +41,8 @@ body {
   height: 91px;
   top: 14px;
   background: #ffefdb;
-  border-radius: 15px;
-  padding-top: 3px;
+  border-radius: 12px;
+  padding-top: 4px;
 }
 
 .p1.container {
@@ -57,7 +57,7 @@ body {
 
 .tournament_container {
   position: absolute;
-  border-radius: 12px;
+  border-radius: 8px;
   left: 67px;
   top: 51px;
   width: 246px;
@@ -69,7 +69,7 @@ body {
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
-  background: #18181b;
+  background: var(--bg-color);
 }
 
 .tournament_name {
@@ -81,17 +81,17 @@ body {
 
 .inner_container {
   position: static;
-  width: 490px;
+  width: 488px;
   height: 53px;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
-  background: #18181b;
-  margin-bottom: 17px;
+  background: var(--bg-color);
+  margin-bottom: 16px;
 }
 
 .p1 .inner_container {
@@ -123,7 +123,7 @@ body {
   overflow: hidden;
   width: 348px;
   height: 43px;
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
   font-size: 20px;
   text-align: center;
@@ -136,20 +136,12 @@ body {
 
 .p1.twitter {
   left: 25px;
-  background: linear-gradient(
-    135deg,
-    rgba(189, 63, 50, 1) 0%,
-    rgba(203, 53, 107, 1) 100%
-  );
+  background: var(--p1-score-bg-color);
 }
 
 .p2.twitter {
   right: 25px;
-  background: linear-gradient(
-    225deg,
-    rgba(47, 128, 237, 1) 0%,
-    rgba(60, 139, 166, 1) 100%
-  );
+  background: var(--p2-score-bg-color);
 }
 
 .twitter_logo {
@@ -237,7 +229,7 @@ body {
   position: absolute;
   width: 75%;
   height: 1%;
-  color: #18181b;
+  color: var(--bg-color);
   font-size: 20px;
 }
 
@@ -246,6 +238,7 @@ body {
   width: 75%;
   height: 1%;
   color: #18181b;
+  color: var(--bg-color);
   font-size: 20px;
 }
 
@@ -254,7 +247,7 @@ body {
   width: 62px;
   height: 53px;
   font-size: 23px;
-  color: #18181b;
+  color: var(--bg-color);
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -304,20 +297,12 @@ body {
 
 .p1 .score {
   color: white;
-  background: linear-gradient(
-    135deg,
-    rgba(189, 63, 50, 1) 0%,
-    rgba(203, 53, 107, 1) 100%
-  );
+  background: var(--p1-score-bg-color);
 }
 
 .p2 .score {
   color: white;
-  background: linear-gradient(
-    225deg,
-    rgba(47, 128, 237, 1) 0%,
-    rgba(60, 139, 166, 1) 100%
-  );
+  background: var(--p2-score-bg-color);
 }
 
 .sponsor {
