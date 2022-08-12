@@ -18,29 +18,27 @@
       {
         duration: 0.75,
         x: "-373px",
-        autoAlpha: 0,
-        ease: "power2.inOut",
+        ease: "power4.Out",
       },
-      "<"
+      "<25%"
     )
     .from(
       [".p2.twitter"],
       {
         duration: 0.75,
         x: "373px",
-        autoAlpha: 0,
-        ease: "power2.inOut",
+        ease: "power4.Out",
       },
       "<"
     )
     .from(
       ".tournament_container",
-      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
-      "<70%"
+      { opacity: 0, duration: 0.5, ease: "power4.Out" },
+      "<80%"
     )
     .from(
       ".tournament_logo",
-      { opacity: 0, duration: 0.5, ease: "power2.inOut" },
+      { opacity: 0, duration: 0.5, ease: "power4.Out" },
       "<"
     );
 
@@ -80,23 +78,24 @@
               : ""
           );
 
-          if (player.twitter) {
-            SetInnerHtml(
-              $(`.p${t + 1}.twitter`),
-              player.twitter
-                ? `<span class="twitter_logo"></span>${
-                    "@" + String(player.twitter).toUpperCase()
-                  }`
-                : ""
-            );
+          const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
+
+          if (!String(player.twitter)) {
+            playerTwitter.classList.add("hidden");
+            playerTwitter.classList.remove("unhidden");
           } else {
-            SetInnerHtml(
-              $(`.p${t + 1}.twitter`),
-              `
-                ${player.name ? player.name.toUpperCase() : ""}
-              `
-            );
+            playerTwitter.classList.add("unhidden");
+            playerTwitter.classList.remove("hidden");
           }
+
+          SetInnerHtml(
+            $(`.p${t + 1}.twitter`),
+            player.twitter
+              ? `<span class="twitter_logo"></span>${
+                  "@" + String(player.twitter).toUpperCase()
+                }`
+              : ""
+          );
 
           let score = [data.score.score_left, data.score.score_right];
 

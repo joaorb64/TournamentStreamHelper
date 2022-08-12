@@ -341,3 +341,13 @@ body {
   /* -webkit-background-clip: text; */
   /* -webkit-text-fill-color: transparent; */
 }
+
+.hidden {
+  opacity: 0%;
+  transition: opacity 0.5s;
+}
+
+.unhidden {
+  opacity: 100%;
+  transition: opacity 0.5s;
+}
