@@ -82,10 +82,10 @@
 
           if (player.twitter) {
             SetInnerHtml(
-              $(`.p${t + 1}.twitter`),
-              `<span class="twitter_logo"></span>${
-                "@" + String(player.twitter).toUpperCase()
-              }`
+              $(`.p${t + 1}.container .twitter`),
+              player.twitter
+                ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+                : ""
             );
           } else {
             SetInnerHtml(
