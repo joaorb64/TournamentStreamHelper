@@ -51,8 +51,6 @@
   var data = {};
   var oldData = {};
 
-  const tournamentContainer = document.querySelector(".tournament_container");
-
   async function Update() {
     oldData = data;
     data = await getData();

@@ -190,7 +190,7 @@ body {
   transform: translateX(-50%);
   width: 268px;
   height: 162px;
-  /* background-image: url("./tournament_logo.png"); */
+  background-image: url("./tournament_logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
