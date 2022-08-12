@@ -80,7 +80,7 @@
 
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
 
-          if (!String(player.twitter)) {
+          if (player.twitter == undefined || String(player.twitter) == "") {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
           } else {
