@@ -29,6 +29,7 @@ jobs:
         id: extract_branch
 
       - run: |
+          sudo apt-get update
           sudo apt-get install -y libgstreamer-plugins-base1.0-dev
           sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
           lrelease -version
