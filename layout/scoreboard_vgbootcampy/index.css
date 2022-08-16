@@ -91,7 +91,7 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   background: var(--bg-color);
-  margin-bottom: 16px;
+  margin-bottom: 17px;
 }
 
 .p1 .inner_container {
