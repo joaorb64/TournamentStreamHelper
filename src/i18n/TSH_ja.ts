@@ -176,6 +176,11 @@ p, li { white-space: pre-wrap; }
         <translation>IP</translation>
     </message>
     <message>
+        <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
         <source>LOCATION</source>
         <translation>本拠地</translation>
@@ -657,7 +662,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
         <source>Update</source>
         <translation>アップデート</translation>
     </message>
@@ -832,7 +837,7 @@ p, li { white-space: pre-wrap; }
         <translation>ステージのBAN/PICKブラウザ{0}を開く</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>新しく保存</translation>
     </message>

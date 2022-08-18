@@ -175,6 +175,11 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
         <source>LOCATION</source>
         <translation>LOCALIDAD</translation>
@@ -542,13 +547,13 @@ p, li { white-space: pre-wrap; }
         <translation>Abre {0} en un navegador para realizar el baneo de escenarios</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Guardar nuevo</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>

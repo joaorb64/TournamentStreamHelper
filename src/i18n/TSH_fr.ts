@@ -170,6 +170,11 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
         <source>LOCATION</source>
         <translation>LIEU</translation>
@@ -603,7 +608,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
         <source>Update</source>
         <translation>Mettre à jour</translation>
     </message>
@@ -851,7 +856,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ouvrez {0} dans un navigateur web pour effectuer le ban des stages.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Sauvegarder le règlement</translation>
     </message>

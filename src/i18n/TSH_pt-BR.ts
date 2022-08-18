@@ -170,6 +170,11 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
         <source>LOCATION</source>
         <translation>LOCAL</translation>
@@ -611,7 +616,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="190"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
         <source>Update</source>
         <translation>Atualizar</translation>
     </message>
@@ -871,7 +876,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abra {0} em um navegador de internet para realizar o stage strike.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="193"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Salvar como novo</translation>
     </message>
