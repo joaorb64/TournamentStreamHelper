@@ -1,0 +1,53 @@
+query TournamentStandingsQuery($eventSlug: String!, $playerNumber: Int!) {
+  event(slug: $eventSlug) {
+    standings(query: {page: 1, perPage: $playerNumber}) {
+      nodes {
+        entrant{
+          id
+          name
+          participants {
+            player {
+              id
+              gamerTag
+              prefix
+              name
+            }
+            user {
+              id
+              prefix
+              name
+              genderPronoun
+              location {
+                country
+                state
+                city
+              }
+              authorizations(types: [TWITTER]) {
+                externalUsername
+              }
+              images(type: "profile") {
+                url
+              }
+            }
+          }
+          paginatedSets(page: 1, perPage: 5, filters: { hideEmpty: true }) {
+            nodes {
+              games {
+                selections {
+                  entrant {
+                    participants {
+                      player {
+                        id
+                      }
+                    }
+                  }
+                  selectionValue
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

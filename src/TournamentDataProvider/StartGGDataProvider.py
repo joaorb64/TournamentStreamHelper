@@ -24,6 +24,7 @@ class StartGGDataProvider(TournamentDataProvider):
     EntrantsQuery = None
     TournamentDataQuery = None
     RecentSetsQuery = None
+    TournamentStandingsQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
@@ -841,108 +842,162 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 for i, team in enumerate(entrants):
                     for j, entrant in enumerate(team.get("participants", [])):
-                        player = entrant.get("player")
-                        user = entrant.get("user")
-
-                        playerData = {}
-
-                        if player:
-                            playerData["prefix"] = player.get("prefix")
-                            playerData["gamerTag"] = player.get("gamerTag")
-                            playerData["name"] = player.get("name")
-
-                            # Main character
-                            playerSelections = Counter()
-
-                            sets = deep_get(player, "sets.nodes", [])
-                            playerId = player.get("id")
-                            if len(sets) > 0:
-                                games = sets[0].get("games", [])
-                                if games and len(games) > 0:
-                                    for game in games:
-                                        selections = game.get("selections", [])
-                                        if selections:
-                                            for selection in selections:
-                                                participants = selection.get(
-                                                    "entrant", {}).get("participants", [])
-                                                if len(participants) > 0:
-                                                    participantId = participants[0].get(
-                                                        "player", {}).get("id", None)
-                                                    if participantId and participantId == playerId:
-                                                        playerSelections[selection.get(
-                                                            "selectionValue")] += 1
-
-                            mains = playerSelections.most_common()
-
-                            if len(mains) > 0:
-                                playerData["startggMains"] = mains
-
-                        if user:
-                            playerData["id"] = [
-                                player.get("id"),
-                                user.get("id")
-                            ]
-
-                            if len(user.get("authorizations", [])) > 0:
-                                playerData["twitter"] = user.get("authorizations", [])[
-                                    0].get("externalUsername")
-
-                            if user.get("genderPronoun"):
-                                playerData["pronoun"] = user.get(
-                                    "genderPronoun")
-
-                            if len(user.get("images")) > 0:
-                                playerData["avatar"] = user.get("images")[
-                                    0].get("url")
-
-                            if user.get("location"):
-                                # Country to country code
-                                if user.get("location").get("country"):
-                                    for country in TSHCountryHelper.countries.values():
-                                        if user.get("location").get("country") == country.get("en_name"):
-                                            playerData["country_code"] = country.get(
-                                                "code")
-                                            break
-
-                                # State -- direct
-                                if user.get("location").get("state"):
-                                    stateCode = user.get(
-                                        "location").get("state")
-                                    if stateCode:
-                                        playerData["state_code"] = user.get(
-                                            "location").get("state")
-                                # State -- from city
-                                elif user.get("location").get("city"):
-                                    stateCode = TSHCountryHelper.FindState(
-                                        playerData.get("country_code", None), user.get("location", {}).get("city", None))
-                                    if stateCode:
-                                        playerData["state_code"] = stateCode
-
-                            if playerData.get("startggMains"):
-                                if TSHGameAssetManager.instance.selectedGame:
-                                    gameCodename = TSHGameAssetManager.instance.selectedGame.get(
-                                        "codename")
-
-                                    mains = []
-
-                                    for sggmain in playerData.get("startggMains"):
-                                        main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
-                                            sggmain[0])
-                                        if main:
-                                            mains.append([main[0]])
-
-                                    playerData["mains"] = {
-                                        gameCodename: mains
-                                    }
-                                else:
-                                    playerData["mains"] = {}
-
+                        playerData = StartGGDataProvider.ProcessEntrantData(entrant)
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
                 players = []
 
                 page += 1
+        except Exception as e:
+            traceback.print_exc()
+
+    def ProcessEntrantData(entrant, setData=[]):
+        player = entrant.get("player")
+        user = entrant.get("user")
+
+        playerData = {}
+
+        if player:
+            playerData["prefix"] = player.get("prefix")
+            playerData["gamerTag"] = player.get("gamerTag")
+            playerData["name"] = player.get("name")
+
+            # Main character
+            playerSelections = Counter()
+
+            sets = []
+
+            if not setData:
+                sets = deep_get(player, "sets.nodes", [])
+            else:
+                sets = setData
+            
+            playerId = player.get("id")
+            
+            if len(sets) > 0:
+                games = sets[0].get("games", [])
+                if games and len(games) > 0:
+                    for game in games:
+                        selections = game.get("selections", [])
+                        if selections:
+                            for selection in selections:
+                                participants = selection.get(
+                                    "entrant", {}).get("participants", [])
+                                if len(participants) > 0:
+                                    participantId = participants[0].get(
+                                        "player", {}).get("id", None)
+                                    if participantId and participantId == playerId:
+                                        playerSelections[selection.get(
+                                            "selectionValue")] += 1
+
+            mains = playerSelections.most_common()
+
+            if len(mains) > 0:
+                playerData["startggMains"] = mains
+
+        if user:
+            playerData["id"] = [
+                player.get("id"),
+                user.get("id")
+            ]
+
+            if len(user.get("authorizations", [])) > 0:
+                playerData["twitter"] = user.get("authorizations", [])[
+                    0].get("externalUsername")
+
+            if user.get("genderPronoun"):
+                playerData["pronoun"] = user.get(
+                    "genderPronoun")
+
+            if len(user.get("images")) > 0:
+                playerData["avatar"] = user.get("images")[
+                    0].get("url")
+
+            if user.get("location"):
+                # Country to country code
+                if user.get("location").get("country"):
+                    for country in TSHCountryHelper.countries.values():
+                        if user.get("location").get("country") == country.get("en_name"):
+                            playerData["country_code"] = country.get(
+                                "code")
+                            break
+
+                # State -- direct
+                if user.get("location").get("state"):
+                    stateCode = user.get(
+                        "location").get("state")
+                    if stateCode:
+                        playerData["state_code"] = user.get(
+                            "location").get("state")
+                # State -- from city
+                elif user.get("location").get("city"):
+                    stateCode = TSHCountryHelper.FindState(
+                        playerData.get("country_code", None), user.get("location", {}).get("city", None))
+                    if stateCode:
+                        playerData["state_code"] = stateCode
+
+            if playerData.get("startggMains"):
+                if TSHGameAssetManager.instance.selectedGame:
+                    gameCodename = TSHGameAssetManager.instance.selectedGame.get(
+                        "codename")
+
+                    mains = []
+
+                    for sggmain in playerData.get("startggMains"):
+                        main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
+                            sggmain[0])
+                        if main:
+                            mains.append([main[0]])
+
+                    playerData["mains"] = {
+                        gameCodename: mains
+                    }
+                else:
+                    playerData["mains"] = {}
+
+        return(playerData)
+
+    def GetStandings(self, playerNumber, progress_callback):
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentStandingsQuery",
+                    "variables": {
+                        "playerNumber": playerNumber,
+                        "eventSlug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.TournamentStandingsQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+
+            standings = deep_get(data, "data.event.standings.nodes", [])
+
+            teams = []
+
+            for standing in standings:
+                team = {}
+
+                participants = deep_get(standing, "entrant.participants")
+
+                if len(participants) > 1:
+                    team["name"] = deep_get(standing, "entrant.name")
+
+                team["players"] = []
+
+                for entrant in participants:
+                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(standing, "paginatedSets")))
+                
+                teams.append(team)
+            return(teams)
         except Exception as e:
             traceback.print_exc()
 
@@ -967,3 +1022,6 @@ StartGGDataProvider.TournamentDataQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGRecentSetsQuery.txt", 'r')
 StartGGDataProvider.RecentSetsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
+StartGGDataProvider.TournamentStandingsQuery = f.read()

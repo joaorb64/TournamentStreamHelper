@@ -301,6 +301,15 @@ class TSHTournamentDataProvider:
             "id1": id1, "id2": id2, "callback": self.signals.recent_sets_updated, "requestTime": time.time_ns()
         })
         self.threadPool.start(worker)
+    
+    def GetStandings(self, playerNumber, callback):
+        worker = Worker(self.provider.GetStandings, **{
+            "playerNumber": playerNumber
+        })
+        worker.signals.result.connect(lambda data: [
+            callback.emit(data)
+        ])
+        self.threadPool.start(worker)
 
     def UiMounted(self):
         if SettingsManager.Get("TOURNAMENT_URL"):

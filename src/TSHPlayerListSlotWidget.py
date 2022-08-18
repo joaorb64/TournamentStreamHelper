@@ -70,3 +70,12 @@ class TSHPlayerListSlotWidget(QGroupBox):
     def SetCharacterNumber(self, value):
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
+
+    def SetTeamData(self, data):
+        if(data.get("name")):
+            self.slotName.setText(data.get("name"))
+        else:
+            self.slotName.setText("")
+        
+        for i, pw in enumerate(self.playerWidgets):
+            pw.SetData(data.get("players")[i])

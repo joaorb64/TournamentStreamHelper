@@ -28,3 +28,6 @@ class TournamentDataProvider:
 
     def GetRecentSets(self, id1, id2, callback):
         pass
+
+    def GetStandings(self, playerNumber):
+        pass
