@@ -521,22 +521,22 @@ p, li { white-space: pre-wrap; }
     <name>app</name>
     <message>
         <location filename="../TournamentStreamHelper.py" line="172"/>
-        <location filename="../TSHPlayerListWidget.py" line="19"/>
+        <location filename="../TSHPlayerListWidget.py" line="24"/>
         <source>Player List</source>
         <translation>Lista de Jugadores</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="52"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>Número de grupos</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="62"/>
+        <location filename="../TSHPlayerListWidget.py" line="67"/>
         <source>Players per slot</source>
         <translation>Jugadores por grupo</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="77"/>
         <location filename="../TSHScoreboardWidget.py" line="85"/>
         <source>Characters per player</source>
         <translation>Personajes por jugador</translation>

@@ -547,7 +547,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="172"/>
-        <location filename="../TSHPlayerListWidget.py" line="19"/>
+        <location filename="../TSHPlayerListWidget.py" line="24"/>
         <source>Player List</source>
         <translation>プレイヤーリスト</translation>
     </message>
@@ -787,17 +787,17 @@ p, li { white-space: pre-wrap; }
         <translation>解説者{0}</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="52"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>スロットの数</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="62"/>
+        <location filename="../TSHPlayerListWidget.py" line="67"/>
         <source>Players per slot</source>
         <translation>各スロットのプレイヤー数</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="77"/>
         <location filename="../TSHScoreboardWidget.py" line="85"/>
         <source>Characters per player</source>
         <translation>各プレイヤーの使用キャラクター数</translation>
