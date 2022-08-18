@@ -420,12 +420,25 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QLabel" name="labelValidation">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Validation</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="dsrGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="dsrGroup"/>
  </buttongroups>
 </ui>

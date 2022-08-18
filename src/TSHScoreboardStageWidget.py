@@ -118,6 +118,9 @@ class TSHScoreboardStageWidget(QWidget):
             QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
+        self.labelValidation = self.findChild(QLabel, "labelValidation")
+        self.labelValidation.setText("")
+
         self.signals.rulesets_changed.connect(self.LoadRulesets)
         self.LoadStartggRulesets()
         self.LoadRuleset()
@@ -421,7 +424,23 @@ class TSHScoreboardStageWidget(QWidget):
 
     def ExportCurrentRuleset(self):
         ruleset = self.GetCurrentRuleset()
+        self.ValidateRuleset(ruleset)
         StateManager.Set(f"score.ruleset", vars(ruleset))
+    
+    def ValidateRuleset(self, ruleset: Ruleset):
+        issues = []
+
+        # Validate bans
+        if len(ruleset.neutralStages) > 0:
+            if sum(ruleset.strikeOrder) != len(ruleset.neutralStages) - 1:
+                remaining = (len(ruleset.neutralStages) - 1) - sum(ruleset.strikeOrder)
+                issues.append(f"Number striked stages does not match the number of neutral stages. Should strike {remaining} more stage(s).")
+
+        if len(issues) == 0:
+            self.labelValidation.setText("<span style='color: green'>The current ruleset is valid!</span>")
+        else:
+            issuesText = "\n".join(issues)
+            self.labelValidation.setText(f'<span style="color: red">{issuesText}</span>')
 
     def GetCurrentRuleset(self, forSaving=False):
         ruleset = Ruleset()
