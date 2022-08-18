@@ -75,8 +75,8 @@
         ZOOM = 2.4;
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssb64") {
-        ASSET_TO_USE = "full";
-        ZOOM = 1.0;
+        ASSET_TO_USE = "artwork";
+        ZOOM = 2.0;
         FLIP_P2_ASSET = true;
       } else {
         ASSET_TO_USE = "full";

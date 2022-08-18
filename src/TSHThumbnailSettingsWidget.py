@@ -265,7 +265,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.updatePreview = self.settings.findChild(
             QPushButton, "btUpdatePreview")
-        self.updatePreview.clicked.connect(self.GeneratePreview)
+        self.updatePreview.clicked.connect(lambda: self.GeneratePreview(True))
 
         # -- load settings at init
         settings = SettingsManager.Get("thumbnail")
@@ -331,8 +331,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         # if preview not there
         if not os.path.isfile(tmp_file):
-            tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
+            try:
+                tmp_file = thumbnail.generate(
+                    isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
+            except Exception as e:
+                self.DisplayErrorMessage(e)
         self.preview.setPixmap(QPixmap(tmp_file))
 
     def enableOutline(self, index=0, val=True):
@@ -462,7 +465,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         return unloadable, family_to_path
 
     # re-generate preview
-    def GeneratePreview(self):
+    def GeneratePreview(self, manual=False):
         settings = SettingsManager.Get("thumbnail")
         if not settings.get("thumbnail_type"):
             settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
@@ -477,27 +480,45 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 settings["font_list"][font_index]["filePath"] = "Bold"
                 SettingsManager.Set("thumbnail", settings)
 
-        try:
-            worker = Worker(self.GeneratePreviewDo)
-            self.thumbnailGenerationThread.start(worker)
-        except Exception as e:
-            print(e)
-            msgBox = QMessageBox()
-            msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-            msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
-            msgBox.setText(QApplication.translate("app", "Warning"))
-            msgBox.setInformativeText(str(e))
-            msgBox.setIcon(QMessageBox.Warning)
-            msgBox.exec()
+        if not manual:
+            # Automatic preview update, we dont want it to spam error messages
+            try:
+                worker = Worker(self.GeneratePreviewDo)
+                self.thumbnailGenerationThread.start(worker)
+            except Exception as e:
+                pass
+        else:
+            # Manually clicked the update button
+            try:
+                tmp_file = thumbnail.generate(
+                    isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
+                if tmp_file:
+                    self.signals.updatePreview.emit(tmp_file)
+            except Exception as e:
+                self.DisplayErrorMessage(e)
 
     def GeneratePreviewDo(self, progress_callback):
         if self.thumbnailGenerationThread.activeThreadCount() > 1:
             return
 
         with self.lock:
-            tmp_file = thumbnail.generate(
-                isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
-            self.signals.updatePreview.emit(tmp_file)
+            try:
+                tmp_file = thumbnail.generate(
+                    isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
+                if tmp_file:
+                    self.signals.updatePreview.emit(tmp_file)
+            except Exception as e:
+                pass
+    
+    def DisplayErrorMessage(self, e):
+        print(e)
+        msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+        msgBox.setWindowTitle(QApplication.translate("thumb_app", "TSH - Thumbnail"))
+        msgBox.setText(QApplication.translate("app", "Warning"))
+        msgBox.setInformativeText(str(e))
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.exec()
 
     def UpdatePreview(self, file):
         self.preview.setPixmap(QPixmap(file))

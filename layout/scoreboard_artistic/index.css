@@ -385,8 +385,12 @@ body {
 
 .character_container > div {
   height: 100%;
-  flex-direction: column;
+  flex-direction: row;
   height: 92px;
+}
+
+.p2 .character_container > div {
+  flex-direction: row-reverse;
 }
 
 .character_container > div > div {
@@ -396,7 +400,7 @@ body {
 .character_container > div > div {
   overflow: hidden;
   width: 100%;
-  height: 500px;
+  height: 100%;
   display: flex;
   align-items: center;
   flex-shrink: 1;

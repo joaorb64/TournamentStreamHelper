@@ -22,17 +22,17 @@
         },
         "x_offset": 25,
         "y_padding": 0,
-        "height_center": 1001
+        "height_center": 75
     },
     "info_text": {
         "dimensions": {
             "x": 1920,
-            "y": 140
+            "y": 150
         },
         "x_position": 0,
         "x_offset": 100,
         "y_padding": 0,
-        "height_center": 75,
+        "height_center": 1001,
         "horizontal": true,
         "always_align_center": true
     },
@@ -42,8 +42,8 @@
         "y_offset": 20,
         "main": {
             "dimensions": {
-                "x": 300,
-                "y": 200
+                "x": 340,
+                "y": 340
             }
         },
         "side": {

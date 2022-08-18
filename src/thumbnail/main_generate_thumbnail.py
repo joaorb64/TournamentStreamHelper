@@ -453,9 +453,9 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
 def paste_round_text(thumbnail, data, display_phase=True):
     if display_phase:
         if template_data["info_text"]["horizontal"]:
-            phase_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
+            round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
                 template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
-            round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0])+round((template_data["info_text"]["dimensions"]["x"]/2.0)*ratio[0]), round(
+            phase_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0])+round((template_data["info_text"]["dimensions"]["x"]/2.0)*ratio[0]), round(
                 (template_data["info_text"]["height_center"]-(template_data["info_text"]["dimensions"]["y"]/2.0))*ratio[1]))
 
             text_max_dimensions = (round((template_data["info_text"]["dimensions"]["x"]/2.0)*ratio[0]), round(
