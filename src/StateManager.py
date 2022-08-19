@@ -12,11 +12,15 @@ from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
 
 class StateManager:
+    lastSavedState = {}
     state = {}
+    saveBlocked = False
 
     def SaveState():
         with open("./out/program_state.json", 'w', encoding='utf-8') as file:
             json.dump(StateManager.state, file, indent=4, sort_keys=False)
+            StateManager.lastSavedState = copy.deepcopy(StateManager.state)
+            StateManager.ExportText(StateManager.lastSavedState)
 
     def LoadState():
         try:
@@ -27,16 +31,14 @@ class StateManager:
             StateManager.SaveState()
 
     def Set(key: str, value):
-        oldState = copy.deepcopy(StateManager.state)
         deep_set(StateManager.state, key, value)
-        StateManager.SaveState()
-        StateManager.ExportText(oldState)
+        if not StateManager.saveBlocked:
+            StateManager.SaveState()
 
     def Unset(key: str):
-        oldState = copy.deepcopy(StateManager.state)
         deep_unset(StateManager.state, key)
-        StateManager.SaveState()
-        StateManager.ExportText(oldState)
+        if not StateManager.saveBlocked:
+            StateManager.SaveState()
 
     def Get(key: str, default=None):
         return deep_get(StateManager.state, key, default)
