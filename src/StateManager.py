@@ -31,14 +31,18 @@ class StateManager:
             StateManager.SaveState()
 
     def Set(key: str, value):
+        oldState = copy.deepcopy(StateManager.state)
         deep_set(StateManager.state, key, value)
         if not StateManager.saveBlocked:
             StateManager.SaveState()
+        StateManager.ExportText(oldState)
 
     def Unset(key: str):
+        oldState = copy.deepcopy(StateManager.state)
         deep_unset(StateManager.state, key)
         if not StateManager.saveBlocked:
             StateManager.SaveState()
+        StateManager.ExportText(oldState)
 
     def Get(key: str, default=None):
         return deep_get(StateManager.state, key, default)
