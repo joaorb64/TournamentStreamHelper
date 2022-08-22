@@ -35,18 +35,19 @@
                 // TODO: Standings formula
                 Array(1, 2, 3, 4, 5, 5, 7, 7, 17, 17, 17, 17, 21, 21, 21, 21)[i]
               }</div>
-              <div class="icon avatar"></div>
-              <div class="icon online_avatar"></div>
-              <div class="name_twitter">
-              <div class="name"></div>
-              <div class="twitter"></div>
+              <div class="footer">
+                <!-- <div class="icon avatar"></div> -->
+                <!-- <div class="icon online_avatar"></div> -->
+                <div class="name_twitter">
+                  <div class="name"></div>
+                  <div class="twitter"></div>
+                </div>
+                <div class="sponsor_icon"></div>
               </div>
-              <div class="sponsor_icon"></div>
               <div class="flags">
                 <div class="flagcountry"></div>
                 ${player.state.asset ? `<div class="flagstate"></div>` : ''}
               </div>
-              <div class="filler"></div>
               <div class="character_container"></div>
             </div>
           `
@@ -62,16 +63,12 @@
       for (let i = 0; i < htmls.length; i++) {
         let html = htmls[i]
 
-        if (!window.SCALING) {
-          $('.players_container').html($('.players_container').html() + html)
+        if (i == 0) {
+          $('.top1_container').html($('.top1_container').html() + html)
+        } else if (i < 4) {
+          $('.top4_container').html($('.top4_container').html() + html)
         } else {
-          if (i == 0) {
-            $('.top1_container').html($('.top1_container').html() + html)
-          } else if (i < 3) {
-            $('.top3_container').html($('.top3_container').html() + html)
-          } else {
-            $('.players_container').html($('.players_container').html() + html)
-          }
+          $('.top8_container').html($('.top8_container').html() + html)
         }
       }
 
@@ -115,13 +112,13 @@
 
             if (t == 0) {
               ASSET_TO_USE = 'full'
-              ZOOM = 1.2
-            } else if (t < 3) {
+              ZOOM = 1.6
+            } else if (t < 4) {
               ASSET_TO_USE = 'full'
-              ZOOM = 1.4
+              ZOOM = 1.6
             } else {
               ASSET_TO_USE = 'full'
-              ZOOM = 2
+              ZOOM = 1.6
             }
 
             Object.values(player.character).forEach((character, index) => {
@@ -161,7 +158,8 @@
                     CenterImage(
                       $(i),
                       { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
-                      $(i).attr('data-zoom')
+                      $(i).attr('data-zoom'),
+                      { x: 0.5, y: 0.5 }
                     )
                   }
                 })

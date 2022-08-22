@@ -78,7 +78,7 @@ function SetInnerHtml(
   })
 }
 
-function CenterImage(element, eyesight, customZoom = 1) {
+function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
   let image = element.css('background-image')
 
   if (image != undefined && image.includes('url(')) {
@@ -107,7 +107,12 @@ function CenterImage(element, eyesight, customZoom = 1) {
       let xx = 0
       let yy = 0
 
-      xx = -eyesight.x * zoom + element.innerWidth() / 2
+      if (!customCenter) {
+        xx = -eyesight.x * zoom + element.innerWidth() / 2
+      } else {
+        xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x
+      }
+
       console.log('xx', xx)
 
       let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom)
@@ -116,7 +121,11 @@ function CenterImage(element, eyesight, customZoom = 1) {
       if (xx > 0) xx = 0
       if (xx < -maxMoveX) xx = -maxMoveX
 
-      yy = -eyesight.y * zoom + element.innerHeight() / 2
+      if (!customCenter) {
+        yy = -eyesight.y * zoom + element.innerHeight() / 2
+      } else {
+        yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y
+      }
       console.log('yy', yy)
 
       let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom)

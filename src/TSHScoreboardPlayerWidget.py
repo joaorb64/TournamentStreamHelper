@@ -667,7 +667,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     characterIndex = i
                                     break
                         character_element.setCurrentIndex(characterIndex)
-                        color_element.setCurrentIndex(int(main[1]))
+                        if len(main) > 1:
+                            color_element.setCurrentIndex(int(main[1]))
+                        else:
+                            color_element.setCurrentIndex(0)
         StateManager.saveBlocked = False
         StateManager.SaveState()
 

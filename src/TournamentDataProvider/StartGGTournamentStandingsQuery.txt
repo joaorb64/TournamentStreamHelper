@@ -2,7 +2,7 @@ query TournamentStandingsQuery($eventSlug: String!, $playerNumber: Int!) {
   event(slug: $eventSlug) {
     standings(query: {page: 1, perPage: $playerNumber}) {
       nodes {
-        entrant{
+        entrant {
           id
           name
           participants {
@@ -30,7 +30,7 @@ query TournamentStandingsQuery($eventSlug: String!, $playerNumber: Int!) {
               }
             }
           }
-          paginatedSets(page: 1, perPage: 5, filters: { hideEmpty: true }) {
+          paginatedSets(page: 1, perPage: 64, sortType: RECENT, filters: { hideEmpty: true }) {
             nodes {
               games {
                 selections {

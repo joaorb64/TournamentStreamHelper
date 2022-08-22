@@ -78,4 +78,4 @@ class TSHPlayerListSlotWidget(QGroupBox):
             self.slotName.setText("")
         
         for i, pw in enumerate(self.playerWidgets):
-            pw.SetData(data.get("players")[i])
+            pw.SetData(data.get("players")[i], True)

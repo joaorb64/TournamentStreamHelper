@@ -876,20 +876,21 @@ class StartGGDataProvider(TournamentDataProvider):
             playerId = player.get("id")
             
             if len(sets) > 0:
-                games = sets[0].get("games", [])
-                if games and len(games) > 0:
-                    for game in games:
-                        selections = game.get("selections", [])
-                        if selections:
-                            for selection in selections:
-                                participants = selection.get(
-                                    "entrant", {}).get("participants", [])
-                                if len(participants) > 0:
-                                    participantId = participants[0].get(
-                                        "player", {}).get("id", None)
-                                    if participantId and participantId == playerId:
-                                        playerSelections[selection.get(
-                                            "selectionValue")] += 1
+                for _set in sets:
+                    games = _set.get("games", [])
+                    if games and len(games) > 0:
+                        for game in games:
+                            selections = game.get("selections", [])
+                            if selections:
+                                for selection in selections:
+                                    participants = selection.get(
+                                        "entrant", {}).get("participants", [])
+                                    if len(participants) > 0:
+                                        participantId = participants[0].get(
+                                            "player", {}).get("id", None)
+                                        if participantId and participantId == playerId:
+                                            playerSelections[selection.get(
+                                                "selectionValue")] += 1
 
             mains = playerSelections.most_common()
 
@@ -994,7 +995,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 team["players"] = []
 
                 for entrant in participants:
-                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(standing, "paginatedSets")))
+                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(standing, "entrant.paginatedSets.nodes")))
                 
                 teams.append(team)
             return(teams)
