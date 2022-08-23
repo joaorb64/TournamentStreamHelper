@@ -434,10 +434,11 @@ class TSHScoreboardStageWidget(QWidget):
         if len(ruleset.neutralStages) > 0:
             if sum(ruleset.strikeOrder) != len(ruleset.neutralStages) - 1:
                 remaining = (len(ruleset.neutralStages) - 1) - sum(ruleset.strikeOrder)
-                issues.append(f"Number striked stages does not match the number of neutral stages. Should strike {remaining} more stage(s).")
+                issues.append(QApplication.translate("app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
 
         if len(issues) == 0:
-            self.labelValidation.setText("<span style='color: green'>The current ruleset is valid!</span>")
+            validText = QApplication.translate("app", "The current ruleset is valid!")
+            self.labelValidation.setText(f"<span style='color: green'>{validText}</span>")
         else:
             issuesText = "\n".join(issues)
             self.labelValidation.setText(f'<span style="color: red">{issuesText}</span>')
