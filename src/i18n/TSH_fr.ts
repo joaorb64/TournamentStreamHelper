@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
         <source>Validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Validation</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="44"/>
@@ -753,7 +753,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="162"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>État</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="167"/>
@@ -822,6 +822,11 @@ p, li { white-space: pre-wrap; }
         <translation>Nombre de personnages par joueur</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListWidget.py" line="88"/>
+        <source>Load tournament standings</source>
+        <translation>Charger les résultats du tournoi</translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="55"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="740"/>
         <source>Save new player</source>
@@ -859,6 +864,16 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Sauvegarder le règlement</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="437"/>
+        <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
+        <translation>Le nombre total de bans ne correspond pas au nombre de stages neutres. Veuillez bannir {0} stages supplémentaires.</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="440"/>
+        <source>The current ruleset is valid!</source>
+        <translation>Le règlement actuel est valide !</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="60"/>

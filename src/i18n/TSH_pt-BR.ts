@@ -842,6 +842,11 @@ p, li { white-space: pre-wrap; }
         <translation>Personagens por jogador</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListWidget.py" line="88"/>
+        <source>Load tournament standings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="55"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="740"/>
         <source>Save new player</source>
@@ -879,6 +884,16 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Salvar como novo</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="437"/>
+        <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="440"/>
+        <source>The current ruleset is valid!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="84"/>

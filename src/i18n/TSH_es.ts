@@ -542,6 +542,11 @@ p, li { white-space: pre-wrap; }
         <translation>Personajes por jugador</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListWidget.py" line="88"/>
+        <source>Load tournament standings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardStageWidget.py" line="118"/>
         <source>Open {0} in a browser to stage strike.</source>
         <translation>Abre {0} en un navegador para realizar el baneo de escenarios</translation>
@@ -550,6 +555,16 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardStageWidget.py" line="196"/>
         <source>Save new</source>
         <translation>Guardar nuevo</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="437"/>
+        <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="440"/>
+        <source>The current ruleset is valid!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>

@@ -85,7 +85,7 @@ class TSHPlayerListWidget(QDockWidget):
         row.layout().setSpacing(0)
         topOptions.layout().addWidget(row)
 
-        self.loadFromStandingsBt = QPushButton("Load tournament standings")
+        self.loadFromStandingsBt = QPushButton(QApplication.translate("app", "Load tournament standings"))
         self.loadFromStandingsBt.clicked.connect(self.LoadFromStandingsClicked)
         row.layout().addWidget(self.loadFromStandingsBt)
 
