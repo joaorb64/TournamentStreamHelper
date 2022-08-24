@@ -78,7 +78,14 @@ function SetInnerHtml(
   })
 }
 
-function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
+function CenterImage(
+  element,
+  eyesight,
+  customZoom = 1,
+  customCenter = null,
+  customElement = null,
+  fullbody = undefined
+) {
   let image = element.css('background-image')
 
   if (image != undefined && image.includes('url(')) {
@@ -93,8 +100,10 @@ function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
         }
       }
 
-      zoom_x = element.innerWidth() / img.naturalWidth
-      zoom_y = element.innerHeight() / img.naturalHeight
+      if (!customElement) customElement = element
+
+      zoom_x = customElement.innerWidth() / img.naturalWidth
+      zoom_y = customElement.innerHeight() / img.naturalHeight
 
       if (zoom_x > zoom_y) {
         zoom = zoom_x
@@ -103,6 +112,10 @@ function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
       }
 
       zoom *= customZoom
+
+      console.log(fullbody)
+
+      if (fullbody !== 'undefined') zoom = customZoom
 
       let xx = 0
       let yy = 0
@@ -118,8 +131,10 @@ function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
       let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom)
       console.log('maxMoveX', maxMoveX)
 
-      if (xx > 0) xx = 0
-      if (xx < -maxMoveX) xx = -maxMoveX
+      if (fullbody === 'undefined') {
+        if (xx > 0) xx = 0
+        if (xx < -maxMoveX) xx = -maxMoveX
+      }
 
       if (!customCenter) {
         yy = -eyesight.y * zoom + element.innerHeight() / 2
@@ -131,8 +146,10 @@ function CenterImage(element, eyesight, customZoom = 1, customCenter = null) {
       let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom)
       console.log('maxMoveY', maxMoveY)
 
-      if (yy > 0) yy = 0
-      if (yy < -maxMoveY) yy = -maxMoveY
+      if (fullbody === 'undefined') {
+        if (yy > 0) yy = 0
+        if (yy < -maxMoveY) yy = -maxMoveY
+      }
 
       console.log('zoom', zoom)
 

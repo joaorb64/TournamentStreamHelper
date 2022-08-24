@@ -36,6 +36,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.playerWidgets = []
 
     def SetPlayersPerTeam(self, number):
+        StateManager.BlockSaving()
         while len(self.playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
                 index=len(self.playerWidgets)+1, teamNumber=1, path=f'player_list.slot.{self.index}.player.{len(self.playerWidgets)+1}')
@@ -57,6 +58,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
             self.playerWidgets.remove(p)
             StateManager.Unset(p.path)
             p.deleteLater()
+        
+        StateManager.ReleaseSaving()
 
         # if number > 1:
         #     self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -68,10 +71,13 @@ class TSHPlayerListSlotWidget(QGroupBox):
         #     self.team2column.findChild(QLineEdit, "teamName").setText("")
 
     def SetCharacterNumber(self, value):
+        StateManager.BlockSaving()
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
+        StateManager.ReleaseSaving()
 
     def SetTeamData(self, data):
+        StateManager.BlockSaving()
         if(data.get("name")):
             self.slotName.setText(data.get("name"))
         else:
@@ -79,3 +85,4 @@ class TSHPlayerListSlotWidget(QGroupBox):
         
         for i, pw in enumerate(self.playerWidgets):
             pw.SetData(data.get("players")[i], True)
+        StateManager.ReleaseSaving()

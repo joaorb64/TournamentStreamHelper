@@ -2,6 +2,8 @@ import os
 from time import sleep
 from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
 
+os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
+
 class PageShotter(QtWebEngineWidgets.QWebEngineView):
     def __init__(self, parent=None):
         super(PageShotter, self).__init__(parent)

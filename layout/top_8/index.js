@@ -121,12 +121,32 @@
               ZOOM = 1.6
             }
 
-            Object.values(player.character).forEach((character, index) => {
+            let centering = {
+              1: [[0.5, 0.5]],
+              2: [
+                [0.25, 0.75],
+                [0.75, 0.25]
+              ],
+              3: [
+                [0.5, 0.6],
+                [0.1, 0.2],
+                [0.9, 0.2]
+              ]
+            }
+
+            let validCharacters = Object.values(player.character).filter(
+              (character) => character.assets[ASSET_TO_USE] != null
+            )
+
+            Object.values(validCharacters).forEach((character, index) => {
               if (character.assets[ASSET_TO_USE]) {
                 charactersHtml += `
                   <div class="icon stockicon">
                       <div
-                        style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'
+                        style='
+                          background-image: url(../../${character.assets[ASSET_TO_USE].asset});
+                          z-index: ${validCharacters.length - index}
+                        '
                         data-eyesight-x='${
                           character.assets[ASSET_TO_USE].eyesight
                             ? character.assets[ASSET_TO_USE].eyesight.x
@@ -137,6 +157,9 @@
                             ? character.assets[ASSET_TO_USE].eyesight.y
                             : null
                         }'
+                        data-centering-x='${centering[validCharacters.length][index][0]}'
+                        data-centering-y='${centering[validCharacters.length][index][1]}'
+                        data-fullbody='${character.assets[ASSET_TO_USE].fullbody}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -159,7 +182,9 @@
                       $(i),
                       { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
                       $(i).attr('data-zoom'),
-                      { x: 0.5, y: 0.5 }
+                      { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
+                      $(i).parent().parent(),
+                      $(i).attr('data-fullbody')
                     )
                   }
                 })

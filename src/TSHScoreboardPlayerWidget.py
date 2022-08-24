@@ -566,7 +566,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageDeletePlayerFromDBActive()
 
     def SetData(self, data, dontLoadFromDB=False, clear=True):
-        StateManager.saveBlocked = True
+        StateManager.BlockSaving()
 
         if clear:
             self.Clear()
@@ -671,8 +671,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             color_element.setCurrentIndex(int(main[1]))
                         else:
                             color_element.setCurrentIndex(0)
-        StateManager.saveBlocked = False
-        StateManager.SaveState()
+                            
+        StateManager.ReleaseSaving()
 
     def GetCurrentPlayerTag(self):
         gamerTag = self.findChild(QWidget, "name").text()

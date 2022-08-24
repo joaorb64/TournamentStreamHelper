@@ -538,6 +538,7 @@ class TSHScoreboardWidget(QDockWidget):
                 QLineEdit, "teamName").editingFinished.emit()
 
     def SwapTeams(self):
+        StateManager.BlockSaving()
         tmpData = [[], []]
 
         # Save state
@@ -594,6 +595,8 @@ class TSHScoreboardWidget(QDockWidget):
                 QLineEdit, "teamName").editingFinished.emit()
 
         self.teamsSwapped = not self.teamsSwapped
+
+        StateManager.ReleaseSaving()
 
     def GetRecentSets(self):
         updated = False

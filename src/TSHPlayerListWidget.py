@@ -17,6 +17,7 @@ class TSHPlayerListWidgetSignals(QObject):
 
 class TSHPlayerListWidget(QDockWidget):
     def __init__(self, *args):
+        StateManager.BlockSaving()
         super().__init__(*args)
 
         self.signals = TSHPlayerListWidgetSignals()
@@ -111,19 +112,23 @@ class TSHPlayerListWidget(QDockWidget):
         self.slotNumber.setValue(8)
 
         self.signals.UpdateData.connect(self.LoadFromStandings)
+        StateManager.ReleaseSaving()
     
     def LoadFromStandingsClicked(self):
         TSHTournamentDataProvider.instance.GetStandings(self.slotNumber.value(), self.signals.UpdateData)
     
     def LoadFromStandings(self, data):
+        StateManager.BlockSaving()
         if len(data) > 0:
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
             
             for i, slot in enumerate(self.slotWidgets):
                 slot.SetTeamData(data[i])
+        StateManager.ReleaseSaving()
 
     def SetSlotNumber(self, number):
+        StateManager.BlockSaving()
         while len(self.slotWidgets) < number:
             s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self)
             self.slotWidgets.append(s)
@@ -144,11 +149,16 @@ class TSHPlayerListWidget(QDockWidget):
             s.setParent(None)
             self.slotWidgets.remove(s)
             StateManager.Unset(f'player_list.slot.{s.index}')
+        StateManager.ReleaseSaving()
 
     def SetCharactersPerPlayer(self, value):
+        StateManager.BlockSaving()
         for s in self.slotWidgets:
             s.SetCharacterNumber(value)
+        StateManager.ReleaseSaving()
 
     def SetPlayersPerTeam(self, number):
+        StateManager.BlockSaving()
         for s in self.slotWidgets:
             s.SetPlayersPerTeam(number)
+        StateManager.ReleaseSaving()

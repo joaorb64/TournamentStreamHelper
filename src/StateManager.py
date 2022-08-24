@@ -14,13 +14,23 @@ from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 class StateManager:
     lastSavedState = {}
     state = {}
-    saveBlocked = False
+    saveBlocked = 0
+
+    def BlockSaving():
+        StateManager.saveBlocked += 1
+    
+    def ReleaseSaving():
+        StateManager.saveBlocked -= 1
+        if StateManager.saveBlocked == 0:
+            StateManager.SaveState()
 
     def SaveState():
-        with open("./out/program_state.json", 'w', encoding='utf-8') as file:
-            json.dump(StateManager.state, file, indent=4, sort_keys=False)
-            StateManager.lastSavedState = copy.deepcopy(StateManager.state)
-            StateManager.ExportText(StateManager.lastSavedState)
+        if StateManager.saveBlocked == 0:
+            with open("./out/program_state.json", 'w', encoding='utf-8') as file:
+                print("SaveState")
+                json.dump(StateManager.state, file, indent=4, sort_keys=False)
+                StateManager.lastSavedState = copy.deepcopy(StateManager.state)
+                StateManager.ExportText(StateManager.lastSavedState)
 
     def LoadState():
         try:
@@ -33,21 +43,22 @@ class StateManager:
     def Set(key: str, value):
         oldState = copy.deepcopy(StateManager.state)
         deep_set(StateManager.state, key, value)
-        if not StateManager.saveBlocked:
+        if StateManager.saveBlocked == 0:
             StateManager.SaveState()
-        StateManager.ExportText(oldState)
+            # StateManager.ExportText(oldState)
 
     def Unset(key: str):
         oldState = copy.deepcopy(StateManager.state)
         deep_unset(StateManager.state, key)
-        if not StateManager.saveBlocked:
+        if StateManager.saveBlocked == 0:
             StateManager.SaveState()
-        StateManager.ExportText(oldState)
+            # StateManager.ExportText(oldState)
 
     def Get(key: str, default=None):
         return deep_get(StateManager.state, key, default)
 
     def ExportText(oldState):
+        print("ExportText")
         diff = DeepDiff(oldState, StateManager.state)
         # print(diff)
 

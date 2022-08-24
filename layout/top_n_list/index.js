@@ -1,6 +1,6 @@
 ;(($) => {
   var ASSET_TO_USE = 'full'
-  var ZOOM = 1.4
+  var ZOOM = 1
 
   gsap.config({ nullTargetWarn: false, trialWarn: false })
 
@@ -118,6 +118,7 @@
                             ? character.assets[ASSET_TO_USE].eyesight.y
                             : null
                         }'
+                        data-fullbody='${character.assets[ASSET_TO_USE].fullbody}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -140,7 +141,9 @@
                       $(i),
                       { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
                       $(i).attr('data-zoom'),
-                      { x: 0.5, y: 0.5 }
+                      { x: 0.5, y: 0.5 },
+                      $(i).parent().parent(),
+                      $(i).attr('data-fullbody')
                     )
                   }
                 })
@@ -189,6 +192,8 @@
             )
           }
         })
+
+        gsap.from($(`.slot${t + 1}`), { x: -100, autoAlpha: 0, duration: 0.4 }, 0.5 + 0.3 * t)
       })
     }
 
