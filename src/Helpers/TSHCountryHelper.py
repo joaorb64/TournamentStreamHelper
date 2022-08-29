@@ -61,9 +61,9 @@ class TSHCountryHelper(QObject):
                 display_name = c["name"]
 
                 locale = TSHLocaleHelper.programLocale
-                if locale.replace("-", "_") in c["translations"]:
+                if locale.replace("_", "-") in c["translations"]:
                     display_name = c["translations"][locale.replace(
-                        "-", "_")]
+                        "_", "-")]
                 elif re.split("-|_", locale)[0] in c["translations"]:
                     display_name = c["translations"][re.split(
                         "-|_", locale)[0]]
@@ -72,9 +72,9 @@ class TSHCountryHelper(QObject):
                 export_name = c["name"]
 
                 locale = TSHLocaleHelper.exportLocale
-                if locale.replace("-", "_") in c["translations"]:
+                if locale.replace("_", "-") in c["translations"]:
                     export_name = c["translations"][locale.replace(
-                        "-", "_")]
+                        "_", "-")]
                 elif re.split("-|_", locale)[0] in c["translations"]:
                     export_name = c["translations"][re.split(
                         "-|_", locale)[0]]

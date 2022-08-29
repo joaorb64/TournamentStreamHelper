@@ -29,8 +29,8 @@ class StateManager:
             with open("./out/program_state.json", 'w', encoding='utf-8') as file:
                 print("SaveState")
                 json.dump(StateManager.state, file, indent=4, sort_keys=False)
-                StateManager.lastSavedState = copy.deepcopy(StateManager.state)
                 StateManager.ExportText(StateManager.lastSavedState)
+                StateManager.lastSavedState = copy.deepcopy(StateManager.state)
 
     def LoadState():
         try:
