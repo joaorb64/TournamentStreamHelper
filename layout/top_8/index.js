@@ -58,7 +58,9 @@
         htmls.push(html)
       })
 
-      $('.players_container').html('')
+      $('.top1_container').html('')
+      $('.top4_container').html('')
+      $('.top8_container').html('')
 
       for (let i = 0; i < htmls.length; i++) {
         let html = htmls[i]
