@@ -13,29 +13,40 @@ from .TSHGameAssetManager import *
 from .Workers import Worker
 
 
-class PreviewWidget(QLabel):
+class PreviewWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setSizePolicy(
             QSizePolicy.Ignored,
             QSizePolicy.Ignored
         )
-        self._pixmap = None
+        self._pixmap: QPixmap = None
 
     def setPixmap(self, pixmap):
         self._pixmap = pixmap
 
-        super().setPixmap(self._pixmap.scaled(
-            self.width(),
-            self.height(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        ))
-
     def resizeEvent(self, QResizeEvent):
-        super().resizeEvent(QResizeEvent)
+        self.repaint()
+    
+    def paintEvent(self, e):
+        qp = QPainter()
+        qp.begin(self)
+        self.drawWidget(qp)
+        qp.end()
+    
+    def drawWidget(self, qp: QPainter):
         if self._pixmap:
-            self.setPixmap(self._pixmap)
+            scaled = self._pixmap.scaled(
+                self.width()-64,
+                self.height()-64,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            )
+            qp.drawPixmap(int((self.width()-scaled.width())/2), int((self.height()-scaled.height())/2), scaled)
+
+            if scaled.width() > 512:
+                mini = self._pixmap.scaledToWidth(256)
+                qp.drawPixmap(self.width()-mini.width(), self.height()-mini.height(), mini)
 
 
 class TSHThumbnailSettingsWidgetSignals(QObject):

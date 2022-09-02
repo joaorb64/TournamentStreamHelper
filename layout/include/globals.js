@@ -84,7 +84,7 @@ function CenterImage(
   customZoom = 1,
   customCenter = null,
   customElement = null,
-  fullbody = undefined
+  fullbody_direction = undefined
 ) {
   let image = element.css('background-image')
 
@@ -105,17 +105,35 @@ function CenterImage(
       zoom_x = customElement.innerWidth() / img.naturalWidth
       zoom_y = customElement.innerHeight() / img.naturalHeight
 
-      if (zoom_x > zoom_y) {
-        zoom = zoom_x
+      // For cropped assets, zoom to fill
+      if (!fullbody_direction) {
+        if (zoom_x > zoom_y) {
+          zoom = zoom_x
+        } else {
+          zoom = zoom_y
+        }
       } else {
-        zoom = zoom_y
+        if (
+          fullbody_direction.includes('u') &&
+          fullbody_direction.includes('d') &&
+          fullbody_direction.includes('l') &&
+          fullbody_direction.includes('r')
+        ) {
+          zoom = customZoom
+        } else if (fullbody_direction.includes('l') && fullbody_direction.includes('r')) {
+          zoom = zoom_y
+        } else if (fullbody_direction.includes('u') && fullbody_direction.includes('d')) {
+          zoom = zoom_x
+        } else {
+          zoom = customZoom
+        }
       }
 
       zoom *= customZoom
 
-      console.log(fullbody)
+      console.log(fullbody_direction)
 
-      if (fullbody !== 'undefined') zoom = customZoom
+      //if (fullbody_direction) zoom = customZoom
 
       let xx = 0
       let yy = 0
@@ -128,12 +146,14 @@ function CenterImage(
 
       console.log('xx', xx)
 
-      let maxMoveX = Math.abs(element.innerWidth() - img.naturalWidth * zoom)
+      let maxMoveX = element.innerWidth() - img.naturalWidth * zoom
       console.log('maxMoveX', maxMoveX)
 
-      if (fullbody === 'undefined') {
+      if (!fullbody_direction || !fullbody_direction.includes('l')) {
         if (xx > 0) xx = 0
-        if (xx < -maxMoveX) xx = -maxMoveX
+      }
+      if (!fullbody_direction || !fullbody_direction.includes('r')) {
+        if (xx < maxMoveX) xx = maxMoveX
       }
 
       if (!customCenter) {
@@ -143,12 +163,14 @@ function CenterImage(
       }
       console.log('yy', yy)
 
-      let maxMoveY = Math.abs(element.innerHeight() - img.naturalHeight * zoom)
+      let maxMoveY = element.innerHeight() - img.naturalHeight * zoom
       console.log('maxMoveY', maxMoveY)
 
-      if (fullbody === 'undefined') {
+      if (!fullbody_direction || !fullbody_direction.includes('u')) {
         if (yy > 0) yy = 0
-        if (yy < -maxMoveY) yy = -maxMoveY
+      }
+      if (!fullbody_direction || !fullbody_direction.includes('d')) {
+        if (yy < maxMoveY) yy = maxMoveY
       }
 
       console.log('zoom', zoom)

@@ -113,26 +113,26 @@
             let charactersHtml = ''
 
             if (t == 0) {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = 'fuller'
+              ZOOM = 0.8
             } else if (t < 4) {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = 'fuller'
+              ZOOM = 0.6
             } else {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = 'fuller'
+              ZOOM = 0.5
             }
 
             let centering = {
-              1: [[0.5, 0.5]],
+              1: [[0.5, 0.4]],
               2: [
-                [0.25, 0.75],
-                [0.75, 0.25]
+                [0.3, 0.7],
+                [0.7, 0.3]
               ],
               3: [
-                [0.5, 0.6],
-                [0.1, 0.2],
-                [0.9, 0.2]
+                [0.5, 0.7],
+                [0.3, 0.3],
+                [0.7, 0.3]
               ]
             }
 
@@ -161,7 +161,9 @@
                         }'
                         data-centering-x='${centering[validCharacters.length][index][0]}'
                         data-centering-y='${centering[validCharacters.length][index][1]}'
-                        data-fullbody='${character.assets[ASSET_TO_USE].fullbody}'
+                        data-uncropped-edge='${JSON.stringify(
+                          character.assets[ASSET_TO_USE].uncropped_edge
+                        )}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -186,7 +188,7 @@
                       $(i).attr('data-zoom'),
                       { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
                       $(i).parent().parent(),
-                      $(i).attr('data-fullbody')
+                      $(i).attr('data-uncropped-edge')
                     )
                   }
                 })

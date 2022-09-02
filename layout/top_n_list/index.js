@@ -118,7 +118,9 @@
                             ? character.assets[ASSET_TO_USE].eyesight.y
                             : null
                         }'
-                        data-fullbody='${character.assets[ASSET_TO_USE].fullbody}'
+                        data-uncropped-edge='${JSON.stringify(
+                          character.assets[ASSET_TO_USE].uncropped_edge
+                        )}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -143,7 +145,7 @@
                       $(i).attr('data-zoom'),
                       { x: 0.5, y: 0.5 },
                       $(i).parent().parent(),
-                      $(i).attr('data-fullbody')
+                      $(i).attr('data-uncropped-edge')
                     )
                   }
                 })
