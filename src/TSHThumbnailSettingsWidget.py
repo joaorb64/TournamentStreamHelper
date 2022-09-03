@@ -93,7 +93,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         game_codename = TSHGameAssetManager.instance.selectedGame.get(
             "codename")
         if game_codename:
+            self.zoom.setEnabled(True)
             self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
+        else:
+            self.zoom.setEnabled(False)
 
     def setDefaults(self, button_mode=False):
         settings = {
@@ -557,9 +560,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 if game_codename:
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(
                         asset_dict[settings[f"asset/{game_codename}"]]))
+                    self.selectRenderType.setEnabled(True)
+                    self.zoom.setEnabled(True)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
                 else:
+                    self.zoom.setEnabled(False)
+                    self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except KeyError:
                 if "full" in asset_dict.keys():
@@ -576,6 +583,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             try:
                 game_codename = TSHGameAssetManager.instance.selectedGame.get(
                     "codename")
+                if not game_codename:
+                    self.selectRenderType.setEnabled(False)
+                    self.zoom.setEnabled(False)
+                else:
+                    self.selectRenderType.setEnabled(True)
+                    self.zoom.setEnabled(True)
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self, key=f"zoom/{game_codename}", val=self.zoom.value(), generatePreview=True)
             except Exception as e:
@@ -586,6 +599,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             try:
                 game_codename = TSHGameAssetManager.instance.selectedGame.get(
                     "codename")
+                if not game_codename:
+                    self.zoom.setEnabled(False)
+                    self.selectRenderType.setEnabled(False)
+                else:
+                    self.zoom.setEnabled(True)
+                    self.selectRenderType.setEnabled(True)
                 if self.selectRenderType.currentData():
                     TSHThumbnailSettingsWidget.SaveSettings(
                         self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=True)
