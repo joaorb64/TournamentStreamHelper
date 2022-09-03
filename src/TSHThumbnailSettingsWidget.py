@@ -532,7 +532,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         if (TSHGameAssetManager.instance.selectedGame.get("name")):
             game_name = TSHGameAssetManager.instance.selectedGame.get("name")
         else:
-            game_name = "(No game selected)"
+            game_name = QApplication.translate("Form", "(No game selected)")
         label_text = f'<html><head/><body><p><span style=" font-weight:700;">{game_name}</span></p></body></html>'
         self.selectRenderLabel.setText(label_text)
         if (TSHGameAssetManager.instance.selectedGame.get("assets")):
