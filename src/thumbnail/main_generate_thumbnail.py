@@ -27,6 +27,7 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 
+crop_borders = [] # left, right, top, bottom
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -103,21 +104,30 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             msg=f"Size cannot be negative, given max size is {max_size}")
 
     resized_eyesight = None
-    if (x_ratio < y_ratio and fill_x and fill_y) or (fill_y and not fill_x) or ((not fill_x) and (not fill_y) and (x_ratio > y_ratio)):
-        new_x = y_ratio*current_size.width()*zoom
-        new_y = max_size[1]*zoom
-        if eyesight_coordinates:
-            resized_eyesight = (
-                round(eyesight_coordinates[0]*y_ratio*zoom), round(eyesight_coordinates[1]*y_ratio*zoom))
-    else:
-        new_x = max_size[0]*zoom
-        new_y = x_ratio*current_size.height()*zoom
-        if eyesight_coordinates:
-            resized_eyesight = (
-                round(eyesight_coordinates[0]*x_ratio*zoom), round(eyesight_coordinates[1]*x_ratio*zoom))
+    effective_zoom = zoom
+    zoom_step = 0.01
+    zoom_flag = False
+    while not zoom_flag:
+        if (x_ratio < y_ratio):
+            new_x = y_ratio*current_size.width()*effective_zoom
+            new_y = max_size[1]*effective_zoom
+            if eyesight_coordinates:
+                resized_eyesight = (
+                    round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+        else:
+            new_x = max_size[0]*effective_zoom
+            new_y = x_ratio*current_size.height()*effective_zoom
+            if eyesight_coordinates:
+                resized_eyesight = (
+                    round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
+        if not(new_x < max_size[0] and ("left" in crop_borders) and ("right" in crop_borders)):
+            if not(new_y < max_size[1] and ("top" in crop_borders) and ("bottom" in crop_borders)):
+                zoom_flag = True
+        if not zoom_flag:
+            effective_zoom += zoom_step
 
     new_size = (round(new_x), round(new_y))
-    image = image.scaled(
+    new_image = image.scaled(
         new_size[0], new_size[1], transformMode=Qt.TransformationMode.SmoothTransformation)
 
     # crop
@@ -143,21 +153,28 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
         if bottom > new_y:
             bottom = new_y
             top = new_y - max_size[1]
-        if max_size[0] > new_x:
-            left = round(-(max_size[0] - new_x)/2)
-            right = round((max_size[0] + new_x)/2)
-        if max_size[1] > new_y:
-            top = round(-(max_size[1] - new_y)/2)
-            bottom = round((max_size[1] + new_y)/2)
+    if max_size[0] > new_x:
+        left = round(-(max_size[0] - new_x)/2)
+        right = round((max_size[0] + new_x)/2)
+        if ("left" in crop_borders):
+            left = 0
+            right = max_size[0]
+        if ("right" in crop_borders):
+            right = max_size[0]
+            left = new_x - max_size[0]
+    if max_size[1] > new_y:
+        top = round(-(max_size[1] - new_y)/2)
+        bottom = round((max_size[1] + new_y)/2)
+        if ("top" in crop_borders):
+            top = 0
+            bottom = max_size[1]
+        if ("bottom" in crop_borders):
+            bottom = max_size[1]
+            top = new_y - max_size[1]
 
-    image = image.copy(
-        int(left),
-        int(top),
-        int(right-left),
-        int(bottom-top)
-    )
+    new_image = create_composite_image(new_image, QSize(max_size[0], max_size[1]), (-left, -top))
 
-    return(image)
+    return(new_image)
 
 
 def create_composite_image(image, size, coordinates):
