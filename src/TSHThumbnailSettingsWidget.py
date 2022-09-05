@@ -24,6 +24,7 @@ class PreviewWidget(QWidget):
 
     def setPixmap(self, pixmap):
         self._pixmap = pixmap
+        self.repaint()
 
     def resizeEvent(self, QResizeEvent):
         self.repaint()

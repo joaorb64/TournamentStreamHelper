@@ -205,21 +205,59 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
             eyesight_coordinates = eyesight_line[col_index]
-            print(f"Processing asset: {image_path}")
+
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
                 paste_coordinates[1] + line_index*individual_max_size[1])
             individual_paste_coordinates = (
                 individual_paste_x, individual_paste_y)
-            character_image = QPixmap("./"+image_path, 'RGBA')
-            character_image = resize_image_to_max_size(
-                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
-            composite_image = create_composite_image(
-                character_image, thumbnail.size(), individual_paste_coordinates)
+
+            print(f"Processing asset: {image_path}")
+
+            pix = QPixmap(image_path, "RGBA")
             painter = QPainter(thumbnail)
-            painter.drawPixmap(0, 0, composite_image)
+
+            xx = 0
+            yy = 0
+
+            customCenter = [0.5, 0.4]
+
+            if not customCenter:
+                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] / 2
+            else:
+                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
+
+            if not customCenter:
+                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] / 2
+            else:
+                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
+            
+
+            extend_x = 0
+            extend_y = 0
+
+            if int(-xx) < 0:
+                extend_x = xx
+            if int(-yy) < 0:
+                extend_y = yy
+
+            painter.drawPixmap(
+                int(individual_paste_x + extend_x),
+                int(individual_paste_y + extend_y),
+                pix.scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+                .copy(int(-xx), int(-yy), int(individual_max_size[0]), int(individual_max_size[1]))
+            )
             painter.end()
+            
+            # character_image = QPixmap("./"+image_path, 'RGBA')
+            # character_image = resize_image_to_max_size(
+            #     character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
+            # composite_image = create_composite_image(
+            #     character_image, thumbnail.size(), individual_paste_coordinates)
+            # painter = QPainter(thumbnail)
+            # painter.drawPixmap(0, 0, composite_image)
+            # painter.end()
 
             # crop
             left = round(0)
@@ -320,13 +358,17 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
+        
         thumbnail = paste_image_matrix(
             thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
 
     return(thumbnail)
 
 
-def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
+def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16), reference_text_size=None):
+    if not reference_text_size:
+        reference_text_size = text
+    
     painter = QPainter(thumbnail)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -351,7 +393,7 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
 
     stretch = 100
 
-    while(fontMetrics.width(text)+2*padding[0] > int(container_size[0])):
+    while(fontMetrics.width(reference_text_size)+2*padding[0] > int(container_size[0])):
         if stretch <= template_data["lower_text_stretch_limit"]:
             max_font_size -= 1
             if max_font_size <= 0:
@@ -394,7 +436,7 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     path.addText(
         int(text_coordinates[0]) +
         (container_size[0] - padding[0]*2) /
-        2 - fontMetrics.width(text)/2,
+        2 - fontMetrics.width(reference_text_size)/2,
         int(text_coordinates[1]) + fontMetrics.height()/4 +
         (container_size[1]-padding[1]*2)/2,
         font,
@@ -434,7 +476,13 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         else:
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
-                current_data = current_team[key].get("mergedName")
+                current_data = ""
+
+                team = current_team[key].get("team", "")
+                if team: current_data += team+" "
+
+                current_data += current_team[key].get("name", "")
+                
                 if current_data:
                     current_data = current_data.rstrip("[L]").strip()
                 if (not use_sponsors) or (not current_data):
@@ -465,6 +513,22 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             (round(template_data["player_text"]["x_offset"]*ratio[0]),
              round(template_data["player_text"]["y_padding"]*ratio[1]))
         )
+
+        if team:
+            draw_text(
+                thumbnail,
+                team,
+                font_path,
+                text_size,
+                (255, 233, 0),
+                text_player_coordinates[i],
+                text_player_max_dimensions,
+                player_text_color["has_outline"],
+                player_text_color["outline_color"],
+                (round(template_data["player_text"]["x_offset"]*ratio[0]),
+                round(template_data["player_text"]["y_padding"]*ratio[1])),
+                player_name
+            )
 
 
 def paste_round_text(thumbnail, data, display_phase=True):
