@@ -657,9 +657,10 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
                 character = gameAssetManager.instance.characters[key]
+                skin = random.randint(0, len(gameAssetManager.instance.characters[key]))
 
                 data = gameAssetManager.instance.GetCharacterAssets(
-                    character.get("codename"), 0)
+                    character.get("codename"), skin)
 
                 asset = data.get(used_assets)
 
