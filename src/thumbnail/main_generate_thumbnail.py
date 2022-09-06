@@ -161,22 +161,16 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             bottom = new_y
             top = new_y - max_size[1]
     if max_size[0] > new_x:
-        left = round(-(max_size[0] - new_x)/2)
-        right = round((max_size[0] + new_x)/2)
+        left = round((new_x - max_size[0])*custom_center[0])
         if ("left" in crop_borders):
             left = 0
-            right = max_size[0]
         if ("right" in crop_borders):
-            right = max_size[0]
             left = new_x - max_size[0]
     if max_size[1] > new_y:
-        top = round(-(max_size[1] - new_y)/2)
-        bottom = round((max_size[1] + new_y)/2)
+        top = round((new_y - max_size[1])*custom_center[1])
         if ("top" in crop_borders):
             top = 0
-            bottom = max_size[1]
         if ("bottom" in crop_borders):
-            bottom = max_size[1]
             top = new_y - max_size[1]
 
     new_image = create_composite_image(new_image, QSize(max_size[0], max_size[1]), (-left, -top))
