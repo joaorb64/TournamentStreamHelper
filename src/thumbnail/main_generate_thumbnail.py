@@ -186,7 +186,7 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     separator_h_image, separator_v_image = generate_separator_images(
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
@@ -251,15 +251,15 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     min_zoom = zoom_y
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
-                    min_zoom = zoom
+                    min_zoom = customZoom
                 elif 'l' in uncropped_edge and 'r' in uncropped_edge:
                     min_zoom = zoom_y
                 elif 'u' in uncropped_edge and 'd' in uncropped_edge:
                     min_zoom = zoom_x
                 else:
-                    min_zoom = zoom
+                    min_zoom = customZoom
 
-            zoom = max(min_zoom, zoom)
+            zoom = max(min_zoom, customZoom * min_zoom)
 
             xx = 0
             yy = 0
