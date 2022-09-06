@@ -107,6 +107,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         if game_codename:
             self.zoom.setEnabled(True)
             self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
+            self.horizontalAlign.setValue(settings.get(f"horizontalAlign/{game_codename}", 50))
+            self.verticalAlign.setValue(settings.get(f"verticalAlign/{game_codename}", 40))
         else:
             self.zoom.setEnabled(False)
 
@@ -223,6 +225,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.zoom = self.settings.findChild(QSpinBox, "zoom")
 
+        self.horizontalAlign = self.settings.findChild(QSpinBox, "horizontalAlign")
+        self.verticalAlign = self.settings.findChild(QSpinBox, "verticalAlign")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -237,6 +242,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             key="open_explorer", val=self.open_explorer.isChecked()))
 
         self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting())
+
+        self.horizontalAlign.valueChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"horizontalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=val,
+                generatePreview=True
+            )]
+        )
+        
+        self.verticalAlign.valueChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"verticalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=val,
+                generatePreview=True
+            )]
+        )
 
         # FONTS
         self.selectFontPlayer = self.settings.findChild(
@@ -576,8 +599,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.zoom.setEnabled(True)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
+                    self.horizontalAlign.setEnabled(True)
+                    self.horizontalAlign.setValue(
+                        settings.get(f"horizontalAlign/{game_codename}", 50))
+                    self.verticalAlign.setEnabled(True)
+                    self.verticalAlign.setValue(
+                        settings.get(f"verticalAlign/{game_codename}", 40))
                 else:
                     self.zoom.setEnabled(False)
+                    self.horizontalAlign.setEnabled(False)
+                    self.verticalAlign.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except KeyError:
