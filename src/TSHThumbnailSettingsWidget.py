@@ -24,6 +24,7 @@ class PreviewWidget(QWidget):
 
     def setPixmap(self, pixmap):
         self._pixmap = pixmap
+        self.repaint()
 
     def resizeEvent(self, QResizeEvent):
         self.repaint()
@@ -80,8 +81,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.selectTypeFontPlayer.findText(QApplication.translate("app",settings["font_list"][0]["fontPath"])))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
+        self.sponsorFontColor1.setStyleSheet(
+            "background-color: %s" % settings.get("sponsor_font_color_1", ["#FFFFFF"])[0])
+        self.sponsorFontColor2.setStyleSheet(
+            "background-color: %s" % settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
         self.phaseFontColor.setStyleSheet(
-            "background-color: %s" % settings["font_color"][1])
+            "background-color: %s" % settings.get("phase_font_color", ["#FFFFFF", "#FFFFFF"])[1])
         self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
         if settings["font_outline_enabled"][0]:
             self.colorPlayerOutline.setStyleSheet(
@@ -106,6 +111,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         if game_codename:
             self.zoom.setEnabled(True)
             self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
+            self.horizontalAlign.setValue(settings.get(f"horizontalAlign/{game_codename}", 50))
+            self.verticalAlign.setValue(settings.get(f"verticalAlign/{game_codename}", 40))
         else:
             self.zoom.setEnabled(False)
 
@@ -140,6 +147,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         }]
         settings["font_color"] = [
             "#FFFFFF", "#FFFFFF"
+        ]
+        settings["phase_font_color"] = [
+            "#FFFFFF", "#FFFFFF"
+        ]
+        settings["sponsor_font_color_1"] = [
+            "#ed333b", "#ed333b"
+        ]
+        settings["sponsor_font_color_2"] = [
+            "#62a0ea", "#62a0ea"
         ]
         settings["font_outline_color"] = [
             "#000000", "#000000"
@@ -222,6 +238,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.zoom = self.settings.findChild(QSpinBox, "zoom")
 
+        self.horizontalAlign = self.settings.findChild(QSpinBox, "horizontalAlign")
+        self.verticalAlign = self.settings.findChild(QSpinBox, "verticalAlign")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -237,6 +256,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting())
 
+        self.horizontalAlign.valueChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"horizontalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=val,
+                generatePreview=True
+            )]
+        )
+        
+        self.verticalAlign.valueChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"verticalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=val,
+                generatePreview=True
+            )]
+        )
+
         # FONTS
         self.selectFontPlayer = self.settings.findChild(
             QComboBox, "comboBoxFont")
@@ -248,6 +285,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             QComboBox, "comboBoxFontTypePhase")
         self.playerFontColor = self.settings.findChild(
             QPushButton, "colorPlayerFontColor")
+        self.sponsorFontColor1 = self.settings.findChild(
+            QPushButton, "sponsorFontColor1")
+        self.sponsorFontColor2 = self.settings.findChild(
+            QPushButton, "sponsorFontColor2")
         self.phaseFontColor = self.settings.findChild(
             QPushButton, "colorPhaseFontColor")
         self.colorPlayerOutline = self.settings.findChild(
@@ -261,8 +302,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.playerFontColor.clicked.connect(lambda: self.ColorPicker(
             button=self.playerFontColor, key="font_color", subKey=0))
+        self.sponsorFontColor1.clicked.connect(lambda: self.ColorPicker(
+            button=self.sponsorFontColor1, key="sponsor_font_color_1", subKey=0))
+        self.sponsorFontColor2.clicked.connect(lambda: self.ColorPicker(
+            button=self.sponsorFontColor2, key="sponsor_font_color_2", subKey=0))
         self.phaseFontColor.clicked.connect(lambda: self.ColorPicker(
-            button=self.phaseFontColor, key="font_color", subKey=1))
+            button=self.phaseFontColor, key="phase_font_color", subKey=1))
         self.colorPlayerOutline.clicked.connect(lambda: self.ColorPicker(
             button=self.colorPlayerOutline, key="font_outline_color", subKey=0))
         self.colorPhaseOutline.clicked.connect(lambda: self.ColorPicker(
@@ -575,8 +620,16 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.zoom.setEnabled(True)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
+                    self.horizontalAlign.setEnabled(True)
+                    self.horizontalAlign.setValue(
+                        settings.get(f"horizontalAlign/{game_codename}", 50))
+                    self.verticalAlign.setEnabled(True)
+                    self.verticalAlign.setValue(
+                        settings.get(f"verticalAlign/{game_codename}", 40))
                 else:
                     self.zoom.setEnabled(False)
+                    self.horizontalAlign.setEnabled(False)
+                    self.verticalAlign.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except KeyError:

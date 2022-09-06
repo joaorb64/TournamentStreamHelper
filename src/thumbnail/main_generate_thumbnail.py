@@ -186,7 +186,7 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     separator_h_image, separator_v_image = generate_separator_images(
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
@@ -198,28 +198,129 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
-        eyesight_line = eyesight_matrix[line_index]
+
+        eyesight_line = []
+
+        if eyesight_matrix and len(eyesight_matrix) >= line_index:
+            eyesight_line = eyesight_matrix[line_index]
+
         num_col = len(line)
+
         for col_index in range(0, len(line)):
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
-            eyesight_coordinates = eyesight_line[col_index]
-            print(f"Processing asset: {image_path}")
+
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
                 paste_coordinates[1] + line_index*individual_max_size[1])
             individual_paste_coordinates = (
                 individual_paste_x, individual_paste_y)
-            character_image = QPixmap("./"+image_path, 'RGBA')
-            character_image = resize_image_to_max_size(
-                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
-            composite_image = create_composite_image(
-                character_image, thumbnail.size(), individual_paste_coordinates)
+
+            print(f"Processing asset: {image_path}")
+
+            pix = QPixmap(image_path, "RGBA")
             painter = QPainter(thumbnail)
-            painter.drawPixmap(0, 0, composite_image)
+
+            eyesight_coordinates = (pix.width()/2, pix.height()/2)
+
+            if len(eyesight_line) >= col_index:
+                if eyesight_line[col_index] != None:
+                    eyesight_coordinates = eyesight_line[col_index]
+            
+            uncropped_edge = []
+
+            if len(uncropped_edges) >= line_index:
+                if len(uncropped_edges[line_index]) >= col_index:
+                    uncropped_edge = uncropped_edges[line_index][col_index]
+            
+            # For cropped assets, zoom to fill
+            # Calculate max zoom
+            zoom_x = max_size[0] / pix.width()
+            zoom_y = max_size[1] / pix.height()
+
+            min_zoom = 1
+
+            print(uncropped_edge)
+
+            if not uncropped_edge:
+                if zoom_x > zoom_y:
+                    min_zoom = zoom_x
+                else:
+                    min_zoom = zoom_y
+            else:
+                if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
+                    min_zoom = zoom
+                elif 'l' in uncropped_edge and 'r' in uncropped_edge:
+                    min_zoom = zoom_y
+                elif 'u' in uncropped_edge and 'd' in uncropped_edge:
+                    min_zoom = zoom_x
+                else:
+                    min_zoom = zoom
+
+            zoom = min_zoom
+
+            xx = 0
+            yy = 0
+
+            customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
+
+            if not customCenter:
+                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] / 2
+            else:
+                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
+
+            if not customCenter:
+                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] / 2
+            else:
+                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
+            
+            # Max move X
+            maxMoveX = individual_max_size[0] - pix.width() * zoom
+
+            if not 'l' in uncropped_edge:
+                if xx > 0: xx = 0
+            
+            if not 'r' in uncropped_edge:
+                if xx < maxMoveX: xx = maxMoveX
+
+            # Max move Y
+            maxMoveY = individual_max_size[1] - pix.height() * zoom
+
+            if not 'u' in uncropped_edge:
+                if yy > 0: yy = 0
+            
+            if not 'd' in uncropped_edge:
+                if yy < maxMoveY: yy = maxMoveY
+
+            # This is because QT won't extend the image if you crop starting
+            # from outside of it towards top-left. So we have to identify how
+            # much we're extending towards top-left.
+            extend_x = 0
+            extend_y = 0
+
+            if int(-xx) < 0:
+                extend_x = xx
+            if int(-yy) < 0:
+                extend_y = yy
+
+            painter.drawPixmap(
+                int(individual_paste_x + extend_x),
+                int(individual_paste_y + extend_y),
+                pix.scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+                .copy(int(-xx), int(-yy), int(individual_max_size[0]), int(individual_max_size[1]))
+            )
             painter.end()
+            
+            # character_image = QPixmap("./"+image_path, 'RGBA')
+            # character_image = resize_image_to_max_size(
+            #     character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
+            # composite_image = create_composite_image(
+            #     character_image, thumbnail.size(), individual_paste_coordinates)
+            # painter = QPainter(thumbnail)
+            # painter.drawPixmap(0, 0, composite_image)
+            # painter.end()
 
             # crop
             left = round(0)
@@ -267,7 +368,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50):
     max_x_size = round(
         template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
     max_y_size = round(
@@ -282,12 +383,16 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
 
     for i in [0, 1]:
         team_index = i+1
+
         path_matrix = []
         eyesight_matrix = []
+        uncropped_edge_matrix = []
+
         current_team = find(f"score.team.{team_index}.player", data)
         for player_key in current_team.keys():
             character_list = []
             eyesight_list = []
+            uncropped_edge_list = []
             characters = find(f"{player_key}.character", current_team)
             for character_key in characters.keys():
                 try:
@@ -301,11 +406,20 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     if character_path.get("eyesight"):
                         eyesight_coordinates = (
                             character_path.get("eyesight")["x"], character_path.get("eyesight")["y"])
+                    
+                    uncropped_edges = None
 
-                    print(eyesight_coordinates)
+                    if character_path.get("uncropped_edge"):
+                        uncropped_edges = character_path.get("uncropped_edge")
+                    else:
+                        uncropped_edges = []
+                    
+                    print("got data:", uncropped_edges)
+
                     if image_path:
                         character_list.append(image_path)
                         eyesight_list.append(eyesight_coordinates)
+                        uncropped_edge_list.append(uncropped_edges)
                 except KeyError:
                     None
             if character_list:
@@ -314,14 +428,18 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                 if i == 0:
                     character_list.reverse()
                     eyesight_list.reverse()
+                    uncropped_edge_list.reverse()
                 path_matrix.append(character_list)
                 eyesight_matrix.append(eyesight_list)
+                uncropped_edge_matrix.append(uncropped_edge_list)
 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
+        
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2,
+            fill_x, fill_y, zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign, uncropped_edges=uncropped_edge_matrix)
 
     return(thumbnail)
 
@@ -377,36 +495,45 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     painter.setFont(font)
 
     pen = QPen()
-    pen.setWidth(stroke_width)
-    pen.setColor(QColor(
-        outline_color[0],
-        outline_color[1],
-        outline_color[2]
-    ))
-    painter.setPen(pen)
 
-    painter.setBrush(QColor(
-        color[0],
-        color[1],
-        color[2]
-    ))
+    if isinstance(color, tuple):
+        color = [color] * len(text)
+    
+    pos_x = int(text_coordinates[0]) + (container_size[0] - padding[0]*2) / 2 - fontMetrics.width(text)/2
 
-    path.addText(
-        int(text_coordinates[0]) +
-        (container_size[0] - padding[0]*2) /
-        2 - fontMetrics.width(text)/2,
-        int(text_coordinates[1]) + fontMetrics.height()/4 +
-        (container_size[1]-padding[1]*2)/2,
-        font,
-        text
-    )
+    for i, char in enumerate(text):
+        path.clear()
+        
+        pen.setWidth(stroke_width)
+        pen.setColor(QColor(
+            outline_color[0],
+            outline_color[1],
+            outline_color[2]
+        ))
+        painter.setPen(pen)
 
-    painter.drawPath(path)
+        painter.setBrush(QColor(
+            color[i][0],
+            color[i][1],
+            color[i][2]
+        ))
 
-    pen.setWidth(0)
-    pen.setColor(QColor(0, 0, 0, 0))
-    painter.setPen(pen)
-    painter.drawPath(path)
+        path.addText(
+            pos_x,
+            int(text_coordinates[1]) + fontMetrics.height()/4 +
+            (container_size[1]-padding[1]*2)/2,
+            font,
+            char
+        )
+
+        painter.drawPath(path)
+
+        pen.setWidth(0)
+        pen.setColor(QColor(0, 0, 0, 0))
+        painter.setPen(pen)
+        painter.drawPath(path)
+
+        pos_x += fontMetrics.width(char)
 
     painter.end()
 
@@ -426,24 +553,46 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_size = template_data["initial_font_size"]*ratio[1]
     player_text_color = text_color[0]
 
+
     for i in [0, 1]:
         team_index = i+1
         player_list = []
+        color_mask = []
         if use_team_names:
             player_name = find(f"score.team.{team_index}.teamName", data)
         else:
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
-                current_data = current_team[key].get("mergedName")
+                current_data = ""
+                individual_color_mask = []
+
+                team = current_team[key].get("team", "")
+                if team:
+                    current_data += team+" "
+                    individual_color_mask += [sponsor_color[i]] * len(team+" ")
+
+                current_data += current_team[key].get("name", "")
+                individual_color_mask += [player_text_color["font_color"]] * len(current_team[key].get("name", ""))
+                
                 if current_data:
                     current_data = current_data.rstrip("[L]").strip()
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name")
+                    individual_color_mask += [player_text_color["font_color"]] * len(current_data)
                     if current_data:
                         current_data = current_data.strip()
                 if current_data:
                     player_list.append(current_data)
+                    color_mask.append(individual_color_mask)
+
             player_name = " / ".join(player_list)
+            
+            final_color_mask = color_mask[0]
+
+            if len(color_mask) > 0:
+                for mask in color_mask[1:]:
+                    final_color_mask += [player_text_color["font_color"]] * 3
+                    final_color_mask += mask
 
         if use_team_names or len(player_list) > 1:
             player_type = "team"
@@ -457,7 +606,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             player_name,
             font_path,
             text_size,
-            player_text_color["font_color"],
+            final_color_mask,
             text_player_coordinates[i],
             text_player_max_dimensions,
             player_text_color["has_outline"],
@@ -657,9 +806,10 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
                 character = gameAssetManager.instance.characters[key]
+                skin = random.randint(0, len(gameAssetManager.instance.characters[key]))
 
                 data = gameAssetManager.instance.GetCharacterAssets(
-                    character.get("codename"), 0)
+                    character.get("codename"), skin)
 
                 asset = data.get(used_assets)
 
@@ -827,6 +977,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         }
     ]
 
+    global sponsor_color
+    sponsor_color = [
+        color_code_to_tuple(settings.get("sponsor_font_color_1", ["#FFFFFF"])[0]),
+        color_code_to_tuple(settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
+    ]
+
     zoom = 1
 
     try:
@@ -919,8 +1075,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     painter.drawPixmap(0, 0, background)
     painter.end()
 
+    horizontalAlign = settings.get(f"horizontalAlign/{game_codename}", 50)
+    verticalAlign = settings.get(f"verticalAlign/{game_codename}", 50)
+
     thumbnail = paste_characters(
-        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom)
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign)
     composite_image = create_composite_image(
         foreground, thumbnail.size(), (0, 0))
 
