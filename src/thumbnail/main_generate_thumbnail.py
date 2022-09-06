@@ -259,12 +259,18 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 else:
                     min_zoom = zoom
 
-            zoom = min_zoom
+            zoom = max(min_zoom, zoom)
 
             xx = 0
             yy = 0
 
             customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
+
+            if player_index == 1:
+                customCenter[0] = 1 - customCenter[0]
+
+            if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+                customCenter[0] = 1 - customCenter[0]
 
             if not customCenter:
                 xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] / 2
