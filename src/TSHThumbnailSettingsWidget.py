@@ -81,10 +81,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.selectTypeFontPlayer.findText(QApplication.translate("app",settings["font_list"][0]["fontPath"])))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
+        if not settings.get("sponsor_font_color_1"):
+            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_1", val=["#ed333b", "#ed333b"], generatePreview=True)
+        if not settings.get("sponsor_font_color_2"):
+            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_2", val=["#62a0ea", "#62a0ea"], generatePreview=True)
         self.sponsorFontColor1.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_1", ["#FFFFFF"])[0])
+            "background-color: %s" % settings.get("sponsor_font_color_1", ["#ed333b"])[0])
         self.sponsorFontColor2.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
+            "background-color: %s" % settings.get("sponsor_font_color_2", ["#62a0ea"])[0])
         self.phaseFontColor.setStyleSheet(
             "background-color: %s" % settings.get("phase_font_color", ["#FFFFFF", "#FFFFFF"])[1])
         self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
@@ -110,11 +114,21 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "codename")
         if game_codename:
             self.zoom.setEnabled(True)
+            self.horizontalAlign.setEnabled(True)
+            self.verticalAlign.setEnabled(True)
+            if not settings.get(f"zoom/{game_codename}"):
+                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=True)
             self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
+            if not settings.get(f"horizontalAlign/{game_codename}"):
+                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=True)
+            if not settings.get(f"verticalAlign/{game_codename}"):
+                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=True)
             self.horizontalAlign.setValue(settings.get(f"horizontalAlign/{game_codename}", 50))
             self.verticalAlign.setValue(settings.get(f"verticalAlign/{game_codename}", 40))
         else:
             self.zoom.setEnabled(False)
+            self.horizontalAlign.setEnabled(False)
+            self.verticalAlign.setEnabled(False)
 
     def setDefaults(self, button_mode=False):
         settings = {
@@ -618,8 +632,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         asset_dict[settings[f"asset/{game_codename}"]]))
                     self.selectRenderType.setEnabled(True)
                     self.zoom.setEnabled(True)
+                    if not settings.get(f"zoom/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=True)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
+                    if not settings.get(f"horizontalAlign/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=True)
+                    if not settings.get(f"verticalAlign/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=True)
                     self.horizontalAlign.setEnabled(True)
                     self.horizontalAlign.setValue(
                         settings.get(f"horizontalAlign/{game_codename}", 50))
@@ -650,9 +670,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 if not game_codename:
                     self.selectRenderType.setEnabled(False)
                     self.zoom.setEnabled(False)
+                    self.horizontalAlign.setEnabled(False)
+                    self.verticalAlign.setEnabled(False)
                 else:
                     self.selectRenderType.setEnabled(True)
                     self.zoom.setEnabled(True)
+                    self.horizontalAlign.setEnabled(True)
+                    self.verticalAlign.setEnabled(True)
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self, key=f"zoom/{game_codename}", val=self.zoom.value(), generatePreview=True)
             except Exception as e:
