@@ -81,8 +81,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.selectTypeFontPlayer.findText(QApplication.translate("app",settings["font_list"][0]["fontPath"])))
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
+        self.sponsorFontColor1.setStyleSheet(
+            "background-color: %s" % settings.get("sponsor_font_color_1", ["#FFFFFF"])[0])
+        self.sponsorFontColor2.setStyleSheet(
+            "background-color: %s" % settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
         self.phaseFontColor.setStyleSheet(
-            "background-color: %s" % settings["font_color"][1])
+            "background-color: %s" % settings.get("phase_font_color", ["#FFFFFF", "#FFFFFF"])[1])
         self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
         if settings["font_outline_enabled"][0]:
             self.colorPlayerOutline.setStyleSheet(
@@ -143,6 +147,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         }]
         settings["font_color"] = [
             "#FFFFFF", "#FFFFFF"
+        ]
+        settings["phase_font_color"] = [
+            "#FFFFFF", "#FFFFFF"
+        ]
+        settings["sponsor_font_color_1"] = [
+            "#ed333b", "#ed333b"
+        ]
+        settings["sponsor_font_color_2"] = [
+            "#62a0ea", "#62a0ea"
         ]
         settings["font_outline_color"] = [
             "#000000", "#000000"
@@ -272,6 +285,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             QComboBox, "comboBoxFontTypePhase")
         self.playerFontColor = self.settings.findChild(
             QPushButton, "colorPlayerFontColor")
+        self.sponsorFontColor1 = self.settings.findChild(
+            QPushButton, "sponsorFontColor1")
+        self.sponsorFontColor2 = self.settings.findChild(
+            QPushButton, "sponsorFontColor2")
         self.phaseFontColor = self.settings.findChild(
             QPushButton, "colorPhaseFontColor")
         self.colorPlayerOutline = self.settings.findChild(
@@ -285,8 +302,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.playerFontColor.clicked.connect(lambda: self.ColorPicker(
             button=self.playerFontColor, key="font_color", subKey=0))
+        self.sponsorFontColor1.clicked.connect(lambda: self.ColorPicker(
+            button=self.sponsorFontColor1, key="sponsor_font_color_1", subKey=0))
+        self.sponsorFontColor2.clicked.connect(lambda: self.ColorPicker(
+            button=self.sponsorFontColor2, key="sponsor_font_color_2", subKey=0))
         self.phaseFontColor.clicked.connect(lambda: self.ColorPicker(
-            button=self.phaseFontColor, key="font_color", subKey=1))
+            button=self.phaseFontColor, key="phase_font_color", subKey=1))
         self.colorPlayerOutline.clicked.connect(lambda: self.ColorPicker(
             button=self.colorPlayerOutline, key="font_outline_color", subKey=0))
         self.colorPhaseOutline.clicked.connect(lambda: self.ColorPicker(

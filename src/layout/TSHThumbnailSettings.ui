@@ -29,9 +29,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-220</y>
+        <y>0</y>
         <width>302</width>
-        <height>939</height>
+        <height>941</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -535,11 +535,22 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="colorSponsorFontColor">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QPushButton" name="sponsorFontColor1">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="sponsorFontColor2">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>

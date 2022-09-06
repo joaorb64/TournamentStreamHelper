@@ -569,7 +569,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                 team = current_team[key].get("team", "")
                 if team:
                     current_data += team+" "
-                    individual_color_mask += [(255, 233, 0)] * len(team+" ")
+                    individual_color_mask += [sponsor_color[i]] * len(team+" ")
 
                 current_data += current_team[key].get("name", "")
                 individual_color_mask += [player_text_color["font_color"]] * len(current_team[key].get("name", ""))
@@ -975,6 +975,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             "has_outline": settings["font_outline_enabled"][1],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
         }
+    ]
+
+    global sponsor_color
+    sponsor_color = [
+        color_code_to_tuple(settings.get("sponsor_font_color_1", ["#FFFFFF"])[0]),
+        color_code_to_tuple(settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
     ]
 
     zoom = 1
