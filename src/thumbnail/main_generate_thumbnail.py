@@ -1,7 +1,6 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
-from numbers import Rational
 import random
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -28,6 +27,7 @@ use_sponsors = True
 all_eyesight = False
 
 crop_borders = [] # left, right, top, bottom
+custom_center = [0.5, 0.5]
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -104,6 +104,8 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             msg=f"Size cannot be negative, given max size is {max_size}")
 
     resized_eyesight = None
+    if not eyesight_coordinates:
+        resized_eyesight = round(float(max_size[0])/2)
     effective_zoom = zoom
     zoom_step = 0.01
     zoom_flag = False
@@ -114,12 +116,17 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             if eyesight_coordinates:
                 resized_eyesight = (
                     round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+            else:
+                resized_eyesight = (round(new_x/2), round(new_y/2))
         else:
             new_x = max_size[0]*effective_zoom
             new_y = x_ratio*current_size.height()*effective_zoom
             if eyesight_coordinates:
                 resized_eyesight = (
                     round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
+            else:
+                resized_eyesight = (round(new_x/2), round(new_y/2))
+        resized_eyesight = (round(resized_eyesight[0]-(custom_center[0]-0.5)*max_size[0]), round(resized_eyesight[1]-(custom_center[1]-0.5)*max_size[1]))
         if not(new_x < max_size[0] and ("left" in crop_borders) and ("right" in crop_borders)):
             if not(new_y < max_size[1] and ("top" in crop_borders) and ("bottom" in crop_borders)):
                 zoom_flag = True
