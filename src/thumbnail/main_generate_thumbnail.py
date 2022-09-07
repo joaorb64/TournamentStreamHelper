@@ -25,8 +25,9 @@ display_phase = True
 use_team_names = False
 use_sponsors = True
 all_eyesight = False
+constant_scaling = True
 
-crop_borders = [] # left, right, top, bottom
+uncropped_edges = ["u", "d", "l", "r"]
 custom_center = [0.5, 0.5]
 
 def color_code_to_tuple(color_code):
@@ -93,8 +94,20 @@ def calculate_new_dimensions(current_size, max_size):
         new_y = x_ratio*current_size.height()
     return((round(new_x), round(new_y)))
 
+def convert_uncropped_edge_to_cropped_borders(uncropped_edge):
+    cropped_borders = []
+    if "u" not in uncropped_edge:
+        cropped_borders.append("top")
+    if "d" not in uncropped_edge:
+        cropped_borders.append("bottom")
+    if "l" not in uncropped_edge:
+        cropped_borders.append("left")
+    if "r" not in uncropped_edge:
+        cropped_borders.append("right")
+    return(cropped_borders)
 
-def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1):
+def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1, return_scaling = False, forced_scaling = None):
+    crop_borders = convert_uncropped_edge_to_cropped_borders(uncropped_edges)
     current_size = image.size()
     x_ratio = max_size[0]/current_size.width()
     y_ratio = max_size[1]/current_size.height()
@@ -104,28 +117,40 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             msg=f"Size cannot be negative, given max size is {max_size}")
 
     resized_eyesight = None
-    if not eyesight_coordinates:
-        resized_eyesight = round(float(max_size[0])/2)
     effective_zoom = zoom
     zoom_step = 0.01
     zoom_flag = False
+    ratio = 1
+    if not eyesight_coordinates:
+        resized_eyesight = round(float(max_size[0])/2)
     while not zoom_flag:
-        if (x_ratio < y_ratio):
-            new_x = y_ratio*current_size.width()*effective_zoom
-            new_y = max_size[1]*effective_zoom
-            if eyesight_coordinates:
-                resized_eyesight = (
-                    round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+        if not forced_scaling:
+            if (x_ratio < y_ratio):
+                new_x = y_ratio*current_size.width()*effective_zoom
+                new_y = max_size[1]*effective_zoom
+                if eyesight_coordinates:
+                    resized_eyesight = (
+                        round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+                else:
+                    resized_eyesight = (round(new_x/2), round(new_y/2))
+                ratio = y_ratio*effective_zoom
             else:
-                resized_eyesight = (round(new_x/2), round(new_y/2))
+                new_x = max_size[0]*effective_zoom
+                new_y = x_ratio*current_size.height()*effective_zoom
+                if eyesight_coordinates:
+                    resized_eyesight = (
+                        round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
+                else:
+                    resized_eyesight = (round(new_x/2), round(new_y/2))
+                ratio = x_ratio*effective_zoom
         else:
-            new_x = max_size[0]*effective_zoom
-            new_y = x_ratio*current_size.height()*effective_zoom
+            new_x = forced_scaling*effective_zoom*current_size.width()
+            new_y = forced_scaling*effective_zoom*current_size.height()
             if eyesight_coordinates:
-                resized_eyesight = (
-                    round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
+                resized_eyesight = (round(eyesight_coordinates[0]*forced_scaling*effective_zoom), round(eyesight_coordinates[1]*forced_scaling*effective_zoom))
             else:
                 resized_eyesight = (round(new_x/2), round(new_y/2))
+            ratio = forced_scaling*effective_zoom
         resized_eyesight = (round(resized_eyesight[0]-(custom_center[0]-0.5)*max_size[0]), round(resized_eyesight[1]-(custom_center[1]-0.5)*max_size[1]))
         if not(new_x < max_size[0] and ("left" in crop_borders) and ("right" in crop_borders)):
             if not(new_y < max_size[1] and ("top" in crop_borders) and ("bottom" in crop_borders)):
@@ -175,7 +200,10 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
 
     new_image = create_composite_image(new_image, QSize(max_size[0], max_size[1]), (-left, -top))
 
-    return(new_image)
+    if return_scaling:
+        return(new_image, ratio)
+    else:
+        return(new_image)
 
 
 def create_composite_image(image, size, coordinates):
@@ -187,17 +215,22 @@ def create_composite_image(image, size, coordinates):
     return(background)
 
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, return_scaling=False, force_scaling=None):
     separator_h_image, separator_v_image = generate_separator_images(
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
+    thumbnail_copy = thumbnail.copy()
 
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
         paste_coordinates = (
-            round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
-        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+            round(thumbnail_copy.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+        thumbnail_copy = thumbnail.transformed(QTransform().scale(-1, 1))
 
+    images_matrix = []
+    scaling_matrix = []
     for line_index in range(0, len(path_matrix)):
+        images_list = []
+        scaling_list= []
         line = path_matrix[line_index]
         eyesight_line = eyesight_matrix[line_index]
         num_col = len(line)
@@ -206,19 +239,59 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
             eyesight_coordinates = eyesight_line[col_index]
+            character_image = QPixmap("./"+image_path, 'RGBA')
+            character_image, scaling = resize_image_to_max_size(
+                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom, return_scaling=True)
+            images_list.append(character_image)
+            scaling_list.append(scaling)
+        images_matrix.append(images_list)
+        scaling_matrix.append(scaling_list)
+
+    max_scaling_list = []
+    for scaling_list in scaling_matrix:
+        max_scaling_list.append(max(scaling_list))
+    if max_scaling_list:
+        max_scaling = max(max_scaling_list)
+    else:
+        max_scaling = 1
+    if force_scaling:
+        max_scaling = force_scaling
+
+    for line_index in range(0, len(path_matrix)):
+        images_list = images_matrix[line_index]
+        line = path_matrix[line_index]
+        eyesight_line = eyesight_matrix[line_index]
+        num_col = len(line)
+        if constant_scaling:
+            for col_index in range(0, len(line)):
+                image_path = line[col_index]
+                eyesight_coordinates = eyesight_line[col_index]
+                character_image = QPixmap("./"+image_path, 'RGBA')
+                individual_max_size = (
+                    round(max_size[0]/num_col), round(max_size[1]/num_line))
+                images_list[col_index] = resize_image_to_max_size(character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, 1, forced_scaling=max_scaling)
+            images_matrix[line_index] = images_list
+
+
+    for line_index in range(0, len(path_matrix)):
+        images_list = images_matrix[line_index]
+        line = path_matrix[line_index]
+        eyesight_line = eyesight_matrix[line_index]
+        num_col = len(line)
+        for col_index in range(0, len(line)):
+            image_path = line[col_index]
             print(f"Processing asset: {image_path}")
+            individual_max_size = (
+                round(max_size[0]/num_col), round(max_size[1]/num_line))
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
                 paste_coordinates[1] + line_index*individual_max_size[1])
             individual_paste_coordinates = (
                 individual_paste_x, individual_paste_y)
-            character_image = QPixmap("./"+image_path, 'RGBA')
-            character_image = resize_image_to_max_size(
-                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
             composite_image = create_composite_image(
-                character_image, thumbnail.size(), individual_paste_coordinates)
-            painter = QPainter(thumbnail)
+                images_list[col_index], thumbnail_copy.size(), individual_paste_coordinates)
+            painter = QPainter(thumbnail_copy)
             painter.drawPixmap(0, 0, composite_image)
             painter.end()
 
@@ -237,8 +310,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 separator_paste_coordinates = (
                     separator_paste_x, separator_paste_y)
                 composite_image = create_composite_image(
-                    separator_v_image, thumbnail.size(), separator_paste_coordinates)
-                painter = QPainter(thumbnail)
+                    separator_v_image, thumbnail_copy.size(), separator_paste_coordinates)
+                painter = QPainter(thumbnail_copy)
                 painter.drawPixmap(0, 0, composite_image)
                 painter.end()
 
@@ -257,15 +330,18 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             separator_paste_coordinates = (
                 separator_paste_x, separator_paste_y)
             composite_image = create_composite_image(
-                separator_h_image, thumbnail.size(), separator_paste_coordinates)
-            painter = QPainter(thumbnail)
+                separator_h_image, thumbnail_copy.size(), separator_paste_coordinates)
+            painter = QPainter(thumbnail_copy)
             painter.drawPixmap(0, 0, composite_image)
             painter.end()
 
     if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+        thumbnail_copy = thumbnail_copy.transformed(QTransform().scale(-1, 1))
 
-    return(thumbnail)
+    if return_scaling:
+        return(max_scaling)
+    else:
+        return(thumbnail_copy)
 
 
 def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
@@ -280,6 +356,11 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         round(template_data["character_images"]["position"]["y"]*ratio[1]),
         round(template_data["character_images"]["position"]["y"]*ratio[1])
     ]
+
+    max_scaling_list = []
+
+    path_matrix_list = []
+    eyesight_matrix_list = []
 
     for i in [0, 1]:
         team_index = i+1
@@ -321,8 +402,27 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
-        thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
+        max_scaling_for_team = paste_image_matrix(
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom, return_scaling=True)
+        max_scaling_list.append(max_scaling_for_team)
+        path_matrix_list.append(path_matrix)
+        eyesight_matrix_list.append(eyesight_matrix)
+    
+    max_scaling = max(max_scaling_list)
+
+    for i in [0, 1]:
+        path_matrix = path_matrix_list[i]
+        eyesight_matrix = eyesight_matrix_list[i]
+        paste_x = origin_x_coordinates[i]
+        paste_y = origin_y_coordinates[i]
+        paste_coordinates = (paste_x, paste_y)
+
+        if constant_scaling:
+            thumbnail = paste_image_matrix(
+                thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom, force_scaling=max_scaling)
+        else:
+            thumbnail = paste_image_matrix(
+                thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
 
     return(thumbnail)
 
