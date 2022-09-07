@@ -27,8 +27,8 @@ use_sponsors = True
 all_eyesight = False
 constant_scaling = True
 
-crop_borders = [] # left, right, top, bottom
-custom_center = [0.5, 0.5]
+uncropped_edges = ["u", "d", "l", "r"]
+custom_center = [1, 1]
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -94,8 +94,20 @@ def calculate_new_dimensions(current_size, max_size):
         new_y = x_ratio*current_size.height()
     return((round(new_x), round(new_y)))
 
+def convert_uncropped_edge_to_cropped_borders(uncropped_edge):
+    cropped_borders = []
+    if "u" not in uncropped_edge:
+        cropped_borders.append("top")
+    if "d" not in uncropped_edge:
+        cropped_borders.append("down")
+    if "l" not in uncropped_edge:
+        cropped_borders.append("left")
+    if "r" not in uncropped_edge:
+        cropped_borders.append("right")
+    return(cropped_borders)
 
 def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1, return_scaling = False, forced_scaling = None):
+    crop_borders = convert_uncropped_edge_to_cropped_borders(uncropped_edges)
     current_size = image.size()
     x_ratio = max_size[0]/current_size.width()
     y_ratio = max_size[1]/current_size.height()
@@ -109,6 +121,8 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
     zoom_step = 0.01
     zoom_flag = False
     ratio = 1
+    if not eyesight_coordinates:
+        resized_eyesight = round(float(max_size[0])/2)
     while not zoom_flag:
         if not forced_scaling:
             if (x_ratio < y_ratio):
@@ -117,6 +131,8 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
                 if eyesight_coordinates:
                     resized_eyesight = (
                         round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+                else:
+                    resized_eyesight = (round(new_x/2), round(new_y/2))
                 ratio = y_ratio*effective_zoom
             else:
                 new_x = max_size[0]*effective_zoom
@@ -124,13 +140,18 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
                 if eyesight_coordinates:
                     resized_eyesight = (
                         round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
+                else:
+                    resized_eyesight = (round(new_x/2), round(new_y/2))
                 ratio = x_ratio*effective_zoom
         else:
             new_x = forced_scaling*effective_zoom*current_size.width()
             new_y = forced_scaling*effective_zoom*current_size.height()
             if eyesight_coordinates:
                 resized_eyesight = (round(eyesight_coordinates[0]*forced_scaling*effective_zoom), round(eyesight_coordinates[1]*forced_scaling*effective_zoom))
+            else:
+                resized_eyesight = (round(new_x/2), round(new_y/2))
             ratio = forced_scaling*effective_zoom
+        resized_eyesight = (round(resized_eyesight[0]-(custom_center[0]-0.5)*max_size[0]), round(resized_eyesight[1]-(custom_center[1]-0.5)*max_size[1]))
         if not(new_x < max_size[0] and ("left" in crop_borders) and ("right" in crop_borders)):
             if not(new_y < max_size[1] and ("top" in crop_borders) and ("bottom" in crop_borders)):
                 zoom_flag = True
@@ -165,22 +186,16 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             bottom = new_y
             top = new_y - max_size[1]
     if max_size[0] > new_x:
-        left = round(-(max_size[0] - new_x)/2)
-        right = round((max_size[0] + new_x)/2)
+        left = round((new_x - max_size[0])*custom_center[0])
         if ("left" in crop_borders):
             left = 0
-            right = max_size[0]
         if ("right" in crop_borders):
-            right = max_size[0]
             left = new_x - max_size[0]
     if max_size[1] > new_y:
-        top = round(-(max_size[1] - new_y)/2)
-        bottom = round((max_size[1] + new_y)/2)
+        top = round((new_y - max_size[1])*custom_center[1])
         if ("top" in crop_borders):
             top = 0
-            bottom = max_size[1]
         if ("bottom" in crop_borders):
-            bottom = max_size[1]
             top = new_y - max_size[1]
 
     new_image = create_composite_image(new_image, QSize(max_size[0], max_size[1]), (-left, -top))
