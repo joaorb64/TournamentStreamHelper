@@ -266,6 +266,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
         for col_index in range(0, len(line)):
             image_path = line[col_index]
             print(f"Processing asset: {image_path}")
+            individual_max_size = (
+                round(max_size[0]/num_col), round(max_size[1]/num_line))
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
