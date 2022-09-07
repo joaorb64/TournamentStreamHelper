@@ -235,7 +235,10 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     max_scaling_list = []
     for scaling_list in scaling_matrix:
         max_scaling_list.append(max(scaling_list))
-    max_scaling = max(scaling_list)
+    if max_scaling_list:
+        max_scaling = max(max_scaling_list)
+    else:
+        max_scaling = 1
     if force_scaling:
         max_scaling = force_scaling
 
