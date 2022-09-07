@@ -28,7 +28,7 @@ all_eyesight = False
 constant_scaling = True
 
 uncropped_edges = ["u", "d", "l", "r"]
-custom_center = [1, 1]
+custom_center = [0.5, 0.5]
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -99,7 +99,7 @@ def convert_uncropped_edge_to_cropped_borders(uncropped_edge):
     if "u" not in uncropped_edge:
         cropped_borders.append("top")
     if "d" not in uncropped_edge:
-        cropped_borders.append("down")
+        cropped_borders.append("bottom")
     if "l" not in uncropped_edge:
         cropped_borders.append("left")
     if "r" not in uncropped_edge:
