@@ -870,7 +870,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHTournamentDataProvider.py" line="172"/>
         <location filename="../TSHTournamentDataProvider.py" line="174"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="273"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="695"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="795"/>
         <source>Player {0}</source>
         <translation>Spieler {0}</translation>
     </message>
@@ -1009,23 +1009,23 @@ p, li { white-space: pre-wrap; }
         <translation>Später erinnern</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="696"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="796"/>
         <source>Sponsor {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="723"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="823"/>
         <source>Winners Finals</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="724"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="824"/>
         <source>Pool {0}</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="742"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="769"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="842"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="869"/>
         <source>Team {0}</source>
         <translation></translation>
     </message>
@@ -1094,12 +1094,12 @@ p, li { white-space: pre-wrap; }
         <translation>Thumbnail wurde erstellt:</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="838"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="938"/>
         <source>Please select a game first</source>
         <translation>Zuerst bitte ein Spiel wählen</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="842"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="942"/>
         <source>Player {0} tag missing</source>
         <translation>Spieler {0}: Name fehlt</translation>
     </message>
