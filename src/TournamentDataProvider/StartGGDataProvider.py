@@ -24,6 +24,7 @@ class StartGGDataProvider(TournamentDataProvider):
     EntrantsQuery = None
     TournamentDataQuery = None
     RecentSetsQuery = None
+    LastSetsQuery = None
     TournamentStandingsQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
@@ -655,6 +656,79 @@ class StartGGDataProvider(TournamentDataProvider):
             "eventSlug": self.url.split("start.gg/")[1]
         })
         self.threadpool.start(worker)
+        
+    def GetLastSets(self, playerID, progress_callback):
+        worker = Worker(self.GetLastSetsWorker, **{
+            "eventSlug": self.url.split("start.gg/")[1],
+            "playerID": playerID
+        })
+        self.threadpool.start(worker)
+    
+    def GetLastSetsWorker(self, eventSlug, playerID, progress_callback):
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "EventEntrantsListQuery",
+                    "variables": {
+                        "eventSlug": eventSlug,
+                        "playerID": playerID
+                    },
+                    "query": StartGGDataProvider.LastSetsQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+
+            sets = deep_get(
+                data, "data.event.sets.nodes", [])
+
+            set_data = []
+
+            for set in sets:
+                if not set:
+                    continue
+                if not set.get("winnerId"):
+                    continue
+
+                phaseName = ""
+                phaseIdentifier = ""
+
+                # This is because a display identifier at a major (Ex. Pools C12) will return C12,
+                # otherwise startgg will just return a string containing "1"
+                if deep_get(set, "phaseGroup.displayIdentifier") != "1":
+                    phaseIdentifier = deep_get(
+                        set, "phaseGroup.displayIdentifier")
+                phaseName = deep_get(set, "phaseGroup.phase.name")
+
+                player1Info = set.get("slots", [{}])[0].get("entrant", {}).get(
+                        "participants", [{}])[0].get("player", {})
+
+                player2Info = set.get("slots", [{}])[1].get("entrant", {}).get(
+                        "participants", [{}])[0].get("player", {})
+                
+                player_set = {
+                    "phase_id": phaseIdentifier,
+                    "phase_name": phaseName,
+                    "round_name": set.get("fullRoundText"),
+                    "player1_score": set.get("entrant1Score"),
+                    "player2_score": set.get("entrant2Score"),
+                    "player1_team": player1Info.get("prefix"),
+                    "player1_name": player1Info.get("gamerTag"),
+                    "player2_team": player2Info.get("prefix"),
+                    "player2_name": player2Info.get("gamerTag")
+                }
+
+                set_data.append(player_set)
+
+            return set_data
+        except Exception as e:
+            traceback.print_exc()
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
         try:
@@ -1023,6 +1097,9 @@ StartGGDataProvider.TournamentDataQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGRecentSetsQuery.txt", 'r')
 StartGGDataProvider.RecentSetsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGPlayerLastSetsQuery.txt", 'r')
+StartGGDataProvider.LastSetsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()
