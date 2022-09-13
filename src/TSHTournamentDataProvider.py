@@ -23,7 +23,7 @@ class TSHTournamentDataProviderSignals(QObject):
     twitch_username_updated = pyqtSignal()
     user_updated = pyqtSignal()
     recent_sets_updated = pyqtSignal(dict)
-    last_sets_updated = pyqtSignal()
+    last_sets_updated = pyqtSignal(dict)
 
 
 class TSHTournamentDataProvider:

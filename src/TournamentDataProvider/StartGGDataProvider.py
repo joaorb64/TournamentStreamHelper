@@ -657,11 +657,16 @@ class StartGGDataProvider(TournamentDataProvider):
         })
         self.threadpool.start(worker)
         
-    def GetLastSets(self, playerID, progress_callback):
+    def GetLastSets(self, playerID, callback, progress_callback):
         worker = Worker(self.GetLastSetsWorker, **{
             "eventSlug": self.url.split("start.gg/")[1],
             "playerID": playerID
         })
+
+        worker.signals.result.connect(lambda result: [
+            callback.emit({"last_sets": result})
+        ])
+
         self.threadpool.start(worker)
     
     def GetLastSetsWorker(self, eventSlug, playerID, progress_callback):
@@ -673,7 +678,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     'Content-Type': 'application/json'
                 },
                 json={
-                    "operationName": "EventEntrantsListQuery",
+                    "operationName": "PlayerLastSetsQuery",
                     "variables": {
                         "eventSlug": eventSlug,
                         "playerID": playerID

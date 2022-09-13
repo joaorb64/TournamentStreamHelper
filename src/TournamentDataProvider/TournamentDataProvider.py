@@ -29,7 +29,7 @@ class TournamentDataProvider:
     def GetRecentSets(self, id1, id2, callback):
         pass
 
-    def GetLastSets(self, id1, callback):
+    def GetLastSets(self, id1):
         pass
 
     def GetStandings(self, playerNumber):
