@@ -255,6 +255,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.horizontalAlign = self.settings.findChild(QSpinBox, "horizontalAlign")
         self.verticalAlign = self.settings.findChild(QSpinBox, "verticalAlign")
 
+        self.scaleToFillX = self.settings.findChild(QCheckBox, "scaleToFillX")
+        self.scaleToFillY = self.settings.findChild(QCheckBox, "scaleToFillY")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -284,6 +287,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self,
                 key=f"verticalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
                 val=val,
+                generatePreview=True
+            )]
+        )
+
+        self.scaleToFillX.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"scaleToFillX/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=self.scaleToFillX.checkState(),
+                generatePreview=True
+            )]
+        )
+
+        self.scaleToFillY.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"scaleToFillY/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=self.scaleToFillY.checkState(),
                 generatePreview=True
             )]
         )
@@ -631,28 +652,59 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(
                         asset_dict[settings[f"asset/{game_codename}"]]))
                     self.selectRenderType.setEnabled(True)
+
                     self.zoom.setEnabled(True)
                     if not settings.get(f"zoom/{game_codename}"):
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=True)
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=False)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
-                    if not settings.get(f"horizontalAlign/{game_codename}"):
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=True)
-                    if not settings.get(f"verticalAlign/{game_codename}"):
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=True)
+
                     self.horizontalAlign.setEnabled(True)
+                    if not settings.get(f"horizontalAlign/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=False)
                     self.horizontalAlign.setValue(
                         settings.get(f"horizontalAlign/{game_codename}", 50))
+
                     self.verticalAlign.setEnabled(True)
+                    if not settings.get(f"verticalAlign/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=False)
                     self.verticalAlign.setValue(
                         settings.get(f"verticalAlign/{game_codename}", 40))
+
+                    uncropped_edge = []
+
+                    if TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", []):
+                        uncropped_edge = TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", [])
+
+                    if 'l' in uncropped_edge or 'r' in uncropped_edge:
+                        self.scaleToFillX.setEnabled(True)
+                        if not settings.get(f"scaleToFillX/{game_codename}"):
+                            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillX/{game_codename}", val=self.scaleToFillX.checkState(), generatePreview=False)
+                        self.scaleToFillX.setChecked(
+                            settings.get(f"scaleToFillX/{game_codename}", 0))
+                    else:
+                        self.scaleToFillX.setChecked(0)
+                        self.scaleToFillX.setEnabled(False)
+                    
+                    if 'u' in uncropped_edge or 'd' in uncropped_edge:
+                        self.scaleToFillY.setEnabled(True)
+                        if not settings.get(f"scaleToFillY/{game_codename}"):
+                            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillY/{game_codename}", val=self.scaleToFillY.checkState(), generatePreview=False)
+                        self.scaleToFillY.setChecked(
+                            settings.get(f"scaleToFillY/{game_codename}", 0))
+                    else:
+                        self.scaleToFillY.setChecked(0)
+                        self.scaleToFillY.setEnabled(False)
                 else:
                     self.zoom.setEnabled(False)
                     self.horizontalAlign.setEnabled(False)
                     self.verticalAlign.setEnabled(False)
+                    self.scaleToFillX.setEnabled(False)
+                    self.scaleToFillY.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
-            except KeyError:
+            except:
+                print(traceback.format_exc())
                 if "full" in asset_dict.keys():
                     self.selectRenderType.setCurrentIndex(
                         self.selectRenderType.findText(asset_dict["full"]))
@@ -696,5 +748,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 if self.selectRenderType.currentData():
                     TSHThumbnailSettingsWidget.SaveSettings(
                         self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=True)
+                    
+                    settings = SettingsManager.Get("thumbnail")
+                    uncropped_edge = []
+
+                    if TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", []):
+                        uncropped_edge = TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", [])
+
+                    if 'l' in uncropped_edge or 'r' in uncropped_edge:
+                        self.scaleToFillX.setEnabled(True)
+                    else:
+                        self.scaleToFillX.setChecked(0)
+                        self.scaleToFillX.setEnabled(False)
+                    
+                    if 'u' in uncropped_edge or 'd' in uncropped_edge:
+                        self.scaleToFillY.setEnabled(True)
+                    else:
+                        self.scaleToFillY.setChecked(0)
+                        self.scaleToFillY.setEnabled(False)
+
             except Exception as e:
                 print(e)

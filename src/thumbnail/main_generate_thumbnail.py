@@ -28,6 +28,8 @@ use_sponsors = True
 all_eyesight = False
 
 crop_borders = [] # left, right, top, bottom
+scale_fill_x = 0
+scale_fill_y = 0
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -191,10 +193,10 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
-    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        paste_coordinates = (
-            round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
-        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+    # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+    #     paste_coordinates = (
+    #         round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+        # thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
     for line_index in range(0, len(path_matrix)):
         line = path_matrix[line_index]
@@ -252,12 +254,20 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
                     min_zoom = customZoom
-                elif 'l' in uncropped_edge and 'r' in uncropped_edge:
+                elif 'l' in uncropped_edge or 'r' in uncropped_edge:
                     min_zoom = zoom_y
-                elif 'u' in uncropped_edge and 'd' in uncropped_edge:
+                elif 'u' in uncropped_edge or 'd' in uncropped_edge:
                     min_zoom = zoom_x
                 else:
                     min_zoom = customZoom
+
+            global scale_fill_x, scale_fill_y
+            if scale_fill_x and not scale_fill_y:
+                min_zoom = zoom_x
+            elif scale_fill_y and not scale_fill_x:
+                min_zoom = zoom_y
+            elif scale_fill_x and scale_fill_y:
+                min_zoom = max(zoom_x, zoom_y)
 
             zoom = max(min_zoom, customZoom * min_zoom)
 
@@ -273,14 +283,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 customCenter[0] = 1 - customCenter[0]
 
             if not customCenter:
-                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] / 2
-            else:
-                xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
+                customCenter = [0.5, 0.5]
+            
+            xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
+            yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
 
-            if not customCenter:
-                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] / 2
-            else:
-                yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
+            original_xx = xx
+            original_yy = yy
             
             # Max move X
             maxMoveX = individual_max_size[0] - pix.width() * zoom
@@ -300,24 +309,56 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             if not 'd' in uncropped_edge:
                 if yy < maxMoveY: yy = maxMoveY
 
-            # This is because QT won't extend the image if you crop starting
-            # from outside of it towards top-left. So we have to identify how
-            # much we're extending towards top-left.
-            extend_x = 0
-            extend_y = 0
+            flip = False
 
-            if int(-xx) < 0:
-                extend_x = xx
-            if int(-yy) < 0:
-                extend_y = yy
+            if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+                flip = True
+            
+            area = QPixmap(int(individual_max_size[0]), int(individual_max_size[1]))
+            area.fill(QColor(0, 0, 0, 0))
+            
+            areaPaint = QPainter(area)
+
+            areaPaint.drawPixmap(
+                int(xx), int(yy),
+                pix
+                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+            )
+
+            areaPaint.end()
+
+            if flip:
+                area = area.transformed(QTransform().scale(-1, 1))
 
             painter.drawPixmap(
-                int(individual_paste_x + extend_x),
-                int(individual_paste_y + extend_y),
-                pix.scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
-                .copy(int(-xx), int(-yy), int(individual_max_size[0]), int(individual_max_size[1]))
+                int(individual_paste_x),
+                int(individual_paste_y),
+                area
             )
             painter.end()
+
+            global font_1
+            draw_text(
+                thumbnail,
+                "Scale: {0:.2f}".format(zoom) + '%'+"\n",
+                font_1, 20, (0, 0, 0),
+                (individual_paste_x, individual_paste_y),
+                (individual_max_size[0], 20),
+                True,
+                (255,255,255),
+                (4, 2)
+            )
+
+            draw_text(
+                thumbnail,
+                f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
+                font_1, 20, (0, 0, 0),
+                (individual_paste_x, individual_paste_y+20),
+                (individual_max_size[0], 20),
+                True,
+                (255,255,255),
+                (4, 2)
+            )
             
             # character_image = QPixmap("./"+image_path, 'RGBA')
             # character_image = resize_image_to_max_size(
@@ -368,8 +409,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             painter.drawPixmap(0, 0, composite_image)
             painter.end()
 
-    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+    # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+    #     thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
     return(thumbnail)
 
@@ -419,8 +460,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                         uncropped_edges = character_path.get("uncropped_edge")
                     else:
                         uncropped_edges = []
-                    
-                    print("got data:", uncropped_edges)
 
                     if image_path:
                         character_list.append(image_path)
@@ -1062,6 +1101,10 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global ratio
     ratio = (background.width()/template_data["base_ratio"]["x"],
              background.height()/template_data["base_ratio"]["y"])
+    
+    global scale_fill_x, scale_fill_y
+    scale_fill_x = settings.get(f"scaleToFillX/{game_codename}", 0)
+    scale_fill_y = settings.get(f"scaleToFillY/{game_codename}", 0)
 
     foreground = foreground.scaled(
         background.width(),

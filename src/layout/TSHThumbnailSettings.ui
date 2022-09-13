@@ -29,9 +29,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-255</y>
         <width>302</width>
-        <height>941</height>
+        <height>974</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -793,6 +793,32 @@
               <number>100</number>
              </property>
             </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_13">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <item>
+              <widget class="QCheckBox" name="scaleToFillX">
+               <property name="text">
+                <string>Scale to fit X</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_18">
+             <item>
+              <widget class="QCheckBox" name="scaleToFillY">
+               <property name="text">
+                <string>Scale to fit Y</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
