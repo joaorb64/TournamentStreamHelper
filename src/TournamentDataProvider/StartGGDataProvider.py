@@ -658,18 +658,6 @@ class StartGGDataProvider(TournamentDataProvider):
         self.threadpool.start(worker)
         
     def GetLastSets(self, playerID, callback, progress_callback):
-        worker = Worker(self.GetLastSetsWorker, **{
-            "eventSlug": self.url.split("start.gg/")[1],
-            "playerID": playerID
-        })
-
-        worker.signals.result.connect(lambda result: [
-            callback.emit({"last_sets": result})
-        ])
-
-        self.threadpool.start(worker)
-    
-    def GetLastSetsWorker(self, eventSlug, playerID, progress_callback):
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -680,7 +668,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 json={
                     "operationName": "PlayerLastSetsQuery",
                     "variables": {
-                        "eventSlug": eventSlug,
+                        "eventSlug": self.url.split("start.gg/")[1],
                         "playerID": playerID
                     },
                     "query": StartGGDataProvider.LastSetsQuery
@@ -731,9 +719,10 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 set_data.append(player_set)
 
-            return set_data
+            callback.emit({"playerID": playerID, "last_sets": set_data})
         except Exception as e:
             traceback.print_exc()
+            callback.emit({"last_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
         try:
