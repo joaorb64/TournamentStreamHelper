@@ -29,7 +29,7 @@ display_phase = True
 use_team_names = False
 use_sponsors = True
 all_eyesight = False
-no_separator = False
+no_separator = 0
 
 crop_borders = [] # left, right, top, bottom
 scale_fill_x = 0
@@ -377,8 +377,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     thumbnail,
                     "Scale: {0:.2f}".format(zoom) + '%'+"\n",
                     font_1, 20, (0, 0, 0),
-                    (individual_paste_x, individual_paste_y),
-                    (individual_max_size[0], 20),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y),
+                    (round(max_size[0]/num_col), 20),
                     True,
                     (255,255,255),
                     (4, 2)
@@ -388,8 +388,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     thumbnail,
                     f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
                     font_1, 20, (0, 0, 0),
-                    (individual_paste_x, individual_paste_y+20),
-                    (individual_max_size[0], 20),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+20),
+                    (round(max_size[0]/num_col), 20),
                     True,
                     (255,255,255),
                     (4, 2)

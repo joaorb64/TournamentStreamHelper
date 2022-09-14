@@ -708,7 +708,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         self.scaleToFillY.setEnabled(False)
                     
                     self.hideSeparators.setEnabled(True)
-                    if not settings.get(f"verticalAlign/{game_codename}"):
+                    if not settings.get(f"hideSeparators/{game_codename}"):
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
                     self.hideSeparators.setValue(
                         settings.get(f"hideSeparators/{game_codename}", 0))
