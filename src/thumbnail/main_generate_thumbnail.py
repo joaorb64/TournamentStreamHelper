@@ -31,6 +31,8 @@ crop_borders = [] # left, right, top, bottom
 scale_fill_x = 0
 scale_fill_y = 0
 
+proportional_zoom = 1
+
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
     red = int(raw_color_code[0:2], base=16)
@@ -193,6 +195,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
+    global proportional_zoom
+
     # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
     #     paste_coordinates = (
     #         round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
@@ -253,13 +257,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     min_zoom = zoom_y
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
-                    min_zoom = customZoom
+                    min_zoom = customZoom * proportional_zoom
                 elif 'l' in uncropped_edge or 'r' in uncropped_edge:
                     min_zoom = zoom_y
                 elif 'u' in uncropped_edge or 'd' in uncropped_edge:
                     min_zoom = zoom_x
                 else:
-                    min_zoom = customZoom
+                    min_zoom = customZoom * proportional_zoom
 
             global scale_fill_x, scale_fill_y
             if scale_fill_x and not scale_fill_y:
@@ -428,6 +432,13 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         round(template_data["character_images"]["position"]["y"]*ratio[1])
     ]
 
+    global proportional_zoom
+    proportional_zoom = 1
+
+    path_matrices = []
+    eyesight_matrices = []
+    uncropped_edge_matrices = []
+
     for i in [0, 1]:
         team_index = i+1
 
@@ -477,7 +488,35 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                 path_matrix.append(character_list)
                 eyesight_matrix.append(eyesight_list)
                 uncropped_edge_matrix.append(uncropped_edge_list)
+        
+        path_matrices.append(path_matrix)
+        eyesight_matrices.append(eyesight_matrix)
+        uncropped_edge_matrices.append(uncropped_edge_matrix)
 
+    # Calculate proportional scaling
+
+    max_width = 0
+    max_height = 0
+
+    for path_matrix in path_matrices:
+        for player_pathes in path_matrix:
+            for path in player_pathes:
+                pix = QPixmap(path)
+                max_width = max(max_width, pix.width())
+                max_height = max(max_height, pix.height())
+    
+    proportional_zoom = min(proportional_zoom, max_size[0] / max_width * 2)
+    proportional_zoom = min(proportional_zoom, max_size[1] / max_height * 2)
+
+    print(proportional_zoom)
+
+    for i in [0, 1]:
+        team_index = i+1
+
+        path_matrix = path_matrices[i]
+        eyesight_matrix = eyesight_matrices[i]
+        uncropped_edge_matrix = uncropped_edge_matrices[i]
+        
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
