@@ -258,6 +258,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillX = self.settings.findChild(QCheckBox, "scaleToFillX")
         self.scaleToFillY = self.settings.findChild(QCheckBox, "scaleToFillY")
 
+        self.hideSeparators = self.settings.findChild(QCheckBox, "hideSeparators")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -305,6 +307,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self,
                 key=f"scaleToFillY/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
                 val=self.scaleToFillY.checkState(),
+                generatePreview=True
+            )]
+        )
+
+        self.hideSeparators.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"hideSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=self.hideSeparators.checkState(),
                 generatePreview=True
             )]
         )
@@ -695,12 +706,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     else:
                         self.scaleToFillY.setChecked(0)
                         self.scaleToFillY.setEnabled(False)
+                    
+                    self.hideSeparators.setEnabled(True)
+                    if not settings.get(f"verticalAlign/{game_codename}"):
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
+                    self.hideSeparators.setValue(
+                        settings.get(f"hideSeparators/{game_codename}", 0))
                 else:
                     self.zoom.setEnabled(False)
                     self.horizontalAlign.setEnabled(False)
                     self.verticalAlign.setEnabled(False)
                     self.scaleToFillX.setEnabled(False)
                     self.scaleToFillY.setEnabled(False)
+                    self.hideSeparators.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except:

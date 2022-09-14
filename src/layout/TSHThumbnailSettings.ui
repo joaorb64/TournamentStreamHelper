@@ -29,9 +29,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-255</y>
+        <y>-284</y>
         <width>302</width>
-        <height>974</height>
+        <height>1003</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -887,6 +887,13 @@
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="hideSeparators">
+           <property name="text">
+            <string>Hide separators between characters</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="Line" name="line_5">

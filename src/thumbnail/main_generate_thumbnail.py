@@ -1,6 +1,7 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+from math import cos, radians, sin
 from numbers import Rational
 import random
 from PyQt5.QtGui import *
@@ -22,10 +23,13 @@ import re
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
+is_preview = False
+
 display_phase = True
 use_team_names = False
 use_sponsors = True
 all_eyesight = False
+no_separator = False
 
 crop_borders = [] # left, right, top, bottom
 scale_fill_x = 0
@@ -189,13 +193,34 @@ def create_composite_image(image, size, coordinates):
     painter.end()
     return(background)
 
+def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3):
+    positions = []
+
+    # For 1 character, just center it
+    if character_number == 1:
+        radius = 0
+    
+    angle_rad = radians(270)
+
+    if character_number == 2:
+        angle_rad = 45
+
+    for i in range(character_number):
+        angle = angle_rad + radians(360/character_number) * i
+        pos = [
+            center[0] + cos(angle) * radius,
+            center[1] + sin(angle) * radius
+        ]
+        positions.append(pos)
+
+    return positions
 
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     separator_h_image, separator_v_image = generate_separator_images(
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
-    global proportional_zoom
+    global proportional_zoom, no_separator, is_preview
 
     # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
     #     paste_coordinates = (
@@ -212,7 +237,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
         num_col = len(line)
 
-        for col_index in range(0, len(line)):
+        for col_index in reversed(range(0, len(line))):
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
@@ -221,8 +246,10 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
                 paste_coordinates[1] + line_index*individual_max_size[1])
-            individual_paste_coordinates = (
-                individual_paste_x, individual_paste_y)
+            
+            if no_separator != 0:
+                individual_max_size = (max_size[0], round(max_size[1]/num_line))
+                individual_paste_x = paste_coordinates[0]
 
             print(f"Processing asset: {image_path}")
 
@@ -289,6 +316,9 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             if not customCenter:
                 customCenter = [0.5, 0.5]
             
+            if no_separator != 0:
+                customCenter = generate_multicharacter_positions(num_col)[col_index]
+
             xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
             yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
 
@@ -341,59 +371,52 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             )
             painter.end()
 
-            global font_1
-            draw_text(
-                thumbnail,
-                "Scale: {0:.2f}".format(zoom) + '%'+"\n",
-                font_1, 20, (0, 0, 0),
-                (individual_paste_x, individual_paste_y),
-                (individual_max_size[0], 20),
-                True,
-                (255,255,255),
-                (4, 2)
-            )
+            if is_preview:
+                global font_1
+                draw_text(
+                    thumbnail,
+                    "Scale: {0:.2f}".format(zoom) + '%'+"\n",
+                    font_1, 20, (0, 0, 0),
+                    (individual_paste_x, individual_paste_y),
+                    (individual_max_size[0], 20),
+                    True,
+                    (255,255,255),
+                    (4, 2)
+                )
 
-            draw_text(
-                thumbnail,
-                f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
-                font_1, 20, (0, 0, 0),
-                (individual_paste_x, individual_paste_y+20),
-                (individual_max_size[0], 20),
-                True,
-                (255,255,255),
-                (4, 2)
-            )
+                draw_text(
+                    thumbnail,
+                    f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
+                    font_1, 20, (0, 0, 0),
+                    (individual_paste_x, individual_paste_y+20),
+                    (individual_max_size[0], 20),
+                    True,
+                    (255,255,255),
+                    (4, 2)
+                )
             
-            # character_image = QPixmap("./"+image_path, 'RGBA')
-            # character_image = resize_image_to_max_size(
-            #     character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom)
-            # composite_image = create_composite_image(
-            #     character_image, thumbnail.size(), individual_paste_coordinates)
-            # painter = QPainter(thumbnail)
-            # painter.drawPixmap(0, 0, composite_image)
-            # painter.end()
+            # Vertical separator line
+            if no_separator == 0:
+                left = round(0)
+                top = round(0)
+                right = round(separator_v_image.width())
+                bottom = round(individual_max_size[1])
+                separator_v_image = separator_v_image.copy(
+                    left, top, right-left, bottom-top)
+                separator_v_offset = max_size[0]/num_col
+                for i in range(1, num_col):
+                    separator_paste_x = round(
+                        paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
+                    separator_paste_y = individual_paste_y
+                    separator_paste_coordinates = (
+                        separator_paste_x, separator_paste_y)
+                    composite_image = create_composite_image(
+                        separator_v_image, thumbnail.size(), separator_paste_coordinates)
+                    painter = QPainter(thumbnail)
+                    painter.drawPixmap(0, 0, composite_image)
+                    painter.end()
 
-            # crop
-            left = round(0)
-            top = round(0)
-            right = round(separator_v_image.width())
-            bottom = round(individual_max_size[1])
-            separator_v_image = separator_v_image.copy(
-                left, top, right-left, bottom-top)
-            separator_v_offset = max_size[0]/num_col
-            for i in range(1, num_col):
-                separator_paste_x = round(
-                    paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
-                separator_paste_y = individual_paste_y
-                separator_paste_coordinates = (
-                    separator_paste_x, separator_paste_y)
-                composite_image = create_composite_image(
-                    separator_v_image, thumbnail.size(), separator_paste_coordinates)
-                painter = QPainter(thumbnail)
-                painter.drawPixmap(0, 0, composite_image)
-                painter.end()
-
-        # crop
+        # Horizontal separator line
         left = round(0)
         top = round(0)
         right = round(max_size[0])
@@ -431,9 +454,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         round(template_data["character_images"]["position"]["y"]*ratio[1]),
         round(template_data["character_images"]["position"]["y"]*ratio[1])
     ]
-
-    global proportional_zoom
-    proportional_zoom = 1
 
     path_matrices = []
     eyesight_matrices = []
@@ -494,6 +514,8 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         uncropped_edge_matrices.append(uncropped_edge_matrix)
 
     # Calculate proportional scaling
+    global proportional_zoom
+    proportional_zoom = 1
 
     max_width = 0
     max_height = 0
@@ -507,8 +529,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     
     proportional_zoom = min(proportional_zoom, max_size[0] / max_width * 2)
     proportional_zoom = min(proportional_zoom, max_size[1] / max_height * 2)
-
-    print(proportional_zoom)
 
     for i in [0, 1]:
         team_index = i+1
@@ -1011,6 +1031,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail")
 
+    global is_preview
+    is_preview = isPreview
+
     data_path = "./out/program_state.json"
     out_path = "./out/thumbnails" if not isPreview else "./tmp/thumbnail"
     tmp_path = "./tmp"
@@ -1144,6 +1167,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global scale_fill_x, scale_fill_y
     scale_fill_x = settings.get(f"scaleToFillX/{game_codename}", 0)
     scale_fill_y = settings.get(f"scaleToFillY/{game_codename}", 0)
+
+    global no_separator
+    no_separator = settings.get(f"hideSeparators/{game_codename}", 0)
 
     foreground = foreground.scaled(
         background.width(),
