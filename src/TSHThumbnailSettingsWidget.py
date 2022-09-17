@@ -710,7 +710,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.hideSeparators.setEnabled(True)
                     if not settings.get(f"hideSeparators/{game_codename}"):
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
-                    self.hideSeparators.setValue(
+                    self.hideSeparators.setChecked(
                         settings.get(f"hideSeparators/{game_codename}", 0))
                 else:
                     self.zoom.setEnabled(False)
