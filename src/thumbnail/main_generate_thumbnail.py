@@ -200,12 +200,22 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
     if character_number == 1:
         radius = 0
     
-    angle_rad = radians(270)
+    angle_rad = radians(90)
 
     if character_number == 2:
         angle_rad = 45
+    
+    pendulum = 1
 
     for i in range(character_number):
+        if i > 1:
+            if i%2 == 0:
+                pendulum *= -1
+            else:
+                pendulum *= -1
+                pendulum += 1
+            i = pendulum
+        
         angle = angle_rad + radians(360/character_number) * i
         pos = [
             center[0] + cos(angle) * radius,
@@ -237,7 +247,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
         num_col = len(line)
 
-        for col_index in reversed(range(0, len(line))):
+        order = 1
+
+        if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+            order = -1
+
+        for col_index in range(0, len(line))[::-1]:
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
@@ -317,7 +332,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 customCenter = [0.5, 0.5]
             
             if no_separator != 0:
-                customCenter = generate_multicharacter_positions(num_col)[col_index]
+                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
+                print("pos", col_index, customCenter)
 
             xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
             yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
@@ -501,7 +517,9 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
             if character_list:
                 # For team 1, characters must come from the center
                 # so we have to reverse the array
-                if i == 0:
+                # but only when drawing separators
+                global no_separator
+                if i == 0 and not no_separator:
                     character_list.reverse()
                     eyesight_list.reverse()
                     uncropped_edge_list.reverse()
