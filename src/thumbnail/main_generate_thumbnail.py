@@ -391,7 +391,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 global font_1
                 draw_text(
                     thumbnail,
-                    "Scale: {0:.2f}".format(zoom) + '%'+"\n",
+                    QApplication.translate("Form", "Scale: {0}").format("{0:.2f}".format(zoom)) + '%'+"\n",
                     font_1, 20, (0, 0, 0),
                     (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y),
                     (round(max_size[0]/num_col), 20),
@@ -402,7 +402,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
                 draw_text(
                     thumbnail,
-                    f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
+                    QApplication.translate("Form", "Eyesight offset: ({0}, {1})").format(int(original_xx - xx), int(original_yy - yy)),
                     font_1, 20, (0, 0, 0),
                     (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+20),
                     (round(max_size[0]/num_col), 20),
