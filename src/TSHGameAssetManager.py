@@ -369,6 +369,9 @@ class TSHGameAssetManager(QObject):
                             else:
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
+                    
+                    if asset.get("uncropped_edge"):
+                        charFiles[assetKey]["uncropped_edge"] = asset.get("uncropped_edge")
                 except Exception as e:
                     print(traceback.format_exc())
 

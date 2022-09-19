@@ -53,7 +53,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.save_bt = QPushButton(
             QApplication.translate("app", "Save new player"))
-        self.save_bt.font().setPointSize(10)
+        self.save_bt.setFont(QFont(self.save_bt.font().family(), 9))
         # self.save_bt.setFont(self.parent.font_small)
         self.save_bt.setIcon(QIcon('assets/icons/save.svg'))
         bottom_buttons_layout.addWidget(self.save_bt)
@@ -62,36 +62,40 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageSavePlayerToDBText)
         self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ManageSavePlayerToDBText)
+        self.save_bt.setMinimumWidth(1)
 
         self.delete_bt = QPushButton(
             QApplication.translate("app", "Delete player entry"))
         # self.delete_bt.setFont(self.parent.font_small)
         self.delete_bt.setIcon(QIcon('assets/icons/cancel.svg'))
         bottom_buttons_layout.addWidget(self.delete_bt)
-        self.delete_bt.font().setPointSize(10)
+        self.delete_bt.setFont(QFont(self.delete_bt.font().family(), 9))
         self.delete_bt.setEnabled(False)
         self.findChild(QLineEdit, "name").editingFinished.connect(
             self.ManageDeletePlayerFromDBActive)
         self.findChild(QLineEdit, "team").editingFinished.connect(
             self.ManageDeletePlayerFromDBActive)
         self.delete_bt.clicked.connect(self.DeletePlayerFromDB)
+        self.delete_bt.setMinimumWidth(1)
 
         self.clear_bt = QPushButton(QApplication.translate("app", "Clear"))
-        self.clear_bt.font().setPointSize(10)
+        self.clear_bt.setFont(QFont(self.clear_bt.font().family(), 9))
         # self.clear_bt.setFont(self.parent.font_small)
         self.clear_bt.setIcon(QIcon('assets/icons/undo.svg'))
         bottom_buttons_layout.addWidget(self.clear_bt)
         self.clear_bt.clicked.connect(self.Clear)
+        self.clear_bt.setMinimumWidth(1)
 
         # Move up/down
+        titleContainer = self.findChild(QHBoxLayout, "titleContainer")
         self.btMoveUp = QPushButton()
-        self.btMoveUp.setMaximumWidth(32)
+        self.btMoveUp.setFixedSize(32, 32)
         self.btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
-        bottom_buttons_layout.addWidget(self.btMoveUp)
+        titleContainer.addWidget(self.btMoveUp)
         self.btMoveDown = QPushButton()
-        self.btMoveDown.setMaximumWidth(32)
+        self.btMoveDown.setFixedSize(32, 32)
         self.btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
-        bottom_buttons_layout.addWidget(self.btMoveDown)
+        titleContainer.addWidget(self.btMoveDown)
 
         self.SetIndex(index, teamNumber)
 
@@ -283,25 +287,43 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character = QComboBox()
             player_character.setEditable(True)
             character_element.layout().addWidget(player_character)
-            player_character.setMinimumWidth(120)
+            player_character.setMinimumWidth(60)
             player_character.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-            player_character.view().setMinimumWidth(250)
+            player_character.view().setMinimumWidth(60)
             player_character.completer().setCompletionMode(QCompleter.PopupCompletion)
             player_character.completer().popup().setMinimumWidth(250)
             player_character.setModel(TSHScoreboardPlayerWidget.characterModel)
             player_character.setIconSize(QSize(24, 24))
             player_character.setFixedHeight(32)
+            player_character.setFont(QFont(player_character.font().family(), 9))
+            player_character.lineEdit().setFont(QFont(player_character.font().family(), 9))
 
             player_character_color = QComboBox()
             character_element.layout().addWidget(player_character_color)
             player_character_color.setIconSize(QSize(48, 48))
             player_character_color.setFixedHeight(32)
-            player_character_color.setMinimumWidth(120)
+            player_character_color.setMinimumWidth(64)
+            player_character_color.setMaximumWidth(120)
+            player_character_color.setFont(QFont(player_character_color.font().family(), 9))
             view = QListView()
             view.setIconSize(QSize(64, 64))
             player_character_color.setView(view)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
+
+            # Move up/down
+            btMoveUp = QPushButton()
+            btMoveUp.setFixedSize(32, 32)
+            btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
+            character_element.layout().addWidget(btMoveUp)
+            btMoveUp.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index-1))
+            btMoveDown = QPushButton()
+            btMoveDown.setFixedSize(32, 32)
+            btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
+            character_element.layout().addWidget(btMoveDown)
+            btMoveDown.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index+1))
+
+            # Add line to characters
             self.character_container.layout().addWidget(character_element)
 
             self.character_elements.append(
@@ -333,6 +355,43 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_elements.pop()
 
         self.CharactersChanged()
+    
+    def SwapCharacters(self, index1: int, index2: int):
+        StateManager.BlockSaving()
+
+        if index2 > len(self.character_elements)-1: index2 = 0
+
+        char1 = self.character_elements[index1]
+        char2 = self.character_elements[index2]
+
+        # Save index1 settings
+        tmp = [char1[1].currentText(), char1[2].currentIndex()]
+
+        # Set index1 to index2
+        # Character
+        found = char1[1].findText(char2[1].currentText())
+        if found != -1:
+            char1[1].setCurrentIndex(found)
+        else:
+            char1[1].setCurrentText(char2[1].currentText())
+        
+        # Color
+        char1[2].setCurrentIndex(char2[2].currentIndex())
+
+        # Set index2 to temp (index1)
+        # Character
+        found = char2[1].findText(tmp[0])
+        if found != -1:
+            char2[1].setCurrentIndex(found)
+        else:
+            char2[1].setCurrentText(tmp[0])
+        
+        # Color
+        char2[2].setCurrentIndex(tmp[1])
+
+        self.CharactersChanged()
+
+        StateManager.ReleaseSaving()
 
     def LoadCountries(self):
         try:
@@ -347,10 +406,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             country.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             country.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-            country.view().setMinimumWidth(300)
+            country.view().setMinimumWidth(60)
             country.completer().setCompletionMode(QCompleter.PopupCompletion)
             country.completer().popup().setMinimumWidth(300)
             country.setModel(TSHCountryHelper.countryModel)
+            country.setFont(QFont(country.font().family(), 9))
+            country.lineEdit().setFont(QFont(country.font().family(), 9))
 
             country.currentIndexChanged.connect(self.LoadStates)
 
@@ -358,9 +419,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             state.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
             state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-            state.view().setMinimumWidth(300)
+            state.view().setMinimumWidth(60)
             state.completer().setCompletionMode(QCompleter.PopupCompletion)
             state.completer().popup().setMinimumWidth(300)
+            state.setFont(QFont(state.font().family(), 9))
+            state.lineEdit().setFont(QFont(state.font().family(), 9))
 
         except Exception as e:
             print(e)
@@ -566,7 +629,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageDeletePlayerFromDBActive()
 
     def SetData(self, data, dontLoadFromDB=False, clear=True):
-        StateManager.saveBlocked = True
+        StateManager.BlockSaving()
 
         if clear:
             self.Clear()
@@ -671,8 +734,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             color_element.setCurrentIndex(int(main[1]))
                         else:
                             color_element.setCurrentIndex(0)
-        StateManager.saveBlocked = False
-        StateManager.SaveState()
+                            
+        StateManager.ReleaseSaving()
 
     def GetCurrentPlayerTag(self):
         gamerTag = self.findChild(QWidget, "name").text()

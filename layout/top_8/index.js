@@ -1,6 +1,14 @@
 ;(($) => {
-  var ASSET_TO_USE = 'full'
-  var ZOOM = 1
+  var ASSET_TO_USE_1ST = 'full'
+  var ZOOM_1ST = 1
+
+  var ASSET_TO_USE_2_to_4 = 'full'
+  var ZOOM_2_to_4 = 1
+
+  var ASSET_TO_USE_5_to_7 = 'full'
+  var ZOOM_5_to_7 = 1
+  
+  var DIVIDERS = true
 
   gsap.config({ nullTargetWarn: false, trialWarn: false })
 
@@ -113,22 +121,34 @@
             let charactersHtml = ''
 
             if (t == 0) {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = ASSET_TO_USE_1ST
+              ZOOM = ZOOM_1ST
             } else if (t < 4) {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = ASSET_TO_USE_2_to_4
+              ZOOM = ZOOM_2_to_4
             } else {
-              ASSET_TO_USE = 'full'
-              ZOOM = 1.6
+              ASSET_TO_USE = ASSET_TO_USE_5_to_7
+              ZOOM = ZOOM_5_to_7
             }
 
-            Object.values(player.character).forEach((character, index) => {
+            let validCharacters = Object.values(player.character).filter(
+              (character) => character.assets[ASSET_TO_USE] != null
+            )
+
+            Object.values(validCharacters).forEach((character, index) => {
               if (character.assets[ASSET_TO_USE]) {
+                let centering = [0.5, 0.4]
+
+                // If not using dividers, calculate proper placement for each character
+                if(!DIVIDERS) GenerateMulticharacterPositions(validCharacters.length)[index]
+
                 charactersHtml += `
-                  <div class="icon stockicon">
+                  <div class="icon stockicon ${DIVIDERS ? "divided" : ""}">
                       <div
-                        style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'
+                        style='
+                          background-image: url(../../${character.assets[ASSET_TO_USE].asset});
+                          z-index: ${validCharacters.length - index}
+                        '
                         data-eyesight-x='${
                           character.assets[ASSET_TO_USE].eyesight
                             ? character.assets[ASSET_TO_USE].eyesight.x
@@ -139,6 +159,11 @@
                             ? character.assets[ASSET_TO_USE].eyesight.y
                             : null
                         }'
+                        data-centering-x='${centering[0]}'
+                        data-centering-y='${centering[1]}'
+                        data-uncropped-edge='${JSON.stringify(
+                          character.assets[ASSET_TO_USE].uncropped_edge
+                        )}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -161,7 +186,9 @@
                       $(i),
                       { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
                       $(i).attr('data-zoom'),
-                      { x: 0.5, y: 0.5 }
+                      { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
+                      $(i).parent().parent(),
+                      $(i).attr('data-uncropped-edge') != "undefined" ? JSON.parse($(i).attr('data-uncropped-edge')) : undefined
                     )
                   }
                 })

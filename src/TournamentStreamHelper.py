@@ -76,6 +76,8 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        StateManager.BlockSaving()
+
         TSHLocaleHelper.LoadLocale()
 
         self.signals = WindowSignals()
@@ -420,6 +422,8 @@ class Window(QMainWindow):
         TSHAlertNotification.instance.UiMounted()
         TSHAssetDownloader.instance.UiMounted()
         TSHPlayerDB.LoadDB()
+
+        StateManager.ReleaseSaving()
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>443</width>
+    <width>264</width>
     <height>410</height>
    </rect>
   </property>
@@ -64,6 +64,12 @@
         </item>
         <item>
          <widget class="QComboBox" name="phase">
+          <property name="minimumSize">
+           <size>
+            <width>10</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -99,6 +105,12 @@
         </item>
         <item>
          <widget class="QComboBox" name="match">
+          <property name="minimumSize">
+           <size>
+            <width>10</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
