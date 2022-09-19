@@ -322,7 +322,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="536"/>
         <source>Sponsor Font Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la police des sponsors</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="771"/>
@@ -384,27 +384,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="809"/>
         <source>Scale to fit X</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à l&apos;échelle horizontale</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="820"/>
         <source>Scale to fit Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à l&apos;échelle verticale</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="842"/>
         <source>Horizontal Align</source>
-        <translation type="unfinished"></translation>
+        <translation>Alignement horizontal</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="873"/>
         <source>Vertical Align</source>
-        <translation type="unfinished"></translation>
+        <translation>Alignement vertical</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="897"/>
         <source>Hide separators between characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher les séparateurs entre personnages</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="918"/>
@@ -475,12 +475,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="394"/>
         <source>Scale: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Échelle : {0}</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="405"/>
         <source>Eyesight offset: ({0}, {1})</source>
-        <translation type="unfinished"></translation>
+        <translation>Décalage de la vision : ({0}, {1})</translation>
     </message>
 </context>
 <context>
