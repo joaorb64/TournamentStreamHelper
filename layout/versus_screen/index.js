@@ -233,17 +233,29 @@
     SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
     SetInnerHtml($(".match"), data.score.match);
 
-    SetInnerHtml(
-      $(".phase"),
-      data.score.phase ? `<div class="container">${data.score.phase}</div>` : ""
-    );
+    if(data.score.phase){
+      gsap.to($(".phase:not(.container)"), {autoAlpha: 1})
 
-    SetInnerHtml(
-      $(".best_of"),
-      data.score.best_of
-        ? `<div class="container">Best of ${data.score.best_of}</div>`
-        : ""
-    );
+      SetInnerHtml(
+        $(".phase:not(.container)"),
+        data.score.phase ? `${data.score.phase}` : ""
+      );
+    } else {
+      gsap.to($(".phase:not(.container)"), {autoAlpha: 0})
+    }
+
+    if(data.score.best_of){
+      gsap.to($(".best_of:not(.container)"), {autoAlpha: 1})
+
+      SetInnerHtml(
+        $(".container .best_of"),
+        data.score.best_of
+          ? `Best of ${data.score.best_of}`
+          : ""
+      );
+    } else {
+      gsap.to($(".best_of:not(.container)"), {autoAlpha: 0})
+    }
   }
 
   // Using update here to set images as soon as possible

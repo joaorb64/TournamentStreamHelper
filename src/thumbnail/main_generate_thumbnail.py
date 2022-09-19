@@ -1,6 +1,8 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+from math import cos, radians, sin
+from numbers import Rational
 import random
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -21,14 +23,19 @@ import re
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
+is_preview = False
+
 display_phase = True
 use_team_names = False
 use_sponsors = True
 all_eyesight = False
-constant_scaling = True
+no_separator = 0
 
-uncropped_edges = ["u", "d", "l", "r"]
-custom_center = [0.5, 0.5]
+crop_borders = [] # left, right, top, bottom
+scale_fill_x = 0
+scale_fill_y = 0
+
+proportional_zoom = 1
 
 def color_code_to_tuple(color_code):
     raw_color_code = color_code.lstrip("#")
@@ -94,20 +101,8 @@ def calculate_new_dimensions(current_size, max_size):
         new_y = x_ratio*current_size.height()
     return((round(new_x), round(new_y)))
 
-def convert_uncropped_edge_to_cropped_borders(uncropped_edge):
-    cropped_borders = []
-    if "u" not in uncropped_edge:
-        cropped_borders.append("top")
-    if "d" not in uncropped_edge:
-        cropped_borders.append("bottom")
-    if "l" not in uncropped_edge:
-        cropped_borders.append("left")
-    if "r" not in uncropped_edge:
-        cropped_borders.append("right")
-    return(cropped_borders)
 
-def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1, return_scaling = False, forced_scaling = None):
-    crop_borders = convert_uncropped_edge_to_cropped_borders(uncropped_edges)
+def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None, fill_x=True, fill_y=True, zoom=1):
     current_size = image.size()
     x_ratio = max_size[0]/current_size.width()
     y_ratio = max_size[1]/current_size.height()
@@ -120,38 +115,19 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
     effective_zoom = zoom
     zoom_step = 0.01
     zoom_flag = False
-    ratio = 1
-    if not eyesight_coordinates:
-        resized_eyesight = round(float(max_size[0])/2)
     while not zoom_flag:
-        if not forced_scaling:
-            if (x_ratio < y_ratio):
-                new_x = y_ratio*current_size.width()*effective_zoom
-                new_y = max_size[1]*effective_zoom
-                if eyesight_coordinates:
-                    resized_eyesight = (
-                        round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
-                else:
-                    resized_eyesight = (round(new_x/2), round(new_y/2))
-                ratio = y_ratio*effective_zoom
-            else:
-                new_x = max_size[0]*effective_zoom
-                new_y = x_ratio*current_size.height()*effective_zoom
-                if eyesight_coordinates:
-                    resized_eyesight = (
-                        round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
-                else:
-                    resized_eyesight = (round(new_x/2), round(new_y/2))
-                ratio = x_ratio*effective_zoom
-        else:
-            new_x = forced_scaling*effective_zoom*current_size.width()
-            new_y = forced_scaling*effective_zoom*current_size.height()
+        if (x_ratio < y_ratio):
+            new_x = y_ratio*current_size.width()*effective_zoom
+            new_y = max_size[1]*effective_zoom
             if eyesight_coordinates:
-                resized_eyesight = (round(eyesight_coordinates[0]*forced_scaling*effective_zoom), round(eyesight_coordinates[1]*forced_scaling*effective_zoom))
-            else:
-                resized_eyesight = (round(new_x/2), round(new_y/2))
-            ratio = forced_scaling*effective_zoom
-        resized_eyesight = (round(resized_eyesight[0]-(custom_center[0]-0.5)*max_size[0]), round(resized_eyesight[1]-(custom_center[1]-0.5)*max_size[1]))
+                resized_eyesight = (
+                    round(eyesight_coordinates[0]*y_ratio*effective_zoom), round(eyesight_coordinates[1]*y_ratio*effective_zoom))
+        else:
+            new_x = max_size[0]*effective_zoom
+            new_y = x_ratio*current_size.height()*effective_zoom
+            if eyesight_coordinates:
+                resized_eyesight = (
+                    round(eyesight_coordinates[0]*x_ratio*effective_zoom), round(eyesight_coordinates[1]*x_ratio*effective_zoom))
         if not(new_x < max_size[0] and ("left" in crop_borders) and ("right" in crop_borders)):
             if not(new_y < max_size[1] and ("top" in crop_borders) and ("bottom" in crop_borders)):
                 zoom_flag = True
@@ -186,24 +162,27 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
             bottom = new_y
             top = new_y - max_size[1]
     if max_size[0] > new_x:
-        left = round((new_x - max_size[0])*custom_center[0])
+        left = round(-(max_size[0] - new_x)/2)
+        right = round((max_size[0] + new_x)/2)
         if ("left" in crop_borders):
             left = 0
+            right = max_size[0]
         if ("right" in crop_borders):
+            right = max_size[0]
             left = new_x - max_size[0]
     if max_size[1] > new_y:
-        top = round((new_y - max_size[1])*custom_center[1])
+        top = round(-(max_size[1] - new_y)/2)
+        bottom = round((max_size[1] + new_y)/2)
         if ("top" in crop_borders):
             top = 0
+            bottom = max_size[1]
         if ("bottom" in crop_borders):
+            bottom = max_size[1]
             top = new_y - max_size[1]
 
     new_image = create_composite_image(new_image, QSize(max_size[0], max_size[1]), (-left, -top))
 
-    if return_scaling:
-        return(new_image, ratio)
-    else:
-        return(new_image)
+    return(new_image)
 
 
 def create_composite_image(image, size, coordinates):
@@ -214,108 +193,246 @@ def create_composite_image(image, size, coordinates):
     painter.end()
     return(background)
 
+def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3):
+    positions = []
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, return_scaling=False, force_scaling=None):
+    # For 1 character, just center it
+    if character_number == 1:
+        radius = 0
+    
+    angle_rad = radians(90)
+
+    if character_number == 2:
+        angle_rad = 45
+    
+    pendulum = 1
+
+    for i in range(character_number):
+        if i > 1:
+            if i%2 == 0:
+                pendulum *= -1
+            else:
+                pendulum *= -1
+                pendulum += 1
+            i = pendulum
+        
+        angle = angle_rad + radians(360/character_number) * i
+        pos = [
+            center[0] + cos(angle) * radius,
+            center[1] + sin(angle) * radius
+        ]
+        positions.append(pos)
+
+    return positions
+
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     separator_h_image, separator_v_image = generate_separator_images(
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
-    thumbnail_copy = thumbnail.copy()
 
-    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        paste_coordinates = (
-            round(thumbnail_copy.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
-        thumbnail_copy = thumbnail.transformed(QTransform().scale(-1, 1))
+    global proportional_zoom, no_separator, is_preview
 
-    images_matrix = []
-    scaling_matrix = []
+    # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+    #     paste_coordinates = (
+    #         round(thumbnail.width()-paste_coordinates[0]-max_size[0]), paste_coordinates[1])
+        # thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+
     for line_index in range(0, len(path_matrix)):
-        images_list = []
-        scaling_list= []
         line = path_matrix[line_index]
-        eyesight_line = eyesight_matrix[line_index]
+
+        eyesight_line = []
+
+        if eyesight_matrix and len(eyesight_matrix) >= line_index:
+            eyesight_line = eyesight_matrix[line_index]
+
         num_col = len(line)
-        for col_index in range(0, len(line)):
+
+        order = 1
+
+        if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+            order = -1
+
+        for col_index in range(0, len(line))[::-1]:
             individual_max_size = (
                 round(max_size[0]/num_col), round(max_size[1]/num_line))
             image_path = line[col_index]
-            eyesight_coordinates = eyesight_line[col_index]
-            character_image = QPixmap("./"+image_path, 'RGBA')
-            character_image, scaling = resize_image_to_max_size(
-                character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, zoom, return_scaling=True)
-            images_list.append(character_image)
-            scaling_list.append(scaling)
-        images_matrix.append(images_list)
-        scaling_matrix.append(scaling_list)
 
-    max_scaling_list = []
-    for scaling_list in scaling_matrix:
-        max_scaling_list.append(max(scaling_list))
-    if max_scaling_list:
-        max_scaling = max(max_scaling_list)
-    else:
-        max_scaling = 1
-    if force_scaling:
-        max_scaling = force_scaling
-
-    for line_index in range(0, len(path_matrix)):
-        images_list = images_matrix[line_index]
-        line = path_matrix[line_index]
-        eyesight_line = eyesight_matrix[line_index]
-        num_col = len(line)
-        if constant_scaling:
-            for col_index in range(0, len(line)):
-                image_path = line[col_index]
-                eyesight_coordinates = eyesight_line[col_index]
-                character_image = QPixmap("./"+image_path, 'RGBA')
-                individual_max_size = (
-                    round(max_size[0]/num_col), round(max_size[1]/num_line))
-                images_list[col_index] = resize_image_to_max_size(character_image, individual_max_size, eyesight_coordinates, fill_x, fill_y, 1, forced_scaling=max_scaling)
-            images_matrix[line_index] = images_list
-
-
-    for line_index in range(0, len(path_matrix)):
-        images_list = images_matrix[line_index]
-        line = path_matrix[line_index]
-        eyesight_line = eyesight_matrix[line_index]
-        num_col = len(line)
-        for col_index in range(0, len(line)):
-            image_path = line[col_index]
-            print(f"Processing asset: {image_path}")
-            individual_max_size = (
-                round(max_size[0]/num_col), round(max_size[1]/num_line))
             individual_paste_x = round(
                 paste_coordinates[0] + col_index*individual_max_size[0])
             individual_paste_y = round(
                 paste_coordinates[1] + line_index*individual_max_size[1])
-            individual_paste_coordinates = (
-                individual_paste_x, individual_paste_y)
-            composite_image = create_composite_image(
-                images_list[col_index], thumbnail_copy.size(), individual_paste_coordinates)
-            painter = QPainter(thumbnail_copy)
-            painter.drawPixmap(0, 0, composite_image)
+            
+            if no_separator != 0:
+                individual_max_size = (max_size[0], round(max_size[1]/num_line))
+                individual_paste_x = paste_coordinates[0]
+
+            print(f"Processing asset: {image_path}")
+
+            pix = QPixmap(image_path, "RGBA")
+            painter = QPainter(thumbnail)
+
+            eyesight_coordinates = (pix.width()/2, pix.height()/2)
+
+            if len(eyesight_line) >= col_index:
+                if eyesight_line[col_index] != None:
+                    eyesight_coordinates = eyesight_line[col_index]
+            
+            uncropped_edge = []
+
+            if len(uncropped_edges) >= line_index:
+                if len(uncropped_edges[line_index]) >= col_index:
+                    uncropped_edge = uncropped_edges[line_index][col_index]
+            
+            # For cropped assets, zoom to fill
+            # Calculate max zoom
+            zoom_x = max_size[0] / pix.width()
+            zoom_y = max_size[1] / pix.height()
+
+            min_zoom = 1
+
+            print(uncropped_edge)
+
+            if not uncropped_edge:
+                if zoom_x > zoom_y:
+                    min_zoom = zoom_x
+                else:
+                    min_zoom = zoom_y
+            else:
+                if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
+                    min_zoom = customZoom * proportional_zoom
+                elif 'l' in uncropped_edge or 'r' in uncropped_edge:
+                    min_zoom = zoom_y
+                elif 'u' in uncropped_edge or 'd' in uncropped_edge:
+                    min_zoom = zoom_x
+                else:
+                    min_zoom = customZoom * proportional_zoom
+
+            global scale_fill_x, scale_fill_y
+            if scale_fill_x and not scale_fill_y:
+                min_zoom = zoom_x
+            elif scale_fill_y and not scale_fill_x:
+                min_zoom = zoom_y
+            elif scale_fill_x and scale_fill_y:
+                min_zoom = max(zoom_x, zoom_y)
+
+            zoom = max(min_zoom, customZoom * min_zoom)
+            print("zoom", zoom)
+
+            xx = 0
+            yy = 0
+
+            customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
+
+            if player_index == 1:
+                customCenter[0] = 1 - customCenter[0]
+
+            if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+                customCenter[0] = 1 - customCenter[0]
+
+            if not customCenter:
+                customCenter = [0.5, 0.5]
+            
+            if no_separator != 0:
+                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
+
+            xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
+            yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
+
+            original_xx = xx
+            original_yy = yy
+            
+            # Max move X
+            maxMoveX = individual_max_size[0] - pix.width() * zoom
+
+            if not 'l' in uncropped_edge:
+                if xx > 0: xx = 0
+            
+            if not 'r' in uncropped_edge:
+                if xx < maxMoveX: xx = maxMoveX
+
+            # Max move Y
+            maxMoveY = individual_max_size[1] - pix.height() * zoom
+
+            if not 'u' in uncropped_edge:
+                if yy > 0: yy = 0
+            
+            if not 'd' in uncropped_edge:
+                if yy < maxMoveY: yy = maxMoveY
+
+            flip = False
+
+            if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+                flip = True
+            
+            area = QPixmap(int(individual_max_size[0]), int(individual_max_size[1]))
+            area.fill(QColor(0, 0, 0, 0))
+            
+            areaPaint = QPainter(area)
+
+            areaPaint.drawPixmap(
+                int(xx), int(yy),
+                pix
+                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+            )
+
+            areaPaint.end()
+
+            if flip:
+                area = area.transformed(QTransform().scale(-1, 1))
+
+            painter.drawPixmap(
+                int(individual_paste_x),
+                int(individual_paste_y),
+                area
+            )
             painter.end()
 
-            # crop
-            left = round(0)
-            top = round(0)
-            right = round(separator_v_image.width())
-            bottom = round(individual_max_size[1])
-            separator_v_image = separator_v_image.copy(
-                left, top, right-left, bottom-top)
-            separator_v_offset = max_size[0]/num_col
-            for i in range(1, num_col):
-                separator_paste_x = round(
-                    paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
-                separator_paste_y = individual_paste_y
-                separator_paste_coordinates = (
-                    separator_paste_x, separator_paste_y)
-                composite_image = create_composite_image(
-                    separator_v_image, thumbnail_copy.size(), separator_paste_coordinates)
-                painter = QPainter(thumbnail_copy)
-                painter.drawPixmap(0, 0, composite_image)
-                painter.end()
+            if is_preview:
+                global font_1
+                draw_text(
+                    thumbnail,
+                    "Scale: {0:.2f}".format(zoom) + '%'+"\n",
+                    font_1, 20, (0, 0, 0),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y),
+                    (round(max_size[0]/num_col), 20),
+                    True,
+                    (255,255,255),
+                    (4, 2)
+                )
 
-        # crop
+                draw_text(
+                    thumbnail,
+                    f'Eyesight offset: ({int(original_xx - xx)}, {int(original_yy - yy)})',
+                    font_1, 20, (0, 0, 0),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+20),
+                    (round(max_size[0]/num_col), 20),
+                    True,
+                    (255,255,255),
+                    (4, 2)
+                )
+            
+            # Vertical separator line
+            if no_separator == 0:
+                left = round(0)
+                top = round(0)
+                right = round(separator_v_image.width())
+                bottom = round(individual_max_size[1])
+                separator_v_image = separator_v_image.copy(
+                    left, top, right-left, bottom-top)
+                separator_v_offset = max_size[0]/num_col
+                for i in range(1, num_col):
+                    separator_paste_x = round(
+                        paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
+                    separator_paste_y = individual_paste_y
+                    separator_paste_coordinates = (
+                        separator_paste_x, separator_paste_y)
+                    composite_image = create_composite_image(
+                        separator_v_image, thumbnail.size(), separator_paste_coordinates)
+                    painter = QPainter(thumbnail)
+                    painter.drawPixmap(0, 0, composite_image)
+                    painter.end()
+
+        # Horizontal separator line
         left = round(0)
         top = round(0)
         right = round(max_size[0])
@@ -330,21 +447,18 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             separator_paste_coordinates = (
                 separator_paste_x, separator_paste_y)
             composite_image = create_composite_image(
-                separator_h_image, thumbnail_copy.size(), separator_paste_coordinates)
-            painter = QPainter(thumbnail_copy)
+                separator_h_image, thumbnail.size(), separator_paste_coordinates)
+            painter = QPainter(thumbnail)
             painter.drawPixmap(0, 0, composite_image)
             painter.end()
 
-    if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-        thumbnail_copy = thumbnail_copy.transformed(QTransform().scale(-1, 1))
+    # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
+    #     thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
 
-    if return_scaling:
-        return(max_scaling)
-    else:
-        return(thumbnail_copy)
+    return(thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50):
     max_x_size = round(
         template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
     max_y_size = round(
@@ -357,19 +471,22 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         round(template_data["character_images"]["position"]["y"]*ratio[1])
     ]
 
-    max_scaling_list = []
-
-    path_matrix_list = []
-    eyesight_matrix_list = []
+    path_matrices = []
+    eyesight_matrices = []
+    uncropped_edge_matrices = []
 
     for i in [0, 1]:
         team_index = i+1
+
         path_matrix = []
         eyesight_matrix = []
+        uncropped_edge_matrix = []
+
         current_team = find(f"score.team.{team_index}.player", data)
         for player_key in current_team.keys():
             character_list = []
             eyesight_list = []
+            uncropped_edge_list = []
             characters = find(f"{player_key}.character", current_team)
             for character_key in characters.keys():
                 try:
@@ -383,46 +500,68 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     if character_path.get("eyesight"):
                         eyesight_coordinates = (
                             character_path.get("eyesight")["x"], character_path.get("eyesight")["y"])
+                    
+                    uncropped_edges = None
 
-                    print(eyesight_coordinates)
+                    if character_path.get("uncropped_edge"):
+                        uncropped_edges = character_path.get("uncropped_edge")
+                    else:
+                        uncropped_edges = []
+
                     if image_path:
                         character_list.append(image_path)
                         eyesight_list.append(eyesight_coordinates)
+                        uncropped_edge_list.append(uncropped_edges)
                 except KeyError:
                     None
             if character_list:
                 # For team 1, characters must come from the center
                 # so we have to reverse the array
-                if i == 0:
+                # but only when drawing separators
+                global no_separator
+                if i == 0 and not no_separator:
                     character_list.reverse()
                     eyesight_list.reverse()
+                    uncropped_edge_list.reverse()
                 path_matrix.append(character_list)
                 eyesight_matrix.append(eyesight_list)
+                uncropped_edge_matrix.append(uncropped_edge_list)
+        
+        path_matrices.append(path_matrix)
+        eyesight_matrices.append(eyesight_matrix)
+        uncropped_edge_matrices.append(uncropped_edge_matrix)
 
-        paste_x = origin_x_coordinates[i]
-        paste_y = origin_y_coordinates[i]
-        paste_coordinates = (paste_x, paste_y)
-        max_scaling_for_team = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom, return_scaling=True)
-        max_scaling_list.append(max_scaling_for_team)
-        path_matrix_list.append(path_matrix)
-        eyesight_matrix_list.append(eyesight_matrix)
+    # Calculate proportional scaling
+    global proportional_zoom
+    proportional_zoom = 1
+
+    max_width = 0
+    max_height = 0
+
+    for path_matrix in path_matrices:
+        for player_pathes in path_matrix:
+            for path in player_pathes:
+                pix = QPixmap(path)
+                max_width = max(max_width, pix.width())
+                max_height = max(max_height, pix.height())
     
-    max_scaling = max(max_scaling_list)
+    proportional_zoom = min(proportional_zoom, max_size[0] / max_width * 2)
+    proportional_zoom = min(proportional_zoom, max_size[1] / max_height * 2)
 
     for i in [0, 1]:
-        path_matrix = path_matrix_list[i]
-        eyesight_matrix = eyesight_matrix_list[i]
+        team_index = i+1
+
+        path_matrix = path_matrices[i]
+        eyesight_matrix = eyesight_matrices[i]
+        uncropped_edge_matrix = uncropped_edge_matrices[i]
+        
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
-
-        if constant_scaling:
-            thumbnail = paste_image_matrix(
-                thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom, force_scaling=max_scaling)
-        else:
-            thumbnail = paste_image_matrix(
-                thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2, fill_x, fill_y, zoom)
+        
+        thumbnail = paste_image_matrix(
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2,
+            fill_x, fill_y, zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign, uncropped_edges=uncropped_edge_matrix)
 
     return(thumbnail)
 
@@ -478,36 +617,45 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     painter.setFont(font)
 
     pen = QPen()
-    pen.setWidth(stroke_width)
-    pen.setColor(QColor(
-        outline_color[0],
-        outline_color[1],
-        outline_color[2]
-    ))
-    painter.setPen(pen)
 
-    painter.setBrush(QColor(
-        color[0],
-        color[1],
-        color[2]
-    ))
+    if isinstance(color, tuple):
+        color = [color] * len(text)
+    
+    pos_x = int(text_coordinates[0]) + (container_size[0] - padding[0]*2) / 2 - fontMetrics.width(text)/2
 
-    path.addText(
-        int(text_coordinates[0]) +
-        (container_size[0] - padding[0]*2) /
-        2 - fontMetrics.width(text)/2,
-        int(text_coordinates[1]) + fontMetrics.height()/4 +
-        (container_size[1]-padding[1]*2)/2,
-        font,
-        text
-    )
+    for i, char in enumerate(text):
+        path.clear()
+        
+        pen.setWidth(stroke_width)
+        pen.setColor(QColor(
+            outline_color[0],
+            outline_color[1],
+            outline_color[2]
+        ))
+        painter.setPen(pen)
 
-    painter.drawPath(path)
+        painter.setBrush(QColor(
+            color[i][0],
+            color[i][1],
+            color[i][2]
+        ))
 
-    pen.setWidth(0)
-    pen.setColor(QColor(0, 0, 0, 0))
-    painter.setPen(pen)
-    painter.drawPath(path)
+        path.addText(
+            pos_x,
+            int(text_coordinates[1]) + fontMetrics.height()/4 +
+            (container_size[1]-padding[1]*2)/2,
+            font,
+            char
+        )
+
+        painter.drawPath(path)
+
+        pen.setWidth(0)
+        pen.setColor(QColor(0, 0, 0, 0))
+        painter.setPen(pen)
+        painter.drawPath(path)
+
+        pos_x += fontMetrics.width(char)
 
     painter.end()
 
@@ -527,24 +675,46 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_size = template_data["initial_font_size"]*ratio[1]
     player_text_color = text_color[0]
 
+
     for i in [0, 1]:
         team_index = i+1
         player_list = []
+        color_mask = []
         if use_team_names:
             player_name = find(f"score.team.{team_index}.teamName", data)
         else:
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
-                current_data = current_team[key].get("mergedName")
+                current_data = ""
+                individual_color_mask = []
+
+                team = current_team[key].get("team", "")
+                if team:
+                    current_data += team+" "
+                    individual_color_mask += [sponsor_color[i]] * len(team+" ")
+
+                current_data += current_team[key].get("name", "")
+                individual_color_mask += [player_text_color["font_color"]] * len(current_team[key].get("name", ""))
+                
                 if current_data:
                     current_data = current_data.rstrip("[L]").strip()
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name")
+                    individual_color_mask += [player_text_color["font_color"]] * len(current_data)
                     if current_data:
                         current_data = current_data.strip()
                 if current_data:
                     player_list.append(current_data)
+                    color_mask.append(individual_color_mask)
+
             player_name = " / ".join(player_list)
+            
+            final_color_mask = color_mask[0]
+
+            if len(color_mask) > 0:
+                for mask in color_mask[1:]:
+                    final_color_mask += [player_text_color["font_color"]] * 3
+                    final_color_mask += mask
 
         if use_team_names or len(player_list) > 1:
             player_type = "team"
@@ -558,7 +728,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             player_name,
             font_path,
             text_size,
-            player_text_color["font_color"],
+            final_color_mask,
             text_player_coordinates[i],
             text_player_max_dimensions,
             player_text_color["has_outline"],
@@ -758,9 +928,10 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
                 character = gameAssetManager.instance.characters[key]
+                skin = random.randint(0, len(gameAssetManager.instance.characters[key]))
 
                 data = gameAssetManager.instance.GetCharacterAssets(
-                    character.get("codename"), 0)
+                    character.get("codename"), skin)
 
                 asset = data.get(used_assets)
 
@@ -878,6 +1049,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail")
 
+    global is_preview
+    is_preview = isPreview
+
     data_path = "./out/program_state.json"
     out_path = "./out/thumbnails" if not isPreview else "./tmp/thumbnail"
     tmp_path = "./tmp"
@@ -926,6 +1100,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             "has_outline": settings["font_outline_enabled"][1],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
         }
+    ]
+
+    global sponsor_color
+    sponsor_color = [
+        color_code_to_tuple(settings.get("sponsor_font_color_1", ["#FFFFFF"])[0]),
+        color_code_to_tuple(settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
     ]
 
     zoom = 1
@@ -1001,6 +1181,13 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global ratio
     ratio = (background.width()/template_data["base_ratio"]["x"],
              background.height()/template_data["base_ratio"]["y"])
+    
+    global scale_fill_x, scale_fill_y
+    scale_fill_x = settings.get(f"scaleToFillX/{game_codename}", 0)
+    scale_fill_y = settings.get(f"scaleToFillY/{game_codename}", 0)
+
+    global no_separator
+    no_separator = settings.get(f"hideSeparators/{game_codename}", 0)
 
     foreground = foreground.scaled(
         background.width(),
@@ -1020,8 +1207,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     painter.drawPixmap(0, 0, background)
     painter.end()
 
+    horizontalAlign = settings.get(f"horizontalAlign/{game_codename}", 50)
+    verticalAlign = settings.get(f"verticalAlign/{game_codename}", 50)
+
     thumbnail = paste_characters(
-        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom)
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign)
     composite_image = create_composite_image(
         foreground, thumbnail.size(), (0, 0))
 
