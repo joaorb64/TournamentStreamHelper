@@ -847,7 +847,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHTournamentDataProvider.py" line="172"/>
         <location filename="../TSHTournamentDataProvider.py" line="174"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="273"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="694"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="795"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
     </message>
@@ -1013,23 +1013,23 @@ p, li { white-space: pre-wrap; }
         <translation>Définir le joueur</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="695"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="796"/>
         <source>Sponsor {0}</source>
         <translation>Sponsor {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="722"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="823"/>
         <source>Winners Finals</source>
         <translation>Finale Winner</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="723"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="824"/>
         <source>Pool {0}</source>
         <translation>Poule {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="741"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="768"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="842"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="869"/>
         <source>Team {0}</source>
         <translation>Équipe {0}</translation>
     </message>
@@ -1122,12 +1122,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="837"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="938"/>
         <source>Please select a game first</source>
         <translation>Veuillez sélectionner un jeu</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="841"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="942"/>
         <source>Player {0} tag missing</source>
         <translation>Le pseudo du joueur {0} est absent</translation>
     </message>
