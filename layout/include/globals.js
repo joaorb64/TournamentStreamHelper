@@ -78,14 +78,54 @@ function SetInnerHtml(
   })
 }
 
+const degrees_to_radians = deg => (deg * Math.PI) / 180.0;
+
+function GenerateMulticharacterPositions(character_number, center=[0.5, 0.5], radius=0.3){
+  let positions = []
+
+  // For 1 character, just center it
+  if(character_number == 1) radius = 0
+  
+  let angle_rad = degrees_to_radians(90)
+
+  if(character_number == 2) angle_rad = 45
+  
+  let pendulum = 1
+
+  for(let i = 0; i<character_number; i+=1){
+    let j = i
+    if(i > 1){
+      if(i%2 == 0){
+        pendulum *= -1
+      } else {
+        pendulum *= -1
+        pendulum += 1
+      }
+      j = pendulum
+    }
+    angle = angle_rad + degrees_to_radians(360/character_number) * j
+    pos = [
+      center[0] + Math.cos(angle) * radius,
+      center[1] + Math.sin(angle) * radius
+    ]
+    positions.push(pos)
+  }
+
+  return positions
+}
+
 function CenterImage(
   element,
   eyesight,
   customZoom = 1,
   customCenter = null,
   customElement = null,
-  fullbody_direction = undefined
+  uncropped_edge = undefined,
+  scale_fill_x = false,
+  scale_fill_y = false
 ) {
+  element.css("opacity", "0");
+
   let image = element.css('background-image')
 
   if (image != undefined && image.includes('url(')) {
@@ -102,39 +142,48 @@ function CenterImage(
 
       if (!customElement) customElement = element
 
+      // For cropped assets, zoom to fill
+      // Calculate max zoom
       zoom_x = customElement.innerWidth() / img.naturalWidth
       zoom_y = customElement.innerHeight() / img.naturalHeight
 
-      // For cropped assets, zoom to fill
-      if (!fullbody_direction) {
+      let minZoom = 1
+
+      if (!uncropped_edge || uncropped_edge == "undefined" || uncropped_edge.length == 0) {
         if (zoom_x > zoom_y) {
-          zoom = zoom_x
+          minZoom = zoom_x
         } else {
-          zoom = zoom_y
+          minZoom = zoom_y
         }
       } else {
         if (
-          fullbody_direction.includes('u') &&
-          fullbody_direction.includes('d') &&
-          fullbody_direction.includes('l') &&
-          fullbody_direction.includes('r')
+          uncropped_edge.includes('u') &&
+          uncropped_edge.includes('d') &&
+          uncropped_edge.includes('l') &&
+          uncropped_edge.includes('r')
         ) {
-          zoom = customZoom
-        } else if (fullbody_direction.includes('l') && fullbody_direction.includes('r')) {
-          zoom = zoom_y
-        } else if (fullbody_direction.includes('u') && fullbody_direction.includes('d')) {
-          zoom = zoom_x
+          minZoom = customZoom
+        } else if (uncropped_edge.includes('l') && uncropped_edge.includes('r')) {
+          minZoom = zoom_y
+        } else if (uncropped_edge.includes('u') && uncropped_edge.includes('d')) {
+          minZoom = zoom_x
         } else {
-          zoom = customZoom
+          minZoom = customZoom
         }
       }
 
-      zoom *= customZoom
+      if(scale_fill_x && !scale_fill_y){
+        minZoom = zoom_x
+      } else if(scale_fill_y && !scale_fill_x){
+        minZoom = zoom_y
+      }
+      else if(scale_fill_x && scale_fill_y){
+        minZoom = Math.max(zoom_x, zoom_y)
+      }
 
-      console.log(fullbody_direction)
+      zoom = Math.max(minZoom, customZoom * minZoom)
 
-      //if (fullbody_direction) zoom = customZoom
-
+      // Cetering
       let xx = 0
       let yy = 0
 
@@ -144,15 +193,12 @@ function CenterImage(
         xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x
       }
 
-      console.log('xx', xx)
-
       let maxMoveX = element.innerWidth() - img.naturalWidth * zoom
-      console.log('maxMoveX', maxMoveX)
 
-      if (!fullbody_direction || !fullbody_direction.includes('l')) {
+      if (!uncropped_edge || !uncropped_edge.includes('l')) {
         if (xx > 0) xx = 0
       }
-      if (!fullbody_direction || !fullbody_direction.includes('r')) {
+      if (!uncropped_edge || !uncropped_edge.includes('r')) {
         if (xx < maxMoveX) xx = maxMoveX
       }
 
@@ -161,15 +207,13 @@ function CenterImage(
       } else {
         yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y
       }
-      console.log('yy', yy)
 
       let maxMoveY = element.innerHeight() - img.naturalHeight * zoom
-      console.log('maxMoveY', maxMoveY)
 
-      if (!fullbody_direction || !fullbody_direction.includes('u')) {
+      if (!uncropped_edge || !uncropped_edge.includes('u')) {
         if (yy > 0) yy = 0
       }
-      if (!fullbody_direction || !fullbody_direction.includes('d')) {
+      if (!uncropped_edge || !uncropped_edge.includes('d')) {
         if (yy < maxMoveY) yy = maxMoveY
       }
 
@@ -190,6 +234,8 @@ function CenterImage(
           ${img.naturalHeight * zoom}px
         `
       )
+
+      element.css("opacity", "1");
 
       //element.css("background-position", "initial");
       //element.css("position", "fixed");

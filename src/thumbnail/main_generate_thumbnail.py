@@ -316,6 +316,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 min_zoom = max(zoom_x, zoom_y)
 
             zoom = max(min_zoom, customZoom * min_zoom)
+            print("zoom", zoom)
 
             xx = 0
             yy = 0

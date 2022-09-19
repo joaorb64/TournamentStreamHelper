@@ -273,7 +273,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(
             key="open_explorer", val=self.open_explorer.isChecked()))
 
-        self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting())
+        self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting(force=True))
 
         self.horizontalAlign.valueChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(

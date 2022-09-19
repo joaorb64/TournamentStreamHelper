@@ -27,7 +27,7 @@ class StateManager:
     def SaveState():
         if StateManager.saveBlocked == 0:
             with open("./out/program_state.json", 'w', encoding='utf-8') as file:
-                print("SaveState")
+                # print("SaveState")
                 json.dump(StateManager.state, file, indent=4, sort_keys=False)
                 StateManager.ExportText(StateManager.lastSavedState)
                 StateManager.lastSavedState = copy.deepcopy(StateManager.state)
@@ -58,7 +58,7 @@ class StateManager:
         return deep_get(StateManager.state, key, default)
 
     def ExportText(oldState):
-        print("ExportText")
+        # print("ExportState")
         diff = DeepDiff(oldState, StateManager.state)
         # print(diff)
 

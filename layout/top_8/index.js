@@ -1,6 +1,14 @@
 ;(($) => {
-  var ASSET_TO_USE = 'full'
-  var ZOOM = 1
+  var ASSET_TO_USE_1ST = 'full'
+  var ZOOM_1ST = 1
+
+  var ASSET_TO_USE_2_to_4 = 'full'
+  var ZOOM_2_to_4 = 1
+
+  var ASSET_TO_USE_5_to_7 = 'full'
+  var ZOOM_5_to_7 = 1
+  
+  var DIVIDERS = true
 
   gsap.config({ nullTargetWarn: false, trialWarn: false })
 
@@ -113,27 +121,14 @@
             let charactersHtml = ''
 
             if (t == 0) {
-              ASSET_TO_USE = 'fuller'
-              ZOOM = 0.8
+              ASSET_TO_USE = ASSET_TO_USE_1ST
+              ZOOM = ZOOM_1ST
             } else if (t < 4) {
-              ASSET_TO_USE = 'fuller'
-              ZOOM = 0.6
+              ASSET_TO_USE = ASSET_TO_USE_2_to_4
+              ZOOM = ZOOM_2_to_4
             } else {
-              ASSET_TO_USE = 'fuller'
-              ZOOM = 0.5
-            }
-
-            let centering = {
-              1: [[0.5, 0.4]],
-              2: [
-                [0.3, 0.7],
-                [0.7, 0.3]
-              ],
-              3: [
-                [0.5, 0.7],
-                [0.3, 0.3],
-                [0.7, 0.3]
-              ]
+              ASSET_TO_USE = ASSET_TO_USE_5_to_7
+              ZOOM = ZOOM_5_to_7
             }
 
             let validCharacters = Object.values(player.character).filter(
@@ -142,8 +137,13 @@
 
             Object.values(validCharacters).forEach((character, index) => {
               if (character.assets[ASSET_TO_USE]) {
+                let centering = [0.5, 0.4]
+
+                // If not using dividers, calculate proper placement for each character
+                if(!DIVIDERS) GenerateMulticharacterPositions(validCharacters.length)[index]
+
                 charactersHtml += `
-                  <div class="icon stockicon">
+                  <div class="icon stockicon ${DIVIDERS ? "divided" : ""}">
                       <div
                         style='
                           background-image: url(../../${character.assets[ASSET_TO_USE].asset});
@@ -159,8 +159,8 @@
                             ? character.assets[ASSET_TO_USE].eyesight.y
                             : null
                         }'
-                        data-centering-x='${centering[validCharacters.length][index][0]}'
-                        data-centering-y='${centering[validCharacters.length][index][1]}'
+                        data-centering-x='${centering[0]}'
+                        data-centering-y='${centering[1]}'
                         data-uncropped-edge='${JSON.stringify(
                           character.assets[ASSET_TO_USE].uncropped_edge
                         )}'
@@ -188,7 +188,7 @@
                       $(i).attr('data-zoom'),
                       { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
                       $(i).parent().parent(),
-                      $(i).attr('data-uncropped-edge')
+                      $(i).attr('data-uncropped-edge') != "undefined" ? JSON.parse($(i).attr('data-uncropped-edge')) : undefined
                     )
                   }
                 })
