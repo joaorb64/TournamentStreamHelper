@@ -89,11 +89,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         # Move up/down
         titleContainer = self.findChild(QHBoxLayout, "titleContainer")
         self.btMoveUp = QPushButton()
-        self.btMoveUp.setMaximumWidth(32)
+        self.btMoveUp.setFixedSize(32, 32)
         self.btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
         titleContainer.addWidget(self.btMoveUp)
         self.btMoveDown = QPushButton()
-        self.btMoveDown.setMaximumWidth(32)
+        self.btMoveDown.setFixedSize(32, 32)
         self.btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
         titleContainer.addWidget(self.btMoveDown)
 
@@ -310,6 +310,20 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character_color.setView(view)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
+
+            # Move up/down
+            btMoveUp = QPushButton()
+            btMoveUp.setFixedSize(32, 32)
+            btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
+            character_element.layout().addWidget(btMoveUp)
+            btMoveUp.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index-1))
+            btMoveDown = QPushButton()
+            btMoveDown.setFixedSize(32, 32)
+            btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
+            character_element.layout().addWidget(btMoveDown)
+            btMoveDown.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index+1))
+
+            # Add line to characters
             self.character_container.layout().addWidget(character_element)
 
             self.character_elements.append(
@@ -341,6 +355,43 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_elements.pop()
 
         self.CharactersChanged()
+    
+    def SwapCharacters(self, index1: int, index2: int):
+        StateManager.BlockSaving()
+
+        if index2 > len(self.character_elements)-1: index2 = 0
+
+        char1 = self.character_elements[index1]
+        char2 = self.character_elements[index2]
+
+        # Save index1 settings
+        tmp = [char1[1].currentText(), char1[2].currentIndex()]
+
+        # Set index1 to index2
+        # Character
+        found = char1[1].findText(char2[1].currentText())
+        if found != -1:
+            char1[1].setCurrentIndex(found)
+        else:
+            char1[1].setCurrentText(char2[1].currentText())
+        
+        # Color
+        char1[2].setCurrentIndex(char2[2].currentIndex())
+
+        # Set index2 to temp (index1)
+        # Character
+        found = char2[1].findText(tmp[0])
+        if found != -1:
+            char2[1].setCurrentIndex(found)
+        else:
+            char2[1].setCurrentText(tmp[0])
+        
+        # Color
+        char2[2].setCurrentIndex(tmp[1])
+
+        self.CharactersChanged()
+
+        StateManager.ReleaseSaving()
 
     def LoadCountries(self):
         try:
