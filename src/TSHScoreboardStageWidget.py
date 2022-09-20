@@ -7,6 +7,7 @@ import json
 import requests
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
+from src.TSHStageStrikeLogic import TSHStageStrikeLogic
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
 from .TSHWebServer import WebServer
@@ -41,6 +42,8 @@ class TSHScoreboardStageWidget(QWidget):
         super().__init__(*args)
 
         self.scoreboard = scoreboard
+
+        self.stageStrikeLogic = TSHStageStrikeLogic()
 
         self.signals = TSHScoreboardStageWidgetSignals()
 
@@ -424,6 +427,7 @@ class TSHScoreboardStageWidget(QWidget):
 
     def ExportCurrentRuleset(self):
         ruleset = self.GetCurrentRuleset()
+        self.stageStrikeLogic.SetRuleset(ruleset)
         self.ValidateRuleset(ruleset)
         StateManager.Set(f"score.ruleset", vars(ruleset))
     

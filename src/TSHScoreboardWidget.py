@@ -61,7 +61,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.tabStage = QWidget()
         self.tabStage.setLayout(QVBoxLayout())
         self.tabs.addTab(self.tabStage, QApplication.translate("app", "Stage"))
-        self.tabStage.layout().addWidget(TSHScoreboardStageWidget(scoreboard=self))
+        self.stageWidget = TSHScoreboardStageWidget(scoreboard=self)
+        self.tabStage.layout().addWidget(self.stageWidget)
 
         # StateManager.Set("score", {})
 
