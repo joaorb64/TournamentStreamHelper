@@ -91,7 +91,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetMatches(self):
+    def GetMatches(self, getFinished=False):
         final_data = []
 
         try:

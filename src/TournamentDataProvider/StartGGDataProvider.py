@@ -167,8 +167,14 @@ class StartGGDataProvider(TournamentDataProvider):
         data = json.loads(data.text)
         return self.ParseMatchDataNewApi(data.get("data", {}).get("set", {}))
 
-    def GetMatches(self):
+    def GetMatches(self, getFinished=False, progress_callback=None):
         try:
+            print("Get matches", getFinished)
+            states = [1, 6, 2]
+            
+            if getFinished:
+                states.append(3)
+
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
@@ -179,12 +185,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     "operationName": "EventMatchListQuery",
                     "variables": {
                         "filters": {
-                            "state": [
-                                1,
-                                6,
-                                2,
-                                # 3
-                            ],
+                            "state": states,
                             "hideEmpty": True
                         },
                         "eventSlug": self.url.split("start.gg/")[1]
@@ -205,6 +206,7 @@ class StartGGDataProvider(TournamentDataProvider):
             return(final_data)
         except Exception as e:
             traceback.print_exc()
+        return([])
 
     def ParseMatchDataNewApi(self, _set):
         p1 = deep_get(_set, "slots", [])[0]
