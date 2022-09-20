@@ -37,17 +37,17 @@ class TSHGameAssetManager(QObject):
         self.LoadGames()
 
     def DownloadStartGGCharacters(self):
-        try:
-            class DownloaderThread(QThread):
-                def run(self):
+        class DownloaderThread(QThread):
+            def run(self):
+                try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
                     open('./assets/characters.json', 'wb').write(r.content)
                     print("startgg characters file updated")
-            thread = DownloaderThread(self)
-            thread.start()
-        except Exception as e:
-            print("Could not update /assets/characters.json: "+str(e))
+                except Exception as e:
+                    print("Could not update /assets/characters.json: "+str(e))
+        thread = DownloaderThread(self)
+        thread.start()
 
     def LoadGames(self):
         class GameLoaderThread(QThread):

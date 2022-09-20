@@ -501,12 +501,20 @@ class TSHScoreboardStageWidget(QWidget):
                         )
                         data = json.loads(data.text)
                         rulesets = deep_get(data, "entities.ruleset")
-                        open('./assets/rulesets.json', 'w').write(json.dumps(data))
+                        open('./assets/rulesets.json', 'w').write(json.dumps(rulesets))
                         self.parent().startggRulesets = rulesets
-                        print("startgg Rulesets loaded")
+                        print("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()
                     except:
                         print(traceback.format_exc())
+
+                        try:
+                            rulesets = json.loads(open('./assets/rulesets.json').read())
+                            self.parent().startggRulesets = rulesets
+                            print("startgg Rulesets loaded from local file")
+                            self.parent().signals.rulesets_changed.emit()
+                        except:
+                            print(traceback.format_exc())
             downloadThread = DownloadThread(self)
             downloadThread.start()
         except Exception as e:
