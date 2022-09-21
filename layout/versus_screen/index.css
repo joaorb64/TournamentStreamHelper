@@ -71,6 +71,10 @@ body {
   align-items: flex-start;
 }
 
+.column > div {
+  max-width: 100%;
+}
+
 .player.container.p2 .column {
   align-items: flex-end;
 }
@@ -214,6 +218,7 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
+  opacity: 0;
 }
 
 .best_of {
@@ -229,6 +234,7 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   background-position: center;
+  opacity: 0;
 }
 
 .phase {

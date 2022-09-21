@@ -495,14 +495,26 @@ class TSHScoreboardStageWidget(QWidget):
         try:
             class DownloadThread(QThread):
                 def run(self):
-                    data = requests.get(
-                        "https://www.start.gg/api/-/gg_api./rulesets"
-                    )
-                    data = json.loads(data.text)
-                    rulesets = deep_get(data, "entities.ruleset")
-                    self.parent().startggRulesets = rulesets
-                    print("startgg Rulesets loaded")
-                    self.parent().signals.rulesets_changed.emit()
+                    try:
+                        data = requests.get(
+                            "https://www.start.gg/api/-/gg_api./rulesets"
+                        )
+                        data = json.loads(data.text)
+                        rulesets = deep_get(data, "entities.ruleset")
+                        open('./assets/rulesets.json', 'w').write(json.dumps(rulesets))
+                        self.parent().startggRulesets = rulesets
+                        print("startgg Rulesets downloaded from startgg")
+                        self.parent().signals.rulesets_changed.emit()
+                    except:
+                        print(traceback.format_exc())
+
+                        try:
+                            rulesets = json.loads(open('./assets/rulesets.json').read())
+                            self.parent().startggRulesets = rulesets
+                            print("startgg Rulesets loaded from local file")
+                            self.parent().signals.rulesets_changed.emit()
+                        except:
+                            print(traceback.format_exc())
             downloadThread = DownloadThread(self)
             downloadThread.start()
         except Exception as e:
