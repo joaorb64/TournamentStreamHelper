@@ -722,7 +722,7 @@ class StartGGDataProvider(TournamentDataProvider):
             callback.emit({"playerID": playerID, "last_sets": set_data})
         except Exception as e:
             traceback.print_exc()
-            callback.emit({"last_sets": []})
+            callback.emit({"playerID": playerID,"last_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
         try:

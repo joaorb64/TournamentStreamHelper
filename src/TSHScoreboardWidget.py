@@ -359,6 +359,9 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
             self.UpdateRecentSets)
 
+        TSHTournamentDataProvider.instance.signals.last_sets_updated.connect(
+            self.UpdateLastSets)
+
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
         default_tournament_phases_file = './assets/tournament_phases.txt'
@@ -480,6 +483,7 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
+            p.instanceSignals.playerId_changed.connect(self.GetLastSets)
 
             self.team1playerWidgets.append(p)
 
@@ -500,6 +504,7 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
+            p.instanceSignals.playerId_changed.connect(self.GetLastSets)
 
             self.team2playerWidgets.append(p)
 
@@ -627,6 +632,36 @@ class TSHScoreboardWidget(QDockWidget):
                 "sets": data.get("sets"),
                 "request_time": data.get("request_time")
             })
+    
+    def GetLastSets(self):
+        # Only if 1 player on each side
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+
+            if p1id and json.dumps(p1id) != json.dumps(p2id):
+                TSHTournamentDataProvider.instance.GetLastSets(p1id)
+            if p2id and json.dumps(p2id) != json.dumps(p1id):
+                TSHTournamentDataProvider.instance.GetLastSets(p2id)
+    
+    def UpdateLastSets(self, data):
+        playerId = "1" if data.get("playerID", "") == StateManager.Get(
+            f"score.team.1.player.1.id")[0] else "2"
+
+        i = 1
+        for set in data.get("last_sets", []):
+            StateManager.Set(f"score.last_sets." + playerId + "." + str(i), {
+                "phase_id": set.get("phase_id"),
+                "phase_name": set.get("phase_name"),
+                "round_name": set.get("round_name"),
+                "player1_score": set.get("player1_score"),
+                "player2_score": set.get("player2_score"),
+                "player1_team": set.get("player1_team"),
+                "player1_name": set.get("player1_name"),
+                "player2_team": set.get("player2_team"),
+                "player2_name": set.get("player2_name")
+            })
+            i+=1
 
     def ResetScore(self):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)

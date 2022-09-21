@@ -1,6 +1,6 @@
 query PlayerLastSetsQuery($eventSlug: String!, $playerID: ID!) {
 	event(slug: $eventSlug) {
-    sets(page: 1, perPage: 99, sortType: RECENT, filters: {playerIds: [$playerID]}) {
+    sets(page: 1, perPage: 10, sortType: RECENT, filters: {playerIds: [$playerID]}) {
       nodes {
         id
         slots {
