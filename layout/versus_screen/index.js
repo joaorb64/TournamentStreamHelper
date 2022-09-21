@@ -12,7 +12,7 @@
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .from([".phase"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
+    .from([".phase.container"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from([".match"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from(
       [".score_container"],
@@ -20,7 +20,7 @@
       0
     )
     .from(
-      [".best_of"],
+      [".best_of.container"],
       { duration: 0.8, opacity: "0", ease: "power2.inOut" },
       0
     )
@@ -234,18 +234,18 @@
     SetInnerHtml($(".match"), data.score.match);
 
     if(data.score.phase){
-      gsap.to($(".phase:not(.container)"), {autoAlpha: 1})
+      gsap.to($(".phase.container"), {autoAlpha: 1, overwrite: true, duration: 0.8})
 
       SetInnerHtml(
         $(".phase:not(.container)"),
         data.score.phase ? `${data.score.phase}` : ""
       );
     } else {
-      gsap.to($(".phase:not(.container)"), {autoAlpha: 0})
+      gsap.to($(".phase.container"), {autoAlpha: 0, overwrite: true, duration: 0.8})
     }
 
     if(data.score.best_of){
-      gsap.to($(".best_of:not(.container)"), {autoAlpha: 1})
+      gsap.to($(".best_of.container"), {opacity: 1, overwrite: true, duration: 0.8})
 
       SetInnerHtml(
         $(".container .best_of"),
@@ -254,7 +254,7 @@
           : ""
       );
     } else {
-      gsap.to($(".best_of:not(.container)"), {autoAlpha: 0})
+      gsap.to($(".best_of.container"), {opacity: 0, overwrite: true, duration: 0.8})
     }
   }
 
