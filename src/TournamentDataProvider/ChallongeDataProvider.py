@@ -91,7 +91,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetMatches(self, getFinished=False):
+    def GetMatches(self, getFinished=False, progress_callback=None):
         final_data = []
 
         try:
@@ -109,8 +109,13 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             all_matches = self.GetAllMatchesFromData(data)
 
+            states = ["open", "pending"]
+
+            if getFinished:
+                states.append("complete")
+
             all_matches = [
-                match for match in all_matches if match.get("state") in ["open", "pending"] and match.get("player1") and match.get("player2")]
+                match for match in all_matches if match.get("state") in states and match.get("player1") and match.get("player2")]
 
             for match in all_matches:
                 final_data.append(self.ParseMatchData(match))
@@ -290,5 +295,57 @@ class ChallongeDataProvider(TournamentDataProvider):
                             all_entrants[player.get("id")] = playerData
 
             TSHPlayerDB.AddPlayers(all_entrants.values())
+        except Exception as e:
+            traceback.print_exc()
+
+    def GetStandings(self, playerNumber, progress_callback):
+        final_data = []
+
+        try:
+            data = requests.get(
+                self.url+".json",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+
+            data = json.loads(data.text)
+
+            all_matches = self.GetAllMatchesFromData(data)
+
+            all_matches.sort(key=lambda m: abs(m.get("identifier")), reverse=True)
+
+            # do not add duplicates
+            added_list = []
+
+            for m in all_matches:
+                winner = m.get("player1")
+
+                if m.get("winner_id") == m.get("player2").get("id"):
+                    winner = m.get("player2")
+                
+                if not winner.get("id") in added_list:
+                    playerData = {}
+
+                    split = winner.get("display_name").rsplit("|", 1)
+
+                    gamerTag = split[-1].strip()
+                    prefix = split[0].strip() if len(
+                        split) > 1 else None
+
+                    playerData["gamerTag"] = gamerTag
+                    playerData["prefix"] = prefix
+
+                    playerData["avatar"] = winner.get("portrait_url")
+
+                    final_data.append({
+                        "players": [playerData]
+                    })
+                    added_list.append(winner.get("id"))
+
+            return final_data
         except Exception as e:
             traceback.print_exc()

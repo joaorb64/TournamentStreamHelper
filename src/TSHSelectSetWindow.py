@@ -28,7 +28,7 @@ class TSHSelectSetWindow(QDialog):
         layout.addWidget(searchBar)
         searchBar.textEdited.connect(filterList)
 
-        self.showFinished = QCheckBox(QApplication.translate("app", "Show finished sets"))
+        self.showFinished = QCheckBox(QApplication.translate("app", "Show completed sets"))
         layout.addWidget(self.showFinished)
         self.showFinished.clicked.connect(lambda check: self.LoadSets())
 
