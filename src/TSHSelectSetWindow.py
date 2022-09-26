@@ -41,7 +41,6 @@ class TSHSelectSetWindow(QDialog):
             QAbstractItemView.NoEditTriggers)
         self.startggSetSelectionItemList.setModel(self.proxyModel)
         self.startggSetSelectionItemList.setColumnHidden(5, True)
-        self.startggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
         self.startggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.startggSetSelectionItemList.resizeColumnsToContents()
 
@@ -107,9 +106,10 @@ class TSHSelectSetWindow(QDialog):
 
         self.proxyModel.setSourceModel(model)
         self.startggSetSelectionItemList.setColumnHidden(5, True)
-        self.startggSetSelectionItemList.horizontalHeader().setStretchLastSection(True)
-        self.startggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.startggSetSelectionItemList.resizeColumnsToContents()
+        self.startggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        QApplication.processEvents()
+        self.resize(self.width(), self.height())
     
     def LoadSelectedSet(self):
         row = 0
