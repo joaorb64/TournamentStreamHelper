@@ -14,9 +14,10 @@ class WebServer(QThread):
     app.config['CORS_HEADERS'] = 'Content-Type'
     scoreboard = None
 
-    def __init__(self, parent=None, scoreboard=None) -> None:
+    def __init__(self, parent=None, scoreboard=None, stageWidget=None) -> None:
         super().__init__(parent)
         WebServer.scoreboard = scoreboard
+        WebServer.stageWidget = stageWidget
         self.host_name = "0.0.0.0"
         self.port = 5000
 
@@ -61,22 +62,22 @@ class WebServer(QThread):
 
     @app.route('/stage_clicked', methods=['POST'])
     def stage_clicked():
-        WebServer.scoreboard.stageWidget.stageStrikeLogic.StageClicked(json.loads(request.get_data()))
+        WebServer.stageWidget.stageStrikeLogic.StageClicked(json.loads(request.get_data()))
         return "OK"
     
     @app.route('/confirm_clicked', methods=['POST'])
     def confirm_clicked():
-        WebServer.scoreboard.stageWidget.stageStrikeLogic.ConfirmClicked()
+        WebServer.stageWidget.stageStrikeLogic.ConfirmClicked()
         return "OK"
     
     @app.route('/rps_win', methods=['POST'])
     def rps_win():
-        WebServer.scoreboard.stageWidget.stageStrikeLogic.RpsResult(int(json.loads(request.get_data()).get("winner")))
+        WebServer.stageWidget.stageStrikeLogic.RpsResult(int(json.loads(request.get_data()).get("winner")))
         return "OK"
     
     @app.route('/match_win', methods=['POST'])
     def match_win():
-        WebServer.scoreboard.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
+        WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
 
         teams = ["1", "2"]
         if WebServer.scoreboard.teamsSwapped:
@@ -88,7 +89,7 @@ class WebServer(QThread):
     
     @app.route('/reset', methods=['POST'])
     def reset():
-        WebServer.scoreboard.stageWidget.stageStrikeLogic.Initialize()
+        WebServer.stageWidget.stageStrikeLogic.Initialize()
         WebServer.reset_scores()
         return "OK"
 

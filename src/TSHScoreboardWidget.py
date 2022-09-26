@@ -43,26 +43,17 @@ class TSHScoreboardWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
 
-        self.tabs = QTabWidget()
-        self.widget.layout().addWidget(self.tabs)
-
-        self.tabScore = QWidget()
+        self.innerWidget = QWidget()
+        self.innerWidget.setLayout(QVBoxLayout())
 
         self.scrollArea = QScrollArea()
-        self.scrollArea.setWidget(self.tabScore)
+        self.scrollArea.setWidget(self.innerWidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setFrameShape(QFrame.Shape.NoFrame)
         self.scrollArea.setStyleSheet(
             "QTabWidget::pane { margin: 0px,0px,0px,0px }")
-
-        self.tabScore.setLayout(QVBoxLayout())
-        self.tabs.addTab(
-            self.scrollArea, QApplication.translate("app", "Score"))
-        self.tabStage = QWidget()
-        self.tabStage.setLayout(QVBoxLayout())
-        self.tabs.addTab(self.tabStage, QApplication.translate("app", "Stage"))
-        self.stageWidget = TSHScoreboardStageWidget(scoreboard=self)
-        self.tabStage.layout().addWidget(self.stageWidget)
+        
+        self.widget.layout().addWidget(self.scrollArea)
 
         # StateManager.Set("score", {})
 
@@ -75,7 +66,7 @@ class TSHScoreboardWidget(QDockWidget):
         topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
-        self.tabScore.layout().addWidget(topOptions)
+        self.innerWidget.layout().addWidget(topOptions)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
@@ -162,14 +153,14 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.columns = QWidget()
         self.columns.setLayout(QHBoxLayout())
-        self.tabScore.layout().addWidget(self.columns)
+        self.innerWidget.layout().addWidget(self.columns)
 
         bottomOptions = QWidget()
         bottomOptions.setLayout(QVBoxLayout())
         bottomOptions.layout().setContentsMargins(0, 0, 0, 0)
         bottomOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
-        self.tabScore.layout().addWidget(bottomOptions)
+        self.innerWidget.layout().addWidget(bottomOptions)
 
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
