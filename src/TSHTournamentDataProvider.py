@@ -312,9 +312,10 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def GetLastSets(self, playerNumber):
+    def GetLastSets(self, playerId, playerNumber):
         worker = Worker(self.provider.GetLastSets, **{
-            "playerID": playerNumber[0],
+            "playerID": playerId[0],
+            "playerNumber": playerNumber,
             "callback": self.signals.last_sets_updated
         })
         self.threadPool.start(worker)

@@ -657,7 +657,7 @@ class StartGGDataProvider(TournamentDataProvider):
         })
         self.threadpool.start(worker)
         
-    def GetLastSets(self, playerID, callback, progress_callback):
+    def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -710,19 +710,19 @@ class StartGGDataProvider(TournamentDataProvider):
                     "phase_name": phaseName,
                     "round_name": set.get("fullRoundText"),
                     "player1_score": set.get("entrant1Score"),
-                    "player2_score": set.get("entrant2Score"),
                     "player1_team": player1Info.get("prefix"),
                     "player1_name": player1Info.get("gamerTag"),
+                    "player2_score": set.get("entrant2Score"),
                     "player2_team": player2Info.get("prefix"),
                     "player2_name": player2Info.get("gamerTag")
                 }
 
                 set_data.append(player_set)
 
-            callback.emit({"playerID": playerID, "last_sets": set_data})
+            callback.emit({"playerNumber": playerNumber, "last_sets": set_data})
         except Exception as e:
             traceback.print_exc()
-            callback.emit({"playerID": playerID,"last_sets": []})
+            callback.emit({"playerNumber": playerNumber,"last_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
         try:

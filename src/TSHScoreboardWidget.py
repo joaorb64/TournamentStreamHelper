@@ -26,6 +26,8 @@ class TSHScoreboardWidget(QDockWidget):
         super().__init__(*args)
 
         StateManager.Set("score", {})
+        StateManager.Set("score.last_sets.1", {})
+        StateManager.Set("score.last_sets.2", {})
 
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
@@ -639,29 +641,38 @@ class TSHScoreboardWidget(QDockWidget):
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             p2id = StateManager.Get(f"score.team.2.player.1.id")
 
-            if p1id and json.dumps(p1id) != json.dumps(p2id):
-                TSHTournamentDataProvider.instance.GetLastSets(p1id)
-            if p2id and json.dumps(p2id) != json.dumps(p1id):
-                TSHTournamentDataProvider.instance.GetLastSets(p2id)
+            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+                TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
+                TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
+            else:
+                StateManager.Set(f"score.last_sets.1", {})
+                StateManager.Set(f"score.last_sets.2", {})
     
     def UpdateLastSets(self, data):
-        playerId = "1" if data.get("playerID", "") == StateManager.Get(
-            f"score.team.1.player.1.id")[0] else "2"
-
+        StateManager.BlockSaving()
         i = 1
+        winner = ""
+        loser = ""
         for set in data.get("last_sets", []):
-            StateManager.Set(f"score.last_sets." + playerId + "." + str(i), {
+            if set.get("player1_score") > set.get("player2_score"):
+                winner = "player1"
+                loser = "player2"
+            else:
+                winner = "player2"
+                loser = "player1"
+            StateManager.Set(f"score.last_sets." + data.get("playerNumber") + "." + str(i), {
                 "phase_id": set.get("phase_id"),
                 "phase_name": set.get("phase_name"),
                 "round_name": set.get("round_name"),
-                "player1_score": set.get("player1_score"),
-                "player2_score": set.get("player2_score"),
-                "player1_team": set.get("player1_team"),
-                "player1_name": set.get("player1_name"),
-                "player2_team": set.get("player2_team"),
-                "player2_name": set.get("player2_name")
+                "winner_score": set.get(winner + "_score"),
+                "loser_score": set.get(loser + "_score"),
+                "winner_team": set.get(winner + "_team"),
+                "winner_name": set.get(winner + "_name"),
+                "loser_team": set.get(loser + "_team"),
+                "loser_name": set.get(loser + "_name")
             })
             i+=1
+        StateManager.ReleaseSaving()
 
     def ResetScore(self):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
