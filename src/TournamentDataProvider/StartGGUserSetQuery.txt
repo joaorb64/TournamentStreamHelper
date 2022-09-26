@@ -2,7 +2,7 @@ query UserSetQuery($userSlug: String!) {
     user(slug: $userSlug) {
         player {
             id
-            sets(page: 1, perPage: 1) {
+            sets(page: 1, perPage: 1, filters: { past: false, upcoming: false, state: [1, 2, 4, 5, 6] }) {
                 nodes {
                     id
                     slots {
