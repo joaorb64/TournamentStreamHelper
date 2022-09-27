@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from src.TSHSelectSetWindow import TSHSelectSetWindow
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
