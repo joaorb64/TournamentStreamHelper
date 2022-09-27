@@ -18,6 +18,28 @@
       JSON.stringify(data.score.last_sets) != JSON.stringify(oldData.score.last_sets)) {
 
       $('.player2_container').html('')
+
+      sets_html = ""
+      Object.values(data.score.last_sets["2"]).slice(0, 3).forEach((sets, s) => {
+        sets_html += `<div class="set${s+1} set_container">
+          <div class="info">
+            <div class="phase"></div>
+            <div class="match"></div>
+          </div>
+          <div class="winner">
+            <div class="name">
+            </div>
+            <div class="score"></div>
+          </div>
+          <div class="loser">
+            <div class="name">
+            </div>
+            <div class="score"></div>
+          </div>
+        </div>`
+        });
+        $('.player2_content').html(sets_html);
+
         Object.values(data.score.last_sets["2"]).slice(0, 3).forEach((sets, s) => {
           let phaseTexts = [];
           if (sets.phase_name) phaseTexts.push(sets.phase_name);

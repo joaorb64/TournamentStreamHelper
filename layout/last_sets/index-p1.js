@@ -18,6 +18,28 @@
       JSON.stringify(data.score.last_sets) != JSON.stringify(oldData.score.last_sets)) {
 
       $('.player1_container').html('')
+
+      sets_html = ""
+      Object.values(data.score.last_sets["1"]).slice(0, 3).forEach((sets, s) => {
+        sets_html += `<div class="set${s+1} set_container">
+          <div class="info">
+            <div class="phase"></div>
+            <div class="match"></div>
+          </div>
+          <div class="winner">
+            <div class="name">
+            </div>
+            <div class="score"></div>
+          </div>
+          <div class="loser">
+            <div class="name">
+            </div>
+            <div class="score"></div>
+          </div>
+        </div>`
+        });
+        $('.player1_content').html(sets_html);
+
         Object.values(data.score.last_sets["1"]).slice(0, 3).forEach((sets, s) => {
           let phaseTexts = [];
           if (sets.phase_name) phaseTexts.push(sets.phase_name);
@@ -43,7 +65,7 @@
           );
           SetInnerHtml($(`.player1_content .set${s+1} .loser .score`), sets.loser_score);
           gsap.from($(`.set${s + 1}`), { y: +100, autoAlpha: 0, duration: 0.4 }, 0.5 + 0.3 * s);
-        });
+      });
     }
 
     $(".text").each(function (e) {
