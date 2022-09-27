@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 
+from src.TSHSelectSetWindow import TSHSelectSetWindow
+
 from .TSHScoreboardPlayerWidget import *
 from .SettingsManager import *
 from .StateManager import *
@@ -225,6 +227,8 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateBottomButtons)
         TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+        self.selectSetWindow = TSHSelectSetWindow(self)
 
         self.timerLayout = QWidget()
         self.timerLayout.setLayout(QHBoxLayout())
@@ -737,8 +741,8 @@ class TSHScoreboardWidget(QDockWidget):
                 str(int(self.autoUpdateTimer.remainingTime()/1000)))
 
     def LoadSetClicked(self):
-        self.lastSetSelected = None
-        TSHTournamentDataProvider.instance.LoadSets(self)
+        self.selectSetWindow.LoadSets()
+        self.selectSetWindow.show()
 
     def LoadStreamSetClicked(self):
         self.lastSetSelected = None

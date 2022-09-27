@@ -17,7 +17,7 @@ class TournamentDataProvider:
     def GetMatch(self, setId):
         pass
 
-    def GetMatches(self):
+    def GetMatches(self, getFinished=False, progress_callback=None):
         pass
 
     def GetStreamMatchId(self, streamName):

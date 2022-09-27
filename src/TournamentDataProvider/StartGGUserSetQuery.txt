@@ -1,8 +1,8 @@
-query UserSetQuery($userSlug: String!) {
+query UserSetQuery($userSlug: String!, $filters: SetFilters = {}) {
     user(slug: $userSlug) {
         player {
             id
-            sets(page: 1, perPage: 1) {
+            sets(page: 1, perPage: 1, filters: $filters) {
                 nodes {
                     id
                     slots {
