@@ -33,6 +33,8 @@ class TSHSelectSetWindow(QDialog):
         self.showFinished.clicked.connect(lambda check: self.LoadSets())
 
         self.startggSetSelectionItemList = QTableView()
+        self.startggSetSelectionItemList.doubleClicked.connect(lambda x: self.LoadSelectedSet())
+        self.startggSetSelectionItemList.installEventFilter(self)
         layout.addWidget(self.startggSetSelectionItemList)
         self.startggSetSelectionItemList.setSortingEnabled(True)
         self.startggSetSelectionItemList.setSelectionBehavior(
@@ -58,6 +60,12 @@ class TSHSelectSetWindow(QDialog):
         self.move(qr.topLeft())
 
         TSHTournamentDataProvider.instance.signals.get_sets_finished.connect(self.SetSets)
+    
+    def eventFilter(self, obj, event):
+        if obj is self.startggSetSelectionItemList and event.type() == QEvent.KeyPress:
+            if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+                self.LoadSelectedSet()
+        return super(self.parent(), self).eventFilter(obj, event)
     
     def LoadSets(self):
         self.proxyModel.setSourceModel(QStandardItemModel())
