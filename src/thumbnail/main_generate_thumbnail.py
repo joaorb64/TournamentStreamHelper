@@ -230,7 +230,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
         thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview
+    global proportional_zoom, no_separator, is_preview, ratio
 
     # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
     #     paste_coordinates = (
@@ -269,13 +269,17 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             print(f"Processing asset: {image_path}")
 
             pix = QPixmap(image_path, "RGBA")
+            pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
             painter = QPainter(thumbnail)
 
             eyesight_coordinates = (pix.width()/2, pix.height()/2)
 
             if len(eyesight_line) >= col_index:
                 if eyesight_line[col_index] != None:
-                    eyesight_coordinates = eyesight_line[col_index]
+                    eyesight_coordinates = (
+                        eyesight_line[col_index][0] * ratio[0],
+                        eyesight_line[col_index][1] * ratio[1]
+                    )
             
             uncropped_edge = []
 
@@ -542,6 +546,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         for player_pathes in path_matrix:
             for path in player_pathes:
                 pix = QPixmap(path)
+                pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
                 max_width = max(max_width, pix.width())
                 max_height = max(max_height, pix.height())
     

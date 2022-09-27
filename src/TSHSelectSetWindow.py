@@ -65,7 +65,7 @@ class TSHSelectSetWindow(QDialog):
         if obj is self.startggSetSelectionItemList and event.type() == QEvent.KeyPress:
             if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
                 self.LoadSelectedSet()
-        return super(self.parent(), self).eventFilter(obj, event)
+        return super().eventFilter(obj, event)
     
     def LoadSets(self):
         self.proxyModel.setSourceModel(QStandardItemModel())
