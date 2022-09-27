@@ -17,8 +17,6 @@
     if (!oldData.score ||
       JSON.stringify(data.score.last_sets) != JSON.stringify(oldData.score.last_sets)) {
 
-      $('.player2_container').html('')
-
       sets_html = ""
       Object.values(data.score.last_sets["2"]).slice(0, 3).forEach((sets, s) => {
         sets_html += `<div class="set${s+1} set_container">
