@@ -88,12 +88,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         # Move up/down
         titleContainer = self.findChild(QHBoxLayout, "titleContainer")
+        titleContainer.setSpacing(4)
         self.btMoveUp = QPushButton()
-        self.btMoveUp.setFixedSize(32, 32)
+        self.btMoveUp.setFixedSize(24, 24)
         self.btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
         titleContainer.addWidget(self.btMoveUp)
         self.btMoveDown = QPushButton()
-        self.btMoveDown.setFixedSize(32, 32)
+        self.btMoveDown.setFixedSize(24, 24)
         self.btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
         titleContainer.addWidget(self.btMoveDown)
 
@@ -282,7 +283,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         while len(self.character_elements) < number:
             character_element = QWidget()
             character_element.setLayout(QHBoxLayout())
-            character_element.layout().setSpacing(0)
+            character_element.layout().setSpacing(4)
             character_element.layout().setContentsMargins(0, 0, 0, 0)
             player_character = QComboBox()
             player_character.setEditable(True)
@@ -313,12 +314,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             # Move up/down
             btMoveUp = QPushButton()
-            btMoveUp.setFixedSize(32, 32)
+            btMoveUp.setFixedSize(24, 24)
             btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
             character_element.layout().addWidget(btMoveUp)
             btMoveUp.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index-1))
             btMoveDown = QPushButton()
-            btMoveDown.setFixedSize(32, 32)
+            btMoveDown.setFixedSize(24, 24)
             btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
             character_element.layout().addWidget(btMoveDown)
             btMoveDown.clicked.connect(lambda checked, index=len(self.character_elements): self.SwapCharacters(index, index+1))

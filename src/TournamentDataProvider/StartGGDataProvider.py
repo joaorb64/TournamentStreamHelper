@@ -610,7 +610,10 @@ class StartGGDataProvider(TournamentDataProvider):
                 json={
                     "operationName": "UserSetQuery",
                     "variables": {
-                        "userSlug": user
+                        "userSlug": user,
+                        "filters": {
+                            "state": [1, 2, 4, 5, 6]
+                        }
                     },
                     "query": StartGGDataProvider.UserSetQuery
                 }
@@ -620,6 +623,31 @@ class StartGGDataProvider(TournamentDataProvider):
             print(data)
 
             sets = deep_get(data, "data.user.player.sets.nodes")
+
+            # If there's no active set, get last finished set instead
+            if sets is not None and len(sets) == 0:
+                data = requests.post(
+                    "https://www.start.gg/api/-/gql",
+                    headers={
+                        "client-version": "20",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "UserSetQuery",
+                        "variables": {
+                            "userSlug": user,
+                            "filters": {
+                            }
+                        },
+                        "query": StartGGDataProvider.UserSetQuery
+                    }
+                )
+                data = json.loads(data.text)
+
+                print(data)
+
+                sets = deep_get(data, "data.user.player.sets.nodes")
+
             if sets and len(sets) > 0:
                 userSet = sets[0]
 
