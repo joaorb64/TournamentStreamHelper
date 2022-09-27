@@ -665,19 +665,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.selectRenderType.setEnabled(True)
 
                     self.zoom.setEnabled(True)
-                    if not settings.get(f"zoom/{game_codename}"):
+                    if settings.get(f"zoom/{game_codename}") == None:
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=False)
                     self.zoom.setValue(
                         settings.get(f"zoom/{game_codename}", 100))
 
                     self.horizontalAlign.setEnabled(True)
-                    if not settings.get(f"horizontalAlign/{game_codename}"):
+                    if settings.get(f"horizontalAlign/{game_codename}") == None:
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=False)
                     self.horizontalAlign.setValue(
                         settings.get(f"horizontalAlign/{game_codename}", 50))
 
                     self.verticalAlign.setEnabled(True)
-                    if not settings.get(f"verticalAlign/{game_codename}"):
+                    if settings.get(f"verticalAlign/{game_codename}") == None:
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=False)
                     self.verticalAlign.setValue(
                         settings.get(f"verticalAlign/{game_codename}", 40))
@@ -689,7 +689,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
                     if 'l' in uncropped_edge or 'r' in uncropped_edge:
                         self.scaleToFillX.setEnabled(True)
-                        if not settings.get(f"scaleToFillX/{game_codename}"):
+                        if settings.get(f"scaleToFillX/{game_codename}") == None:
                             TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillX/{game_codename}", val=self.scaleToFillX.checkState(), generatePreview=False)
                         self.scaleToFillX.setChecked(
                             settings.get(f"scaleToFillX/{game_codename}", 0))
@@ -699,7 +699,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     
                     if 'u' in uncropped_edge or 'd' in uncropped_edge:
                         self.scaleToFillY.setEnabled(True)
-                        if not settings.get(f"scaleToFillY/{game_codename}"):
+                        if settings.get(f"scaleToFillY/{game_codename}") == None:
                             TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillY/{game_codename}", val=self.scaleToFillY.checkState(), generatePreview=False)
                         self.scaleToFillY.setChecked(
                             settings.get(f"scaleToFillY/{game_codename}", 0))
@@ -708,7 +708,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         self.scaleToFillY.setEnabled(False)
                     
                     self.hideSeparators.setEnabled(True)
-                    if not settings.get(f"hideSeparators/{game_codename}"):
+                    if settings.get(f"hideSeparators/{game_codename}") == None:
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
                     self.hideSeparators.setChecked(
                         settings.get(f"hideSeparators/{game_codename}", 0))
