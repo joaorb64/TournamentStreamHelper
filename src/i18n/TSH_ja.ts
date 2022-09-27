@@ -481,12 +481,12 @@ p, li { white-space: pre-wrap; }
         <translation>入れ換える</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="394"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="398"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="405"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="409"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -870,7 +870,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="278"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="966"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="971"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
@@ -970,23 +970,23 @@ p, li { white-space: pre-wrap; }
         <translation>対戦を選ぶ</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="967"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="972"/>
         <source>Sponsor {0}</source>
         <translation>スポンサー{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="994"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="999"/>
         <source>Winners Finals</source>
         <translation>勝者側決勝</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="995"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1000"/>
         <source>Pool {0}</source>
         <translation>予選プール{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1013"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1040"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1018"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1045"/>
         <source>Team {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -1146,12 +1146,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1118"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1123"/>
         <source>Please select a game first</source>
         <translation>ゲームを選んで下さい</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1122"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1127"/>
         <source>Player {0} tag missing</source>
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>
