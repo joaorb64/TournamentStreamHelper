@@ -23,6 +23,7 @@ class TSHTournamentDataProviderSignals(QObject):
     twitch_username_updated = pyqtSignal()
     user_updated = pyqtSignal()
     recent_sets_updated = pyqtSignal(dict)
+    last_sets_updated = pyqtSignal(dict)
     get_sets_finished = pyqtSignal(list)
 
 
@@ -211,6 +212,14 @@ class TSHTournamentDataProvider:
         worker.signals.result.connect(lambda data: [
             callback.emit(data)
         ])
+        self.threadPool.start(worker)
+
+    def GetLastSets(self, playerId, playerNumber):
+        worker = Worker(self.provider.GetLastSets, **{
+            "playerID": playerId[0],
+            "playerNumber": playerNumber,
+            "callback": self.signals.last_sets_updated
+        })
         self.threadPool.start(worker)
 
     def UiMounted(self):
