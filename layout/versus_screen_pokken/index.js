@@ -1,17 +1,23 @@
 (($) => {
   // Change this to the name of the assets pack you want to use
   // It's basically the folder name: user_data/games/game/ASSETPACK
-  var ASSET_TO_USE = "full";
+  var ASSET_TO_USE = "fuller";
 
   // Change this to select wether to flip P2 character asset or not
   // Set it to true or false
   var FLIP_P2_ASSET = true;
 
   // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
-  var zoom = 1;
+  var zoom = 1.2;
 
   let startingAnimation = gsap
     .timeline({ paused: true })
+    .to([".logo"], {duration: 0.8, top: 160}, 0)
+    .to([".logo"], {duration: 0.8, scale: 0.4}, 0)
+    .from([".p1.character"], {duration: 0.6, x: "-5000", y: "+2000"}, 0.2)
+    .from([".p1.character"], {duration: 0.6, scale: 6.0}, 0.2)
+    .from([".p2.character"], {duration: 0.6, x: "+5000", y: "+2000"}, 0.2)
+    .from([".p2.character"], {duration: 0.6, scale: 6.0}, 0.2)
     .from([".phase.container"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from([".match"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from(
@@ -24,9 +30,11 @@
       { duration: 0.8, opacity: "0", ease: "power2.inOut" },
       0
     )
-    .from([".vs"], { duration: 0.4, opacity: "0", scale: 4, ease: "out" }, 0.5)
+    .from([".vs1"], { duration: 0.2, opacity: "0", scale: 10, ease: "in" }, 0.8)
+    .from([".vs2"], { duration: 0.01, opacity: "0" }, 1)
+    .to([".vs2"], { opacity:0, scale: 2, ease: "power2.out" }, 1.01)
     .from([".p1.container"], { duration: 1, x: "-100px", ease: "out" }, 0)
-    .from([".p2.container"], { duration: 1, x: "100px", ease: "out" }, 0);
+    .from([".p2.container"], { duration: 1, x: "100px", ease: "out" }, 0)
 
   async function Start() {
     startingAnimation.restart();
@@ -171,56 +179,55 @@
               CenterImage(
                 $(`.p${t + 1}.character .char${c} .portrait`),
                 character.assets[ASSET_TO_USE],
-                zoom
+                zoom,
+                {x: 0.5, y: 0.4}
               );
             }
           });
 
           characters.forEach((character, c) => {
             if (character) {
-              gsap.timeline().fromTo(
-                [`.p${t + 1}.character .char${c}`],
-                {
-                  duration: 1,
-                  x: zIndexMultiplyier * -800 + "px",
-                  z: 0,
-                  rotationY: zIndexMultiplyier * 15 * (c + 1),
-                  ease: "out",
-                },
-                {
-                  duration: 1,
-                  x: 0,
-                  z: -c * 50 + "px",
-                  rotationY: zIndexMultiplyier * 15 * (c + 1),
-                  ease: "out",
-                },
-                c / 6
-              );
+              // gsap.timeline().fromTo(
+              //   [`.p${t + 1}.character .char${c}`],
+              //   {
+              //     duration: 1,
+              //     x: zIndexMultiplyier * -800 + "px",
+              //     z: 0,
+              //     ease: "out",
+              //   },
+              //   {
+              //     duration: 1,
+              //     x: 0,
+              //     z: -c * 50 + "px",
+              //     ease: "out",
+              //   },
+              //   c / 6
+              // );
 
-              gsap
-                .timeline()
-                .from(
-                  `.p${t + 1}.character .char${c} .portrait_container`,
-                  {
-                    duration: 0.5,
-                    opacity: 0,
-                  },
-                  c / 6
-                )
-                .from(`.p${t + 1}.character .char${c} .portrait_container`, {
-                  duration: 0.4,
-                  filter: "brightness(0%)",
-                  onUpdate: function (tl) {
-                    var tlp = (this.progress() * 100) >> 0;
-                    TweenMax.set(
-                      `.p${t + 1}.character .char${c} .portrait_container`,
-                      {
-                        filter: "brightness(" + tlp + "%)",
-                      }
-                    );
-                  },
-                  onUpdateParams: ["{self}"],
-                });
+              // gsap
+              //   .timeline()
+              //   .from(
+              //     `.p${t + 1}.character .char${c} .portrait_container`,
+              //     {
+              //       duration: 0.5,
+              //       opacity: 0,
+              //     },
+              //     c / 6
+              //   )
+              //   .from(`.p${t + 1}.character .char${c} .portrait_container`, {
+              //     duration: 0.4,
+              //     filter: "brightness(0%)",
+              //     onUpdate: function (tl) {
+              //       var tlp = (this.progress() * 100) >> 0;
+              //       TweenMax.set(
+              //         `.p${t + 1}.character .char${c} .portrait_container`,
+              //         {
+              //           filter: "brightness(" + tlp + "%)",
+              //         }
+              //       );
+              //     },
+              //     onUpdateParams: ["{self}"],
+              //   });
             }
           });
         }

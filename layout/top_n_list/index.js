@@ -108,19 +108,9 @@
                   <div class="icon stockicon">
                       <div
                         style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'
-                        data-eyesight-x='${
-                          character.assets[ASSET_TO_USE].eyesight
-                            ? character.assets[ASSET_TO_USE].eyesight.x
-                            : null
+                        data-asset='${
+                          JSON.stringify(character.assets[ASSET_TO_USE])
                         }'
-                        data-eyesight-y='${
-                          character.assets[ASSET_TO_USE].eyesight
-                            ? character.assets[ASSET_TO_USE].eyesight.y
-                            : null
-                        }'
-                        data-uncropped-edge='${JSON.stringify(
-                          character.assets[ASSET_TO_USE].uncropped_edge
-                        )}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -141,11 +131,10 @@
                     console.log(i)
                     CenterImage(
                       $(i),
-                      { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
+                      $(i).attr('data-asset'),
                       $(i).attr('data-zoom'),
                       { x: 0.5, y: 0.5 },
                       $(i).parent().parent(),
-                      $(i).attr('data-uncropped-edge')
                     )
                   }
                 })

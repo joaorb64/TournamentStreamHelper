@@ -234,15 +234,17 @@ class TSHGameAssetManager(QObject):
                                     # Get image dimensions
                                     imgfile = QImageReader('./user_data/games/'+game+'/'+assetsKey+'/'+f)
 
+                                    size = imgfile.size()
+
                                     if not assetsKey in widths:
                                         widths[assetsKey] = []
 
-                                    widths[assetsKey].append(imgfile.size().width())
+                                    widths[assetsKey].append(size.width())
 
                                     if not assetsKey in heights:
                                         heights[assetsKey] = []
 
-                                    heights[assetsKey].append(imgfile.size().height())
+                                    heights[assetsKey].append(size.height())
                             print("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
                         

@@ -1,4 +1,7 @@
 (($) => {
+  let ASSET_TO_USE = "base_files/icon"
+  let ZOOM = 1
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -120,8 +123,8 @@
                 ).each((i, e) => {
                   CenterImage(
                     $(e),
-                    Object.values(player.character)[i].assets["base_files/icon"]
-                      .eyesight
+                    Object.values(player.character)[i].assets[ASSET_TO_USE],
+                    ZOOM
                   );
                 });
               }
