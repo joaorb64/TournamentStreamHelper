@@ -205,6 +205,9 @@ class TSHGameAssetManager(QObject):
 
                         self.parent().skins = {}
 
+                        widths = {}
+                        heights = {}
+
                         for c in self.parent().characters.keys():
                             self.parent().skins[c] = {}
                             for assetsKey in list(gameObj["assets"].keys()):
@@ -227,8 +230,31 @@ class TSHGameAssetManager(QObject):
                                     except:
                                         pass
                                     self.parent().skins[c][number] = True
+                                
+                                    # Get image dimensions
+                                    imgfile = QImageReader('./user_data/games/'+game+'/'+assetsKey+'/'+f)
+
+                                    if not assetsKey in widths:
+                                        widths[assetsKey] = []
+
+                                    widths[assetsKey].append(imgfile.size().width())
+
+                                    if not assetsKey in heights:
+                                        heights[assetsKey] = []
+
+                                    heights[assetsKey].append(imgfile.size().height())
                             print("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
+                        
+                        # Set average size
+                        for assetsKey in list(gameObj["assets"].keys()):
+                            try:
+                                gameObj["assets"][assetsKey]["average_size"] = {
+                                    "x": sum(widths[assetsKey])/len(widths[assetsKey]),
+                                    "y": sum(heights[assetsKey])/len(heights[assetsKey])
+                                }
+                            except:
+                                print(traceback.format_exc())
 
                         assetsKey = ""
                         if len(list(gameObj.get("assets", {}).keys())) > 0:
@@ -372,6 +398,9 @@ class TSHGameAssetManager(QObject):
                     
                     if asset.get("uncropped_edge"):
                         charFiles[assetKey]["uncropped_edge"] = asset.get("uncropped_edge")
+                    
+                    if asset.get("average_size"):
+                        charFiles[assetKey]["average_size"] = asset.get("average_size")
                 except Exception as e:
                     print(traceback.format_exc())
 
