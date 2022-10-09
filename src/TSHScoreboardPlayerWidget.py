@@ -16,6 +16,8 @@ from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 class TSHScoreboardPlayerWidgetSignals(QObject):
     characters_changed = pyqtSignal()
     playerId_changed = pyqtSignal()
+    player1Id_changed = pyqtSignal()
+    player2Id_changed = pyqtSignal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -241,6 +243,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             StateManager.Set(
                 f"{self.path}.id", id)
             self.instanceSignals.playerId_changed.emit()
+            if self.path.startswith("score.team.1"):
+                self.instanceSignals.player1Id_changed.emit()
+            else:
+                self.instanceSignals.player2Id_changed.emit()
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         tmpData = []

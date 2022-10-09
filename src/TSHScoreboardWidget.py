@@ -489,7 +489,7 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
-            p.instanceSignals.playerId_changed.connect(self.GetLastSets)
+            p.instanceSignals.player1Id_changed.connect(self.GetLastSetsP1)
 
             self.team1playerWidgets.append(p)
 
@@ -510,7 +510,7 @@ class TSHScoreboardWidget(QDockWidget):
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
-            p.instanceSignals.playerId_changed.connect(self.GetLastSets)
+            p.instanceSignals.player2Id_changed.connect(self.GetLastSetsP2)
 
             self.team2playerWidgets.append(p)
 
@@ -639,17 +639,22 @@ class TSHScoreboardWidget(QDockWidget):
                 "request_time": data.get("request_time")
             })
     
-    def GetLastSets(self):
+    def GetLastSetsP1(self):
         # Only if 1 player on each side
         if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.team.1.player.1.id")
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
-
-            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+            if p1id:
                 TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
-                TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
             else:
                 StateManager.Set(f"score.last_sets.1", {})
+    
+    def GetLastSetsP2(self):
+        # Only if 1 player on each side
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            if p2id:
+                TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
+            else:
                 StateManager.Set(f"score.last_sets.2", {})
     
     def UpdateLastSets(self, data):
