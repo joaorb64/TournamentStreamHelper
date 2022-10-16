@@ -37,23 +37,28 @@ p, li { white-space: pre-wrap; }
         <translation>大会情報</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="54"/>
         <source>Address</source>
         <translation>場所</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="63"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="67"/>
         <source>Event Name</source>
         <translatorcomment>シングルス、ダブルス、その他など</translatorcomment>
         <translation>種目</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="77"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
+        <source>Short Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
         <source>Tournament Name</source>
         <translation>大会名</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="84"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="74"/>
         <source>Entrant Number</source>
         <translation>参加人数</translation>
     </message>

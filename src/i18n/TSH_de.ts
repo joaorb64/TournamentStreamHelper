@@ -32,22 +32,27 @@ p, li { white-space: pre-wrap; }
         <translation>Turnierdaten</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="54"/>
         <source>Address</source>
         <translation>Adresse</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="63"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="67"/>
         <source>Event Name</source>
         <translation>Eventname</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="77"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
+        <source>Short Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
         <source>Tournament Name</source>
         <translation>Turniername</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="84"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="74"/>
         <source>Entrant Number</source>
         <translation>Teilnehmerzahl</translation>
     </message>
