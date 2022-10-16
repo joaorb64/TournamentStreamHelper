@@ -1,5 +1,6 @@
 (($) => {
   var ASSET_TO_USE = "base_files/icon";
+  var ZOOM = 1
 
   if (window.PORTRAITS) ASSET_TO_USE = "portrait";
 
@@ -125,8 +126,8 @@
                   ).each((i, e) => {
                     CenterImage(
                       $(e),
-                      Object.values(player.character)[i].assets[ASSET_TO_USE]
-                        .eyesight
+                      Object.values(player.character)[i].assets[ASSET_TO_USE],
+                      ZOOM
                     );
                   });
                 }
@@ -238,7 +239,7 @@
               $(
                 `.p${t + 1}.container .character_container .stockicon div`
               ).each((i, e) => {
-                CenterImage($(e), characters[i].assets[ASSET_TO_USE].eyesight);
+                CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM);
               });
             }
           );

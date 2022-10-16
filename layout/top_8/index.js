@@ -1,12 +1,12 @@
 ;(($) => {
-  var ASSET_TO_USE_1ST = 'full'
-  var ZOOM_1ST = 1
+  var ASSET_TO_USE_1ST = 'fuller'
+  var ZOOM_1ST = 1.2
 
-  var ASSET_TO_USE_2_to_4 = 'full'
-  var ZOOM_2_to_4 = 1
+  var ASSET_TO_USE_2_to_4 = 'fuller'
+  var ZOOM_2_to_4 = 1.2
 
-  var ASSET_TO_USE_5_to_7 = 'full'
-  var ZOOM_5_to_7 = 1
+  var ASSET_TO_USE_5_to_7 = 'fuller'
+  var ZOOM_5_to_7 = 1.2
   
   var DIVIDERS = true
 
@@ -149,21 +149,9 @@
                           background-image: url(../../${character.assets[ASSET_TO_USE].asset});
                           z-index: ${validCharacters.length - index}
                         '
-                        data-eyesight-x='${
-                          character.assets[ASSET_TO_USE].eyesight
-                            ? character.assets[ASSET_TO_USE].eyesight.x
-                            : null
-                        }'
-                        data-eyesight-y='${
-                          character.assets[ASSET_TO_USE].eyesight
-                            ? character.assets[ASSET_TO_USE].eyesight.y
-                            : null
-                        }'
+                        data-asset='${JSON.stringify(character.assets[ASSET_TO_USE])}'
                         data-centering-x='${centering[0]}'
                         data-centering-y='${centering[1]}'
-                        data-uncropped-edge='${JSON.stringify(
-                          character.assets[ASSET_TO_USE].uncropped_edge
-                        )}'
                         data-zoom='${ZOOM}'
                       >
                       </div>
@@ -181,14 +169,12 @@
                   `.slot${t + 1} .p${p + 1}.container .character_container .icon.stockicon div`
                 ).each((e, i) => {
                   if (player.character[e + 1].assets[ASSET_TO_USE] != null) {
-                    console.log(i)
                     CenterImage(
                       $(i),
-                      { x: $(i).attr('data-eyesight-x'), y: $(i).attr('data-eyesight-y') },
+                      $(i).attr('data-asset'),
                       $(i).attr('data-zoom'),
                       { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
-                      $(i).parent().parent(),
-                      $(i).attr('data-uncropped-edge') != "undefined" ? JSON.parse($(i).attr('data-uncropped-edge')) : undefined
+                      $(i).parent().parent()
                     )
                   }
                 })

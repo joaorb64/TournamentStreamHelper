@@ -1,4 +1,7 @@
 (($) => {
+  var ASSET_TO_USE = "full"
+  var ZOOM = 1
+
   function Start() {}
 
   var data = {};
@@ -20,13 +23,12 @@
       console.log(characters);
       oldCharacters = JSON.stringify(characters);
 
-      assetToUse = "full";
       characterAssets = [];
 
       Object.values(characters).forEach((character) => {
         if (character.assets) {
-          if (character.assets.hasOwnProperty(assetToUse)) {
-            let asset = character.assets[assetToUse];
+          if (character.assets.hasOwnProperty(ASSET_TO_USE)) {
+            let asset = character.assets[ASSET_TO_USE];
             asset.img = new Image();
             asset.img.src = "../../" + asset.asset;
             characterAssets.push(asset);
@@ -53,7 +55,7 @@
       $(".container").html(elements);
 
       characterAssets.forEach((a, i) => {
-        CenterImage($(`#character${i}`), a.eyesight);
+        CenterImage($(`#character${i}`), a, ZOOM, null, $(`#character${i}`).parent());
       });
     }
   }

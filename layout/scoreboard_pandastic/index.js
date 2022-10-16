@@ -1,4 +1,7 @@
 (($) => {
+  var ASSET_TO_USE = "portrait"
+  var ZOOM = 1
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -119,10 +122,10 @@
             ) {
               let charactersHtml = "";
               Object.values(player.character).forEach((character, index) => {
-                if (character.assets["portrait"]) {
+                if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
                     <div class="icon stockicon">
-                        <div style='background-image: url(../../${character.assets["portrait"].asset})'></div>
+                        <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
                     </div>
                     `;
                 }
@@ -137,8 +140,8 @@
                     (i, e) => {
                       CenterImage(
                         $(e),
-                        Object.values(player.character)[i].assets["portrait"]
-                          .eyesight
+                        Object.values(player.character)[i].assets[ASSET_TO_USE],
+                        ZOOM
                       );
                     }
                   );
@@ -234,10 +237,10 @@
         if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
           let charactersHtml = "";
           characters.forEach((character, index) => {
-            if (character.assets["portrait"]) {
+            if (character.assets[ASSET_TO_USE]) {
               charactersHtml += `
                 <div class="icon stockicon">
-                    <div style='background-image: url(../../${character.assets["portrait"].asset})'></div>
+                    <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
                 </div>
                 `;
             }
@@ -250,7 +253,7 @@
             () => {
               $(`.p${t + 1}.character_container .stockicon div`).each(
                 (i, e) => {
-                  CenterImage($(e), characters[i].assets["portrait"].eyesight);
+                  CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM);
                 }
               );
             }
