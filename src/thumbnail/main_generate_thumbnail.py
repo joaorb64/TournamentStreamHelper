@@ -545,8 +545,8 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
 
     if average_size is not None:
         proportional_zoom = 0
-        proportional_zoom = max(proportional_zoom, max_size[0] * ratio[0] / average_size.get("x") * 1.2)
-        proportional_zoom = max(proportional_zoom, max_size[1] * ratio[1] / average_size.get("y") * 1.2)
+        proportional_zoom = max(proportional_zoom, max_size[0] / ratio[0] / average_size.get("x") * 1.2)
+        proportional_zoom = max(proportional_zoom, max_size[1] / ratio[1] / average_size.get("y") * 1.2)
     else:
         # Keeping this as a fallback, but should never enter this block of code
         max_width = 0
