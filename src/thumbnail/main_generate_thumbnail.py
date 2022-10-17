@@ -1106,12 +1106,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global text_color
     text_color = [
         {
-            "font_color": color_code_to_tuple(settings["font_color"][0]),
+            "font_color": color_code_to_tuple(settings["phase_font_color"][0]),
             "has_outline": settings["font_outline_enabled"][0],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][0])
         },
         {
-            "font_color": color_code_to_tuple(settings["font_color"][1]),
+            "font_color": color_code_to_tuple(settings["phase_font_color"][1]),
             "has_outline": settings["font_outline_enabled"][1],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
         }
