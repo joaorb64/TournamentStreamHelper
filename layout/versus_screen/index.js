@@ -170,7 +170,7 @@
             if (character.assets[ASSET_TO_USE]) {
               CenterImage(
                 $(`.p${t + 1}.character .char${c} .portrait`),
-                character.assets[ASSET_TO_USE].eyesight,
+                character.assets[ASSET_TO_USE],
                 zoom
               );
             }

@@ -68,7 +68,7 @@
     if (data.game) {
       if (data.game.codename == "ssbu") {
         ASSET_TO_USE = "mural_art";
-        ZOOM = 1;
+        ZOOM = .8;
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssbm") {
         ASSET_TO_USE = "full";
@@ -169,9 +169,9 @@
                     (i, e) => {
                       CenterImage(
                         $(e),
-                        Object.values(player.character)[i].assets[ASSET_TO_USE]
-                          .eyesight,
-                        ZOOM
+                        Object.values(player.character)[i].assets[ASSET_TO_USE],
+                        ZOOM,
+                        {x: 0.5, y: 0.4}
                       );
                     }
                   );
@@ -289,8 +289,9 @@
                 (i, e) => {
                   CenterImage(
                     $(e),
-                    characters[i].assets[ASSET_TO_USE].eyesight,
-                    ZOOM
+                    characters[i].assets[ASSET_TO_USE],
+                    ZOOM,
+                    {x: 0.5, y: 0.4},
                   );
                 }
               );

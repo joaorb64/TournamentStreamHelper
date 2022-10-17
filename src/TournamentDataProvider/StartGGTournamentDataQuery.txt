@@ -10,6 +10,7 @@ query TournamentDataQuery($eventSlug: String!) {
     numEntrants
     tournament {
         name
+        shortSlug
         venueAddress
     }
   }
