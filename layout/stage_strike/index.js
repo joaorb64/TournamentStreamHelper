@@ -11,7 +11,8 @@
     if (
       !oldData.score ||
       JSON.stringify(data.score.stage_strike) !=
-        JSON.stringify(oldData.score.stage_strike)
+        JSON.stringify(oldData.score.stage_strike) ||
+      JSON.stringify(oldData.score.team) != JSON.stringify(data.score.team)
     ) {
       console.log(data.score.stage_strike);
       html = "";

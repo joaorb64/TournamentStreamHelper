@@ -341,11 +341,19 @@ class StartGGDataProvider(TournamentDataProvider):
         selectedCharMap = {}
 
         for task in reversed(tasks):
-            if task.get("action") == "setup_character" or task.get("action") == "setup_strike":
+            if task.get("action") in ["setup_character", "setup_strike"]:
                 selectedCharMap = task.get(
                     "metadata", {}).get("charSelections", {})
                 break
+            elif task.get("action") in ["report"]:
+                allSelections = task.get("metadata", {}).get("report", {}).get("selections", {})
 
+                for selection in allSelections:
+                    if selection.get("selectionType") == "character":
+                        selectedCharMap[str(selection.get("entrantId"))] = [selection.get("selectionValue")]
+                break
+
+        print(selectedCharMap)
         selectedChars = [[], []]
 
         for char in selectedCharMap.items():
