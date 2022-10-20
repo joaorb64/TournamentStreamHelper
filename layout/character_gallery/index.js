@@ -39,7 +39,7 @@
         $(".container").html(elements);
 
         characterAssets.forEach((a, i) => {
-          CenterImage($(`#character${i}`), a.eyesight);
+          CenterImage($(`#character${i}`), a);
         });
 
         imgs = $.makeArray($(".icon"));

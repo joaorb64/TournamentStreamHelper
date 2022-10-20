@@ -116,23 +116,29 @@ function GenerateMulticharacterPositions(character_number, center=[0.5, 0.5], ra
 
 function CenterImage(
   element,
-  eyesight,
+  assetData,
   customZoom = 1,
   customCenter = null,
   customElement = null,
-  uncropped_edge = undefined,
   scale_fill_x = false,
   scale_fill_y = false
 ) {
   element.css("opacity", "0");
 
-  let image = element.css('background-image')
+  if(typeof(assetData) == "string"){
+    assetData = JSON.parse(assetData)
+  }
+
+  let image = 'url("../../'+assetData.asset+'")'
 
   if (image != undefined && image.includes('url(')) {
     let img = new Image()
     img.src = image.split('url("')[1].split('")')[0]
 
     $(img).on('load', () => {
+
+      let eyesight = assetData.eyesight
+
       if (!eyesight) {
         eyesight = {
           x: img.naturalWidth / 2,
@@ -142,12 +148,24 @@ function CenterImage(
 
       if (!customElement) customElement = element
 
+      console.log(assetData)
+
+      let proportional_zoom = 1;
+      if(assetData.average_size){
+        proportional_zoom = 0
+        proportional_zoom = Math.max(proportional_zoom, customElement.innerWidth() / assetData.average_size.x * 1.2)
+        proportional_zoom = Math.max(proportional_zoom, customElement.innerHeight() / assetData.average_size.y * 1.2)
+      }
+      console.log(proportional_zoom)
+
       // For cropped assets, zoom to fill
       // Calculate max zoom
       zoom_x = customElement.innerWidth() / img.naturalWidth
       zoom_y = customElement.innerHeight() / img.naturalHeight
 
       let minZoom = 1
+
+      let uncropped_edge = assetData.uncropped_edge
 
       if (!uncropped_edge || uncropped_edge == "undefined" || uncropped_edge.length == 0) {
         if (zoom_x > zoom_y) {
@@ -162,13 +180,13 @@ function CenterImage(
           uncropped_edge.includes('l') &&
           uncropped_edge.includes('r')
         ) {
-          minZoom = customZoom
+          minZoom = customZoom * proportional_zoom
         } else if (uncropped_edge.includes('l') && uncropped_edge.includes('r')) {
           minZoom = zoom_y
         } else if (uncropped_edge.includes('u') && uncropped_edge.includes('d')) {
           minZoom = zoom_x
         } else {
-          minZoom = customZoom
+          minZoom = customZoom * proportional_zoom
         }
       }
 
@@ -234,6 +252,8 @@ function CenterImage(
           ${img.naturalHeight * zoom}px
         `
       )
+
+      element.css("background-image", 'url("'+img.src+'")')
 
       element.css("opacity", "1");
 

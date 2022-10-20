@@ -420,10 +420,15 @@ body {
 .pronoun {
   font-size: 12px;
   text-transform: uppercase;
-  margin-top: auto;
   margin-left: 6px;
+  margin-right: 6px;
   letter-spacing: normal;
-  line-height: 32px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--bg-color);
+  place-self: flex-end;
+  transform: translateY(-50%);
 }
 
 .p1 .score {
@@ -440,7 +445,7 @@ body {
 }
 
 .p1 .pronoun {
-  color: var(--p1-sponsor-color);
+  background-color: var(--p1-sponsor-color);
 }
 
 .p2 .score {
@@ -452,7 +457,7 @@ body {
 }
 
 .p2 .pronoun {
-  color: var(--p2-sponsor-color);
+  background-color: var(--p2-sponsor-color);
 }
 
 .losers {

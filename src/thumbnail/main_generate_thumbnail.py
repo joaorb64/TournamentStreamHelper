@@ -478,6 +478,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     path_matrices = []
     eyesight_matrices = []
     uncropped_edge_matrices = []
+    average_size = None
 
     for i in [0, 1]:
         team_index = i+1
@@ -507,10 +508,13 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     
                     uncropped_edges = None
 
-                    if character_path.get("uncropped_edge"):
+                    if character_path.get("uncropped_edge") is not None:
                         uncropped_edges = character_path.get("uncropped_edge")
                     else:
                         uncropped_edges = []
+                    
+                    if character_path.get("average_size") is not None:
+                        average_size = character_path.get("average_size")
 
                     if image_path:
                         character_list.append(image_path)
@@ -539,19 +543,25 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     global proportional_zoom
     proportional_zoom = 1
 
-    max_width = 0
-    max_height = 0
+    if average_size is not None:
+        proportional_zoom = 0
+        proportional_zoom = max(proportional_zoom, max_size[0] / ratio[0] / average_size.get("x") * 1.2)
+        proportional_zoom = max(proportional_zoom, max_size[1] / ratio[1] / average_size.get("y") * 1.2)
+    else:
+        # Keeping this as a fallback, but should never enter this block of code
+        max_width = 0
+        max_height = 0
 
-    for path_matrix in path_matrices:
-        for player_pathes in path_matrix:
-            for path in player_pathes:
-                pix = QPixmap(path)
-                pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
-                max_width = max(max_width, pix.width())
-                max_height = max(max_height, pix.height())
-    
-    proportional_zoom = min(proportional_zoom, max_size[0] / max_width * 2)
-    proportional_zoom = min(proportional_zoom, max_size[1] / max_height * 2)
+        for path_matrix in path_matrices:
+            for player_pathes in path_matrix:
+                for path in player_pathes:
+                    pix = QPixmap(path)
+                    pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+                    max_width = max(max_width, pix.width())
+                    max_height = max(max_height, pix.height())
+        
+        proportional_zoom = max(proportional_zoom, max_size[0] / max_width * 1.2)
+        proportional_zoom = max(proportional_zoom, max_size[1] / max_height * 1.2)
 
     for i in [0, 1]:
         team_index = i+1
@@ -1096,12 +1106,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global text_color
     text_color = [
         {
-            "font_color": color_code_to_tuple(settings["font_color"][0]),
+            "font_color": color_code_to_tuple(settings["phase_font_color"][0]),
             "has_outline": settings["font_outline_enabled"][0],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][0])
         },
         {
-            "font_color": color_code_to_tuple(settings["font_color"][1]),
+            "font_color": color_code_to_tuple(settings["phase_font_color"][1]),
             "has_outline": settings["font_outline_enabled"][1],
             "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
         }

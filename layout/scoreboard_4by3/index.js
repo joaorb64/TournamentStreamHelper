@@ -1,4 +1,7 @@
 (($) => {
+  let ASSET_TO_USE = "full"
+  let ZOOM = 1
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
@@ -127,7 +130,8 @@
                 ).each((i, e) => {
                   CenterImage(
                     $(e),
-                    Object.values(player.character)[i].assets["full"].eyesight
+                    Object.values(player.character)[i].assets[ASSET_TO_USE],
+                    ZOOM
                   );
                 });
               }
