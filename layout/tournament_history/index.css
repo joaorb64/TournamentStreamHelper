@@ -71,7 +71,7 @@ body {
   justify-content: flex-start;
 }
 
-.set_container {
+.tournament_container {
   width: 45%;
   color: var(--text-color);
   overflow: hidden;
