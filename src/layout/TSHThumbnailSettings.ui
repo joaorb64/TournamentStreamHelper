@@ -32,7 +32,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-284</y>
+        <y>0</y>
         <width>302</width>
         <height>1003</height>
        </rect>
@@ -992,6 +992,13 @@
       <widget class="QPushButton" name="btUpdatePreview">
        <property name="text">
         <string>Update Preview</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btGenerate">
+       <property name="text">
+        <string>Generate Thumbnail</string>
        </property>
       </widget>
      </item>

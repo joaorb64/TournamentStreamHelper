@@ -66,10 +66,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
         <source>Form</source>
         <translation>フォーム</translation>
@@ -389,7 +389,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="735"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="637"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="641"/>
         <source>(No game selected)</source>
         <translation>ゲームが選択されてません</translation>
     </message>
@@ -427,6 +427,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHThumbnailSettings.ui" line="976"/>
         <source>Preview</source>
         <translation>プレビュー</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1001"/>
+        <source>Generate Thumbnail</source>
+        <translation type="unfinished">サムネイルを作成する</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="925"/>
@@ -486,12 +491,12 @@ p, li { white-space: pre-wrap; }
         <translation>入れ換える</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="398"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="399"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="409"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="410"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -582,8 +587,8 @@ p, li { white-space: pre-wrap; }
         <translation>大会情報</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="43"/>
         <location filename="../TournamentStreamHelper.py" line="162"/>
+        <location filename="../TSHScoreboardWidget.py" line="43"/>
         <source>Scoreboard</source>
         <translation>スコアボード</translation>
     </message>
@@ -594,8 +599,8 @@ p, li { white-space: pre-wrap; }
         <translation>解説</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="25"/>
         <location filename="../TournamentStreamHelper.py" line="175"/>
+        <location filename="../TSHPlayerListWidget.py" line="25"/>
         <source>Player List</source>
         <translation>プレイヤーリスト</translation>
     </message>
@@ -875,7 +880,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="284"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="981"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="982"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
@@ -975,23 +980,23 @@ p, li { white-space: pre-wrap; }
         <translation>対戦を選ぶ</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="982"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="983"/>
         <source>Sponsor {0}</source>
         <translation>スポンサー{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1009"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1010"/>
         <source>Winners Finals</source>
         <translation>勝者側決勝</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1010"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1011"/>
         <source>Pool {0}</source>
         <translation>予選プール{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1028"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1055"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1029"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1056"/>
         <source>Team {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -1048,10 +1053,10 @@ p, li { white-space: pre-wrap; }
         <translation>チーム{0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="623"/>
-        <location filename="../TSHScoreboardWidget.py" line="446"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="627"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="509"/>
+        <location filename="../TSHScoreboardWidget.py" line="446"/>
         <location filename="../TSHAssetDownloader.py" line="316"/>
         <source>Warning</source>
         <translation>注意</translation>
@@ -1095,27 +1100,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="74"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="527"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="531"/>
         <source>Bold Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold Italic</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="525"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="584"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="529"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="588"/>
         <source>Bold</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="524"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="528"/>
         <source>Regular</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="526"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="530"/>
         <source>Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Italic</translation>
@@ -1134,16 +1139,16 @@ p, li { white-space: pre-wrap; }
         <translation>]</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="763"/>
-        <location filename="../TournamentStreamHelper.py" line="438"/>
         <location filename="../TSHSelectSetWindow.py" line="101"/>
+        <location filename="../TournamentStreamHelper.py" line="438"/>
+        <location filename="../TSHScoreboardWidget.py" line="763"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="763"/>
-        <location filename="../TournamentStreamHelper.py" line="438"/>
         <location filename="../TSHSelectSetWindow.py" line="102"/>
+        <location filename="../TournamentStreamHelper.py" line="438"/>
+        <location filename="../TSHScoreboardWidget.py" line="763"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -1151,17 +1156,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1133"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1136"/>
         <source>Please select a game first</source>
         <translation>ゲームを選んで下さい</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1137"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1140"/>
         <source>Player {0} tag missing</source>
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="622"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="626"/>
         <location filename="../TSHScoreboardWidget.py" line="424"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>

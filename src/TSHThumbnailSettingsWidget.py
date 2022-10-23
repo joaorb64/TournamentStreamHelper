@@ -371,6 +371,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.updatePreview = self.settings.findChild(
             QPushButton, "btUpdatePreview")
         self.updatePreview.clicked.connect(lambda: self.GeneratePreview(True))
+    
+        self.generateThumbnail = self.settings.findChild(
+            QPushButton, "btGenerate")
+        self.generateThumbnail.clicked.connect(lambda: self.parent().scoreboard.GenerateThumbnail())
 
         # -- load settings at init
         settings = SettingsManager.Get("thumbnail")

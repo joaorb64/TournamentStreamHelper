@@ -19,6 +19,7 @@ from copy import deepcopy
 import datetime
 import os
 import re
+import string
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
@@ -396,23 +397,23 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 draw_text(
                     thumbnail,
                     QApplication.translate("Form", "Scale: {0}").format("{0:.2f}".format(zoom)) + '%'+"\n",
-                    font_1, 20, (0, 0, 0),
+                    font_1, 28, (0, 0, 0),
                     (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y),
-                    (round(max_size[0]/num_col), 20),
+                    (round(max_size[0]/num_col), 28),
                     True,
-                    (255,255,255),
-                    (4, 2)
+                    (200,200,200),
+                    (2, 1)
                 )
 
                 draw_text(
                     thumbnail,
                     QApplication.translate("Form", "Eyesight offset: ({0}, {1})").format(int(original_xx - xx), int(original_yy - yy)),
-                    font_1, 20, (0, 0, 0),
-                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+20),
-                    (round(max_size[0]/num_col), 20),
+                    font_1, 28, (0, 0, 0),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+24),
+                    (round(max_size[0]/num_col), 28),
                     True,
-                    (255,255,255),
-                    (4, 2)
+                    (200,200,200),
+                    (2, 1)
                 )
             
             # Vertical separator line
@@ -1059,6 +1060,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     }
     return data
 
+def remove_special_chars(input_str: str):
+    return re.sub(r'(?u)[^-\w.]', '', input_str)
 
 def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
@@ -1243,7 +1246,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     if not isPreview:
         tag_player1 = find("score.team.1.player.1.name", data)
         tag_player2 = find("score.team.2.player.1.name", data)
-        thumbnail_filename = f"{tag_player1}-vs-{tag_player2}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
+        thumbnail_filename = f"{remove_special_chars(tag_player1)}-vs-{remove_special_chars(tag_player2)}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
         thumbnail.save(f"{out_path}/{thumbnail_filename}.jpg")
         if os.path.isdir(tmp_path):
