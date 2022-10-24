@@ -72,3 +72,14 @@ body {
   font-size: 100px;
   text-shadow: 12px 12px 2px black;
 }
+
+.pronoun {
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--text-color);
+  align-self: center;
+}

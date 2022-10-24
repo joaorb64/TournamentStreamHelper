@@ -25,6 +25,7 @@ class StartGGDataProvider(TournamentDataProvider):
     TournamentDataQuery = None
     RecentSetsQuery = None
     LastSetsQuery = None
+    HistorySetsQuery = None
     TournamentStandingsQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
@@ -763,6 +764,55 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             traceback.print_exc()
             callback.emit({"playerNumber": playerNumber,"last_sets": []})
+        
+    def GetPlayerHistorySets(self, playerID, playerNumber, gameType, callback, progress_callback):
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentHistoryDataQuery",
+                    "variables": {
+                        "playerID": playerID,
+                        "gameID": gameType
+                    },
+                    "query": StartGGDataProvider.HistorySetsQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+
+            sets = deep_get(
+                data, "data.player.recentStandings", [])
+
+            set_data = []
+
+            for set in sets:
+                if not set:
+                    continue
+                if not set.get("placement"):
+                    continue
+
+                event = deep_get(set, "entrant.event", [])
+                tournament = deep_get(event, "tournament", [])
+                
+                player_history = {
+                    "placement": set.get("placement"),
+                    "event_name": event.get("name"),
+                    "tournament_name": tournament.get("name"),
+                    "tournament_picture": tournament.get("images")[0].get("url")
+                }
+
+                set_data.append(player_history)
+
+            callback.emit({"playerNumber": playerNumber, "history_sets": set_data})
+        except Exception as e:
+            traceback.print_exc()
+            callback.emit({"playerNumber": playerNumber,"history_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
         try:
@@ -1134,6 +1184,9 @@ StartGGDataProvider.RecentSetsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGPlayerLastSetsQuery.txt", 'r')
 StartGGDataProvider.LastSetsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGPlayerTournamentHistoryQuery.txt", 'r')
+StartGGDataProvider.HistorySetsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()

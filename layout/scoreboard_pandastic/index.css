@@ -419,6 +419,14 @@ body {
   transform: translateY(-50%);
 }
 
+.p1 .pronoun {
+  background: var(--p1-sponsor-color);
+}
+
+.p2 .pronoun {
+  background: var(--p2-sponsor-color);
+}
+
 .p1 .score {
   color: var(--p1-sponsor-color);
 }
@@ -432,20 +440,12 @@ body {
   color: var(--p1-sponsor-color);
 }
 
-.p1 .pronoun {
-  background: var(--p1-sponsor-color);
-}
-
 .p2 .score {
   color: var(--p2-sponsor-color);
 }
 
 .p2 .sponsor {
   color: var(--p2-sponsor-color);
-}
-
-.p2 .pronoun {
-  background: var(--p2-sponsor-color);
 }
 
 .losers {

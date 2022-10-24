@@ -79,6 +79,7 @@
               <span class="sponsor">${
                 player.team ? player.team + "&nbsp;" : ""
               }</span>${String(player.name)}
+              <span class="pronoun">${player.pronoun}</span>
             `
           );
 

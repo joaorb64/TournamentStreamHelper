@@ -287,3 +287,27 @@ body {
 .right .sponsor_logo {
   right: 0;
 }
+
+.pronoun {
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-left: 6px;
+  margin-right: 6px;
+  letter-spacing: normal;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--bg-color);
+  place-self: flex-end;
+  transform: translateY(-50%);
+  position: absolute;
+  right: 0;
+}
+
+.p1 .pronoun {
+  background: var(--p1-sponsor-color);
+}
+
+.p2 .pronoun {
+  background: var(--p2-sponsor-color);
+}

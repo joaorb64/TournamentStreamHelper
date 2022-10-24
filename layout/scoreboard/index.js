@@ -64,112 +64,224 @@
     oldData = data;
     data = await getData();
 
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.player["1"]].forEach((player, p) => {
-        if (player) {
-          SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
-            `
-              <span class="sponsor">
-                ${player.team ? player.team : ""}
-              </span>
-              ${player.name}
-              <span class="pronoun">
-                ${player.pronoun ? player.pronoun : ""}
-              </span>
-              ${team.losers ? "<span class='losers'>L</span>" : ""}
-            `
-          );
+    let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
-          SetInnerHtml(
-            $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset
-              ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-              : ""
-          );
+    if(!isDoubles){
+      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+        [team.player["1"]].forEach((player, p) => {
+          if (player) {
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+                <span class="sponsor">
+                  ${player.team ? player.team : ""}
+                </span>
+                ${player.name}
+                <span class="pronoun">
+                  ${player.pronoun ? player.pronoun : ""}
+                </span>
+                ${team.losers ? "<span class='losers'>L</span>" : ""}
+              `
+            );
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .flagcountry`),
+              player.country.asset
+                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                : ""
+            );
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .flagstate`),
+              player.state.asset
+                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                : ""
+            );
+  
+            if (
+              !oldData.score ||
+              JSON.stringify(player.character) !=
+                JSON.stringify(
+                  oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+                )
+            ) {
+              let charactersHtml = "";
+              Object.values(player.character).forEach((character, index) => {
+                if (character.assets["base_files/icon"]) {
+                  charactersHtml += `
+                    <div class="icon stockicon">
+                        <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
+                    </div>
+                    `;
+                }
+              });
+              SetInnerHtml(
+                $(`.p${t + 1}.container .character_container`),
+                charactersHtml,
+                undefined,
+                0.5,
+                () => {
+                  $(
+                    `.p${t + 1}.container .character_container .stockicon div`
+                  ).each((i, e) => {
+                    CenterImage(
+                      $(e),
+                      Object.values(player.character)[i].assets[ASSET_TO_USE],
+                      ZOOM
+                    );
+                  });
+                }
+              );
+            }
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .sponsor_icon`),
+              player.sponsor_logo
+                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                : ""
+            );
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .avatar`),
+              player.avatar
+                ? `<div style="background-image: url('../../${player.avatar}')"></div>`
+                : ""
+            );
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .online_avatar`),
+              player.online_avatar
+                ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+                : ""
+            );
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .twitter`),
+              player.twitter
+                ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+                : ""
+            );
+  
+            let score = [data.score.score_left, data.score.score_right];
+  
+            SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
+  
+            SetInnerHtml(
+              $(`.p${t + 1}.container .sponsor-container`),
+              `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            );
+          }
+        });
+      });
+    } else {
+      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+        let teamName = "";
 
-          SetInnerHtml(
-            $(`.p${t + 1}.container .flagstate`),
-            player.state.asset
-              ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
-              : ""
-          );
+        if (!team.teamName || team.teamName == "") {
+          let names = [];
+          Object.values(team.player).forEach((player, p) => {
+            if (player) {
+              names.push(player.name);
+            }
+          });
+          teamName = names.join(" / ");
+        } else {
+          teamName = team.teamName;
+        }
 
-          if (
-            !oldData.score ||
-            JSON.stringify(player.character) !=
-              JSON.stringify(
-                oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-              )
-          ) {
-            let charactersHtml = "";
+        SetInnerHtml(
+          $(`.p${t + 1}.container .name`),
+          `
+            ${teamName}
+            ${team.losers ? "<span class='losers'>L</span>" : ""}
+          `
+        );
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .flagcountry`), ""
+        );
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .flagstate`), ""
+        );
+
+        let charactersHtml = "";
+
+        let charactersChanged = false;
+
+        if(!oldData){
+          charactersChanged = true;
+        } else {
+          Object.values(team.player).forEach((player, p) => {
             Object.values(player.character).forEach((character, index) => {
-              if (character.assets["base_files/icon"]) {
+              try {
+                if(JSON.stringify(player.character) != JSON.stringify(oldData.score.team[`${t + 1}`].player[`${p + 1}`].character)){
+                  charactersChanged = true;
+                }
+              } catch {
+                charactersChanged = true;
+              }
+            })
+          })
+        }
+
+        if(charactersChanged){
+          Object.values(team.player).forEach((player, p) => {
+            Object.values(player.character).forEach((character, index) => {
+              if (character.assets[ASSET_TO_USE]) {
                 charactersHtml += `
                   <div class="icon stockicon">
-                      <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
+                    <div data-asset='${JSON.stringify(character.assets[ASSET_TO_USE])}'></div>
                   </div>
                   `;
               }
             });
-            SetInnerHtml(
-              $(`.p${t + 1}.container .character_container`),
-              charactersHtml,
-              undefined,
-              0.5,
-              () => {
-                $(
-                  `.p${t + 1}.container .character_container .stockicon div`
-                ).each((i, e) => {
-                  CenterImage(
-                    $(e),
-                    Object.values(player.character)[i].assets[ASSET_TO_USE],
-                    ZOOM
-                  );
-                });
-              }
-            );
-          }
-
+          })
+  
           SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor_icon`),
-            player.sponsor_logo
-              ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .avatar`),
-            player.avatar
-              ? `<div style="background-image: url('../../${player.avatar}')"></div>`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .online_avatar`),
-            player.online_avatar
-              ? `<div style="background-image: url('${player.online_avatar}')"></div>`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .twitter`),
-            player.twitter
-              ? `<span class="twitter_logo"></span>${String(player.twitter)}`
-              : ""
-          );
-
-          let score = [data.score.score_left, data.score.score_right];
-
-          SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            $(`.p${t + 1}.container .character_container`),
+            charactersHtml,
+            undefined,
+            0.5,
+            () => {
+              $(
+                `.p${t + 1}.container .character_container .stockicon div`
+              ).each((i, e) => {
+                CenterImage(
+                  $(e),
+                  JSON.parse($(e).attr('data-asset')),
+                  ZOOM
+                );
+              });
+            }
           );
         }
-      });
-    });
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .sponsor_icon`), ""
+        );
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .avatar`), ""
+        );
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .online_avatar`), ""
+        );
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .twitter`), ""
+        );
+
+        let score = [data.score.score_left, data.score.score_right];
+
+        SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
+
+        SetInnerHtml(
+          $(`.p${t + 1}.container .sponsor-container`), ""
+        );
+      })
+    }
 
     SetInnerHtml($(".tournament_name"), data.tournamentInfo.tournamentName);
 
