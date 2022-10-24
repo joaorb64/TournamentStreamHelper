@@ -406,3 +406,21 @@ body {
 .p2 .sponsor_logo {
   right: 5px;
 }
+
+.pronoun {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--bg-color);
+}
+
+.p1 .pronoun {
+  background: var(--p1-sponsor-color);
+}
+
+.p2 .pronoun {
+  background: var(--p2-sponsor-color);
+}

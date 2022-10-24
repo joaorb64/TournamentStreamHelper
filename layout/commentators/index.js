@@ -26,6 +26,7 @@
         html += `
               <div class="commentator_container commentator${index}">
                   <div class="name"></div>
+                  <div class="pronoun"></div>
                   ${
                     window.config.size == "normal"
                       ? `<div class="real_name"></div>`
@@ -49,11 +50,16 @@
         SetInnerHtml(
           $(`.commentator${index} .name`),
           `
+            <span class="mic_icon"></span>
             <span class="team">
               ${commentator.team ? commentator.team + "&nbsp;" : ""}
             </span>
             ${commentator.name}
           `
+        );
+        SetInnerHtml(
+          $(`.commentator${index} .pronoun`),
+          commentator.pronoun
         );
         SetInnerHtml(
           $(`.commentator${index} .real_name`),

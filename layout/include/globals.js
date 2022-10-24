@@ -254,7 +254,7 @@ function CenterImage(
       )
 
       element.css("background-image", 'url("'+img.src+'")')
-
+      element.css("background-repeat", "no-repeat");
       element.css("opacity", "1");
 
       //element.css("background-position", "initial");

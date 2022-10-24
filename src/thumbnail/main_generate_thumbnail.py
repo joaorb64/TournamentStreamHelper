@@ -397,23 +397,23 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 draw_text(
                     thumbnail,
                     QApplication.translate("Form", "Scale: {0}").format("{0:.2f}".format(zoom)) + '%'+"\n",
-                    font_1, 28, (0, 0, 0),
-                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y),
-                    (round(max_size[0]/num_col), 28),
+                    font_1, 24, (0, 0, 0),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+2),
+                    (round(max_size[0]/num_col), 24),
                     True,
                     (200,200,200),
-                    (2, 1)
+                    (4, 2)
                 )
 
                 draw_text(
                     thumbnail,
                     QApplication.translate("Form", "Eyesight offset: ({0}, {1})").format(int(original_xx - xx), int(original_yy - yy)),
-                    font_1, 28, (0, 0, 0),
-                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+24),
-                    (round(max_size[0]/num_col), 28),
+                    font_1, 24, (0, 0, 0),
+                    (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+22),
+                    (round(max_size[0]/num_col), 24),
                     True,
                     (200,200,200),
-                    (2, 1)
+                    (4, 2)
                 )
             
             # Vertical separator line

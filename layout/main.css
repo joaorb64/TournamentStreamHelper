@@ -3,6 +3,11 @@
   src: url('./include/NotoSans-Regular.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: "RobotoCondensed";
+  src: url("./include/RobotoCondensed.ttf") format("truetype");
+}
+
 .text {
   white-space: nowrap;
   display: flex;
@@ -17,7 +22,7 @@
 
 /* Main theme -- Dark Gradient */
 :root {
-  --font: 'NotoSans';
+  --font: 'RobotoCondensed';
   --border-radius: 16px;
   --text-color: white;
   --bg-color: #18181b;
