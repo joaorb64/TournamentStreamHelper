@@ -24,6 +24,7 @@ class TSHTournamentDataProviderSignals(QObject):
     user_updated = pyqtSignal()
     recent_sets_updated = pyqtSignal(dict)
     last_sets_updated = pyqtSignal(dict)
+    history_sets_updated = pyqtSignal(dict)
     get_sets_finished = pyqtSignal(list)
 
 
@@ -219,6 +220,15 @@ class TSHTournamentDataProvider:
             "playerID": playerId[0],
             "playerNumber": playerNumber,
             "callback": self.signals.last_sets_updated
+        })
+        self.threadPool.start(worker)
+
+    def GetHistorySets(self, playerId, playerNumber, gameType):
+        worker = Worker(self.provider.GetPlayerHistorySets, **{
+            "playerID": playerId[0],
+            "playerNumber": playerNumber,
+            "gameType": gameType,
+            "callback": self.signals.history_sets_updated
         })
         self.threadPool.start(worker)
 

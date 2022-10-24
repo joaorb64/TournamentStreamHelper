@@ -30,6 +30,8 @@ class TSHScoreboardWidget(QDockWidget):
         StateManager.Set("score", {})
         StateManager.Set("score.last_sets.1", {})
         StateManager.Set("score.last_sets.2", {})
+        StateManager.Set("score.history_sets.1", {})
+        StateManager.Set("score.history_sets.2", {})
 
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
@@ -368,6 +370,9 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.instance.signals.last_sets_updated.connect(
             self.UpdateLastSets)
 
+        TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
+            self.UpdateHistorySets)
+
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
         default_tournament_phases_file = './assets/tournament_phases.txt'
@@ -490,6 +495,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
             p.instanceSignals.player1Id_changed.connect(self.GetLastSetsP1)
+            p.instanceSignals.player1Id_changed.connect(self.GetHistorySetsP1)
 
             self.team1playerWidgets.append(p)
 
@@ -511,6 +517,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
             p.instanceSignals.player2Id_changed.connect(self.GetLastSetsP2)
+            p.instanceSignals.player2Id_changed.connect(self.GetHistorySetsP2)
 
             self.team2playerWidgets.append(p)
 
@@ -679,6 +686,37 @@ class TSHScoreboardWidget(QDockWidget):
                 "winner_name": set.get(winner + "_name"),
                 "loser_team": set.get(loser + "_team"),
                 "loser_name": set.get(loser + "_name")
+            })
+            i+=1
+        StateManager.ReleaseSaving()
+    
+    def GetHistorySetsP1(self):
+        # Only if 1 player on each side
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            if p1id:
+                TSHTournamentDataProvider.instance.GetHistorySets(p1id, "1", StateManager.Get(f"game.smashgg_id"))
+            else:
+                StateManager.Set(f"score.last_sets.1", {})
+    
+    def GetHistorySetsP2(self):
+        # Only if 1 player on each side
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            if p2id:
+                TSHTournamentDataProvider.instance.GetHistorySets(p2id, "2", StateManager.Get(f"game.smashgg_id"))
+            else:
+                StateManager.Set(f"score.last_sets.2", {})
+    
+    def UpdateHistorySets(self, data):
+        StateManager.BlockSaving()
+        i = 1
+        for set in data.get("history_sets", []):
+            StateManager.Set(f"score.history_sets." + data.get("playerNumber") + "." + str(i), {
+                "placement": set.get("placement"),
+                "event_name": set.get("event_name"),
+                "tournament_name": set.get("tournament_name"),
+                "tournament_picture": set.get("tournament_picture")
             })
             i+=1
         StateManager.ReleaseSaving()
