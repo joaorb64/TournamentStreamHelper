@@ -265,7 +265,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 320px;
+  width: 300px;
   text-align: justify;
   align-items: center;
   overflow: hidden;
@@ -274,18 +274,18 @@ body {
 }
 
 .info.material_container.middle .tournament_name {
-  width: 100%;
+  max-width: 100%;
   font-size: 26px;
 }
 
 .info.material_container.middle .phase {
-  width: 100%;
+  max-width: 100%;
   font-size: 16px;
   letter-spacing: 4px;
 }
 
 .info.material_container.middle .match {
-  width: 100%;
+  max-width: 100%;
   font-size: 22px;
   letter-spacing: 3px;
   opacity: 1;
@@ -334,4 +334,26 @@ body {
 .t2 .doubles_score {
   color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
+}
+
+.pronoun {
+  position: absolute;
+  top: -20px;
+  left: 26px;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-left: 6px;
+  margin-right: 6px;
+  letter-spacing: normal;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--bg-color);
+}
+
+.t1 .pronoun {
+  background-color: var(--p1-sponsor-color);
+}
+.t2 .pronoun {
+  background-color: var(--p2-sponsor-color);
 }
