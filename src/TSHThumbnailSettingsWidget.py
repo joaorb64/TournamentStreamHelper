@@ -255,10 +255,23 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             lambda val: [
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self,
+                    key=f"foreground_path", 
+                    val="",
+                    generatePreview=False
+                ),
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
+                    key=f"background_path", 
+                    val="",
+                    generatePreview=False
+                ),
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
                     key=f"thumbnail_type", 
                     val=self.templateSelect.currentData().get("filename"),
                     generatePreview=True
-            )]
+                )
+            ]
         )
 
         # SEPARATORS

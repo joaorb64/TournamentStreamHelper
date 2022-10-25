@@ -260,26 +260,37 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             if path_matrix[line_index][col_index] == None:
                 continue
 
-            col_span = 1
-            line_span = 1
+            chars_in_col = 0
+            chars_in_line = 0
+
+            curr_col_index = 0
+            curr_line_index = 0
 
             if flip_direction:
-                for l in range(line_index+1, len(path_matrix)):
-                    if path_matrix[l][col_index] == None:
-                        line_span += 1
+                for l in range(0, len(path_matrix)):
+                    if l == line_index:
+                        curr_line_index = chars_in_line
+                    if path_matrix[l][col_index] != None:
+                        chars_in_line += 1
+                chars_in_col = len(line)
+                curr_col_index = col_index
             else:
-                for c in range(col_index+1, len(line)):
-                    if line[c] == None:
-                        col_span += 1
+                for c in range(0, len(line)):
+                    if c == col_index:
+                        curr_col_index = chars_in_col
+                    if line[c] != None:
+                        chars_in_col += 1
+                chars_in_line = len(path_matrix)
+                curr_line_index = line_index
 
             individual_max_size = (
-                round(max_size[0]/num_col)*col_span, round(max_size[1]/num_line)*line_span)
+                round(max_size[0]/chars_in_col), round(max_size[1]/chars_in_line))
             image_path = line[col_index]
 
             individual_paste_x = round(
-                paste_coordinates[0] + col_index*individual_max_size[0])
+                paste_coordinates[0] + curr_col_index*individual_max_size[0])
             individual_paste_y = round(
-                paste_coordinates[1] + line_index*individual_max_size[1])
+                paste_coordinates[1] + curr_line_index*individual_max_size[1])
             
             if no_separator != 0:
                 individual_max_size = (max_size[0], round(max_size[1]/num_line))
@@ -441,11 +452,20 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 separatorHeight = round(separator_width*ratio[0])
                 separatorWidth = round(separator_width*ratio[1])
 
-                if line_index + line_span < num_line:
-                    separator_down = True
-                
-                if col_index + col_span < num_col:
-                    separator_right = True
+                if flip_direction:
+                    separator_right = curr_col_index < len(line)-1
+
+                    for l in range(line_index+1, len(path_matrix)):
+                        if path_matrix[l][col_index] != None:
+                            separator_down = True
+                            break
+                else:
+                    separator_down = curr_line_index < len(path_matrix)-1
+
+                    for c in range(col_index+1, len(line)):
+                        if line[c] != None:
+                            separator_right = True
+                            break
                 
                 if separator_right:
                     painter = QPainter(separatorsPix)
@@ -543,7 +563,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                 # so we have to reverse the array
                 # but only when drawing separators
                 global no_separator
-                if i == 0 and not no_separator:
+                if i == 0 and not no_separator and not flip_direction:
                     character_list.reverse()
                     eyesight_list.reverse()
                     uncropped_edge_list.reverse()

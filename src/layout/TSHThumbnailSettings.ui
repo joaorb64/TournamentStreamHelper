@@ -25,19 +25,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>-337</y>
-        <width>302</width>
-        <height>1085</height>
-       </rect>
-      </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="rightMargin">
+        <number>16</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
@@ -843,18 +835,6 @@
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="flipSeparators">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Split team members horizontally</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -919,6 +899,13 @@
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="flipSeparators">
+           <property name="text">
+            <string>Invert separator orientation</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="hideSeparators">
