@@ -758,8 +758,11 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         team_index = i+1
         player_list = []
         color_mask = []
-        if use_team_names:
+        final_color_mask = []
+
+        if use_team_names and find(f"score.team.{team_index}.teamName", data):
             player_name = find(f"score.team.{team_index}.teamName", data)
+            final_color_mask = player_text_color["font_color"]
         else:
             current_team = find(f"score.team.{team_index}.player", data)
             for key in current_team.keys():
@@ -767,7 +770,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                 individual_color_mask = []
 
                 team = current_team[key].get("team", "")
-                if team:
+                if team and use_sponsors:
                     current_data += team+" "
                     individual_color_mask += [sponsor_color[i]] * len(team+" ")
 
@@ -776,8 +779,9 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                 
                 if current_data:
                     current_data = current_data.rstrip("[L]").strip()
+                
                 if (not use_sponsors) or (not current_data):
-                    current_data = current_team[key].get("name")
+                    current_data = current_team[key].get("name", "")
                     individual_color_mask += [player_text_color["font_color"]] * len(current_data)
                     if current_data:
                         current_data = current_data.strip()
