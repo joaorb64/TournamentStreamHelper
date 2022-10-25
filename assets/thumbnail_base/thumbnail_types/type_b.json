@@ -1,5 +1,5 @@
 {
-    "name": "Standard",
+    "name": "Skewed",
     "default_foreground": "./assets/thumbnail_base/thumbnail_types/type_b/foreground.svg",
     "default_background": "./assets/thumbnail_base/thumbnail_types/type_b/background.svg",
     "base_ratio": {

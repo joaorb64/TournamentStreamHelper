@@ -34,12 +34,29 @@
         <x>0</x>
         <y>0</y>
         <width>302</width>
-        <height>1003</height>
+        <height>1056</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Template</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="templateSelect"/>
+         </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0,1">
            <property name="rightMargin">

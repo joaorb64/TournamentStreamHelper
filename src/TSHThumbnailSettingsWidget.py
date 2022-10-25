@@ -227,6 +227,40 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.topRightIcon.clicked.connect(
             lambda: self.SaveIcons("side_icon_list", 1))
 
+        self.templateSelect: QComboBox = self.settings.findChild(
+            QComboBox, "templateSelect"
+        )
+
+        types = [f'./assets/thumbnail_base/thumbnail_types/{t}' for t in os.listdir("./assets/thumbnail_base/thumbnail_types/") if t.endswith(".json")]
+        types.sort()
+        self.templates = []
+        for t in types:
+            try:
+                config = json.load(open(t))
+                config["filename"] = t
+                self.templates.append(config)
+            except Exception as e:
+                print(e)
+        
+        for t in self.templates:
+            self.templateSelect.addItem(t.get("name") + f' ({t.get("filename", "").rsplit("/")[-1]})', t)
+        
+        currSettings = SettingsManager.Get("thumbnail")
+
+        for i, t in enumerate(self.templates):
+            if t.get("filename") == currSettings.get("thumbnail_type"):
+                self.templateSelect.setCurrentIndex(i)
+        
+        self.templateSelect.currentIndexChanged.connect(
+            lambda val: [
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
+                    key=f"thumbnail_type", 
+                    val=self.templateSelect.currentData().get("filename"),
+                    generatePreview=True
+            )]
+        )
+
         # SEPARATORS
         self.VSpacer = self.settings.findChild(QSpinBox, "widthSpacer")
         self.VColor = self.settings.findChild(QPushButton, "colorSpacer")
