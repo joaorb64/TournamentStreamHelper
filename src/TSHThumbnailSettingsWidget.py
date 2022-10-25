@@ -290,6 +290,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.hideSeparators = self.settings.findChild(QCheckBox, "hideSeparators")
 
+        self.flipSeparators = self.settings.findChild(QCheckBox, "flipSeparators")
+
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
@@ -346,6 +348,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self,
                 key=f"hideSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
                 val=self.hideSeparators.checkState(),
+                generatePreview=True
+            )]
+        )
+
+        self.flipSeparators.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"flipSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=self.flipSeparators.checkState(),
                 generatePreview=True
             )]
         )
@@ -752,6 +763,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
                     self.hideSeparators.setChecked(
                         settings.get(f"hideSeparators/{game_codename}", 0))
+                    
+                    self.flipSeparators.setEnabled(True)
+                    if settings.get(f"flipSeparators/{game_codename}") == None:
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"flipSeparators/{game_codename}", val=self.flipSeparators.checkState(), generatePreview=False)
+                    self.flipSeparators.setChecked(
+                        settings.get(f"flipSeparators/{game_codename}", 0))
                 else:
                     self.zoom.setEnabled(False)
                     self.horizontalAlign.setEnabled(False)
@@ -759,6 +776,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.scaleToFillX.setEnabled(False)
                     self.scaleToFillY.setEnabled(False)
                     self.hideSeparators.setEnabled(False)
+                    self.flipSeparators.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except:

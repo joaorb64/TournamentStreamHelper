@@ -1260,6 +1260,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global no_separator
     no_separator = settings.get(f"hideSeparators/{game_codename}", 0)
 
+    global flip_direction
+    flip_direction = settings.get(f"flipSeparators/{game_codename}", 0)
+
     foreground = foreground.scaled(
         background.width(),
         background.height(),
