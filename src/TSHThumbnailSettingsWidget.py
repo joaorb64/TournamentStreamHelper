@@ -151,11 +151,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             settings["background_path"] = thumbnail_type_desc["default_background"]
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
-            "name": "Open Sans",
+            "name": "Roboto Condensed",
             "type": "Bold",
             "fontPath": "Bold"
         }, {
-            "name": "Open Sans",
+            "name": "Roboto Condensed",
             "type": "Bold Italic",
             "fontPath": "Bold Italic"
         }]
@@ -396,6 +396,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # add Open Sans
         self.family_to_path["Open Sans"] = [
             './assets/font/OpenSans/OpenSans-Bold.ttf', './assets/font/OpenSans/OpenSans-Semibold.ttf']
+
+        # Load Roboto Condensed
+        QFontDatabase.addApplicationFont(
+            "./assets/font/RobotoCondensed.ttf")
+        
+        self.family_to_path["Roboto Condensed"] = [
+            './assets/font/RobotoCondensed.ttf', './assets/font/RobotoCondensed.ttf']
+
         # add all fonts available
         for k, v in sorted(self.family_to_path.items()):
             self.selectFontPlayer.addItem(k, v)
