@@ -1,6 +1,7 @@
 # This script can be used to generate thumbnails using ./out/program_state.json and ./thumbnail_base
 # Run as python ./src/generate_thumbnail in order to test it
 
+import itertools
 from math import cos, radians, sin
 from numbers import Rational
 import random
@@ -31,6 +32,7 @@ use_team_names = False
 use_sponsors = True
 all_eyesight = False
 no_separator = 0
+flip_direction = False
 
 crop_borders = [] # left, right, top, bottom
 scale_fill_x = 0
@@ -247,11 +249,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             eyesight_line = eyesight_matrix[line_index]
 
         num_col = len(line)
-
-        order = 1
-
-        if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-            order = -1
 
         for col_index in range(0, len(line))[::-1]:
             individual_max_size = (
@@ -532,9 +529,29 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     character_list.reverse()
                     eyesight_list.reverse()
                     uncropped_edge_list.reverse()
-                path_matrix.append(character_list)
-                eyesight_matrix.append(eyesight_list)
-                uncropped_edge_matrix.append(uncropped_edge_list)
+
+                if no_separator:
+                    path_matrix.extend(character_list)
+                    eyesight_matrix.extend(eyesight_list)
+                    uncropped_edge_matrix.extend(uncropped_edge_list)
+                else:
+                    path_matrix.append(character_list)
+                    eyesight_matrix.append(eyesight_list)
+                    uncropped_edge_matrix.append(uncropped_edge_list)
+        
+        if no_separator:
+            path_matrix = [path_matrix]
+            eyesight_matrix = [eyesight_matrix]
+            uncropped_edge_matrix = [uncropped_edge_matrix]
+
+        # Transpose character lists
+        if not no_separator and flip_direction:
+            path_matrix = list(map(list, itertools.zip_longest(*path_matrix, fillvalue=None)))
+            path_matrix = [p for p in path_matrix if p is not None]
+            for line in range(len(path_matrix)):
+                path_matrix[line] = [p for p in path_matrix[line] if p is not None]
+            eyesight_matrix = list(map(list, itertools.zip_longest(*eyesight_matrix, fillvalue=None)))
+            uncropped_edge_matrix = list(map(list, itertools.zip_longest(*uncropped_edge_matrix, fillvalue=None)))
         
         path_matrices.append(path_matrix)
         eyesight_matrices.append(eyesight_matrix)
@@ -1089,7 +1106,10 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
     return data
 
 def remove_special_chars(input_str: str):
-    return re.sub(r'(?u)[^-\w.]', '', input_str)
+    invalid = '<>:"/\|?* '
+    for char in invalid:
+        input_str = input_str.replace(char, "")
+    return input_str
 
 def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
