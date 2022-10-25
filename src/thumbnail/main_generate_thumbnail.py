@@ -34,6 +34,8 @@ all_eyesight = False
 no_separator = 0
 flip_direction = False
 
+separator_color_code = "#888888"
+
 crop_borders = [] # left, right, top, bottom
 scale_fill_x = 0
 scale_fill_y = 0
@@ -229,11 +231,15 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
     return positions
 
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
-    separator_h_image, separator_v_image = generate_separator_images(
-        thumbnail, separator_color_code, separator_width)
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview, ratio
+    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width
+
+    separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
+    separatorsPix.fill(QColor(0, 0, 0, 0))
+
+    debugPix = QPixmap(thumbnail.width(), thumbnail.height())
+    debugPix.fill(QColor(0, 0, 0, 0))
 
     # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
     #     paste_coordinates = (
@@ -251,8 +257,23 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
         num_col = len(line)
 
         for col_index in range(0, len(line))[::-1]:
+            if path_matrix[line_index][col_index] == None:
+                continue
+
+            col_span = 1
+            line_span = 1
+
+            if flip_direction:
+                for l in range(line_index+1, len(path_matrix)):
+                    if path_matrix[l][col_index] == None:
+                        line_span += 1
+            else:
+                for c in range(col_index+1, len(line)):
+                    if line[c] == None:
+                        col_span += 1
+
             individual_max_size = (
-                round(max_size[0]/num_col), round(max_size[1]/num_line))
+                round(max_size[0]/num_col)*col_span, round(max_size[1]/num_line)*line_span)
             image_path = line[col_index]
 
             individual_paste_x = round(
@@ -392,7 +413,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             if is_preview:
                 global font_1
                 draw_text(
-                    thumbnail,
+                    debugPix,
                     QApplication.translate("Form", "Scale: {0}").format("{0:.2f}".format(zoom)) + '%'+"\n",
                     font_1, 24, (0, 0, 0),
                     (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+2),
@@ -403,7 +424,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 )
 
                 draw_text(
-                    thumbnail,
+                    debugPix,
                     QApplication.translate("Form", "Eyesight offset: ({0}, {1})").format(int(original_xx - xx), int(original_yy - yy)),
                     font_1, 24, (0, 0, 0),
                     (round(paste_coordinates[0] + col_index*round(max_size[0]/num_col)), individual_paste_y+22),
@@ -413,49 +434,46 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     (4, 2)
                 )
             
-            # Vertical separator line
             if no_separator == 0:
-                left = round(0)
-                top = round(0)
-                right = round(separator_v_image.width())
-                bottom = round(individual_max_size[1])
-                separator_v_image = separator_v_image.copy(
-                    left, top, right-left, bottom-top)
-                separator_v_offset = max_size[0]/num_col
-                for i in range(1, num_col):
-                    separator_paste_x = round(
-                        paste_coordinates[0]-(separator_v_image.width()/2)+i*separator_v_offset)
-                    separator_paste_y = individual_paste_y
-                    separator_paste_coordinates = (
-                        separator_paste_x, separator_paste_y)
-                    composite_image = create_composite_image(
-                        separator_v_image, thumbnail.size(), separator_paste_coordinates)
-                    painter = QPainter(thumbnail)
-                    painter.drawPixmap(0, 0, composite_image)
+                separator_right = False
+                separator_down = False
+
+                separatorHeight = round(separator_width*ratio[0])
+                separatorWidth = round(separator_width*ratio[1])
+
+                if line_index + line_span < num_line:
+                    separator_down = True
+                
+                if col_index + col_span < num_col:
+                    separator_right = True
+                
+                if separator_right:
+                    painter = QPainter(separatorsPix)
+                    painter.setPen(QPen(QColor(separator_color_code), separatorWidth))
+                    painter.drawLine(
+                        individual_paste_x + individual_max_size[0],
+                        individual_paste_y,
+                        individual_paste_x + individual_max_size[0],
+                        individual_paste_y + individual_max_size[1],
+                    )
                     painter.end()
-
-        # Horizontal separator line
-        left = round(0)
-        top = round(0)
-        right = round(max_size[0])
-        bottom = round(separator_h_image.height())
-        separator_h_image = separator_h_image.copy(
-            left, top, right-left, bottom-top)
-        separator_h_offset = max_size[1]/num_line
-        for i in range(1, num_line):
-            separator_paste_x = paste_coordinates[0]
-            separator_paste_y = round(
-                paste_coordinates[1]-(separator_h_image.height()/2)+i*separator_h_offset)
-            separator_paste_coordinates = (
-                separator_paste_x, separator_paste_y)
-            composite_image = create_composite_image(
-                separator_h_image, thumbnail.size(), separator_paste_coordinates)
-            painter = QPainter(thumbnail)
-            painter.drawPixmap(0, 0, composite_image)
-            painter.end()
-
-    # if (player_index == 1 and flip_p2) or (player_index == 0 and flip_p1):
-    #     thumbnail = thumbnail.transformed(QTransform().scale(-1, 1))
+                
+                if separator_down:
+                    painter = QPainter(separatorsPix)
+                    painter.setPen(QPen(QColor(separator_color_code), separatorHeight))
+                    painter.drawLine(
+                        individual_paste_x,
+                        individual_paste_y + individual_max_size[1],
+                        individual_paste_x + individual_max_size[0],
+                        individual_paste_y + individual_max_size[1],
+                    )
+                    painter.end()
+            
+        painter = QPainter(thumbnail)
+        painter.drawPixmap(0, 0, separatorsPix)
+        if is_preview:
+            painter.drawPixmap(0, 0, debugPix)
+        painter.end()
 
     return(thumbnail)
 
@@ -547,9 +565,6 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         # Transpose character lists
         if not no_separator and flip_direction:
             path_matrix = list(map(list, itertools.zip_longest(*path_matrix, fillvalue=None)))
-            path_matrix = [p for p in path_matrix if p is not None]
-            for line in range(len(path_matrix)):
-                path_matrix[line] = [p for p in path_matrix[line] if p is not None]
             eyesight_matrix = list(map(list, itertools.zip_longest(*eyesight_matrix, fillvalue=None)))
             uncropped_edge_matrix = list(map(list, itertools.zip_longest(*uncropped_edge_matrix, fillvalue=None)))
         
