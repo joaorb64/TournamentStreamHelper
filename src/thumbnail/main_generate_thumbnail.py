@@ -582,8 +582,11 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     return(thumbnail)
 
 
-def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16)):
-    painter = QPainter(thumbnail)
+def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_size, outline, outline_color, padding=(32, 16), skew=(0, 0)):
+    pix = QPixmap(int(container_size[0]), int(container_size[1]))
+    pix.fill(QColor(0, 0, 0, 0))
+
+    painter = QPainter(pix)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
     font = QFont()
@@ -618,8 +621,8 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
             font.setStretch(stretch)
         fontMetrics = QFontMetricsF(font)
 
-    text_x = round((pos[0]+padding[0]))
-    text_y = round((pos[1]+padding[1]))
+    text_x = round((padding[0]))
+    text_y = round((padding[1]))
     text_coordinates = (text_x, text_y)
     print(text_coordinates)
 
@@ -675,6 +678,13 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
 
     painter.end()
 
+    pix = pix.transformed(QTransform().shear(radians(skew[0]), radians(skew[1])), Qt.TransformationMode.SmoothTransformation)
+
+    # Paste pixmap in the thumbnail
+    painter = QPainter(thumbnail)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.drawPixmap(pos[0], pos[1], pix)
+    painter.end()
 
 def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
     text_player_max_dimensions = (round(template_data["character_images"]["dimensions"]["x"]*ratio[0]/2.0), round(
@@ -749,8 +759,14 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
             text_player_max_dimensions,
             player_text_color["has_outline"],
             player_text_color["outline_color"],
-            (round(template_data["player_text"]["x_offset"]*ratio[0]),
-             round(template_data["player_text"]["y_padding"]*ratio[1]))
+            (
+                round(template_data["player_text"]["x_offset"]*ratio[0]),
+                round(template_data["player_text"]["y_padding"]*ratio[1])
+            ),
+            (
+                template_data["player_text"].get("skew", {}).get("x", 0),
+                template_data["player_text"].get("skew", {}).get("y", 0)
+            )
         )
 
 
@@ -791,8 +807,14 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]
-             ["x_offset"]*ratio[0]/2.0), y_padding)
+            (
+                round(template_data["info_text"]["x_offset"]*ratio[0]/2.0),
+                y_padding
+            ),
+            (
+                template_data["info_text"].get("skew", {}).get("x", 0),
+                template_data["info_text"].get("skew", {}).get("y", 0)
+            )
         )
 
         draw_text(
@@ -805,8 +827,14 @@ def paste_round_text(thumbnail, data, display_phase=True):
             text_max_dimensions,
             text_color[1]["has_outline"],
             text_color[1]["outline_color"],
-            (round(template_data["info_text"]
-             ["x_offset"]*ratio[0]/2.0), y_padding)
+            (
+                round(template_data["info_text"]["x_offset"]*ratio[0]/2.0),
+                y_padding
+            ),
+            (
+                template_data["info_text"].get("skew", {}).get("x", 0),
+                template_data["info_text"].get("skew", {}).get("y", 0)
+            )
         )
     else:
         round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
@@ -1067,6 +1095,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail")
 
+    global template_data
+    with open(settings["thumbnail_type"], 'rt') as template_data_file:
+        template_data = template_data_file.read()
+        template_data = json.loads(template_data)
+
     global is_preview
     is_preview = isPreview
 
@@ -1075,10 +1108,14 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     tmp_path = "./tmp"
 
     # IMG PATH
-    foreground_path = settings["foreground_path"]
+    foreground_path = settings.get("foreground_path")
+    if not foreground_path:
+        foreground_path = template_data["default_foreground"]
     if not os.path.isfile(foreground_path):
         raise Exception(f"Foreground {foreground_path} doesn't exist !")
-    background_path = settings["background_path"]
+    background_path = settings.get("background_path")
+    if not background_path:
+        background_path = template_data["default_background"]
     if not os.path.isfile(background_path):
         raise Exception(f"Background {background_path} doesn't exist !")
     main_icon_path = settings["main_icon_path"]
@@ -1184,10 +1221,6 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
 
     foreground = QPixmap(foreground_path, "RGBA")
     background = QPixmap(background_path, "RGBA")
-    global template_data
-    with open(settings["thumbnail_type"], 'rt') as template_data_file:
-        template_data = template_data_file.read()
-        template_data = json.loads(template_data)
 
     if isPreview:
         background = background.scaled(

@@ -145,10 +145,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             },
             "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
         }
-        with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
-            thumbnail_type_desc = json.loads(thumbnail_type_file.read())
-            settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
-            settings["background_path"] = thumbnail_type_desc["default_background"]
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
             "name": "Roboto Condensed",
@@ -156,8 +152,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             "fontPath": "Bold"
         }, {
             "name": "Roboto Condensed",
-            "type": "Bold Italic",
-            "fontPath": "Bold Italic"
+            "type": "Bold",
+            "fontPath": "Bold"
         }]
         settings["font_color"] = [
             "#FFFFFF", "#FFFFFF"
@@ -583,14 +579,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     # re-generate preview
     def GeneratePreview(self, manual=False):
+        SettingsManager.LoadSettings()
         settings = SettingsManager.Get("thumbnail")
+
         if not settings.get("thumbnail_type"):
             settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
-            with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
-                thumbnail_type_desc = json.loads(thumbnail_type_file.read())
-                settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
-                settings["background_path"] = thumbnail_type_desc["default_background"]
-            SettingsManager.Set("thumbnail", settings)
+        
         for font_index in range(len(settings["font_list"])):
             if "type" in settings["font_list"][font_index]["type"].lower():
                 settings["font_list"][font_index]["type"] = QApplication.translate("app","Bold")
