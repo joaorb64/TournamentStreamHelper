@@ -393,7 +393,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="735"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="641"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="649"/>
         <source>(No game selected)</source>
         <translation></translation>
     </message>
@@ -1031,7 +1031,7 @@ p, li { white-space: pre-wrap; }
         <translation>EQUIPO {0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="627"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="635"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="509"/>
         <location filename="../TSHScoreboardWidget.py" line="451"/>
@@ -1097,24 +1097,24 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="74"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="531"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="539"/>
         <source>Bold Italic</source>
         <translation>Negrita Itálica</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="529"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="588"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="537"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="596"/>
         <source>Bold</source>
         <translation>Negrita</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="528"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="536"/>
         <source>Regular</source>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="530"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="538"/>
         <source>Italic</source>
         <translation>Itálica</translation>
     </message>
@@ -1159,7 +1159,7 @@ p, li { white-space: pre-wrap; }
         <translation>Falta la tag del jugador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="626"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="634"/>
         <location filename="../TSHScoreboardWidget.py" line="429"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>

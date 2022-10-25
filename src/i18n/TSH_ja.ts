@@ -389,7 +389,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="735"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="641"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="649"/>
         <source>(No game selected)</source>
         <translation>ゲームが選択されてません</translation>
     </message>
@@ -1053,7 +1053,7 @@ p, li { white-space: pre-wrap; }
         <translation>チーム{0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="627"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="635"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="509"/>
         <location filename="../TSHScoreboardWidget.py" line="451"/>
@@ -1100,27 +1100,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="74"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="531"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="539"/>
         <source>Bold Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold Italic</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="529"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="588"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="537"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="596"/>
         <source>Bold</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="528"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="536"/>
         <source>Regular</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="530"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="538"/>
         <source>Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Italic</translation>
@@ -1166,7 +1166,7 @@ p, li { white-space: pre-wrap; }
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="626"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="634"/>
         <location filename="../TSHScoreboardWidget.py" line="429"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>
