@@ -325,6 +325,9 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
 
+            if no_separator != 0:
+                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
+
             if player_index == 1:
                 customCenter[0] = 1 - customCenter[0]
 
@@ -333,9 +336,6 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             if not customCenter:
                 customCenter = [0.5, 0.5]
-            
-            if no_separator != 0:
-                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
 
             xx = -eyesight_coordinates[0] * zoom + individual_max_size[0] * customCenter[0]
             yy = -eyesight_coordinates[1] * zoom + individual_max_size[1] * customCenter[1]
