@@ -44,7 +44,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
         <source>Short Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourci</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
@@ -349,7 +349,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="45"/>
         <source>Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Modèle</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="422"/>
@@ -414,7 +414,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="906"/>
         <source>Invert separator orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverser l&apos;orientation des séparateurs</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="913"/>
@@ -434,7 +434,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1017"/>
         <source>Generate Thumbnail</source>
-        <translation type="unfinished">Générer la miniature</translation>
+        <translation>Générer la miniature</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="941"/>
@@ -1038,7 +1038,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
         <source>Show completed sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les matchs terminés</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="78"/>
