@@ -499,12 +499,12 @@ p, li { white-space: pre-wrap; }
         <translation>INTERCAMBIAR EQUIPOS</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="428"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="429"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="439"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="440"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -967,7 +967,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="284"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1066"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1067"/>
         <source>Player {0}</source>
         <translation>Jugador {0}</translation>
     </message>
@@ -1075,23 +1075,23 @@ p, li { white-space: pre-wrap; }
         <translation>Comentarista {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1067"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1068"/>
         <source>Sponsor {0}</source>
         <translation>Patrocinador {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1094"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1095"/>
         <source>Winners Finals</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1095"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1096"/>
         <source>Pool {0}</source>
         <translation>Grupo {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1113"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1140"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1114"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1141"/>
         <source>Team {0}</source>
         <translation>Equipo {0}</translation>
     </message>
@@ -1159,12 +1159,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1232"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1233"/>
         <source>Please select a game first</source>
         <translation>Seleccione un juego primero</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1236"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1237"/>
         <source>Player {0} tag missing</source>
         <translation>Falta la tag del jugador {0}</translation>
     </message>
