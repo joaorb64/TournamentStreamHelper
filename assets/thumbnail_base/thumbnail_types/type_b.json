@@ -1,0 +1,67 @@
+{
+    "name": "Skewed",
+    "default_foreground": "./assets/thumbnail_base/thumbnail_types/type_b/foreground.svg",
+    "default_background": "./assets/thumbnail_base/thumbnail_types/type_b/background.svg",
+    "base_ratio": {
+        "x": 1920,
+        "y": 1080
+    },
+    "character_images": {
+        "position": {
+            "x": 0,
+            "y": 150
+        },
+        "dimensions": {
+            "x": 1920,
+            "y": 790
+        }
+    },
+    "player_text": {
+        "dimensions": {
+            "y": 150
+        },
+        "x_offset": 34,
+        "y_padding": 0,
+        "height_center": 75,
+        "skew": {
+            "x": 0,
+            "y": -2
+        }
+    },
+    "info_text": {
+        "dimensions": {
+            "x": 1920,
+            "y": 150
+        },
+        "x_position": 0,
+        "x_offset": 100,
+        "y_padding": 0,
+        "height_center": 971,
+        "horizontal": true,
+        "always_align_center": true,
+        "skew": {
+            "x": 0,
+            "y": -2
+        }
+    },
+    "icons_position": {
+        "align": "bottom",
+        "bind_to_character_images": true,
+        "y_offset": 60,
+        "main": {
+            "dimensions": {
+                "x": 340,
+                "y": 320
+            }
+        },
+        "side": {
+            "x_offset": 10,
+            "dimensions": {
+                "x": 240,
+                "y": 240
+            }
+        }
+    },
+    "initial_font_size": 200,
+    "lower_text_stretch_limit": 80
+}

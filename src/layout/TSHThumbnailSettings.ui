@@ -25,21 +25,30 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>302</width>
-        <height>1003</height>
-       </rect>
-      </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="rightMargin">
+        <number>16</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Template</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="templateSelect"/>
+         </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0,1">
            <property name="rightMargin">
@@ -890,6 +899,13 @@
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="flipSeparators">
+           <property name="text">
+            <string>Invert separator orientation</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="hideSeparators">
