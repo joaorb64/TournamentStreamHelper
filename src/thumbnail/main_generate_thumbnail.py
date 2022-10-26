@@ -234,6 +234,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     num_line = len(path_matrix)
 
     global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width
+    image_ratio = (max(ratio[0], ratio[1]), max(ratio[0], ratio[1]))
 
     separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
     separatorsPix.fill(QColor(0, 0, 0, 0))
@@ -299,7 +300,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             print(f"Processing asset: {image_path}")
 
             pix = QPixmap(image_path, "RGBA")
-            pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+            pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
             painter = QPainter(thumbnail)
 
             eyesight_coordinates = (pix.width()/2, pix.height()/2)
@@ -307,8 +308,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             if len(eyesight_line) >= col_index:
                 if eyesight_line[col_index] != None:
                     eyesight_coordinates = (
-                        eyesight_line[col_index][0] * ratio[0],
-                        eyesight_line[col_index][1] * ratio[1]
+                        eyesight_line[col_index][0] * image_ratio[0],
+                        eyesight_line[col_index][1] * image_ratio[1]
                     )
             
             uncropped_edge = []
