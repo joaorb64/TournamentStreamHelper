@@ -55,7 +55,7 @@ class TSHAssetDownloader(QObject):
                             if currVersion != version and currVersion != "":
                                 if not game_code in updates:
                                     updates[game_code] = []
-                                updates[game_code].append(asset_code)
+                                updates[game_code].append(assets[game_code]["assets"][asset_code])
 
                     TSHAssetDownloader.instance.signals.AssetUpdates.emit(
                         updates)
@@ -271,6 +271,11 @@ class TSHAssetDownloader(QObject):
         btOk = QPushButton(QApplication.translate("app", "Download"))
         self.preDownloadDialogue.layout().addWidget(btOk)
 
+        btUpdateAll = QPushButton(QApplication.translate("app", "Update all"))
+        self.preDownloadDialogue.layout().addWidget(btUpdateAll)
+
+        btUpdateAll.clicked.connect(TSHAssetDownloader.UpdateAllAssets)
+
         def DownloadStart():
             nonlocal self
 
@@ -346,11 +351,11 @@ class TSHAssetDownloader(QObject):
         totalSize = sum(f["size"] for f in files)
         downloaded = 0
 
-        for f in files:
+        for i, f in enumerate(files):
             with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                 print("Downloading "+f["name"])
                 progress_callback.emit(QApplication.translate(
-                    "app", "Downloading {0}...").format(f["name"]))
+                    "app", "Downloading {0}... ({1}/{2})").format(f["name"], i+1, len(files)))
 
                 response = urllib.request.urlopen(f["path"])
 
@@ -366,39 +371,27 @@ class TSHAssetDownloader(QObject):
                     if self.downloadDialogue.wasCanceled():
                         return
 
-                    progress_callback.emit(int(downloaded/totalSize*100))
+                    progress_callback.emit(min(int(downloaded/totalSize*100), 99))
                 downloadFile.close()
 
-                print("OK")
+                print("Download OK")
+
+                is7z = f["name"].endswith(".7z")
+
+                if is7z:
+                    with py7zr.SevenZipFile("./user_data/games/"+f["name"], 'r') as parent_zip:
+                        parent_zip.extractall(f["extractpath"])
+
+                    os.remove("./user_data/games/"+f["name"])
+                else:
+                    for f in files:
+                        if os.path.isfile(f["extractpath"]+"/"+f["name"]):
+                            os.remove(f["extractpath"]+"/"+f["name"])
+                        shutil.move("./user_data/games/"+f["name"], f["extractpath"])
+                
+                print("Extract OK")
 
         progress_callback.emit(100)
-
-        filenames = ["./user_data/games/"+f["name"] for f in files]
-        mergedFile = "./user_data/games/"+files[0]["name"].split(".")[0]+'.7z'
-
-        is7z = next((f for f in files if ".7z" in f["name"]), None)
-
-        if is7z:
-            with open(mergedFile, 'ab') as outfile:
-                for fname in filenames:
-                    with open(fname, 'rb') as infile:
-                        outfile.write(infile.read())
-
-            print("Extracting "+mergedFile)
-            progress_callback.emit("Extracting "+mergedFile)
-
-            with py7zr.SevenZipFile(mergedFile, 'r') as parent_zip:
-                parent_zip.extractall(files[0]["extractpath"])
-
-            for f in files:
-                os.remove("./user_data/games/"+f["name"])
-
-            os.remove(mergedFile)
-        else:
-            for f in files:
-                if os.path.isfile(f["extractpath"]+"/"+f["name"]):
-                    os.remove(f["extractpath"]+"/"+f["name"])
-                shutil.move("./user_data/games/"+f["name"], f["extractpath"])
 
         print("OK")
 
@@ -415,6 +408,38 @@ class TSHAssetDownloader(QObject):
     def DownloadAssetsFinished(self):
         self.downloadDialogue.close()
         TSHGameAssetManager.instance.LoadGames()
+    
+    def UpdateAllAssets(self):
+        def f(assets):
+            print(assets),
+            TSHAssetDownloader.instance.signals.AssetUpdates.disconnect(f)
 
+            filesToDownload = []
+
+            for game, _assets in assets.items():
+                for asset in _assets:
+                    fileToDownload = list(asset["files"].values())[0]
+                    fileToDownload["path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
+                    fileToDownload["extractpath"] = f'./user_data/games/{game}'
+                    filesToDownload.append(fileToDownload)
+
+            TSHAssetDownloader.instance.downloadDialogue = QProgressDialog(
+                QApplication.translate("app", "Downloading assets"),
+                QApplication.translate("app", "Cancel"),
+                0,
+                100
+            )
+            TSHAssetDownloader.instance.downloadDialogue.setMinimumWidth(1200)
+            TSHAssetDownloader.instance.downloadDialogue.setWindowModality(
+                Qt.WindowModality.WindowModal)
+            TSHAssetDownloader.instance.downloadDialogue.show()
+            worker = Worker(TSHAssetDownloader.instance.DownloadAssetsWorker, *[filesToDownload])
+            worker.signals.progress.connect(TSHAssetDownloader.instance.DownloadAssetsProgress)
+            worker.signals.finished.connect(TSHAssetDownloader.instance.DownloadAssetsFinished)
+            TSHAssetDownloader.instance.threadpool.start(worker)
+
+        
+        TSHAssetDownloader.instance.CheckAssetUpdates()
+        TSHAssetDownloader.instance.signals.AssetUpdates.connect(f)
 
 TSHAssetDownloader.instance = TSHAssetDownloader()
