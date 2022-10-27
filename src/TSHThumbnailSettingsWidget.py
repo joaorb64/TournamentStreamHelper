@@ -145,19 +145,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             },
             "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
         }
-        with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
-            thumbnail_type_desc = json.loads(thumbnail_type_file.read())
-            settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
-            settings["background_path"] = thumbnail_type_desc["default_background"]
         settings["side_icon_list"] = ["", ""]
         settings["font_list"] = [{
-            "name": "Open Sans",
+            "name": "Roboto Condensed",
             "type": "Bold",
             "fontPath": "Bold"
         }, {
-            "name": "Open Sans",
-            "type": "Bold Italic",
-            "fontPath": "Bold Italic"
+            "name": "Roboto Condensed",
+            "type": "Bold",
+            "fontPath": "Bold"
         }]
         settings["font_color"] = [
             "#FFFFFF", "#FFFFFF"
@@ -231,6 +227,53 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.topRightIcon.clicked.connect(
             lambda: self.SaveIcons("side_icon_list", 1))
 
+        self.templateSelect: QComboBox = self.settings.findChild(
+            QComboBox, "templateSelect"
+        )
+
+        types = [f'./assets/thumbnail_base/thumbnail_types/{t}' for t in os.listdir("./assets/thumbnail_base/thumbnail_types/") if t.endswith(".json")]
+        types.sort()
+        self.templates = []
+        for t in types:
+            try:
+                config = json.load(open(t))
+                config["filename"] = t
+                self.templates.append(config)
+            except Exception as e:
+                print(e)
+        
+        for t in self.templates:
+            self.templateSelect.addItem(t.get("name") + f' ({t.get("filename", "").rsplit("/")[-1]})', t)
+        
+        currSettings = SettingsManager.Get("thumbnail")
+
+        for i, t in enumerate(self.templates):
+            if t.get("filename") == currSettings.get("thumbnail_type"):
+                self.templateSelect.setCurrentIndex(i)
+        
+        self.templateSelect.currentIndexChanged.connect(
+            lambda val: [
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
+                    key=f"foreground_path", 
+                    val="",
+                    generatePreview=False
+                ),
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
+                    key=f"background_path", 
+                    val="",
+                    generatePreview=False
+                ),
+                TSHThumbnailSettingsWidget.SaveSettings(
+                    self,
+                    key=f"thumbnail_type", 
+                    val=self.templateSelect.currentData().get("filename"),
+                    generatePreview=True
+                )
+            ]
+        )
+
         # SEPARATORS
         self.VSpacer = self.settings.findChild(QSpinBox, "widthSpacer")
         self.VColor = self.settings.findChild(QPushButton, "colorSpacer")
@@ -259,6 +302,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillY = self.settings.findChild(QCheckBox, "scaleToFillY")
 
         self.hideSeparators = self.settings.findChild(QCheckBox, "hideSeparators")
+
+        self.flipSeparators = self.settings.findChild(QCheckBox, "flipSeparators")
 
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked()))
@@ -316,6 +361,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self,
                 key=f"hideSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
                 val=self.hideSeparators.checkState(),
+                generatePreview=True
+            )]
+        )
+
+        self.flipSeparators.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"flipSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                val=self.flipSeparators.checkState(),
                 generatePreview=True
             )]
         )
@@ -396,6 +450,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # add Open Sans
         self.family_to_path["Open Sans"] = [
             './assets/font/OpenSans/OpenSans-Bold.ttf', './assets/font/OpenSans/OpenSans-Semibold.ttf']
+
+        # Load Roboto Condensed
+        QFontDatabase.addApplicationFont(
+            "./assets/font/RobotoCondensed.ttf")
+        
+        self.family_to_path["Roboto Condensed"] = [
+            './assets/font/RobotoCondensed.ttf', './assets/font/RobotoCondensed.ttf']
+
         # add all fonts available
         for k, v in sorted(self.family_to_path.items()):
             self.selectFontPlayer.addItem(k, v)
@@ -575,14 +637,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     # re-generate preview
     def GeneratePreview(self, manual=False):
+        SettingsManager.LoadSettings()
         settings = SettingsManager.Get("thumbnail")
+
         if not settings.get("thumbnail_type"):
             settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
-            with open(settings["thumbnail_type"], 'rt') as thumbnail_type_file:
-                thumbnail_type_desc = json.loads(thumbnail_type_file.read())
-                settings["foreground_path"] = thumbnail_type_desc["default_foreground"]
-                settings["background_path"] = thumbnail_type_desc["default_background"]
-            SettingsManager.Set("thumbnail", settings)
+        
         for font_index in range(len(settings["font_list"])):
             if "type" in settings["font_list"][font_index]["type"].lower():
                 settings["font_list"][font_index]["type"] = QApplication.translate("app","Bold")
@@ -716,6 +776,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                         TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
                     self.hideSeparators.setChecked(
                         settings.get(f"hideSeparators/{game_codename}", 0))
+                    
+                    self.flipSeparators.setEnabled(True)
+                    if settings.get(f"flipSeparators/{game_codename}") == None:
+                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"flipSeparators/{game_codename}", val=self.flipSeparators.checkState(), generatePreview=False)
+                    self.flipSeparators.setChecked(
+                        settings.get(f"flipSeparators/{game_codename}", 0))
                 else:
                     self.zoom.setEnabled(False)
                     self.horizontalAlign.setEnabled(False)
@@ -723,6 +789,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.scaleToFillX.setEnabled(False)
                     self.scaleToFillY.setEnabled(False)
                     self.hideSeparators.setEnabled(False)
+                    self.flipSeparators.setEnabled(False)
                     self.selectRenderType.setEnabled(False)
                     self.selectRenderType.setCurrentIndex(0)
             except:

@@ -30,8 +30,8 @@
     .from([".vs1"], { duration: 0.1, opacity: "0", scale: 10, ease: "in" }, 1.2)
     .from([".vs2"], { duration: 0.01, opacity: "0" }, 1.3)
     .to([".vs2"], { opacity:0, scale: 2, ease: "power2.out" }, 1.31)
-    .from([".p1.container"], { duration: 1, x: "-100px", ease: "out" }, 0)
-    .from([".p2.container"], { duration: 1, x: "100px", ease: "out" }, 0)
+    .from([".p1.container"], { duration: 1, x: "-200px", ease: "out" }, 0)
+    .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0)
 
   async function Start() {
     startingAnimation.restart();
@@ -124,7 +124,6 @@
           ) {
             let html = "";
             let characters = Object.values(player.character);
-            if (t == 0) characters = characters.reverse();
             let zIndexMultiplyier = 1;
             if (t == 1) zIndexMultiplyier = -1;
             characters.forEach((character, c) => {
@@ -136,9 +135,7 @@
                 if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
                   // if asset is a image, add a image element
                   html += `
-                  <div class="bg char${
-                    t == 1 ? c : characters.length - 1 - c
-                  }" style="z-index: ${c * zIndexMultiplyier};">
+                  <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
                     <div class="portrait_container">
                       <div
                         class="portrait ${
@@ -161,9 +158,7 @@
                 } else {
                   // if asset is a video, add a video element
                   html += `
-                  <div class="bg char${
-                    t == 1 ? c : characters.length - 1 - c
-                  }" style="z-index: ${c * zIndexMultiplyier};">
+                  <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
                     <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
                       <source src="../../${character.assets[ASSET_TO_USE].asset}">
                     </video>
@@ -175,7 +170,6 @@
   
             $(`.p${t + 1}.character`).html(html);
   
-            if (t == 0) characters = characters.reverse();
             characters.forEach((character, c) => {
               if (character.assets[ASSET_TO_USE]) {
                 CenterImage(
@@ -273,7 +267,6 @@
             })
           })
 
-          if (t == 1) characters = characters.reverse();
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
           characters.forEach((character, c) => {
@@ -285,9 +278,7 @@
               if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
                 // if asset is a image, add a image element
                 html += `
-                <div class="bg char${
-                  t == 1 ? c : characters.length - 1 - c
-                }" style="z-index: ${c * zIndexMultiplyier};">
+                <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
                   <div class="portrait_container">
                     <div
                       class="portrait ${
@@ -310,9 +301,7 @@
               } else {
                 // if asset is a video, add a video element
                 html += `
-                <div class="bg char${
-                  t == 1 ? c : characters.length - 1 - c
-                }" style="z-index: ${c * zIndexMultiplyier};">
+                <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
                   <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
                     <source src="../../${character.assets[ASSET_TO_USE].asset}">
                   </video>
@@ -323,8 +312,6 @@
           });
 
           $(`.p${t + 1}.character`).html(html);
-
-          characters = characters.reverse();
           
           characters.forEach((character, c) => {
             if (character.assets[ASSET_TO_USE]) {

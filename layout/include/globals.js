@@ -88,7 +88,7 @@ function GenerateMulticharacterPositions(character_number, center=[0.5, 0.5], ra
   
   let angle_rad = degrees_to_radians(90)
 
-  if(character_number == 2) angle_rad = 45
+  if(character_number == 2) angle_rad = degrees_to_radians(45)
   
   let pendulum = 1
 

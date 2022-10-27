@@ -250,200 +250,210 @@ p, li { white-space: pre-wrap; }
         <translation>País</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="69"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="78"/>
         <source>Image</source>
         <translation>Imagen</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="76"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="85"/>
         <source>Foreground</source>
         <translation>Cuadro frontal</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="83"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="92"/>
         <source>Background</source>
         <translation>Fondo</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="114"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="123"/>
         <source>Custom Icon</source>
         <translation>Ícono Personalizado</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="121"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="130"/>
         <source>Main</source>
         <translation>Main</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="148"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="157"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="155"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="164"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="201"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="210"/>
         <source>Separators</source>
         <translation>Separadores</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="221"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="230"/>
         <source>Width</source>
         <translation>Ancho</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="244"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="253"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="304"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="313"/>
         <source>Display</source>
         <translation>Visible en pantalla</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="311"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="320"/>
         <source>Phase name?</source>
         <translation>Nombre de la fase?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="321"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="330"/>
         <source>Teams names?</source>
         <translatorcomment>You could also use &quot;Nombre de la dupla&quot;</translatorcomment>
         <translation>Nombre de los equipos?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="331"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="340"/>
         <source>Sponsors?</source>
         <translation>Organización?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="341"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="350"/>
         <source>Flip P1 assets?</source>
         <translation>Intercambiar info P1?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="351"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="360"/>
         <source>Flip P2 assets?</source>
         <translation>Intercambiar info P2?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="536"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="545"/>
         <source>Sponsor Font Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="771"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="780"/>
         <source>Zoom</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="787"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="849"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="880"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="796"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="858"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="889"/>
         <source>%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="1001"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="906"/>
+        <source>Invert separator orientation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1017"/>
         <source>Generate Thumbnail</source>
         <translation type="unfinished">Generar Miniatura</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="392"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="401"/>
         <source>Tag font</source>
         <translation>Fuente para el tag</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="413"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="593"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="45"/>
+        <source>Template</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="422"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="602"/>
         <source>Fonts</source>
         <translation>Fuentes</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="437"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="617"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="446"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="626"/>
         <source>Font Type</source>
         <translation>Tipo de fuente</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="462"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="642"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="471"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="651"/>
         <source>Font Color</source>
         <translation>Color de la fuente</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="487"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="667"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="496"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="676"/>
         <source>Font Outline</source>
         <translation>Contorno de la fuente</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="572"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="581"/>
         <source>Phase font</source>
         <translation>Fuente para la fase</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="722"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="731"/>
         <source>Asset Pack</source>
         <translation>Paquete de archivos</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="735"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="641"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="744"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="701"/>
         <source>(No game selected)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="809"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="818"/>
         <source>Scale to fit X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="820"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="829"/>
         <source>Scale to fit Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="842"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="851"/>
         <source>Horizontal Align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="873"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
         <source>Vertical Align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="897"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="913"/>
         <source>Hide separators between characters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="918"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="934"/>
         <source>UI Options</source>
         <translation>Opciones de Interfaz</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="925"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="941"/>
         <source>Open File Explorer after generation?</source>
         <translation>¿Abrir explorador de archivos después de producir?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="942"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="958"/>
         <source>Reset to Defaults</source>
         <translation>Reiniciar a predeterminado</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="976"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="992"/>
         <source>Preview</source>
         <translation>Vista previa</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="994"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1010"/>
         <source>Update Preview</source>
         <translation>Actualiza vista previa</translation>
     </message>
@@ -489,12 +499,12 @@ p, li { white-space: pre-wrap; }
         <translation>INTERCAMBIAR EQUIPOS</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="399"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="429"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="410"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="440"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -626,7 +636,7 @@ p, li { white-space: pre-wrap; }
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="197"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="193"/>
         <location filename="../TournamentStreamHelper.py" line="146"/>
         <source>Thumbnail Settings</source>
         <translation>Configuración de Miniaturas</translation>
@@ -750,7 +760,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="546"/>
         <location filename="../TournamentStreamHelper.py" line="555"/>
-        <location filename="../TSHAssetDownloader.py" line="293"/>
+        <location filename="../TSHAssetDownloader.py" line="298"/>
+        <location filename="../TSHAssetDownloader.py" line="428"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -853,19 +864,29 @@ p, li { white-space: pre-wrap; }
         <translation>Descargar</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="292"/>
+        <location filename="../TSHAssetDownloader.py" line="274"/>
+        <source>Update all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHAssetDownloader.py" line="297"/>
+        <location filename="../TSHAssetDownloader.py" line="427"/>
         <source>Downloading assets</source>
         <translation>Descargando archivos</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="317"/>
+        <location filename="../TSHAssetDownloader.py" line="322"/>
         <source>Failed to fetch assets from github:</source>
         <translation>Error al buscar los archivos en Github</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="346"/>
+        <location filename="../TSHAssetDownloader.py" line="357"/>
+        <source>Downloading {0}... ({1}/{2})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Downloading {0}...</source>
-        <translation>Descargando {0}...</translation>
+        <translation type="vanished">Descargando {0}...</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="87"/>
@@ -957,7 +978,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="284"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="982"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1067"/>
         <source>Player {0}</source>
         <translation>Jugador {0}</translation>
     </message>
@@ -1031,11 +1052,11 @@ p, li { white-space: pre-wrap; }
         <translation>EQUIPO {0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="627"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="687"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="509"/>
         <location filename="../TSHScoreboardWidget.py" line="451"/>
-        <location filename="../TSHAssetDownloader.py" line="316"/>
+        <location filename="../TSHAssetDownloader.py" line="321"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
@@ -1065,23 +1086,23 @@ p, li { white-space: pre-wrap; }
         <translation>Comentarista {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="983"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1068"/>
         <source>Sponsor {0}</source>
         <translation>Patrocinador {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1010"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1095"/>
         <source>Winners Finals</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1011"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1096"/>
         <source>Pool {0}</source>
         <translation>Grupo {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1029"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1056"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1114"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1141"/>
         <source>Team {0}</source>
         <translation>Equipo {0}</translation>
     </message>
@@ -1097,24 +1118,24 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="74"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="531"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="593"/>
         <source>Bold Italic</source>
         <translation>Negrita Itálica</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="529"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="588"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="591"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="648"/>
         <source>Bold</source>
         <translation>Negrita</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="528"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="590"/>
         <source>Regular</source>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="530"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="592"/>
         <source>Italic</source>
         <translation>Itálica</translation>
     </message>
@@ -1149,17 +1170,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1136"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1233"/>
         <source>Please select a game first</source>
         <translation>Seleccione un juego primero</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1140"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1237"/>
         <source>Player {0} tag missing</source>
         <translation>Falta la tag del jugador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="626"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="686"/>
         <location filename="../TSHScoreboardWidget.py" line="429"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
