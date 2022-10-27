@@ -732,7 +732,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="546"/>
         <location filename="../TournamentStreamHelper.py" line="555"/>
-        <location filename="../TSHAssetDownloader.py" line="293"/>
+        <location filename="../TSHAssetDownloader.py" line="298"/>
+        <location filename="../TSHAssetDownloader.py" line="428"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -825,19 +826,29 @@ p, li { white-space: pre-wrap; }
         <translation>ダウンロード</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="292"/>
+        <location filename="../TSHAssetDownloader.py" line="274"/>
+        <source>Update all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHAssetDownloader.py" line="297"/>
+        <location filename="../TSHAssetDownloader.py" line="427"/>
         <source>Downloading assets</source>
         <translation>アセットをダウンロードしています</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="317"/>
+        <location filename="../TSHAssetDownloader.py" line="322"/>
         <source>Failed to fetch assets from github:</source>
         <translation>アセットをGitHubから取得するのに失敗しました:</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="346"/>
+        <location filename="../TSHAssetDownloader.py" line="357"/>
+        <source>Downloading {0}... ({1}/{2})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Downloading {0}...</source>
-        <translation>{0}をダウンロード中...</translation>
+        <translation type="vanished">{0}をダウンロード中...</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="41"/>
@@ -1067,7 +1078,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="509"/>
         <location filename="../TSHScoreboardWidget.py" line="451"/>
-        <location filename="../TSHAssetDownloader.py" line="316"/>
+        <location filename="../TSHAssetDownloader.py" line="321"/>
         <source>Warning</source>
         <translation>注意</translation>
     </message>
