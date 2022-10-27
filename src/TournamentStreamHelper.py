@@ -649,6 +649,9 @@ class Window(QMainWindow):
                 p.drawImage(QPoint(20, 0), updateIcon)
                 p.end()
                 self.downloadAssetsAction.setIcon(QIcon(baseIcon))
+            else:
+                baseIcon = self.downloadAssetsAction.icon().pixmap(32, 32)
+                self.downloadAssetsAction.setIcon(QIcon(baseIcon))
         except:
             print(traceback.format_exc())
 

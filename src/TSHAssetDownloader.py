@@ -407,8 +407,8 @@ class TSHAssetDownloader(QObject):
 
     def DownloadAssetsFinished(self):
         self.downloadDialogue.close()
-        TSHAssetDownloader.instance.CheckAssetUpdates()
         TSHGameAssetManager.instance.LoadGames()
+        TSHAssetDownloader.instance.CheckAssetUpdates()
     
     def UpdateAllAssets(self):
         def f(assets):
@@ -439,7 +439,7 @@ class TSHAssetDownloader(QObject):
             TSHAssetDownloader.instance.threadpool.start(worker)
 
         
-        TSHAssetDownloader.instance.CheckAssetUpdates()
         TSHAssetDownloader.instance.signals.AssetUpdates.connect(f)
+        TSHAssetDownloader.instance.CheckAssetUpdates()
 
 TSHAssetDownloader.instance = TSHAssetDownloader()
