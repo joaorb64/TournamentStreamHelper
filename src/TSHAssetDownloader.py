@@ -393,7 +393,7 @@ class TSHAssetDownloader(QObject):
 
         progress_callback.emit(100)
 
-        print("OK")
+        print("All OK")
 
     def DownloadAssetsProgress(self, n):
         if type(n) == int:
@@ -407,11 +407,11 @@ class TSHAssetDownloader(QObject):
 
     def DownloadAssetsFinished(self):
         self.downloadDialogue.close()
+        TSHAssetDownloader.instance.CheckAssetUpdates()
         TSHGameAssetManager.instance.LoadGames()
     
     def UpdateAllAssets(self):
         def f(assets):
-            print(assets),
             TSHAssetDownloader.instance.signals.AssetUpdates.disconnect(f)
 
             filesToDownload = []

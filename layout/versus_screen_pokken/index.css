@@ -43,8 +43,8 @@ body {
 }
 
 .player.container {
-  bottom: 48px;
-  width: 600px;
+  bottom: 0;
+  width: 740px;
   height: 210px;
   display: flex;
   flex-direction: row;
@@ -57,8 +57,13 @@ body {
   z-index: 9;
 }
 
+.player.container.p1 {
+  border-bottom-right-radius: 0;
+}
+
 .player.container.p2 {
   flex-direction: row-reverse;
+  border-bottom-left-radius: 0;
 }
 
 .player.container .column {
@@ -66,7 +71,7 @@ body {
   flex-direction: column;
   padding-left: 40px;
   padding-right: 40px;
-  width: 340px;
+  width: 430px;
   overflow: hidden;
   align-items: flex-start;
 }
@@ -186,7 +191,7 @@ body {
 
 .info {
   position: absolute;
-  top: 630px;
+  top: 680px;
   left: 50%;
   transform: translateX(-50%);
   width: 800px;
@@ -282,9 +287,9 @@ body {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 840px;
+  width: 740px;
   top: 0;
-  height: calc(100% - 200px);
+  height: calc(100% - 210px);
   perspective: 1000px;
   perspective-origin: right;
   z-index: -1;
@@ -317,11 +322,9 @@ body {
 
 .p1.character .bg {
   width: 100%;
-  //background: var(--p1-score-bg-color);
 }
 
 .bg {
-  border-radius: var(--border-radius);
   height: 100%;
   /* filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
@@ -329,13 +332,17 @@ body {
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4)); */
 }
 
+.bg:not(:last-child) {
+  border-bottom: 4px solid var(--bg-color);
+}
+
 .p2.character {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 840px;
+  width: 740px;
   top: 0;
-  height: calc(100% - 200px);
+  height: calc(100% - 210px);
   perspective: 1000px;
   perspective-origin: left;
   display: flex;
@@ -363,18 +370,18 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  filter: drop-shadow(-16px 12px 0px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(-32px 16px 0px rgba(0, 0, 0, 0.8));
 }
 
 .invert_shadow {
-  filter: drop-shadow(16px 12px 0px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(32px 16px 0px rgba(0, 0, 0, 0.8));
 }
 
 .vs {
   font-size: 200px;
   position: absolute;
   left: 50%;
-  top: 85%;
+  top: 90%;
   transform: translate(-50%, -50%);
   font-weight: bold;
   z-index: 999;
