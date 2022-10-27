@@ -330,11 +330,17 @@ class TSHAssetDownloader(QObject):
             return(None)
 
     def DownloadGameIconComplete(self, result):
-        pix = QPixmap()
-        pix.loadFromData(result[1], "png")
-        for i in range(self.select.model().rowCount()):
-            if self.select.model().index(i, 0).data(Qt.ItemDataRole.UserRole) == result[0]:
-                self.select.setItemIcon(i, QIcon(pix))
+        try:
+            if result is not None:
+                pix = QPixmap()
+                pix.loadFromData(result[1], "png")
+                pix = pix.scaledToWidth(64, Qt.TransformationMode.SmoothTransformation)
+                for i in range(self.select.model().rowCount()):
+                    if self.select.model().index(i, 0).data(Qt.ItemDataRole.UserRole) == result[0]:
+                        self.select.setItemIcon(i, QIcon(pix))
+        except Exception as e:
+            print(traceback.format_exc())
+            return(None)
 
     def DownloadAssetsWorker(self, files, progress_callback):
         totalSize = sum(f["size"] for f in files)
