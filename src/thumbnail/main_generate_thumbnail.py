@@ -208,7 +208,7 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
     angle_rad = radians(90)
 
     if character_number == 2:
-        angle_rad = 45
+        angle_rad = radians(45)
     
     pendulum = 1
 
