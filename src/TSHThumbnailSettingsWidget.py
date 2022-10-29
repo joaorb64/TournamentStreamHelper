@@ -82,13 +82,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.playerFontColor.setStyleSheet(
             "background-color: %s" % settings["font_color"][0])
         if not settings.get("sponsor_font_color_1"):
-            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_1", val=["#ed333b", "#ed333b"], generatePreview=True)
+            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_1", val=["#ff7a6d", "#ff7a6d"], generatePreview=True)
         if not settings.get("sponsor_font_color_2"):
-            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_2", val=["#62a0ea", "#62a0ea"], generatePreview=True)
+            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_2", val=["#29b6f6", "#29b6f6"], generatePreview=True)
         self.sponsorFontColor1.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_1", ["#ed333b"])[0])
+            "background-color: %s" % settings.get("sponsor_font_color_1", ["#ff7a6d"])[0])
         self.sponsorFontColor2.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_2", ["#62a0ea"])[0])
+            "background-color: %s" % settings.get("sponsor_font_color_2", ["#29b6f6"])[0])
         self.phaseFontColor.setStyleSheet(
             "background-color: %s" % settings.get("phase_font_color", ["#FFFFFF", "#FFFFFF"])[1])
         self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])

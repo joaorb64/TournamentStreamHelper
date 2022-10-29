@@ -7,6 +7,7 @@ import json
 import requests
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
+from src.TSHStageStrikeLogic import TSHStageStrikeLogic
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
 from .TSHWebServer import WebServer
@@ -35,19 +36,25 @@ class Ruleset():
         self.videogame = ""
 
 
-class TSHScoreboardStageWidget(QWidget):
+class TSHScoreboardStageWidget(QDockWidget):
 
-    def __init__(self, scoreboard, *args):
+    def __init__(self, *args):
         super().__init__(*args)
 
-        self.scoreboard = scoreboard
+        self.setWindowTitle(QApplication.translate("app", "Ruleset"))
+        self.setFloating(True)
+        self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
+        self.setFloating(True)
+        self.setWindowFlags(Qt.WindowType.Window)
+
+        self.innerWidget = QWidget()
+        self.setWidget(self.innerWidget)
+
+        self.stageStrikeLogic = TSHStageStrikeLogic()
 
         self.signals = TSHScoreboardStageWidgetSignals()
 
-        self.webserver = WebServer(parent=None, scoreboard=self.scoreboard)
-        self.webserver.start()
-
-        uic.loadUi("src/layout/TSHScoreboardStage.ui", self)
+        uic.loadUi("src/layout/TSHScoreboardStage.ui", self.innerWidget)
 
         self.userRulesets = []
         self.startggRulesets = []
@@ -424,6 +431,7 @@ class TSHScoreboardStageWidget(QWidget):
 
     def ExportCurrentRuleset(self):
         ruleset = self.GetCurrentRuleset()
+        self.stageStrikeLogic.SetRuleset(ruleset)
         self.ValidateRuleset(ruleset)
         StateManager.Set(f"score.ruleset", vars(ruleset))
     

@@ -14,9 +14,10 @@ class WebServer(QThread):
     app.config['CORS_HEADERS'] = 'Content-Type'
     scoreboard = None
 
-    def __init__(self, parent=None, scoreboard=None) -> None:
+    def __init__(self, parent=None, scoreboard=None, stageWidget=None) -> None:
         super().__init__(parent)
         WebServer.scoreboard = scoreboard
+        WebServer.stageWidget = stageWidget
         self.host_name = "0.0.0.0"
         self.port = 5000
 
@@ -59,9 +60,37 @@ class WebServer(QThread):
 
         return data
 
-    @app.route('/post', methods=['POST'])
-    def post_route():
-        StateManager.Set(f"score.stage_strike", json.loads(request.get_data()))
+    @app.route('/stage_clicked', methods=['POST'])
+    def stage_clicked():
+        WebServer.stageWidget.stageStrikeLogic.StageClicked(json.loads(request.get_data()))
+        return "OK"
+    
+    @app.route('/confirm_clicked', methods=['POST'])
+    def confirm_clicked():
+        WebServer.stageWidget.stageStrikeLogic.ConfirmClicked()
+        return "OK"
+    
+    @app.route('/rps_win', methods=['POST'])
+    def rps_win():
+        WebServer.stageWidget.stageStrikeLogic.RpsResult(int(json.loads(request.get_data()).get("winner")))
+        return "OK"
+    
+    @app.route('/match_win', methods=['POST'])
+    def match_win():
+        WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
+
+        teams = ["1", "2"]
+        if WebServer.scoreboard.teamsSwapped:
+            teams.reverse()
+        
+        WebServer.team_scoreup(teams[int(json.loads(request.get_data()).get("winner"))])
+        
+        return "OK"
+    
+    @app.route('/reset', methods=['POST'])
+    def reset():
+        WebServer.stageWidget.stageStrikeLogic.Initialize()
+        WebServer.reset_scores()
         return "OK"
 
     @app.route('/score', methods=['POST'])

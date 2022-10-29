@@ -65,24 +65,13 @@ class App extends Component {
     phase: null,
     match: null,
     bestOf: null,
-    timestamp: 0,
-    serverTimestamp: 0,
   };
 
   Initialize(resetStreamScore = false) {
-    this.setState({
-      currGame: 0,
-      currPlayer: -1,
-      currStep: 0,
-      strikedStages: [[]],
-      strikedBy: [[], []],
-      stagesWon: [[], []],
-      stagesPicked: [],
-      selectedStage: null,
-      lastWinner: -1,
-      serverTimestamp: 0,
+    fetch("http://" + window.location.hostname + ":5000/reset", {
+      method: "POST",
+      contentType: "application/json",
     });
-    if (resetStreamScore) this.ResetStreamScore();
   }
 
   GetStage(stage) {
@@ -140,40 +129,11 @@ class App extends Component {
   }
 
   StageClicked(stage) {
-    if (this.state.currGame > 0 && this.state.currStep > 0) {
-      // pick
-      if (!this.IsStageBanned(stage.name) && !this.IsStageStriked(stage.name)) {
-        this.state.selectedStage = stage.name;
-        this.setState(this.state);
-        this.setState({ timestamp: new Date().getTime() });
-      }
-    } else if (
-      !this.IsStageStriked(stage.name, true) &&
-      !this.IsStageBanned(stage.name)
-    ) {
-      // ban
-      let foundIndex = this.state.strikedStages[this.state.currStep].findIndex(
-        (e) => e === stage.name
-      );
-      if (foundIndex === -1) {
-        if (
-          this.state.strikedStages[this.state.currStep].length <
-          this.GetStrikeNumber()
-        ) {
-          this.state.strikedStages[this.state.currStep].push(stage.name);
-          this.state.strikedBy[this.state.currPlayer].push(stage.codename);
-        }
-      } else {
-        this.state.strikedStages[this.state.currStep].splice(foundIndex, 1);
-
-        foundIndex = this.state.strikedBy[this.state.currPlayer].findIndex(
-          (e) => e === stage.codename
-        );
-        this.state.strikedBy[this.state.currPlayer].splice(foundIndex, 1);
-      }
-      this.setState(this.state);
-      this.setState({ timestamp: new Date().getTime() });
-    }
+    fetch("http://" + window.location.hostname + ":5000/stage_clicked", {
+      method: "POST",
+      body: JSON.stringify(stage),
+      contentType: "application/json",
+    });
   }
 
   CanConfirm() {
@@ -199,64 +159,18 @@ class App extends Component {
   }
 
   ConfirmClicked() {
-    if (this.state.currGame === 0) {
-      if (
-        this.state.strikedStages[this.state.currStep].length ===
-        this.state.ruleset.strikeOrder[this.state.currStep]
-      ) {
-        this.state.currStep += 1;
-        this.state.currPlayer = (this.state.currPlayer + 1) % 2;
-        this.state.strikedStages.push([]);
-      }
-    } else {
-      if (
-        this.state.strikedStages[this.state.currStep].length ===
-        this.state.ruleset.banCount
-      ) {
-        this.state.currStep += 1;
-        this.state.currPlayer = (this.state.currPlayer + 1) % 2;
-        this.state.strikedStages.push([]);
-      }
-    }
-
-    if (
-      this.state.currGame === 0 &&
-      this.state.currStep >= this.state.ruleset.strikeOrder.length
-    ) {
-      let selectedStage = this.state.ruleset.neutralStages.find(
-        (stage) => !this.IsStageStriked(stage.name)
-      );
-      this.state.selectedStage = selectedStage.name;
-      this.state.stagesPicked.push(selectedStage.name);
-    }
-
-    this.setState(this.state);
-    this.setState({ timestamp: new Date().getTime() });
-    console.log(this.state);
+    fetch("http://" + window.location.hostname + ":5000/confirm_clicked", {
+      method: "POST",
+      contentType: "application/json",
+    });
   }
 
   MatchWinner(id) {
-    this.state.currGame += 1;
-    this.state.currStep = 0;
-
-    this.state.stagesWon[id].push(this.state.selectedStage);
-    this.state.stagesPicked.push(this.state.selectedStage);
-
-    this.state.currPlayer = id;
-    this.state.strikedStages = [[]];
-    this.state.selectedStage = null;
-    this.state.strikedBy = [[], []];
-
-    this.state.lastWinner = id;
-
-    // If next step has no bans, skip it
-    if (this.GetStrikeNumber() == 0) {
-      this.ConfirmClicked();
-    }
-
-    this.setState(this.state);
-    this.UpdateStreamScore();
-    this.setState({ timestamp: new Date().getTime() });
+    fetch("http://" + window.location.hostname + ":5000/match_win", {
+      method: "POST",
+      contentType: "application/json",
+      body: JSON.stringify({"winner": id})
+    })
   }
 
   GetStrikeNumber() {
@@ -283,7 +197,6 @@ class App extends Component {
 
   componentDidMount() {
     window.setInterval(() => this.FetchRuleset(), 100);
-    window.setInterval(() => this.UpdateStream(), 100);
   }
 
   FetchRuleset() {
@@ -300,16 +213,9 @@ class App extends Component {
           bestOf: data.best_of,
         });
 
-        // Reset only if ruleset changed
-        if (JSON.stringify(oldRuleset) !== JSON.stringify(this.state.ruleset)) {
-          this.Initialize();
-        }
-
         if (
           data.state &&
-          Object.keys(data.state).length > 0 &&
-          (this.state.timestamp == 0 ||
-            this.state.timestamp < data.state.timestamp)
+          Object.keys(data.state).length > 0
         ) {
           this.setState({
             currGame: data.state.currGame,
@@ -321,74 +227,10 @@ class App extends Component {
             stagesPicked: data.state.stagesPicked,
             selectedStage: data.state.selectedStage,
             lastWinner: data.state.lastWinner,
-            serverTimestamp: data.state.timestamp,
-            timestamp: data.state.timestamp,
           });
         }
       })
       .catch(console.log);
-  }
-
-  UpdateStream() {
-    if (!this.state.ruleset) return;
-
-    if (this.state.timestamp <= this.state.serverTimestamp) return;
-
-    let allStages =
-      this.state.currGame === 0
-        ? this.state.ruleset.neutralStages
-        : this.state.ruleset.neutralStages.concat(
-            this.state.ruleset.counterpickStages
-          );
-    let stageMap = {};
-
-    allStages.forEach((stage) => {
-      stageMap[stage.codename] = stage;
-    });
-
-    let data = {
-      dsr: this.GetBannedStages().map((stage) => this.GetStage(stage).codename),
-      playerTurn: null,
-      selected: this.GetStage(this.state.selectedStage),
-      stages: stageMap,
-      striked: this.state.ruleset.neutralStages
-        .concat(this.state.ruleset.counterpickStages)
-        .filter((stage) => this.IsStageStriked(stage.name))
-        .map((stage) => stage.codename),
-      strikedBy: this.state.strikedBy,
-      currPlayer: this.state.currPlayer,
-      state: {
-        currGame: this.state.currGame,
-        currPlayer: this.state.currPlayer,
-        currStep: this.state.currStep,
-        strikedStages: this.state.strikedStages,
-        strikedBy: this.state.strikedBy,
-        stagesWon: this.state.stagesWon,
-        stagesPicked: this.state.stagesPicked,
-        selectedStage: this.state.selectedStage,
-        lastWinner: this.state.lastWinner,
-        timestamp: this.state.timestamp,
-      },
-    };
-
-    fetch("http://" + window.location.hostname + ":5000/post", {
-      method: "POST",
-      body: JSON.stringify(data),
-      contentType: "application/json",
-    });
-  }
-
-  UpdateStreamScore() {
-    let data = {
-      team1score: this.state.stagesWon[0].length,
-      team2score: this.state.stagesWon[1].length,
-    };
-
-    fetch("http://" + window.location.hostname + ":5000/score", {
-      method: "POST",
-      body: JSON.stringify(data),
-      contentType: "application/json",
-    });
   }
 
   ResetStreamScore() {
@@ -672,7 +514,6 @@ class App extends Component {
                         variant="outlined"
                         onClick={() => {
                           this.Initialize(true);
-                          this.setState({ timestamp: new Date().getTime() });
                         }}
                       >
                         {i18n.t("reset")}
@@ -723,9 +564,10 @@ class App extends Component {
                         color="p1color"
                         variant="contained"
                         onClick={() =>
-                          this.setState({
-                            currPlayer: 0,
-                            timestamp: new Date().getTime(),
+                          fetch("http://" + window.location.hostname + ":5000/rps_win", {
+                            method: "POST",
+                            contentType: "application/json",
+                            body: JSON.stringify({"winner": 0})
                           })
                         }
                       >
@@ -742,9 +584,10 @@ class App extends Component {
                         color="p2color"
                         variant="contained"
                         onClick={() =>
-                          this.setState({
-                            currPlayer: 1,
-                            timestamp: new Date().getTime(),
+                          fetch("http://" + window.location.hostname + ":5000/rps_win", {
+                            method: "POST",
+                            contentType: "application/json",
+                            body: JSON.stringify({"winner": 1})
                           })
                         }
                       >
@@ -765,9 +608,10 @@ class App extends Component {
                     color="success"
                     variant="outlined"
                     onClick={() =>
-                      this.setState({
-                        currPlayer: Math.random() > 0.5 ? 1 : 0,
-                        timestamp: new Date().getTime(),
+                      fetch("http://" + window.location.hostname + ":5000/rps_win", {
+                        method: "POST",
+                        contentType: "application/json",
+                        body: JSON.stringify({"winner": Math.random() > 0.5 ? 1 : 0})
                       })
                     }
                   >

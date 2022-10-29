@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from src.TSHSelectSetWindow import TSHSelectSetWindow
+from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
@@ -164,6 +164,16 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
 
+        self.stageWidget = TSHScoreboardStageWidget()
+        self.stageWidget.setObjectName(
+            QApplication.translate("app", "Stage"))
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, self.stageWidget)
+        self.dockWidgets.append(self.stageWidget)
+        
+        self.webserver = WebServer(parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
+        self.webserver.start()
+
         commentary = TSHCommentaryWidget()
         commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
         commentary.setObjectName(QApplication.translate("app", "Commentary"))
@@ -176,6 +186,7 @@ class Window(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, playerList)
         self.dockWidgets.append(playerList)
 
+        self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
         self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
