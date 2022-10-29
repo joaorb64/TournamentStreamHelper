@@ -175,7 +175,7 @@
   $(window).on("load", () => {
     $("body").fadeTo(1000, 1, async () => {
       Start();
-      setInterval(Update, 32);
+      setInterval(Update, 64);
     });
   });
 })(jQuery);

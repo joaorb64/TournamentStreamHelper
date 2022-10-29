@@ -65,8 +65,6 @@ class App extends Component {
     phase: null,
     match: null,
     bestOf: null,
-    timestamp: 0,
-    serverTimestamp: 0,
   };
 
   Initialize(resetStreamScore = false) {
@@ -199,7 +197,6 @@ class App extends Component {
 
   componentDidMount() {
     window.setInterval(() => this.FetchRuleset(), 100);
-    //window.setInterval(() => this.UpdateStream(), 100);
   }
 
   FetchRuleset() {
@@ -230,74 +227,10 @@ class App extends Component {
             stagesPicked: data.state.stagesPicked,
             selectedStage: data.state.selectedStage,
             lastWinner: data.state.lastWinner,
-            serverTimestamp: data.state.timestamp,
-            timestamp: data.state.timestamp,
           });
         }
       })
       .catch(console.log);
-  }
-
-  UpdateStream() {
-    if (!this.state.ruleset) return;
-
-    if (this.state.timestamp <= this.state.serverTimestamp) return;
-
-    let allStages =
-      this.state.currGame === 0
-        ? this.state.ruleset.neutralStages
-        : this.state.ruleset.neutralStages.concat(
-            this.state.ruleset.counterpickStages
-          );
-    let stageMap = {};
-
-    allStages.forEach((stage) => {
-      stageMap[stage.codename] = stage;
-    });
-
-    let data = {
-      dsr: this.GetBannedStages().map((stage) => this.GetStage(stage).codename),
-      playerTurn: null,
-      selected: this.GetStage(this.state.selectedStage),
-      stages: stageMap,
-      striked: this.state.ruleset.neutralStages
-        .concat(this.state.ruleset.counterpickStages)
-        .filter((stage) => this.IsStageStriked(stage.name))
-        .map((stage) => stage.codename),
-      strikedBy: this.state.strikedBy,
-      currPlayer: this.state.currPlayer,
-      state: {
-        currGame: this.state.currGame,
-        currPlayer: this.state.currPlayer,
-        currStep: this.state.currStep,
-        strikedStages: this.state.strikedStages,
-        strikedBy: this.state.strikedBy,
-        stagesWon: this.state.stagesWon,
-        stagesPicked: this.state.stagesPicked,
-        selectedStage: this.state.selectedStage,
-        lastWinner: this.state.lastWinner,
-        timestamp: this.state.timestamp,
-      },
-    };
-
-    // fetch("http://" + window.location.hostname + ":5000/post", {
-    //   method: "POST",
-    //   body: JSON.stringify(data),
-    //   contentType: "application/json",
-    // });
-  }
-
-  UpdateStreamScore() {
-    let data = {
-      team1score: this.state.stagesWon[0].length,
-      team2score: this.state.stagesWon[1].length,
-    };
-
-    fetch("http://" + window.location.hostname + ":5000/score", {
-      method: "POST",
-      body: JSON.stringify(data),
-      contentType: "application/json",
-    });
   }
 
   ResetStreamScore() {
