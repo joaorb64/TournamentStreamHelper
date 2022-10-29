@@ -55,7 +55,7 @@ class WebServer(QThread):
             "best_of": StateManager.Get(f"score.best_of"),
             "match": StateManager.Get(f"score.match"),
             "phase": StateManager.Get(f"score.phase"),
-            "state": StateManager.Get(f"score.stage_strike.state", {})
+            "state": StateManager.Get(f"score.stage_strike", {})
         })
 
         return data

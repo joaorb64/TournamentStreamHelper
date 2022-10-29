@@ -75,9 +75,9 @@ class App extends Component {
   }
 
   GetStage(stage) {
-    let found = this.state.ruleset.neutralStages.find((s) => s.name === stage);
+    let found = this.state.ruleset.neutralStages.find((s) => s.codename === stage);
     if (found) return found;
-    found = this.state.ruleset.counterpickStages.find((s) => s.name === stage);
+    found = this.state.ruleset.counterpickStages.find((s) => s.codename === stage);
     if (found) return found;
     return null;
   }
@@ -370,7 +370,7 @@ class App extends Component {
                             <CardActionArea
                               onClick={() => this.StageClicked(stage)}
                             >
-                              {this.IsStageStriked(stage.name) ? (
+                              {this.IsStageStriked(stage.codename) ? (
                                 <>
                                   <div className="stamp stage-striked"></div>
                                   <div className="banned_by">
@@ -390,10 +390,10 @@ class App extends Component {
                                   </div>
                                 </>
                               ) : null}
-                              {this.IsStageBanned(stage.name) ? (
+                              {this.IsStageBanned(stage.codename) ? (
                                 <div className="stamp stage-dsr"></div>
                               ) : null}
-                              {this.state.selectedStage === stage.name ? (
+                              {this.state.selectedStage === stage.codename ? (
                                 <>
                                   <div className="stamp stage-selected"></div>
                                   <div className="banned_by">

@@ -20,7 +20,7 @@ class TSHStageStrikeLogic():
         self.serverTimestamp = 0
     
     def ExportState(self):
-        StateManager.Set("score.stage_strike.state", {
+        StateManager.Set("score.stage_strike", {
             "currGame": self.currGame,
             "currPlayer": self.currPlayer,
             "currStep": self.currStep,
@@ -31,7 +31,6 @@ class TSHStageStrikeLogic():
             "selectedStage": self.selectedStage,
             "lastWinner": self.lastWinner
         })
-        print(StateManager.Get("score.stage_strike.state"))
 
     def SetRuleset(self, ruleset):
         self.ruleset = ruleset
@@ -102,21 +101,21 @@ class TSHStageStrikeLogic():
                 return 0
 
     def StageClicked(self, stage):
-        print("Clicked on stage", stage.get("name"))
+        print("Clicked on stage", stage.get("codename"))
 
         if self.currGame > 0 and self.currStep > 0:
             # we're picking
-            if not self.IsStageBanned(stage.get("name")) and not self.IsStageStriked(stage.get("name")):
-                self.selectedStage = stage.get("name")
+            if not self.IsStageBanned(stage.get("codename")) and not self.IsStageStriked(stage.get("codename")):
+                self.selectedStage = stage.get("codename")
                 print("Stage picked")
                 self.ExportState()
-        elif not self.IsStageStriked(stage.get("name"), True) and not self.IsStageBanned(stage.get("name")):
+        elif not self.IsStageStriked(stage.get("codename"), True) and not self.IsStageBanned(stage.get("codename")):
             # we're banning
-            foundIndex = next((i for i, e in enumerate(self.strikedStages[self.currStep]) if e == stage.get("name")), None)
+            foundIndex = next((i for i, e in enumerate(self.strikedStages[self.currStep]) if e == stage.get("codename")), None)
             
             if foundIndex == None:
                 if len(self.strikedStages[self.currStep]) < self.GetStrikeNumber():
-                    self.strikedStages[self.currStep].append(stage.get("name"));
+                    self.strikedStages[self.currStep].append(stage.get("codename"));
                     self.strikedBy[self.currPlayer].append(stage.get("codename"));
                     print("Stage banned")
                     self.ExportState()
@@ -146,9 +145,9 @@ class TSHStageStrikeLogic():
         
         # For first game, when no more stages are available we know the remaining one is the picked stage
         if self.currGame == 0 and self.currStep >= len(self.ruleset.strikeOrder):
-            selectedStage = next((stage for stage in self.ruleset.neutralStages if not self.IsStageStriked(stage.get("name"))), None)
-            self.selectedStage = selectedStage.get("name")
-            self.stagesPicked.append(selectedStage.get("name"))
+            selectedStage = next((stage for stage in self.ruleset.neutralStages if not self.IsStageStriked(stage.get("codename"))), None)
+            self.selectedStage = selectedStage.get("codename")
+            self.stagesPicked.append(selectedStage.get("codename"))
 
         self.ExportState()
     

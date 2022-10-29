@@ -22,6 +22,8 @@
   function IsStageBanned(ruleset, state, stage) {
     let banList = GetBannedStages(ruleset, state);
 
+    console.log("banList", banList)
+
     let found = banList.findIndex((e) => e === stage);
     if (found !== -1) {
       return true;
@@ -95,11 +97,11 @@
 
         console.log(teamNames)
 
-        console.log(data.score.stage_strike.state)
+        console.log(data.score.stage_strike)
 
         let allStages = data.score.ruleset.neutralStages;
 
-        if(data.score.stage_strike.state.currGame > 0){
+        if(data.score.stage_strike.currGame > 0){
           allStages = allStages.concat(data.score.ruleset.counterpickStages)
         }
 
@@ -111,17 +113,17 @@
               <div class="stage-container">
                   <div class="stage-icon" style="background-image: url('../../${path}')">
                       ${
-                        IsStageStriked(data.score.stage_strike.state, stage.name)
+                        IsStageStriked(data.score.stage_strike, stage.codename)
                           ? `<div class="stage-striked stamp"></div>`
                           : ""
                       }
-                      ${IsStageBanned(data.score.ruleset, data.score.stage_strike.state, stage.name)
+                      ${IsStageBanned(data.score.ruleset, data.score.stage_strike, stage.codename)
                           ? `<div class="stage-dsr stamp"></div>`
                           : ""
                       }
                       ${
-                        data.score.stage_strike.state.selectedStage &&
-                        data.score.stage_strike.state.selectedStage == stage.name
+                        data.score.stage_strike.selectedStage &&
+                        data.score.stage_strike.selectedStage == stage.codename
                           ? `<div class="stage-selected stamp"></div>`
                           : ""
                       }
@@ -132,13 +134,13 @@
                       </div>
                   </div>
                   ${
-                    IsStageStriked(data.score.stage_strike.state, stage.name) &&
-                    (data.score.stage_strike.state.strikedBy[0].includes(stage.codename) ||
-                      data.score.stage_strike.state.strikedBy[1].includes(stage.codename))
+                    IsStageStriked(data.score.stage_strike, stage.codename) &&
+                    (data.score.stage_strike.strikedBy[0].includes(stage.codename) ||
+                      data.score.stage_strike.strikedBy[1].includes(stage.codename))
                       ? `<div class="banned-by-name">
                         <div class="text">
                           ${
-                            data.score.stage_strike.state.strikedBy[0].includes(stage.codename)
+                            data.score.stage_strike.strikedBy[0].includes(stage.codename)
                               ? teamNames[0]
                               : teamNames[1]
                           }
@@ -147,11 +149,11 @@
                       : ""
                   }
                   ${
-                    data.score.stage_strike.state.selectedStage &&
-                    data.score.stage_strike.state.selectedStage == stage.name
+                    data.score.stage_strike.selectedStage &&
+                    data.score.stage_strike.selectedStage == stage.codename
                       ? `<div class="banned-by-name">
                         <div class="text">
-                          ${teamNames[data.score.stage_strike.state.currPlayer]}
+                          ${teamNames[data.score.stage_strike.currPlayer]}
                         </div>
                       </div>`
                       : ""

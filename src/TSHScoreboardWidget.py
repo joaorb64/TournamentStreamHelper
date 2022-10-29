@@ -908,3 +908,4 @@ class TSHScoreboardWidget(QDockWidget):
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))
+            StateManager.Set(f"score.ruleset", data.get("ruleset"))

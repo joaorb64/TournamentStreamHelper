@@ -342,17 +342,20 @@ class StartGGDataProvider(TournamentDataProvider):
         selectedCharMap = {}
 
         for task in reversed(tasks):
-            if task.get("action") in ["setup_character", "setup_strike"]:
+            if task.get("action") in ["setup_character", "setup_strike", "setup_ban"]:
                 selectedCharMap = task.get(
                     "metadata", {}).get("charSelections", {})
-                break
+                if len(selectedCharMap) > 0:
+                        break
             elif task.get("action") in ["report"]:
-                allSelections = task.get("metadata", {}).get("report", {}).get("selections", {})
+                allSelections = task.get("metadata", {}).get("report", {}).get("selections", [])
 
-                for selection in allSelections:
-                    if selection.get("selectionType") == "character":
-                        selectedCharMap[str(selection.get("entrantId"))] = [selection.get("selectionValue")]
-                break
+                if isinstance(allSelections, list):
+                    for selection in allSelections:
+                        if selection.get("selectionType") == "character":
+                            selectedCharMap[str(selection.get("entrantId"))] = [selection.get("selectionValue")]
+                    if len(selectedCharMap) > 0:
+                        break
 
         print(selectedCharMap)
         selectedChars = [[], []]
@@ -374,6 +377,14 @@ class StartGGDataProvider(TournamentDataProvider):
                 latestWinner = int(task.get("metadata", {}).get(
                     "report", {}).get("winnerId"))
                 break
+        
+        lastWinnerSlot = None
+
+        if latestWinner:
+            if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                lastWinnerSlot = 0
+            if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                lastWinnerSlot = 1
 
         allStages = None
         strikedStages = None
@@ -381,6 +392,8 @@ class StartGGDataProvider(TournamentDataProvider):
         selectedStage = None
         dsrStages = None
         currPlayer = 0
+        dsr = False
+        mdsr = False
 
         for task in reversed(tasks):
             if task.get("action") in ["setup_strike", "setup_stage", "setup_character", "setup_ban", "report"]:
@@ -407,25 +420,23 @@ class StartGGDataProvider(TournamentDataProvider):
                 elif base.get("stageId", None) is not None:
                     selectedStage = base.get("stageId")
 
-                # cannot repeat stages in the set
-                if base.get("useDSR") and base.get("stageWins"):
-                    dsrStages = []
+                # Stages previously won in
+                stageWins = [[], []]
+                if base.get("stageWins"):
 
-                    for stage_array in base.get("stageWins").values():
-                        for stage in stage_array:
-                            dsrStages.append(int(stage))
-                # cannot pick stage where you won
-                elif base.get("useMDSR") and base.get("stageWins"):
-                    loser = next(
-                        (p for p in base.get("stageWins").keys()
-                            if int(p) != int(latestWinner)),
-                        None
-                    )
+                    for entrantId, stageCodes in base.get("stageWins").items():
+                        stages = []
 
-                    if loser is not None:
-                        dsrStages = []
-                        dsrStages = [int(s) for s in base.get(
-                            "stageWins")[loser]]
+                        for stageCode in stageCodes:
+                            stages.append(TSHGameAssetManager.instance.GetStageFromStartGGId(int(stageCode))[1].get("codename"))
+
+                        if str(entrantId) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                            stageWins[0] = stages
+                        if str(entrantId) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                            stageWins[1] = stages
+                
+                if base.get("useMDSR"): mdsr = True
+                if base.get("useDSR"): dsr = True
 
                 if base.get("strikeList"):
                     for stage_code, entrant in base.get("strikeList").items():
@@ -482,12 +493,12 @@ class StartGGDataProvider(TournamentDataProvider):
                 break
 
         try:
-            allStagesFinal = {}
+            allStagesFinal = []
             for st in allStages:
                 stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
                     st)
                 if stage:
-                    allStagesFinal[stage[1].get("codename")] = stage[1]
+                    allStagesFinal.append(stage[1])
 
             striked = []
             if strikedStages is not None:
@@ -500,25 +511,24 @@ class StartGGDataProvider(TournamentDataProvider):
             selected = ""
             if selectedStage is not None:
                 selectedStage = TSHGameAssetManager.instance.GetStageFromStartGGId(
-                    selectedStage)
+                    int(selectedStage))
                 if selectedStage:
-                    selected = selectedStage[1]
-
-            dsr = []
-            if dsrStages:
-                for stage in dsrStages:
-                    stage = TSHGameAssetManager.instance.GetStageFromStartGGId(
-                        stage)
-                    if stage:
-                        dsr.append(stage[1].get("codename"))
+                    selected = selectedStage[1].get("codename")
 
             stageStrikeState = {
-                "stages": allStagesFinal,
                 "strikedBy": strikedBy,
-                "striked": striked,
-                "selected": selected,
-                "dsr": dsr,
-                "currPlayer": currPlayer
+                "strikedStages": [striked],
+                "stagesWon": stageWins,
+                "selectedStage": selected,
+                "currPlayer": currPlayer,
+                "lastWinner": lastWinnerSlot,
+                "currGame": respTasks.get("sets", {}).get("entrant1Score", 0) + respTasks.get("sets", {}).get("entrant2Score", 0)
+            }
+
+            rulesetState = {
+                "neutralStages": allStagesFinal,
+                "useDSR": dsr,
+                "useMDSR": mdsr,
             }
         except:
             print(traceback.format_exc())
@@ -529,6 +539,7 @@ class StartGGDataProvider(TournamentDataProvider):
             dsrStages = None
             currPlayer = 0
             stageStrikeState = {}
+            rulesetState = {}
 
         entrants = [[], []]
 
@@ -551,8 +562,9 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return({
             "stage_strike": stageStrikeState,
+            "ruleset": rulesetState,
             "strikedBy": strikedBy,
-            "entrants": entrants if len(entrants[0]) > 0 and len(entrants[1]) > 0 else None,
+            "entrants": entrants,
             "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
             "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
             "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
