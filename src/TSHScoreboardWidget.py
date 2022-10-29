@@ -606,6 +606,8 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.teamsSwapped = not self.teamsSwapped
 
+        StateManager.Set(f"score.teamsSwapped", self.teamsSwapped)
+
         StateManager.ReleaseSaving()
 
     def GetRecentSets(self):

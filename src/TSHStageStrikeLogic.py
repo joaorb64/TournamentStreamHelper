@@ -121,7 +121,7 @@ class TSHStageStrikeLogic():
                     print("Stage banned")
                     self.ExportState()
             else:
-                self.strikedStages[self.currStep].pop(self.currStep)
+                self.strikedStages[self.currStep].pop(foundIndex)
 
                 foundIndex = next((i for i, e in enumerate(self.strikedBy[self.currPlayer]) if e == stage.get("codename")), None)
 
