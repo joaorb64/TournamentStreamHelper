@@ -245,10 +245,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         for t in self.templates:
             self.templateSelect.addItem(t.get("name") + f' ({t.get("filename", "").rsplit("/")[-1]})', t)
         
-        currSettings = SettingsManager.Get("thumbnail")
+        currSettings = SettingsManager.Get("thumbnail", {})
 
         for i, t in enumerate(self.templates):
-            if t.get("filename") == currSettings.get("thumbnail_type"):
+            if t.get("filename") == currSettings.get("thumbnail_type", None):
                 self.templateSelect.setCurrentIndex(i)
         
         self.templateSelect.currentIndexChanged.connect(
