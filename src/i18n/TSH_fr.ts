@@ -847,7 +847,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="274"/>
         <source>Update all</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettre à jour toutes les ressources</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="297"/>
@@ -858,12 +858,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="322"/>
         <source>Failed to fetch assets from github:</source>
-        <translation>Échec de la récupération des ressources depuis Github</translation>
+        <translation>Échec de la récupération des ressources depuis Github :</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="357"/>
         <source>Downloading {0}... ({1}/{2})</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement de {0}... ({1}/{2})</translation>
     </message>
     <message>
         <source>Downloading {0}...</source>
@@ -932,7 +932,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="44"/>
         <source>Ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation>Règles</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="125"/>
