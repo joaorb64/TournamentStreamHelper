@@ -196,6 +196,12 @@ class WebServer(QThread):
         WebServer.scoreboard.SwapTeams()
         return "OK"
 
+    # Opens Set Selector Window
+    @app.route('/open-set')
+    def open_sets():
+        WebServer.scoreboard.signals.SetSelection.emit()
+        return "OK"
+
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():

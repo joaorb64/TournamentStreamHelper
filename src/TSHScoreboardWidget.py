@@ -21,6 +21,7 @@ from .TSHThumbnailSettingsWidget import *
 class TSHScoreboardWidgetSignals(QObject):
     UpdateSetData = pyqtSignal(object)
     NewSetSelected = pyqtSignal(object)
+    SetSelection = pyqtSignal()
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -36,6 +37,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
+        self.signals.SetSelection.connect(self.LoadSetClicked)
 
         self.lastSetSelected = None
 
@@ -173,7 +175,7 @@ class TSHScoreboardWidget(QDockWidget):
         self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
-        self.btSelectSet.clicked.connect(self.LoadSetClicked)
+        self.btSelectSet.clicked.connect(self.signals.SetSelection.emit)
 
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
