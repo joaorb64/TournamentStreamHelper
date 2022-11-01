@@ -302,16 +302,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             print(f"Processing asset: {image_path}")
 
-            transformMode = Qt.TransformationMode.SmoothTransformation
-
-            if not smooth_scale:
-                transformMode = Qt.TransformationMode.FastTransformation
-
             pix = QPixmap(image_path, "RGBA")
-            pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=transformMode)
+            tmpWidth = int(pix.width() * image_ratio[0])
+            tmpHeight = int(pix.height() * image_ratio[1])
+            # pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
             painter = QPainter(thumbnail)
 
-            eyesight_coordinates = (pix.width()/2, pix.height()/2)
+            eyesight_coordinates = (tmpWidth/2, tmpHeight/2)
 
             if len(eyesight_line) >= col_index:
                 if eyesight_line[col_index] != None:
@@ -328,8 +325,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             
             # For cropped assets, zoom to fill
             # Calculate max zoom
-            zoom_x = max_size[0] / pix.width()
-            zoom_y = max_size[1] / pix.height()
+            zoom_x = max_size[0] / tmpWidth
+            zoom_y = max_size[1] / tmpHeight
 
             min_zoom = 1
 
@@ -385,7 +382,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             original_yy = yy
             
             # Max move X
-            maxMoveX = individual_max_size[0] - pix.width() * zoom
+            maxMoveX = individual_max_size[0] - tmpWidth * zoom
 
             if not 'l' in uncropped_edge:
                 if xx > 0: xx = 0
@@ -394,7 +391,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 if xx < maxMoveX: xx = maxMoveX
 
             # Max move Y
-            maxMoveY = individual_max_size[1] - pix.height() * zoom
+            maxMoveY = individual_max_size[1] - tmpHeight * zoom
 
             if not 'u' in uncropped_edge:
                 if yy > 0: yy = 0
@@ -412,10 +409,15 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             
             areaPaint = QPainter(area)
 
+            transformMode = Qt.TransformationMode.SmoothTransformation
+
+            if not smooth_scale:
+                transformMode = Qt.TransformationMode.FastTransformation
+
             areaPaint.drawPixmap(
                 int(xx), int(yy),
                 pix
-                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=transformMode)
+                .scaled(int(zoom*tmpWidth), int(zoom*tmpHeight), transformMode=transformMode)
             )
 
             areaPaint.end()

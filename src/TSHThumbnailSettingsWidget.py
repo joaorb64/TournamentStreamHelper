@@ -663,22 +663,18 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         if 'l' in uncropped_edge or 'r' in uncropped_edge:
             self.scaleToFillX.setEnabled(True)
-            if self.GetSetting(f"game.{game_codename}.scaleFillX") == None:
-                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillX/{game_codename}", val=self.scaleToFillX.checkState(), generatePreview=False)
             self.scaleToFillX.setChecked(
                 self.GetSetting(f"game.{game_codename}.scaleFillX", 0))
         else:
-            self.scaleToFillX.setChecked(0)
+            self.scaleToFillX.setChecked(True)
             self.scaleToFillX.setEnabled(False)
         
         if 'u' in uncropped_edge or 'd' in uncropped_edge:
             self.scaleToFillY.setEnabled(True)
-            if self.GetSetting(f"game.{game_codename}.scaleFillY") == None:
-                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillY/game.{game_codename}", val=self.scaleToFillY.checkState(), generatePreview=False)
             self.scaleToFillY.setChecked(
                 self.GetSetting(f"game.{game_codename}.scaleFillY", 0))
         else:
-            self.scaleToFillY.setChecked(0)
+            self.scaleToFillY.setChecked(True)
             self.scaleToFillY.setEnabled(False)
 
     def SaveIcons(self, key, side):
