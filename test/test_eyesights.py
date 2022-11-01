@@ -6,7 +6,7 @@ import re
 from copy import deepcopy
 
 tested_assets = {
-    "ssbu": ["full"]
+    "ssbu": ["mural_art"]
 }
 
 main_out_path = "../out/test"
@@ -34,29 +34,33 @@ def draw_eyesight(game, asset_pack):
         list_png = [f for f in os.listdir(
             asset_folder) if re.search(image_regexp, f)]
         for png_filename in list_png:
-            skin_index = re.search(image_regexp, png_filename).group(1)
-            png_path = f"{asset_folder}/{png_filename}"
-            new_png_path = f"{out_path}/{png_filename}"
+            try:
+                skin_index = re.search(image_regexp, png_filename).group(1)
+                png_path = f"{asset_folder}/{png_filename}"
+                new_png_path = f"{out_path}/{png_filename}"
 
-            eyesight_coordinates_dict = eyesight_data.get(
-                codename).get(str(int(skin_index)))
-            if not eyesight_coordinates_dict:
                 eyesight_coordinates_dict = eyesight_data.get(
-                    codename).get('0')
+                    codename).get(str(int(skin_index)))
+                if not eyesight_coordinates_dict:
+                    eyesight_coordinates_dict = eyesight_data.get(
+                        codename).get('0')
 
-            if eyesight_coordinates_dict:
-                eyesight_coordinates = (eyesight_coordinates_dict.get(
-                    "x"), eyesight_coordinates_dict.get("y"))
+                if eyesight_coordinates_dict:
+                    eyesight_coordinates = (eyesight_coordinates_dict.get(
+                        "x"), eyesight_coordinates_dict.get("y"))
 
-                png_image = Image.open(png_path)
-                png_size = png_image.size
-                new_png_image = deepcopy(png_image)
-                draw = ImageDraw.Draw(new_png_image)
-                draw.line([(eyesight_coordinates[0], 0), (eyesight_coordinates[0], png_size[1])], fill=(
-                    255, 0, 0), width=5)
-                draw.line([(0, eyesight_coordinates[1]), (png_size[0],
-                          eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
-                new_png_image.save(new_png_path)
+                    png_image = Image.open(png_path)
+                    png_size = png_image.size
+                    new_png_image = deepcopy(png_image)
+                    draw = ImageDraw.Draw(new_png_image)
+                    draw.line([(eyesight_coordinates[0], 0), (eyesight_coordinates[0], png_size[1])], fill=(
+                        255, 0, 0), width=5)
+                    draw.line([(0, eyesight_coordinates[1]), (png_size[0],
+                            eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
+                    new_png_image.save(new_png_path)
+            except Exception as e:
+                print(f"Error in file {png_filename}")
+                print(">> "+str(e))
 
 
 for game in tested_assets.keys():

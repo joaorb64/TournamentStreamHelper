@@ -5,6 +5,7 @@ import itertools
 from math import cos, radians, sin
 from numbers import Rational
 import random
+import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -24,6 +25,7 @@ import string
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
+from src.Helpers.TSHDictHelper import *
 
 is_preview = False
 
@@ -33,6 +35,7 @@ use_sponsors = True
 all_eyesight = False
 no_separator = 0
 flip_direction = False
+smooth_scale = True
 
 separator_color_code = "#888888"
 
@@ -233,7 +236,7 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width
+    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width, smooth_scale
     image_ratio = (max(ratio[0], ratio[1]), max(ratio[0], ratio[1]))
 
     separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
@@ -300,10 +303,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             print(f"Processing asset: {image_path}")
 
             pix = QPixmap(image_path, "RGBA")
-            pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+            tmpWidth = int(pix.width() * image_ratio[0])
+            tmpHeight = int(pix.height() * image_ratio[1])
+            # pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
             painter = QPainter(thumbnail)
 
-            eyesight_coordinates = (pix.width()/2, pix.height()/2)
+            eyesight_coordinates = (tmpWidth/2, tmpHeight/2)
 
             if len(eyesight_line) >= col_index:
                 if eyesight_line[col_index] != None:
@@ -320,8 +325,8 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             
             # For cropped assets, zoom to fill
             # Calculate max zoom
-            zoom_x = max_size[0] / pix.width()
-            zoom_y = max_size[1] / pix.height()
+            zoom_x = max_size[0] / tmpWidth
+            zoom_y = max_size[1] / tmpHeight
 
             min_zoom = 1
 
@@ -377,7 +382,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             original_yy = yy
             
             # Max move X
-            maxMoveX = individual_max_size[0] - pix.width() * zoom
+            maxMoveX = individual_max_size[0] - tmpWidth * zoom
 
             if not 'l' in uncropped_edge:
                 if xx > 0: xx = 0
@@ -386,7 +391,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                 if xx < maxMoveX: xx = maxMoveX
 
             # Max move Y
-            maxMoveY = individual_max_size[1] - pix.height() * zoom
+            maxMoveY = individual_max_size[1] - tmpHeight * zoom
 
             if not 'u' in uncropped_edge:
                 if yy > 0: yy = 0
@@ -404,10 +409,15 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             
             areaPaint = QPainter(area)
 
+            transformMode = Qt.TransformationMode.SmoothTransformation
+
+            if not smooth_scale:
+                transformMode = Qt.TransformationMode.FastTransformation
+
             areaPaint.drawPixmap(
                 int(xx), int(yy),
                 pix
-                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+                .scaled(int(zoom*tmpWidth), int(zoom*tmpHeight), transformMode=transformMode)
             )
 
             areaPaint.end()
@@ -468,7 +478,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                             separator_right = True
                             break
                 
-                if separator_right:
+                if separator_right and separator_width > 0:
                     painter = QPainter(separatorsPix)
                     painter.setPen(QPen(QColor(separator_color_code), separatorWidth))
                     painter.drawLine(
@@ -479,7 +489,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     )
                     painter.end()
                 
-                if separator_down:
+                if separator_down and separator_width > 0:
                     painter = QPainter(separatorsPix)
                     painter.setPen(QPen(QColor(separator_color_code), separatorHeight))
                     painter.drawLine(
@@ -603,6 +613,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         proportional_zoom = max(proportional_zoom, max_size[1] / ratio[1] / average_size.get("y") * 1.2)
     else:
         # Keeping this as a fallback, but should never enter this block of code
+        print("No proportional size. Calculating.")
         max_width = 0
         max_height = 0
 
@@ -1024,7 +1035,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
 
         for i in range(4):
             asset = None
-            while (not asset):
+            if not asset:
                 key = list(gameAssetManager.instance.characters.keys())[
                     random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
@@ -1040,6 +1051,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     asset = data.get("full")
                 if not asset:
                     asset = data.get("portrait")
+                if not asset:
+                    asset = data.get("base_files/icon")
 
             name = key
             if character.get("locale"):
@@ -1153,12 +1166,17 @@ def remove_special_chars(input_str: str):
 
 def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
-    settings = settingsManager.Get("thumbnail")
+    settings = settingsManager.Get("thumbnail_config")
 
     global template_data
-    with open(settings["thumbnail_type"], 'rt') as template_data_file:
-        template_data = template_data_file.read()
-        template_data = json.loads(template_data)
+    try:
+        with open(settings.get("thumbnail_type"), 'rt') as template_data_file:
+            template_data = template_data_file.read()
+            template_data = json.loads(template_data)
+    except:
+        if isPreview:
+            return
+        raise Exception(f"Thumbnail type could not be loaded")
 
     global is_preview
     is_preview = isPreview
@@ -1178,10 +1196,13 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         background_path = template_data["default_background"]
     if not os.path.isfile(background_path):
         raise Exception(f"Background {background_path} doesn't exist !")
-    main_icon_path = settings["main_icon_path"]
+    main_icon_path = settings.get("main_icon_path", "")
     if main_icon_path and not os.path.isfile(main_icon_path):
         raise Exception(f"Main Icon {main_icon_path} doesn't exist !")
-    side_icon_list = settings["side_icon_list"]
+    side_icon_list = [
+        deep_get(settings, f"side_icon_list.L", ""),
+        deep_get(settings, f"side_icon_list.R", "")
+    ]
     # not blocking so empty
     if side_icon_list[0] and not os.path.isfile(side_icon_list[0]):
         print(f"Top Left Icon {side_icon_list[0]} doesn't exist !")
@@ -1190,40 +1211,50 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         print(f"Top Right Icon {side_icon_list[1]} doesn't exist !")
         side_icon_list[1] = ''
     # BOOLEAN
-    display_phase = settings["display_phase"]
-    use_team_names = settings["use_team_names"]
-    use_sponsors = settings["use_sponsors"]
-    flip_p1 = settings["flip_p1"]
-    flip_p2 = settings["flip_p2"]
+    display_phase = deep_get(settings, f"display_phase")
+    use_team_names = deep_get(settings, "use_team_names")
+    use_sponsors = deep_get(settings, "use_sponsors")
 
-    font_list = ["./assets/font/OpenSans/OpenSans-Bold.ttf",
-                 "./assets/font/OpenSans/OpenSans-Semibold.ttf"]
-    if settings["font_list"][0]:
-        font_list[0] = settings["font_list"][0]
-    if settings["font_list"][1]:
-        font_list[1] = settings["font_list"][1]
+    font_list = [
+        {
+            "name": "Roboto Condensed",
+            "type": "Bold",
+            "fontPath": "./assets/font/RobotoCondensed.ttf"
+        },
+        {
+            "name": "Roboto Condensed",
+            "type": "Bold",
+            "fontPath": "./assets/font/RobotoCondensed.ttf"
+        }
+    ]
+    if deep_get(settings, f"player_font"):
+        font_list[0] = deep_get(settings, f"player_font")
+    if deep_get(settings, f"phase_font"):
+        font_list[1] = deep_get(settings, f"phase_font")
 
     global text_color
     text_color = [
         {
-            "font_color": color_code_to_tuple(settings["phase_font_color"][0]),
-            "has_outline": settings["font_outline_enabled"][0],
-            "outline_color": color_code_to_tuple(settings["font_outline_color"][0])
+            "font_color": color_code_to_tuple(settings.get("phase_font_color", "#FFFFFF")),
+            "has_outline": deep_get(settings, f"player_outline", True),
+            "outline_color": color_code_to_tuple(deep_get(settings, f"player_outline_color", "#FFFFFF"))
         },
         {
-            "font_color": color_code_to_tuple(settings["phase_font_color"][1]),
-            "has_outline": settings["font_outline_enabled"][1],
-            "outline_color": color_code_to_tuple(settings["font_outline_color"][1])
+            "font_color": color_code_to_tuple(settings.get("phase_font_color", "#FFFFFF")),
+            "has_outline": deep_get(settings, f"phase_outline", True),
+            "outline_color": color_code_to_tuple(deep_get(settings, f"phase_outline_color", "#FFFFFF"))
         }
     ]
 
     global sponsor_color
     sponsor_color = [
-        color_code_to_tuple(settings.get("sponsor_font_color_1", ["#FFFFFF"])[0]),
-        color_code_to_tuple(settings.get("sponsor_font_color_2", ["#FFFFFF"])[0])
+        color_code_to_tuple(settings.get("sponsor_font_color_1", "#FFFFFF")),
+        color_code_to_tuple(settings.get("sponsor_font_color_2", "#FFFFFF"))
     ]
 
     zoom = 1
+
+    global smooth_scale
 
     try:
         with open(data_path, 'rt', encoding='utf-8') as f:
@@ -1237,22 +1268,30 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
                 raise Exception(QApplication.translate("thumb_app", "Player {0} tag missing").format(i))
 
         game_codename = data.get("game").get("codename")
-        used_assets = settings[f"asset/{game_codename}"]
+        used_assets = deep_get(settings, f"game.{game_codename}.asset_pack")
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
-        zoom = settings.get(f"zoom/{game_codename}", 100)/100
+        zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
+        flip_p1 = deep_get(settings, f"game.{game_codename}.flip_p1")
+        flip_p2 = deep_get(settings, f"game.{game_codename}.flip_p2")
+        smooth_scale = deep_get(settings, f"game.{game_codename}.smooth_scale")
     except Exception as e:
         if isPreview:
             game_codename = data.get("game").get("codename")
-            data = createFalseData(
-                gameAssetManager, settings.get(f"asset/{game_codename}"))
+            data = createFalseData(gameAssetManager, deep_get(settings, f"game.{game_codename}.asset_pack"))
             used_assets = "full"
             asset_data_path = f"./assets/mock_data/mock_asset/config.json"
-            zoom = settings.get(f"zoom/{game_codename}", 100)/100
+            zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
+            flip_p1 = deep_get(settings, f"game.{game_codename}.flip_p1")
+            flip_p2 = deep_get(settings, f"game.{game_codename}.flip_p2")
+            smooth_scale = deep_get(settings, f"game.{game_codename}.smooth_scale")
         else:
-            raise e
+            raise traceback.format_exc()
 
-    with open(asset_data_path, 'rt', encoding='utf-8') as f:
-        all_eyesight = json.loads(f.read()).get("eyesights")
+    try:
+        with open(asset_data_path, 'rt', encoding='utf-8') as f:
+            all_eyesight = json.loads(f.read()).get("eyesights", {})
+    except:
+        all_eyesight = {}
 
     Path(tmp_path).mkdir(parents=True, exist_ok=True)
     # for i in range(0, len(font_list)):
@@ -1274,8 +1313,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
 
     global separator_color_code
     global separator_width
-    separator_color_code = settings["separator"]["color"]
-    separator_width = settings["separator"]["width"]
+    separator_color_code = deep_get(settings, f"separator.color", "#FFFFFF")
+    separator_width = deep_get(settings, f"separator.width", 5)
 
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
@@ -1294,14 +1333,14 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
              background.height()/template_data["base_ratio"]["y"])
     
     global scale_fill_x, scale_fill_y
-    scale_fill_x = settings.get(f"scaleToFillX/{game_codename}", 0)
-    scale_fill_y = settings.get(f"scaleToFillY/{game_codename}", 0)
+    scale_fill_x = deep_get(settings, f"game.{game_codename}.scaleFillX", 0)
+    scale_fill_y = deep_get(settings, f"game.{game_codename}.scaleFillY", 0)
 
     global no_separator
-    no_separator = settings.get(f"hideSeparators/{game_codename}", 0)
+    no_separator = deep_get(settings, f"game.{game_codename}.hideSeparators", 0)
 
     global flip_direction
-    flip_direction = settings.get(f"flipSeparators/{game_codename}", 0)
+    flip_direction = deep_get(settings, f"game.{game_codename}.flipSeparators", 0)
 
     foreground = foreground.scaled(
         background.width(),
@@ -1321,8 +1360,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     painter.drawPixmap(0, 0, background)
     painter.end()
 
-    horizontalAlign = settings.get(f"horizontalAlign/{game_codename}", 50)
-    verticalAlign = settings.get(f"verticalAlign/{game_codename}", 50)
+    horizontalAlign = deep_get(settings, f"game.{game_codename}.align.horizontal", 50)
+    verticalAlign = deep_get(settings, f"game.{game_codename}.align.vertical", 40)
 
     thumbnail = paste_characters(
         thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign)

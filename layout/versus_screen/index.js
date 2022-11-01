@@ -10,6 +10,9 @@
   // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
   var zoom = 1;
 
+  // Where to center character eyesights. [ 0.0 - 1.0 ]
+  var EYESIGHT_CENTERING = {x: 0.5, y: 0.4};
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".phase.container"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
@@ -176,7 +179,8 @@
                 CenterImage(
                   $(`.p${t + 1}.character .char${c} .portrait`),
                   character.assets[ASSET_TO_USE],
-                  zoom
+                  zoom,
+                  EYESIGHT_CENTERING
                 );
               }
             });
@@ -373,7 +377,7 @@
                 $(`.p${t + 1}.character .char${c} .portrait`),
                 character.assets[ASSET_TO_USE],
                 zoom,
-                {x: 0.5, y: 0.4}
+                EYESIGHT_CENTERING
               );
             }
           });
