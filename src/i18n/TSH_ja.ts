@@ -5,7 +5,7 @@
     <name>About</name>
     <message>
         <location filename="../layout/TSHAbout.ui" line="23"/>
-        <location filename="../TournamentStreamHelper.py" line="385"/>
+        <location filename="../TournamentStreamHelper.py" line="386"/>
         <source>About</source>
         <translation>このプログラムについて</translation>
     </message>
@@ -252,209 +252,222 @@ p, li { white-space: pre-wrap; }
         <translation>国</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="85"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="249"/>
         <source>Foreground</source>
         <translation>前景</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="92"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="284"/>
         <source>Background</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="130"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="106"/>
         <source>Main</source>
         <translation>メイン</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="157"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="159"/>
         <source>Left</source>
         <translation>左</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="164"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="190"/>
         <source>Right</source>
         <translation>右</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="78"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="240"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="123"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="97"/>
         <source>Custom Icon</source>
         <translation>カスタムアイコン</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="210"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="53"/>
+        <source>General Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="351"/>
         <source>Separators</source>
         <translation>分離線</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="230"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="371"/>
         <source>Width</source>
         <translation>太さ</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="253"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="394"/>
         <source>Color</source>
         <translation>色</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="313"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="454"/>
         <source>Display</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="320"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="461"/>
         <source>Phase name?</source>
         <translation>フェーズ?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="330"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="471"/>
         <source>Teams names?</source>
         <translation>チーム名?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="340"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="481"/>
         <source>Sponsors?</source>
         <translation>スポンサー?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="350"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="839"/>
+        <source>Game Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="887"/>
+        <source>Smooth scaling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="894"/>
         <source>Flip P1 assets?</source>
         <translation>プレイヤー1の画像を反転?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="360"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="904"/>
         <source>Flip P2 assets?</source>
         <translation>プレイヤー2の画像を反転?</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="545"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="653"/>
         <source>Sponsor Font Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="780"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="929"/>
         <source>Zoom</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="796"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="858"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="889"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="945"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="999"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1030"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="401"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="509"/>
         <source>Tag font</source>
         <translation>タグのフォント</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="45"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="67"/>
         <source>Template</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="422"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="602"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="530"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="710"/>
         <source>Fonts</source>
         <translation>フォント</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="446"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="626"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="554"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="734"/>
         <source>Font Type</source>
         <translation>書体</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="471"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="651"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="579"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="759"/>
         <source>Font Color</source>
         <translation>フォントの色</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="496"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="676"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="604"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="784"/>
         <source>Font Outline</source>
         <translation>アウトラインの色</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="581"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="689"/>
         <source>Phase font</source>
         <translation>フェーズのフォント</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="731"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="866"/>
         <source>Asset Pack</source>
         <translation>アセットパック</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="744"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="701"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="852"/>
         <source>(No game selected)</source>
         <translation>ゲームが選択されてません</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="818"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="965"/>
         <source>Scale to fit X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="829"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="972"/>
         <source>Scale to fit Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="851"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="992"/>
         <source>Horizontal Align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1023"/>
         <source>Vertical Align</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="906"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1047"/>
         <source>Invert separator orientation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="913"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1054"/>
         <source>Hide separators between characters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="934"/>
         <source>UI Options</source>
-        <translation>UIオプション</translation>
+        <translation type="vanished">UIオプション</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="992"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1089"/>
         <source>Preview</source>
         <translation>プレビュー</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="1017"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1114"/>
         <source>Generate Thumbnail</source>
         <translation type="unfinished">サムネイルを作成する</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="941"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1121"/>
         <source>Open File Explorer after generation?</source>
         <translation>サムネを作成した後エクスプローラーで開く</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="958"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
         <source>Reset to Defaults</source>
         <translation>デフォルトの設定にリセット</translation>
     </message>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="1010"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="1107"/>
         <source>Update Preview</source>
         <translation>プレビューを更新する</translation>
     </message>
@@ -501,12 +514,12 @@ p, li { white-space: pre-wrap; }
         <translation>入れ換える</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="429"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="439"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="440"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="450"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -586,7 +599,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="193"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="72"/>
         <location filename="../TournamentStreamHelper.py" line="146"/>
         <source>Thumbnail Settings</source>
         <translation>サムネイルの設定</translation>
@@ -621,8 +634,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="219"/>
-        <location filename="../TournamentStreamHelper.py" line="449"/>
-        <location filename="../TournamentStreamHelper.py" line="453"/>
+        <location filename="../TournamentStreamHelper.py" line="450"/>
+        <location filename="../TournamentStreamHelper.py" line="454"/>
         <source>Load tournament and sets from StartGG user</source>
         <translation>大会と対戦データをStartGGからロードする</translation>
     </message>
@@ -633,7 +646,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="260"/>
-        <location filename="../TournamentStreamHelper.py" line="649"/>
+        <location filename="../TournamentStreamHelper.py" line="650"/>
         <source>Check for updates</source>
         <translation>更新情報を調べる</translation>
     </message>
@@ -653,43 +666,43 @@ p, li { white-space: pre-wrap; }
         <translation>ツールの表示</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="288"/>
+        <location filename="../TournamentStreamHelper.py" line="289"/>
         <source>Program Language</source>
         <translation>プログラムの表示言語</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="299"/>
+        <location filename="../TournamentStreamHelper.py" line="300"/>
         <source>System language</source>
         <translation>システムの表示言語と同じにする</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="319"/>
+        <location filename="../TournamentStreamHelper.py" line="320"/>
         <source>Export Language</source>
         <translation>エクスポート物の言語</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="330"/>
-        <location filename="../TournamentStreamHelper.py" line="361"/>
+        <location filename="../TournamentStreamHelper.py" line="331"/>
+        <location filename="../TournamentStreamHelper.py" line="362"/>
         <source>Same as program language</source>
         <translation>プログラムの表示言語と同じにする</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="350"/>
+        <location filename="../TournamentStreamHelper.py" line="351"/>
         <source>Default Phase Name Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="358"/>
+        <location filename="../TournamentStreamHelper.py" line="359"/>
         <source>Default phase name language changed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="621"/>
+        <location filename="../TournamentStreamHelper.py" line="622"/>
         <source>Update complete.</source>
         <translation>更新が完了しました。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="634"/>
+        <location filename="../TournamentStreamHelper.py" line="635"/>
         <source>Info</source>
         <translation>このプログラムについて</translation>
     </message>
@@ -699,7 +712,7 @@ p, li { white-space: pre-wrap; }
         <translation>アセットパック名</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="539"/>
+        <location filename="../TournamentStreamHelper.py" line="540"/>
         <source>Updater</source>
         <translation>アップデータ</translation>
     </message>
@@ -709,52 +722,52 @@ p, li { white-space: pre-wrap; }
         <translation>プログラムを閉じます。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="296"/>
+        <location filename="../TournamentStreamHelper.py" line="297"/>
         <source>Program language changed successfully.</source>
         <translation>プログラムの表示言語を変更しました。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="327"/>
+        <location filename="../TournamentStreamHelper.py" line="328"/>
         <source>Export language changed successfully.</source>
         <translation>エクスポート物の言語を変更しました。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="548"/>
+        <location filename="../TournamentStreamHelper.py" line="549"/>
         <source>Update to latest version?</source>
         <translation>最新のバージョンに更新しますか?</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="554"/>
+        <location filename="../TournamentStreamHelper.py" line="555"/>
         <location filename="../TSHScoreboardStageWidget.py" line="200"/>
         <source>Update</source>
         <translation>アップデート</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="557"/>
-        <location filename="../TournamentStreamHelper.py" line="566"/>
+        <location filename="../TournamentStreamHelper.py" line="558"/>
+        <location filename="../TournamentStreamHelper.py" line="567"/>
         <location filename="../TSHAssetDownloader.py" line="298"/>
         <location filename="../TSHAssetDownloader.py" line="428"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="566"/>
-        <location filename="../TournamentStreamHelper.py" line="595"/>
+        <location filename="../TournamentStreamHelper.py" line="567"/>
+        <location filename="../TournamentStreamHelper.py" line="596"/>
         <source>Downloading update...</source>
         <translation>アップデートをダウンロードしています…</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="522"/>
+        <location filename="../TournamentStreamHelper.py" line="523"/>
         <source>Failed to fetch version from github:</source>
         <translation>最新のバージョンをGitHubから読み込むのに失敗しました</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="545"/>
+        <location filename="../TournamentStreamHelper.py" line="546"/>
         <source>New version available:</source>
         <translation>新しいバージョンがあります</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="548"/>
+        <location filename="../TournamentStreamHelper.py" line="549"/>
         <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
         <translation>注意:/layout/に入っているファイルは保存されますが、他のディレクトリのデータは上書きされます</translation>
     </message>
@@ -763,12 +776,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">更新が完了しました。ソフトを閉じます。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="636"/>
+        <location filename="../TournamentStreamHelper.py" line="637"/>
         <source>You&apos;re already using the latest version</source>
         <translation>このソフトはすでに最新のバージョンです</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="649"/>
+        <location filename="../TournamentStreamHelper.py" line="650"/>
         <source>Update available!</source>
         <translation>アップデートがあります!</translation>
     </message>
@@ -901,7 +914,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="284"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1067"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1080"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
@@ -1006,23 +1019,23 @@ p, li { white-space: pre-wrap; }
         <translation>対戦を選ぶ</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1068"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1081"/>
         <source>Sponsor {0}</source>
         <translation>スポンサー{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1095"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1108"/>
         <source>Winners Finals</source>
         <translation>勝者側決勝</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1096"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1109"/>
         <source>Pool {0}</source>
         <translation>予選プール{0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1114"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1141"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1127"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1154"/>
         <source>Team {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -1078,9 +1091,9 @@ p, li { white-space: pre-wrap; }
         <translation>チーム{0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="687"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="814"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
-        <location filename="../TournamentStreamHelper.py" line="520"/>
+        <location filename="../TournamentStreamHelper.py" line="521"/>
         <location filename="../TSHScoreboardWidget.py" line="443"/>
         <location filename="../TSHAssetDownloader.py" line="321"/>
         <source>Warning</source>
@@ -1124,28 +1137,25 @@ p, li { white-space: pre-wrap; }
         <translation>プログラムを再度実行した時にこの通知を表示する</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="74"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="593"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="729"/>
         <source>Bold Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold Italic</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="591"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="648"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="727"/>
         <source>Bold</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="590"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="726"/>
         <source>Regular</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="592"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="728"/>
         <source>Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Italic</translation>
@@ -1154,25 +1164,25 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="649"/>
+        <location filename="../TournamentStreamHelper.py" line="650"/>
         <source>[</source>
         <translation>[</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="649"/>
+        <location filename="../TournamentStreamHelper.py" line="650"/>
         <source>]</source>
         <translation>]</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="101"/>
-        <location filename="../TournamentStreamHelper.py" line="449"/>
+        <location filename="../TournamentStreamHelper.py" line="450"/>
         <location filename="../TSHScoreboardWidget.py" line="795"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="102"/>
-        <location filename="../TournamentStreamHelper.py" line="449"/>
+        <location filename="../TournamentStreamHelper.py" line="450"/>
         <location filename="../TSHScoreboardWidget.py" line="795"/>
         <source>)</source>
         <translation>)</translation>
@@ -1181,17 +1191,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1233"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1264"/>
         <source>Please select a game first</source>
         <translation>ゲームを選んで下さい</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1237"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1268"/>
         <source>Player {0} tag missing</source>
         <translation>プレイヤー{0}のタグがありません</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="686"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="813"/>
         <location filename="../TSHScoreboardWidget.py" line="421"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>
