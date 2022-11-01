@@ -138,7 +138,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.background.clicked.connect(
             lambda: self.SaveImage("background_path"))
 
-        self.GetSetting("main_icon_path", "./layout/logo.png")
         self.mainIcon.clicked.connect(lambda: self.SaveImage("main_icon_path"))
 
         if not self.GetSetting("side_icon_list.L", None):
@@ -425,13 +424,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont(
             "player_font",
             self.selectFontPlayer.currentText(),
-            self.selectTypeFontPlayer.currentText(),
+            self.selectTypeFontPlayer.currentData(),
             self.selectTypeFontPlayer.currentData()
         ))
         self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont(
             "phase_font",
             self.selectFontPhase.currentText(),
-            self.selectTypeFontPhase.currentText(),
+            self.selectTypeFontPhase.currentData(),
             self.selectTypeFontPhase.currentData()
         ))
 
@@ -483,6 +482,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def updateFromSettings(self):
         game_codename = TSHGameAssetManager.instance.selectedGame.get('codename')
 
+        self.GetSetting("main_icon_path", "./layout/logo.png")
+
         # Thumbnail type
         try:
             for i, t in enumerate(self.templates):
@@ -513,13 +514,18 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             {
                 "name": "Roboto Condensed",
                 "type": "Bold",
-                "fontPath": "./assets/font/RobotoCondensed.ttf"
+                "fontPath": "Bold"
             }
         )
+        self.selectFontPlayer.blockSignals(True)
+        self.selectTypeFontPlayer.blockSignals(True)
         self.selectFontPlayer.setCurrentIndex(
             self.selectFontPlayer.findText(playerFont.get("name")))
+        self.SetTypeFont(0, self.selectFontPlayer, self.selectTypeFontPlayer)
         self.selectTypeFontPlayer.setCurrentIndex(
-            self.selectTypeFontPlayer.findText(playerFont.get("type")))
+            self.selectTypeFontPlayer.findData(playerFont.get("type")))
+        self.selectFontPlayer.blockSignals(False)
+        self.selectTypeFontPlayer.blockSignals(False)
 
         # Phase font, phase font type
         phaseFont = self.GetSetting(
@@ -527,13 +533,18 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             {
                 "name": "Roboto Condensed",
                 "type": "Bold",
-                "fontPath": "./assets/font/RobotoCondensed.ttf"
+                "fontPath": "Bold"
             }
         )
+        self.selectFontPhase.blockSignals(True)
+        self.selectTypeFontPhase.blockSignals(True)
         self.selectFontPhase.setCurrentIndex(
             self.selectFontPhase.findText(phaseFont.get("name")))
+        self.SetTypeFont(1, self.selectFontPhase, self.selectTypeFontPhase)
         self.selectTypeFontPhase.setCurrentIndex(
-            self.selectTypeFontPhase.findText(phaseFont.get("type")))
+            self.selectTypeFontPhase.findData(phaseFont.get("type")))
+        self.selectFontPhase.blockSignals(False)
+        self.selectTypeFontPhase.blockSignals(False)
         
         # Outlines
         self.enablePlayerOutline.blockSignals(True)
@@ -689,6 +700,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     "fontPath": fontPath
                 }
                 self.SaveSettings(f"{key}", val=fontSetting)
+                self.GeneratePreview()
         except Exception as e:
             print("error save font")
             print(e)
@@ -768,6 +780,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     # re-generate preview
     def GeneratePreview(self, manual=False):
         SettingsManager.LoadSettings()
+        self.updateFromSettings()
 
         if not manual:
             # Automatic preview update, we dont want it to spam error messages
@@ -831,9 +844,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.selectRenderType.addItem(key, key)
                     asset_dict[key] = key
 
+            game_name = TSHGameAssetManager.instance.selectedGame.get("name")
+            self.selectRenderLabel.setText(f"{game_name}")
+            
             game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
-
-            self.selectRenderLabel.setText(f"{game_codename}")
 
             asset_pack = self.GetSetting(f"game.{game_codename}.asset_pack", "full")
             index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail.game.{game_codename}.asset_pack")))

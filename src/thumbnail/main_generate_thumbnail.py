@@ -1172,6 +1172,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             template_data = template_data_file.read()
             template_data = json.loads(template_data)
     except:
+        if isPreview:
+            return
         raise Exception(f"Thumbnail type could not be loaded")
 
     global is_preview
