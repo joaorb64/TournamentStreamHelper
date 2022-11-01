@@ -1287,8 +1287,11 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         else:
             raise traceback.format_exc()
 
-    with open(asset_data_path, 'rt', encoding='utf-8') as f:
-        all_eyesight = json.loads(f.read()).get("eyesights")
+    try:
+        with open(asset_data_path, 'rt', encoding='utf-8') as f:
+            all_eyesight = json.loads(f.read()).get("eyesights", {})
+    except:
+        all_eyesight = {}
 
     Path(tmp_path).mkdir(parents=True, exist_ok=True)
     # for i in range(0, len(font_list)):
