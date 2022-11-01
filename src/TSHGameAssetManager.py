@@ -239,12 +239,14 @@ class TSHGameAssetManager(QObject):
                                     if not assetsKey in widths:
                                         widths[assetsKey] = []
 
-                                    widths[assetsKey].append(size.width())
+                                    if size.width() != -1:
+                                        widths[assetsKey].append(size.width())
 
                                     if not assetsKey in heights:
                                         heights[assetsKey] = []
 
-                                    heights[assetsKey].append(size.height())
+                                    if size.height() != -1:
+                                        heights[assetsKey].append(size.height())
                             print("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
                         
