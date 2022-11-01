@@ -86,23 +86,56 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             lambda: self.setDefaults(button_mode=True))
 
         # IMG
-        self.foreground = self.settings.findChild(
-            QPushButton, "customForeground")
-        self.background = self.settings.findChild(
-            QPushButton, "customBackground")
+        self.foreground = self.settings.findChild(QPushButton, "customForeground")
+        self.foregroundReset = self.settings.findChild(QPushButton, "customForegroundReset")
+        self.foregroundReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.foregroundReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail.foreground_path"),
+            self.GeneratePreview()
+        ])
+
+        self.background = self.settings.findChild(QPushButton, "customBackground")
+        self.backgroundReset = self.settings.findChild(QPushButton, "customBackgroundReset")
+        self.backgroundReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.backgroundReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail.background_path"),
+            self.GeneratePreview()
+        ])
+        
         self.mainIcon = self.settings.findChild(QPushButton, "customMainIcon")
+        self.mainIconReset = self.settings.findChild(QPushButton, "customMainIconReset")
+        self.mainIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.mainIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail.main_icon_path"),
+            self.GeneratePreview()
+        ])
+
         self.topLeftIcon = self.settings.findChild(
             QPushButton, "customTopLeftIcon")
+        self.topLeftIconReset = self.settings.findChild(
+            QPushButton, "customTopLeftIconReset")
+        self.topLeftIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.topLeftIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail.side_icon_list.L"),
+            self.GeneratePreview()
+        ])
+
         self.topRightIcon = self.settings.findChild(
             QPushButton, "customTopRightIcon")
+        self.topRightIconReset = self.settings.findChild(
+            QPushButton, "customTopRightIconReset")
+        self.topRightIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.topRightIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail.side_icon_list.R"),
+            self.GeneratePreview()
+        ])
 
         self.foreground.clicked.connect(
             lambda: self.SaveImage("foreground_path"))
         self.background.clicked.connect(
             lambda: self.SaveImage("background_path"))
 
-        if not self.GetSetting("main_icon_path", None):
-            self.SaveSettings("main_icon_path", "./assets/icons/icon.png")
+        self.GetSetting("main_icon_path", "./layout/logo.png")
         self.mainIcon.clicked.connect(lambda: self.SaveImage("main_icon_path"))
 
         if not self.GetSetting("side_icon_list.L", None):

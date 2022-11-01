@@ -1192,7 +1192,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         background_path = template_data["default_background"]
     if not os.path.isfile(background_path):
         raise Exception(f"Background {background_path} doesn't exist !")
-    main_icon_path = settings["main_icon_path"]
+    main_icon_path = settings.get("main_icon_path", "")
     if main_icon_path and not os.path.isfile(main_icon_path):
         raise Exception(f"Main Icon {main_icon_path} doesn't exist !")
     side_icon_list = [

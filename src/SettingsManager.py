@@ -17,6 +17,10 @@ class SettingsManager:
     def Set(key: str, value):
         deep_set(SettingsManager.settings, key, value)
         SettingsManager.SaveSettings()
+    
+    def Unset(key: str):
+        deep_unset(SettingsManager.settings, key)
+        SettingsManager.SaveSettings()
 
     def Get(key: str, default=None):
         return deep_get(SettingsManager.settings, key, default)
