@@ -425,7 +425,7 @@ class TSHScoreboardWidget(QDockWidget):
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
 
-            thumbnail_settings = SettingsManager.Get("thumbnail")
+            thumbnail_settings = SettingsManager.Get("thumbnail_config")
             if thumbnail_settings.get("open_explorer"):
                 outThumbDir = f"{os.getcwd()}/out/thumbnails/"
                 if platform.system() == "Windows":
