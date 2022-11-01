@@ -35,6 +35,7 @@ use_sponsors = True
 all_eyesight = False
 no_separator = 0
 flip_direction = False
+smooth_scale = True
 
 separator_color_code = "#888888"
 
@@ -235,7 +236,7 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width
+    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width, smooth_scale
     image_ratio = (max(ratio[0], ratio[1]), max(ratio[0], ratio[1]))
 
     separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
@@ -301,8 +302,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             print(f"Processing asset: {image_path}")
 
+            transformMode = Qt.TransformationMode.SmoothTransformation
+
+            if not smooth_scale:
+                transformMode = Qt.TransformationMode.FastTransformation
+
             pix = QPixmap(image_path, "RGBA")
-            pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+            pix = pix.scaled(int(pix.width() * image_ratio[0]), int(pix.height() * image_ratio[1]), transformMode=transformMode)
             painter = QPainter(thumbnail)
 
             eyesight_coordinates = (pix.width()/2, pix.height()/2)
@@ -409,7 +415,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             areaPaint.drawPixmap(
                 int(xx), int(yy),
                 pix
-                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=Qt.TransformationMode.SmoothTransformation)
+                .scaled(int(zoom*pix.width()), int(zoom*pix.height()), transformMode=transformMode)
             )
 
             areaPaint.end()
@@ -605,6 +611,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         proportional_zoom = max(proportional_zoom, max_size[1] / ratio[1] / average_size.get("y") * 1.2)
     else:
         # Keeping this as a fallback, but should never enter this block of code
+        print("No proportional size. Calculating.")
         max_width = 0
         max_height = 0
 
@@ -1026,7 +1033,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
 
         for i in range(4):
             asset = None
-            while (not asset):
+            if not asset:
                 key = list(gameAssetManager.instance.characters.keys())[
                     random.randint(0, len(gameAssetManager.instance.characters)-1)]
 
@@ -1042,6 +1049,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     asset = data.get("full")
                 if not asset:
                     asset = data.get("portrait")
+                if not asset:
+                    asset = data.get("base_files/icon")
 
             name = key
             if character.get("locale"):
@@ -1241,6 +1250,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
 
     zoom = 1
 
+    global smooth_scale
+
     try:
         with open(data_path, 'rt', encoding='utf-8') as f:
             data = json.loads(f.read())
@@ -1258,6 +1269,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
         flip_p1 = deep_get(settings, f"game.{game_codename}.flip_p1")
         flip_p2 = deep_get(settings, f"game.{game_codename}.flip_p2")
+        smooth_scale = deep_get(settings, f"game.{game_codename}.smooth_scale")
     except Exception as e:
         if isPreview:
             game_codename = data.get("game").get("codename")
@@ -1267,6 +1279,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
             flip_p1 = deep_get(settings, f"game.{game_codename}.flip_p1")
             flip_p2 = deep_get(settings, f"game.{game_codename}.flip_p2")
+            smooth_scale = deep_get(settings, f"game.{game_codename}.smooth_scale")
         else:
             raise traceback.format_exc()
 

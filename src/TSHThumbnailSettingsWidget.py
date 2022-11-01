@@ -186,6 +186,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
+        self.smooth_scale = self.settings.findChild(QCheckBox, "smoothScaling")
         self.flip_p2 = self.settings.findChild(QCheckBox, "flipP2Check")
         self.flip_p1 = self.settings.findChild(QCheckBox, "flipP1Check")
         self.open_explorer = self.settings.findChild(QCheckBox, "openExplorerCheck")
@@ -223,6 +224,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.flip_p1.stateChanged.connect(lambda: self.SaveSettings(
             key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flip_p1", val=self.flip_p1.isChecked(), generatePreview=True))
+        
+        self.smooth_scale.stateChanged.connect(lambda: self.SaveSettings(
+            key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.smooth_scale", val=self.smooth_scale.isChecked(), generatePreview=True))
 
         self.zoom.valueChanged.connect(lambda:
             TSHThumbnailSettingsWidget.SaveSettings(
@@ -532,6 +536,10 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.flip_p1.blockSignals(True)
         self.flip_p1.setChecked(self.GetSetting(f"game.{game_codename}.flip_p1", False))
         self.flip_p1.blockSignals(False)
+
+        self.smooth_scale.blockSignals(True)
+        self.smooth_scale.setChecked(self.GetSetting(f"game.{game_codename}.smooth_scale", True))
+        self.smooth_scale.blockSignals(False)
 
         # Eyesight alignment
         self.horizontalAlign.blockSignals(True)
