@@ -802,6 +802,9 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def GeneratePreviewDo(self, progress_callback):
         with self.lock:
             try:
+                if self.thumbnailGenerationThread.activeThreadCount() > 1:
+                    return
+
                 tmp_file = thumbnail.generate(
                     isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
                 if tmp_file:
