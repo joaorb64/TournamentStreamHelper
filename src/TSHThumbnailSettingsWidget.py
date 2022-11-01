@@ -82,8 +82,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # SET DEFAULTS
         self.setDefaultsButton = self.settings.findChild(
             QPushButton, "resetToDefault")
-        self.setDefaultsButton.clicked.connect(
-            lambda: self.setDefaults(button_mode=True))
+        self.setDefaultsButton.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail"),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
 
         # IMG
         self.foreground = self.settings.findChild(QPushButton, "customForeground")
@@ -166,15 +169,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         for t in self.templates:
             self.templateSelect.addItem(t.get("name") + f' ({t.get("filename", "").rsplit("/")[-1]})', t)
         
-        currSettings = SettingsManager.Get("thumbnail", {})
-
-        try:
-            for i, t in enumerate(self.templates):
-                if t.get("filename") == self.GetSetting("thumbnail_type", "./assets/thumbnail_base/thumbnail_types/type_a.json"):
-                    self.templateSelect.setCurrentIndex(i)
-        except:
-            print(traceback.format_exc())
-        
         self.templateSelect.currentIndexChanged.connect(
             lambda val: [
                 TSHThumbnailSettingsWidget.SaveSettings(
@@ -236,19 +230,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.flipSeparators = self.settings.findChild(QCheckBox, "flipSeparators")
 
-        self.phase_name.setChecked(self.GetSetting("display_phase", True))
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
             key="display_phase", val=self.phase_name.isChecked(), generatePreview=True))
 
-        self.team_name.setChecked(self.GetSetting("use_team_names", True))
         self.team_name.stateChanged.connect(lambda: self.SaveSettings(
             key="use_team_names", val=self.team_name.isChecked(), generatePreview=True))
 
-        self.sponsor.setChecked(self.GetSetting("use_sponsors", True))
         self.sponsor.stateChanged.connect(lambda: self.SaveSettings(
             key="use_sponsors", val=self.sponsor.isChecked(), generatePreview=True))
 
-        self.open_explorer.setChecked(self.GetSetting("open_explorer", False))
         self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(
             key="open_explorer", val=self.open_explorer.isChecked(), generatePreview=True))
         
@@ -493,6 +483,30 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def updateFromSettings(self):
         game_codename = TSHGameAssetManager.instance.selectedGame.get('codename')
 
+        # Thumbnail type
+        try:
+            for i, t in enumerate(self.templates):
+                if t.get("filename") == self.GetSetting("thumbnail_type", "./assets/thumbnail_base/thumbnail_types/type_a.json"):
+                    self.templateSelect.blockSignals(True)
+                    self.templateSelect.setCurrentIndex(i)
+                    self.templateSelect.blockSignals(False)
+        except:
+            print(traceback.format_exc())
+        
+        # Upper checkboxes
+        self.phase_name.blockSignals(True)
+        self.phase_name.setChecked(self.GetSetting("display_phase", True))
+        self.phase_name.blockSignals(False)
+        self.team_name.blockSignals(True)
+        self.team_name.setChecked(self.GetSetting("use_team_names", True))
+        self.team_name.blockSignals(False)
+        self.sponsor.blockSignals(True)
+        self.sponsor.setChecked(self.GetSetting("use_sponsors", True))
+        self.sponsor.blockSignals(False)
+        self.open_explorer.blockSignals(True)
+        self.open_explorer.setChecked(self.GetSetting("open_explorer", False))
+        self.open_explorer.blockSignals(False)
+
         # Player font, player font type
         playerFont = self.GetSetting(
             "player_font",
@@ -655,9 +669,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         else:
             self.scaleToFillY.setChecked(0)
             self.scaleToFillY.setEnabled(False)
-    
-    def setDefaults(self, button_mode=False):
-        pass
 
     def SaveIcons(self, key, side):
         path = QFileDialog.getOpenFileName()[0]
