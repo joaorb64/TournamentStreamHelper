@@ -851,5 +851,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
             if index != -1:
                 self.selectRenderType.setCurrentIndex(index)
+            else:
+                if len(list(asset_dict.keys())) > 0:
+                    self.SaveSettings(f"game.{game_codename}.asset_pack", list(asset_dict.keys())[0])
 
         self.selectRenderType.blockSignals(False)
