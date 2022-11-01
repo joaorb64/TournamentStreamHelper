@@ -1166,7 +1166,7 @@ def remove_special_chars(input_str: str):
 
 def generate(settingsManager, isPreview=False, gameAssetManager=None):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
-    settings = settingsManager.Get("thumbnail")
+    settings = settingsManager.Get("thumbnail_config")
 
     global template_data
     try:

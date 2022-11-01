@@ -60,8 +60,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
 
-        if not SettingsManager.Get("thumbnail"):
-            SettingsManager.Set("thumbnail", {})
+        if not SettingsManager.Get("thumbnail_config"):
+            SettingsManager.Set("thumbnail_config", {})
 
         self.signals = TSHThumbnailSettingsWidgetSignals()
         self.signals.updatePreview.connect(self.UpdatePreview)
@@ -83,7 +83,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.setDefaultsButton = self.settings.findChild(
             QPushButton, "resetToDefault")
         self.setDefaultsButton.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail"),
+            SettingsManager.Unset("thumbnail_config"),
             self.updateFromSettings(),
             self.GeneratePreview()
         ])
@@ -93,7 +93,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.foregroundReset = self.settings.findChild(QPushButton, "customForegroundReset")
         self.foregroundReset.setIcon(QIcon('assets/icons/undo.svg'))
         self.foregroundReset.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail.foreground_path"),
+            SettingsManager.Unset("thumbnail_config.foreground_path"),
             self.GeneratePreview()
         ])
 
@@ -101,7 +101,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.backgroundReset = self.settings.findChild(QPushButton, "customBackgroundReset")
         self.backgroundReset.setIcon(QIcon('assets/icons/undo.svg'))
         self.backgroundReset.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail.background_path"),
+            SettingsManager.Unset("thumbnail_config.background_path"),
             self.GeneratePreview()
         ])
         
@@ -109,7 +109,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.mainIconReset = self.settings.findChild(QPushButton, "customMainIconReset")
         self.mainIconReset.setIcon(QIcon('assets/icons/undo.svg'))
         self.mainIconReset.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail.main_icon_path"),
+            SettingsManager.Unset("thumbnail_config.main_icon_path"),
             self.GeneratePreview()
         ])
 
@@ -119,7 +119,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             QPushButton, "customTopLeftIconReset")
         self.topLeftIconReset.setIcon(QIcon('assets/icons/undo.svg'))
         self.topLeftIconReset.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail.side_icon_list.L"),
+            SettingsManager.Unset("thumbnail_config.side_icon_list.L"),
             self.GeneratePreview()
         ])
 
@@ -129,7 +129,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             QPushButton, "customTopRightIconReset")
         self.topRightIconReset.setIcon(QIcon('assets/icons/undo.svg'))
         self.topRightIconReset.clicked.connect(lambda: [
-            SettingsManager.Unset("thumbnail.side_icon_list.R"),
+            SettingsManager.Unset("thumbnail_config.side_icon_list.R"),
             self.GeneratePreview()
         ])
 
@@ -447,7 +447,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.selectRenderType.currentIndexChanged.connect(lambda: [
             SettingsManager.Set(
-                f"thumbnail.game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.asset_pack",
+                f"thumbnail_config.game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.asset_pack",
                 self.selectRenderType.currentData()
             ),
             self.updateFromSettings(),
@@ -471,12 +471,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     
     def GetSetting(self, key, default=0):
         setting = SettingsManager.Get(
-            f"thumbnail.{key}",
+            f"thumbnail_config.{key}",
             default=None
         )
         if setting == None:
             setting = default
-            SettingsManager.Set(f"thumbnail.{key}", default)
+            SettingsManager.Set(f"thumbnail_config.{key}", default)
         return setting
     
     def updateFromSettings(self):
@@ -666,7 +666,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.scaleToFillX.setChecked(
                 self.GetSetting(f"game.{game_codename}.scaleFillX", 0))
         else:
-            self.scaleToFillX.setChecked(True)
             self.scaleToFillX.setEnabled(False)
         
         if 'u' in uncropped_edge or 'd' in uncropped_edge:
@@ -674,7 +673,6 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             self.scaleToFillY.setChecked(
                 self.GetSetting(f"game.{game_codename}.scaleFillY", 0))
         else:
-            self.scaleToFillY.setChecked(True)
             self.scaleToFillY.setEnabled(False)
 
     def SaveIcons(self, key, side):
@@ -714,7 +712,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def SaveSettings(self, key, val, generatePreview=False):
         try:
-            SettingsManager.Set(f"thumbnail.{key}", val)
+            SettingsManager.Set(f"thumbnail_config.{key}", val)
         except Exception as e:
             print(e)
 
@@ -849,7 +847,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
 
             asset_pack = self.GetSetting(f"game.{game_codename}.asset_pack", "full")
-            index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail.game.{game_codename}.asset_pack")))
+            index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail_config.game.{game_codename}.asset_pack")))
 
             if index != -1:
                 self.selectRenderType.setCurrentIndex(index)
