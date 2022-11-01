@@ -691,7 +691,7 @@ class TSHScoreboardWidget(QDockWidget):
             if p1id:
                 TSHTournamentDataProvider.instance.GetHistorySets(p1id, "1", StateManager.Get(f"game.smashgg_id"))
             else:
-                StateManager.Set(f"score.last_sets.1", {})
+                StateManager.Set(f"score.history_sets.1", {})
     
     def GetHistorySetsP2(self):
         # Only if 1 player on each side
@@ -700,7 +700,7 @@ class TSHScoreboardWidget(QDockWidget):
             if p2id:
                 TSHTournamentDataProvider.instance.GetHistorySets(p2id, "2", StateManager.Get(f"game.smashgg_id"))
             else:
-                StateManager.Set(f"score.last_sets.2", {})
+                StateManager.Set(f"score.history_sets.2", {})
     
     def UpdateHistorySets(self, data):
         StateManager.BlockSaving()
