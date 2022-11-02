@@ -625,8 +625,9 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     max_width = max(max_width, pix.width())
                     max_height = max(max_height, pix.height())
         
-        proportional_zoom = max(proportional_zoom, max_size[0] / max_width * 1.2)
-        proportional_zoom = max(proportional_zoom, max_size[1] / max_height * 1.2)
+        if max_width != 0 and max_height != 0:
+            proportional_zoom = max(proportional_zoom, max_size[0] / max_width * 1.2)
+            proportional_zoom = max(proportional_zoom, max_size[1] / max_height * 1.2)
 
     for i in [0, 1]:
         team_index = i+1

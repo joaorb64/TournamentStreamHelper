@@ -844,15 +844,35 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             game_name = TSHGameAssetManager.instance.selectedGame.get("name")
             self.selectRenderLabel.setText(f"{game_name}")
             
-            game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+            game = TSHGameAssetManager.instance.selectedGame
 
-            asset_pack = self.GetSetting(f"game.{game_codename}.asset_pack", "full")
-            index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail_config.game.{game_codename}.asset_pack")))
+            # If there's no asset_pack config for this game
+            if not SettingsManager.Get(f"thumbnail_config.game.{game.get('codename')}.asset_pack"):
+                # If there are any assets available
+                if len(list(asset_dict.keys())) > 0:
+                    # Pick the pack with the biggest images
+                    biggest_pack = list(game.get("assets").values())[0]
+                    biggest_pack_key = list(game.get("assets").keys())[0]
+
+                    for key, val in game.get("assets").items():
+                        if val.get("average_size") and biggest_pack.get("average_size"):
+                            val_size = val.get("average_size").get("x") * val.get("average_size").get("y")
+                            biggest_pack_size = biggest_pack.get("average_size").get("x") * biggest_pack.get("average_size").get("y")
+
+                            if val_size > biggest_pack_size:
+                                biggest_pack = val
+                                biggest_pack_key = key
+                        elif val.get("average_size") and not biggest_pack.get("average_size"):
+                            biggest_pack = val
+
+                    self.SaveSettings(f"game.{game.get('codename')}.asset_pack", biggest_pack_key)
+        
+            # Find pack in combobox, select it
+            index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail_config.game.{game.get('codename')}.asset_pack")))
 
             if index != -1:
                 self.selectRenderType.setCurrentIndex(index)
             else:
-                if len(list(asset_dict.keys())) > 0:
-                    self.SaveSettings(f"game.{game_codename}.asset_pack", list(asset_dict.keys())[0])
+                self.SaveSettings(f"game.{game.get('codename')}.asset_pack", list(asset_dict.keys())[0])
 
         self.selectRenderType.blockSignals(False)
