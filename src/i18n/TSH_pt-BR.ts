@@ -44,7 +44,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
         <source>Short Link</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
@@ -290,7 +290,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="53"/>
         <source>General Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurações Gerais</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="351"/>
@@ -330,12 +330,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="839"/>
         <source>Game Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurações de jogo</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="887"/>
         <source>Smooth scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>Redimensionamento suave</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="894"/>
@@ -372,7 +372,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="67"/>
         <source>Template</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="530"/>
@@ -436,7 +436,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1047"/>
         <source>Invert separator orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverter a orientação dos separadores</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1054"/>
@@ -455,7 +455,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1114"/>
         <source>Generate Thumbnail</source>
-        <translation type="unfinished">Gerar Thumbnail</translation>
+        <translation>Gerar Thumbnail</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1121"/>
@@ -880,7 +880,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="274"/>
         <source>Update all</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar todos</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="297"/>
@@ -896,7 +896,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="357"/>
         <source>Downloading {0}... ({1}/{2})</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixando {0}... ({1}/{2})</translation>
     </message>
     <message>
         <source>Downloading {0}...</source>
@@ -965,7 +965,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="44"/>
         <source>Ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="125"/>
@@ -1020,7 +1020,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
         <source>Show completed sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sets finalizados</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="78"/>
