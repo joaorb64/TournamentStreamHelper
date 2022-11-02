@@ -282,7 +282,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="53"/>
         <source>General Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages principaux</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="351"/>
@@ -322,12 +322,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="839"/>
         <source>Game Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages par jeu</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="887"/>
         <source>Smooth scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à l&apos;échelle lisse</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="894"/>
@@ -408,12 +408,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="965"/>
         <source>Scale to fit X</source>
-        <translation>Mise à l&apos;échelle horizontale</translation>
+        <translation>Contraindre la mise à l&apos;échelle horizontalement</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="972"/>
         <source>Scale to fit Y</source>
-        <translation>Mise à l&apos;échelle verticale</translation>
+        <translation>Contraindre la mise à l&apos;échelle verticalement</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="992"/>
