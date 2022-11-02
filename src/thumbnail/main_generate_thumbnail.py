@@ -1236,7 +1236,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     global text_color
     text_color = [
         {
-            "font_color": color_code_to_tuple(settings.get("phase_font_color", "#FFFFFF")),
+            "font_color": color_code_to_tuple(settings.get("player_font_color", "#FFFFFF")),
             "has_outline": deep_get(settings, f"player_outline", True),
             "outline_color": color_code_to_tuple(deep_get(settings, f"player_outline_color", "#FFFFFF"))
         },
