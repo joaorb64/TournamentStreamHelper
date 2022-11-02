@@ -341,10 +341,6 @@ body {
   border-radius: 8px;
 }
 
-.flagstate .text div {
-  margin-left: 4px;
-}
-
 .sponsor_icon > div > div {
   display: inline-block;
   background-size: contain;
