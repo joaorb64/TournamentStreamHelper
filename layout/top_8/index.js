@@ -1,15 +1,4 @@
 ;(($) => {
-  var ASSET_TO_USE_1ST = 'fuller'
-  var ZOOM_1ST = 1.2
-
-  var ASSET_TO_USE_2_to_4 = 'fuller'
-  var ZOOM_2_to_4 = 1.2
-
-  var ASSET_TO_USE_5_to_7 = 'fuller'
-  var ZOOM_5_to_7 = 1.2
-  
-  var DIVIDERS = true
-
   gsap.config({ nullTargetWarn: false, trialWarn: false })
 
   let startingAnimation = gsap
@@ -26,6 +15,48 @@
   async function Update() {
     oldData = data
     data = await getData()
+
+    if(data.game){
+      if (data.game.codename == "ssbu") {
+        var ASSET_TO_USE_1ST = 'fuller'
+        var ZOOM_1ST = 1.2
+
+        var ASSET_TO_USE_2_to_4 = 'fuller'
+        var ZOOM_2_to_4 = 1.2
+
+        var ASSET_TO_USE_5_to_7 = 'fuller'
+        var ZOOM_5_to_7 = 1.2
+      } else if (data.game.codename == "ssbm") {
+        var ASSET_TO_USE_1ST = 'portrait_hd'
+        var ZOOM_1ST = 1.2
+
+        var ASSET_TO_USE_2_to_4 = 'portrait_hd'
+        var ZOOM_2_to_4 = 1.2
+
+        var ASSET_TO_USE_5_to_7 = 'portrait_hd'
+        var ZOOM_5_to_7 = 1.2
+      } else if (data.game.codename == "ssb64") {
+        var ASSET_TO_USE_1ST = 'artwork'
+        var ZOOM_1ST = 1.2
+
+        var ASSET_TO_USE_2_to_4 = 'artwork'
+        var ZOOM_2_to_4 = 1.2
+
+        var ASSET_TO_USE_5_to_7 = 'artwork'
+        var ZOOM_5_to_7 = 1.2
+      } else {
+        var ASSET_TO_USE_1ST = 'full'
+        var ZOOM_1ST = 1.2
+
+        var ASSET_TO_USE_2_to_4 = 'full'
+        var ZOOM_2_to_4 = 1.2
+
+        var ASSET_TO_USE_5_to_7 = 'full'
+        var ZOOM_5_to_7 = 1.2
+      }
+      
+      var DIVIDERS = true
+    }
 
     if (
       !oldData.player_list ||
@@ -140,7 +171,7 @@
                 let centering = [0.5, 0.4]
 
                 // If not using dividers, calculate proper placement for each character
-                if(!DIVIDERS) GenerateMulticharacterPositions(validCharacters.length)[index]
+                if(!DIVIDERS) centering = GenerateMulticharacterPositions(validCharacters.length)[index]
 
                 charactersHtml += `
                   <div class="icon stockicon ${DIVIDERS ? "divided" : ""}">
