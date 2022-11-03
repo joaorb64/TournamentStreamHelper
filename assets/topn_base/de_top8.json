@@ -1,0 +1,106 @@
+{
+    "name": {
+        "en": "Double Elimination - Top 8",
+        "fr": "Double Élimination - Top 8"
+    },
+    "winners": [
+        {
+            "name": {
+                "en": "Winners Semis",
+                "fr": "Demi-finales Winner"
+            },
+            "matches": [
+                {
+                    "winner_to": "winners/1/matches/0/player/0",
+                    "loser_to": "losers/1/matches/0/player/0"
+                },
+                {
+                    "winner_to": "winners/1/matches/0/player/1",
+                    "loser_to": "losers/1/matches/1/player/0"
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Winners Finals",
+                "fr": "Finale Winner"
+            },
+            "matches": [
+                {
+                    "winner_to": "grands/winner",
+                    "loser_to": "losers/3/matches/0/player/0"
+                }
+            ]
+        }
+    ],
+    "losers": [
+        {
+            "name": {
+                "en": "Losers Top 8",
+                "fr": "Top 8 Loser"
+            },
+            "matches": [
+                {
+                    "winner_to": "losers/1/matches/0/player/1",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "losers/1/matches/1/player/1",
+                    "loser_to": null
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Losers Quarters",
+                "fr": "Quarts de finale Loser"
+            },
+            "matches": [
+                {
+                    "winner_to": "losers/2/matches/0/player/0",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "losers/2/matches/0/player/1",
+                    "loser_to": null
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Losers Semis",
+                "fr": "Demi-finale Loser"
+            },
+            "matches": [
+                {
+                    "winner_to": "losers/3/matches/0/player/1",
+                    "loser_to": null
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Losers Fnals",
+                "fr": "Finale Loser"
+            },
+            "matches": [
+                {
+                    "winner_to": "grands/loser",
+                    "loser_to": null
+                }
+            ]
+        }
+    ],
+    "grands": {
+        "name": {
+            "en": "Grand Finals",
+            "fr": "Grande Finale"
+        }
+    },
+    "grands_reset": {
+        "name": {
+            "en": "True Finals",
+            "fr": "Grande Finale - Reset"
+        }
+    }
+}

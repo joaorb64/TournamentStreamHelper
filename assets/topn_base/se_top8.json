@@ -1,0 +1,60 @@
+{
+    "name": {
+        "en": "Single Elimination - Top 8",
+        "fr": "Élimination Directe - Top 8"
+    },
+    "winners": [
+        {
+            "name": {
+                "en": "Quarter finals",
+                "fr": "Quarts de finale"
+            },
+            "matches": [
+                {
+                    "winner_to": "winners/1/matches/0/player/0",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "winners/1/matches/0/player/1",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "winners/1/matches/1/player/0",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "winners/1/matches/1/player/1",
+                    "loser_to": null
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Semi-finals",
+                "fr": "Demi-finales"
+            },
+            "matches": [
+                {
+                    "winner_to": "winners/2/matches/0/player/0",
+                    "loser_to": null
+                },
+                {
+                    "winner_to": "winners/2/matches/0/player/1",
+                    "loser_to": null
+                }
+            ]
+        },
+        {
+            "name": {
+                "en": "Finals",
+                "fr": "Finale"
+            },
+            "matches": [
+                {
+                    "winner_to": "win",
+                    "loser_to": null
+                }
+            ]
+        }
+    ]
+}
