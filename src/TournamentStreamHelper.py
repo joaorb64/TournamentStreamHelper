@@ -38,6 +38,7 @@ from .TSHAlertNotification import TSHAlertNotification
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHBracketWidget import TSHBracketWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
@@ -147,6 +148,14 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
         self.dockWidgets.append(thumbnailSetting)
+
+        bracket = TSHBracketWidget()
+        bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
+        bracket.setObjectName(
+            QApplication.translate("app", "Bracket"))
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, bracket)
+        self.dockWidgets.append(bracket)
 
         tournamentInfo = TSHTournamentInfoWidget()
         tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
