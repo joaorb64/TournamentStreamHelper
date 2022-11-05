@@ -278,6 +278,7 @@ class Window(QMainWindow):
             "app", "Toggle widgets") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(toggleWidgets)
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
+        toggleWidgets.addAction(self.stageWidget.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())

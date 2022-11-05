@@ -239,22 +239,25 @@ class TSHGameAssetManager(QObject):
                                     if not assetsKey in widths:
                                         widths[assetsKey] = []
 
-                                    widths[assetsKey].append(size.width())
+                                    if size.width() != -1:
+                                        widths[assetsKey].append(size.width())
 
                                     if not assetsKey in heights:
                                         heights[assetsKey] = []
 
-                                    heights[assetsKey].append(size.height())
+                                    if size.height() != -1:
+                                        heights[assetsKey].append(size.height())
                             print("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
                         
                         # Set average size
                         for assetsKey in list(gameObj["assets"].keys()):
                             try:
-                                gameObj["assets"][assetsKey]["average_size"] = {
-                                    "x": sum(widths[assetsKey])/len(widths[assetsKey]),
-                                    "y": sum(heights[assetsKey])/len(heights[assetsKey])
-                                }
+                                if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
+                                    gameObj["assets"][assetsKey]["average_size"] = {
+                                        "x": sum(widths[assetsKey])/len(widths[assetsKey]),
+                                        "y": sum(heights[assetsKey])/len(heights[assetsKey])
+                                    }
                             except:
                                 print(traceback.format_exc())
 

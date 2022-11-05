@@ -1,3 +1,4 @@
+from email.policy import default
 from multiprocessing import Lock
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -11,6 +12,7 @@ from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
 from .TSHGameAssetManager import *
 from .Workers import Worker
+from .Helpers.TSHDictHelper import deep_get, deep_set
 
 
 class PreviewWidget(QWidget):
@@ -55,139 +57,16 @@ class TSHThumbnailSettingsWidgetSignals(QObject):
 
 
 class TSHThumbnailSettingsWidget(QDockWidget):
-    def resetDisplay(self, settings, force_defaults=False):
-        self.VSpacer.setValue(settings["separator"]["width"])
-        self.VColor.setStyleSheet("background-color: %s" %
-                                  settings["separator"]["color"])
-        self.phase_name.setChecked(settings["display_phase"])
-        self.team_name.setChecked(settings["use_team_names"])
-        self.sponsor.setChecked(settings["use_sponsors"])
-        self.flip_p2.setChecked(settings["flip_p2"])
-        self.flip_p1.setChecked(settings["flip_p1"])
-        self.open_explorer.setChecked(settings["open_explorer"])
-        self.selectFontPlayer.setCurrentIndex(
-            self.selectFontPlayer.findText(settings["font_list"][0]["name"]))
-        self.selectFontPhase.setCurrentIndex(
-            self.selectFontPhase.findText(settings["font_list"][1]["name"]))
-        if force_defaults:
-            self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText(QApplication.translate("app","Bold Italic")))
-            self.selectTypeFontPlayer.setCurrentIndex(
-                self.selectTypeFontPlayer.findText(QApplication.translate("app","Bold")))
-        else:
-            self.selectTypeFontPhase.setCurrentIndex(
-                self.selectTypeFontPhase.findText(QApplication.translate("app",settings["font_list"][1]["fontPath"])))
-            self.selectTypeFontPlayer.setCurrentIndex(
-                self.selectTypeFontPlayer.findText(QApplication.translate("app",settings["font_list"][0]["fontPath"])))
-        self.playerFontColor.setStyleSheet(
-            "background-color: %s" % settings["font_color"][0])
-        if not settings.get("sponsor_font_color_1"):
-            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_1", val=["#ff7a6d", "#ff7a6d"], generatePreview=True)
-        if not settings.get("sponsor_font_color_2"):
-            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"sponsor_font_color_2", val=["#29b6f6", "#29b6f6"], generatePreview=True)
-        self.sponsorFontColor1.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_1", ["#ff7a6d"])[0])
-        self.sponsorFontColor2.setStyleSheet(
-            "background-color: %s" % settings.get("sponsor_font_color_2", ["#29b6f6"])[0])
-        self.phaseFontColor.setStyleSheet(
-            "background-color: %s" % settings.get("phase_font_color", ["#FFFFFF", "#FFFFFF"])[1])
-        self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
-        if settings["font_outline_enabled"][0]:
-            self.colorPlayerOutline.setStyleSheet(
-                "background-color: %s" % settings["font_outline_color"][0])
-            self.colorPlayerOutline.setText("")
-        else:
-            self.colorPlayerOutline.setStyleSheet("")
-            self.colorPlayerOutline.setText("Disabled")
-        self.colorPhaseOutline.setEnabled(settings["font_outline_enabled"][1])
-        if settings["font_outline_enabled"][1]:
-            self.colorPhaseOutline.setStyleSheet(
-                "background-color: %s" % settings["font_outline_color"][1])
-            self.colorPhaseOutline.setText("")
-        else:
-            self.colorPhaseOutline.setStyleSheet("")
-            self.colorPhaseOutline.setText("Disabled")
-        self.enablePlayerOutline.setChecked(
-            settings["font_outline_enabled"][0])
-        self.enablePhaseOutline.setChecked(settings["font_outline_enabled"][1])
-        game_codename = TSHGameAssetManager.instance.selectedGame.get(
-            "codename")
-        if game_codename:
-            self.zoom.setEnabled(True)
-            self.horizontalAlign.setEnabled(True)
-            self.verticalAlign.setEnabled(True)
-            if not settings.get(f"zoom/{game_codename}"):
-                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=True)
-            self.zoom.setValue(settings.get(f"zoom/{game_codename}", 100))
-            if not settings.get(f"horizontalAlign/{game_codename}"):
-                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=True)
-            if not settings.get(f"verticalAlign/{game_codename}"):
-                TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=True)
-            self.horizontalAlign.setValue(settings.get(f"horizontalAlign/{game_codename}", 50))
-            self.verticalAlign.setValue(settings.get(f"verticalAlign/{game_codename}", 40))
-        else:
-            self.zoom.setEnabled(False)
-            self.horizontalAlign.setEnabled(False)
-            self.verticalAlign.setEnabled(False)
-
-    def setDefaults(self, button_mode=False):
-        settings = {
-            "display_phase": True,
-            "use_team_names": False,
-            "use_sponsors": True,
-            "flip_p1": False,
-            "flip_p2": False,
-            "open_explorer": True,
-            "main_icon_path": "./assets/icons/icon.png",
-            "separator": {
-                "width": 5,
-                "color": "#18181b"
-            },
-            "thumbnail_type": "./assets/thumbnail_base/thumbnail_types/type_a.json"
-        }
-        settings["side_icon_list"] = ["", ""]
-        settings["font_list"] = [{
-            "name": "Roboto Condensed",
-            "type": "Bold",
-            "fontPath": "Bold"
-        }, {
-            "name": "Roboto Condensed",
-            "type": "Bold",
-            "fontPath": "Bold"
-        }]
-        settings["font_color"] = [
-            "#FFFFFF", "#FFFFFF"
-        ]
-        settings["phase_font_color"] = [
-            "#FFFFFF", "#FFFFFF"
-        ]
-        settings["sponsor_font_color_1"] = [
-            "#ed333b", "#ed333b"
-        ]
-        settings["sponsor_font_color_2"] = [
-            "#62a0ea", "#62a0ea"
-        ]
-        settings["font_outline_color"] = [
-            "#000000", "#000000"
-        ]
-        settings["font_outline_enabled"] = [
-            True, True
-        ]
-        SettingsManager.Set("thumbnail", settings)
-
-        if button_mode:
-            self.resetDisplay(settings, force_defaults=True)
-            self.SetAssetPack(reset=True)
-            self.GeneratePreview()
-
     def __init__(self, *args):
         super().__init__(*args)
+
+        if not SettingsManager.Get("thumbnail_config"):
+            SettingsManager.Set("thumbnail_config", {})
 
         self.signals = TSHThumbnailSettingsWidgetSignals()
         self.signals.updatePreview.connect(self.UpdatePreview)
 
         self.thumbnailGenerationThread = QThreadPool()
-        self.thumbnailGenerationThread.setMaxThreadCount(1)
         self.lock = Lock()
 
         self.setWindowTitle(QApplication.translate("app","Thumbnail Settings"))
@@ -203,29 +82,73 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         # SET DEFAULTS
         self.setDefaultsButton = self.settings.findChild(
             QPushButton, "resetToDefault")
-        self.setDefaultsButton.clicked.connect(
-            lambda: self.setDefaults(button_mode=True))
+        self.setDefaultsButton.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config"),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
 
         # IMG
-        self.foreground = self.settings.findChild(
-            QPushButton, "customForeground")
-        self.background = self.settings.findChild(
-            QPushButton, "customBackground")
+        self.foreground = self.settings.findChild(QPushButton, "customForeground")
+        self.foregroundReset = self.settings.findChild(QPushButton, "customForegroundReset")
+        self.foregroundReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.foregroundReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config.foreground_path"),
+            self.GeneratePreview()
+        ])
+
+        self.background = self.settings.findChild(QPushButton, "customBackground")
+        self.backgroundReset = self.settings.findChild(QPushButton, "customBackgroundReset")
+        self.backgroundReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.backgroundReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config.background_path"),
+            self.GeneratePreview()
+        ])
+        
         self.mainIcon = self.settings.findChild(QPushButton, "customMainIcon")
+        self.mainIconReset = self.settings.findChild(QPushButton, "customMainIconReset")
+        self.mainIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.mainIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config.main_icon_path"),
+            self.GeneratePreview()
+        ])
+
         self.topLeftIcon = self.settings.findChild(
             QPushButton, "customTopLeftIcon")
+        self.topLeftIconReset = self.settings.findChild(
+            QPushButton, "customTopLeftIconReset")
+        self.topLeftIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.topLeftIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config.side_icon_list.L"),
+            self.GeneratePreview()
+        ])
+
         self.topRightIcon = self.settings.findChild(
             QPushButton, "customTopRightIcon")
+        self.topRightIconReset = self.settings.findChild(
+            QPushButton, "customTopRightIconReset")
+        self.topRightIconReset.setIcon(QIcon('assets/icons/undo.svg'))
+        self.topRightIconReset.clicked.connect(lambda: [
+            SettingsManager.Unset("thumbnail_config.side_icon_list.R"),
+            self.GeneratePreview()
+        ])
 
         self.foreground.clicked.connect(
             lambda: self.SaveImage("foreground_path"))
         self.background.clicked.connect(
             lambda: self.SaveImage("background_path"))
+
         self.mainIcon.clicked.connect(lambda: self.SaveImage("main_icon_path"))
+
+        if not self.GetSetting("side_icon_list.L", None):
+            self.SaveSettings("side_icon_list.L", "")
         self.topLeftIcon.clicked.connect(
-            lambda: self.SaveIcons("side_icon_list", 0))
+            lambda: self.SaveIcons("side_icon_list", "L"))
+
+        if not self.GetSetting("side_icon_list.R", None):
+            self.SaveSettings("side_icon_list.R", "")
         self.topRightIcon.clicked.connect(
-            lambda: self.SaveIcons("side_icon_list", 1))
+            lambda: self.SaveIcons("side_icon_list", "R"))
 
         self.templateSelect: QComboBox = self.settings.findChild(
             QComboBox, "templateSelect"
@@ -245,25 +168,17 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         for t in self.templates:
             self.templateSelect.addItem(t.get("name") + f' ({t.get("filename", "").rsplit("/")[-1]})', t)
         
-        currSettings = SettingsManager.Get("thumbnail", {})
-
-        for i, t in enumerate(self.templates):
-            if t.get("filename") == currSettings.get("thumbnail_type", None):
-                self.templateSelect.setCurrentIndex(i)
-        
         self.templateSelect.currentIndexChanged.connect(
             lambda val: [
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self,
                     key=f"foreground_path", 
-                    val="",
-                    generatePreview=False
+                    val=""
                 ),
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self,
                     key=f"background_path", 
-                    val="",
-                    generatePreview=False
+                    val=""
                 ),
                 TSHThumbnailSettingsWidget.SaveSettings(
                     self,
@@ -278,20 +193,29 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.VSpacer = self.settings.findChild(QSpinBox, "widthSpacer")
         self.VColor = self.settings.findChild(QPushButton, "colorSpacer")
 
-        self.VSpacer.valueChanged.connect(lambda: self.SaveSettings(
-            key="separator", subKey="width", val=self.VSpacer.value()))
+        self.VSpacer.valueChanged.connect(
+            lambda: self.SaveSettings(
+                key="separator.width",
+                val=self.VSpacer.value(),
+                generatePreview=True
+            )
+        )
         # open color select & save
-        self.VColor.clicked.connect(lambda: self.ColorPicker(
-            self.VColor, key="separator", subKey="color"))
+        self.VColor.clicked.connect(
+            lambda: self.ColorPicker(
+                self.VColor,
+                key="separator.color"
+            )
+        )
 
-        # CHECK BOX
+        # CHECKBOX
         self.phase_name = self.settings.findChild(QCheckBox, "phaseNameCheck")
         self.team_name = self.settings.findChild(QCheckBox, "teamNameCheck")
         self.sponsor = self.settings.findChild(QCheckBox, "sponsorCheck")
+        self.smooth_scale = self.settings.findChild(QCheckBox, "smoothScaling")
         self.flip_p2 = self.settings.findChild(QCheckBox, "flipP2Check")
         self.flip_p1 = self.settings.findChild(QCheckBox, "flipP1Check")
-        self.open_explorer = self.settings.findChild(
-            QCheckBox, "openExplorerCheck")
+        self.open_explorer = self.settings.findChild(QCheckBox, "openExplorerCheck")
 
         self.zoom = self.settings.findChild(QSpinBox, "zoom")
 
@@ -306,24 +230,39 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.flipSeparators = self.settings.findChild(QCheckBox, "flipSeparators")
 
         self.phase_name.stateChanged.connect(lambda: self.SaveSettings(
-            key="display_phase", val=self.phase_name.isChecked()))
-        self.team_name.stateChanged.connect(lambda: self.SaveSettings(
-            key="use_team_names", val=self.team_name.isChecked()))
-        self.sponsor.stateChanged.connect(lambda: self.SaveSettings(
-            key="use_sponsors", val=self.sponsor.isChecked()))
-        self.flip_p2.stateChanged.connect(lambda: self.SaveSettings(
-            key="flip_p2", val=self.flip_p2.isChecked()))
-        self.flip_p1.stateChanged.connect(lambda: self.SaveSettings(
-            key="flip_p1", val=self.flip_p1.isChecked()))
-        self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(
-            key="open_explorer", val=self.open_explorer.isChecked()))
+            key="display_phase", val=self.phase_name.isChecked(), generatePreview=True))
 
-        self.zoom.valueChanged.connect(lambda val: self.SetZoomSetting(force=True))
+        self.team_name.stateChanged.connect(lambda: self.SaveSettings(
+            key="use_team_names", val=self.team_name.isChecked(), generatePreview=True))
+
+        self.sponsor.stateChanged.connect(lambda: self.SaveSettings(
+            key="use_sponsors", val=self.sponsor.isChecked(), generatePreview=True))
+
+        self.open_explorer.stateChanged.connect(lambda: self.SaveSettings(
+            key="open_explorer", val=self.open_explorer.isChecked(), generatePreview=True))
+        
+        self.flip_p2.stateChanged.connect(lambda: self.SaveSettings(
+            key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flip_p2", val=self.flip_p2.isChecked(), generatePreview=True))
+
+        self.flip_p1.stateChanged.connect(lambda: self.SaveSettings(
+            key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flip_p1", val=self.flip_p1.isChecked(), generatePreview=True))
+        
+        self.smooth_scale.stateChanged.connect(lambda: self.SaveSettings(
+            key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.smooth_scale", val=self.smooth_scale.isChecked(), generatePreview=True))
+
+        self.zoom.valueChanged.connect(lambda:
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.zoom",
+                val=self.zoom.value(),
+                generatePreview=True
+            )
+        )
 
         self.horizontalAlign.valueChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"horizontalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.align.horizontal", 
                 val=val,
                 generatePreview=True
             )]
@@ -332,7 +271,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.verticalAlign.valueChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"verticalAlign/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.align.vertical", 
                 val=val,
                 generatePreview=True
             )]
@@ -341,7 +280,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillX.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"scaleToFillX/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillX", 
                 val=self.scaleToFillX.checkState(),
                 generatePreview=True
             )]
@@ -350,7 +289,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillY.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"scaleToFillY/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillY", 
                 val=self.scaleToFillY.checkState(),
                 generatePreview=True
             )]
@@ -359,7 +298,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.hideSeparators.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"hideSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.hideSeparators", 
                 val=self.hideSeparators.checkState(),
                 generatePreview=True
             )]
@@ -368,7 +307,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.flipSeparators.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"flipSeparators/{TSHGameAssetManager.instance.selectedGame.get('codename')}", 
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flipSeparators", 
                 val=self.flipSeparators.checkState(),
                 generatePreview=True
             )]
@@ -400,22 +339,40 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.enablePhaseOutline = self.settings.findChild(
             QCheckBox, "enablePhaseOutline")
 
-        self.playerFontColor.clicked.connect(lambda: self.ColorPicker(
-            button=self.playerFontColor, key="font_color", subKey=0))
-        self.sponsorFontColor1.clicked.connect(lambda: self.ColorPicker(
-            button=self.sponsorFontColor1, key="sponsor_font_color_1", subKey=0))
-        self.sponsorFontColor2.clicked.connect(lambda: self.ColorPicker(
-            button=self.sponsorFontColor2, key="sponsor_font_color_2", subKey=0))
-        self.phaseFontColor.clicked.connect(lambda: self.ColorPicker(
-            button=self.phaseFontColor, key="phase_font_color", subKey=1))
-        self.colorPlayerOutline.clicked.connect(lambda: self.ColorPicker(
-            button=self.colorPlayerOutline, key="font_outline_color", subKey=0))
-        self.colorPhaseOutline.clicked.connect(lambda: self.ColorPicker(
-            button=self.colorPhaseOutline, key="font_outline_color", subKey=1))
-        self.enablePlayerOutline.stateChanged.connect(
-            lambda: self.enableOutline(index=0, val=self.enablePlayerOutline.isChecked()))
-        self.enablePhaseOutline.stateChanged.connect(
-            lambda: self.enableOutline(index=1, val=self.enablePhaseOutline.isChecked()))
+        self.playerFontColor.clicked.connect(lambda: [
+            self.ColorPicker(button=self.playerFontColor, key="player_font_color"),
+            self.GeneratePreview()
+        ])
+        self.sponsorFontColor1.clicked.connect(lambda: [
+            self.ColorPicker(button=self.sponsorFontColor1, key="sponsor_font_color_1"),
+            self.GeneratePreview()
+        ])
+        self.sponsorFontColor2.clicked.connect(lambda: [
+            self.ColorPicker(button=self.sponsorFontColor2, key="sponsor_font_color_2"),
+            self.GeneratePreview()
+        ])
+        self.phaseFontColor.clicked.connect(lambda: [
+            self.ColorPicker(button=self.phaseFontColor, key="phase_font_color"),
+            self.GeneratePreview()
+        ])
+        self.colorPlayerOutline.clicked.connect(lambda: [
+            self.ColorPicker(button=self.colorPlayerOutline, key="player_outline_color"),
+            self.GeneratePreview()
+        ])
+        self.colorPhaseOutline.clicked.connect(lambda: [
+            self.ColorPicker(button=self.colorPhaseOutline, key="phase_outline_color"),
+            self.GeneratePreview()
+        ])
+        self.enablePlayerOutline.stateChanged.connect(lambda: [
+            self.SaveSettings("player_outline", val=self.enablePlayerOutline.isChecked()),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
+        self.enablePhaseOutline.stateChanged.connect(lambda: [
+            self.SaveSettings("phase_outline", val=self.enablePhaseOutline.isChecked()),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
 
         # PREVIEW
         previewContainer = self.settings.findChild(QWidget, "thumbnailPreview")
@@ -430,33 +387,27 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             QPushButton, "btGenerate")
         self.generateThumbnail.clicked.connect(lambda: self.parent().scoreboard.GenerateThumbnail())
 
-        # -- load settings at init
-        settings = SettingsManager.Get("thumbnail")
-        if settings is not None:
-            print(f'found thumbnail settings ! {settings}')
-        else:
-            self.setDefaults()
-        settings = SettingsManager.Get("thumbnail")
-
         # Load OpenSans
         QFontDatabase.addApplicationFont(
             "./assets/font/OpenSans/OpenSans-Bold.ttf")
         QFontDatabase.addApplicationFont(
             "./assets/font/OpenSans/OpenSans-Semibold.ttf")
-        font_id = QFontDatabase.addApplicationFont(
-            "./assets/font/OpenSans/OpenSans-Bold.ttf")
 
         unloadable, self.family_to_path = self.getFontPaths()
         # add Open Sans
         self.family_to_path["Open Sans"] = [
-            './assets/font/OpenSans/OpenSans-Bold.ttf', './assets/font/OpenSans/OpenSans-Semibold.ttf']
+            './assets/font/OpenSans/OpenSans-Bold.ttf',
+            './assets/font/OpenSans/OpenSans-Semibold.ttf'
+        ]
 
         # Load Roboto Condensed
         QFontDatabase.addApplicationFont(
             "./assets/font/RobotoCondensed.ttf")
         
         self.family_to_path["Roboto Condensed"] = [
-            './assets/font/RobotoCondensed.ttf', './assets/font/RobotoCondensed.ttf']
+            './assets/font/RobotoCondensed.ttf',
+            './assets/font/RobotoCondensed.ttf'
+        ]
 
         # add all fonts available
         for k, v in sorted(self.family_to_path.items()):
@@ -469,23 +420,18 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectFontPhase.currentIndexChanged.connect(
             lambda: self.SetTypeFont(1, self.selectFontPhase, self.selectTypeFontPhase))
 
-        # update display
-        self.resetDisplay(settings)
-
         # listener type font
         self.selectTypeFontPlayer.currentIndexChanged.connect(lambda: self.SaveFont(
-            "font_list",
+            "player_font",
             self.selectFontPlayer.currentText(),
-            self.selectTypeFontPlayer.currentText(),
             self.selectTypeFontPlayer.currentData(),
-            0
+            self.selectTypeFontPlayer.currentData()
         ))
         self.selectTypeFontPhase.currentIndexChanged.connect(lambda: self.SaveFont(
-            "font_list",
+            "phase_font",
             self.selectFontPhase.currentText(),
-            self.selectTypeFontPhase.currentText(),
             self.selectTypeFontPhase.currentData(),
-            1
+            self.selectTypeFontPhase.currentData()
         ))
 
         # Asset Pack
@@ -493,8 +439,20 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.selectRenderType = self.settings.findChild(
             QComboBox, "comboBoxAsset")
         # add item (assets pack) when choosing game
-        TSHGameAssetManager.instance.signals.onLoad.connect(self.SetAssetPack)
-        self.selectRenderType.currentIndexChanged.connect(self.SetAssetSetting)
+        TSHGameAssetManager.instance.signals.onLoad.connect(lambda: [
+            self.LoadAssetPacks(),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
+
+        self.selectRenderType.currentIndexChanged.connect(lambda: [
+            SettingsManager.Set(
+                f"thumbnail_config.game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.asset_pack",
+                self.selectRenderType.currentData()
+            ),
+            self.updateFromSettings(),
+            self.GeneratePreview()
+        ])
 
         tmp_path = "./tmp/thumbnail"
         tmp_file = f"{tmp_path}/template.jpg"
@@ -506,41 +464,228 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 tmp_file = thumbnail.generate(
                     isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
             except Exception as e:
-                self.DisplayErrorMessage(e)
+                self.DisplayErrorMessage(traceback.format_exc())
         self.preview.setPixmap(QPixmap(tmp_file))
 
-    def enableOutline(self, index=0, val=True):
-        self.SaveSettings(key="font_outline_enabled", subKey=index, val=val)
+        self.updateFromSettings()
+    
+    def GetSetting(self, key, default=0):
+        setting = SettingsManager.Get(
+            f"thumbnail_config.{key}",
+            default=None
+        )
+        if setting == None:
+            setting = default
+            SettingsManager.Set(f"thumbnail_config.{key}", default)
+        return setting
+    
+    def updateFromSettings(self):
+        game_codename = TSHGameAssetManager.instance.selectedGame.get('codename')
 
-        settings = SettingsManager.Get("thumbnail")
-        self.colorPlayerOutline.setEnabled(settings["font_outline_enabled"][0])
-        if settings["font_outline_enabled"][0]:
-            self.colorPlayerOutline.setStyleSheet(
-                "background-color: %s" % settings["font_outline_color"][0])
+        self.GetSetting("main_icon_path", "./layout/logo.png")
+
+        # Thumbnail type
+        try:
+            for i, t in enumerate(self.templates):
+                if t.get("filename") == self.GetSetting("thumbnail_type", "./assets/thumbnail_base/thumbnail_types/type_a.json"):
+                    self.templateSelect.blockSignals(True)
+                    self.templateSelect.setCurrentIndex(i)
+                    self.templateSelect.blockSignals(False)
+        except:
+            print(traceback.format_exc())
+        
+        # Upper checkboxes
+        self.phase_name.blockSignals(True)
+        self.phase_name.setChecked(self.GetSetting("display_phase", True))
+        self.phase_name.blockSignals(False)
+        self.team_name.blockSignals(True)
+        self.team_name.setChecked(self.GetSetting("use_team_names", True))
+        self.team_name.blockSignals(False)
+        self.sponsor.blockSignals(True)
+        self.sponsor.setChecked(self.GetSetting("use_sponsors", True))
+        self.sponsor.blockSignals(False)
+        self.open_explorer.blockSignals(True)
+        self.open_explorer.setChecked(self.GetSetting("open_explorer", False))
+        self.open_explorer.blockSignals(False)
+
+        # Player font, player font type
+        playerFont = self.GetSetting(
+            "player_font",
+            {
+                "name": "Roboto Condensed",
+                "type": "Bold",
+                "fontPath": "Bold"
+            }
+        )
+        self.selectFontPlayer.blockSignals(True)
+        self.selectTypeFontPlayer.blockSignals(True)
+        self.selectFontPlayer.setCurrentIndex(
+            self.selectFontPlayer.findText(playerFont.get("name")))
+        self.SetTypeFont(0, self.selectFontPlayer, self.selectTypeFontPlayer)
+        self.selectTypeFontPlayer.setCurrentIndex(
+            self.selectTypeFontPlayer.findData(playerFont.get("type")))
+        self.selectFontPlayer.blockSignals(False)
+        self.selectTypeFontPlayer.blockSignals(False)
+
+        # Phase font, phase font type
+        phaseFont = self.GetSetting(
+            "phase_font",
+            {
+                "name": "Roboto Condensed",
+                "type": "Bold",
+                "fontPath": "Bold"
+            }
+        )
+        self.selectFontPhase.blockSignals(True)
+        self.selectTypeFontPhase.blockSignals(True)
+        self.selectFontPhase.setCurrentIndex(
+            self.selectFontPhase.findText(phaseFont.get("name")))
+        self.SetTypeFont(1, self.selectFontPhase, self.selectTypeFontPhase)
+        self.selectTypeFontPhase.setCurrentIndex(
+            self.selectTypeFontPhase.findData(phaseFont.get("type")))
+        self.selectFontPhase.blockSignals(False)
+        self.selectTypeFontPhase.blockSignals(False)
+        
+        # Outlines
+        self.enablePlayerOutline.blockSignals(True)
+        self.enablePlayerOutline.setChecked(self.GetSetting(f"player_outline", True))
+        self.enablePlayerOutline.blockSignals(False)
+        
+        self.enablePhaseOutline.blockSignals(True)
+        self.enablePhaseOutline.setChecked(self.GetSetting(f"phase_outline", True))
+        self.enablePhaseOutline.blockSignals(False)
+
+        # Set background-color for color pickers
+        if self.GetSetting("player_outline", True) == True:
+            self.colorPlayerOutline.setStyleSheet("background-color: %s" % self.GetSetting("player_outline_color", "#000000"))
             self.colorPlayerOutline.setText("")
         else:
             self.colorPlayerOutline.setStyleSheet("")
             self.colorPlayerOutline.setText("Disabled")
-        self.colorPhaseOutline.setEnabled(settings["font_outline_enabled"][1])
-        if settings["font_outline_enabled"][1]:
-            self.colorPhaseOutline.setStyleSheet(
-                "background-color: %s" % settings["font_outline_color"][1])
+        
+        if self.GetSetting("phase_outline", True) == True:
+            self.colorPhaseOutline.setStyleSheet("background-color: %s" % self.GetSetting("phase_outline_color", "#000000"))
             self.colorPhaseOutline.setText("")
         else:
             self.colorPhaseOutline.setStyleSheet("")
             self.colorPhaseOutline.setText("Disabled")
+        
+        self.playerFontColor.setStyleSheet("background-color: %s" % self.GetSetting("player_font_color", "#FFFFFF"))
+        self.phaseFontColor.setStyleSheet("background-color: %s" % self.GetSetting("phase_font_color", "#FFFFFF"))
 
-    def SaveIcons(self, key, index):
+        self.sponsorFontColor1.setStyleSheet("background-color: %s" % self.GetSetting("sponsor_font_color_1", "#ff7a6d"))
+        self.sponsorFontColor2.setStyleSheet("background-color: %s" % self.GetSetting("sponsor_font_color_2", "#29b6f6"))
+
+        self.VColor.setStyleSheet("background-color: %s" % self.GetSetting("separator.color", "#000000"))
+
+        # Separator width
+        self.VSpacer.blockSignals(True)
+        self.VSpacer.setValue(self.GetSetting(
+            f"separator.width",
+            6
+        ))
+        self.VSpacer.blockSignals(False)
+
+        # Flip player assets
+        self.flip_p2.blockSignals(True)
+        self.flip_p2.setChecked(self.GetSetting(f"game.{game_codename}.flip_p2", True))
+        self.flip_p2.blockSignals(False)
+
+        self.flip_p1.blockSignals(True)
+        self.flip_p1.setChecked(self.GetSetting(f"game.{game_codename}.flip_p1", False))
+        self.flip_p1.blockSignals(False)
+
+        self.smooth_scale.blockSignals(True)
+        self.smooth_scale.setChecked(self.GetSetting(f"game.{game_codename}.smooth_scale", True))
+        self.smooth_scale.blockSignals(False)
+
+        # Eyesight alignment
+        self.horizontalAlign.blockSignals(True)
+        self.horizontalAlign.setValue(self.GetSetting(
+            f"game.{game_codename}.align.horizontal",
+            50
+        ))
+        self.horizontalAlign.blockSignals(False)
+
+        self.verticalAlign.blockSignals(True)
+        self.verticalAlign.setValue(self.GetSetting(
+            f"game.{game_codename}.align.vertical",
+            40
+        ))
+        self.verticalAlign.blockSignals(False)
+
+        # Zoom
+        self.zoom.blockSignals(True)
+        self.zoom.setValue(self.GetSetting(
+            f"game.{game_codename}.zoom",
+            100
+        ))
+        self.zoom.blockSignals(False)
+
+        # Flip separators
+        self.flipSeparators.blockSignals(True)
+        self.flipSeparators.setChecked(self.GetSetting(
+            f"game.{game_codename}.flipSeparators",
+            False
+        ))
+        self.flipSeparators.blockSignals(False)
+
+        # Hide separators
+        self.hideSeparators.blockSignals(True)
+        self.hideSeparators.setChecked(self.GetSetting(
+            f"game.{game_codename}.hideSeparators",
+            False
+        ))
+        self.hideSeparators.blockSignals(False)
+
+        # Scale to fill X/Y
+        self.scaleToFillX.blockSignals(True)
+        self.scaleToFillX.setChecked(self.GetSetting(
+            f"game.{game_codename}.scaleFillX",
+            False
+        ))
+        self.scaleToFillX.blockSignals(False)
+
+        self.scaleToFillY.blockSignals(True)
+        self.scaleToFillY.setChecked(self.GetSetting(
+            f"game.{game_codename}.scaleFillY",
+            False
+        ))
+        self.scaleToFillY.blockSignals(False)
+
+        # Disable scale to fill options if it doesn't make sense with uncropped edge
+        # Because if the edges are cropped it's going to scale to fill anyways
+        # since we can't let it show past a cropped edge
+        uncropped_edge = []
+
+        if TSHGameAssetManager.instance.selectedGame.get("assets", {}).get(self.GetSetting(f"game.{game_codename}.asset_pack"), {}).get("uncropped_edge", []):
+            uncropped_edge = TSHGameAssetManager.instance.selectedGame.get("assets").get(self.GetSetting(f"game.{game_codename}.asset_pack"), {}).get("uncropped_edge", [])
+
+        if 'l' in uncropped_edge or 'r' in uncropped_edge:
+            self.scaleToFillX.setEnabled(True)
+            self.scaleToFillX.setChecked(
+                self.GetSetting(f"game.{game_codename}.scaleFillX", 0))
+        else:
+            self.scaleToFillX.setEnabled(False)
+        
+        if 'u' in uncropped_edge or 'd' in uncropped_edge:
+            self.scaleToFillY.setEnabled(True)
+            self.scaleToFillY.setChecked(
+                self.GetSetting(f"game.{game_codename}.scaleFillY", 0))
+        else:
+            self.scaleToFillY.setEnabled(False)
+
+    def SaveIcons(self, key, side):
         path = QFileDialog.getOpenFileName()[0]
         if path:
-            self.SaveSettings(key=key, subKey=index, val=path)
+            self.SaveSettings(key=f"{key}.{side}", val=path, generatePreview=True)
 
     def SaveImage(self, key):
         path = QFileDialog.getOpenFileName()[0]
         if path:
-            self.SaveSettings(key=key, val=path)
+            self.SaveSettings(key=key, val=path, generatePreview=True)
 
-    def SaveFont(self, key, font, type, fontPath, index):
+    def SaveFont(self, key, font, type, fontPath):
         try:
             if font and fontPath:
                 fontSetting = {
@@ -548,35 +693,26 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     "type": type,
                     "fontPath": fontPath
                 }
-                self.SaveSettings(key=key, subKey=index, val=fontSetting)
+                self.SaveSettings(f"{key}", val=fontSetting)
+                self.GeneratePreview()
         except Exception as e:
             print("error save font")
             print(e)
 
-    def ColorPicker(self, button, key="separator", subKey="color"):
+    def ColorPicker(self, button, key):
         try:
             # HEX color
             color_result = QColorDialog.getColor()
             if color_result.isValid():
                 color = color_result.name()
-                # set button color
-                button.setStyleSheet("background-color: %s" % color)
-                self.SaveSettings(key=key, subKey=subKey, val=color)
+                self.SaveSettings(f"{key}", val=color)
+                self.updateFromSettings()
         except Exception as e:
             print(e)
 
-    def SaveSettings(self, key, val, subKey=None, generatePreview=True):
+    def SaveSettings(self, key, val, generatePreview=False):
         try:
-            settings = SettingsManager.Get("thumbnail")
-
-            if subKey is not None:
-                print(f'\t- save {val} in {key}.{subKey}')
-                settings[key][subKey] = val
-            else:
-                print(f'\t- save {val} in {key}')
-                settings[key] = val
-
-            SettingsManager.Set("thumbnail", settings)
+            SettingsManager.Set(f"thumbnail_config.{key}", val)
         except Exception as e:
             print(e)
 
@@ -638,16 +774,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
     # re-generate preview
     def GeneratePreview(self, manual=False):
         SettingsManager.LoadSettings()
-        settings = SettingsManager.Get("thumbnail")
-
-        if not settings.get("thumbnail_type"):
-            settings["thumbnail_type"] = "./assets/thumbnail_base/thumbnail_types/type_a.json"
-        
-        for font_index in range(len(settings["font_list"])):
-            if "type" in settings["font_list"][font_index]["type"].lower():
-                settings["font_list"][font_index]["type"] = QApplication.translate("app","Bold")
-                settings["font_list"][font_index]["filePath"] = "Bold"
-                SettingsManager.Set("thumbnail", settings)
+        self.updateFromSettings()
 
         if not manual:
             # Automatic preview update, we dont want it to spam error messages
@@ -664,14 +791,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 if tmp_file:
                     self.signals.updatePreview.emit(tmp_file)
             except Exception as e:
-                self.DisplayErrorMessage(e)
+                self.DisplayErrorMessage(traceback.format_exc())
 
     def GeneratePreviewDo(self, progress_callback):
-        if self.thumbnailGenerationThread.activeThreadCount() > 1:
-            return
-
         with self.lock:
             try:
+                if self.thumbnailGenerationThread.activeThreadCount() > 1:
+                    return
+
                 tmp_file = thumbnail.generate(
                     isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
                 if tmp_file:
@@ -691,17 +818,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
     def UpdatePreview(self, file):
         self.preview.setPixmap(QPixmap(file))
+    
+    def LoadAssetPacks(self):
+        self.selectRenderType.blockSignals(True)
 
-    def SetAssetPack(self, reset=False):
-        self.selectRenderLabel.clear()
+        self.selectRenderLabel.setText("(No game selected)")
         self.selectRenderType.clear()
-        if (TSHGameAssetManager.instance.selectedGame.get("name")):
-            game_name = TSHGameAssetManager.instance.selectedGame.get("name")
-        else:
-            game_name = QApplication.translate("Form", "(No game selected)")
-        label_text = f'<html><head/><body><p><span style=" font-weight:700;">{game_name}</span></p></body></html>'
-        self.selectRenderLabel.setText(label_text)
-        if (TSHGameAssetManager.instance.selectedGame.get("assets")):
+
+        if TSHGameAssetManager.instance.selectedGame.get("assets"):
             asset_dict = {}
             for key, val in TSHGameAssetManager.instance.selectedGame.get("assets").items():
                 # don't use base_files, because don't contains asset, only folder (?)
@@ -716,145 +840,39 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 else:
                     self.selectRenderType.addItem(key, key)
                     asset_dict[key] = key
-            # select setting
-            settings = SettingsManager.Get("thumbnail")
-            try:
-                if reset:
-                    raise(KeyError("Reset to default"))
-                game_codename = TSHGameAssetManager.instance.selectedGame.get(
-                    "codename")
-                if game_codename:
-                    self.selectRenderType.setCurrentIndex(self.selectRenderType.findText(
-                        asset_dict[settings[f"asset/{game_codename}"]]))
-                    self.selectRenderType.setEnabled(True)
 
-                    self.zoom.setEnabled(True)
-                    if settings.get(f"zoom/{game_codename}") == None:
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"zoom/{game_codename}", val=100, generatePreview=False)
-                    self.zoom.setValue(
-                        settings.get(f"zoom/{game_codename}", 100))
+            game_name = TSHGameAssetManager.instance.selectedGame.get("name")
+            self.selectRenderLabel.setText(f"{game_name}")
+            
+            game = TSHGameAssetManager.instance.selectedGame
 
-                    self.horizontalAlign.setEnabled(True)
-                    if settings.get(f"horizontalAlign/{game_codename}") == None:
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"horizontalAlign/{game_codename}", val=50, generatePreview=False)
-                    self.horizontalAlign.setValue(
-                        settings.get(f"horizontalAlign/{game_codename}", 50))
+            # If there's no asset_pack config for this game
+            if not SettingsManager.Get(f"thumbnail_config.game.{game.get('codename')}.asset_pack"):
+                # If there are any assets available
+                if len(list(asset_dict.keys())) > 0:
+                    # Pick the pack with the biggest images
+                    biggest_pack = list(game.get("assets").values())[0]
+                    biggest_pack_key = list(game.get("assets").keys())[0]
 
-                    self.verticalAlign.setEnabled(True)
-                    if settings.get(f"verticalAlign/{game_codename}") == None:
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"verticalAlign/{game_codename}", val=40, generatePreview=False)
-                    self.verticalAlign.setValue(
-                        settings.get(f"verticalAlign/{game_codename}", 40))
+                    for key, val in game.get("assets").items():
+                        if val.get("average_size") and biggest_pack.get("average_size"):
+                            val_size = val.get("average_size").get("x") * val.get("average_size").get("y")
+                            biggest_pack_size = biggest_pack.get("average_size").get("x") * biggest_pack.get("average_size").get("y")
 
-                    uncropped_edge = []
+                            if val_size > biggest_pack_size:
+                                biggest_pack = val
+                                biggest_pack_key = key
+                        elif val.get("average_size") and not biggest_pack.get("average_size"):
+                            biggest_pack = val
 
-                    if TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", []):
-                        uncropped_edge = TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", [])
+                    self.SaveSettings(f"game.{game.get('codename')}.asset_pack", biggest_pack_key)
+        
+            # Find pack in combobox, select it
+            index = self.selectRenderType.findText(asset_dict.get(SettingsManager.Get(f"thumbnail_config.game.{game.get('codename')}.asset_pack")))
 
-                    if 'l' in uncropped_edge or 'r' in uncropped_edge:
-                        self.scaleToFillX.setEnabled(True)
-                        if settings.get(f"scaleToFillX/{game_codename}") == None:
-                            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillX/{game_codename}", val=self.scaleToFillX.checkState(), generatePreview=False)
-                        self.scaleToFillX.setChecked(
-                            settings.get(f"scaleToFillX/{game_codename}", 0))
-                    else:
-                        self.scaleToFillX.setChecked(0)
-                        self.scaleToFillX.setEnabled(False)
-                    
-                    if 'u' in uncropped_edge or 'd' in uncropped_edge:
-                        self.scaleToFillY.setEnabled(True)
-                        if settings.get(f"scaleToFillY/{game_codename}") == None:
-                            TSHThumbnailSettingsWidget.SaveSettings(self, key=f"scaleToFillY/{game_codename}", val=self.scaleToFillY.checkState(), generatePreview=False)
-                        self.scaleToFillY.setChecked(
-                            settings.get(f"scaleToFillY/{game_codename}", 0))
-                    else:
-                        self.scaleToFillY.setChecked(0)
-                        self.scaleToFillY.setEnabled(False)
-                    
-                    self.hideSeparators.setEnabled(True)
-                    if settings.get(f"hideSeparators/{game_codename}") == None:
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"hideSeparators/{game_codename}", val=self.hideSeparators.checkState(), generatePreview=False)
-                    self.hideSeparators.setChecked(
-                        settings.get(f"hideSeparators/{game_codename}", 0))
-                    
-                    self.flipSeparators.setEnabled(True)
-                    if settings.get(f"flipSeparators/{game_codename}") == None:
-                        TSHThumbnailSettingsWidget.SaveSettings(self, key=f"flipSeparators/{game_codename}", val=self.flipSeparators.checkState(), generatePreview=False)
-                    self.flipSeparators.setChecked(
-                        settings.get(f"flipSeparators/{game_codename}", 0))
-                else:
-                    self.zoom.setEnabled(False)
-                    self.horizontalAlign.setEnabled(False)
-                    self.verticalAlign.setEnabled(False)
-                    self.scaleToFillX.setEnabled(False)
-                    self.scaleToFillY.setEnabled(False)
-                    self.hideSeparators.setEnabled(False)
-                    self.flipSeparators.setEnabled(False)
-                    self.selectRenderType.setEnabled(False)
-                    self.selectRenderType.setCurrentIndex(0)
-            except:
-                print(traceback.format_exc())
-                if "full" in asset_dict.keys():
-                    self.selectRenderType.setCurrentIndex(
-                        self.selectRenderType.findText(asset_dict["full"]))
-                else:
-                    self.selectRenderType.setCurrentIndex(
-                        self.selectRenderType.findText(asset_dict["base_files/icon"]))
-                self.SetAssetSetting(force=True)
-            TSHGameAssetManager.instance.thumbnailSettingsLoaded = True
+            if index != -1:
+                self.selectRenderType.setCurrentIndex(index)
+            else:
+                self.SaveSettings(f"game.{game.get('codename')}.asset_pack", list(asset_dict.keys())[0])
 
-    def SetZoomSetting(self, force=False):
-        if TSHGameAssetManager.instance.thumbnailSettingsLoaded or force:
-            try:
-                game_codename = TSHGameAssetManager.instance.selectedGame.get(
-                    "codename")
-                if not game_codename:
-                    self.selectRenderType.setEnabled(False)
-                    self.zoom.setEnabled(False)
-                    self.horizontalAlign.setEnabled(False)
-                    self.verticalAlign.setEnabled(False)
-                else:
-                    self.selectRenderType.setEnabled(True)
-                    self.zoom.setEnabled(True)
-                    self.horizontalAlign.setEnabled(True)
-                    self.verticalAlign.setEnabled(True)
-                TSHThumbnailSettingsWidget.SaveSettings(
-                    self, key=f"zoom/{game_codename}", val=self.zoom.value(), generatePreview=True)
-            except Exception as e:
-                print(e)
-
-    def SetAssetSetting(self, force=False):
-        if TSHGameAssetManager.instance.thumbnailSettingsLoaded or force:
-            try:
-                game_codename = TSHGameAssetManager.instance.selectedGame.get(
-                    "codename")
-                if not game_codename:
-                    self.zoom.setEnabled(False)
-                    self.selectRenderType.setEnabled(False)
-                else:
-                    self.zoom.setEnabled(True)
-                    self.selectRenderType.setEnabled(True)
-                if self.selectRenderType.currentData():
-                    TSHThumbnailSettingsWidget.SaveSettings(
-                        self, key=f"asset/{game_codename}", val=self.selectRenderType.currentData(), generatePreview=True)
-                    
-                    settings = SettingsManager.Get("thumbnail")
-                    uncropped_edge = []
-
-                    if TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", []):
-                        uncropped_edge = TSHGameAssetManager.instance.selectedGame.get("assets")[settings[f"asset/{game_codename}"]].get("uncropped_edge", [])
-
-                    if 'l' in uncropped_edge or 'r' in uncropped_edge:
-                        self.scaleToFillX.setEnabled(True)
-                    else:
-                        self.scaleToFillX.setChecked(0)
-                        self.scaleToFillX.setEnabled(False)
-                    
-                    if 'u' in uncropped_edge or 'd' in uncropped_edge:
-                        self.scaleToFillY.setEnabled(True)
-                    else:
-                        self.scaleToFillY.setChecked(0)
-                        self.scaleToFillY.setEnabled(False)
-
-            except Exception as e:
-                print(e)
+        self.selectRenderType.blockSignals(False)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>962</width>
+    <width>959</width>
     <height>753</height>
    </rect>
   </property>
@@ -26,12 +26,34 @@
       </sizepolicy>
      </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>-486</y>
+        <width>350</width>
+        <height>1205</height>
+       </rect>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <property name="rightMargin">
         <number>16</number>
        </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_18">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>General Settings</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="label_17">
            <property name="font">
@@ -50,65 +72,17 @@
           <widget class="QComboBox" name="templateSelect"/>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0,1">
+          <layout class="QVBoxLayout" name="verticalLayout_15">
            <property name="rightMargin">
             <number>0</number>
            </property>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_11">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="locale">
-                <locale language="English" country="UnitedStates"/>
-               </property>
-               <property name="text">
-                <string>Image</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="customForeground">
-               <property name="text">
-                <string>Foreground</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="customBackground">
-               <property name="text">
-                <string>Background</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <property name="spacing">
               <number>5</number>
              </property>
              <property name="leftMargin">
-              <number>5</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLabel" name="label_2">
@@ -125,14 +99,42 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="customMainIcon">
-               <property name="text">
-                <string>Main</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="customMainIcon">
+                 <property name="text">
+                  <string>Main</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="customMainIconReset">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>1</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
                <property name="spacing">
                 <number>5</number>
                </property>
@@ -159,9 +161,151 @@
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="customTopLeftIconReset">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>1</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="customTopRightIcon">
                  <property name="text">
                   <string>Right</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="customTopRightIconReset">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>1</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+               <property name="text">
+                <string>Image</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QPushButton" name="customForeground">
+                 <property name="text">
+                  <string>Foreground</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="customForegroundReset">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>1</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QPushButton" name="customBackground">
+                 <property name="text">
+                  <string>Background</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="customBackgroundReset">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>22</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>1</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -179,10 +323,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0,3">
-           <property name="spacing">
-            <number>6</number>
-           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -343,39 +484,6 @@
                 <bool>true</bool>
                </property>
               </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="flipP1Check">
-               <property name="text">
-                <string>Flip P1 assets?</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="flipP2Check">
-               <property name="text">
-                <string>Flip P2 assets?</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </item>
@@ -719,16 +827,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="label_19">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>Asset Pack</string>
+            <string>Game Settings</string>
            </property>
           </widget>
          </item>
@@ -746,6 +854,20 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_9">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Asset Pack</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
            <property name="bottomMargin">
             <number>0</number>
@@ -758,6 +880,33 @@
             </layout>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="smoothScaling">
+           <property name="text">
+            <string>Smooth scaling</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="flipP1Check">
+           <property name="text">
+            <string>Flip P1 assets?</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="flipP2Check">
+           <property name="text">
+            <string>Flip P2 assets?</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -809,28 +958,20 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <layout class="QVBoxLayout" name="verticalLayout_20">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_19">
-             <item>
-              <widget class="QCheckBox" name="scaleToFillX">
-               <property name="text">
-                <string>Scale to fit X</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QCheckBox" name="scaleToFillX">
+             <property name="text">
+              <string>Scale to fit X</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_18">
-             <item>
-              <widget class="QCheckBox" name="scaleToFillY">
-               <property name="text">
-                <string>Scale to fit Y</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QCheckBox" name="scaleToFillY">
+             <property name="text">
+              <string>Scale to fit Y</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -922,55 +1063,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_10">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>UI Options</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="openExplorerCheck">
-           <property name="text">
-            <string>Open File Explorer after generation?</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="Line" name="line_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="resetToDefault">
            <property name="text">
             <string>Reset to Defaults</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>80</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -1015,6 +1112,16 @@
       <widget class="QPushButton" name="btGenerate">
        <property name="text">
         <string>Generate Thumbnail</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="openExplorerCheck">
+       <property name="text">
+        <string>Open File Explorer after generation?</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
