@@ -202,6 +202,18 @@ class WebServer(QThread):
         WebServer.scoreboard.signals.SetSelection.emit()
         return "OK"
 
+    # Pulls Current Stream Set
+    @app.route('/pull-stream')
+    def pull_stream_set():
+        WebServer.scoreboard.signals.StreamSetSelection.emit()
+        return "OK"
+
+    # Pulls Current User Set
+    @app.route('/pull-user')
+    def pull_user_set():
+        WebServer.scoreboard.signals.UserSetSelection.emit()
+        return "OK"
+
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():

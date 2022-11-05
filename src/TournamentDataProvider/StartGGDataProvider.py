@@ -330,6 +330,11 @@ class StartGGDataProvider(TournamentDataProvider):
                         if main:
                             playerData["mains"] = main[0]
 
+                if "id" not in playerData:
+                    playerData["id"] = [
+                        player.get("id"),
+                        0
+                    ]
                 players[i].append(playerData)
 
         setData["entrants"] = players
