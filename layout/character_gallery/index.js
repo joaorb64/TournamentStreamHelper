@@ -3,6 +3,16 @@
 
   var data = {};
   var oldData = {};
+  
+  // Change this to the name of the assets pack you want to use
+  // It's basically the folder name: user_data/games/game/ASSETPACK
+  var ASSET_TO_USE = "full";
+
+  // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
+  var CUSTOM_ZOOM = 1;
+
+  // Where to center character eyesights. [ 0.0 - 1.0 ]
+  var EYESIGHT_CENTERING = {x: 0.5, y: 0.4};
 
   let oldCharacters = {};
 
@@ -17,7 +27,7 @@
       TweenMax.to(".container", 0.1, { autoAlpha: 0 }).then(() => {
         oldCharacters = characters;
 
-        assetToUse = "full";
+        assetToUse = ASSET_TO_USE;
         characterAssets = [];
 
         Object.values(characters).forEach((character) => {
@@ -39,7 +49,7 @@
         $(".container").html(elements);
 
         characterAssets.forEach((a, i) => {
-          CenterImage($(`#character${i}`), a);
+          CenterImage($(`#character${i}`), a, customZoom = CUSTOM_ZOOM, customCenter = EYESIGHT_CENTERING);
         });
 
         imgs = $.makeArray($(".icon"));
