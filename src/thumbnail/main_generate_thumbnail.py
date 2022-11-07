@@ -3,25 +3,17 @@
 
 import itertools
 from math import cos, radians, sin
-from numbers import Rational
 import random
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from cgitb import text
-from textwrap import fill
 from pathlib import Path
 import json
-from click import style
-import requests
 import shutil
-import string
-from copy import deepcopy
 import datetime
 import os
 import re
-import string
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
@@ -36,6 +28,9 @@ all_eyesight = False
 no_separator = 0
 flip_direction = False
 smooth_scale = True
+no_separator_angle = 45
+no_separator_distance = 30
+proportional_scaling = True
 
 separator_color_code = "#888888"
 
@@ -201,17 +196,17 @@ def create_composite_image(image, size, coordinates):
     painter.end()
     return(background)
 
-def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3):
+def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3, angle=45):
     positions = []
 
     # For 1 character, just center it
     if character_number == 1:
         radius = 0
     
-    angle_rad = radians(90)
+    angle_rad = radians(angle+45)
 
     if character_number == 2:
-        angle_rad = radians(45)
+        angle_rad = radians(angle)
     
     pendulum = 1
 
@@ -236,7 +231,7 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
 def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, rescaling_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width, smooth_scale
+    global proportional_zoom, no_separator, no_separator_angle, no_separator_distance, is_preview, ratio, separator_color_code, separator_width, smooth_scale
     image_ratio = (max(ratio[0], ratio[1]), max(ratio[0], ratio[1]))
 
     separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
@@ -332,7 +327,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             print(rescaling_matrix)
 
-            rescaling_factor = rescaling_matrix[line_index][col_index]
+            global proportional_scaling
+
+            if proportional_scaling:
+                rescaling_factor = rescaling_matrix[line_index][col_index]
+            else:
+                rescaling_factor = 1
 
             print(uncropped_edge)
 
@@ -369,7 +369,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
 
             if no_separator != 0:
-                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
+                customCenter = generate_multicharacter_positions(
+                    num_col,
+                    center=customCenter,
+                    radius=no_separator_distance/100,
+                    angle=no_separator_angle
+                )[col_index]
 
             if player_index == 1:
                 customCenter[0] = 1 - customCenter[0]
@@ -1353,6 +1358,15 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
 
     global no_separator
     no_separator = deep_get(settings, f"game.{game_codename}.hideSeparators", 0)
+
+    global no_separator_angle
+    no_separator_angle = deep_get(settings, f"game.{game_codename}.noSeparatorAngle", 45)
+
+    global no_separator_distance
+    no_separator_distance = deep_get(settings, f"game.{game_codename}.noSeparatorDistance", 30)
+
+    global proportional_scaling
+    proportional_scaling = deep_get(settings, f"game.{game_codename}.proportionalScaling", True)
 
     global flip_direction
     flip_direction = deep_get(settings, f"game.{game_codename}.flipSeparators", 0)

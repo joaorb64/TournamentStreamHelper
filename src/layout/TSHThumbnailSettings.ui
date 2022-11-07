@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>959</width>
+    <width>966</width>
     <height>753</height>
    </rect>
   </property>
@@ -26,14 +26,6 @@
       </sizepolicy>
      </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>-486</y>
-        <width>350</width>
-        <height>1205</height>
-       </rect>
-      </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <property name="rightMargin">
         <number>16</number>
@@ -78,9 +70,6 @@
            </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_8">
-             <property name="spacing">
-              <number>5</number>
-             </property>
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -102,6 +91,12 @@
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
                 <widget class="QPushButton" name="customMainIcon">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="text">
                   <string>Main</string>
                  </property>
@@ -960,6 +955,13 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_20">
            <item>
+            <widget class="QCheckBox" name="proportionalScaling">
+             <property name="text">
+              <string>Proportional character scaling</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="scaleToFillX">
              <property name="text">
               <string>Scale to fit X</string>
@@ -1053,6 +1055,54 @@
            <property name="text">
             <string>Hide separators between characters</string>
            </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="noSeparatorOptions">
+           <layout class="QHBoxLayout" name="noSeparatorOptionsLayout">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_18">
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Distance</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="noSeparatorDistance">
+                <property name="suffix">
+                 <string>%</string>
+                </property>
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_19">
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="text">
+                 <string>Angle</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="noSeparatorAngle">
+                <property name="suffix">
+                 <string>º</string>
+                </property>
+                <property name="maximum">
+                 <number>360</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>

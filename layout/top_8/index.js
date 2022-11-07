@@ -18,13 +18,13 @@
 
     if(data.game){
       if (data.game.codename == "ssbu") {
-        var ASSET_TO_USE_1ST = 'fuller'
+        var ASSET_TO_USE_1ST = 'chara3'
         var ZOOM_1ST = 1.2
 
-        var ASSET_TO_USE_2_to_4 = 'fuller'
+        var ASSET_TO_USE_2_to_4 = 'chara3'
         var ZOOM_2_to_4 = 1.2
 
-        var ASSET_TO_USE_5_to_7 = 'fuller'
+        var ASSET_TO_USE_5_to_7 = 'chara3'
         var ZOOM_5_to_7 = 1.2
       } else if (data.game.codename == "ssbm") {
         var ASSET_TO_USE_1ST = 'portrait_hd'
