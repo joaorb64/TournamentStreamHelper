@@ -3,25 +3,17 @@
 
 import itertools
 from math import cos, radians, sin
-from numbers import Rational
 import random
 import traceback
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from cgitb import text
-from textwrap import fill
 from pathlib import Path
 import json
-from click import style
-import requests
 import shutil
-import string
-from copy import deepcopy
 import datetime
 import os
 import re
-import string
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
@@ -36,6 +28,9 @@ all_eyesight = False
 no_separator = 0
 flip_direction = False
 smooth_scale = True
+no_separator_angle = 45
+no_separator_distance = 30
+proportional_scaling = True
 
 separator_color_code = "#888888"
 
@@ -201,17 +196,17 @@ def create_composite_image(image, size, coordinates):
     painter.end()
     return(background)
 
-def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3):
+def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radius=0.3, angle=45):
     positions = []
 
     # For 1 character, just center it
     if character_number == 1:
         radius = 0
     
-    angle_rad = radians(90)
+    angle_rad = radians(angle+45)
 
     if character_number == 2:
-        angle_rad = radians(45)
+        angle_rad = radians(angle)
     
     pendulum = 1
 
@@ -233,10 +228,10 @@ def generate_multicharacter_positions(character_number, center=[0.5, 0.5], radiu
 
     return positions
 
-def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
+def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, rescaling_matrix, player_index=0, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, customZoom=1, horizontalAlign=50, verticalAlign=50, uncropped_edges=[]):
     num_line = len(path_matrix)
 
-    global proportional_zoom, no_separator, is_preview, ratio, separator_color_code, separator_width, smooth_scale
+    global proportional_zoom, no_separator, no_separator_angle, no_separator_distance, is_preview, ratio, separator_color_code, separator_width, smooth_scale
     image_ratio = (max(ratio[0], ratio[1]), max(ratio[0], ratio[1]))
 
     separatorsPix = QPixmap(thumbnail.width(), thumbnail.height())
@@ -330,6 +325,15 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             min_zoom = 1
 
+            print(rescaling_matrix)
+
+            global proportional_scaling
+
+            if proportional_scaling:
+                rescaling_factor = rescaling_matrix[line_index][col_index]
+            else:
+                rescaling_factor = 1
+
             print(uncropped_edge)
 
             if not uncropped_edge:
@@ -339,15 +343,16 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     min_zoom = zoom_y
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
-                    min_zoom = customZoom * proportional_zoom
-                elif 'l' in uncropped_edge or 'r' in uncropped_edge:
-                    min_zoom = zoom_y
-                elif 'u' in uncropped_edge or 'd' in uncropped_edge:
+                    min_zoom = customZoom * proportional_zoom * rescaling_factor
+                elif not 'l' in uncropped_edge and not 'r' in uncropped_edge:
                     min_zoom = zoom_x
+                elif not 'u' in uncropped_edge and not 'd' in uncropped_edge:
+                    min_zoom = zoom_y
                 else:
-                    min_zoom = customZoom * proportional_zoom
+                    min_zoom = customZoom * proportional_zoom * rescaling_factor
 
             global scale_fill_x, scale_fill_y
+            print("scale_fill", scale_fill_x, scale_fill_y)
             if scale_fill_x and not scale_fill_y:
                 min_zoom = zoom_x
             elif scale_fill_y and not scale_fill_x:
@@ -364,7 +369,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             customCenter = [horizontalAlign/100.0, verticalAlign/100.0]
 
             if no_separator != 0:
-                customCenter = generate_multicharacter_positions(num_col, center=customCenter)[col_index]
+                customCenter = generate_multicharacter_positions(
+                    num_col,
+                    center=customCenter,
+                    radius=no_separator_distance/100,
+                    angle=no_separator_angle
+                )[col_index]
 
             if player_index == 1:
                 customCenter[0] = 1 - customCenter[0]
@@ -526,6 +536,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
     eyesight_matrices = []
     uncropped_edge_matrices = []
     average_size = None
+    rescaling_matrices = []
 
     for i in [0, 1]:
         team_index = i+1
@@ -533,12 +544,14 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         path_matrix = []
         eyesight_matrix = []
         uncropped_edge_matrix = []
+        rescaling_matrix = []
 
         current_team = find(f"score.team.{team_index}.player", data)
         for player_key in current_team.keys():
             character_list = []
             eyesight_list = []
             uncropped_edge_list = []
+            rescaling_list = []
             characters = find(f"{player_key}.character", current_team)
             for character_key in characters.keys():
                 try:
@@ -549,10 +562,12 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     character_path = find(
                         f"{character_key}.assets.{used_assets}", characters)
 
+                    # Eyesight
                     if character_path.get("eyesight"):
                         eyesight_coordinates = (
                             character_path.get("eyesight")["x"], character_path.get("eyesight")["y"])
                     
+                    # Uncropped edges
                     uncropped_edges = None
 
                     if character_path.get("uncropped_edge") is not None:
@@ -560,13 +575,21 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     else:
                         uncropped_edges = []
                     
+                    # Average size
                     if character_path.get("average_size") is not None:
                         average_size = character_path.get("average_size")
+                    
+                    # Rescale
+                    rescale_factor = 1
+
+                    if character_path.get("rescaling_factor") is not None:
+                        rescale_factor = character_path.get("rescaling_factor")
 
                     if image_path:
                         character_list.append(image_path)
                         eyesight_list.append(eyesight_coordinates)
                         uncropped_edge_list.append(uncropped_edges)
+                        rescaling_list.append(rescale_factor)
                 except KeyError:
                     None
             if character_list:
@@ -578,30 +601,36 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
                     character_list.reverse()
                     eyesight_list.reverse()
                     uncropped_edge_list.reverse()
+                    rescaling_list.reverse()
 
                 if no_separator:
                     path_matrix.extend(character_list)
                     eyesight_matrix.extend(eyesight_list)
                     uncropped_edge_matrix.extend(uncropped_edge_list)
+                    rescaling_matrix.extend(rescaling_list)
                 else:
                     path_matrix.append(character_list)
                     eyesight_matrix.append(eyesight_list)
                     uncropped_edge_matrix.append(uncropped_edge_list)
+                    rescaling_matrix.append(rescaling_list)
         
         if no_separator:
             path_matrix = [path_matrix]
             eyesight_matrix = [eyesight_matrix]
             uncropped_edge_matrix = [uncropped_edge_matrix]
+            rescaling_matrix = [rescaling_matrix]
 
         # Transpose character lists
         if not no_separator and flip_direction:
             path_matrix = list(map(list, itertools.zip_longest(*path_matrix, fillvalue=None)))
             eyesight_matrix = list(map(list, itertools.zip_longest(*eyesight_matrix, fillvalue=None)))
             uncropped_edge_matrix = list(map(list, itertools.zip_longest(*uncropped_edge_matrix, fillvalue=None)))
+            rescaling_matrix = list(map(list, itertools.zip_longest(*rescaling_matrix, fillvalue=None)))
         
         path_matrices.append(path_matrix)
         eyesight_matrices.append(eyesight_matrix)
         uncropped_edge_matrices.append(uncropped_edge_matrix)
+        rescaling_matrices.append(rescaling_matrix)
 
     # Calculate proportional scaling
     global proportional_zoom
@@ -635,13 +664,14 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         path_matrix = path_matrices[i]
         eyesight_matrix = eyesight_matrices[i]
         uncropped_edge_matrix = uncropped_edge_matrices[i]
+        rescale_matrix = rescaling_matrices[i]
         
         paste_x = origin_x_coordinates[i]
         paste_y = origin_y_coordinates[i]
         paste_coordinates = (paste_x, paste_y)
         
         thumbnail = paste_image_matrix(
-            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, i, flip_p1, flip_p2,
+            thumbnail, path_matrix, max_size, paste_coordinates, eyesight_matrix, rescale_matrix, i, flip_p1, flip_p2,
             fill_x, fill_y, zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign, uncropped_edges=uncropped_edge_matrix)
 
     return(thumbnail)
@@ -1339,6 +1369,15 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
 
     global no_separator
     no_separator = deep_get(settings, f"game.{game_codename}.hideSeparators", 0)
+
+    global no_separator_angle
+    no_separator_angle = deep_get(settings, f"game.{game_codename}.noSeparatorAngle", 45)
+
+    global no_separator_distance
+    no_separator_distance = deep_get(settings, f"game.{game_codename}.noSeparatorDistance", 30)
+
+    global proportional_scaling
+    proportional_scaling = deep_get(settings, f"game.{game_codename}.proportionalScaling", True)
 
     global flip_direction
     flip_direction = deep_get(settings, f"game.{game_codename}.flipSeparators", 0)

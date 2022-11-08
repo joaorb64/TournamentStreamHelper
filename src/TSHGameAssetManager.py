@@ -401,6 +401,42 @@ class TSHGameAssetManager(QObject):
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
                     
+                    if asset.get("rescaling_factor"):
+                        rescaling_factor = asset.get("rescaling_factor", {}).get(
+                            characterCodename, {})
+
+                        if len(rescaling_factor.keys()) > 0:
+                            if str(skin) in rescaling_factor:
+                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
+                                    str(skin))
+                            else:
+                                charFiles[assetKey]["rescaling_factor"] = list(
+                                    rescaling_factor.values())[0]
+                    
+                    if asset.get("unflippable"):
+                        unflippable = asset.get("unflippable", {}).get(
+                            characterCodename, {})
+
+                        if len(unflippable.keys()) > 0:
+                            if str(skin) in unflippable:
+                                charFiles[assetKey]["unflippable"] = unflippable.get(
+                                    str(skin))
+                            else:
+                                charFiles[assetKey]["unflippable"] = list(
+                                    unflippable.values())[0]
+                    
+                    if asset.get("metadata"):
+                        metadata = asset.get("metadata", {}).get(
+                            characterCodename, {})
+
+                        if len(metadata.keys()) > 0:
+                            if str(skin) in metadata:
+                                charFiles[assetKey]["metadata"] = metadata.get(
+                                    str(skin))
+                            else:
+                                charFiles[assetKey]["metadata"] = list(
+                                    metadata.values())[0]
+                    
                     if asset.get("uncropped_edge"):
                         charFiles[assetKey]["uncropped_edge"] = asset.get("uncropped_edge")
                     
