@@ -1144,7 +1144,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                     "player": {
                         "1": {
                             "character": {
-                                "1": chars[0]["asset"]
+                                "1": chars[0]["asset"],
+                                "2": chars[1]["asset"]
                             },
                             "country": {},
                             "mergedName": f"{chars[0]['team']} | {chars[0]['name']}",
@@ -1168,6 +1169,16 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
                             "name": chars[2]["name"],
                             "state": {},
                             "team": chars[2]["team"]
+                        },
+                        "2": {
+                            "character": {
+                                "1": chars[3]["asset"]
+                            },
+                            "country": {},
+                            "mergedName": f"{chars[3]['team']} | {chars[3]['name']}",
+                            "name": chars[3]["name"],
+                            "state": {},
+                            "team": chars[3]["team"]
                         }
                     },
                     "score": 0,
