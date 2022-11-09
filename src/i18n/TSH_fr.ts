@@ -409,7 +409,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
         <source>Proportional character scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à l&apos;échelle proportionnelle des personnages</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="967"/>
@@ -468,17 +468,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
         <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distance</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1089"/>
         <source>Angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Angle</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1096"/>
         <source>º</source>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1157"/>
