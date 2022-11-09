@@ -1,5 +1,5 @@
 (($) => {
-  var ASSET_TO_USE = "fuller"
+  var ASSET_TO_USE = "full"
   var ZOOM = 1
   
   gsap.config({ nullTargetWarn: false, trialWarn: false });
