@@ -2,7 +2,7 @@
 
 A Stream helper for fighting game tournaments!
 
-<a href="https://discord.gg/qVkbqxDUhr">
+<a href="https://discord.gg/X9Sp2FkcHF">
         <img src="https://img.shields.io/discord/1012284618457759755?color=5865F2&label=TSH%20-%20Tournament%20Stream%20Helper&logo=discord&logoColor=white"
             alt="Discord">
     </a>
