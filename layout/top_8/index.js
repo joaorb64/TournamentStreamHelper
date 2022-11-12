@@ -17,15 +17,19 @@
     data = await getData()
 
     if(data.game){
+      var DIVIDERS = true
+
       if (data.game.codename == "ssbu") {
-        var ASSET_TO_USE_1ST = 'chara3'
-        var ZOOM_1ST = 1.2
+        var ASSET_TO_USE_1ST = 'vs_renders'
+        var ZOOM_1ST = 1
 
-        var ASSET_TO_USE_2_to_4 = 'chara3'
-        var ZOOM_2_to_4 = 1.2
+        var ASSET_TO_USE_2_to_4 = 'vs_renders'
+        var ZOOM_2_to_4 = 1
 
-        var ASSET_TO_USE_5_to_7 = 'chara3'
-        var ZOOM_5_to_7 = 1.2
+        var ASSET_TO_USE_5_to_7 = 'vs_renders'
+        var ZOOM_5_to_7 = 1
+
+        DIVIDERS = false
       } else if (data.game.codename == "ssbm") {
         var ASSET_TO_USE_1ST = 'portrait_hd'
         var ZOOM_1ST = 1.2
@@ -54,8 +58,6 @@
         var ASSET_TO_USE_5_to_7 = 'full'
         var ZOOM_5_to_7 = 1.2
       }
-      
-      var DIVIDERS = true
     }
 
     if (
