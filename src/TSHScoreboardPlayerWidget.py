@@ -313,7 +313,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character_color.setMaximumWidth(120)
             player_character_color.setFont(QFont(player_character_color.font().family(), 9))
             view = QListView()
-            view.setIconSize(QSize(64, 64))
+            view.setIconSize(QSize(128, 128))
             player_character_color.setView(view)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
@@ -528,7 +528,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             "name": export_name,
                             "en_name": c,
                             "display_name": display_name,
-                            "codename": TSHGameAssetManager.instance.characters[c].get("codename")
+                            "codename": TSHGameAssetManager.instance.characters[c].get("codename"),
+                            "skin_name": TSHGameAssetManager.instance.characters[c].get("skin_name", {})
                         }
                         item.setData(data, Qt.ItemDataRole.UserRole)
                         TSHScoreboardPlayerWidget.characterModel.appendRow(
@@ -566,14 +567,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             if assetData == None:
                 assetData = {}
             item = QStandardItem()
-            item.setData(str(skin), Qt.ItemDataRole.EditRole)
+
+            skinName = str(skin)
+
+            print("characterData", characterData)
+
+            if skinName in characterData.get("skin_name", {}):
+                skinName = characterData.get("skin_name", {})[skinName].get("name")
+
+            item.setData(skinName, Qt.ItemDataRole.EditRole)
             item.setData(assetData, Qt.ItemDataRole.UserRole)
 
             # Set to use first asset as a fallback
             key = list(assetData.keys())[0]
 
             for k, asset in list(assetData.items()):
-                if "portrait" in asset.get("type", []):
+                if "full" in asset.get("type", []):
                     key = k
                     break
                 if "icon" in asset.get("type", []):
@@ -584,15 +593,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             originalH = pix.height()
 
             pix = pix.scaledToWidth(
-                64, Qt.TransformationMode.SmoothTransformation)
+                128, Qt.TransformationMode.SmoothTransformation)
 
             if asset.get("eyesight", {}).get("y", 0):
-                newImg = QImage(QSize(64, 48), QImage.Format.Format_RGBA64)
+                newImg = QImage(QSize(128, 96), QImage.Format.Format_RGBA64)
                 newImg.fill(QColor(0, 0, 0, 0))
                 painter = QPainter()
                 painter.begin(newImg)
 
-                moveY = int(32/2 -
+                moveY = int(96/2 -
                             float(asset.get("eyesight").get("y", 0)) /
                             originalH*pix.height())
                 moveY = min(moveY, 16)
