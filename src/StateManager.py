@@ -142,8 +142,7 @@ class StateManager:
                         print(traceback.format_exc())
                 if os.path.exists(di):
                     try:
-                        shutil.copyfile(
-                            di, f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                        os.symlink(os.path.abspath(di), f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                     except Exception as e:
                         print(traceback.format_exc())
             elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
