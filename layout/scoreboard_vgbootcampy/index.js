@@ -100,6 +100,11 @@
           let score = [data.score.score_left, data.score.score_right];
 
           SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
+
+          SetInnerHtml(
+            $(`.p${t + 1} .sponsor-container`),
+            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+          );
         }
       });
     });

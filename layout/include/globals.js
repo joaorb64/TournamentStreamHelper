@@ -165,6 +165,10 @@ function CenterImage(
 
       let minZoom = 1
 
+      let rescalingFactor = 1;
+
+      if(assetData.rescaling_factor) rescalingFactor = assetData.rescaling_factor;
+
       let uncropped_edge = assetData.uncropped_edge
 
       if (!uncropped_edge || uncropped_edge == "undefined" || uncropped_edge.length == 0) {
@@ -180,13 +184,13 @@ function CenterImage(
           uncropped_edge.includes('l') &&
           uncropped_edge.includes('r')
         ) {
-          minZoom = customZoom * proportional_zoom
-        } else if (uncropped_edge.includes('l') && uncropped_edge.includes('r')) {
-          minZoom = zoom_y
-        } else if (uncropped_edge.includes('u') && uncropped_edge.includes('d')) {
+          minZoom = customZoom * proportional_zoom * rescalingFactor
+        } else if (!uncropped_edge.includes('l') && !uncropped_edge.includes('r')) {
           minZoom = zoom_x
+        } else if (!uncropped_edge.includes('u') && !uncropped_edge.includes('d')) {
+          minZoom = zoom_y
         } else {
-          minZoom = customZoom * proportional_zoom
+          minZoom = customZoom * proportional_zoom * rescalingFactor
         }
       }
 

@@ -225,7 +225,12 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillX = self.settings.findChild(QCheckBox, "scaleToFillX")
         self.scaleToFillY = self.settings.findChild(QCheckBox, "scaleToFillY")
 
+        self.proportionalScaling = self.settings.findChild(QCheckBox, "proportionalScaling")
+
         self.hideSeparators = self.settings.findChild(QCheckBox, "hideSeparators")
+        self.hideSeparatorOptions = self.settings.findChild(QGroupBox, "noSeparatorOptions")
+        self.noSeparatorDistance = self.settings.findChild(QSpinBox, "noSeparatorDistance")
+        self.noSeparatorAngle = self.settings.findChild(QSpinBox, "noSeparatorAngle")
 
         self.flipSeparators = self.settings.findChild(QCheckBox, "flipSeparators")
 
@@ -295,6 +300,15 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             )]
         )
 
+        self.proportionalScaling.stateChanged.connect(lambda val: [
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.proportionalScaling", 
+                val=self.proportionalScaling.checkState(),
+                generatePreview=True
+            )]
+        )
+
         self.hideSeparators.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
@@ -302,6 +316,24 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 val=self.hideSeparators.checkState(),
                 generatePreview=True
             )]
+        )
+
+        self.noSeparatorAngle.valueChanged.connect(lambda:
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.noSeparatorAngle",
+                val=self.noSeparatorAngle.value(),
+                generatePreview=True
+            )
+        )
+
+        self.noSeparatorDistance.valueChanged.connect(lambda:
+            TSHThumbnailSettingsWidget.SaveSettings(
+                self,
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.noSeparatorDistance",
+                val=self.noSeparatorDistance.value(),
+                generatePreview=True
+            )
         )
 
         self.flipSeparators.stateChanged.connect(lambda val: [
@@ -630,6 +662,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         ))
         self.flipSeparators.blockSignals(False)
 
+        # Proportional scaling
+        self.proportionalScaling.blockSignals(True)
+        if TSHGameAssetManager.instance.selectedGame.get("assets", {}).get(self.GetSetting(f"game.{game_codename}.asset_pack"), {}).get("rescaling_factor", []):
+            self.proportionalScaling.setEnabled(True)
+            self.proportionalScaling.setChecked(self.GetSetting(
+                f"game.{game_codename}.proportionalScaling",
+                True
+            ))
+        else:
+            self.proportionalScaling.setEnabled(False)
+            self.proportionalScaling.setChecked(False)
+        self.proportionalScaling.blockSignals(False)
+
         # Hide separators
         self.hideSeparators.blockSignals(True)
         self.hideSeparators.setChecked(self.GetSetting(
@@ -637,6 +682,27 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             False
         ))
         self.hideSeparators.blockSignals(False)
+
+        # Hide/Show related options
+        self.hideSeparatorOptions.setVisible(
+            self.GetSetting(f"game.{game_codename}.hideSeparators", False)
+        )
+
+        # No separator angle
+        self.noSeparatorAngle.blockSignals(True)
+        self.noSeparatorAngle.setValue(self.GetSetting(
+            f"game.{game_codename}.noSeparatorAngle",
+            45
+        ))
+        self.noSeparatorAngle.blockSignals(False)
+
+        # No separator distance
+        self.noSeparatorDistance.blockSignals(True)
+        self.noSeparatorDistance.setValue(self.GetSetting(
+            f"game.{game_codename}.noSeparatorDistance",
+            30
+        ))
+        self.noSeparatorDistance.blockSignals(False)
 
         # Scale to fill X/Y
         self.scaleToFillX.blockSignals(True)

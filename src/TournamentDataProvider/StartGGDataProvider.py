@@ -330,6 +330,11 @@ class StartGGDataProvider(TournamentDataProvider):
                         if main:
                             playerData["mains"] = main[0]
 
+                if "id" not in playerData:
+                    playerData["id"] = [
+                        player.get("id"),
+                        0
+                    ]
                 players[i].append(playerData)
 
         setData["entrants"] = players
@@ -812,11 +817,17 @@ class StartGGDataProvider(TournamentDataProvider):
                 event = deep_get(set, "entrant.event", [])
                 tournament = deep_get(event, "tournament", [])
                 
+                try:
+                    tournamentPicture = tournament.get("images")[0].get("url")
+                except:
+                    tournamentPicture = None
+                    print(traceback.format_exc())
+                
                 player_history = {
                     "placement": set.get("placement"),
                     "event_name": event.get("name"),
                     "tournament_name": tournament.get("name"),
-                    "tournament_picture": tournament.get("images")[0].get("url")
+                    "tournament_picture": tournamentPicture
                 }
 
                 set_data.append(player_history)
