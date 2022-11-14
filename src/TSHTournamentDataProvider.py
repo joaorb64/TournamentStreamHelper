@@ -223,8 +223,8 @@ class TSHTournamentDataProvider:
         })
         self.threadPool.start(worker)
 
-    def GetHistorySets(self, playerId, playerNumber, gameType):
-        worker = Worker(self.provider.GetPlayerHistorySets, **{
+    def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
+        worker = Worker(self.provider.GetPlayerHistoryStandings, **{
             "playerID": playerId[0],
             "playerNumber": playerNumber,
             "gameType": gameType,

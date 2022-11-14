@@ -493,7 +493,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
             p.instanceSignals.player1Id_changed.connect(self.GetLastSetsP1)
-            p.instanceSignals.player1Id_changed.connect(self.GetHistorySetsP1)
+            p.instanceSignals.player1Id_changed.connect(self.GetPlayerHistoryStandingsP1)
 
             self.team1playerWidgets.append(p)
 
@@ -515,7 +515,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
             p.instanceSignals.player2Id_changed.connect(self.GetLastSetsP2)
-            p.instanceSignals.player2Id_changed.connect(self.GetHistorySetsP2)
+            p.instanceSignals.player2Id_changed.connect(self.GetPlayerHistoryStandingsP2)
 
             self.team2playerWidgets.append(p)
 
@@ -648,7 +648,7 @@ class TSHScoreboardWidget(QDockWidget):
     
     def GetLastSetsP1(self):
         # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
@@ -657,7 +657,7 @@ class TSHScoreboardWidget(QDockWidget):
     
     def GetLastSetsP2(self):
         # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
             p2id = StateManager.Get(f"score.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
@@ -690,21 +690,21 @@ class TSHScoreboardWidget(QDockWidget):
             i+=1
         StateManager.ReleaseSaving()
     
-    def GetHistorySetsP1(self):
+    def GetPlayerHistoryStandingsP1(self):
         # Only if 1 player on each side
         if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             if p1id:
-                TSHTournamentDataProvider.instance.GetHistorySets(p1id, "1", StateManager.Get(f"game.smashgg_id"))
+                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p1id, "1", StateManager.Get(f"game.smashgg_id"))
             else:
                 StateManager.Set(f"score.history_sets.1", {})
     
-    def GetHistorySetsP2(self):
+    def GetPlayerHistoryStandingsP2(self):
         # Only if 1 player on each side
         if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p2id = StateManager.Get(f"score.team.2.player.1.id")
             if p2id:
-                TSHTournamentDataProvider.instance.GetHistorySets(p2id, "2", StateManager.Get(f"game.smashgg_id"))
+                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p2id, "2", StateManager.Get(f"game.smashgg_id"))
             else:
                 StateManager.Set(f"score.history_sets.2", {})
     

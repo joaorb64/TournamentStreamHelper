@@ -782,7 +782,7 @@ class StartGGDataProvider(TournamentDataProvider):
             traceback.print_exc()
             callback.emit({"playerNumber": playerNumber,"last_sets": []})
         
-    def GetPlayerHistorySets(self, playerID, playerNumber, gameType, callback, progress_callback):
+    def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback):
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
