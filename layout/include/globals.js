@@ -114,6 +114,28 @@ function GenerateMulticharacterPositions(character_number, center=[0.5, 0.5], ra
   return positions
 }
 
+function resizeInCanvas(image, width, height){
+  // Initialize the canvas and it's size
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  // Set width and height
+  canvas.width = width;
+  canvas.height = height;
+
+  ctx.imageSmoothingQuality = "high";
+  ctx.imageSmoothingEnabled = true;
+
+  // Draw image and export to a data-uri
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const dataURI = canvas.toDataURL();
+
+  canvas.remove();
+
+  // Do something with the result, like overwrite original
+  return dataURI;
+}
+
 function CenterImage(
   element,
   assetData,
@@ -257,7 +279,7 @@ function CenterImage(
         `
       )
 
-      element.css("background-image", 'url("'+img.src+'")')
+      element.css("background-image", "url("+resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom)+")")
       element.css("background-repeat", "no-repeat");
       element.css("opacity", "1");
 
