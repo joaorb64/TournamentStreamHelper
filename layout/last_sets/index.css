@@ -196,12 +196,17 @@ body {
 
 .bracket_line {
   position: absolute;
-  background: black;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    var(--bg-color) 10%
+  );
   height: 20px;
   left: -120px;
   top: 60%;
   transform: translateY(-50%);
   z-index: -1;
+  opacity: 0.6;
 }
 
 .line_arrow {
@@ -209,9 +214,9 @@ body {
   right: 0;
   width: 0;
   height: 0;
-  border-left: 64px solid black;
+  border-left: 48px solid var(--bg-color);
   top: 50%;
   transform: translateY(-50%) scaleY(50%) translateX(50%);
-  border-top: 64px solid transparent;
-  border-bottom: 64px solid transparent;
+  border-top: 48px solid transparent;
+  border-bottom: 48px solid transparent;
 }

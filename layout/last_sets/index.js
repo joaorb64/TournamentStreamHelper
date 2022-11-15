@@ -91,8 +91,8 @@
           );
           gsap.from(
             $(`.set${s + 1}`),
-            { x: -80, autoAlpha: 0, duration: 0.4 },
-            0.2 + 0.3 * s
+            { x: -100, autoAlpha: 0, duration: 0.4 },
+            0.2 + 0.2 * s
           );
         });
 
