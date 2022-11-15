@@ -762,17 +762,22 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 player2Info = set.get("slots", [{}])[1].get("entrant", {}).get(
                         "participants", [{}])[0].get("player", {})
+
+                players = ["1", "2"]
+
+                if player1Info.get("id") != playerID:
+                    players.reverse()
                 
                 player_set = {
                     "phase_id": phaseIdentifier,
                     "phase_name": phaseName,
                     "round_name": set.get("fullRoundText"),
-                    "player1_score": set.get("entrant1Score"),
-                    "player1_team": player1Info.get("prefix"),
-                    "player1_name": player1Info.get("gamerTag"),
-                    "player2_score": set.get("entrant2Score"),
-                    "player2_team": player2Info.get("prefix"),
-                    "player2_name": player2Info.get("gamerTag")
+                    f"player{players[0]}_score": set.get("entrant1Score"),
+                    f"player{players[0]}_team": player1Info.get("prefix"),
+                    f"player{players[0]}_name": player1Info.get("gamerTag"),
+                    f"player{players[1]}_score": set.get("entrant2Score"),
+                    f"player{players[1]}_team": player2Info.get("prefix"),
+                    f"player{players[1]}_name": player2Info.get("gamerTag")
                 }
 
                 set_data.append(player_set)
@@ -827,7 +832,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "placement": set.get("placement"),
                     "event_name": event.get("name"),
                     "tournament_name": tournament.get("name"),
-                    "tournament_picture": tournamentPicture
+                    "tournament_picture": tournamentPicture,
+                    "entrants": event.get("numEntrants")
                 }
 
                 set_data.append(player_history)

@@ -667,25 +667,17 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateLastSets(self, data):
         StateManager.BlockSaving()
         i = 1
-        winner = ""
-        loser = ""
         for set in data.get("last_sets", []):
-            if set.get("player1_score") > set.get("player2_score"):
-                winner = "player1"
-                loser = "player2"
-            else:
-                winner = "player2"
-                loser = "player1"
             StateManager.Set(f"score.last_sets." + data.get("playerNumber") + "." + str(i), {
                 "phase_id": set.get("phase_id"),
                 "phase_name": set.get("phase_name"),
                 "round_name": set.get("round_name"),
-                "winner_score": set.get(winner + "_score"),
-                "loser_score": set.get(loser + "_score"),
-                "winner_team": set.get(winner + "_team"),
-                "winner_name": set.get(winner + "_name"),
-                "loser_team": set.get(loser + "_team"),
-                "loser_name": set.get(loser + "_name")
+                "player_score": set.get("player1_score"),
+                "player_team": set.get("player1_team"),
+                "player_name": set.get("player1_name"),
+                "oponent_score": set.get("player2_score"),
+                "oponent_team": set.get("player2_team"),
+                "oponent_name": set.get("player2_name")
             })
             i+=1
         StateManager.ReleaseSaving()
@@ -716,7 +708,8 @@ class TSHScoreboardWidget(QDockWidget):
                 "placement": set.get("placement"),
                 "event_name": set.get("event_name"),
                 "tournament_name": set.get("tournament_name"),
-                "tournament_picture": set.get("tournament_picture")
+                "tournament_picture": set.get("tournament_picture"),
+                "entrants": set.get("entrants")
             })
             i+=1
         StateManager.ReleaseSaving()
