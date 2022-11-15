@@ -387,17 +387,22 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                 if _set.get("entrants")[0][0].get("id")[0] != playerID and _set.get("entrants")[1][0].get("id")[0] != playerID:
                     continue
+            
+                players = ["1", "2"]
+                
+                if _set.get("entrants")[0][0].get("id")[0] != playerID:
+                    players.reverse()
                 
                 player_set = {
                     "phase_id": "",
                     "phase_name": _set.get("tournament_phase"),
                     "round_name": _set.get("round_name"),
-                    "player1_score": _set.get("team1score"),
-                    "player1_team": _set.get("entrants")[0][0].get("prefix"),
-                    "player1_name": _set.get("entrants")[0][0].get("gamerTag"),
-                    "player2_score": _set.get("team2score"),
-                    "player2_team": _set.get("entrants")[1][0].get("prefix"),
-                    "player2_name": _set.get("entrants")[1][0].get("gamerTag"),
+                    f"player{players[0]}_score": _set.get("team1score"),
+                    f"player{players[0]}_team": _set.get("entrants")[0][0].get("prefix"),
+                    f"player{players[0]}_name": _set.get("entrants")[0][0].get("gamerTag"),
+                    f"player{players[1]}_score": _set.get("team2score"),
+                    f"player{players[1]}_team": _set.get("entrants")[1][0].get("prefix"),
+                    f"player{players[1]}_name": _set.get("entrants")[1][0].get("gamerTag"),
                 }
 
                 set_data.append(player_set)
