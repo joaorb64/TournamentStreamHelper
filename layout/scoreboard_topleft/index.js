@@ -1,6 +1,6 @@
 (($) => {
   var ASSET_TO_USE = "base_files/icon";
-  var ZOOM = 1
+  var ZOOM = 1;
 
   if (window.PORTRAITS) ASSET_TO_USE = "portrait";
 
