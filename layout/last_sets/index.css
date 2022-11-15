@@ -65,7 +65,6 @@ body {
   display: flex;
   flex-direction: row;
   background-color: var(--bg-color);
-  margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 10px;
 }
@@ -75,6 +74,9 @@ body {
   color: var(--text-color);
   margin: 10px;
   overflow: hidden;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .phase {
@@ -108,7 +110,7 @@ body {
   overflow: hidden;
 }
 
-.winner .name {
+.name {
   align-items: center;
   width: 400px;
   text-align: left;
@@ -116,13 +118,12 @@ body {
   font-size: 24px;
 }
 
-.winner .sponsor {
+.color1 .sponsor {
   color: var(--p1-sponsor-color);
   font-size: 24px;
 }
 
 .loser {
-  margin-top: 5px;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -131,17 +132,10 @@ body {
   align-items: center;
   border-radius: 10px;
   overflow: hidden;
+  filter: brightness(0.5);
 }
 
-.loser .name {
-  align-items: center;
-  width: 400px;
-  text-align: left;
-  padding-left: 10px;
-  font-size: 24px;
-}
-
-.loser .sponsor {
+.color2 .sponsor {
   color: var(--p2-sponsor-color);
   font-size: 24px;
 }
@@ -186,11 +180,11 @@ body {
   text-align: center;
 }
 
-.winner .score {
+.color1 .score {
   background: var(--p1-score-bg-color);
 }
 
-.loser .score {
+.color2 .score {
   background: var(--p2-score-bg-color);
 }
 

@@ -32,12 +32,16 @@
             <div class="phase"></div>
             <div class="match"></div>
           </div>
-          <div class="winner">
+          <div class="p1 color${window.PLAYER == 1 ? 1 : 2} ${
+            sets.player_score > sets.oponent_score ? "winner" : "loser"
+          }">
             <div class="name">
             </div>
             <div class="score"></div>
           </div>
-          <div class="loser">
+          <div class="p2 color${window.PLAYER == 1 ? 2 : 1} ${
+            sets.player_score > sets.oponent_score ? "loser" : "winner"
+          }">
             <div class="name">
             </div>
             <div class="score"></div>
@@ -64,30 +68,30 @@
             sets.round_name
           );
           SetInnerHtml(
-            $(`.player1_content .set${s + 1} .winner .name`),
+            $(`.player1_content .set${s + 1} .p1 .name`),
             `
             <span class="sponsor">
-              ${sets.winner_team ? sets.winner_team : ""}
+              ${sets.player_team ? sets.player_team : ""}
             </span>
-            ${sets.winner_name}
+            ${sets.player_name}
           `
           );
           SetInnerHtml(
-            $(`.player1_content .set${s + 1} .winner .score`),
-            sets.winner_score
+            $(`.player1_content .set${s + 1} .p1 .score`),
+            sets.player_score
           );
           SetInnerHtml(
-            $(`.player1_content .set${s + 1} .loser .name`),
+            $(`.player1_content .set${s + 1} .p2 .name`),
             `
             <span class="sponsor">
-              ${sets.loser_team ? sets.loser_team : ""}
+              ${sets.oponent_team ? sets.oponent_team : ""}
             </span>
-            ${sets.loser_name}
+            ${sets.oponent_name}
           `
           );
           SetInnerHtml(
-            $(`.player1_content .set${s + 1} .loser .score`),
-            sets.loser_score
+            $(`.player1_content .set${s + 1} .p2 .score`),
+            sets.oponent_score
           );
           gsap.from(
             $(`.set${s + 1}`),
