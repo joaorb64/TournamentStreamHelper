@@ -716,7 +716,8 @@ class TSHScoreboardWidget(QDockWidget):
                 "placement": set.get("placement"),
                 "event_name": set.get("event_name"),
                 "tournament_name": set.get("tournament_name"),
-                "tournament_picture": set.get("tournament_picture")
+                "tournament_picture": set.get("tournament_picture"),
+                "entrants": set.get("entrants")
             })
             i+=1
         StateManager.ReleaseSaving()

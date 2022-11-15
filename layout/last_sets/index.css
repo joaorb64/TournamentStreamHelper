@@ -28,7 +28,7 @@ body {
   letter-spacing: 1;
 }
 
-.player1_content {
+.container {
   position: absolute;
   top: 10px;
   left: 50%;
@@ -40,6 +40,11 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.player1_content {
+  display: flex;
+  position: relative;
 }
 
 .player2_content {
@@ -187,4 +192,26 @@ body {
 
 .loser .score {
   background: var(--p2-score-bg-color);
+}
+
+.bracket_line {
+  position: absolute;
+  background: black;
+  height: 20px;
+  left: -120px;
+  top: 60%;
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+.line_arrow {
+  position: absolute;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 64px solid black;
+  top: 50%;
+  transform: translateY(-50%) scaleY(50%) translateX(50%);
+  border-top: 64px solid transparent;
+  border-bottom: 64px solid transparent;
 }

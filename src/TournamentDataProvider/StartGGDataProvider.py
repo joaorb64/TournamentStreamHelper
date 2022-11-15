@@ -827,7 +827,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "placement": set.get("placement"),
                     "event_name": event.get("name"),
                     "tournament_name": tournament.get("name"),
-                    "tournament_picture": tournamentPicture
+                    "tournament_picture": tournamentPicture,
+                    "entrants": event.get("numEntrants")
                 }
 
                 set_data.append(player_history)
