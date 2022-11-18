@@ -65,7 +65,7 @@ body {
   display: flex;
   flex-direction: row;
   background-color: var(--bg-color);
-  padding: 5px 10px;
+  padding: 5px 16px;
   border-radius: 10px;
 }
 
@@ -88,11 +88,23 @@ body {
   justify-content: left;
 }
 
+.phase .text {
+  text-align: left;
+  align-items: left;
+  justify-content: left;
+}
+
 .match {
   font-size: 18px;
   letter-spacing: 2px;
   width: 200px;
   text-align: right;
+}
+
+.match .text {
+  text-align: right;
+  align-items: right;
+  justify-content: right;
 }
 
 .sponsor {
@@ -112,10 +124,14 @@ body {
 
 .name {
   align-items: center;
-  width: 400px;
+  flex-grow: 1;
   text-align: left;
-  padding-left: 10px;
   font-size: 24px;
+  padding-left: 16px;
+  padding-right: 16px;
+  flex-shrink: 1;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .color1 .sponsor {
@@ -173,11 +189,12 @@ body {
   font-size: 40px;
   color: var(--text-color);
   overflow: hidden;
-  width: 100px;
+  width: 80px;
   height: 100%;
   align-items: center;
   justify-content: center;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .color1 .score {
