@@ -1,31 +1,31 @@
 function getData() {
   return $.ajax({
-    dataType: 'json',
-    url: '../../out/program_state.json',
-    cache: false
-  })
+    dataType: "json",
+    url: "../../out/program_state.json",
+    cache: false,
+  });
 }
 
 function FitText(target) {
   document.fonts.ready.then(() => {
-    if (target == null) return
-    if (target.css('font-size') == null) return
-    if (target.css('width') == null) return
+    if (target == null) return;
+    if (target.css("font-size") == null) return;
+    if (target.css("width") == null) return;
 
-    let textElement = target.find('.text')
+    let textElement = target.find(".text");
 
-    if (textElement.text().trim().toLowerCase() == 'undefined') {
-      textElement.html('')
+    if (textElement.text().trim().toLowerCase() == "undefined") {
+      textElement.html("");
     }
 
-    textElement.css('transform', '')
-    let scaleX = 1
+    textElement.css("transform", "");
+    let scaleX = 1;
 
     while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
-      scaleX -= 0.01
-      textElement.css('transform', 'scaleX(' + scaleX + ')')
+      scaleX -= 0.01;
+      textElement.css("transform", "scaleX(" + scaleX + ")");
     }
-  })
+  });
 }
 
 function SetInnerHtml(
@@ -35,86 +35,90 @@ function SetInnerHtml(
   fadeTime = 0.5,
   middleFunction = undefined
 ) {
-  if (element == null) return
-  if (force == false) return
+  if (element == null) return;
+  if (force == false) return;
 
-  let fadeOutTime = fadeTime
-  let fadeInTime = fadeTime
+  let fadeOutTime = fadeTime;
+  let fadeInTime = fadeTime;
 
-  if (html == null || html == undefined) html = ''
+  if (html == null || html == undefined) html = "";
 
-  html = String(html)
+  html = String(html);
 
   // First run, no need of smooth fade out
-  if (element.find('.text').length == 0) {
+  if (element.find(".text").length == 0) {
     // Put any text inside the div just so the font loading is triggered
-    element.html("<div class='text'>&nbsp;</div>")
-    fadeOutTime = 0
+    element.html("<div class='text'>&nbsp;</div>");
+    fadeOutTime = 0;
   }
 
   // Wait for font to load before calculating sizes
   document.fonts.ready.then(() => {
     if (
       force == true ||
-      he.decode(String(element.find('.text').html()).replace(/'/g, '"')) !=
+      he.decode(String(element.find(".text").html()).replace(/'/g, '"')) !=
         he.decode(String(html).replace(/'/g, '"'))
     ) {
-      gsap.to(element.find('.text'), {
+      gsap.to(element.find(".text"), {
         autoAlpha: 0,
         duration: fadeOutTime,
         onComplete: () => {
-          element.find('.text').html(html)
-          FitText(element)
+          element.find(".text").html(html);
+          FitText(element);
           if (middleFunction != undefined) {
-            middleFunction()
+            middleFunction();
           }
-          gsap.to(element.find('.text'), {
+          gsap.to(element.find(".text"), {
             autoAlpha: 1,
-            duration: fadeInTime
-          })
-        }
-      })
+            duration: fadeInTime,
+          });
+        },
+      });
     }
-  })
+  });
 }
 
-const degrees_to_radians = deg => (deg * Math.PI) / 180.0;
+const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
-function GenerateMulticharacterPositions(character_number, center=[0.5, 0.5], radius=0.3){
-  let positions = []
+function GenerateMulticharacterPositions(
+  character_number,
+  center = [0.5, 0.5],
+  radius = 0.3
+) {
+  let positions = [];
 
   // For 1 character, just center it
-  if(character_number == 1) radius = 0
-  
-  let angle_rad = degrees_to_radians(90)
+  if (character_number == 1) radius = 0;
 
-  if(character_number == 2) angle_rad = degrees_to_radians(45)
-  
-  let pendulum = 1
+  let angle_rad = degrees_to_radians(90);
 
-  for(let i = 0; i<character_number; i+=1){
-    let j = i
-    if(i > 1){
-      if(i%2 == 0){
-        pendulum *= -1
+  if (character_number == 2) angle_rad = degrees_to_radians(45);
+
+  let pendulum = 1;
+
+  for (let i = 0; i < character_number; i += 1) {
+    let j = i;
+    if (i > 1) {
+      if (i % 2 == 0) {
+        pendulum *= -1;
       } else {
-        pendulum *= -1
-        pendulum += 1
+        pendulum *= -1;
+        pendulum += 1;
       }
-      j = pendulum
+      j = pendulum;
     }
-    angle = angle_rad + degrees_to_radians(360/character_number) * j
+    angle = angle_rad + degrees_to_radians(360 / character_number) * j;
     pos = [
       center[0] + Math.cos(angle) * radius,
-      center[1] + Math.sin(angle) * radius
-    ]
-    positions.push(pos)
+      center[1] + Math.sin(angle) * radius,
+    ];
+    positions.push(pos);
   }
 
-  return positions
+  return positions;
 }
 
-function resizeInCanvas(image, width, height){
+function resizeInCanvas(image, width, height) {
   // Initialize the canvas and it's size
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -147,139 +151,163 @@ function CenterImage(
 ) {
   element.css("opacity", "0");
 
-  if(typeof(assetData) == "string"){
-    assetData = JSON.parse(assetData)
+  if (typeof assetData == "string") {
+    assetData = JSON.parse(assetData);
   }
 
-  let image = 'url("../../'+assetData.asset+'")'
+  let image = 'url("../../' + assetData.asset + '")';
 
-  if (image != undefined && image.includes('url(')) {
-    let img = new Image()
-    img.src = image.split('url("')[1].split('")')[0]
+  if (image != undefined && image.includes("url(")) {
+    let img = new Image();
+    img.src = image.split('url("')[1].split('")')[0];
 
-    $(img).on('load', () => {
-
-      let eyesight = assetData.eyesight
+    $(img).on("load", () => {
+      let eyesight = assetData.eyesight;
 
       if (!eyesight) {
         eyesight = {
           x: img.naturalWidth / 2,
-          y: img.naturalHeight / 2
-        }
+          y: img.naturalHeight / 2,
+        };
       }
 
-      if (!customElement) customElement = element
+      if (!customElement) customElement = element;
 
-      console.log(assetData)
+      console.log(assetData);
 
       let proportional_zoom = 1;
-      if(assetData.average_size){
-        proportional_zoom = 0
-        proportional_zoom = Math.max(proportional_zoom, customElement.innerWidth() / assetData.average_size.x * 1.2)
-        proportional_zoom = Math.max(proportional_zoom, customElement.innerHeight() / assetData.average_size.y * 1.2)
+      if (assetData.average_size) {
+        proportional_zoom = 0;
+        proportional_zoom = Math.max(
+          proportional_zoom,
+          (customElement.innerWidth() / assetData.average_size.x) * 1.2
+        );
+        proportional_zoom = Math.max(
+          proportional_zoom,
+          (customElement.innerHeight() / assetData.average_size.y) * 1.2
+        );
       }
-      console.log(proportional_zoom)
+      console.log(proportional_zoom);
 
       // For cropped assets, zoom to fill
       // Calculate max zoom
-      zoom_x = customElement.innerWidth() / img.naturalWidth
-      zoom_y = customElement.innerHeight() / img.naturalHeight
+      zoom_x = customElement.innerWidth() / img.naturalWidth;
+      zoom_y = customElement.innerHeight() / img.naturalHeight;
 
-      let minZoom = 1
+      let minZoom = 1;
 
       let rescalingFactor = 1;
 
-      if(assetData.rescaling_factor) rescalingFactor = assetData.rescaling_factor;
+      if (assetData.rescaling_factor)
+        rescalingFactor = assetData.rescaling_factor;
 
-      let uncropped_edge = assetData.uncropped_edge
+      let uncropped_edge = assetData.uncropped_edge;
 
-      if (!uncropped_edge || uncropped_edge == "undefined" || uncropped_edge.length == 0) {
+      if (
+        !uncropped_edge ||
+        uncropped_edge == "undefined" ||
+        uncropped_edge.length == 0
+      ) {
         if (zoom_x > zoom_y) {
-          minZoom = zoom_x
+          minZoom = zoom_x;
         } else {
-          minZoom = zoom_y
+          minZoom = zoom_y;
         }
       } else {
         if (
-          uncropped_edge.includes('u') &&
-          uncropped_edge.includes('d') &&
-          uncropped_edge.includes('l') &&
-          uncropped_edge.includes('r')
+          uncropped_edge.includes("u") &&
+          uncropped_edge.includes("d") &&
+          uncropped_edge.includes("l") &&
+          uncropped_edge.includes("r")
         ) {
-          minZoom = customZoom * proportional_zoom * rescalingFactor
-        } else if (!uncropped_edge.includes('l') && !uncropped_edge.includes('r')) {
-          minZoom = zoom_x
-        } else if (!uncropped_edge.includes('u') && !uncropped_edge.includes('d')) {
-          minZoom = zoom_y
+          minZoom = customZoom * proportional_zoom * rescalingFactor;
+        } else if (
+          !uncropped_edge.includes("l") &&
+          !uncropped_edge.includes("r")
+        ) {
+          minZoom = zoom_x;
+        } else if (
+          !uncropped_edge.includes("u") &&
+          !uncropped_edge.includes("d")
+        ) {
+          minZoom = zoom_y;
         } else {
-          minZoom = customZoom * proportional_zoom * rescalingFactor
+          minZoom = customZoom * proportional_zoom * rescalingFactor;
         }
       }
 
-      if(scale_fill_x && !scale_fill_y){
-        minZoom = zoom_x
-      } else if(scale_fill_y && !scale_fill_x){
-        minZoom = zoom_y
-      }
-      else if(scale_fill_x && scale_fill_y){
-        minZoom = Math.max(zoom_x, zoom_y)
+      if (scale_fill_x && !scale_fill_y) {
+        minZoom = zoom_x;
+      } else if (scale_fill_y && !scale_fill_x) {
+        minZoom = zoom_y;
+      } else if (scale_fill_x && scale_fill_y) {
+        minZoom = Math.max(zoom_x, zoom_y);
       }
 
-      zoom = Math.max(minZoom, customZoom * minZoom)
+      zoom = Math.max(minZoom, customZoom * minZoom);
 
       // Cetering
-      let xx = 0
-      let yy = 0
+      let xx = 0;
+      let yy = 0;
 
       if (!customCenter) {
-        xx = -eyesight.x * zoom + element.innerWidth() / 2
+        xx = -eyesight.x * zoom + element.innerWidth() / 2;
       } else {
-        xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x
+        xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x;
       }
 
-      let maxMoveX = element.innerWidth() - img.naturalWidth * zoom
+      let maxMoveX = element.innerWidth() - img.naturalWidth * zoom;
 
-      if (!uncropped_edge || !uncropped_edge.includes('l')) {
-        if (xx > 0) xx = 0
+      if (!uncropped_edge || !uncropped_edge.includes("l")) {
+        if (xx > 0) xx = 0;
       }
-      if (!uncropped_edge || !uncropped_edge.includes('r')) {
-        if (xx < maxMoveX) xx = maxMoveX
+      if (!uncropped_edge || !uncropped_edge.includes("r")) {
+        if (xx < maxMoveX) xx = maxMoveX;
       }
 
       if (!customCenter) {
-        yy = -eyesight.y * zoom + element.innerHeight() / 2
+        yy = -eyesight.y * zoom + element.innerHeight() / 2;
       } else {
-        yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y
+        yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y;
       }
 
-      let maxMoveY = element.innerHeight() - img.naturalHeight * zoom
+      let maxMoveY = element.innerHeight() - img.naturalHeight * zoom;
 
-      if (!uncropped_edge || !uncropped_edge.includes('u')) {
-        if (yy > 0) yy = 0
+      if (!uncropped_edge || !uncropped_edge.includes("u")) {
+        if (yy > 0) yy = 0;
       }
-      if (!uncropped_edge || !uncropped_edge.includes('d')) {
-        if (yy < maxMoveY) yy = maxMoveY
+      if (!uncropped_edge || !uncropped_edge.includes("d")) {
+        if (yy < maxMoveY) yy = maxMoveY;
       }
 
-      console.log('zoom', zoom)
+      console.log("zoom", zoom);
 
       element.css(
-        'background-position',
+        "background-position",
         `
           ${xx}px
           ${yy}px
         `
-      )
+      );
 
       element.css(
-        'background-size',
+        "background-size",
         `
           ${img.naturalWidth * zoom}px
           ${img.naturalHeight * zoom}px
         `
-      )
+      );
 
-      element.css("background-image", "url("+resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom)+")")
+      element.css(
+        "background-image",
+        "url(" +
+          resizeInCanvas(
+            img,
+            img.naturalWidth * zoom,
+            img.naturalHeight * zoom
+          ) +
+          ")"
+      );
       element.css("background-repeat", "no-repeat");
       element.css("opacity", "1");
 
@@ -287,25 +315,25 @@ function CenterImage(
       //element.css("position", "fixed");
       //element.css("width", img.naturalWidth * zoom);
       //element.css("height", img.naturalHeight * zoom);
-    })
+    });
   }
 }
 
-async function FindImages(folder = '') {
-  let flag = true
-  let counter = 1
-  const files = []
+async function FindImages(folder = "") {
+  let flag = true;
+  let counter = 1;
+  const files = [];
 
   while (flag) {
-    const filename = `${folder}/${counter}.png`
+    const filename = `${folder}/${counter}.png`;
     try {
-      await $.get(filename)
-      files.push(filename)
-      counter += 1
+      await $.get(filename);
+      files.push(filename);
+      counter += 1;
     } catch (e) {
-      flag = false
+      flag = false;
     }
   }
 
-  return files
+  return files;
 }
