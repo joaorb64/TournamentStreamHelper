@@ -48,8 +48,10 @@
           </div>
         </div>`;
         });
-      sets_html +=
-        '<div class="bracket_line"><div class="line_arrow"></div></div>';
+      if (Object.values(data.score.last_sets[window.PLAYER]).length > 0) {
+        sets_html +=
+          '<div class="bracket_line"><div class="line_arrow"></div></div>';
+      }
       $(".player1_content").html(sets_html);
 
       Object.values(data.score.last_sets[window.PLAYER])

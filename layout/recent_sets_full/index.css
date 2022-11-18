@@ -41,6 +41,9 @@ body {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .recent_sets_title {
