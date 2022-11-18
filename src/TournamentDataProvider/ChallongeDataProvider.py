@@ -192,6 +192,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         p1_gamerTag = p1_split[-1].strip()
         p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
         p1_avatar = deep_get(match, "player1.portrait_url")
+        p1_id = deep_get(match, "player1.id")
 
         p2_split = deep_get(
             match, "player2.display_name").rsplit("|", 1)
@@ -199,6 +200,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         p2_gamerTag = p2_split[-1].strip()
         p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
         p2_avatar = deep_get(match, "player2.portrait_url")
+        p2_id = deep_get(match, "player2.id")
 
         stream = deep_get(match, "station.stream_url", None)
 
@@ -231,11 +233,13 @@ class ChallongeDataProvider(TournamentDataProvider):
             "p2_name": deep_get(match, "player2.display_name"),
             "entrants": [
                 [{
+                    "id": [p1_id],
                     "gamerTag": p1_gamerTag,
                     "prefix": p1_prefix,
                     "avatar": p1_avatar
                 }],
                 [{
+                    "id": [p2_id],
                     "gamerTag": p2_gamerTag,
                     "prefix": p2_prefix,
                     "avatar": p2_avatar
@@ -349,3 +353,61 @@ class ChallongeDataProvider(TournamentDataProvider):
             return final_data
         except Exception as e:
             traceback.print_exc()
+    
+    def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
+        try:
+            data = requests.get(
+                self.url+".json",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+
+            data = json.loads(data.text)
+
+            set_data = []
+
+            all_matches = self.GetAllMatchesFromData(data)
+
+            all_matches = [
+                match for match in all_matches if match.get("state") in ["complete"] and match.get("player1") and match.get("player2")]
+            
+            all_matches.sort(key=lambda m: abs(m.get("identifier")), reverse=True)
+
+            for _set in all_matches:
+                _set = self.ParseMatchData(_set)
+
+                if not _set:
+                    continue
+                if not _set.get("team1score") and not _set.get("team2score"):
+                    continue
+
+                if _set.get("entrants")[0][0].get("id")[0] != playerID and _set.get("entrants")[1][0].get("id")[0] != playerID:
+                    continue
+            
+                players = ["1", "2"]
+                
+                if _set.get("entrants")[0][0].get("id")[0] != playerID:
+                    players.reverse()
+                
+                player_set = {
+                    "phase_id": "",
+                    "phase_name": _set.get("tournament_phase"),
+                    "round_name": _set.get("round_name"),
+                    f"player{players[0]}_score": _set.get("team1score"),
+                    f"player{players[0]}_team": _set.get("entrants")[0][0].get("prefix"),
+                    f"player{players[0]}_name": _set.get("entrants")[0][0].get("gamerTag"),
+                    f"player{players[1]}_score": _set.get("team2score"),
+                    f"player{players[1]}_team": _set.get("entrants")[1][0].get("prefix"),
+                    f"player{players[1]}_name": _set.get("entrants")[1][0].get("gamerTag"),
+                }
+
+                set_data.append(player_set)
+
+            callback.emit({"playerNumber": playerNumber, "last_sets": set_data})
+        except Exception as e:
+            traceback.print_exc()
+            callback.emit({"playerNumber": playerNumber,"last_sets": []})
