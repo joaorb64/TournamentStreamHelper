@@ -833,14 +833,14 @@ class StartGGDataProvider(TournamentDataProvider):
                     "event_name": event.get("name"),
                     "tournament_name": tournament.get("name"),
                     "tournament_picture": tournamentPicture,
-                    "entrants": event.get("numEntrants")
+                    "entrants": event.get("numEntrants"),
+                    "event_date": event.get("startAt")
                 }
 
                 set_data.append(player_history)
 
             callback.emit({"playerNumber": playerNumber, "history_sets": set_data})
         except Exception as e:
-            traceback.print_exc()
             callback.emit({"playerNumber": playerNumber,"history_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
@@ -1143,6 +1143,11 @@ class StartGGDataProvider(TournamentDataProvider):
                     }
                 else:
                     playerData["mains"] = {}
+        if "id" not in playerData:
+            playerData["id"] = [
+                player.get("id"),
+                0
+            ]
 
         return(playerData)
 
