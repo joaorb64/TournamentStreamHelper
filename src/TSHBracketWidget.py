@@ -10,6 +10,8 @@ from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 from .TSHBracketView import TSHBracketView
+from .TSHPlayerList import TSHPlayerList
+from .TSHBracket import *
 
 class TSHBracketWidgetSignals(QObject):
     UpdateData = pyqtSignal(object)
@@ -23,10 +25,12 @@ class TSHBracketWidget(QDockWidget):
 
         self.signals = TSHBracketWidgetSignals()
 
+        self.bracket = Bracket(16)
+
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
 
-        self.mainLayout = self.findChild(QWidget, "dockWidgetContents")
+        self.mainLayout = self.findChild(QWidget, "bracket")
         self.mainLayout.setLayout(QVBoxLayout())
 
         self.setFloating(True)
@@ -36,8 +40,18 @@ class TSHBracketWidget(QDockWidget):
         self.layout().setSpacing(0)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
-        outerLayout: QWidget = self.findChild(QWidget, "dockWidgetContents")
-        self.bracketView = TSHBracketView()
+        outerLayout: QWidget = self.findChild(QWidget, "bracket")
+        self.playerList = TSHPlayerList(base="bracket.players")
+        list: QWidget = self.findChild(QWidget, "listContainer")
+        list.layout().addWidget(self.playerList)
+
+        self.bracketView = TSHBracketView(self.bracket, self.playerList)
         outerLayout.layout().addWidget(self.bracketView)
+
+        self.playerList.SetSlotNumber(16)
+        self.playerList.SetPlayersPerTeam(1)
+        self.playerList.SetCharactersPerPlayer(1)
+
+        self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 
         StateManager.ReleaseSaving()

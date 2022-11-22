@@ -11,16 +11,19 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHPlayerList import TSHPlayerList
 
 class TSHPlayerListWidgetSignals(QObject):
     UpdateData = pyqtSignal(object)
 
 class TSHPlayerListWidget(QDockWidget):
-    def __init__(self, *args):
+    def __init__(self, *args, base="player_list"):
         StateManager.BlockSaving()
         super().__init__(*args)
 
         self.signals = TSHPlayerListWidgetSignals()
+
+        self.playerList = TSHPlayerList(base=base)
 
         self.setWindowTitle(QApplication.translate("app","Player List"))
         self.setFloating(True)
@@ -57,7 +60,7 @@ class TSHPlayerListWidget(QDockWidget):
         self.slotNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
         col.layout().addWidget(self.slotNumber)
-        self.slotNumber.valueChanged.connect(self.SetSlotNumber)
+        self.slotNumber.valueChanged.connect(self.playerList.SetSlotNumber)
         row.layout().addWidget(col)
 
         col = QWidget()
@@ -67,7 +70,7 @@ class TSHPlayerListWidget(QDockWidget):
         self.playerPerTeam = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Players per slot")))
         col.layout().addWidget(self.playerPerTeam)
-        self.playerPerTeam.valueChanged.connect(self.SetPlayersPerTeam)
+        self.playerPerTeam.valueChanged.connect(self.playerList.SetPlayersPerTeam)
         row.layout().addWidget(col)
 
         col = QWidget()
@@ -77,7 +80,7 @@ class TSHPlayerListWidget(QDockWidget):
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Characters per player")))
         col.layout().addWidget(self.charNumber)
-        self.charNumber.valueChanged.connect(self.SetCharactersPerPlayer)
+        self.charNumber.valueChanged.connect(self.playerList.SetCharactersPerPlayer)
         row.layout().addWidget(col)
 
         row = QWidget()
@@ -90,18 +93,7 @@ class TSHPlayerListWidget(QDockWidget):
         self.loadFromStandingsBt.clicked.connect(self.LoadFromStandingsClicked)
         row.layout().addWidget(self.loadFromStandingsBt)
 
-        scrollArea = QScrollArea()
-        scrollArea.setFrameShadow(QFrame.Shadow.Plain)
-        scrollArea.setFrameShape(QFrame.Shape.NoFrame)
-        scrollArea.setWidgetResizable(True)
-
-        self.widgetArea = QWidget()
-        self.widgetArea.setLayout(QVBoxLayout())
-        self.widgetArea.setSizePolicy(
-            QSizePolicy.Preferred, QSizePolicy.Maximum)
-        scrollArea.setWidget(self.widgetArea)
-
-        self.widget.layout().addWidget(scrollArea)
+        self.widget.layout().addWidget(self.playerList)
 
         self.slotWidgets = []
 
@@ -123,42 +115,6 @@ class TSHPlayerListWidget(QDockWidget):
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
             
-            for i, slot in enumerate(self.slotWidgets):
+            for i, slot in enumerate(self.playerList.slotWidgets):
                 slot.SetTeamData(data[i])
-        StateManager.ReleaseSaving()
-
-    def SetSlotNumber(self, number):
-        StateManager.BlockSaving()
-        while len(self.slotWidgets) < number:
-            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self)
-            self.slotWidgets.append(s)
-            self.widgetArea.layout().addWidget(s)
-            s.SetPlayersPerTeam(self.playerPerTeam.value())
-
-            # s.SetCharactersPerPlayer(self.charNumber.value())
-
-            # index = len(self.team1playerWidgets)
-
-            # p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
-            #     self.team1playerWidgets[index-1 if index > 0 else 0]))
-            # p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
-            #     self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
-
-        while len(self.slotWidgets) > number:
-            s = self.slotWidgets[-1]
-            s.setParent(None)
-            self.slotWidgets.remove(s)
-            StateManager.Unset(f'player_list.slot.{s.index}')
-        StateManager.ReleaseSaving()
-
-    def SetCharactersPerPlayer(self, value):
-        StateManager.BlockSaving()
-        for s in self.slotWidgets:
-            s.SetCharacterNumber(value)
-        StateManager.ReleaseSaving()
-
-    def SetPlayersPerTeam(self, number):
-        StateManager.BlockSaving()
-        for s in self.slotWidgets:
-            s.SetPlayersPerTeam(number)
         StateManager.ReleaseSaving()
