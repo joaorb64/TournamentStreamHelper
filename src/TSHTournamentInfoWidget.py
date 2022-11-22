@@ -20,14 +20,12 @@ class TSHTournamentInfoWidget(QDockWidget):
         TSHTournamentDataProvider.instance.signals.tournament_data_updated.connect(
             self.UpdateData)
 
-# TODO value (QDate) -> String ?
         for widget in self.findChildren(QDateEdit):
-            print("-----")
-            print(widget.objectName())
             widget.dateChanged.connect(lambda value, element=widget: [
                 StateManager.Set(
-                    f"tournamentInfo.{element.objectName()}", value)
+                    f"tournamentInfo.{element.objectName()}", value.toString('dd/MM/yyyy'))
             ])
+            #widget.setDate(d)
             #widget.setValue(StateManager.Get(
             #    f"tournamentInfo.{widget.objectName()}", 0))
 
