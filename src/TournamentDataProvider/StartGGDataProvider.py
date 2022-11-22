@@ -72,6 +72,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 data, "data.event.tournament.venueAddress", "")
             finalData["shortLink"] = deep_get(
                 data, "data.event.tournament.shortSlug", "")
+            finalData["startAt"] = deep_get(
+                data, "data.event.tournament.startAt", "")
         except:
             traceback.print_exc()
 
