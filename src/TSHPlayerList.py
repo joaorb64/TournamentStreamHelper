@@ -64,7 +64,7 @@ class TSHPlayerList(QWidget):
     def SetSlotNumber(self, number):
         StateManager.BlockSaving()
         while len(self.slotWidgets) < number:
-            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self)
+            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self, base=self.base)
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playersPerTeam)

@@ -54,9 +54,8 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID!) {
       nodes {
         round
         identifier
-        games {
-          winnerId
-        }
+        entrant1Score
+        entrant2Score
       }
     }
   }
