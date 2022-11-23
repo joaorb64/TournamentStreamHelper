@@ -27,6 +27,8 @@ class StartGGDataProvider(TournamentDataProvider):
     LastSetsQuery = None
     HistorySetsQuery = None
     TournamentStandingsQuery = None
+    TournamentPhasesQuery = None
+    TournamentPhaseGroupQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
@@ -34,7 +36,7 @@ class StartGGDataProvider(TournamentDataProvider):
         self.getMatchThreadPool = QThreadPool()
         self.getRecentSetsThreadPool = QThreadPool()
 
-    def GetTournamentData(self):
+    def GetTournamentData(self, progress_callback=None):
         finalData = {}
 
         try:
@@ -72,6 +74,94 @@ class StartGGDataProvider(TournamentDataProvider):
                 data, "data.event.tournament.venueAddress", "")
             finalData["shortLink"] = deep_get(
                 data, "data.event.tournament.shortSlug", "")
+        except:
+            traceback.print_exc()
+
+        return finalData
+    
+    def GetTournamentPhases(self, progress_callback=None):
+        phases = []
+
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentPhasesQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.TournamentPhasesQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+            print(data)
+
+            for phase in deep_get(data, "data.event.phases", []):
+                phaseObj = {
+                    "id": phase.get("id"),
+                    "name": phase.get("name"),
+                    "groups": []
+                }
+
+                for phaseGroup in deep_get(phase, "phaseGroups.nodes", []):
+                    phaseObj["groups"].append({
+                        "id": phaseGroup.get("id"),
+                        "name": f"Pool {phaseGroup.get('displayIdentifier')}"
+                    })
+
+                phases.append(phaseObj)
+        except:
+            traceback.print_exc()
+
+        return phases
+
+    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+        finalData = {}
+
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentPhaseGroupQuery",
+                    "variables": {
+                        "id": id,
+                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                    },
+                    "query": StartGGDataProvider.TournamentPhaseGroupQuery
+                }
+            )
+            data = json.loads(data.text)
+
+            seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
+            seeds.sort(key=lambda s: s.get("seedNum"))
+
+            teams = []
+
+            for seed in seeds:
+                team = {}
+                participants = deep_get(seed, "entrant.participants")
+
+                if len(participants) > 1:
+                    team["name"] = deep_get(seed, "entrant.name")
+
+                team["players"] = []
+
+                for entrant in participants:
+                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(seed, "entrant.paginatedSets.nodes")))
+                
+                teams.append(team)
+            
+            finalData["entrants"] = teams
         except:
             traceback.print_exc()
 
@@ -1219,3 +1309,9 @@ StartGGDataProvider.HistorySetsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentPhasesQuery.txt", 'r')
+StartGGDataProvider.TournamentPhasesQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
+StartGGDataProvider.TournamentPhaseGroupQuery = f.read()

@@ -23,6 +23,9 @@ class TSHBracketWidget(QDockWidget):
 
         uic.loadUi("src/layout/TSHBracket.ui", self)
 
+        TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(self.UpdatePhases)
+        TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.connect(self.UpdatePhaseGroup)
+
         self.signals = TSHBracketWidgetSignals()
 
         self.bracket = Bracket(16)
@@ -52,6 +55,39 @@ class TSHBracketWidget(QDockWidget):
         self.playerList.SetPlayersPerTeam(1)
         self.playerList.SetCharactersPerPlayer(1)
 
+        self.phaseSelection: QComboBox = self.findChild(QComboBox, "phaseSelection")
+        self.phaseSelection.currentIndexChanged.connect(self.UpdatePhaseGroups)
+
+        self.phaseGroupSelection: QComboBox = self.findChild(QComboBox, "phaseGroupSelection")
+        self.phaseGroupSelection.currentIndexChanged.connect(self.PhaseGroupChanged)
+
+        self.numProgressions: QSpinBox = self.findChild(QSpinBox, "numProgressions")
+
+
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 
         StateManager.ReleaseSaving()
+    
+    def UpdatePhases(self, phases):
+        print("phases", phases)
+        self.phaseSelection.clear()
+        self.phaseSelection.addItem("")
+
+        for phase in phases:
+            self.phaseSelection.addItem(phase.get("name"), phase)
+        
+    def UpdatePhaseGroups(self):
+        self.phaseGroupSelection.clear()
+
+        if self.phaseSelection.currentData() != None:
+            print(self.phaseSelection.currentData().get("groups", []))
+            for phaseGroup in self.phaseSelection.currentData().get("groups", []):
+                self.phaseGroupSelection.addItem(phaseGroup.get("name"), phaseGroup)
+    
+    def PhaseGroupChanged(self):
+        if self.phaseGroupSelection.currentData() != None:
+            TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
+
+    def UpdatePhaseGroup(self, phaseGroupData):
+        print(phaseGroupData)
+        self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))

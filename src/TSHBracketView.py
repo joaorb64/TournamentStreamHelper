@@ -146,6 +146,22 @@ class TSHBracketView(QGraphicsView):
             for setWidget in round:
                 setWidget.Update()
         self.DrawLines()
+        
+        StateManager.BlockSaving()
+
+        data = {}
+
+        for i, round in enumerate(self.bracketWidgets):
+            data[i] = {}
+            for j, setWidget in enumerate(round):
+                data[i][j] = {
+                    "playerId": setWidget.bracketSet.playerIds,
+                    "score": setWidget.bracketSet.score
+                }
+
+        StateManager.Set("bracket.bracket.rounds", data)
+
+        StateManager.ReleaseSaving()
     
     def DrawLines(self):
         for element in self.bracketLines:

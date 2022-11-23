@@ -6,6 +6,7 @@ class BracketSet():
         self.playerIds = [-1, -1]
         self.score = [0, 0]
         self.winNext: "BracketSet" = None
+        self.loseNext: "BracketSet" = None
 
 # Bracket always has a power of 2 number of players
 # if there are less than that, we round up and add

@@ -1,0 +1,14 @@
+query TournamentPhasesQuery($eventSlug: String!) {
+  event(slug: $eventSlug) {
+    phases {
+      id
+      name
+      phaseGroups(query: {page: 1, perPage: 99}){
+        nodes {
+          id
+          displayIdentifier
+        }
+      }
+    }
+  }
+}

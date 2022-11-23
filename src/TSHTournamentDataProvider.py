@@ -26,7 +26,8 @@ class TSHTournamentDataProviderSignals(QObject):
     last_sets_updated = pyqtSignal(dict)
     history_sets_updated = pyqtSignal(dict)
     get_sets_finished = pyqtSignal(list)
-
+    tournament_phases_updated = pyqtSignal(list)
+    tournament_phasegroup_updated = pyqtSignal(dict)
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -67,10 +68,8 @@ class TSHTournamentDataProvider:
             print("Unsupported provider...")
             return
 
-        tournamentData = TSHTournamentDataProvider.instance.provider.GetTournamentData()
-        tournamentData.update({"initial_load": initialLoading})
-        TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(
-            tournamentData)
+        self.GetTournamentData(initialLoading=initialLoading)
+        self.GetTournamentPhases()
 
         TSHTournamentDataProvider.instance.provider.GetEntrants()
         TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
@@ -163,6 +162,28 @@ class TSHTournamentDataProvider:
         if okPressed:
             SettingsManager.Set(providerName+"_user", text)
             TSHTournamentDataProvider.instance.signals.user_updated.emit()
+
+    def GetTournamentData(self, initialLoading=False):
+        worker = Worker(self.provider.GetTournamentData)
+        worker.signals.result.connect(lambda tournamentData: [
+            tournamentData.update({"initial_load": initialLoading}),
+            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(tournamentData)
+        ])
+        self.threadPool.start(worker)
+    
+    def GetTournamentPhases(self):
+        worker = Worker(self.provider.GetTournamentPhases)
+        worker.signals.result.connect(lambda tournamentPhases: [
+            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit(tournamentPhases)
+        ])
+        self.threadPool.start(worker)
+    
+    def GetTournamentPhaseGroup(self, id):
+        worker = Worker(self.provider.GetTournamentPhaseGroup, **{"id": id})
+        worker.signals.result.connect(lambda phaseGroupData: [
+            TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(phaseGroupData)
+        ])
+        self.threadPool.start(worker)
 
     def LoadSets(self, showFinished):
         worker = Worker(self.provider.GetMatches, **{"getFinished": showFinished})

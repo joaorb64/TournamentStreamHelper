@@ -18,7 +18,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
 
-    def GetTournamentData(self):
+    def GetTournamentData(self, progress_callback=None):
         finalData = {}
 
         try:
