@@ -64,7 +64,8 @@ class Bracket():
             i = math.floor(i/2)
             round = [BracketSet(self) for i in range(int(i))]
             subBracket.append(round)
-        subBracket[-1].append(BracketSet(self))
+        subBracket.append([BracketSet(self)])
+        subBracket.append([BracketSet(self)])
 
         for r, round in enumerate(subBracket):
             self.rounds[str(2+r)] = round
@@ -111,6 +112,17 @@ class Bracket():
                             _set.winNext = self.rounds[str(roundNum-1)][j]
                     except Exception as e:
                         print(e)
+        
+        # Connect losers to winners for grand finals
+        lastLosers = min([int(r) for r in self.rounds.keys()])
+        gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
+        self.rounds[str(lastLosers)][0].winNext = self.rounds[str(gfsRound)][0]
+
+        # Connect grand finals to reset
+        gfsResetRound = max([int(r) for r in self.rounds.keys()])
+        gfsRound = gfsResetRound - 1
+        self.rounds[str(gfsRound)][0].winNext = self.rounds[str(gfsResetRound)][0]
+        self.rounds[str(gfsRound)][0].loseNext = self.rounds[str(gfsResetRound)][0]
     
     def UpdateBracket(self):
         for k, round in sorted(self.rounds.items()):
@@ -119,6 +131,15 @@ class Bracket():
                 targetIdL = j%2
                 if int(k) > 1: targetIdL = 0
                 if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
+
+                lastLosers = min([int(r) for r in self.rounds.keys()])
+                if k == str(lastLosers):
+                    targetIdW = 1
+
+                gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
+                if k == str(gfsRound):
+                    targetIdW = 0
+                    targetIdL = 1
 
                 if _set.winNext:
                     if _set.score[0] > _set.score[1]:

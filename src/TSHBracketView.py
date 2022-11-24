@@ -145,6 +145,8 @@ class TSHBracketView(QGraphicsView):
             if int(roundNum) < 0:
                 currentBracket = self.losersBracket
                 currentWidgets = self.losersBracketWidgets
+            if int(roundNum) == -1:
+                continue
             layoutOuter = QWidget()
             currentBracket.layout().addWidget(layoutOuter)
             layoutOuter.setLayout(QVBoxLayout())
@@ -224,7 +226,7 @@ class TSHBracketView(QGraphicsView):
             for j, setWidget in enumerate(round):
                 _set = setWidget
 
-                if i%2 == 1:
+                if i%2 == 0:
                     nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
                 else:
                     nxtWidget = self.losersBracketWidgets[i+1][j]

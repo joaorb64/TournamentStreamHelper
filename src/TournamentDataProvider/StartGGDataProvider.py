@@ -174,6 +174,8 @@ class StartGGDataProvider(TournamentDataProvider):
             for s in sets:
                 round = int(s.get("round"))
 
+                # StartGG gives us 2 extra rounds for losers (at the start)
+                # ignore them and re-label
                 if round < 0:
                     if round in [-1]:
                         continue
@@ -181,11 +183,15 @@ class StartGGDataProvider(TournamentDataProvider):
                 
                 if not str(round) in finalSets:
                     finalSets[str(round)] = []
-                
 
                 finalSets[str(round)].append({
                     "score": [s.get("entrant1Score"), s.get("entrant2Score")]
                 })
+            
+            # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
+            lastRound = max([int(r) for r in finalSets])
+            gfsReset = finalSets[str(lastRound)].pop()
+            finalSets[str(lastRound+1)] = [gfsReset]
             
             finalData["sets"] = finalSets
         except:
