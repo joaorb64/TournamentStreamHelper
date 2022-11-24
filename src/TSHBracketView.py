@@ -27,28 +27,35 @@ class BracketSetWidget(QWidget):
             hbox.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
             idLabel = QLabel()
+            idLabel.setMinimumWidth(30)
+            idLabel.setFont(QFont(idLabel.font().family(), 8))
+            idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.playerId.append(idLabel)
             hbox.layout().addWidget(idLabel)
 
             name = QLineEdit()
+            name.setMinimumWidth(120)
             name.setDisabled(True)
             self.name.append(name)
             hbox.layout().addWidget(name)
 
             score = QSpinBox()
+            score.setMinimum(-1)
             self.score.append(score)
             hbox.layout().addWidget(score)
             score.valueChanged.connect(lambda newVal, i=i: self.SetScore(i, newVal))
+            score.setValue(-1)
         
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.layout().setSpacing(2)
 
         self.Update()
     
-    def SetScore(self, id, score):
+    def SetScore(self, id, score, updateDisplay=True):
         self.bracketSet.score[id] = score
-        self.bracketSet.bracket.UpdateBracket()
-        self.bracketView.Update()
+        if updateDisplay:
+            self.bracketSet.bracket.UpdateBracket()
+            self.bracketView.Update()
 
     def Update(self):
         if self.bracketSet:
@@ -89,35 +96,57 @@ class TSHBracketView(QGraphicsView):
         super().__init__(*args)
 
         self.playerList = playerList
-        self.bracket = bracket
 
         self._zoom = 0
         self._empty = True
         self._scene = QGraphicsScene(self)
-        self._photo = QGraphicsPixmapItem()
-        self._scene.addItem(self._photo)
         self.setScene(self._scene)
+        
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         #self.setBackgroundBrush(QBrush(QColor(30, 30, 30)))
         self.setFrameShape(QFrame.NoFrame)
+        self.setDragMode(QGraphicsView.ScrollHandDrag)
+
+        self.SetBracket(bracket)
+
+        self.bracketLines = []
+    
+    def SetBracket(self, bracket):
+        self.bracket = bracket
+
+        self.bracketLines = []
+        self._scene.clear()
 
         self.bracketLayout = QWidget()
-        self.bracketLayout.setLayout(QHBoxLayout())
+        self.bracketLayout.setLayout(QVBoxLayout())
+
+        self.winnersBracket = QWidget()
+        self.winnersBracket.setLayout(QHBoxLayout())
+        self.bracketLayout.layout().addWidget(self.winnersBracket)
+
+        self.losersBracket = QWidget()
+        self.losersBracket.setLayout(QHBoxLayout())
+        self.bracketLayout.layout().addWidget(self.losersBracket)
+
         self._scene.addWidget(self.bracketLayout)
 
         self.bracketWidgets = []
+        self.winnersBracketWidgets = []
+        self.losersBracketWidgets = []
 
-        for x, round in enumerate(self.bracket.rounds):
-            print("round", len(round), x)
-            round[0].score = [1,0]
         self.bracket.UpdateBracket()
 
-        for round in self.bracket.rounds:
+        for roundNum, round in self.bracket.rounds.items():
+            currentBracket = self.winnersBracket
+            currentWidgets = self.winnersBracketWidgets
+            if int(roundNum) < 0:
+                currentBracket = self.losersBracket
+                currentWidgets = self.losersBracketWidgets
             layoutOuter = QWidget()
-            self.bracketLayout.layout().addWidget(layoutOuter)
+            currentBracket.layout().addWidget(layoutOuter)
             layoutOuter.setLayout(QVBoxLayout())
             roundWidgets = []
             for _set in round:
@@ -125,20 +154,8 @@ class TSHBracketView(QGraphicsView):
                 layoutOuter.layout().addWidget(wid)
                 roundWidgets.append(wid)
             self.bracketWidgets.append(roundWidgets)
-
-        self.toggleDragMode()
-
-        brush = QBrush()
-        brush.setColor(QColor(0, 0, 0, 0))
-
-        pen = QPen()
-        pen.setColor(QColor(0,0,0,0))
-
-        self.repaint()
-        qApp.processEvents()
-
-        self.bracketLines = []
-
+            currentWidgets.append(roundWidgets)
+        
         self.fitInView()
     
     def Update(self):
@@ -169,11 +186,11 @@ class TSHBracketView(QGraphicsView):
 
         self.bracketLines = []
 
-        for i, round in enumerate(self.bracketWidgets[:-1]):
+        for i, round in enumerate(self.winnersBracketWidgets[:-1]):
             for j, setWidget in enumerate(round):
                 _set = setWidget
 
-                nxtWidget = self.bracketWidgets[i+1][math.floor(j/2)]
+                nxtWidget = self.winnersBracketWidgets[i+1][math.floor(j/2)]
                 nxt = nxtWidget
 
                 pen = QPen(Qt.black, 2, Qt.SolidLine)
@@ -196,33 +213,64 @@ class TSHBracketView(QGraphicsView):
                     ])
                 )
 
-                self._scene.addPath(
+                item = self._scene.addPath(
                     path,
                     pen
                 )
 
-                self.bracketLines.append(path)
+                self.bracketLines.append(item)
+        
+        for i, round in enumerate(self.losersBracketWidgets[:-1]):
+            for j, setWidget in enumerate(round):
+                _set = setWidget
+
+                if i%2 == 1:
+                    nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
+                else:
+                    nxtWidget = self.losersBracketWidgets[i+1][j]
+                nxt = nxtWidget
+
+                pen = QPen(Qt.black, 2, Qt.SolidLine)
+
+                start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                    QPointF(_set.width(), _set.height()/2)
+                end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                    QPointF(0, _set.height()/2)
+
+                midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
+                midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
+
+                path = QPainterPath()
+                path.addPolygon(
+                    QPolygonF([
+                        start,
+                        midpoint1,
+                        midpoint2,
+                        end
+                    ])
+                )
+
+                item = self._scene.addPath(
+                    path,
+                    pen
+                )
+
+                self.bracketLines.append(item)
 
     def fitInView(self, scale=True):
         rect = QRectF(self.bracketLayout.rect())
         if not rect.isNull():
-            self.setSceneRect(rect)
-            # if self.hasPhoto():
-            #     unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
-            #     self.scale(1 / unity.width(), 1 / unity.height())
-            #     viewrect = self.viewport().rect()
-            #     scenerect = self.transform().mapRect(rect)
-            #     factor = min(viewrect.width() / scenerect.width(),
-            #                  viewrect.height() / scenerect.height())
-            #     self.scale(factor, factor)
-            self._zoom = 0
+            # self.setSceneRect(rect)
 
-    def setPhoto(self, pixmap=None):
-        self._zoom = 0
-        self._empty = False
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
-        self._photo.setPixmap(pixmap)
-        self.fitInView()
+            # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
+            # self.scale(1 / unity.width(), 1 / unity.height())
+            # viewrect = self.viewport().rect()
+            # scenerect = self.transform().mapRect(rect)
+            # factor = min(viewrect.width() / scenerect.width(),
+            #                 viewrect.height() / scenerect.height())
+            # self.scale(factor, factor)
+            
+            self._zoom = 0
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
@@ -231,17 +279,12 @@ class TSHBracketView(QGraphicsView):
         else:
             factor = 0.8
             self._zoom -= 1
-        if self._zoom >= 0:
-            self.scale(factor, factor)
-        elif self._zoom == 0:
-            self.fitInView()
-        else:
-            self._zoom = 0
-
-    def toggleDragMode(self):
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
+        # if self._zoom >= 0:
+        self.scale(factor, factor)
+        # elif self._zoom == 0:
+        #     self.fitInView()
+        # else:
+        #     self._zoom = 0
 
     def mousePressEvent(self, event):
-        if self._photo.isUnderMouse():
-            self.photoClicked.emit(self.mapToScene(event.pos()).toPoint())
         super().mousePressEvent(event)

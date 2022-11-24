@@ -164,15 +164,28 @@ class StartGGDataProvider(TournamentDataProvider):
             finalData["entrants"] = teams
 
             sets = deep_get(data, "data.phaseGroup.sets.nodes", [])
-            sets.sort(key=lambda s: (abs(int(s.get("round"))), s.get("identifier")))
+            sets.sort(key=lambda s: (abs(int(s.get("round"))), s.get("id")))
 
             finalSets = {}
 
+            print("sets")
+            print(sets)
+
             for s in sets:
-                if not s.get("round") in finalSets:
-                    finalSets[s.get("round")] = []
+                round = int(s.get("round"))
+
+                if round < 0:
+                    if round in [-1]:
+                        continue
+                    round += 2
                 
-                finalSets[s.get("round")].append([s.get("entrant1Score"), s.get("entrant2Score")])
+                if not str(round) in finalSets:
+                    finalSets[str(round)] = []
+                
+
+                finalSets[str(round)].append({
+                    "score": [s.get("entrant1Score"), s.get("entrant2Score")]
+                })
             
             finalData["sets"] = finalSets
         except:

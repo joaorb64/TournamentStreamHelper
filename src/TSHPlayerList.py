@@ -54,6 +54,7 @@ class TSHPlayerList(QWidget):
     def LoadFromStandings(self, data):
         StateManager.BlockSaving()
         if len(data) > 0:
+            self.SetSlotNumber(len(data))
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
             

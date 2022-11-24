@@ -63,7 +63,6 @@ class TSHBracketWidget(QDockWidget):
 
         self.numProgressions: QSpinBox = self.findChild(QSpinBox, "numProgressions")
 
-
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 
         StateManager.ReleaseSaving()
@@ -89,5 +88,21 @@ class TSHBracketWidget(QDockWidget):
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
 
     def UpdatePhaseGroup(self, phaseGroupData):
+        StateManager.BlockSaving()
         print(phaseGroupData)
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
+        self.bracket = Bracket(len(phaseGroupData.get("entrants")))
+        self.bracketView.SetBracket(self.bracket)
+
+        for r, round in phaseGroupData.get("sets", {}).items():
+            for s, _set in enumerate(round):
+                try:
+                    score = _set.get("score")
+                    if score[0] == None: score[0] = -1
+                    if score[1] == None: score[1] = -1
+                    self.bracket.rounds[str(r)][s].score = score
+                except Exception as e:
+                    print(e)
+        self.bracket.UpdateBracket()
+        self.bracketView.Update()
+        StateManager.ReleaseSaving()

@@ -4,7 +4,7 @@ class BracketSet():
     def __init__(self, bracket: "Bracket") -> None:
         self.bracket: Bracket = bracket
         self.playerIds = [-1, -1]
-        self.score = [0, 0]
+        self.score = [-1, -1]
         self.winNext: "BracketSet" = None
         self.loseNext: "BracketSet" = None
 
@@ -14,74 +14,122 @@ class BracketSet():
 def next_power_of_2(x):
     return 1 if x == 0 else 2**math.ceil(math.log2(x))
 
+def seeding(numPlayers):
+    rounds = math.log(numPlayers)/math.log(2)-1
+    pls = [1,2]
+    for i in range(int(rounds)):
+        pls = nextLayer(pls)
+    return pls
+
+def nextLayer(pls):
+    out = []
+    length = len(pls)*2+1
+    
+    for d in pls:
+        out.append(d)
+        out.append(length-d)
+    return out
+
 class Bracket():
     def __init__(self, playerNumber) -> None:
         self.playerNumber = next_power_of_2(playerNumber)
 
-        self.slots = [BracketSet(self) for i in range(int(self.playerNumber/2))]
+        seeds = seeding(self.playerNumber)
 
-        x = [0] * int(self.playerNumber/2)
-        y = [0] * int(self.playerNumber/2)
+        print(seeds)
 
-        a = 1
+        self.rounds = {}
 
-        for i in range(1, int(self.playerNumber/4)+int(self.playerNumber/4)+1):
-            if i == 1:
-                x[i-1] = a
-                y[i-1] = a+1
-            elif i % 2 == 0:
-                x[i-1] = 2*i
-                y[i-1] = x[i-1]-1
-            else:
-                x[i-1] = 2*i-1
-                y[i-1] = x[i-1]+1
-            a += 1
-
-        print(x)
-        print(y)
-
-        a = 0
-        b = 0
-
-        for i in range(0, int(len(x)/2)):
+        # Create winners
+        self.rounds["1"] = []
+        for i in range(self.playerNumber):
             if i % 2 == 0:
-                self.slots[i].playerIds[0] = x[a]
-                self.slots[i].playerIds[1] = x[-a-1]
-
-                self.slots[i + int(self.playerNumber/4)].playerIds[0] = y[a]
-                self.slots[i + int(self.playerNumber/4)].playerIds[1] = y[-a-1]
-
-                a += 1
-            else:
-                self.slots[i].playerIds[0] = x[int(len(x)/2)-b-1]
-                self.slots[i].playerIds[1] = x[int(len(x)/2)+b]
-
-                self.slots[i + int(self.playerNumber/4)].playerIds[0] = y[int(len(x)/2)-b-1]
-                self.slots[i + int(self.playerNumber/4)].playerIds[1] = y[int(len(x)/2)+b]
-
-                b += 1
-
-        self.rounds = []
-        self.rounds.append(self.slots)
-
-        i = len(self.slots)
+                _set = BracketSet(self)
+                _set.playerIds[0] = seeds[i]
+                _set.playerIds[1] = seeds[i+1]
+                self.rounds["1"].append(_set)
         
+        # Create losers
+        self.rounds["-1"] = []
+        self.rounds["-2"] = []
+        for i in range(int(self.playerNumber/4)):
+            self.rounds["-1"].append(BracketSet(self))
+            self.rounds["-2"].append(BracketSet(self))
+        
+        # Expand winners
+        subBracket = []
+        i = self.playerNumber/2
+
         while i > 1:
             i = math.floor(i/2)
             round = [BracketSet(self) for i in range(int(i))]
-            self.rounds.append(round)
+            subBracket.append(round)
+        subBracket[-1].append(BracketSet(self))
 
-        for i, round in enumerate(self.rounds[:-1]):
-            for j, _set in enumerate(round):
-                _set.winNext = self.rounds[i+1][math.floor(j/2)]
+        for r, round in enumerate(subBracket):
+            self.rounds[str(2+r)] = round
+        
+        # Expand losers
+        subBracket = []
+        i = self.playerNumber/4
+
+        while i > 1:
+            i = math.floor(i/2)
+            for j in range(2):
+                round = [BracketSet(self) for i in range(math.floor(i))]
+                subBracket.append(round)
+
+        for r, round in enumerate(subBracket):
+            self.rounds[str(-3-r)] = round
+
+        # Connect sets
+        for k, round in self.rounds.items():
+            roundNum = int(k)
+
+            if roundNum > 0:
+                for j, _set in enumerate(round):
+                    try:
+                        _set.winNext = self.rounds[str(roundNum+1)][math.floor(j/2)]
+                    except Exception as e:
+                        print(e)
+                    try:
+                        if abs(roundNum) == 1:
+                            _set.loseNext = self.rounds[str(-max(1, int(2*(roundNum-1))))][math.floor(j/2)]
+                        else:
+                            if abs(roundNum)%2 == 0:
+                                _set.loseNext = self.rounds[str(-int(2*(roundNum-1)))][(-1-j)%len(round)]
+                            else:
+                                _set.loseNext = self.rounds[str(-int(2*(roundNum-1)))][(-int(len(round)/2)-1-j)%len(round)]
+                    except Exception as e:
+                        print(e)
+            else:
+                for j, _set in enumerate(round):
+                    try:
+                        if abs(roundNum)%2 == 0:
+                            _set.winNext = self.rounds[str(roundNum-1)][math.floor(j/2)]
+                        else:
+                            _set.winNext = self.rounds[str(roundNum-1)][j]
+                    except Exception as e:
+                        print(e)
     
     def UpdateBracket(self):
-        for i, round in enumerate(self.rounds):
+        for k, round in sorted(self.rounds.items()):
             for j, _set in enumerate(round):
+                targetIdW = j%2
+                targetIdL = j%2
+                if int(k) > 1: targetIdL = 0
+                if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
+
                 if _set.winNext:
                     if _set.score[0] > _set.score[1]:
-                        _set.winNext.playerIds[j%2] = _set.playerIds[0]
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
                     elif _set.score[0] < _set.score[1]:
-                        _set.winNext.playerIds[j%2] = _set.playerIds[1]
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[1]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
                     else:
-                        _set.winNext.playerIds[j%2] = -1
+                        _set.winNext.playerIds[targetIdW] = -1
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = -1
