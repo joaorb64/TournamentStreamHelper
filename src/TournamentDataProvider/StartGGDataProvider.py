@@ -112,7 +112,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 for phaseGroup in deep_get(phase, "phaseGroups.nodes", []):
                     phaseObj["groups"].append({
                         "id": phaseGroup.get("id"),
-                        "name": f"Pool {phaseGroup.get('displayIdentifier')}"
+                        "name": f"Pool {phaseGroup.get('displayIdentifier')}",
+                        "bracketType": phaseGroup.get("bracketType")
                     })
 
                 phases.append(phaseObj)
@@ -168,9 +169,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
             finalSets = {}
 
-            print("sets")
-            print(sets)
-
             for s in sets:
                 round = int(s.get("round"))
 
@@ -190,10 +188,13 @@ class StartGGDataProvider(TournamentDataProvider):
             
             # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
             lastRound = max([int(r) for r in finalSets])
-            gfsReset = finalSets[str(lastRound)].pop()
-            finalSets[str(lastRound+1)] = [gfsReset]
-            
+            if len(finalSets[str(lastRound)]) > 1:
+                gfsReset = finalSets[str(lastRound)].pop()
+                finalSets[str(lastRound+1)] = [gfsReset]
+
             finalData["sets"] = finalSets
+            
+            finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
         except:
             traceback.print_exc()
 

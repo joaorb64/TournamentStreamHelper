@@ -7,6 +7,7 @@ query TournamentPhasesQuery($eventSlug: String!) {
         nodes {
           id
           displayIdentifier
+          bracketType
         }
       }
     }

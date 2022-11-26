@@ -74,6 +74,12 @@ class TSHBracketWidget(QDockWidget):
 
         for phase in phases:
             self.phaseSelection.addItem(phase.get("name"), phase)
+
+            # Let's only allow double elimination for now
+            if phase.get("bracketType") != "DOUBLE_ELIMINATION":
+                itemModel: QStandardItemModel = self.phaseSelection.model()
+                item = itemModel.item(itemModel.rowCount()-1)
+                item.setDisabled(True)
         
     def UpdatePhaseGroups(self):
         self.phaseGroupSelection.clear()
@@ -89,7 +95,14 @@ class TSHBracketWidget(QDockWidget):
 
     def UpdatePhaseGroup(self, phaseGroupData):
         StateManager.BlockSaving()
+
         print(phaseGroupData)
+
+        if phaseGroupData.get("progressionsOut", {}) != None:
+            self.numProgressions.setValue(len(phaseGroupData.get("progressionsOut", {})))
+        else:
+            self.numProgressions.setValue(0)
+
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
         self.bracket = Bracket(len(phaseGroupData.get("entrants")))
         self.bracketView.SetBracket(self.bracket)
@@ -103,6 +116,7 @@ class TSHBracketWidget(QDockWidget):
                     self.bracket.rounds[str(r)][s].score = score
                 except Exception as e:
                     print(e)
+        
         self.bracket.UpdateBracket()
         self.bracketView.Update()
         StateManager.ReleaseSaving()

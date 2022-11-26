@@ -23,11 +23,17 @@
         JSON.stringify(oldData.bracket.bracket)
     ) {
       let bracket = data.bracket.bracket.rounds;
-      let players = data.player_list.slot;
+      let players = data.bracket.players.slot;
 
       let html = "";
 
-      Object.values(bracket).forEach((round, r) => {
+      let winnersRounds = Object.fromEntries(
+        Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
+      );
+
+      console.log(winnersRounds);
+
+      Object.values(winnersRounds).forEach((round, r) => {
         html += `<div class="round round_${r}">`;
         Object.values(round).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
@@ -56,8 +62,23 @@
 
       $(".players_container").html(html);
 
+      let slotLines = "";
+
       Object.values(bracket).forEach((round, r) => {
         Object.values(round).forEach((slot, i) => {
+          if (
+            slot.playerId[0] > Object.keys(players).length ||
+            slot.playerId[1] > Object.keys(players).length
+          ) {
+            $(`.round_${r} .slot_${i + 1} .slot_p_0.container`).css(
+              "opacity",
+              "0"
+            );
+            $(`.round_${r} .slot_${i + 1} .slot_p_1.container`).css(
+              "opacity",
+              "0"
+            );
+          }
           Object.values(slot.score).forEach((score, p) => {
             console.log(p);
             SetInnerHtml(
@@ -69,8 +90,33 @@
               0
             );
           });
+          if (slot.score[0] > slot.score[1]) {
+            $(`.round_${r} .slot_${i + 1} .slot_p_${1}.container`).css(
+              "filter",
+              "brightness(0.6)"
+            );
+          } else if (slot.score[1] > slot.score[0]) {
+            $(`.round_${r} .slot_${i + 1} .slot_p_${0}.container`).css(
+              "filter",
+              "brightness(0.6)"
+            );
+          }
+
+          let slotElement = $(`.round_${r} .slot_${i + 1}`);
+
+          if (slotElement && slotElement.position()) {
+            console.log(slotElement.position());
+            slotLines += `<line
+              x1=${slotElement.position().left + slotElement.width()}
+              y1=${slotElement.position().top + slotElement.height() / 2}
+              x2=${slotElement.position().left + slotElement.width() + 10}
+              y2=${slotElement.position().top + slotElement.height() / 2} 
+              stroke="black" width="5" />`;
+          }
         });
       });
+
+      $(".lines").html(slotLines);
 
       Object.values(players).forEach((slot, t) => {
         Object.values(slot.player).forEach((player, p) => {
@@ -139,10 +185,9 @@
                   }.container .character_container .icon.stockicon div`
                 ).each((e, i) => {
                   if (
-                    player.character[e + 1] &&
-                    player.character[e + 1].assets[ASSET_TO_USE] != null
+                    player.character[1] &&
+                    player.character[1].assets[ASSET_TO_USE] != null
                   ) {
-                    console.log(i);
                     CenterImage(
                       $(i),
                       $(i).attr("data-asset"),
@@ -215,7 +260,7 @@
 
   Update();
   $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
+    $("body").fadeTo(1000, 1000, async () => {
       Start();
       setInterval(Update, 16);
     });

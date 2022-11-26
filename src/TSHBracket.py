@@ -1,12 +1,13 @@
 import math
 
 class BracketSet():
-    def __init__(self, bracket: "Bracket") -> None:
+    def __init__(self, bracket: "Bracket", pos) -> None:
         self.bracket: Bracket = bracket
         self.playerIds = [-1, -1]
         self.score = [-1, -1]
         self.winNext: "BracketSet" = None
         self.loseNext: "BracketSet" = None
+        self.pos = pos
 
 # Bracket always has a power of 2 number of players
 # if there are less than that, we round up and add
@@ -44,7 +45,7 @@ class Bracket():
         self.rounds["1"] = []
         for i in range(self.playerNumber):
             if i % 2 == 0:
-                _set = BracketSet(self)
+                _set = BracketSet(self, [1, len(self.rounds["1"])])
                 _set.playerIds[0] = seeds[i]
                 _set.playerIds[1] = seeds[i+1]
                 self.rounds["1"].append(_set)
@@ -53,8 +54,8 @@ class Bracket():
         self.rounds["-1"] = []
         self.rounds["-2"] = []
         for i in range(int(self.playerNumber/4)):
-            self.rounds["-1"].append(BracketSet(self))
-            self.rounds["-2"].append(BracketSet(self))
+            self.rounds["-1"].append(BracketSet(self, [-1, len(self.rounds["-1"])]))
+            self.rounds["-2"].append(BracketSet(self, [-2, len(self.rounds["-2"])]))
         
         # Expand winners
         subBracket = []
@@ -62,10 +63,10 @@ class Bracket():
 
         while i > 1:
             i = math.floor(i/2)
-            round = [BracketSet(self) for i in range(int(i))]
+            round = [BracketSet(self, [2+len(subBracket), i]) for i in range(int(i))]
             subBracket.append(round)
-        subBracket.append([BracketSet(self)])
-        subBracket.append([BracketSet(self)])
+        subBracket.append([BracketSet(self, [2+len(subBracket), 0])])
+        subBracket.append([BracketSet(self, [2+len(subBracket), 0])])
 
         for r, round in enumerate(subBracket):
             self.rounds[str(2+r)] = round
@@ -77,7 +78,7 @@ class Bracket():
         while i > 1:
             i = math.floor(i/2)
             for j in range(2):
-                round = [BracketSet(self) for i in range(math.floor(i))]
+                round = [BracketSet(self, [-3-len(subBracket), i]) for i in range(math.floor(i))]
                 subBracket.append(round)
 
         for r, round in enumerate(subBracket):

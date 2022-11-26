@@ -18,7 +18,7 @@ body {
   overflow: hidden;
   display: flex;
   box-sizing: border-box;
-  border-radius: var(--border-radius);
+  border-radius: calc(var(--border-radius) / 2);
   background-color: var(--bg-color);
   align-items: center;
   justify-content: center;
@@ -28,23 +28,22 @@ body {
 .players_container {
   display: flex;
   flex-direction: row;
-  height: 100%;
   gap: 8px 32px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-content: center;
   width: 100%;
-  height: 100%;
+  height: 50vh;
+  overflow: hidden;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0%;
 }
 
 .round {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  gap: 16px;
+  gap: 0px;
 }
 
 .slot {
@@ -65,8 +64,8 @@ body {
 
 .player.container {
   position: relative;
-  width: 400px;
-  height: 48px;
+  width: 200px;
+  height: 16px;
 }
 
 .name_twitter {
@@ -90,7 +89,7 @@ body {
 }
 
 .name_twitter .name {
-  font-size: 24px;
+  font-size: 16px;
   max-width: 100%;
 }
 
@@ -133,12 +132,12 @@ body {
   border-radius: var(--border-radius);
   overflow: hidden;
   background-color: #3f3f46;
-  height: 64px;
+  height: 16px;
 }
 
 .icon div:not(.text) {
-  width: 64px;
-  height: 64px;
+  width: 16px;
+  height: 16px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -153,10 +152,10 @@ body {
 .flags {
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 2px;
   height: 100%;
   justify-content: center;
-  width: 82px;
+  width: 32px;
   flex-shrink: 0;
 }
 
@@ -165,9 +164,9 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 30px;
-  height: 22px;
-  border-radius: 10px;
+  width: 12px;
+  height: 8px;
+  border-radius: 4px;
 }
 
 .sponsor_icon > div > div {
@@ -175,18 +174,18 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  width: 56px;
-  height: 56px;
+  width: 16px;
+  height: 16px;
   border-radius: var(--border-radius);
 }
 
 .character_container {
   display: flex;
   overflow: hidden;
-  height: calc(100% + 32px);
-  width: 120px;
+  height: 100%;
+  width: 32px;
   flex-shrink: 0;
-  margin-top: -16px;
+  margin-top: 0;
   right: 0;
 }
 
@@ -195,7 +194,7 @@ body {
   height: 100%;
   gap: 4px;
   display: flex;
-  width: 120px;
+  width: 32px;
 }
 
 .character_container > div > div {
@@ -208,9 +207,9 @@ body {
 }
 
 .score {
-  width: 64px;
+  width: 32px;
   height: 100px;
-  font-size: 32px;
+  font-size: 16px;
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
@@ -224,8 +223,24 @@ body {
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .sponsor {
   color: var(--p1-sponsor-color);
+}
+
+.slot_p_0 {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.slot_p_1 {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.lines {
+  width: 100vw;
+  height: 100vh;
 }

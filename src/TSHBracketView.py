@@ -170,12 +170,14 @@ class TSHBracketView(QGraphicsView):
 
         data = {}
 
-        for i, round in enumerate(self.bracketWidgets):
+        for i, round in self.bracket.rounds.items():
             data[i] = {}
-            for j, setWidget in enumerate(round):
+            for j, bracketSet in enumerate(round):
                 data[i][j] = {
-                    "playerId": setWidget.bracketSet.playerIds,
-                    "score": setWidget.bracketSet.score
+                    "playerId": bracketSet.playerIds,
+                    "score": bracketSet.score,
+                    "nextWin": bracketSet.winNext.pos if bracketSet.winNext else None,
+                    "nextLose": bracketSet.loseNext.pos if bracketSet.loseNext else None
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
