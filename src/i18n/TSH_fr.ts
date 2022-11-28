@@ -705,7 +705,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="555"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="200"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="201"/>
         <source>Update</source>
         <translation>Mettre à jour</translation>
     </message>
@@ -964,29 +964,34 @@ p, li { white-space: pre-wrap; }
         <translation>Mettre à jour le joueur</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="44"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="45"/>
         <source>Ruleset</source>
         <translation>Règles</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="125"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="126"/>
         <source>Open {0} in a browser to stage strike.</source>
         <translation>Ouvrez {0} dans un navigateur web pour effectuer le ban des stages.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="203"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="204"/>
         <source>Save new</source>
         <translation>Sauvegarder le règlement</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="448"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="449"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation>Le nombre total de bans ne correspond pas au nombre de stages neutres. Veuillez bannir {0} stages supplémentaires.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="451"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="456"/>
         <source>The current ruleset is valid!</source>
         <translation>Le règlement actuel est valide !</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="506"/>
+        <source>The text for banByMaxGames is invalid.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Score</source>
