@@ -34,6 +34,7 @@ class Ruleset():
         self.banCount = 0
         self.strikeOrder = []
         self.videogame = ""
+        self.errors = []
 
 
 class TSHScoreboardStageWidget(QDockWidget):
@@ -447,6 +448,10 @@ class TSHScoreboardStageWidget(QDockWidget):
                 remaining = (len(ruleset.neutralStages) - 1) - sum(ruleset.strikeOrder)
                 issues.append(QApplication.translate("app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
 
+        # Add errors
+        for error in ruleset.errors:
+            issues.append(error)
+
         if len(issues) == 0:
             validText = QApplication.translate("app", "The current ruleset is valid!")
             self.labelValidation.setText(f"<span style='color: green'>{validText}</span>")
@@ -498,6 +503,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                         ruleset.banByMaxGames[key.strip()] = int(value.strip())
             except:
                 ruleset.banByMaxGames = {}
+                ruleset.errors.append(QApplication.translate("app", "The text for banByMaxGames is invalid."))
                 traceback.print_exc()
 
         ruleset.strikeOrder = [
