@@ -11,6 +11,14 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from ..Workers import Worker
 
+def CHALLONGE_BRACKET_TYPE(bracketType: str):
+    mapping = {
+        "DoubleEliminationBracketPlotter": "DOUBLE_ELIMINATION"
+    }
+    if bracketType in mapping:
+        return mapping[bracketType]
+    else:
+        return bracketType
 
 class ChallongeDataProvider(TournamentDataProvider):
 
@@ -125,6 +133,106 @@ class ChallongeDataProvider(TournamentDataProvider):
             traceback.print_exc()
 
         return final_data
+    
+    def GetTournamentPhases(self, progress_callback=None):
+        phases = []
+
+        try:
+            data = requests.get(
+                self.url+".json",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+            print(data.text)
+            data = json.loads(data.text)
+
+            if len(deep_get(data, "groups", [])) > 0:
+                phaseObj = {
+                    "id": "group_stage",
+                    "name": "Group Stage",
+                    "groups": []
+                }
+                for g, group in enumerate(deep_get(data, "groups", [])):
+                    phaseObj["groups"].append({
+                        "id": g,
+                        "name": group.get('name'),
+                        "bracketType": CHALLONGE_BRACKET_TYPE(group.get("requested_plotter"))
+                    })
+                phases.append(phaseObj)
+            
+            phases.append({
+                "id": "final_stage",
+                "name": "Final Stage",
+                "groups": [{
+                        "id": "final_stage",
+                        "name": "Bracket",
+                        "bracketType": CHALLONGE_BRACKET_TYPE(data.get("requested_plotter"))
+                    }
+                ]
+            })
+        except:
+            traceback.print_exc()
+
+        return phases
+
+    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+        finalData = {}
+        try:
+            data = requests.get(
+                self.url+".json",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+            print(data.text)
+            data = json.loads(data.text)
+
+            if id == "final_stage":
+                pass
+            else:
+                deep_get(data, "groups", [])[int(id)]
+
+            entrants = self.GetAllEntrantsFromData(data)
+            entrants.sort(key=lambda e: e.get("seed"))
+
+            finalData["entrants"] = entrants
+
+            all_matches = self.GetAllMatchesFromData(data)
+
+            parsed_matches = []
+
+            for match in all_matches:
+                parsed_matches.append(self.ParseMatchData(match))
+
+            rounds = {}
+
+            for match in parsed_matches:
+                roundNum = match.get("round")
+
+                if roundNum < 0:
+                    roundNum -= 3
+
+                if not str(roundNum) in rounds:
+                    rounds[str(roundNum)] = []
+                rounds[str(roundNum)].append({
+                    "score": [match.get("team1score", -1), match.get("team2score", -1)]
+                })
+            
+            print("finalRounds")
+            print(rounds)
+
+            finalData["sets"] = rounds
+        except:
+            traceback.print_exc()
+
+        return finalData
 
     def GetAllMatchesFromData(self, data):
         rounds = deep_get(data, "rounds", {})
@@ -136,6 +244,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             for m, match in enumerate(round):
                 match["round_name"] = next(
                     r["title"] for r in rounds if r["number"] == match.get("round"))
+                match["round"] = match.get("round")
                 if data.get("tournament", {}).get("tournament_type") == "round robin":
                     match["phase"] = "Round Robin"
                 else:
@@ -228,21 +337,26 @@ class ChallongeDataProvider(TournamentDataProvider):
         return({
             "id": deep_get(match, "id"),
             "round_name": deep_get(match, "round_name"),
+            "round": deep_get(match, "round"),
             "tournament_phase": match.get("phase"),
             "p1_name": deep_get(match, "player1.display_name"),
             "p2_name": deep_get(match, "player2.display_name"),
+            "p1_seed": deep_get(match, "player1.seed"),
+            "p2_seed": deep_get(match, "player2.seed"),
             "entrants": [
                 [{
                     "id": [p1_id],
                     "gamerTag": p1_gamerTag,
                     "prefix": p1_prefix,
-                    "avatar": p1_avatar
+                    "avatar": p1_avatar,
+                    "seed": deep_get(match, "player1.seed")
                 }],
                 [{
                     "id": [p2_id],
                     "gamerTag": p2_gamerTag,
                     "prefix": p2_prefix,
-                    "avatar": p2_avatar
+                    "avatar": p2_avatar,
+                    "seed": deep_get(match, "player2.seed")
                 }],
             ],
             "stream": stream,
@@ -271,36 +385,46 @@ class ChallongeDataProvider(TournamentDataProvider):
             print(data)
 
             data = json.loads(data.text)
-
-            rounds = deep_get(data, "rounds", {})
-            matches = deep_get(data, "matches_by_round", {})
-
-            all_matches = self.GetAllMatchesFromData(data)
-
-            all_entrants = {}
-
-            for match in all_matches:
-                for player in [match.get("player1"), match.get("player2")]:
-                    if player:
-                        if not player.get("id") in all_entrants:
-                            playerData = {}
-
-                            split = player.get("display_name").rsplit("|", 1)
-
-                            gamerTag = split[-1].strip()
-                            prefix = split[0].strip() if len(
-                                split) > 1 else None
-
-                            playerData["gamerTag"] = gamerTag
-                            playerData["prefix"] = prefix
-
-                            playerData["avatar"] = player.get("portrait_url")
-
-                            all_entrants[player.get("id")] = playerData
-
-            TSHPlayerDB.AddPlayers(all_entrants.values())
+            TSHPlayerDB.AddPlayers(self.GetAllEntrantsFromData(data))
         except Exception as e:
             traceback.print_exc()
+    
+    def GetAllEntrantsFromData(self, data):
+        final_data = []
+
+        all_matches = self.GetAllMatchesFromData(data)
+        all_matches.sort(key=lambda m: abs(m.get("identifier")), reverse=True)
+
+        # do not add duplicates
+        added_list = []
+
+        for m in all_matches:
+            for p in ["player1", "player2"]:
+                player = m.get(p)
+
+                if player.get("id", None) != None and not player.get("id") in added_list:
+                    playerData = {}
+
+                    split = player.get("display_name").rsplit("|", 1)
+
+                    gamerTag = split[-1].strip()
+                    prefix = split[0].strip() if len(
+                        split) > 1 else None
+
+                    playerData["gamerTag"] = gamerTag
+                    playerData["prefix"] = prefix
+
+                    playerData["avatar"] = player.get("portrait_url")
+
+                    playerData["seed"] = player.get("seed")
+
+                    final_data.append({
+                        "players": [playerData],
+                        "seed": player.get("seed")
+                    })
+                    added_list.append(player.get("id"))
+        
+        return(final_data)
 
     def GetStandings(self, playerNumber, progress_callback):
         final_data = []
