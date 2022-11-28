@@ -67,7 +67,7 @@
       );
 
       Object.values(losersRounds).forEach((round, r) => {
-        if (r == 0) return;
+        if (r in [0, 1, 2]) return;
         console.log(round);
         html += `<div class="round round_${r}">`;
         Object.values(round).forEach((slot, i) => {
@@ -140,8 +140,16 @@
               ).css("filter", "brightness(0.6)");
             }
 
+            let lastLosers =
+              parseInt(roundKey) ==
+              Math.min.apply(
+                null,
+                Object.keys(bracket).map((r) => parseInt(r))
+              );
+
             if (
               slot.nextWin &&
+              !lastLosers &&
               !(
                 slot.playerId[0] > Object.keys(players).length ||
                 slot.playerId[1] > Object.keys(players).length ||

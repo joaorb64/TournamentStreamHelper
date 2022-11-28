@@ -1,3 +1,7 @@
+:root {
+  --player-height: 12px;
+}
+
 body {
   font-family: var(--font);
   font-weight: bold;
@@ -79,7 +83,7 @@ body {
 .player.container {
   position: relative;
   width: 220px;
-  height: 12px;
+  height: var(--player-height);
 }
 
 .name_twitter {
