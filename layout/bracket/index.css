@@ -25,7 +25,7 @@ body {
   place-content: center;
 }
 
-.players_container {
+.winners_container {
   display: flex;
   flex-direction: row;
   gap: 8px 32px;
@@ -39,6 +39,20 @@ body {
   top: 0%;
 }
 
+.losers_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 32px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+}
+
 .round {
   display: flex;
   flex-direction: column;
@@ -49,7 +63,7 @@ body {
 .slot {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .slot .title {
@@ -64,8 +78,8 @@ body {
 
 .player.container {
   position: relative;
-  width: 200px;
-  height: 16px;
+  width: 220px;
+  height: 12px;
 }
 
 .name_twitter {
@@ -89,7 +103,7 @@ body {
 }
 
 .name_twitter .name {
-  font-size: 16px;
+  font-size: 12px;
   max-width: 100%;
 }
 
@@ -166,7 +180,7 @@ body {
   background-position: center;
   width: 12px;
   height: 8px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .sponsor_icon > div > div {
@@ -209,7 +223,7 @@ body {
 .score {
   width: 32px;
   height: 100px;
-  font-size: 16px;
+  font-size: 12px;
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;

@@ -171,13 +171,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
             for s in sets:
                 round = int(s.get("round"))
-
-                # StartGG gives us 2 extra rounds for losers (at the start)
-                # ignore them and re-label
-                if round < 0:
-                    if round in [-1]:
-                        continue
-                    round += 2
                 
                 if not str(round) in finalSets:
                     finalSets[str(round)] = []
@@ -185,16 +178,33 @@ class StartGGDataProvider(TournamentDataProvider):
                 finalSets[str(round)].append({
                     "score": [s.get("entrant1Score"), s.get("entrant2Score")]
                 })
-            
-            # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
-            lastRound = max([int(r) for r in finalSets])
-            if len(finalSets[str(lastRound)]) > 1:
-                gfsReset = finalSets[str(lastRound)].pop()
-                finalSets[str(lastRound+1)] = [gfsReset]
 
             finalData["sets"] = finalSets
+
+            finalData["progressionsIn"] = []
             
+            for s in seeds:
+                originPhaseId = deep_get(s, "progressionSource.originPhaseGroup.id")
+                if originPhaseId:
+                    finalData["progressionsIn"].append(originPhaseId)
+            
+            if len(finalData["progressionsIn"]) > 0:
+                originalKeys = list(finalData["sets"].keys())
+                originalKeys.reverse()
+                for roundKey in originalKeys:
+                    round = int(roundKey)
+
+                    if round > 0:
+                        finalData["sets"][str(round+1)] = finalData["sets"].pop(roundKey)
+
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
+
+            # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
+            if finalData["progressionsOut"] == None or len(finalData["progressionsOut"]) == 0:
+                lastRound = max([int(r) for r in finalData["sets"].keys()])
+                if len(finalData["sets"][str(lastRound)]) > 1:
+                    gfsReset = finalData["sets"][str(lastRound)].pop()
+                    finalData["sets"][str(lastRound+1)] = [gfsReset]
         except:
             traceback.print_exc()
 

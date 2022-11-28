@@ -77,12 +77,32 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Progressions</string>
+           <string>Progressions in</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="numProgressions"/>
+         <widget class="QSpinBox" name="progressionsIn"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Progressions out</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="progressionsOut"/>
         </item>
        </layout>
       </item>

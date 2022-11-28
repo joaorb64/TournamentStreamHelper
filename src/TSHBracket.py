@@ -53,7 +53,7 @@ class Bracket():
         # Create losers
         self.rounds["-1"] = []
         self.rounds["-2"] = []
-        for i in range(int(self.playerNumber/4)):
+        for i in range(int(self.playerNumber/2)):
             self.rounds["-1"].append(BracketSet(self, [-1, len(self.rounds["-1"])]))
             self.rounds["-2"].append(BracketSet(self, [-2, len(self.rounds["-2"])]))
         
@@ -73,7 +73,7 @@ class Bracket():
         
         # Expand losers
         subBracket = []
-        i = self.playerNumber/4
+        i = self.playerNumber/2
 
         while i > 1:
             i = math.floor(i/2)
@@ -95,13 +95,14 @@ class Bracket():
                     except Exception as e:
                         print(e)
                     try:
-                        if abs(roundNum) == 1:
-                            _set.loseNext = self.rounds[str(-max(1, int(2*(roundNum-1))))][math.floor(j/2)]
-                        else:
-                            if abs(roundNum)%2 == 0:
-                                _set.loseNext = self.rounds[str(-int(2*(roundNum-1)))][(-1-j)%len(round)]
-                            else:
-                                _set.loseNext = self.rounds[str(-int(2*(roundNum-1)))][(-int(len(round)/2)-1-j)%len(round)]
+                        if abs(roundNum)%4 == 0:
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)+j)%len(round)]
+                        elif abs(roundNum)%4 == 1:
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][j]
+                        elif abs(roundNum)%4 == 2:
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(-1-j)%len(round)]
+                        elif abs(roundNum)%4 == 3:
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)-1-j)%len(round)]
                     except Exception as e:
                         print(e)
             else:
@@ -129,8 +130,7 @@ class Bracket():
         for k, round in sorted(self.rounds.items()):
             for j, _set in enumerate(round):
                 targetIdW = j%2
-                targetIdL = j%2
-                if int(k) > 1: targetIdL = 0
+                targetIdL = 0
                 if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
 
                 lastLosers = min([int(r) for r in self.rounds.keys()])
@@ -151,6 +151,10 @@ class Bracket():
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[1]
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
+                    elif _set.score[0] == -1 and _set.score[1] == -1:
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
                     else:
                         _set.winNext.playerIds[targetIdW] = -1
                         if _set.loseNext:

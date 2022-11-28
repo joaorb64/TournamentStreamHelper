@@ -3,6 +3,11 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
     seeds(query: {page: 1, perPage: 500}) {
       nodes {
         seedNum
+        progressionSource {
+          originPhaseGroup {
+            id
+          }
+        }
         entrant {
           id
           name
@@ -59,6 +64,8 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
         entrant2Score
       }
     }
-    progressionsOut
+    progressionsOut {
+      id
+    }
   }
 }

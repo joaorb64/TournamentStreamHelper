@@ -31,8 +31,6 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
       );
 
-      console.log(winnersRounds);
-
       Object.values(winnersRounds).forEach((round, r) => {
         html += `<div class="round round_${r}">`;
         Object.values(round).forEach((slot, i) => {
@@ -60,60 +58,170 @@
         html += "</div>";
       });
 
-      $(".players_container").html(html);
+      $(".winners_container").html(html);
+
+      html = "";
+
+      let losersRounds = Object.fromEntries(
+        Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+      );
+
+      Object.values(losersRounds).forEach((round, r) => {
+        if (r == 0) return;
+        console.log(round);
+        html += `<div class="round round_${r}">`;
+        Object.values(round).forEach((slot, i) => {
+          html += `<div class="slot slot_${i + 1}">`;
+          Object.values(slot.playerId).forEach((playerId, p) => {
+            html += `
+              <div class="p_${playerId} slot_p_${p} player container">
+                <div class="icon avatar"></div>
+                <div class="icon online_avatar"></div>
+                <div class="name_twitter">
+                <div class="name"></div>
+                </div>
+                <div class="sponsor_icon"></div>
+                <div class="flags">
+                  <div class="flagcountry"></div>
+                  <div class="flagstate"></div>
+                </div>
+                <div class="character_container"></div>
+                <div class="score">0</div>
+              </div>
+            `;
+          });
+          html += "</div>";
+        });
+        html += "</div>";
+      });
+
+      $(".losers_container").html(html);
 
       let slotLines = "";
 
-      Object.values(bracket).forEach((round, r) => {
-        Object.values(round).forEach((slot, i) => {
-          if (
-            slot.playerId[0] > Object.keys(players).length ||
-            slot.playerId[1] > Object.keys(players).length
-          ) {
-            $(`.round_${r} .slot_${i + 1} .slot_p_0.container`).css(
-              "opacity",
-              "0"
-            );
-            $(`.round_${r} .slot_${i + 1} .slot_p_1.container`).css(
-              "opacity",
-              "0"
-            );
-          }
-          Object.values(slot.score).forEach((score, p) => {
-            console.log(p);
-            SetInnerHtml(
-              $(`.round_${r} .slot_${i + 1} .slot_p_${p}.container .score`),
-              `
+      let baseClass = "winners_container";
+
+      Object.entries(bracket).forEach(function ([roundKey, round], r) {
+        if (parseInt(roundKey) < 0) {
+          baseClass = "losers_container";
+        } else {
+          baseClass = "winners_container";
+        }
+        Object.values(round).forEach(
+          function (slot, i) {
+            Object.values(slot.score).forEach(
+              function (score, p) {
+                SetInnerHtml(
+                  $(
+                    `.${this.baseClass} .round_${
+                      Math.abs(parseInt(roundKey)) - 1
+                    } .slot_${i + 1} .slot_p_${p}.container .score`
+                  ),
+                  `
                 ${score}
               `,
-              undefined,
-              0
+                  undefined,
+                  0
+                );
+              },
+              { baseClass: baseClass }
             );
-          });
-          if (slot.score[0] > slot.score[1]) {
-            $(`.round_${r} .slot_${i + 1} .slot_p_${1}.container`).css(
-              "filter",
-              "brightness(0.6)"
-            );
-          } else if (slot.score[1] > slot.score[0]) {
-            $(`.round_${r} .slot_${i + 1} .slot_p_${0}.container`).css(
-              "filter",
-              "brightness(0.6)"
-            );
-          }
+            if (slot.score[0] > slot.score[1]) {
+              $(
+                `.${this.baseClass} .round_${
+                  Math.abs(parseInt(roundKey)) - 1
+                } .slot_${i + 1} .slot_p_${1}.container`
+              ).css("filter", "brightness(0.6)");
+            } else if (slot.score[1] > slot.score[0]) {
+              $(
+                `.${this.baseClass} .round_${
+                  Math.abs(parseInt(roundKey)) - 1
+                } .slot_${i + 1} .slot_p_${0}.container`
+              ).css("filter", "brightness(0.6)");
+            }
 
-          let slotElement = $(`.round_${r} .slot_${i + 1}`);
+            if (
+              slot.nextWin &&
+              !(
+                slot.playerId[0] > Object.keys(players).length ||
+                slot.playerId[1] > Object.keys(players).length ||
+                (slot.score[0] == -1 && slot.score[1] == -1)
+              )
+            ) {
+              let slotElement = $(
+                `.${this.baseClass} .round_${
+                  Math.abs(parseInt(roundKey)) - 1
+                } .slot_${i + 1}`
+              );
+              let winElement = $(
+                `.${this.baseClass} .round_${
+                  Math.abs(slot.nextWin[0]) - 1
+                } .slot_${slot.nextWin[1] + 1}`
+              );
 
-          if (slotElement && slotElement.position()) {
-            console.log(slotElement.position());
-            slotLines += `<line
-              x1=${slotElement.position().left + slotElement.width()}
-              y1=${slotElement.position().top + slotElement.height() / 2}
-              x2=${slotElement.position().left + slotElement.width() + 10}
-              y2=${slotElement.position().top + slotElement.height() / 2} 
-              stroke="black" width="5" />`;
-          }
-        });
+              if (
+                slotElement &&
+                slotElement.offset() &&
+                winElement &&
+                winElement.offset()
+              ) {
+                console.log(slotElement.offset());
+
+                slotLines += `<path class="${this.baseClass} r_${Math.abs(
+                  roundKey
+                )} s_${i + 1}" d="
+                M${[
+                  slotElement.offset().left + slotElement.width(),
+                  slotElement.offset().top + slotElement.height() / 2,
+                ].join(" ")}
+                ${[
+                  [
+                    slotElement.offset().left +
+                      slotElement.width() +
+                      (winElement.offset().left -
+                        (slotElement.offset().left + slotElement.width())) /
+                        2,
+                    slotElement.offset().top + slotElement.height() / 2,
+                  ],
+                  [
+                    slotElement.offset().left +
+                      slotElement.width() +
+                      (winElement.offset().left -
+                        (slotElement.offset().left + slotElement.width())) /
+                        2,
+                    winElement.offset().top + slotElement.height() / 2,
+                  ],
+                  [
+                    winElement.offset().left,
+                    winElement.offset().top + winElement.height() / 2,
+                  ],
+                ]
+                  .map((point) => point.join(" "))
+                  .map((point) => "L" + point)
+                  .join(" ")}"
+                stroke="black" fill="none" stroke-width="2" />`;
+              }
+            }
+
+            if (
+              slot.playerId[0] > Object.keys(players).length ||
+              slot.playerId[1] > Object.keys(players).length ||
+              (slot.score[0] == -1 && slot.score[1] == -1)
+            ) {
+              $(
+                `.${this.baseClass} .round_${
+                  Math.abs(parseInt(roundKey)) - 1
+                } .slot_${i + 1} .slot_p_0.container`
+              ).css("opacity", "0");
+              $(
+                `.${this.baseClass} .round_${
+                  Math.abs(parseInt(roundKey)) - 1
+                } .slot_${i + 1} .slot_p_1.container`
+              ).css("opacity", "0");
+            }
+          },
+          { baseClass: baseClass }
+        );
       });
 
       $(".lines").html(slotLines);
@@ -246,10 +354,38 @@
         });
 
         gsap.from(
-          $(`.round_${t + 1}`),
-          { x: -100, autoAlpha: 0, duration: 0.4 },
-          0.5 + 0.3 * t
+          $(`.round_${t}`),
+          { x: -50, autoAlpha: 0, duration: 0.5 },
+          0.5 + 0.5 * t
         );
+
+        let elements = $(`.r_${t}`);
+
+        elements.each((index, element) => {
+          if (element) {
+            let length = element.getTotalLength();
+            gsap.from(
+              element,
+              {
+                duration: 0.5,
+                "stroke-dashoffset": length,
+                "stroke-dasharray": length,
+                onUpdate: function (tl) {
+                  let tlp = (this.progress() * 100) >> 0;
+                  if (element) {
+                    let length = element.getTotalLength();
+                    TweenMax.set(element, {
+                      "stroke-dashoffset": (length / 100) * (100 - tlp),
+                      "stroke-dasharray": length,
+                    });
+                  }
+                },
+                onUpdateParams: ["{self}"],
+              },
+              1 + 0.5 * t
+            );
+          }
+        });
       });
     }
 
