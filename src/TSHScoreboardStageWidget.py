@@ -430,10 +430,13 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.ExportCurrentRuleset()
 
     def ExportCurrentRuleset(self):
-        ruleset = self.GetCurrentRuleset()
-        self.stageStrikeLogic.SetRuleset(ruleset)
-        self.ValidateRuleset(ruleset)
-        StateManager.Set(f"score.ruleset", vars(ruleset))
+        try:
+            ruleset = self.GetCurrentRuleset()
+            self.stageStrikeLogic.SetRuleset(ruleset)
+            self.ValidateRuleset(ruleset)
+            StateManager.Set(f"score.ruleset", vars(ruleset))
+        except:
+            traceback.print_exc()
     
     def ValidateRuleset(self, ruleset: Ruleset):
         issues = []
@@ -483,15 +486,19 @@ class TSHScoreboardStageWidget(QDockWidget):
             ruleset.banCount = self.banCount.value()
 
         if self.variableBanCount.isChecked():
-            inputText: str = self.banCountByMaxGames.text()
-            ruleset.banByMaxGames = {}
+            try:
+                inputText: str = self.banCountByMaxGames.text()
+                ruleset.banByMaxGames = {}
 
-            for _set in inputText.split(","):
-                split = _set.split(":")
+                for _set in inputText.split(","):
+                    split = _set.split(":")
 
-                if len(split) == 2:
-                    key, value = split
-                    ruleset.banByMaxGames[key.strip()] = int(value.strip())
+                    if len(split) == 2:
+                        key, value = split
+                        ruleset.banByMaxGames[key.strip()] = int(value.strip())
+            except:
+                ruleset.banByMaxGames = {}
+                traceback.print_exc()
 
         ruleset.strikeOrder = [
             int(n.strip()) for n in self.strikeOrder.text().split(",") if n.strip() != ""
