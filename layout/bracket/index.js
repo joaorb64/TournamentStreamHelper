@@ -25,6 +25,27 @@
       let bracket = data.bracket.bracket.rounds;
       let players = data.bracket.players.slot;
 
+      let biggestRound = Math.max.apply(
+        null,
+        Object.values(bracket).map((r) => Object.keys(r).length)
+      );
+      console.log(biggestRound);
+
+      let size = 32;
+      $(":root").css("--player-height", size);
+
+      while (
+        biggestRound * (2 * parseInt($(":root").css("--player-height")) + 2) >
+        $(window).height() / 2
+      ) {
+        console.log("repeat");
+        size -= 1;
+        $(":root").css("--player-height", size);
+      }
+      $(":root").css("--name-size", size - size * 0.3);
+      $(":root").css("--score-size", size - size * 0.3);
+      $(":root").css("--flag-height", size - size * 0.5);
+
       let html = "";
 
       let winnersRounds = Object.fromEntries(
@@ -32,6 +53,7 @@
       );
 
       Object.values(winnersRounds).forEach((round, r) => {
+        if (r == 0 && data.bracket.bracket.progressionsIn > 0) return;
         html += `<div class="round round_${r}">`;
         Object.values(round).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
@@ -118,7 +140,7 @@
                     } .slot_${i + 1} .slot_p_${p}.container .score`
                   ),
                   `
-                ${score}
+                ${score == -1 ? "DQ" : score}
               `,
                   undefined,
                   0

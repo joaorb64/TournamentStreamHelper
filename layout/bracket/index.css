@@ -1,5 +1,9 @@
 :root {
-  --player-height: 12px;
+  --player-height: 24;
+  --name-size: 14;
+  --score-size: 14;
+  --set-gap: 2;
+  --flag-height: 8;
 }
 
 body {
@@ -107,7 +111,7 @@ body {
 }
 
 .name_twitter .name {
-  font-size: 12px;
+  font-size: var(--name-size);
   max-width: 100%;
 }
 
@@ -147,15 +151,14 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  border-radius: var(--border-radius);
   overflow: hidden;
   background-color: #3f3f46;
-  height: 16px;
+  height: var(--player-height);
 }
 
 .icon div:not(.text) {
-  width: 16px;
-  height: 16px;
+  width: var(--player-height);
+  height: var(--player-height);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -182,8 +185,8 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 12px;
-  height: 8px;
+  width: var(--flag-height);
+  height: var(--flag-height);
   border-radius: 2px;
 }
 
@@ -227,7 +230,7 @@ body {
 .score {
   width: 32px;
   height: 100px;
-  font-size: 12px;
+  font-size: var(--score-size);
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
