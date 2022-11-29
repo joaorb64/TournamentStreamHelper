@@ -89,7 +89,7 @@
       );
 
       Object.values(losersRounds).forEach((round, r) => {
-        if (r in [0, 1, 2]) return;
+        if (r in [0, 1]) return;
         console.log(round);
         html += `<div class="round round_${r}">`;
         Object.values(round).forEach((slot, i) => {
