@@ -42,9 +42,9 @@
         size -= 1;
         $(":root").css("--player-height", size);
       }
-      $(":root").css("--name-size", size - size * 0.3);
+      $(":root").css("--name-size", Math.min(size - size * 0.3, 16));
       $(":root").css("--score-size", size - size * 0.3);
-      $(":root").css("--flag-height", size - size * 0.5);
+      $(":root").css("--flag-height", size - size * 0.4);
 
       let html = "";
 

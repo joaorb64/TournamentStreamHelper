@@ -40,11 +40,13 @@ body {
   flex-wrap: nowrap;
   justify-content: center;
   align-content: center;
-  width: 100%;
+  width: 100vw;
   height: 50vh;
-  overflow: hidden;
   position: absolute;
   top: 0%;
+  padding-left: 100px;
+  padding-right: 100px;
+  box-sizing: border-box;
 }
 
 .losers_container {
@@ -54,11 +56,13 @@ body {
   flex-wrap: nowrap;
   justify-content: center;
   align-content: center;
-  width: 100%;
+  width: 100vw;
   height: 50vh;
-  overflow: hidden;
   position: absolute;
   top: 50%;
+  padding-left: 100px;
+  padding-right: 100px;
+  box-sizing: border-box;
 }
 
 .round {
@@ -66,6 +70,9 @@ body {
   flex-direction: column;
   justify-content: space-evenly;
   gap: 0px;
+  flex: 1 1 0;
+  max-width: 320px;
+  min-width: 0;
 }
 
 .slot {
@@ -86,7 +93,7 @@ body {
 
 .player.container {
   position: relative;
-  width: 220px;
+  width: 100%;
   height: var(--player-height);
 }
 
@@ -176,7 +183,7 @@ body {
   gap: 2px;
   height: 100%;
   justify-content: center;
-  width: 32px;
+  width: calc(var(--flag-height) * 2px + 8px);
   flex-shrink: 0;
 }
 
@@ -186,7 +193,7 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   width: var(--flag-height);
-  height: var(--flag-height);
+  height: calc(var(--flag-height) * 0.7px);
   border-radius: 2px;
 }
 
@@ -195,8 +202,8 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  width: 16px;
-  height: 16px;
+  width: var(--flag-height);
+  height: var(--flag-height);
   border-radius: var(--border-radius);
 }
 
@@ -204,7 +211,7 @@ body {
   display: flex;
   overflow: hidden;
   height: 100%;
-  width: 32px;
+  width: 64px;
   flex-shrink: 0;
   margin-top: 0;
   right: 0;
@@ -215,7 +222,7 @@ body {
   height: 100%;
   gap: 4px;
   display: flex;
-  width: 32px;
+  width: 100%;
 }
 
 .character_container > div > div {
@@ -264,4 +271,5 @@ body {
 .lines {
   width: 100vw;
   height: 100vh;
+  position: absolute;
 }
