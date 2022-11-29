@@ -426,16 +426,26 @@ class TSHGameAssetManager(QObject):
                                     unflippable.values())[0]
                     
                     if asset.get("metadata"):
-                        metadata = asset.get("metadata", {}).get(
-                            characterCodename, {})
+                        metadata = {}
+                        charFiles[assetKey]['metadata'] = {}
+                        for key in asset.get("metadata").keys():
+                            metadata[key] = asset.get("metadata", {})[key]["values"].get(
+                                characterCodename, {}).get("value", "")
+                            charFiles[assetKey]['metadata'][f"{key}_en"] = metadata[key]
+                            if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys():
+                                try:
+                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale]
+                                except KeyError:
+                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
+                            charFiles[assetKey]['metadata'][key] = metadata[key]
 
-                        if len(metadata.keys()) > 0:
-                            if str(skin) in metadata:
-                                charFiles[assetKey]["metadata"] = metadata.get(
-                                    str(skin))
-                            else:
-                                charFiles[assetKey]["metadata"] = list(
-                                    metadata.values())[0]
+                        # if len(metadata.keys()) > 0:
+                        #     if str(skin) in metadata:
+                        #         charFiles[assetKey]["metadata"] = metadata.get(
+                        #             str(skin))
+                        #     else:
+                        #         charFiles[assetKey]["metadata"] = list(
+                        #             metadata.values())[0]
                     
                     if asset.get("uncropped_edge"):
                         charFiles[assetKey]["uncropped_edge"] = asset.get("uncropped_edge")
