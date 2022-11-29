@@ -77,7 +77,12 @@ class BracketSetWidget(QWidget):
             
             if self.bracketSet.playerIds[0] != -1:
                 try:
-                    self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
+                    if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets):
+                        self.name[0].setStyleSheet("font-style: normal;")
+                        self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
+                    else:
+                        self.name[0].setStyleSheet("font-style: italic;")
+                        self.name[0].setText("bye")
                 except:
                     pass
             else:
@@ -85,7 +90,12 @@ class BracketSetWidget(QWidget):
 
             if self.bracketSet.playerIds[1] != -1:
                 try:
-                    self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
+                    if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets):
+                        self.name[1].setStyleSheet("font-style: normal;")
+                        self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
+                    else:
+                        self.name[1].setStyleSheet("font-style: italic;")
+                        self.name[1].setText("bye")
                 except:
                     pass
             else:
@@ -145,6 +155,8 @@ class TSHBracketView(QGraphicsView):
             if int(roundNum) < 0:
                 currentBracket = self.losersBracket
                 currentWidgets = self.losersBracketWidgets
+            if int(roundNum) in [-1, -2]:
+                continue
             layoutOuter = QWidget()
             currentBracket.layout().addWidget(layoutOuter)
             layoutOuter.setLayout(QVBoxLayout())

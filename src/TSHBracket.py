@@ -152,9 +152,21 @@ class Bracket():
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
                     elif _set.score[0] == -1 and _set.score[1] == -1:
-                        _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
+                        # Advance higher seed, but note that -1 would in theory be a smaller seed
+                        won = 0
+                        lost = 1
+                        if _set.playerIds[1] == -1:
+                            won = 0
+                            lost = 1
+                        elif _set.playerIds[0] == -1:
+                            won = 1
+                            lost = 0
+                        else:
+                            won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
+                            lost = 0 if won == 1 else 1
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
                         if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
                     else:
                         _set.winNext.playerIds[targetIdW] = -1
                         if _set.loseNext:
