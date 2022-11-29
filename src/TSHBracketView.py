@@ -124,7 +124,7 @@ class TSHBracketView(QGraphicsView):
 
         self.bracketLines = []
     
-    def SetBracket(self, bracket):
+    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0):
         self.bracket = bracket
 
         self.bracketLines = []
@@ -147,23 +147,44 @@ class TSHBracketView(QGraphicsView):
         self.winnersBracketWidgets = []
         self.losersBracketWidgets = []
 
+        self.roundNameLabels = {}
+
         self.bracket.UpdateBracket()
 
         for roundNum, round in self.bracket.rounds.items():
             currentBracket = self.winnersBracket
             currentWidgets = self.winnersBracketWidgets
+            
             if int(roundNum) < 0:
                 currentBracket = self.losersBracket
                 currentWidgets = self.losersBracketWidgets
+            
+            # Do not draw the mock losers round 1 & 2
             if int(roundNum) in [-1, -2]:
                 continue
+        
+            if int(roundNum) == 1 and progressionsIn > 0:
+                continue
+            
+            # Outer Round layout (column)
             layoutOuter = QWidget()
             currentBracket.layout().addWidget(layoutOuter)
             layoutOuter.setLayout(QVBoxLayout())
+
+            # Round name
+            roundNameLabel = QLineEdit()
+            roundNameLabel.setPlaceholderText(self.bracket.GetRoundName(roundNum))
+            layoutOuter.layout().addWidget(roundNameLabel)
+            self.roundNameLabels[roundNum] = roundNameLabel
+
+            layoutRound = QWidget()
+            layoutOuter.layout().addWidget(layoutRound)
+            layoutRound.setLayout(QVBoxLayout())
+
             roundWidgets = []
             for _set in round:
                 wid = BracketSetWidget(_set, self)
-                layoutOuter.layout().addWidget(wid)
+                layoutRound.layout().addWidget(wid)
                 roundWidgets.append(wid)
             self.bracketWidgets.append(roundWidgets)
             currentWidgets.append(roundWidgets)
@@ -180,10 +201,21 @@ class TSHBracketView(QGraphicsView):
 
         data = {}
 
-        for i, round in self.bracket.rounds.items():
-            data[i] = {}
+        for roundKey, round in self.bracket.rounds.items():
+            
+            if self.roundNameLabels.get(roundKey):
+                roundName = self.roundNameLabels.get(roundKey).text()
+                if roundName == "":
+                    roundName = self.roundNameLabels.get(roundKey).placeholderText()
+            else:
+                roundName = ""
+
+            data[roundKey] = {
+                "name": roundName,
+                "sets": {}
+            }
             for j, bracketSet in enumerate(round):
-                data[i][j] = {
+                data[roundKey]["sets"][j] = {
                     "playerId": bracketSet.playerIds,
                     "score": bracketSet.score,
                     "nextWin": bracketSet.winNext.pos if bracketSet.winNext else None,

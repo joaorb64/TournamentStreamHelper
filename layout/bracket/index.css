@@ -66,6 +66,7 @@ body {
 }
 
 .round {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -73,6 +74,19 @@ body {
   flex: 1 1 0;
   max-width: 320px;
   min-width: 0;
+}
+
+.round_name {
+  position: absolute;
+  top: 0;
+  align-self: center;
+  width: 100%;
+  font-size: 22px;
+  box-sizing: border-box;
+  padding: 6px;
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 2);
+  background-color: var(--bg-color);
 }
 
 .slot {

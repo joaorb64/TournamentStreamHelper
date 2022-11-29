@@ -55,7 +55,8 @@
       Object.values(winnersRounds).forEach((round, r) => {
         if (r == 0 && data.bracket.bracket.progressionsIn > 0) return;
         html += `<div class="round round_${r}">`;
-        Object.values(round).forEach((slot, i) => {
+        html += `<div class="round_name"></div>`;
+        Object.values(round.sets).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
           Object.values(slot.playerId).forEach((playerId, p) => {
             html += `
@@ -90,9 +91,9 @@
 
       Object.values(losersRounds).forEach((round, r) => {
         if (r in [0, 1]) return;
-        console.log(round);
         html += `<div class="round round_${r}">`;
-        Object.values(round).forEach((slot, i) => {
+        html += `<div class="round_name"></div>`;
+        Object.values(round.sets).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
           Object.values(slot.playerId).forEach((playerId, p) => {
             html += `
@@ -129,7 +130,19 @@
         } else {
           baseClass = "winners_container";
         }
-        Object.values(round).forEach(
+
+        console.log(round.name);
+
+        SetInnerHtml(
+          $(
+            `.${baseClass} .round_${
+              Math.abs(parseInt(roundKey)) - 1
+            } .round_name`
+          ),
+          round.name
+        );
+
+        Object.values(round.sets).forEach(
           function (slot, i) {
             Object.values(slot.score).forEach(
               function (score, p) {
@@ -384,7 +397,7 @@
         });
 
         gsap.from(
-          $(`.round_${t}`),
+          $(`.round_${t} .slot`),
           { x: -50, autoAlpha: 0, duration: 0.5 },
           0.5 + 0.5 * t
         );

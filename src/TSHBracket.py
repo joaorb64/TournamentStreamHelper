@@ -15,6 +15,7 @@ class BracketSet():
 def next_power_of_2(x):
     return 1 if x == 0 else 2**math.ceil(math.log2(x))
 
+# Seeding order logic
 def seeding(numPlayers):
     rounds = math.log(numPlayers)/math.log(2)-1
     pls = [1,2]
@@ -36,8 +37,6 @@ class Bracket():
         self.playerNumber = next_power_of_2(playerNumber)
 
         seeds = seeding(self.playerNumber)
-
-        print(seeds)
 
         self.rounds = {}
 
@@ -171,3 +170,35 @@ class Bracket():
                         _set.winNext.playerIds[targetIdW] = -1
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = -1
+    # Get round names
+    def GetRoundName(self, round: str, progressionsIn=0, progressionsOut=0):
+        roundNumber = int(round)
+
+        prefix = "Winners" if roundNumber > 0 else "Losers"
+
+        gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
+
+        if roundNumber == gfsRound:
+            return f"Grand Final"
+        if roundNumber == gfsRound + 1:
+            return f"Grand Final Reset"
+        if roundNumber == gfsRound - 1:
+            return f"{prefix} Final"
+        if roundNumber == gfsRound - 2:
+            return f"{prefix} Semi-Final"
+        if roundNumber == gfsRound - 3:
+            return f"{prefix} Quarter-Final"
+
+        lastLosers = min([int(r) for r in self.rounds.keys()])
+
+        if roundNumber == lastLosers:
+            return f"{prefix} Final"
+        if roundNumber == lastLosers + 1:
+            return f"{prefix} Semi-Final"
+        if roundNumber == lastLosers + 2:
+            return f"{prefix} Quarter-Final"
+
+        if roundNumber < 0:
+            roundNumber += 2
+
+        return f"{prefix} Round {abs(roundNumber)}"

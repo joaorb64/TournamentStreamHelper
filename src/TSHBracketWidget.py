@@ -114,7 +114,12 @@ class TSHBracketWidget(QDockWidget):
 
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
         self.bracket = Bracket(len(phaseGroupData.get("entrants")))
-        self.bracketView.SetBracket(self.bracket)
+
+        self.bracketView.SetBracket(
+            self.bracket,
+            progressionsIn=self.progressionsIn.value(),
+            progressionsOut=self.progressionsOut.value()
+        )
 
         for r, round in phaseGroupData.get("sets", {}).items():
             for s, _set in enumerate(round):
