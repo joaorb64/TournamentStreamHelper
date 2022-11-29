@@ -211,19 +211,79 @@ class ChallongeDataProvider(TournamentDataProvider):
             for match in all_matches:
                 parsed_matches.append(self.ParseMatchData(match))
 
+            parsed_matches.sort(key=lambda match: abs(int(match.get("round"))), reverse=True)
+
             rounds = {}
 
             for match in parsed_matches:
                 roundNum = match.get("round")
 
+                score = [match.get("team1score", -1), match.get("team2score", -1)]
+
+                if int(roundNum) == -2:
+                    score.reverse()
+                
                 if roundNum < 0:
                     roundNum -= 3
 
-                if not str(roundNum) in rounds:
-                    rounds[str(roundNum)] = []
-                rounds[str(roundNum)].append({
-                    "score": [match.get("team1score", -1), match.get("team2score", -1)]
-                })
+                # For first round, we work around the incomplete data Challonge gives us
+                if roundNum == 1:
+                    nextRoundMatches = [s for s in parsed_matches if s.get("round") == roundNum+1]
+                    
+                    # Initially, fill in the round with -1 scores
+                    if not str(roundNum) in rounds:
+                        rounds[str(roundNum)] = []
+
+                        # Round 1 has 2x the number of sets that Round 2 has
+                        for i in range(len(nextRoundMatches) * 2):
+                            rounds[str(roundNum)].append({
+                                "score": [-1, -1]
+                            })
+                    
+                    roundY = 0
+
+                    for m, roundMatch in enumerate(nextRoundMatches):
+                        if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
+                            roundY = 2*m
+                            break
+                        if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
+                            roundY = 2*m+1
+                            break
+
+                    rounds[str(roundNum)][roundY]["score"] = score
+                # For first *losers* round, we work around the incomplete data Challonge gives us
+                # (-1) - 3 = -4
+                if roundNum == -4:
+                    nextRoundMatches = [s for s in parsed_matches if s.get("round") == roundNum+3-1]
+                    
+                    # Initially, fill in the round with -1 scores
+                    if not str(roundNum) in rounds:
+                        rounds[str(roundNum)] = []
+
+                        # Round -1 has 2x the number of sets that Round -2 has
+                        for i in range(len(nextRoundMatches) * 2):
+                            rounds[str(roundNum)].append({
+                                "score": [-1, -1]
+                            })
+                    
+                    roundY = 0
+
+                    for m, roundMatch in enumerate(nextRoundMatches):
+                        if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
+                            roundY = 2*m-1
+                            break
+                        if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
+                            roundY = 2*m
+                            break
+
+                    rounds[str(roundNum)][roundY]["score"] = score
+                else:
+                    if not str(roundNum) in rounds:
+                        rounds[str(roundNum)] = []
+                    
+                    rounds[str(roundNum)].append({
+                        "score": score
+                    })
             
             print("finalRounds")
             print(rounds)
@@ -365,6 +425,9 @@ class ChallongeDataProvider(TournamentDataProvider):
             "team2score": scores[1],
             "team1losers": team1losers,
             "team2losers": team2losers,
+            "identifier": match.get("identifier"),
+            "player1_prereq_identifier": match.get("player1_prereq_identifier"),
+            "player2_prereq_identifier": match.get("player2_prereq_identifier")
         })
 
     def GetEntrants(self):
