@@ -1,5 +1,6 @@
 query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
   phaseGroup(id: $id) {
+    seedMap
     seeds(query: {page: 1, perPage: 500}) {
       nodes {
         seedNum

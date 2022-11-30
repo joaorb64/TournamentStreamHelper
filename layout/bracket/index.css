@@ -47,6 +47,7 @@ body {
   padding-left: 100px;
   padding-right: 100px;
   box-sizing: border-box;
+  padding-top: 30px;
 }
 
 .losers_container {
@@ -63,6 +64,7 @@ body {
   padding-left: 100px;
   padding-right: 100px;
   box-sizing: border-box;
+  padding-top: 30px;
 }
 
 .round {
@@ -78,12 +80,12 @@ body {
 
 .round_name {
   position: absolute;
-  top: 0;
+  top: -30px;
   align-self: center;
   width: 100%;
-  font-size: 22px;
+  font-size: 20px;
   box-sizing: border-box;
-  padding: 6px;
+  padding: 2px 8px;
   color: var(--text-color);
   border-radius: calc(var(--border-radius) / 2);
   background-color: var(--bg-color);

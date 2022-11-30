@@ -146,6 +146,12 @@ class StartGGDataProvider(TournamentDataProvider):
             seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
             seeds.sort(key=lambda s: s.get("seedNum"))
 
+            seedMap: list = deep_get(data, "data.phaseGroup.seedMap.1")
+            
+            if seedMap:
+                seedMap = [s if s != "bye" else -1 for s in seedMap]
+                finalData["seedMap"] = seedMap
+
             teams = []
 
             for seed in seeds:

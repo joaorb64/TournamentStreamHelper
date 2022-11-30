@@ -151,6 +151,9 @@ class TSHBracketView(QGraphicsView):
 
         self.bracket.UpdateBracket()
 
+        winnersRounds = [r for r in self.bracket.rounds.keys() if int(r) > 0]
+        losersRounds = [r for r in self.bracket.rounds.keys() if int(r) < 0]
+
         for roundNum, round in self.bracket.rounds.items():
             currentBracket = self.winnersBracket
             currentWidgets = self.winnersBracketWidgets
@@ -163,8 +166,24 @@ class TSHBracketView(QGraphicsView):
             if int(roundNum) in [-1, -2]:
                 continue
         
-            if int(roundNum) == 1 and progressionsIn > 0:
-                continue
+            # Winners right side cutout
+            if int(roundNum) > 0 and progressionsOut > 0:
+                cutOut = math.sqrt(progressionsOut)/2 + 1
+                if progressionsIn > 0: cutOut += 1
+                if int(roundNum) + cutOut >= len(winnersRounds): continue
+            
+            # # Winners left side cutout
+            if int(roundNum) == 1 and progressionsIn > 0: continue
+            
+            # Losers right side cutout
+            if int(roundNum) < 0 and progressionsOut > 0:
+                cutOut = math.sqrt(progressionsOut)
+                if progressionsIn > 0: cutOut += 1
+                if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
+            
+            # Losers left side cutout
+            if int(roundNum) in [-1, -2]: continue
+            if int(roundNum) == -3 and progressionsIn == 0: continue
             
             # Outer Round layout (column)
             layoutOuter = QWidget()
@@ -173,7 +192,7 @@ class TSHBracketView(QGraphicsView):
 
             # Round name
             roundNameLabel = QLineEdit()
-            roundNameLabel.setPlaceholderText(self.bracket.GetRoundName(roundNum))
+            roundNameLabel.setPlaceholderText(self.bracket.GetRoundName(roundNum, progressionsIn, progressionsOut))
             layoutOuter.layout().addWidget(roundNameLabel)
             self.roundNameLabels[roundNum] = roundNameLabel
 

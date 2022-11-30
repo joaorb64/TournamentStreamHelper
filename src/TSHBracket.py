@@ -33,10 +33,13 @@ def nextLayer(pls):
     return out
 
 class Bracket():
-    def __init__(self, playerNumber) -> None:
+    def __init__(self, playerNumber, seedMap=None) -> None:
         self.playerNumber = next_power_of_2(playerNumber)
 
-        seeds = seeding(self.playerNumber)
+        if seedMap:
+            seeds = seedMap
+        else:
+            seeds = seeding(self.playerNumber)
 
         self.rounds = {}
 
@@ -154,10 +157,10 @@ class Bracket():
                         # Advance higher seed, but note that -1 would in theory be a smaller seed
                         won = 0
                         lost = 1
-                        if _set.playerIds[1] == -1:
+                        if _set.playerIds[1] == -1 and _set.playerIds[0] != -1:
                             won = 0
                             lost = 1
-                        elif _set.playerIds[0] == -1:
+                        elif _set.playerIds[0] == -1 and _set.playerIds[1] != -1:
                             won = 1
                             lost = 0
                         else:
@@ -178,25 +181,29 @@ class Bracket():
 
         gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
 
-        if roundNumber == gfsRound:
-            return f"Grand Final"
-        if roundNumber == gfsRound + 1:
-            return f"Grand Final Reset"
-        if roundNumber == gfsRound - 1:
-            return f"{prefix} Final"
-        if roundNumber == gfsRound - 2:
-            return f"{prefix} Semi-Final"
-        if roundNumber == gfsRound - 3:
-            return f"{prefix} Quarter-Final"
+        if roundNumber > 0:
+            if progressionsIn > 0:
+                roundNumber -= 1
 
-        lastLosers = min([int(r) for r in self.rounds.keys()])
+        # if roundNumber == gfsRound:
+        #     return f"Grand Final"
+        # if roundNumber == gfsRound + 1:
+        #     return f"Grand Final Reset"
+        # if roundNumber == gfsRound - 1:
+        #     return f"{prefix} Final"
+        # if roundNumber == gfsRound - 2:
+        #     return f"{prefix} Semi-Final"
+        # if roundNumber == gfsRound - 3:
+        #     return f"{prefix} Quarter-Final"
 
-        if roundNumber == lastLosers:
-            return f"{prefix} Final"
-        if roundNumber == lastLosers + 1:
-            return f"{prefix} Semi-Final"
-        if roundNumber == lastLosers + 2:
-            return f"{prefix} Quarter-Final"
+        # lastLosers = min([int(r) for r in self.rounds.keys()])
+
+        # if roundNumber == lastLosers:
+        #     return f"{prefix} Final"
+        # if roundNumber == lastLosers + 1:
+        #     return f"{prefix} Semi-Final"
+        # if roundNumber == lastLosers + 2:
+        #     return f"{prefix} Quarter-Final"
 
         if roundNumber < 0:
             roundNumber += 2

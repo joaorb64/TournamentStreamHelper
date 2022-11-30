@@ -27,7 +27,7 @@
 
       let biggestRound = Math.max.apply(
         null,
-        Object.values(bracket).map((r) => Object.keys(r).length)
+        Object.values(bracket).map((r) => Object.keys(r.sets).length)
       );
       console.log(biggestRound);
 
@@ -52,8 +52,19 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
       );
 
+      var progressionsOut = 0;
+      if (data.bracket.bracket.progressionsOut > 0) {
+        progressionsOut = parseInt(
+          Math.sqrt(data.bracket.bracket.progressionsOut) / 2 + 2
+        );
+        if (data.bracket.bracket.progressionsIn > 0) {
+          progressionsOut += 1;
+        }
+      }
+
       Object.values(winnersRounds).forEach((round, r) => {
         if (r == 0 && data.bracket.bracket.progressionsIn > 0) return;
+        if (r + progressionsOut >= Object.keys(winnersRounds).length) return;
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -89,8 +100,19 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
       );
 
+      var progressionsOut = 0;
+      if (data.bracket.bracket.progressionsOut > 0) {
+        progressionsOut = parseInt(
+          Math.sqrt(data.bracket.bracket.progressionsOut) / 2 + 2
+        );
+        if (data.bracket.bracket.progressionsIn > 0) {
+          progressionsOut += 1;
+        }
+      }
+
       Object.values(losersRounds).forEach((round, r) => {
         if (r in [0, 1]) return;
+        if (r + progressionsOut >= Object.keys(losersRounds).length) return;
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -187,8 +209,7 @@
               !lastLosers &&
               !(
                 slot.playerId[0] > Object.keys(players).length ||
-                slot.playerId[1] > Object.keys(players).length ||
-                (slot.score[0] == -1 && slot.score[1] == -1)
+                slot.playerId[1] > Object.keys(players).length
               )
             ) {
               let slotElement = $(
@@ -248,8 +269,7 @@
 
             if (
               slot.playerId[0] > Object.keys(players).length ||
-              slot.playerId[1] > Object.keys(players).length ||
-              (slot.score[0] == -1 && slot.score[1] == -1)
+              slot.playerId[1] > Object.keys(players).length
             ) {
               $(
                 `.${this.baseClass} .round_${

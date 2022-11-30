@@ -113,7 +113,10 @@ class TSHBracketWidget(QDockWidget):
             self.progressionsOut.setValue(0)
 
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
-        self.bracket = Bracket(len(phaseGroupData.get("entrants")))
+        self.bracket = Bracket(
+            len(phaseGroupData.get("entrants")),
+            phaseGroupData.get("seedMap")
+        )
 
         self.bracketView.SetBracket(
             self.bracket,
