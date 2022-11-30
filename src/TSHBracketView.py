@@ -5,6 +5,7 @@ from PyQt5 import uic
 import json
 from .TSHBracket import *
 from .TSHPlayerList import *
+import traceback
 
 class BracketSetWidget(QWidget):
     def __init__(self, bracketSet: BracketSet = None, bracketView: "TSHBracketView" = None, *args) -> None:
@@ -162,9 +163,6 @@ class TSHBracketView(QGraphicsView):
                 currentBracket = self.losersBracket
                 currentWidgets = self.losersBracketWidgets
             
-            # Do not draw the mock losers round 1 & 2
-            if int(roundNum) in [-1, -2]:
-                continue
         
             # Winners right side cutout
             if int(roundNum) > 0 and progressionsOut > 0:
@@ -182,6 +180,7 @@ class TSHBracketView(QGraphicsView):
                 if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
             
             # Losers left side cutout
+            # Do not draw the mock losers round 1 & 2
             if int(roundNum) in [-1, -2]: continue
             if int(roundNum) == -3 and progressionsIn == 0: continue
             
@@ -287,40 +286,43 @@ class TSHBracketView(QGraphicsView):
         
         for i, round in enumerate(self.losersBracketWidgets[:-1]):
             for j, setWidget in enumerate(round):
-                _set = setWidget
+                try:
+                    _set = setWidget
 
-                if i%2 == 1:
-                    nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
-                else:
-                    nxtWidget = self.losersBracketWidgets[i+1][j]
-                nxt = nxtWidget
+                    if i%2 == 0:
+                        nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
+                    else:
+                        nxtWidget = self.losersBracketWidgets[i+1][j]
+                    nxt = nxtWidget
 
-                pen = QPen(Qt.black, 2, Qt.SolidLine)
+                    pen = QPen(Qt.black, 2, Qt.SolidLine)
 
-                start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
-                    QPointF(_set.width(), _set.height()/2)
-                end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
-                    QPointF(0, _set.height()/2)
+                    start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                        QPointF(_set.width(), _set.height()/2)
+                    end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                        QPointF(0, _set.height()/2)
 
-                midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
-                midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
+                    midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
+                    midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
 
-                path = QPainterPath()
-                path.addPolygon(
-                    QPolygonF([
-                        start,
-                        midpoint1,
-                        midpoint2,
-                        end
-                    ])
-                )
+                    path = QPainterPath()
+                    path.addPolygon(
+                        QPolygonF([
+                            start,
+                            midpoint1,
+                            midpoint2,
+                            end
+                        ])
+                    )
 
-                item = self._scene.addPath(
-                    path,
-                    pen
-                )
+                    item = self._scene.addPath(
+                        path,
+                        pen
+                    )
 
-                self.bracketLines.append(item)
+                    self.bracketLines.append(item)
+                except:
+                    print(traceback.format_exc())
 
     def fitInView(self, scale=True):
         rect = QRectF(self.bracketLayout.rect())

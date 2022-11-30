@@ -25,6 +25,9 @@
       let bracket = data.bracket.bracket.rounds;
       let players = data.bracket.players.slot;
 
+      let progressionsOut = data.bracket.bracket.progressionsOut;
+      let progressionsIn = data.bracket.bracket.progressionsIn;
+
       let biggestRound = Math.max.apply(
         null,
         Object.values(bracket).map((r) => Object.keys(r.sets).length)
@@ -52,19 +55,18 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
       );
 
-      var progressionsOut = 0;
-      if (data.bracket.bracket.progressionsOut > 0) {
-        progressionsOut = parseInt(
-          Math.sqrt(data.bracket.bracket.progressionsOut) / 2 + 2
-        );
-        if (data.bracket.bracket.progressionsIn > 0) {
-          progressionsOut += 1;
+      Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
+        // Winners right side cutout
+        if (progressionsOut > 0) {
+          let cutOut = Math.sqrt(progressionsOut) / 2 + 1;
+          if (progressionsIn > 0) cutOut += 1;
+          if (parseInt(roundKey) + cutOut >= Object.keys(winnersRounds).length)
+            return;
         }
-      }
 
-      Object.values(winnersRounds).forEach((round, r) => {
-        if (r == 0 && data.bracket.bracket.progressionsIn > 0) return;
-        if (r + progressionsOut >= Object.keys(winnersRounds).length) return;
+        // Winners left side cutout
+        if (parseInt(roundKey) == 1 && progressionsIn > 0) return;
+
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -100,19 +102,24 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
       );
 
-      var progressionsOut = 0;
-      if (data.bracket.bracket.progressionsOut > 0) {
-        progressionsOut = parseInt(
-          Math.sqrt(data.bracket.bracket.progressionsOut) / 2 + 2
-        );
-        if (data.bracket.bracket.progressionsIn > 0) {
-          progressionsOut += 1;
-        }
-      }
+      Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+        // Left side cutout
+        // Do not draw the mock losers round 1 & 2
+        if ([-1, -2].includes(parseInt(roundKey))) return;
+        // When there are progressions in, there's an extra mock set
+        if (parseInt(roundKey) == -3 && progressionsIn == 0) return;
 
-      Object.values(losersRounds).forEach((round, r) => {
-        if (r in [0, 1]) return;
-        if (r + progressionsOut >= Object.keys(losersRounds).length) return;
+        // Right side cutout
+        if (progressionsOut > 0) {
+          let cutOut = Math.sqrt(progressionsOut) - 1;
+          if (progressionsIn > 0 && progressionsOut) cutOut += 2;
+          if (
+            Math.abs(parseInt(roundKey)) + cutOut >=
+            Object.keys(losersRounds).length
+          )
+            return;
+        }
+
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -209,7 +216,9 @@
               !lastLosers &&
               !(
                 slot.playerId[0] > Object.keys(players).length ||
-                slot.playerId[1] > Object.keys(players).length
+                slot.playerId[1] > Object.keys(players).length ||
+                slot.playerId[0] == -1 ||
+                slot.playerId[1] == -1
               )
             ) {
               let slotElement = $(
@@ -269,7 +278,9 @@
 
             if (
               slot.playerId[0] > Object.keys(players).length ||
-              slot.playerId[1] > Object.keys(players).length
+              slot.playerId[1] > Object.keys(players).length ||
+              slot.playerId[0] == -1 ||
+              slot.playerId[1] == -1
             ) {
               $(
                 `.${this.baseClass} .round_${
