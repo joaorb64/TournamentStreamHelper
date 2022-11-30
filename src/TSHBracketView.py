@@ -177,8 +177,8 @@ class TSHBracketView(QGraphicsView):
             
             # Losers right side cutout
             if int(roundNum) < 0 and progressionsOut > 0:
-                cutOut = math.sqrt(progressionsOut)
-                if progressionsIn > 0: cutOut += 1
+                cutOut = math.sqrt(progressionsOut) - 1
+                if progressionsIn > 0 and progressionsOut: cutOut += 2
                 if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
             
             # Losers left side cutout

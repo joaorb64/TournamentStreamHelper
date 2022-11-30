@@ -180,29 +180,29 @@ class Bracket():
         prefix = "Winners" if roundNumber > 0 else "Losers"
 
         gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
+        lastLosers = min([int(r) for r in self.rounds.keys()])
+
+        if roundNumber > 0:
+            if roundNumber == gfsRound:
+                return f"Grand Final"
+            if roundNumber == gfsRound + 1:
+                return f"Grand Final Reset"
+            if roundNumber == gfsRound - 1:
+                return f"{prefix} Final"
+            if roundNumber == gfsRound - 2:
+                return f"{prefix} Semi-Final"
+            if roundNumber == gfsRound - 3:
+                return f"{prefix} Quarter-Final"
+        else:
+            if roundNumber == lastLosers:
+                return f"{prefix} Final"
+            if roundNumber == lastLosers + 1:
+                return f"{prefix} Semi-Final"
+            if roundNumber == lastLosers + 2:
+                return f"{prefix} Quarter-Final"
 
         if progressionsIn > 0:
             roundNumber -= 1
-
-        # if roundNumber == gfsRound:
-        #     return f"Grand Final"
-        # if roundNumber == gfsRound + 1:
-        #     return f"Grand Final Reset"
-        # if roundNumber == gfsRound - 1:
-        #     return f"{prefix} Final"
-        # if roundNumber == gfsRound - 2:
-        #     return f"{prefix} Semi-Final"
-        # if roundNumber == gfsRound - 3:
-        #     return f"{prefix} Quarter-Final"
-
-        # lastLosers = min([int(r) for r in self.rounds.keys()])
-
-        # if roundNumber == lastLosers:
-        #     return f"{prefix} Final"
-        # if roundNumber == lastLosers + 1:
-        #     return f"{prefix} Semi-Final"
-        # if roundNumber == lastLosers + 2:
-        #     return f"{prefix} Quarter-Final"
 
         if roundNumber < 0:
             roundNumber += 3
