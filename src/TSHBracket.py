@@ -181,9 +181,8 @@ class Bracket():
 
         gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
 
-        if roundNumber > 0:
-            if progressionsIn > 0:
-                roundNumber -= 1
+        if progressionsIn > 0:
+            roundNumber -= 1
 
         # if roundNumber == gfsRound:
         #     return f"Grand Final"
@@ -206,6 +205,6 @@ class Bracket():
         #     return f"{prefix} Quarter-Final"
 
         if roundNumber < 0:
-            roundNumber += 2
+            roundNumber += 3
 
         return f"{prefix} Round {abs(roundNumber)}"
