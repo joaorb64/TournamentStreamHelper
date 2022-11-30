@@ -34,6 +34,7 @@ class Ruleset():
         self.banCount = 0
         self.strikeOrder = []
         self.videogame = ""
+        self.errors = []
 
 
 class TSHScoreboardStageWidget(QDockWidget):
@@ -430,10 +431,13 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.ExportCurrentRuleset()
 
     def ExportCurrentRuleset(self):
-        ruleset = self.GetCurrentRuleset()
-        self.stageStrikeLogic.SetRuleset(ruleset)
-        self.ValidateRuleset(ruleset)
-        StateManager.Set(f"score.ruleset", vars(ruleset))
+        try:
+            ruleset = self.GetCurrentRuleset()
+            self.stageStrikeLogic.SetRuleset(ruleset)
+            self.ValidateRuleset(ruleset)
+            StateManager.Set(f"score.ruleset", vars(ruleset))
+        except:
+            traceback.print_exc()
     
     def ValidateRuleset(self, ruleset: Ruleset):
         issues = []
@@ -443,6 +447,10 @@ class TSHScoreboardStageWidget(QDockWidget):
             if sum(ruleset.strikeOrder) != len(ruleset.neutralStages) - 1:
                 remaining = (len(ruleset.neutralStages) - 1) - sum(ruleset.strikeOrder)
                 issues.append(QApplication.translate("app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
+
+        # Add errors
+        for error in ruleset.errors:
+            issues.append(error)
 
         if len(issues) == 0:
             validText = QApplication.translate("app", "The current ruleset is valid!")
@@ -483,15 +491,20 @@ class TSHScoreboardStageWidget(QDockWidget):
             ruleset.banCount = self.banCount.value()
 
         if self.variableBanCount.isChecked():
-            inputText: str = self.banCountByMaxGames.text()
-            ruleset.banByMaxGames = {}
+            try:
+                inputText: str = self.banCountByMaxGames.text()
+                ruleset.banByMaxGames = {}
 
-            for _set in inputText.split(","):
-                split = _set.split(":")
+                for _set in inputText.split(","):
+                    split = _set.split(":")
 
-                if len(split) == 2:
-                    key, value = split
-                    ruleset.banByMaxGames[key.strip()] = int(value.strip())
+                    if len(split) == 2:
+                        key, value = split
+                        ruleset.banByMaxGames[key.strip()] = int(value.strip())
+            except:
+                ruleset.banByMaxGames = {}
+                ruleset.errors.append(QApplication.translate("app", "The text for banByMaxGames is invalid."))
+                traceback.print_exc()
 
         ruleset.strikeOrder = [
             int(n.strip()) for n in self.strikeOrder.text().split(",") if n.strip() != ""
