@@ -34,9 +34,13 @@ def nextLayer(pls):
 
 class Bracket():
     def __init__(self, playerNumber, seedMap=None) -> None:
+        self.originalPlayerNumber = playerNumber
         self.playerNumber = next_power_of_2(playerNumber)
 
         if seedMap:
+            if len(seedMap) < self.playerNumber:
+                for i in range(len(seedMap)+1, self.playerNumber+1):
+                    seedMap.append(-1)
             seeds = seedMap
         else:
             seeds = seeding(self.playerNumber)

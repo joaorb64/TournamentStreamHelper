@@ -13,6 +13,10 @@ from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
 
+# Checks if a number is power of 2
+def is_power_of_two(n):
+    return (n != 0) and (n & (n-1) == 0)
+
 class TSHBracketWidgetSignals(QObject):
     UpdateData = pyqtSignal(object)
 
@@ -130,7 +134,14 @@ class TSHBracketWidget(QDockWidget):
                     score = _set.get("score")
                     if score[0] == None: score[0] = -1
                     if score[1] == None: score[1] = -1
-                    self.bracket.rounds[str(r)][s].score = score
+
+                    roundIndex = str(r)
+
+                    if int(r) > 0:
+                        if self.progressionsIn.value() > 0 and not is_power_of_two(self.progressionsIn.value()):
+                            roundIndex = str(int(r)+1)
+
+                    self.bracket.rounds[roundIndex][s].score = score
                 except Exception as e:
                     print(e)
         

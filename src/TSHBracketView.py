@@ -7,6 +7,10 @@ from .TSHBracket import *
 from .TSHPlayerList import *
 import traceback
 
+# Checks if a number is power of 2
+def is_power_of_two(n):
+    return (n != 0) and (n & (n-1) == 0)
+
 class BracketSetWidget(QWidget):
     def __init__(self, bracketSet: BracketSet = None, bracketView: "TSHBracketView" = None, *args) -> None:
         super().__init__(*args)
@@ -104,7 +108,7 @@ class BracketSetWidget(QWidget):
             else:
                 self.name[1].setText("")
             
-            if self.name[0].text() == "" or self.name[1].text() == "":
+            if self.name[0].text() == "" and self.name[1].text() == "":
                 self.hide()
             else:
                 self.show()
@@ -173,26 +177,44 @@ class TSHBracketView(QGraphicsView):
                 currentBracket = self.losersBracket
                 currentWidgets = self.losersBracketWidgets
             
-        
-            # Winners right side cutout
-            if int(roundNum) > 0 and progressionsOut > 0:
-                cutOut = math.sqrt(progressionsOut)/2 + 1
-                if progressionsIn > 0: cutOut += 1
-                if int(roundNum) + cutOut >= len(winnersRounds): continue
+            # Winners cutout
+            if int(roundNum) > 0:
+                # Winners right side cutout
+                if progressionsOut > 0:
+                    cutOut = int(math.sqrt(progressionsOut))/2 + 1
+                    if progressionsIn > 0:
+                        cutOut += 1
+                    if int(roundNum) + cutOut >= len(winnersRounds): continue
             
-            # # Winners left side cutout
-            if int(roundNum) == 1 and progressionsIn > 0: continue
+                # Winners left side cutout
+                if progressionsIn > 0:
+                    if int(roundNum) == 1: continue
+
+                    if not is_power_of_two(progressionsIn):
+                        if int(roundNum) == 2: continue
             
-            # Losers right side cutout
-            if int(roundNum) < 0 and progressionsOut > 0:
-                cutOut = math.sqrt(progressionsOut) - 1
-                if progressionsIn > 0 and progressionsOut: cutOut += 2
-                if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
+            # Losers cutout
+            if int(roundNum) < 0:
+                if progressionsOut > 0:
+                    # Losers right side cutout
+                    progressionsLosers = int(math.sqrt(progressionsOut))/2
+                    cutOut = progressionsLosers*2 - 1
+                    if not is_power_of_two(progressionsOut):
+                        cutOut += 1
+                    if progressionsIn > 0:
+                        cutOut += 2
+                    if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
             
-            # Losers left side cutout
-            # Do not draw the mock losers round 1 & 2
-            if int(roundNum) in [-1, -2]: continue
-            if int(roundNum) == -3 and progressionsIn == 0: continue
+                # Losers left side cutout
+                cutOut = 2
+
+                if self.bracket.originalPlayerNumber < self.bracket.playerNumber / 2:
+                    cutOut += 1
+
+                if progressionsIn > 0 and not is_power_of_two(progressionsIn):
+                    cutOut += 1
+                
+                if abs(int(roundNum)) <= cutOut: continue
             
             # Outer Round layout (column)
             layoutOuter = QWidget()
@@ -291,37 +313,44 @@ class TSHBracketView(QGraphicsView):
                             end
                         ])
                     )
+
+                    item = self._scene.addPath(
+                        path,
+                        pen
+                    )
+
+                    self.bracketLines.append(item)
                 elif self.progressionsOut > 0:
-                        pen = QPen(Qt.black, 2, Qt.SolidLine)
+                    pen = QPen(Qt.black, 2, Qt.SolidLine)
 
-                        start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
-                            QPointF(_set.width(), _set.height()/2)
-                        end = start + QPointF(50, 0)
+                    start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                        QPointF(_set.width(), _set.height()/2)
+                    end = start + QPointF(50, 0)
 
-                        notch1 = end + QPointF(-10, +10)
-                        notch2 = end + QPointF(-10, -10)
-                        
-                        path = QPainterPath()
-                        path.addPolygon(
-                            QPolygonF([
-                                start,
-                                end
-                            ])
-                        )
-                        path.addPolygon(
-                            QPolygonF([
-                                notch1,
-                                end,
-                                notch2
-                            ])
-                        )
+                    notch1 = end + QPointF(-10, +10)
+                    notch2 = end + QPointF(-10, -10)
+                    
+                    path = QPainterPath()
+                    path.addPolygon(
+                        QPolygonF([
+                            start,
+                            end
+                        ])
+                    )
+                    path.addPolygon(
+                        QPolygonF([
+                            notch1,
+                            end,
+                            notch2
+                        ])
+                    )
 
-                item = self._scene.addPath(
-                    path,
-                    pen
-                )
+                    item = self._scene.addPath(
+                        path,
+                        pen
+                    )
 
-                self.bracketLines.append(item)
+                    self.bracketLines.append(item)
 
                 # Progression in
                 if self.progressionsIn > 0 and i == 0:
@@ -355,7 +384,7 @@ class TSHBracketView(QGraphicsView):
                         continue
 
                     if i < len(self.losersBracketWidgets)-1:
-                        if (i%2 == 0 and self.progressionsIn <= 0) or (i%2 == 1 and self.progressionsIn > 0):
+                        if len(self.losersBracketWidgets[i+1]) < len(self.losersBracketWidgets[i]):
                             nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
                         else:
                             nxtWidget = self.losersBracketWidgets[i+1][j]
@@ -380,6 +409,13 @@ class TSHBracketView(QGraphicsView):
                                 end
                             ])
                         )
+
+                        item = self._scene.addPath(
+                            path,
+                            pen
+                        )
+
+                        self.bracketLines.append(item)
                     elif self.progressionsOut > 1:
                         pen = QPen(Qt.black, 2, Qt.SolidLine)
 
@@ -405,12 +441,12 @@ class TSHBracketView(QGraphicsView):
                             ])
                         )
 
-                    item = self._scene.addPath(
-                        path,
-                        pen
-                    )
+                        item = self._scene.addPath(
+                            path,
+                            pen
+                        )
 
-                    self.bracketLines.append(item)
+                        self.bracketLines.append(item)
 
                     # Progression in
                     if self.progressionsIn > 1 and i == 0:

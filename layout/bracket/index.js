@@ -107,7 +107,7 @@
         // Do not draw the mock losers round 1 & 2
         if ([-1, -2].includes(parseInt(roundKey))) return;
         // When there are progressions in, there's an extra mock set
-        if (parseInt(roundKey) == -3 && progressionsIn == 0) return;
+        if (parseInt(roundKey) == -3 && progressionsIn > 1) return;
 
         // Right side cutout
         if (progressionsOut > 0) {
