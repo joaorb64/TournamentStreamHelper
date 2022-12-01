@@ -39,6 +39,7 @@ class BracketSetWidget(QWidget):
             name.setDisabled(True)
             self.name.append(name)
             hbox.layout().addWidget(name)
+            name.sizePolicy().setRetainSizeWhenHidden(True)
 
             score = QSpinBox()
             score.setMinimum(-1)
@@ -48,6 +49,7 @@ class BracketSetWidget(QWidget):
             score.setValue(-1)
         
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.sizePolicy().setRetainSizeWhenHidden(True)
         self.layout().setSpacing(2)
 
         self.Update()
@@ -78,7 +80,7 @@ class BracketSetWidget(QWidget):
             
             if self.bracketSet.playerIds[0] != -1:
                 try:
-                    if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets):
+                    if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] != -1:
                         self.name[0].setStyleSheet("font-style: normal;")
                         self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
                     else:
@@ -91,7 +93,7 @@ class BracketSetWidget(QWidget):
 
             if self.bracketSet.playerIds[1] != -1:
                 try:
-                    if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets):
+                    if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] != -1:
                         self.name[1].setStyleSheet("font-style: normal;")
                         self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
                     else:
@@ -101,6 +103,11 @@ class BracketSetWidget(QWidget):
                     pass
             else:
                 self.name[1].setText("")
+            
+            if self.name[0].text() == "" or self.name[1].text() == "":
+                self.hide()
+            else:
+                self.show()
 
 class TSHBracketView(QGraphicsView):
     def __init__(self, bracket: Bracket, playerList: TSHPlayerList = None, *args):
@@ -141,6 +148,9 @@ class TSHBracketView(QGraphicsView):
         self.losersBracket = QWidget()
         self.losersBracket.setLayout(QHBoxLayout())
         self.bracketLayout.layout().addWidget(self.losersBracket)
+
+        self.progressionsIn = progressionsIn
+        self.progressionsOut = progressionsOut
 
         self._scene.addWidget(self.bracketLayout)
 
@@ -250,49 +260,16 @@ class TSHBracketView(QGraphicsView):
 
         self.bracketLines = []
 
-        for i, round in enumerate(self.winnersBracketWidgets[:-1]):
+        for i, round in enumerate(self.winnersBracketWidgets):
             for j, setWidget in enumerate(round):
                 _set = setWidget
 
-                nxtWidget = self.winnersBracketWidgets[i+1][math.floor(j/2)]
-                nxt = nxtWidget
+                if setWidget.isHidden():
+                    continue
 
-                pen = QPen(Qt.black, 2, Qt.SolidLine)
+                if i < len(self.winnersBracketWidgets)-1:
 
-                start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
-                    QPointF(_set.width(), _set.height()/2)
-                end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
-                    QPointF(0, _set.height()/2)
-
-                midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
-                midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
-
-                path = QPainterPath()
-                path.addPolygon(
-                    QPolygonF([
-                        start,
-                        midpoint1,
-                        midpoint2,
-                        end
-                    ])
-                )
-
-                item = self._scene.addPath(
-                    path,
-                    pen
-                )
-
-                self.bracketLines.append(item)
-        
-        for i, round in enumerate(self.losersBracketWidgets[:-1]):
-            for j, setWidget in enumerate(round):
-                try:
-                    _set = setWidget
-
-                    if i%2 == 0:
-                        nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
-                    else:
-                        nxtWidget = self.losersBracketWidgets[i+1][j]
+                    nxtWidget = self.winnersBracketWidgets[i+1][math.floor(j/2)]
                     nxt = nxtWidget
 
                     pen = QPen(Qt.black, 2, Qt.SolidLine)
@@ -314,6 +291,53 @@ class TSHBracketView(QGraphicsView):
                             end
                         ])
                     )
+                elif self.progressionsOut > 0:
+                        pen = QPen(Qt.black, 2, Qt.SolidLine)
+
+                        start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                            QPointF(_set.width(), _set.height()/2)
+                        end = start + QPointF(50, 0)
+
+                        notch1 = end + QPointF(-10, +10)
+                        notch2 = end + QPointF(-10, -10)
+                        
+                        path = QPainterPath()
+                        path.addPolygon(
+                            QPolygonF([
+                                start,
+                                end
+                            ])
+                        )
+                        path.addPolygon(
+                            QPolygonF([
+                                notch1,
+                                end,
+                                notch2
+                            ])
+                        )
+
+                item = self._scene.addPath(
+                    path,
+                    pen
+                )
+
+                self.bracketLines.append(item)
+
+                # Progression in
+                if self.progressionsIn > 0 and i == 0:
+                    pen = QPen(Qt.black, 2, Qt.DashLine)
+
+                    end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                        QPointF(0, _set.height()/2)
+                    start = end - QPointF(50, 0)
+                    
+                    path = QPainterPath()
+                    path.addPolygon(
+                        QPolygonF([
+                            start,
+                            end
+                        ])
+                    )
 
                     item = self._scene.addPath(
                         path,
@@ -321,6 +345,95 @@ class TSHBracketView(QGraphicsView):
                     )
 
                     self.bracketLines.append(item)
+        
+        for i, round in enumerate(self.losersBracketWidgets):
+            for j, setWidget in enumerate(round):
+                try:
+                    _set = setWidget
+
+                    if setWidget.isHidden():
+                        continue
+
+                    if i < len(self.losersBracketWidgets)-1:
+                        if (i%2 == 0 and self.progressionsIn <= 0) or (i%2 == 1 and self.progressionsIn > 0):
+                            nxtWidget = self.losersBracketWidgets[i+1][math.floor(j/2)]
+                        else:
+                            nxtWidget = self.losersBracketWidgets[i+1][j]
+                        nxt = nxtWidget
+
+                        pen = QPen(Qt.black, 2, Qt.SolidLine)
+
+                        start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                            QPointF(_set.width(), _set.height()/2)
+                        end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                            QPointF(0, _set.height()/2)
+
+                        midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
+                        midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
+
+                        path = QPainterPath()
+                        path.addPolygon(
+                            QPolygonF([
+                                start,
+                                midpoint1,
+                                midpoint2,
+                                end
+                            ])
+                        )
+                    elif self.progressionsOut > 1:
+                        pen = QPen(Qt.black, 2, Qt.SolidLine)
+
+                        start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                            QPointF(_set.width(), _set.height()/2)
+                        end = start + QPointF(50, 0)
+
+                        notch1 = end + QPointF(-10, +10)
+                        notch2 = end + QPointF(-10, -10)
+                        
+                        path = QPainterPath()
+                        path.addPolygon(
+                            QPolygonF([
+                                start,
+                                end
+                            ])
+                        )
+                        path.addPolygon(
+                            QPolygonF([
+                                notch1,
+                                end,
+                                notch2
+                            ])
+                        )
+
+                    item = self._scene.addPath(
+                        path,
+                        pen
+                    )
+
+                    self.bracketLines.append(item)
+
+                    # Progression in
+                    if self.progressionsIn > 1 and i == 0:
+                        pen = QPen(Qt.black, 2, Qt.DashLine)
+
+                        end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
+                            QPointF(0, _set.height()/2)
+                        start = end - QPointF(50, 0)
+                        
+                        path = QPainterPath()
+                        path.addPolygon(
+                            QPolygonF([
+                                start,
+                                end
+                            ])
+                        )
+
+                        item = self._scene.addPath(
+                            path,
+                            pen
+                        )
+
+                        self.bracketLines.append(item)
                 except:
                     print(traceback.format_exc())
 
