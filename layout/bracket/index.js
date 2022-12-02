@@ -141,7 +141,7 @@
         // Losers left side cutout
         let cutOut = 2;
 
-        if (!powerOf2(Object.keys(players).length)) {
+        if (powerOf2(Object.keys(players).length)) {
           cutOut += 1;
         }
 
