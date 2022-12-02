@@ -137,10 +137,6 @@ class TSHBracketWidget(QDockWidget):
 
                     roundIndex = str(r)
 
-                    if int(r) > 0:
-                        if self.progressionsIn.value() > 0 and not is_power_of_two(self.progressionsIn.value()):
-                            roundIndex = str(int(r)+1)
-
                     self.bracket.rounds[roundIndex][s].score = score
                 except Exception as e:
                     print(e)

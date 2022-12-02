@@ -56,16 +56,30 @@
       );
 
       Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
-        // Winners right side cutout
-        if (progressionsOut > 0) {
-          let cutOut = Math.sqrt(progressionsOut) / 2 + 1;
-          if (progressionsIn > 0) cutOut += 1;
-          if (parseInt(roundKey) + cutOut >= Object.keys(winnersRounds).length)
-            return;
+        // Winners cutout
+        if (parseInt(roundKey) > 0) {
+          // Winners right side cutout
+          if (progressionsOut > 0) {
+            let cutOut = parseInt(Math.sqrt(progressionsOut)) / 2 + 1;
+            if (progressionsIn > 0) {
+              cutOut += 1;
+            }
+            if (
+              parseInt(roundKey) + cutOut >=
+              Object.keys(winnersRounds).length
+            )
+              return;
+          }
         }
 
         // Winners left side cutout
-        if (parseInt(roundKey) == 1 && progressionsIn > 0) return;
+        if (progressionsIn > 0) {
+          if (parseInt(roundKey) == 1) return;
+
+          if (!powerOf2(progressionsIn)) {
+            if (parseInt(roundKey) == 2) return;
+          }
+        }
 
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
@@ -103,22 +117,36 @@
       );
 
       Object.entries(losersRounds).forEach(([roundKey, round], r) => {
-        // Left side cutout
-        // Do not draw the mock losers round 1 & 2
-        if ([-1, -2].includes(parseInt(roundKey))) return;
-        // When there are progressions in, there's an extra mock set
-        if (parseInt(roundKey) == -3 && progressionsIn > 1) return;
-
-        // Right side cutout
-        if (progressionsOut > 0) {
-          let cutOut = Math.sqrt(progressionsOut) - 1;
-          if (progressionsIn > 0 && progressionsOut) cutOut += 2;
-          if (
-            Math.abs(parseInt(roundKey)) + cutOut >=
-            Object.keys(losersRounds).length
-          )
-            return;
+        // Losers cutout
+        if (parseInt(roundKey) < 0) {
+          if (progressionsOut > 0) {
+            // Losers right side cutout
+            let cutOut = 0;
+            progressionsLosers = parseInt(Math.sqrt(progressionsOut)) / 2;
+            cutOut = progressionsLosers * 2 - 1;
+            if (!powerOf2(progressionsOut)) {
+              cutOut += 1;
+            }
+            if (progressionsIn > 0) {
+              cutOut += 2;
+            }
+            if (
+              Math.abs(parseInt(roundKey)) + cutOut >=
+              Object.keys(losersRounds).length
+            )
+              return;
+          }
         }
+
+        // Losers left side cutout
+        let cutOut = 2;
+
+        if (!powerOf2(Object.keys(players).length)) {
+          cutOut += 1;
+        }
+
+        if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
+        if (Math.abs(parseInt(roundKey)) <= cutOut) return;
 
         html += `<div class="round round_${r}">`;
         html += `<div class="round_name"></div>`;
