@@ -23,6 +23,10 @@ def seeding(numPlayers):
         pls = nextLayer(pls)
     return pls
 
+# Checks if a number is power of 2
+def is_power_of_two(n):
+    return (n != 0) and (n & (n-1) == 0)
+
 def nextLayer(pls):
     out = []
     length = len(pls)*2+1
@@ -205,10 +209,16 @@ class Bracket():
             if roundNumber == lastLosers + 2:
                 return f"{prefix} Quarter-Final"
 
-        if progressionsIn > 0:
-            roundNumber -= 1
-
         if roundNumber < 0:
-            roundNumber += 3
+            if progressionsIn > 0 and not is_power_of_two(progressionsIn):
+                roundNumber += 1
+        
+            if progressionsIn == 0 and self.originalPlayerNumber != self.playerNumber:
+                roundNumber += 1
+
+            roundNumber += 2
+        elif roundNumber > 0:
+            if progressionsIn > 0:
+                roundNumber -= 1
 
         return f"{prefix} Round {abs(roundNumber)}"

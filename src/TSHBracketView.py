@@ -208,7 +208,7 @@ class TSHBracketView(QGraphicsView):
                 # Losers left side cutout
                 cutOut = 2
 
-                if self.bracket.originalPlayerNumber == self.bracket.playerNumber:
+                if progressionsIn == 0 and self.bracket.originalPlayerNumber != self.bracket.playerNumber:
                     cutOut += 1
 
                 if progressionsIn > 0 and not is_power_of_two(progressionsIn):
