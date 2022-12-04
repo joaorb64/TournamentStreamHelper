@@ -181,9 +181,8 @@ class TSHBracketView(QGraphicsView):
             if int(roundNum) > 0:
                 # Winners right side cutout
                 if progressionsOut > 0:
-                    cutOut = int(math.sqrt(progressionsOut))/2 + 1
-                    if progressionsIn > 0:
-                        cutOut += 1
+                    progressionsWinners = math.pow(2, int(math.log2(progressionsOut/2)))
+                    cutOut = int(math.log2(progressionsWinners)) + 1
                     if int(roundNum) + cutOut >= len(winnersRounds): continue
             
                 # Winners left side cutout
@@ -197,18 +196,17 @@ class TSHBracketView(QGraphicsView):
             if int(roundNum) < 0:
                 if progressionsOut > 0:
                     # Losers right side cutout
-                    progressionsLosers = int(math.sqrt(progressionsOut))/2
-                    cutOut = progressionsLosers*2 - 1
-                    if not is_power_of_two(progressionsOut):
-                        cutOut += 1
-                    if progressionsIn > 0:
-                        cutOut += 2
+                    progressionsLosers = progressionsOut - math.pow(2, int(math.log2(progressionsOut/2)))
+                    cutOut = math.log2(progressionsLosers) * 2 - 1
                     if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
             
                 # Losers left side cutout
                 cutOut = 2
 
-                if progressionsIn == 0 and self.bracket.originalPlayerNumber != self.bracket.playerNumber:
+                # Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
+                # it's an auto win for all players and R1 doesn't exist
+                byes = self.bracket.playerNumber - self.bracket.originalPlayerNumber
+                if progressionsIn == 0 and byes > 0 and byes > self.bracket.playerNumber/4:
                     cutOut += 1
 
                 if progressionsIn > 0 and not is_power_of_two(progressionsIn):

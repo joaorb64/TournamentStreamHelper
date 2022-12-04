@@ -213,7 +213,8 @@ class Bracket():
             if progressionsIn > 0 and not is_power_of_two(progressionsIn):
                 roundNumber += 1
         
-            if progressionsIn == 0 and self.originalPlayerNumber != self.playerNumber:
+            byes = self.playerNumber - self.originalPlayerNumber
+            if progressionsIn == 0 and byes > 0 and byes > self.playerNumber/4:
                 roundNumber += 1
 
             roundNumber += 2
