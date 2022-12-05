@@ -133,7 +133,7 @@
         // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
         // it's an auto win for all players and R1 doesn't exist
         let byes =
-          powerOf2(Object.keys(players).length) - Object.keys(players).length;
+          nextPow2(Object.keys(players).length) - Object.keys(players).length;
         if (
           progressionsIn == 0 &&
           byes > 0 &&

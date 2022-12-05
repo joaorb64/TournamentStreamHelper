@@ -82,33 +82,27 @@ class BracketSetWidget(QWidget):
                 self.score[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                 self.score[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
             
-            if self.bracketSet.playerIds[0] != -1:
-                try:
-                    if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] != -1:
-                        self.name[0].setStyleSheet("font-style: normal;")
-                        self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
-                    else:
-                        self.name[0].setStyleSheet("font-style: italic;")
-                        self.name[0].setText("bye")
-                except:
-                    pass
-            else:
-                self.name[0].setText("")
+            try:
+                if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] != -1:
+                    self.name[0].setStyleSheet("font-style: normal;")
+                    self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
+                else:
+                    self.name[0].setStyleSheet("font-style: italic;")
+                    self.name[0].setText("bye")
+            except:
+                pass
 
-            if self.bracketSet.playerIds[1] != -1:
-                try:
-                    if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] != -1:
-                        self.name[1].setStyleSheet("font-style: normal;")
-                        self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
-                    else:
-                        self.name[1].setStyleSheet("font-style: italic;")
-                        self.name[1].setText("bye")
-                except:
-                    pass
-            else:
-                self.name[1].setText("")
+            try:
+                if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] != -1:
+                    self.name[1].setStyleSheet("font-style: normal;")
+                    self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
+                else:
+                    self.name[1].setStyleSheet("font-style: italic;")
+                    self.name[1].setText("bye")
+            except:
+                pass
             
-            if self.name[0].text() == "" and self.name[1].text() == "":
+            if (self.name[0].text() == "bye" and not self.name[1].text() == "bye") or (self.name[1].text() == "bye" and not self.name[0].text() == "bye"):
                 self.hide()
             else:
                 self.show()
