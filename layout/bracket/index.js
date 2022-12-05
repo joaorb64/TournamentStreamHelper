@@ -130,9 +130,16 @@
         // Losers left side cutout
         let cutOut = 2;
 
-        if (progressionsIn == 0 && !powerOf2(Object.keys(players).length)) {
+        // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
+        // it's an auto win for all players and R1 doesn't exist
+        let byes =
+          powerOf2(Object.keys(players).length) - Object.keys(players).length;
+        if (
+          progressionsIn == 0 &&
+          byes > 0 &&
+          byes > Object.keys(players).length / 4
+        )
           cutOut += 1;
-        }
 
         if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
         if (Math.abs(parseInt(roundKey)) <= cutOut) return;
@@ -446,8 +453,8 @@
 
         gsap.from(
           $(`.round_${t} .slot`),
-          { x: -50, autoAlpha: 0, duration: 0.5 },
-          0.5 + 0.5 * t
+          { x: -50, autoAlpha: 0, duration: 0.4 },
+          0.5 + 0.4 * t
         );
 
         let elements = $(`.r_${t}`);
@@ -458,7 +465,7 @@
             gsap.from(
               element,
               {
-                duration: 0.5,
+                duration: 0.4,
                 "stroke-dashoffset": length,
                 "stroke-dasharray": length,
                 onUpdate: function (tl) {
@@ -473,7 +480,7 @@
                 },
                 onUpdateParams: ["{self}"],
               },
-              1 + 0.5 * t
+              0.4 + 0.4 * t
             );
           }
         });
