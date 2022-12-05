@@ -57,19 +57,15 @@
 
       Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
         // Winners cutout
-        if (parseInt(roundKey) > 0) {
+        if (progressionsOut > 0) {
           // Winners right side cutout
-          if (progressionsOut > 0) {
-            let cutOut = parseInt(Math.sqrt(progressionsOut)) / 2 + 1;
-            if (progressionsIn > 0) {
-              cutOut += 1;
-            }
-            if (
-              parseInt(roundKey) + cutOut >=
-              Object.keys(winnersRounds).length
-            )
-              return;
-          }
+          let progressionsWinners = Math.pow(
+            2,
+            parseInt(Math.log2(progressionsOut / 2))
+          );
+          let cutOut = parseInt(Math.log2(progressionsWinners)) + 1;
+          if (parseInt(roundKey) + cutOut >= Object.keys(winnersRounds).length)
+            return;
         }
 
         // Winners left side cutout
@@ -118,24 +114,17 @@
 
       Object.entries(losersRounds).forEach(([roundKey, round], r) => {
         // Losers cutout
-        if (parseInt(roundKey) < 0) {
-          if (progressionsOut > 0) {
-            // Losers right side cutout
-            let cutOut = 0;
-            progressionsLosers = parseInt(Math.sqrt(progressionsOut)) / 2;
-            cutOut = progressionsLosers * 2 - 1;
-            if (!powerOf2(progressionsOut)) {
-              cutOut += 1;
-            }
-            if (progressionsIn > 0) {
-              cutOut += 2;
-            }
-            if (
-              Math.abs(parseInt(roundKey)) + cutOut >=
-              Object.keys(losersRounds).length
-            )
-              return;
-          }
+        if (progressionsOut > 0) {
+          // Losers right side cutout
+          let progressionsLosers =
+            progressionsOut -
+            Math.pow(2, parseInt(Math.log2(progressionsOut / 2)));
+          let cutOut = parseInt(Math.log2(progressionsLosers)) * 2 - 1;
+          if (
+            Math.abs(parseInt(roundKey)) + cutOut >=
+            Object.keys(losersRounds).length
+          )
+            return;
         }
 
         // Losers left side cutout
