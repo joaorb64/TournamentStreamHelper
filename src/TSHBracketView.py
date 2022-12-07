@@ -49,8 +49,8 @@ class BracketSetWidget(QWidget):
             score.setMinimum(-1)
             self.score.append(score)
             hbox.layout().addWidget(score)
-            score.valueChanged.connect(lambda newVal, i=i: self.SetScore(i, newVal))
             score.setValue(-1)
+            score.valueChanged.connect(lambda newVal, i=i: self.SetScore(i, newVal))
         
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.sizePolicy().setRetainSizeWhenHidden(True)
@@ -236,7 +236,14 @@ class TSHBracketView(QGraphicsView):
     def Update(self):
         for round in self.bracketWidgets:
             for setWidget in round:
+                for w in setWidget.score:
+                    w.blockSignals(True)
                 setWidget.Update()
+                for w in setWidget.score:
+                    w.blockSignals(False)
+        
+        QGuiApplication.processEvents()
+
         self.DrawLines()
         
         StateManager.BlockSaving()
