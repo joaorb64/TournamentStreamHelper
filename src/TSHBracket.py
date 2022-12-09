@@ -214,7 +214,7 @@ class Bracket():
                 roundNumber += 1
         
             byes = self.playerNumber - self.originalPlayerNumber
-            if progressionsIn == 0 and byes > 0 and byes > self.playerNumber/4:
+            if progressionsIn == 0 and byes > 0 and byes/2 > self.playerNumber/4:
                 roundNumber += 1
 
             roundNumber += 2

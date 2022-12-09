@@ -137,7 +137,7 @@
         if (
           progressionsIn == 0 &&
           byes > 0 &&
-          byes > Object.keys(players).length / 4
+          byes / 2 > Object.keys(players).length / 4
         )
           cutOut += 1;
 
