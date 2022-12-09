@@ -55,6 +55,9 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
       );
 
+      let winnersCutoutLeft = 0;
+      let winnersCutoutRight = 0;
+
       Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
         // Winners cutout
         if (progressionsOut > 0) {
@@ -64,20 +67,27 @@
             parseInt(Math.log2(progressionsOut / 2))
           );
           let cutOut = parseInt(Math.log2(progressionsWinners)) + 1;
+          winnersCutoutRight = cutOut;
           if (parseInt(roundKey) + cutOut >= Object.keys(winnersRounds).length)
             return;
         }
 
         // Winners left side cutout
         if (progressionsIn > 0) {
-          if (parseInt(roundKey) == 1) return;
+          if (parseInt(roundKey) == 1) {
+            winnersCutoutLeft = 1;
+            return;
+          }
 
           if (!powerOf2(progressionsIn)) {
-            if (parseInt(roundKey) == 2) return;
+            if (parseInt(roundKey) == 2) {
+              winnersCutoutLeft = 2;
+              return;
+            }
           }
         }
 
-        html += `<div class="round round_${r}">`;
+        html += `<div class="round round_${roundKey}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
@@ -112,6 +122,9 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
       );
 
+      let losersCutoutLeft = 0;
+      let losersCutoutRight = 0;
+
       Object.entries(losersRounds).forEach(([roundKey, round], r) => {
         // Losers cutout
         if (progressionsOut > 0) {
@@ -120,6 +133,7 @@
             progressionsOut -
             Math.pow(2, parseInt(Math.log2(progressionsOut / 2)));
           let cutOut = parseInt(Math.log2(progressionsLosers)) * 2 - 1;
+          losersCutoutRight = cutOut;
           if (
             Math.abs(parseInt(roundKey)) + cutOut >=
             Object.keys(losersRounds).length
@@ -129,6 +143,7 @@
 
         // Losers left side cutout
         let cutOut = 2;
+        losersCutoutLeft = 2;
 
         // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
         // it's an auto win for all players and R1 doesn't exist
@@ -144,7 +159,7 @@
         if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
         if (Math.abs(parseInt(roundKey)) <= cutOut) return;
 
-        html += `<div class="round round_${r}">`;
+        html += `<div class="round round_${roundKey}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
           html += `<div class="slot slot_${i + 1}">`;
@@ -187,11 +202,7 @@
         console.log(round.name);
 
         SetInnerHtml(
-          $(
-            `.${baseClass} .round_${
-              Math.abs(parseInt(roundKey)) - 1
-            } .round_name`
-          ),
+          $(`.${baseClass} .round_${parseInt(roundKey)} .round_name`),
           round.name
         );
 
@@ -201,9 +212,9 @@
               function (score, p) {
                 SetInnerHtml(
                   $(
-                    `.${this.baseClass} .round_${
-                      Math.abs(parseInt(roundKey)) - 1
-                    } .slot_${i + 1} .slot_p_${p}.container .score`
+                    `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+                      i + 1
+                    } .slot_p_${p}.container .score`
                   ),
                   `
                 ${score == -1 ? "DQ" : score}
@@ -216,15 +227,15 @@
             );
             if (slot.score[0] > slot.score[1]) {
               $(
-                `.${this.baseClass} .round_${
-                  Math.abs(parseInt(roundKey)) - 1
-                } .slot_${i + 1} .slot_p_${1}.container`
+                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+                  i + 1
+                } .slot_p_${1}.container`
               ).css("filter", "brightness(0.6)");
             } else if (slot.score[1] > slot.score[0]) {
               $(
-                `.${this.baseClass} .round_${
-                  Math.abs(parseInt(roundKey)) - 1
-                } .slot_${i + 1} .slot_p_${0}.container`
+                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+                  i + 1
+                } .slot_p_${0}.container`
               ).css("filter", "brightness(0.6)");
             }
 
@@ -246,24 +257,18 @@
               )
             ) {
               let slotElement = $(
-                `.${this.baseClass} .round_${
-                  Math.abs(parseInt(roundKey)) - 1
-                } .slot_${i + 1}`
+                `.${this.baseClass} .round_${roundKey} .slot_${i + 1}`
               );
+
+              if (!slotElement || !slotElement.offset()) return;
+
               let winElement = $(
-                `.${this.baseClass} .round_${
-                  Math.abs(slot.nextWin[0]) - 1
-                } .slot_${slot.nextWin[1] + 1}`
+                `.${this.baseClass} .round_${slot.nextWin[0]} .slot_${
+                  slot.nextWin[1] + 1
+                }`
               );
 
-              if (
-                slotElement &&
-                slotElement.offset() &&
-                winElement &&
-                winElement.offset()
-              ) {
-                console.log(slotElement.offset());
-
+              if (winElement && winElement.offset()) {
                 slotLines += `<path class="${this.baseClass} r_${Math.abs(
                   roundKey
                 )} s_${i + 1}" d="
@@ -298,6 +303,65 @@
                   .join(" ")}"
                 stroke="black" fill="none" stroke-width="2" />`;
               }
+
+              // Lines for progressions in
+              if (
+                progressionsIn > 0 &&
+                ((parseInt(roundKey) > 0 &&
+                  parseInt(roundKey) == winnersCutoutLeft + 1) ||
+                  (parseInt(roundKey) < 0 &&
+                    Math.abs(parseInt(roundKey)) == losersCutoutLeft + 1))
+              ) {
+                slotLines += `<path class="${this.baseClass} r_${
+                  Math.sign(parseInt(roundKey)) *
+                  (Math.abs(parseInt(roundKey)) - 1)
+                } s_${i + 1}" d="
+                M${[
+                  slotElement.offset().left - 50,
+                  slotElement.offset().top + slotElement.height() / 2,
+                ].join(" ")}
+                ${[
+                  [
+                    slotElement.offset().left,
+                    slotElement.offset().top + slotElement.height() / 2,
+                  ],
+                ]
+                  .map((point) => point.join(" "))
+                  .map((point) => "L" + point)
+                  .join(" ")}"
+                stroke="black" fill="none" stroke-width="2" />`;
+              }
+
+              // Lines for progressions out
+              if (
+                progressionsOut > 0 &&
+                ((parseInt(roundKey) > 0 &&
+                  parseInt(roundKey) ==
+                    Object.keys(winnersRounds).length -
+                      winnersCutoutRight -
+                      1) ||
+                  (parseInt(roundKey) < 0 &&
+                    Math.abs(parseInt(roundKey)) ==
+                      Object.keys(losersRounds).length - losersCutoutRight - 1))
+              ) {
+                slotLines += `<path class="${this.baseClass} r_${roundKey} s_${
+                  i + 1
+                }" d="
+                M${[
+                  slotElement.offset().left + slotElement.width(),
+                  slotElement.offset().top + slotElement.height() / 2,
+                ].join(" ")}
+                ${[
+                  [
+                    slotElement.offset().left + slotElement.width() + 50,
+                    slotElement.offset().top + slotElement.height() / 2,
+                  ],
+                ]
+                  .map((point) => point.join(" "))
+                  .map((point) => "L" + point)
+                  .join(" ")}"
+                stroke="black" fill="none" stroke-width="2" />`;
+              }
             }
 
             if (
@@ -307,14 +371,14 @@
               slot.playerId[1] == -1
             ) {
               $(
-                `.${this.baseClass} .round_${
-                  Math.abs(parseInt(roundKey)) - 1
-                } .slot_${i + 1} .slot_p_0.container`
+                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+                  i + 1
+                } .slot_p_0.container`
               ).css("opacity", "0");
               $(
-                `.${this.baseClass} .round_${
-                  Math.abs(parseInt(roundKey)) - 1
-                } .slot_${i + 1} .slot_p_1.container`
+                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+                  i + 1
+                } .slot_p_1.container`
               ).css("opacity", "0");
             }
           },
@@ -323,6 +387,44 @@
       });
 
       $(".lines").html(slotLines);
+
+      Object.entries(bracket).forEach(function ([roundKey, round], r) {
+        console.log($(`.round_${roundKey} .slot`));
+
+        gsap.from(
+          $(`.round_${roundKey} .slot`),
+          { x: -50, autoAlpha: 0, duration: 0.4 },
+          0.5 + 0.4 * Math.abs(parseInt(roundKey))
+        );
+
+        let elements = $(`.r_${roundKey}`);
+
+        elements.each((index, element) => {
+          if (element) {
+            let length = element.getTotalLength();
+            gsap.from(
+              element,
+              {
+                duration: 0.4,
+                "stroke-dashoffset": length,
+                "stroke-dasharray": length,
+                onUpdate: function (tl) {
+                  let tlp = (this.progress() * 100) >> 0;
+                  if (element) {
+                    let length = element.getTotalLength();
+                    TweenMax.set(element, {
+                      "stroke-dashoffset": (length / 100) * (100 - tlp),
+                      "stroke-dasharray": length,
+                    });
+                  }
+                },
+                onUpdateParams: ["{self}"],
+              },
+              0.9 + 0.4 * Math.abs(parseInt(roundKey))
+            );
+          }
+        });
+      });
 
       Object.values(players).forEach((slot, t) => {
         Object.values(slot.player).forEach((player, p) => {
@@ -447,40 +549,6 @@
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
               undefined,
               0
-            );
-          }
-        });
-
-        gsap.from(
-          $(`.round_${t} .slot`),
-          { x: -50, autoAlpha: 0, duration: 0.4 },
-          0.5 + 0.4 * t
-        );
-
-        let elements = $(`.r_${t}`);
-
-        elements.each((index, element) => {
-          if (element) {
-            let length = element.getTotalLength();
-            gsap.from(
-              element,
-              {
-                duration: 0.4,
-                "stroke-dashoffset": length,
-                "stroke-dasharray": length,
-                onUpdate: function (tl) {
-                  let tlp = (this.progress() * 100) >> 0;
-                  if (element) {
-                    let length = element.getTotalLength();
-                    TweenMax.set(element, {
-                      "stroke-dashoffset": (length / 100) * (100 - tlp),
-                      "stroke-dasharray": length,
-                    });
-                  }
-                },
-                onUpdateParams: ["{self}"],
-              },
-              0.4 + 0.4 * t
             );
           }
         });
