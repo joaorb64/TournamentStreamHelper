@@ -200,7 +200,7 @@ class TSHBracketView(QGraphicsView):
                 # Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
                 # it's an auto win for all players and R1 doesn't exist
                 byes = self.bracket.playerNumber - self.bracket.originalPlayerNumber
-                if progressionsIn == 0 and byes > 0 and byes/2 > self.bracket.playerNumber/4:
+                if progressionsIn == 0 and byes > 0 and byes/2 > self.bracket.originalPlayerNumber/4:
                     cutOut += 1
 
                 if progressionsIn > 0 and not is_power_of_two(progressionsIn):

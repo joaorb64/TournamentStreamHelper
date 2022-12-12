@@ -39,7 +39,7 @@
 
       while (
         biggestRound * (2 * parseInt($(":root").css("--player-height")) + 2) >
-        $(window).height() / 2
+        $(".winners_container").height() - 20
       ) {
         console.log("repeat");
         size -= 1;
@@ -143,7 +143,6 @@
 
         // Losers left side cutout
         let cutOut = 2;
-        losersCutoutLeft = 2;
 
         // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
         // it's an auto win for all players and R1 doesn't exist
@@ -157,6 +156,9 @@
           cutOut += 1;
 
         if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
+
+        losersCutoutLeft = cutOut;
+
         if (Math.abs(parseInt(roundKey)) <= cutOut) return;
 
         html += `<div class="round round_${roundKey}">`;
@@ -269,9 +271,9 @@
               );
 
               if (winElement && winElement.offset()) {
-                slotLines += `<path class="${this.baseClass} r_${Math.abs(
-                  roundKey
-                )} s_${i + 1}" d="
+                slotLines += `<path class="${this.baseClass} r_${roundKey} s_${
+                  i + 1
+                }" d="
                 M${[
                   slotElement.offset().left + slotElement.width(),
                   slotElement.offset().top + slotElement.height() / 2,
@@ -394,7 +396,7 @@
         gsap.from(
           $(`.round_${roundKey} .slot`),
           { x: -50, autoAlpha: 0, duration: 0.4 },
-          0.5 + 0.4 * Math.abs(parseInt(roundKey))
+          0.5 + 0.8 * Math.abs(parseInt(roundKey))
         );
 
         let elements = $(`.r_${roundKey}`);
@@ -408,6 +410,7 @@
                 duration: 0.4,
                 "stroke-dashoffset": length,
                 "stroke-dasharray": length,
+                opacity: 0,
                 onUpdate: function (tl) {
                   let tlp = (this.progress() * 100) >> 0;
                   if (element) {
@@ -415,12 +418,13 @@
                     TweenMax.set(element, {
                       "stroke-dashoffset": (length / 100) * (100 - tlp),
                       "stroke-dasharray": length,
+                      opacity: 1,
                     });
                   }
                 },
                 onUpdateParams: ["{self}"],
               },
-              0.9 + 0.4 * Math.abs(parseInt(roundKey))
+              0.9 + 0.8 * Math.abs(parseInt(roundKey))
             );
           }
         });

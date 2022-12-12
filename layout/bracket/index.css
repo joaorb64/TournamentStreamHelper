@@ -229,7 +229,7 @@ body {
   display: flex;
   overflow: hidden;
   height: 100%;
-  width: 64px;
+  width: 32px;
   flex-shrink: 0;
   margin-top: 0;
   right: 0;
