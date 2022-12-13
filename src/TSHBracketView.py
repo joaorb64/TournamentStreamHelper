@@ -334,12 +334,34 @@ class TSHBracketView(QGraphicsView):
                             nextWin[0] += losersOffset
                     if nextLose:
                         nextLose[0] += losersOffset
+                    
+                p1name = ""
+
+                if bracketSet.playerIds[0] > 0:
+                    try:
+                        p1tree: dict = StateManager.Get(f"bracket.players.slot.{bracketSet.playerIds[0]}.player")
+                        p1name = " / ".join([p.get("name") for p in p1tree.values()])
+                    except:
+                        pass
+
+                p2name = ""
+
+                if bracketSet.playerIds[1] > 0:
+                    try:
+                        p2tree: dict = StateManager.Get(f"bracket.players.slot.{bracketSet.playerIds[1]}.player")
+                        p2name = " / ".join([p.get("name") for p in p2tree.values()])
+                    except:
+                        pass
 
                 data[roundKey]["sets"][j] = {
                     "playerId": bracketSet.playerIds,
                     "score": bracketSet.score,
                     "nextWin": nextWin,
-                    "nextLose": nextLose
+                    "nextLose": nextLose,
+                    "playerName": [
+                        p1name,
+                        p2name
+                    ]
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
