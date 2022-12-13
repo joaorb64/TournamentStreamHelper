@@ -52,7 +52,7 @@ class TSHBracketWidget(QDockWidget):
         list: QWidget = self.findChild(QWidget, "listContainer")
         list.layout().addWidget(self.playerList)
 
-        self.bracketView = TSHBracketView(self.bracket, self.playerList)
+        self.bracketView = TSHBracketView(self.bracket, self.playerList, self)
         outerLayout.layout().addWidget(self.bracketView)
 
         self.playerList.SetSlotNumber(8)
@@ -70,6 +70,12 @@ class TSHBracketWidget(QDockWidget):
 
         self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
         self.progressionsOut.valueChanged.connect(lambda val: StateManager.Set("bracket.bracket.progressionsOut", val))
+
+        self.limitExport: QCheckBox = self.findChild(QCheckBox, "limitExport")
+        self.limitExport.stateChanged.connect(self.bracketView.Update)
+
+        self.limitExportNumber: QSpinBox = self.findChild(QSpinBox, "limitExportNumber")
+        self.limitExportNumber.valueChanged.connect(self.bracketView.Update)
 
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 

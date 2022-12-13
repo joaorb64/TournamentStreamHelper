@@ -108,8 +108,10 @@ class BracketSetWidget(QWidget):
                 self.show()
 
 class TSHBracketView(QGraphicsView):
-    def __init__(self, bracket: Bracket, playerList: TSHPlayerList = None, *args):
+    def __init__(self, bracket: Bracket, playerList: TSHPlayerList = None, bracketWidget = None, *args):
         super().__init__(*args)
+
+        self.bracketWidget = bracketWidget
 
         self.playerList = playerList
 
@@ -234,6 +236,8 @@ class TSHBracketView(QGraphicsView):
         self.fitInView()
     
     def Update(self):
+        self.bracket.UpdateBracket()
+
         for round in self.bracketWidgets:
             for setWidget in round:
                 for w in setWidget.score:
@@ -250,14 +254,37 @@ class TSHBracketView(QGraphicsView):
 
         data = {}
 
+        limitExportNumber = -1
+        winnersRounds = 0
+        losersRounds = 0
+
+        if self.bracketWidget.limitExport.isChecked():
+            limitExportNumber = self.bracketWidget.limitExportNumber.value()
+            winnersRounds = math.floor(limitExportNumber/8) + 3
+            losersRounds = math.floor(limitExportNumber/2) + 2
+
+            if StateManager.Get("bracket.bracket.progressionsIn") > 0:
+                StateManager.Set("bracket.bracket.progressionsIn", 0)
+                losersRounds += 2
+        
+        totalWinnersRounds = len([i for i in self.bracket.rounds.keys() if int(i) > 0])
+        totalLosersRounds = len([i for i in self.bracket.rounds.keys() if int(i) < 0])
+
         for roundKey, round in self.bracket.rounds.items():
-            
             if self.roundNameLabels.get(roundKey):
                 roundName = self.roundNameLabels.get(roundKey).text()
                 if roundName == "":
                     roundName = self.roundNameLabels.get(roundKey).placeholderText()
             else:
                 roundName = ""
+            
+            if limitExportNumber != -1:
+                if int(roundKey) > 0:
+                    roundKey = str(int(roundKey) - (totalWinnersRounds-winnersRounds))
+                    if int(roundKey) <= 0: continue
+                if int(roundKey) < 0:
+                    roundKey = str(int(roundKey) + (totalLosersRounds-losersRounds))
+                    if int(roundKey) >= 0: continue
 
             data[roundKey] = {
                 "name": roundName,
