@@ -106,6 +106,23 @@ class BracketSetWidget(QWidget):
                 self.hide()
             else:
                 self.show()
+            
+            limitExportNumber, winnersOffset, losersOffset = self.bracketView.GetLimitedExportingBracketOffsets()
+
+            if self.bracketSet.pos[0] > 0:
+                if self.bracketSet.pos[0] + winnersOffset <= 0:
+                    self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
+                    self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
+                else:
+                    self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
+                    self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
+            elif self.bracketSet.pos[0] < 0:
+                if self.bracketSet.pos[0] + losersOffset >= 0:
+                    self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
+                    self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
+                else:
+                    self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
+                    self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
 
 class TSHBracketView(QGraphicsView):
     def __init__(self, bracket: Bracket, playerList: TSHPlayerList = None, bracketWidget = None, *args):
@@ -234,26 +251,10 @@ class TSHBracketView(QGraphicsView):
             currentWidgets.append(roundWidgets)
         
         self.fitInView()
-    
-    def Update(self):
-        self.bracket.UpdateBracket()
-
-        for round in self.bracketWidgets:
-            for setWidget in round:
-                for w in setWidget.score:
-                    w.blockSignals(True)
-                setWidget.Update()
-                for w in setWidget.score:
-                    w.blockSignals(False)
-        
         QGuiApplication.processEvents()
-
         self.DrawLines()
-        
-        StateManager.BlockSaving()
 
-        data = {}
-
+    def GetLimitedExportingBracketOffsets(self):
         limitExportNumber = -1
         winnersRounds = 0
         losersRounds = 0
@@ -277,6 +278,29 @@ class TSHBracketView(QGraphicsView):
         if self.bracketWidget.limitExport.isChecked():
             winnersOffset = -(totalWinnersRounds-winnersRounds)
             losersOffset = (totalLosersRounds-losersRounds)
+
+        return (limitExportNumber, winnersOffset, losersOffset)
+    
+    def Update(self):
+        self.bracket.UpdateBracket()
+
+        for round in self.bracketWidgets:
+            for setWidget in round:
+                for w in setWidget.score:
+                    w.blockSignals(True)
+                setWidget.Update()
+                for w in setWidget.score:
+                    w.blockSignals(False)
+        
+        QGuiApplication.processEvents()
+
+        self.DrawLines()
+        
+        StateManager.BlockSaving()
+
+        data = {}
+
+        limitExportNumber, winnersOffset, losersOffset = self.GetLimitedExportingBracketOffsets()
 
         for roundKey, round in self.bracket.rounds.items():
             if self.roundNameLabels.get(roundKey):

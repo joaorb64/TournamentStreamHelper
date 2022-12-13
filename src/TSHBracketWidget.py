@@ -66,10 +66,24 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection.currentIndexChanged.connect(self.PhaseGroupChanged)
 
         self.progressionsIn: QSpinBox = self.findChild(QSpinBox, "progressionsIn")
-        self.progressionsIn.valueChanged.connect(lambda val: StateManager.Set("bracket.bracket.progressionsIn", val))
+        self.progressionsIn.valueChanged.connect(lambda val: [
+            StateManager.Set("bracket.bracket.progressionsIn", val),
+            self.bracketView.SetBracket(
+                self.bracket,
+                progressionsIn=self.progressionsIn.value(),
+                progressionsOut=self.progressionsOut.value()
+            )
+        ])
 
         self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
-        self.progressionsOut.valueChanged.connect(lambda val: StateManager.Set("bracket.bracket.progressionsOut", val))
+        self.progressionsOut.valueChanged.connect(lambda val: [
+            StateManager.Set("bracket.bracket.progressionsOut", val),
+            self.bracketView.SetBracket(
+                self.bracket,
+                progressionsIn=self.progressionsIn.value(),
+                progressionsOut=self.progressionsOut.value()
+            )
+        ])
 
         self.limitExport: QCheckBox = self.findChild(QCheckBox, "limitExport")
         self.limitExport.stateChanged.connect(self.bracketView.Update)
