@@ -258,6 +258,10 @@ class TSHBracketView(QGraphicsView):
         winnersRounds = 0
         losersRounds = 0
 
+        # Offset caused by limited exporting
+        winnersOffset = 0
+        losersOffset = 0
+
         if self.bracketWidget.limitExport.isChecked():
             limitExportNumber = self.bracketWidget.limitExportNumber.value()
             winnersRounds = math.floor(limitExportNumber/8) + 3
@@ -270,6 +274,10 @@ class TSHBracketView(QGraphicsView):
         totalWinnersRounds = len([i for i in self.bracket.rounds.keys() if int(i) > 0])
         totalLosersRounds = len([i for i in self.bracket.rounds.keys() if int(i) < 0])
 
+        if self.bracketWidget.limitExport.isChecked():
+            winnersOffset = -(totalWinnersRounds-winnersRounds)
+            losersOffset = (totalLosersRounds-losersRounds)
+
         for roundKey, round in self.bracket.rounds.items():
             if self.roundNameLabels.get(roundKey):
                 roundName = self.roundNameLabels.get(roundKey).text()
@@ -280,10 +288,10 @@ class TSHBracketView(QGraphicsView):
             
             if limitExportNumber != -1:
                 if int(roundKey) > 0:
-                    roundKey = str(int(roundKey) - (totalWinnersRounds-winnersRounds))
+                    roundKey = str(int(roundKey) + winnersOffset)
                     if int(roundKey) <= 0: continue
                 if int(roundKey) < 0:
-                    roundKey = str(int(roundKey) + (totalLosersRounds-losersRounds))
+                    roundKey = str(int(roundKey) + losersOffset)
                     if int(roundKey) >= 0: continue
 
             data[roundKey] = {
@@ -291,11 +299,23 @@ class TSHBracketView(QGraphicsView):
                 "sets": {}
             }
             for j, bracketSet in enumerate(round):
+                nextWin = bracketSet.winNext.pos.copy() if bracketSet.winNext else None
+                nextLose = bracketSet.loseNext.pos.copy() if bracketSet.loseNext else None
+
+                if limitExportNumber != -1:
+                    if nextWin:
+                        if nextWin[0] > 0:
+                            nextWin[0] += winnersOffset
+                        else:
+                            nextWin[0] += losersOffset
+                    if nextLose:
+                        nextLose[0] += losersOffset
+
                 data[roundKey]["sets"][j] = {
                     "playerId": bracketSet.playerIds,
                     "score": bracketSet.score,
-                    "nextWin": bracketSet.winNext.pos if bracketSet.winNext else None,
-                    "nextLose": bracketSet.loseNext.pos if bracketSet.loseNext else None
+                    "nextWin": nextWin,
+                    "nextLose": nextLose
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
