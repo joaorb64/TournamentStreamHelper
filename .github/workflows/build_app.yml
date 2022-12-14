@@ -6,6 +6,7 @@ on:
       - main
       - feature/ui-translations
       - locale/*
+      - feature/bracket-view
   workflow_dispatch:
 
 jobs:
@@ -57,7 +58,7 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/bracket-view' }}
     strategy:
       fail-fast: false
       matrix:
