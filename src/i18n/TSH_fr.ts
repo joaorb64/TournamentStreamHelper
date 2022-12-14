@@ -59,42 +59,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBracket.ui" line="17"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Arbre</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="40"/>
         <source>Phase</source>
-        <translation type="unfinished">Phase</translation>
+        <translation>Phase</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="60"/>
         <source>Phase Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Groupe</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="80"/>
         <source>Progressions in</source>
-        <translation type="unfinished"></translation>
+        <translation>Progressions entrantes</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="100"/>
         <source>Progressions out</source>
-        <translation type="unfinished"></translation>
+        <translation>Progressions sortantes</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="120"/>
         <source>Limit exported bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Limiter larbre exporté</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="127"/>
         <source> players</source>
-        <translation type="unfinished"></translation>
+        <translation> joueurs</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="130"/>
         <source>Top </source>
-        <translation type="unfinished"></translation>
+        <translation>Top </translation>
     </message>
 </context>
 <context>
@@ -659,7 +659,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="155"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Arbre</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="163"/>
@@ -1036,7 +1036,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="506"/>
         <source>The text for banByMaxGames is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>La valeur pour les bans maximums par match est invalide.</translation>
     </message>
     <message>
         <source>Score</source>
