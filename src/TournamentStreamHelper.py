@@ -200,6 +200,7 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
         self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
+        self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
@@ -292,6 +293,7 @@ class Window(QMainWindow):
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
+        toggleWidgets.addAction(bracket.toggleViewAction())
 
         self.optionsBt.menu().addSeparator()
 
