@@ -161,6 +161,9 @@ class TSHBracketWidget(QDockWidget):
                 except Exception as e:
                     print(e)
         
+        QGuiApplication.processEvents()
+        self.bracket.UpdateBracket()
         self.bracket.UpdateBracket()
         self.bracketView.Update()
+        
         StateManager.ReleaseSaving()

@@ -213,6 +213,15 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             parsed_matches.sort(key=lambda match: abs(int(match.get("round"))), reverse=True)
 
+            lastWinners = parsed_matches[0]
+
+            for match in parsed_matches:
+                if match.get("round") > lastWinners.get("round"):
+                    lastWinners = match
+                elif match.get("round") == lastWinners.get("round") and match.get("identifier") > lastWinners.get("identifier"):
+                    lastWinners = match
+            lastWinners["round"] = lastWinners["round"]+1
+
             rounds = {}
 
             for match in parsed_matches:

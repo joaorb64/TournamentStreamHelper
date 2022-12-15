@@ -268,7 +268,7 @@ class TSHBracketView(QGraphicsView):
             winnersRounds = math.floor(limitExportNumber/8) + 3
             losersRounds = math.floor(limitExportNumber/2) + 2
 
-            if StateManager.Get("bracket.bracket.progressionsIn") > 0:
+            if StateManager.Get("bracket.bracket.progressionsIn", 0) > 0:
                 StateManager.Set("bracket.bracket.progressionsIn", 0)
                 losersRounds += 2
         

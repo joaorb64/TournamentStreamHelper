@@ -113,7 +113,7 @@ class TSHPlayerListWidget(QDockWidget):
         StateManager.BlockSaving()
         if len(data) > 0:
             playerNumber = len(data[0].get("players"))
-            self.SetPlayersPerTeam(playerNumber)
+            self.playerList.SetPlayersPerTeam(playerNumber)
             
             for i, slot in enumerate(self.playerList.slotWidgets):
                 slot.SetTeamData(data[i])
