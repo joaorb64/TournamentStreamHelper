@@ -15,6 +15,9 @@ query SetQuery($id: ID!) {
             entrant {
                 id
                 name
+                seeds {
+                    seedNum
+                }
                 participants {
                     id
                     user {

@@ -83,7 +83,7 @@
           gsap.from(
             $(`.tournament${s + 1}`),
             { y: +100, autoAlpha: 0, duration: 0.3 },
-            0.2 + 0.2 * s
+            (0.2 + 0.2 * s) + gsap.timeline().time()
           );
         });
     }

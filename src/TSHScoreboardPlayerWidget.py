@@ -741,6 +741,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             color_element.setCurrentIndex(int(main[1]))
                         else:
                             color_element.setCurrentIndex(0)
+        
+        if data.get("seed"):
+            StateManager.Set(f"{self.path}.seed", data.get("seed"))
                             
         StateManager.ReleaseSaving()
 

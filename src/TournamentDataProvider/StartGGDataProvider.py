@@ -335,6 +335,9 @@ class StartGGDataProvider(TournamentDataProvider):
                         player.get("id"),
                         0
                     ]
+                if deep_get(_set, "slots", [])[i].get("entrant", {}).get("seeds", []) != []:
+                    playerData["seed"] = deep_get(_set, "slots", [])[i].get(
+                    "entrant", {}).get("seeds", [])[0].get("seedNum", 0)
                 players[i].append(playerData)
 
         setData["entrants"] = players
@@ -1030,6 +1033,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 for i, team in enumerate(entrants):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(entrant)
+                        if deep_get(team, "seeds", []) != []:
+                            playerData["seed"] = deep_get(team, "seeds", [])[0].get("seedNum", 0)
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
