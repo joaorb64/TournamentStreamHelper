@@ -335,6 +335,9 @@ class StartGGDataProvider(TournamentDataProvider):
                         player.get("id"),
                         0
                     ]
+                if deep_get(_set, "slots", [])[i].get("entrant", {}).get("seeds", []) != []:
+                    playerData["seed"] = deep_get(_set, "slots", [])[i].get(
+                    "entrant", {}).get("seeds", [])[0].get("seedNum", 0)
                 players[i].append(playerData)
 
         setData["entrants"] = players
@@ -833,14 +836,14 @@ class StartGGDataProvider(TournamentDataProvider):
                     "event_name": event.get("name"),
                     "tournament_name": tournament.get("name"),
                     "tournament_picture": tournamentPicture,
-                    "entrants": event.get("numEntrants")
+                    "entrants": event.get("numEntrants"),
+                    "event_date": event.get("startAt")
                 }
 
                 set_data.append(player_history)
 
             callback.emit({"playerNumber": playerNumber, "history_sets": set_data})
         except Exception as e:
-            traceback.print_exc()
             callback.emit({"playerNumber": playerNumber,"history_sets": []})
 
     def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
@@ -1030,6 +1033,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 for i, team in enumerate(entrants):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(entrant)
+                        if deep_get(team, "seeds", []) != []:
+                            playerData["seed"] = deep_get(team, "seeds", [])[0].get("seedNum", 0)
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
@@ -1143,6 +1148,11 @@ class StartGGDataProvider(TournamentDataProvider):
                     }
                 else:
                     playerData["mains"] = {}
+        if "id" not in playerData:
+            playerData["id"] = [
+                player.get("id"),
+                0
+            ]
 
         return(playerData)
 
