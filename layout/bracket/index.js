@@ -146,14 +146,17 @@
 
         // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
         // it's an auto win for all players and R1 doesn't exist
-        let byes =
-          nextPow2(Object.keys(players).length) - Object.keys(players).length;
-        if (
-          progressionsIn == 0 &&
-          byes > 0 &&
-          byes / 2 > Object.keys(players).length / 4
-        )
-          cutOut += 1;
+        // But disable this in case we're showing only part of a bracket
+        if (data.bracket.bracket.limitExportNumber == -1) {
+          let byes =
+            nextPow2(Object.keys(players).length) - Object.keys(players).length;
+          if (
+            progressionsIn == 0 &&
+            byes > 0 &&
+            byes / 2 > Object.keys(players).length / 4
+          )
+            cutOut += 1;
+        }
 
         if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
 

@@ -89,7 +89,9 @@ class TSHBracketWidget(QDockWidget):
         self.limitExport.stateChanged.connect(self.bracketView.Update)
 
         self.limitExportNumber: QSpinBox = self.findChild(QSpinBox, "limitExportNumber")
-        self.limitExportNumber.valueChanged.connect(self.bracketView.Update)
+        self.limitExportNumber.valueChanged.connect(lambda val: [
+            self.bracketView.Update()
+        ])
 
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 

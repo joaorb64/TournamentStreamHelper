@@ -302,6 +302,8 @@ class TSHBracketView(QGraphicsView):
 
         limitExportNumber, winnersOffset, losersOffset = self.GetLimitedExportingBracketOffsets()
 
+        StateManager.Set("bracket.bracket.limitExportNumber", limitExportNumber)
+
         for roundKey, round in self.bracket.rounds.items():
             if self.roundNameLabels.get(roundKey):
                 roundName = self.roundNameLabels.get(roundKey).text()
