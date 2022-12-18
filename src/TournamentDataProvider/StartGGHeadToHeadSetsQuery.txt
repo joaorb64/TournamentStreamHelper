@@ -1,22 +1,22 @@
 query HeadToHeadSetsQuery($eventId: ID!, $pid1: ID!, $pid2: ID!, $page: Int!) {
 	event(id: $eventId) {
-    sets(page: $page, perPage: 500, filters: {playerIds: [$pid1, $pid2]}) {
-      nodes {
-        entrant1Score
-        entrant2Score
-        winnerId
-        slots(includeByes: false) {
-          entrant {
-            id
-            participants {
-              id
-              player {
-                  id
-              }
+        sets(page: $page, perPage: 500, filters: {playerIds: [$pid1, $pid2]}) {
+            nodes {
+                entrant1Score
+                entrant2Score
+                winnerId
+                slots(includeByes: false) {
+                    entrant {
+                        id
+                        participants {
+                            id
+                            player {
+                                id
+                            }
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 }
