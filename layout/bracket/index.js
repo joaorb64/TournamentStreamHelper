@@ -55,38 +55,7 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
       );
 
-      let winnersCutoutLeft = 0;
-      let winnersCutoutRight = 0;
-
       Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
-        // Winners cutout
-        if (progressionsOut > 0) {
-          // Winners right side cutout
-          let progressionsWinners = Math.pow(
-            2,
-            parseInt(Math.log2(progressionsOut / 2))
-          );
-          let cutOut = parseInt(Math.log2(progressionsWinners)) + 1;
-          winnersCutoutRight = cutOut;
-          if (parseInt(roundKey) + cutOut >= Object.keys(winnersRounds).length)
-            return;
-        }
-
-        // Winners left side cutout
-        if (progressionsIn > 0) {
-          if (parseInt(roundKey) == 1) {
-            winnersCutoutLeft = 1;
-            return;
-          }
-
-          if (!powerOf2(progressionsIn)) {
-            if (parseInt(roundKey) == 2) {
-              winnersCutoutLeft = 2;
-              return;
-            }
-          }
-        }
-
         html += `<div class="round round_${roundKey}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -122,48 +91,7 @@
         Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
       );
 
-      let losersCutoutLeft = 0;
-      let losersCutoutRight = 0;
-
       Object.entries(losersRounds).forEach(([roundKey, round], r) => {
-        // Losers cutout
-        if (progressionsOut > 0) {
-          // Losers right side cutout
-          let progressionsLosers =
-            progressionsOut -
-            Math.pow(2, parseInt(Math.log2(progressionsOut / 2)));
-          let cutOut = parseInt(Math.log2(progressionsLosers)) * 2 - 1;
-          losersCutoutRight = cutOut;
-          if (
-            Math.abs(parseInt(roundKey)) + cutOut >=
-            Object.keys(losersRounds).length
-          )
-            return;
-        }
-
-        // Losers left side cutout
-        let cutOut = 2;
-
-        // Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
-        // it's an auto win for all players and R1 doesn't exist
-        // But disable this in case we're showing only part of a bracket
-        if (data.bracket.bracket.limitExportNumber == -1) {
-          let byes =
-            nextPow2(Object.keys(players).length) - Object.keys(players).length;
-          if (
-            progressionsIn == 0 &&
-            byes > 0 &&
-            byes / 2 > Object.keys(players).length / 4
-          )
-            cutOut += 1;
-        }
-
-        if (progressionsIn > 0 && !powerOf2(progressionsIn)) cutOut += 1;
-
-        losersCutoutLeft = cutOut;
-
-        if (Math.abs(parseInt(roundKey)) <= cutOut) return;
-
         html += `<div class="round round_${roundKey}">`;
         html += `<div class="round_name"></div>`;
         Object.values(round.sets).forEach((slot, i) => {
@@ -253,7 +181,6 @@
 
             if (
               slot.nextWin &&
-              !lastLosers &&
               !(
                 slot.playerId[0] > Object.keys(players).length ||
                 slot.playerId[1] > Object.keys(players).length ||
@@ -312,14 +239,11 @@
               // Lines for progressions in
               if (
                 progressionsIn > 0 &&
-                ((parseInt(roundKey) > 0 &&
-                  parseInt(roundKey) == winnersCutoutLeft + 1) ||
-                  (parseInt(roundKey) < 0 &&
-                    Math.abs(parseInt(roundKey)) == losersCutoutLeft + 1))
+                ((parseInt(roundKey) > 0 && parseInt(roundKey) == 1) ||
+                  (parseInt(roundKey) < 0 && Math.abs(parseInt(roundKey)) == 1))
               ) {
-                slotLines += `<path class="${this.baseClass} r_${
-                  Math.sign(parseInt(roundKey)) *
-                  (Math.abs(parseInt(roundKey)) - 1)
+                slotLines += `<path class="${this.baseClass} in_r_${
+                  Math.sign(parseInt(roundKey)) * Math.abs(parseInt(roundKey))
                 } s_${i + 1}" d="
                 M${[
                   slotElement.offset().left - 50,
@@ -341,13 +265,10 @@
               if (
                 progressionsOut > 0 &&
                 ((parseInt(roundKey) > 0 &&
-                  parseInt(roundKey) ==
-                    Object.keys(winnersRounds).length -
-                      winnersCutoutRight -
-                      1) ||
+                  parseInt(roundKey) == Object.keys(winnersRounds).length) ||
                   (parseInt(roundKey) < 0 &&
                     Math.abs(parseInt(roundKey)) ==
-                      Object.keys(losersRounds).length - losersCutoutRight - 1))
+                      Object.keys(losersRounds).length))
               ) {
                 slotLines += `<path class="${this.baseClass} r_${roundKey} s_${
                   i + 1
@@ -358,8 +279,25 @@
                 ].join(" ")}
                 ${[
                   [
-                    slotElement.offset().left + slotElement.width() + 50,
+                    slotElement.offset().left + slotElement.width() + 45,
                     slotElement.offset().top + slotElement.height() / 2,
+                  ],
+                ]
+                  .map((point) => point.join(" "))
+                  .map((point) => "L" + point)
+                  .join(" ")}
+                M${[
+                  slotElement.offset().left + slotElement.width() + 40,
+                  slotElement.offset().top + slotElement.height() / 2 - 5,
+                ].join(" ")}
+                ${[
+                  [
+                    slotElement.offset().left + slotElement.width() + 45,
+                    slotElement.offset().top + slotElement.height() / 2,
+                  ],
+                  [
+                    slotElement.offset().left + slotElement.width() + 40,
+                    slotElement.offset().top + slotElement.height() / 2 + 5,
                   ],
                 ]
                   .map((point) => point.join(" "))
@@ -402,9 +340,9 @@
           0.5 + 0.8 * Math.abs(parseInt(roundKey))
         );
 
-        let elements = $(`.r_${roundKey}`);
+        let roundLines = $(`.r_${roundKey}, .in_r_${roundKey}`);
 
-        elements.each((index, element) => {
+        roundLines.each((index, element) => {
           if (element) {
             let length = element.getTotalLength();
             gsap.from(
@@ -427,7 +365,9 @@
                 },
                 onUpdateParams: ["{self}"],
               },
-              0.9 + 0.8 * Math.abs(parseInt(roundKey))
+              0.9 +
+                0.8 * Math.abs(parseInt(roundKey)) -
+                ($(element).is(`.in_r_${roundKey}`) ? 0.8 : 0)
             );
           }
         });

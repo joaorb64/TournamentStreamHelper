@@ -149,6 +149,47 @@ class TSHBracketView(QGraphicsView):
 
         self.bracketLines = []
     
+    def GetCutouts(self):
+        winnersRounds = [r for r in self.bracket.rounds.keys() if int(r) > 0]
+        losersRounds = [r for r in self.bracket.rounds.keys() if int(r) < 0]
+
+        winnersCutout = [0, len(winnersRounds)+1]
+        losersCutout = [0, len(losersRounds)+1]
+
+        # Winners right side cutout
+        if self.progressionsOut > 0:
+            progressionsWinners = math.pow(2, int(math.log2(self.progressionsOut/2)))
+            winnersCutout[1] = len(winnersRounds) - (int(math.log2(progressionsWinners)) + 1)
+    
+        # Winners left side cutout
+        if self.progressionsIn > 0:
+            if not is_power_of_two(self.progressionsIn):
+                winnersCutout[0] = 2
+            else:
+                winnersCutout[0] = 1
+        
+        # Losers right side cutout
+        if self.progressionsOut > 0:
+            progressionsLosers = self.progressionsOut - math.pow(2, int(math.log2(self.progressionsOut/2)))
+            losersCutout[1] = len(losersRounds) - (math.log2(progressionsLosers) * 2 - 1)
+    
+        # Losers left side cutout
+        losersCutout[0] = 2
+
+        # Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
+        # it's an auto win for all players and R1 doesn't exist
+        # But do not apply this when using limited exporting
+        byes = self.bracket.playerNumber - self.bracket.originalPlayerNumber
+        if not self.bracketWidget.limitExport.isChecked() and self.bracketWidget.limitExportNumber.value() > 0:
+            if self.progressionsIn == 0 and byes > 0 and byes/2 > self.bracket.originalPlayerNumber/4:
+                losersCutout[0] += 1
+
+        if self.progressionsIn > 0 and not is_power_of_two(self.progressionsIn):
+            losersCutout[0] += 1
+    
+        return (winnersCutout, losersCutout)
+
+
     def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0):
         self.bracket = bracket
 
@@ -179,8 +220,7 @@ class TSHBracketView(QGraphicsView):
 
         self.bracket.UpdateBracket()
 
-        winnersRounds = [r for r in self.bracket.rounds.keys() if int(r) > 0]
-        losersRounds = [r for r in self.bracket.rounds.keys() if int(r) < 0]
+        winnersCutout, losersCutout = self.GetCutouts()
 
         for roundNum, round in self.bracket.rounds.items():
             currentBracket = self.winnersBracket
@@ -192,40 +232,13 @@ class TSHBracketView(QGraphicsView):
             
             # Winners cutout
             if int(roundNum) > 0:
-                # Winners right side cutout
-                if progressionsOut > 0:
-                    progressionsWinners = math.pow(2, int(math.log2(progressionsOut/2)))
-                    cutOut = int(math.log2(progressionsWinners)) + 1
-                    if int(roundNum) + cutOut >= len(winnersRounds): continue
-            
-                # Winners left side cutout
-                if progressionsIn > 0:
-                    if int(roundNum) == 1: continue
-
-                    if not is_power_of_two(progressionsIn):
-                        if int(roundNum) == 2: continue
+                if int(roundNum) <= winnersCutout[0]: continue
+                if int(roundNum) >= winnersCutout[1]: continue
             
             # Losers cutout
             if int(roundNum) < 0:
-                if progressionsOut > 0:
-                    # Losers right side cutout
-                    progressionsLosers = progressionsOut - math.pow(2, int(math.log2(progressionsOut/2)))
-                    cutOut = math.log2(progressionsLosers) * 2 - 1
-                    if abs(int(roundNum)) + cutOut >= len(losersRounds): continue
-            
-                # Losers left side cutout
-                cutOut = 2
-
-                # Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
-                # it's an auto win for all players and R1 doesn't exist
-                byes = self.bracket.playerNumber - self.bracket.originalPlayerNumber
-                if progressionsIn == 0 and byes > 0 and byes/2 > self.bracket.originalPlayerNumber/4:
-                    cutOut += 1
-
-                if progressionsIn > 0 and not is_power_of_two(progressionsIn):
-                    cutOut += 1
-                
-                if abs(int(roundNum)) <= cutOut: continue
+                if abs(int(roundNum)) <= losersCutout[0]: continue
+                if abs(int(roundNum)) >= losersCutout[1]: continue
             
             # Outer Round layout (column)
             layoutOuter = QWidget()
@@ -234,7 +247,7 @@ class TSHBracketView(QGraphicsView):
 
             # Round name
             roundNameLabel = QLineEdit()
-            roundNameLabel.setPlaceholderText(self.bracket.GetRoundName(roundNum, progressionsIn, progressionsOut))
+            roundNameLabel.setPlaceholderText(self.bracket.GetRoundName(int(roundNum), winnersCutout, losersCutout))
             layoutOuter.layout().addWidget(roundNameLabel)
             self.roundNameLabels[roundNum] = roundNameLabel
 
@@ -301,10 +314,25 @@ class TSHBracketView(QGraphicsView):
         data = {}
 
         limitExportNumber, winnersOffset, losersOffset = self.GetLimitedExportingBracketOffsets()
+        winnersCutout, losersCutout = self.GetCutouts()
+
+        winnersOffset += winnersCutout[0]
+        losersOffset += losersCutout[0]
 
         StateManager.Set("bracket.bracket.limitExportNumber", limitExportNumber)
 
         for roundKey, round in self.bracket.rounds.items():
+            # Winners cutout
+            if int(roundKey) > 0:
+                if int(roundKey) <= winnersCutout[0]: continue
+                if int(roundKey) >= winnersCutout[1]: continue
+            
+            # Losers cutout
+            if int(roundKey) < 0:
+                if abs(int(roundKey)) <= losersCutout[0]: continue
+                if abs(int(roundKey)) >= losersCutout[1]: continue
+            
+            # Get round name or placeholder name
             if self.roundNameLabels.get(roundKey):
                 roundName = self.roundNameLabels.get(roundKey).text()
                 if roundName == "":
@@ -312,13 +340,13 @@ class TSHBracketView(QGraphicsView):
             else:
                 roundName = ""
             
-            if limitExportNumber != -1:
-                if int(roundKey) > 0:
-                    roundKey = str(int(roundKey) + winnersOffset)
-                    if int(roundKey) <= 0: continue
-                if int(roundKey) < 0:
-                    roundKey = str(int(roundKey) + losersOffset)
-                    if int(roundKey) >= 0: continue
+            # Limited export number cutout
+            if int(roundKey) > 0:
+                roundKey = str(int(roundKey) - winnersOffset)
+                if int(roundKey) <= 0: continue
+            if int(roundKey) < 0:
+                roundKey = str(int(roundKey) + losersOffset)
+                if int(roundKey) >= 0: continue
 
             data[roundKey] = {
                 "name": roundName,
@@ -328,14 +356,14 @@ class TSHBracketView(QGraphicsView):
                 nextWin = bracketSet.winNext.pos.copy() if bracketSet.winNext else None
                 nextLose = bracketSet.loseNext.pos.copy() if bracketSet.loseNext else None
 
-                if limitExportNumber != -1:
-                    if nextWin:
-                        if nextWin[0] > 0:
-                            nextWin[0] += winnersOffset
-                        else:
-                            nextWin[0] += losersOffset
-                    if nextLose:
-                        nextLose[0] += losersOffset
+                # Reassign rounds based on export number
+                if nextWin:
+                    if nextWin[0] > 0:
+                        nextWin[0] -= winnersOffset
+                    else:
+                        nextWin[0] += losersOffset
+                if nextLose:
+                    nextLose[0] += losersOffset
                     
                 p1name = ""
 

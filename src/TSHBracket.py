@@ -182,7 +182,7 @@ class Bracket():
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = -1
     # Get round names
-    def GetRoundName(self, round: str, progressionsIn=0, progressionsOut=0):
+    def GetRoundName(self, round: str, winnersCutout=[0,0], losersCutout=[0,0]):
         roundNumber = int(round)
 
         prefix = "Winners" if roundNumber > 0 else "Losers"
@@ -208,18 +208,10 @@ class Bracket():
                 return f"{prefix} Semi-Final"
             if roundNumber == lastLosers + 2:
                 return f"{prefix} Quarter-Final"
-
-        if roundNumber < 0:
-            if progressionsIn > 0 and not is_power_of_two(progressionsIn):
-                roundNumber += 1
         
-            byes = self.playerNumber - self.originalPlayerNumber
-            if progressionsIn == 0 and byes > 0 and byes/2 > self.originalPlayerNumber/4:
-                roundNumber += 1
-
-            roundNumber += 2
-        elif roundNumber > 0:
-            if progressionsIn > 0:
-                roundNumber -= 1
+        if roundNumber > 0:
+            roundNumber -= winnersCutout[0]
+        if roundNumber < 0:
+            roundNumber += losersCutout[0]
 
         return f"{prefix} Round {abs(roundNumber)}"
