@@ -6,6 +6,7 @@ from flask import Flask, send_from_directory, request
 from flask_cors import CORS, cross_origin
 import json
 from .StateManager import StateManager
+from .TSHStatsUtil import TSHStatsUtil
 
 
 class WebServer(QThread):
@@ -212,6 +213,40 @@ class WebServer(QThread):
     @app.route('/pull-user')
     def pull_user_set():
         WebServer.scoreboard.signals.UserSetSelection.emit()
+        return "OK"
+
+    # Resubmits Call for Recent Sets
+    @app.route('/stats-recent-sets')
+    def stats_recent_sets():
+        TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
+        return "OK"
+
+    # Resubmits Call for Last Sets
+    @app.route('/stats-last-sets-<player>')
+    def stats_last_sets(player):
+        if player == "1":
+            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
+        elif player == "2":
+            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+        elif player == "both":
+            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
+            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+        else:
+            print("[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
+        return "OK"
+
+   # Resubmits Call for History Sets
+    @app.route('/stats-history-sets-<player>')
+    def stats_history_sets(player):
+        if player == "1":
+            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
+        elif player == "2":
+            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+        elif player == "both":
+            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
+            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+        else:
+            print("[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
     # Resets scores

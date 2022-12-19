@@ -6,6 +6,7 @@ query TournamentHistoryDataQuery($playerID: ID!, $gameID: ID!) {
         event {
           name
           numEntrants
+          startAt
           tournament {
             name
             images(type: "profile") {
