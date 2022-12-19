@@ -117,7 +117,7 @@ class BracketSetWidget(QWidget):
                     self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
                     self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
             elif self.bracketSet.pos[0] < 0:
-                if self.bracketSet.pos[0] + losersOffset >= 0:
+                if self.bracketSet.pos[0] + 2 + losersOffset >= 0:
                     self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                     self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                 else:
@@ -342,7 +342,7 @@ class TSHBracketView(QGraphicsView):
             
             # Limited export number cutout
             if int(roundKey) > 0:
-                roundKey = str(int(roundKey) - winnersOffset)
+                roundKey = str(int(roundKey) + winnersOffset)
                 if int(roundKey) <= 0: continue
             if int(roundKey) < 0:
                 roundKey = str(int(roundKey) + losersOffset)
@@ -359,7 +359,7 @@ class TSHBracketView(QGraphicsView):
                 # Reassign rounds based on export number
                 if nextWin:
                     if nextWin[0] > 0:
-                        nextWin[0] -= winnersOffset
+                        nextWin[0] += winnersOffset
                     else:
                         nextWin[0] += losersOffset
                 if nextLose:
