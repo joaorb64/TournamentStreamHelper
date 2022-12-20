@@ -31,8 +31,10 @@ class BracketSetWidget(QWidget):
             self.layout().addWidget(hbox)
             hbox.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
-            idLabel = QLabel()
+            idLabel = QLineEdit()
+            idLabel.setDisabled(True)
             idLabel.setMinimumWidth(30)
+            idLabel.setMaximumWidth(30)
             idLabel.setFont(QFont(idLabel.font().family(), 8))
             idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.playerId.append(idLabel)
@@ -40,6 +42,7 @@ class BracketSetWidget(QWidget):
 
             name = QLineEdit()
             name.setMinimumWidth(120)
+            name.setMaximumWidth(120)
             name.setDisabled(True)
             self.name.append(name)
             hbox.layout().addWidget(name)
@@ -68,9 +71,18 @@ class BracketSetWidget(QWidget):
         if self.bracketSet:
             self.playerId[0].setText(str(self.bracketSet.playerIds[0]))
             self.playerId[1].setText(str(self.bracketSet.playerIds[1]))
+
+            if self.playerId[0].text() == "-2":
+                self.playerId[0].setText("")
+            if self.playerId[1].text() == "-2":
+                self.playerId[1].setText("")
             
+            self.score[0].blockSignals(True)
+            self.score[1].blockSignals(True)
             self.score[0].setValue(self.bracketSet.score[0])
             self.score[1].setValue(self.bracketSet.score[1])
+            self.score[0].blockSignals(False)
+            self.score[1].blockSignals(False)
 
             if self.bracketSet.score[0] > self.bracketSet.score[1]:
                 self.score[0].setStyleSheet("background-color: rgba(0, 255, 0, 50);")
@@ -83,26 +95,29 @@ class BracketSetWidget(QWidget):
                 self.score[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
             
             try:
-                if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] != -1:
-                    self.name[0].setStyleSheet("font-style: normal;")
+                if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] > 0:
                     self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
                 else:
-                    self.name[0].setStyleSheet("font-style: italic;")
-                    self.name[0].setText("bye")
+                    self.name[0].setText("")
             except:
                 pass
 
             try:
-                if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] != -1:
-                    self.name[1].setStyleSheet("font-style: normal;")
+                if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] > 0:
                     self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
                 else:
-                    self.name[1].setStyleSheet("font-style: italic;")
-                    self.name[1].setText("bye")
+                    self.name[1].setText("")
             except:
                 pass
             
-            if (self.name[0].text() == "bye" and not self.name[1].text() == "bye") or (self.name[1].text() == "bye" and not self.name[0].text() == "bye"):
+            winnersCutout, losersCutout = self.bracketView.GetCutouts()
+            hasBye = \
+                ((self.bracketSet.playerIds[0] == -1 and not self.bracketSet.playerIds[1] == -1) or \
+                (self.bracketSet.playerIds[1] == -1 and not self.bracketSet.playerIds[0] == -1))
+
+            if self.bracketSet.pos[0] < 0 and abs(self.bracketSet.pos[0]) < losersCutout[0]+2 and hasBye:
+                self.hide()
+            elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
                 self.hide()
             else:
                 self.show()
@@ -110,7 +125,7 @@ class BracketSetWidget(QWidget):
             limitExportNumber, winnersOffset, losersOffset = self.bracketView.GetLimitedExportingBracketOffsets()
 
             if self.bracketSet.pos[0] > 0:
-                if self.bracketSet.pos[0] + winnersOffset <= 0:
+                if self.bracketSet.pos[0] - winnersOffset <= 0:
                     self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                     self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                 else:
@@ -284,12 +299,13 @@ class TSHBracketView(QGraphicsView):
             if StateManager.Get("bracket.bracket.progressionsIn", 0) > 0:
                 StateManager.Set("bracket.bracket.progressionsIn", 0)
                 losersRounds += 2
+                winnersRounds += 1
         
         totalWinnersRounds = len([i for i in self.bracket.rounds.keys() if int(i) > 0])
         totalLosersRounds = len([i for i in self.bracket.rounds.keys() if int(i) < 0])
 
         if self.bracketWidget.limitExport.isChecked():
-            winnersOffset = -(totalWinnersRounds-winnersRounds)
+            winnersOffset = (totalWinnersRounds-winnersRounds)
             losersOffset = (totalLosersRounds-losersRounds)
 
         return (limitExportNumber, winnersOffset, losersOffset)
@@ -342,7 +358,7 @@ class TSHBracketView(QGraphicsView):
             
             # Limited export number cutout
             if int(roundKey) > 0:
-                roundKey = str(int(roundKey) + winnersOffset)
+                roundKey = str(int(roundKey) - winnersOffset)
                 if int(roundKey) <= 0: continue
             if int(roundKey) < 0:
                 roundKey = str(int(roundKey) + losersOffset)
@@ -359,7 +375,7 @@ class TSHBracketView(QGraphicsView):
                 # Reassign rounds based on export number
                 if nextWin:
                     if nextWin[0] > 0:
-                        nextWin[0] += winnersOffset
+                        nextWin[0] -= winnersOffset
                     else:
                         nextWin[0] += losersOffset
                 if nextLose:

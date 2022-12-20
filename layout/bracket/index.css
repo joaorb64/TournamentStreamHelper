@@ -97,6 +97,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  background-color: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+  overflow: hidden;
 }
 
 .slot .title {

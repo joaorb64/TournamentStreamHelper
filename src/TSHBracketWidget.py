@@ -100,12 +100,18 @@ class TSHBracketWidget(QDockWidget):
     def UpdatePhases(self, phases):
         print("phases", phases)
         self.phaseSelection.clear()
-        self.phaseSelection.addItem("")
+        self.phaseSelection.addItem("", {})
 
         for phase in phases:
             self.phaseSelection.addItem(phase.get("name"), phase)
         
     def UpdatePhaseGroups(self):
+        try:
+            selectedGroup = self.phaseSelection.currentData()
+            StateManager.Set("bracket.phase", selectedGroup.get("name", ""))
+        except:
+            StateManager.Set("bracket.phase", "")
+
         self.phaseGroupSelection.clear()
 
         if self.phaseSelection.currentData() != None:
@@ -120,6 +126,12 @@ class TSHBracketWidget(QDockWidget):
                     item.setEnabled(False)
     
     def PhaseGroupChanged(self):
+        try:
+            selectedGroup = self.phaseGroupSelection.currentData()
+            StateManager.Set("bracket.phaseGroup", selectedGroup.get("name"))
+        except:
+            StateManager.Set("bracket.phaseGroup", "")
+        
         if self.phaseGroupSelection.currentData() != None:
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
 
@@ -150,12 +162,17 @@ class TSHBracketWidget(QDockWidget):
             progressionsOut=self.progressionsOut.value()
         )
 
+        if self.progressionsIn.value() > 0:
+            for _set in self.bracket.rounds["1"]:
+                _set.score[0] = -1
+                _set.score[1] = -1
+
         for r, round in phaseGroupData.get("sets", {}).items():
             for s, _set in enumerate(round):
                 try:
                     score = _set.get("score")
-                    if score[0] == None: score[0] = -1
-                    if score[1] == None: score[1] = -1
+                    if score[0] == None: score[0] = 0
+                    if score[1] == None: score[1] = 0
 
                     roundIndex = str(r)
 
@@ -164,7 +181,6 @@ class TSHBracketWidget(QDockWidget):
                     print(e)
         
         QGuiApplication.processEvents()
-        self.bracket.UpdateBracket()
         self.bracket.UpdateBracket()
         self.bracketView.Update()
         

@@ -1,10 +1,13 @@
 import math
 
 class BracketSet():
+    BYE = -1
+    PENDING = -2
+
     def __init__(self, bracket: "Bracket", pos) -> None:
         self.bracket: Bracket = bracket
-        self.playerIds = [-1, -1]
-        self.score = [-1, -1]
+        self.playerIds = [BracketSet.BYE, BracketSet.BYE]
+        self.score = [0, 0]
         self.winNext: "BracketSet" = None
         self.loseNext: "BracketSet" = None
         self.pos = pos
@@ -137,7 +140,7 @@ class Bracket():
         self.rounds[str(gfsRound)][0].loseNext = self.rounds[str(gfsResetRound)][0]
     
     def UpdateBracket(self):
-        for k, round in sorted(self.rounds.items()):
+        for k, round in sorted(self.rounds.items(), key=lambda x: (int(x[0]) < 0, abs(int(x[0])))):
             for j, _set in enumerate(round):
                 targetIdW = j%2
                 targetIdL = 0
@@ -153,34 +156,65 @@ class Bracket():
                     targetIdL = 1
 
                 if _set.winNext:
-                    if _set.score[0] > _set.score[1]:
-                        _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
+                    if _set.playerIds[0] == -2 or _set.playerIds[1] == -2:
+                        _set.winNext.playerIds[targetIdW] = -2
                         if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
-                    elif _set.score[0] < _set.score[1]:
-                        _set.winNext.playerIds[targetIdW] = _set.playerIds[1]
-                        if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
-                    elif _set.score[0] == -1 and _set.score[1] == -1:
-                        # Advance higher seed, but note that -1 would in theory be a smaller seed
+                            _set.loseNext.playerIds[targetIdL] = -2
+                    elif _set.playerIds[0] == -1 and _set.playerIds[1] == -1:
                         won = 0
                         lost = 1
-                        if _set.playerIds[1] == -1 and _set.playerIds[0] != -1:
-                            won = 0
-                            lost = 1
-                        elif _set.playerIds[0] == -1 and _set.playerIds[1] != -1:
-                            won = 1
-                            lost = 0
-                        else:
-                            won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
-                            lost = 0 if won == 1 else 1
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
+                    elif _set.playerIds[1] < 0 and _set.playerIds[0] > 0:
+                        won = 0
+                        lost = 1
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
+                    elif _set.playerIds[0] < 0 and _set.playerIds[1] > 0:
+                        won = 1
+                        lost = 0
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
                     else:
-                        _set.winNext.playerIds[targetIdW] = -1
-                        if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = -1
+                        if _set.score[0] == -1 and _set.score[1] == -1:
+                            # Advance higher seed, but note that -1 would in theory be a smaller seed
+                            won = 0
+                            lost = 1
+                            if _set.playerIds[1] == -1 and _set.playerIds[0] > 0:
+                                won = 0
+                                lost = 1
+                            elif _set.playerIds[0] == -1 and _set.playerIds[1] > 0:
+                                won = 1
+                                lost = 0
+                            else:
+                                won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
+                                lost = 0 if won == 1 else 1
+                            _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
+                            if _set.loseNext:
+                                _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
+                        elif _set.score[0] > _set.score[1]:
+                            _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
+                            if _set.loseNext:
+                                _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
+                        elif _set.score[0] < _set.score[1]:
+                            _set.winNext.playerIds[targetIdW] = _set.playerIds[1]
+                            if _set.loseNext:
+                                _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
+                        else:
+                            _set.winNext.playerIds[targetIdW] = -2
+                            if _set.loseNext:
+                                _set.loseNext.playerIds[targetIdL] = -2
+
+        # Clear scores when no players in set
+        # for k, round in sorted(self.rounds.items(), key=lambda x: (int(x[0]) < 0, abs(int(x[0])))):
+        #     for j, _set in enumerate(round):
+        #         if _set.playerIds[0] == -2 or _set.playerIds[1] == -2:
+        #             _set.score[0] = 0
+        #             _set.score[1] = 0
+
     # Get round names
     def GetRoundName(self, round: str, winnersCutout=[0,0], losersCutout=[0,0]):
         roundNumber = int(round)

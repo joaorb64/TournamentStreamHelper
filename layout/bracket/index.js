@@ -38,7 +38,7 @@
       $(":root").css("--player-height", size);
 
       while (
-        biggestRound * (2 * parseInt($(":root").css("--player-height")) + 2) >
+        biggestRound * (2 * parseInt($(":root").css("--player-height")) + 4) >
         $(".winners_container").height() - 20
       ) {
         console.log("repeat");
@@ -205,35 +205,37 @@
                   i + 1
                 }" d="
                 M${[
-                  slotElement.offset().left + slotElement.width(),
-                  slotElement.offset().top + slotElement.height() / 2,
+                  slotElement.offset().left + slotElement.outerWidth(),
+                  slotElement.offset().top + slotElement.outerHeight() / 2,
                 ].join(" ")}
                 ${[
                   [
                     slotElement.offset().left +
-                      slotElement.width() +
+                      slotElement.outerWidth() +
                       (winElement.offset().left -
-                        (slotElement.offset().left + slotElement.width())) /
+                        (slotElement.offset().left +
+                          slotElement.outerWidth())) /
                         2,
-                    slotElement.offset().top + slotElement.height() / 2,
+                    slotElement.offset().top + slotElement.outerHeight() / 2,
                   ],
                   [
                     slotElement.offset().left +
-                      slotElement.width() +
+                      slotElement.outerWidth() +
                       (winElement.offset().left -
-                        (slotElement.offset().left + slotElement.width())) /
+                        (slotElement.offset().left +
+                          slotElement.outerWidth())) /
                         2,
-                    winElement.offset().top + slotElement.height() / 2,
+                    winElement.offset().top + slotElement.outerHeight() / 2,
                   ],
                   [
                     winElement.offset().left,
-                    winElement.offset().top + winElement.height() / 2,
+                    winElement.offset().top + winElement.outerHeight() / 2,
                   ],
                 ]
                   .map((point) => point.join(" "))
                   .map((point) => "L" + point)
                   .join(" ")}"
-                stroke="black" fill="none" stroke-width="2" />`;
+                stroke="black" fill="none" stroke-width="3" />`;
               }
 
               // Lines for progressions in
@@ -247,18 +249,18 @@
                 } s_${i + 1}" d="
                 M${[
                   slotElement.offset().left - 50,
-                  slotElement.offset().top + slotElement.height() / 2,
+                  slotElement.offset().top + slotElement.outerHeight() / 2,
                 ].join(" ")}
                 ${[
                   [
                     slotElement.offset().left,
-                    slotElement.offset().top + slotElement.height() / 2,
+                    slotElement.offset().top + slotElement.outerHeight() / 2,
                   ],
                 ]
                   .map((point) => point.join(" "))
                   .map((point) => "L" + point)
                   .join(" ")}"
-                stroke="black" fill="none" stroke-width="2" />`;
+                stroke="black" fill="none" stroke-width="3" />`;
               }
 
               // Lines for progressions out
@@ -274,55 +276,39 @@
                   i + 1
                 }" d="
                 M${[
-                  slotElement.offset().left + slotElement.width(),
-                  slotElement.offset().top + slotElement.height() / 2,
+                  slotElement.offset().left + slotElement.outerWidth(),
+                  slotElement.offset().top + slotElement.outerHeight() / 2,
                 ].join(" ")}
                 ${[
                   [
-                    slotElement.offset().left + slotElement.width() + 45,
-                    slotElement.offset().top + slotElement.height() / 2,
+                    slotElement.offset().left + slotElement.outerWidth() + 45,
+                    slotElement.offset().top + slotElement.outerHeight() / 2,
                   ],
                 ]
                   .map((point) => point.join(" "))
                   .map((point) => "L" + point)
                   .join(" ")}
                 M${[
-                  slotElement.offset().left + slotElement.width() + 40,
-                  slotElement.offset().top + slotElement.height() / 2 - 5,
+                  slotElement.offset().left + slotElement.outerWidth() + 40,
+                  slotElement.offset().top + slotElement.outerHeight() / 2 - 5,
                 ].join(" ")}
                 ${[
                   [
-                    slotElement.offset().left + slotElement.width() + 45,
-                    slotElement.offset().top + slotElement.height() / 2,
+                    slotElement.offset().left + slotElement.outerWidth() + 45,
+                    slotElement.offset().top + slotElement.outerHeight() / 2,
                   ],
                   [
-                    slotElement.offset().left + slotElement.width() + 40,
-                    slotElement.offset().top + slotElement.height() / 2 + 5,
+                    slotElement.offset().left + slotElement.outerWidth() + 40,
+                    slotElement.offset().top +
+                      slotElement.outerHeight() / 2 +
+                      5,
                   ],
                 ]
                   .map((point) => point.join(" "))
                   .map((point) => "L" + point)
                   .join(" ")}"
-                stroke="black" fill="none" stroke-width="2" />`;
+                stroke="black" fill="none" stroke-width="3" />`;
               }
-            }
-
-            if (
-              slot.playerId[0] > Object.keys(players).length ||
-              slot.playerId[1] > Object.keys(players).length ||
-              slot.playerId[0] == -1 ||
-              slot.playerId[1] == -1
-            ) {
-              $(
-                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
-                  i + 1
-                } .slot_p_0.container`
-              ).css("opacity", "0");
-              $(
-                `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
-                  i + 1
-                } .slot_p_1.container`
-              ).css("opacity", "0");
             }
           },
           { baseClass: baseClass }
@@ -331,21 +317,36 @@
 
       $(".lines").html(slotLines);
 
-      Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        console.log($(`.round_${roundKey} .slot`));
+      let GfResetRoundNum = Math.max.apply(
+        null,
+        Object.keys(bracket).map((r) => parseInt(r))
+      );
 
-        gsap.from(
-          $(`.round_${roundKey} .slot`),
-          { x: -50, autoAlpha: 0, duration: 0.4 },
-          0.5 + 0.8 * Math.abs(parseInt(roundKey))
-        );
+      let gf = bracket[GfResetRoundNum - 1].sets[0];
+      let isReset = gf.score[0] < gf.score[1];
+
+      Object.entries(bracket).forEach(function ([roundKey, round], r) {
+        Object.values(round.sets).forEach((set, setIndex) => {
+          let anim = gsap.from(
+            $(`.round_${roundKey} .slot_${setIndex + 1}`),
+            { x: -50, autoAlpha: 0, duration: 0.4 },
+            0.5 + 0.8 * Math.abs(parseInt(roundKey))
+          );
+
+          if (parseInt(roundKey) == GfResetRoundNum && !isReset) {
+            anim.pause();
+          }
+          if (set.playerId[0] == -1 || set.playerId[1] == -1) {
+            anim.pause();
+          }
+        });
 
         let roundLines = $(`.r_${roundKey}, .in_r_${roundKey}`);
 
         roundLines.each((index, element) => {
           if (element) {
             let length = element.getTotalLength();
-            gsap.from(
+            let anim = gsap.from(
               element,
               {
                 duration: 0.4,
@@ -369,6 +370,10 @@
                 0.8 * Math.abs(parseInt(roundKey)) -
                 ($(element).is(`.in_r_${roundKey}`) ? 0.8 : 0)
             );
+
+            if (parseInt(roundKey) == GfResetRoundNum - 1 && !isReset) {
+              anim.pause();
+            }
           }
         });
       });
