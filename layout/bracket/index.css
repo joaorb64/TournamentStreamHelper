@@ -116,6 +116,7 @@ body {
   position: relative;
   width: 100%;
   height: var(--player-height);
+  transition: filter 0.4s linear;
 }
 
 .name_twitter {
