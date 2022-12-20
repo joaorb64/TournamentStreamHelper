@@ -11,6 +11,8 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
+class TSHPlayerListSlotWidgetSignals(QObject):
+    dataChanged = pyqtSignal()
 
 class TSHPlayerListSlotWidget(QGroupBox):
     def __init__(self, index, playerList, base="player_list", *args):
@@ -19,6 +21,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.playerList = playerList
 
         self.base = base
+
+        self.signals = TSHPlayerListSlotWidgetSignals()
 
         self.setLayout(QVBoxLayout())
         self.slotName = QLineEdit()
@@ -53,6 +57,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
                 self.playerWidgets[index-1 if index > 0 else 0]))
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.playerWidgets[index+1 if index < len(self.playerWidgets) - 1 else index]))
+            
+            p.instanceSignals.dataChanged.connect(self.signals.dataChanged.emit)
 
         while len(self.playerWidgets) > number:
             p = self.playerWidgets[-1]
@@ -62,6 +68,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
             p.deleteLater()
         
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()
 
         # if number > 1:
         #     self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -77,6 +84,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()
 
     def SetTeamData(self, data):
         StateManager.BlockSaving()
@@ -88,3 +96,4 @@ class TSHPlayerListSlotWidget(QGroupBox):
         for i, pw in enumerate(self.playerWidgets):
             pw.SetData(data.get("players")[i])
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()

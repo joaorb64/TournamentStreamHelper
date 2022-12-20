@@ -136,6 +136,7 @@ class TSHCountryHelper(QObject):
 
             TSHCountryHelper.signals.countriesUpdated.emit()
         except:
+            TSHCountryHelper.countries_json = {}
             print(traceback.format_exc())
 
     def FindState(countryCode, city):

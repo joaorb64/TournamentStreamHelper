@@ -69,6 +69,7 @@ class TSHPlayerList(QWidget):
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playersPerTeam)
+            s.signals.dataChanged.connect(self.signals.DataChanged.emit)
 
             # s.SetCharactersPerPlayer(self.charNumber.value())
 

@@ -95,6 +95,8 @@ class TSHBracketWidget(QDockWidget):
 
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
 
+        self.bracketView.Update()
+
         StateManager.ReleaseSaving()
     
     def UpdatePhases(self, phases):
@@ -136,8 +138,6 @@ class TSHBracketWidget(QDockWidget):
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
 
     def UpdatePhaseGroup(self, phaseGroupData):
-        StateManager.BlockSaving()
-
         print(phaseGroupData)
 
         if phaseGroupData.get("progressionsIn", {}) != None:
@@ -149,6 +149,13 @@ class TSHBracketWidget(QDockWidget):
             self.progressionsOut.setValue(len(phaseGroupData.get("progressionsOut", {})))
         else:
             self.progressionsOut.setValue(0)
+        
+        # Make sure progressions are exported
+        QGuiApplication.processEvents()
+
+        StateManager.BlockSaving()
+
+        self.playerList.signals.DataChanged.disconnect()
 
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
         self.bracket = Bracket(
@@ -183,5 +190,7 @@ class TSHBracketWidget(QDockWidget):
         QGuiApplication.processEvents()
         self.bracket.UpdateBracket()
         self.bracketView.Update()
+
+        self.playerList.signals.DataChanged.connect(self.bracketView.Update)
         
         StateManager.ReleaseSaving()
