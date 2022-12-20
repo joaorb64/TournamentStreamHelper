@@ -49,7 +49,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
             self.playerWidgets.append(p)
             self.list.layout().addWidget(p)
 
-            p.SetCharactersPerPlayer(number)
+            p.SetCharactersPerPlayer(self.playerList.charactersPerPlayer)
 
             index = len(self.playerWidgets)-1
 
