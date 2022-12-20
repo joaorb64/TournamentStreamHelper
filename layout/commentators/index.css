@@ -39,8 +39,11 @@ body {
   display: inline-block;
   width: 30px;
   height: 30px;
-  background-image: url("./icon_mic.svg");
-  background-size: contain;
+  -webkit-mask-image: url(./icon_mic.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
 }
 
 .name {
