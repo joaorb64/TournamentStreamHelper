@@ -425,7 +425,8 @@ class TSHBracketView(QGraphicsView):
                     "playerName": [
                         p1name,
                         p2name
-                    ]
+                    ],
+                    "completed": bracketSet.finished
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
