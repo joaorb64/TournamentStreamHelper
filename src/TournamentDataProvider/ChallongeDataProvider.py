@@ -221,7 +221,14 @@ class ChallongeDataProvider(TournamentDataProvider):
                         lastWinners = match
                 lastWinners["round"] = lastWinners["round"]+1
             else:
-                finalData["progressionsOut"] = [{}, {}]
+                groups = deep_get(data, "groups", [])
+            
+                if id != None:
+                    groupId = int(id.split("_")[-1])
+                    groups = [groups[groupId]]
+                
+
+                finalData["progressionsOut"] = [{}] * deep_get(groups[0], "tournament.participant_count_to_advance", 0)
 
             rounds = {}
 
