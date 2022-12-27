@@ -86,6 +86,9 @@ class TSHPlayerList(QWidget):
             s.setParent(None)
             self.slotWidgets.remove(s)
             StateManager.Unset(f'{self.base}.slot.{s.index}')
+
+        self.signals.DataChanged.emit()
+        
         StateManager.ReleaseSaving()
 
     def SetCharactersPerPlayer(self, value):
@@ -93,6 +96,7 @@ class TSHPlayerList(QWidget):
         StateManager.BlockSaving()
         for s in self.slotWidgets:
             s.SetCharacterNumber(value)
+        self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()
 
     def SetPlayersPerTeam(self, number):
@@ -100,4 +104,5 @@ class TSHPlayerList(QWidget):
         StateManager.BlockSaving()
         for s in self.slotWidgets:
             s.SetPlayersPerTeam(number)
+        self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()

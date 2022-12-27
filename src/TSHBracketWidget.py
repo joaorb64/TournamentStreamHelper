@@ -49,15 +49,53 @@ class TSHBracketWidget(QDockWidget):
 
         outerLayout: QWidget = self.findChild(QWidget, "bracket")
         self.playerList = TSHPlayerList(base="bracket.players")
+        
         list: QWidget = self.findChild(QWidget, "listContainer")
+
+        # Add player list settings on the top
+        row = QWidget()
+        row.setLayout(QHBoxLayout())
+        row.setContentsMargins(0, 0, 0, 0)
+        row.layout().setSpacing(0)
+        list.layout().addWidget(row)
+
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
+        self.slotNumber = QSpinBox()
+        col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
+        col.layout().addWidget(self.slotNumber)
+        self.slotNumber.valueChanged.connect(lambda val: [
+            self.playerList.SetSlotNumber(val),
+            self.RebuildBracket(val)
+        ])
+        row.layout().addWidget(col)
+
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
+        self.playerPerTeam = QSpinBox()
+        col.layout().addWidget(QLabel(QApplication.translate("app","Players per slot")))
+        col.layout().addWidget(self.playerPerTeam)
+        self.playerPerTeam.valueChanged.connect(self.playerList.SetPlayersPerTeam)
+        row.layout().addWidget(col)
+
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        col.setContentsMargins(0, 0, 0, 0)
+        col.layout().setSpacing(0)
+        self.charNumber = QSpinBox()
+        col.layout().addWidget(QLabel(QApplication.translate("app","Characters per player")))
+        col.layout().addWidget(self.charNumber)
+        self.charNumber.valueChanged.connect(self.playerList.SetCharactersPerPlayer)
+        row.layout().addWidget(col)
+
         list.layout().addWidget(self.playerList)
 
         self.bracketView = TSHBracketView(self.bracket, self.playerList, self)
         outerLayout.layout().addWidget(self.bracketView)
-
-        self.playerList.SetSlotNumber(8)
-        self.playerList.SetPlayersPerTeam(1)
-        self.playerList.SetCharactersPerPlayer(1)
 
         self.phaseSelection: QComboBox = self.findChild(QComboBox, "phaseSelection")
         self.phaseSelection.currentIndexChanged.connect(self.UpdatePhaseGroups)
@@ -94,6 +132,10 @@ class TSHBracketWidget(QDockWidget):
         ])
 
         self.playerList.signals.DataChanged.connect(self.bracketView.Update)
+
+        self.slotNumber.setValue(8)
+        self.playerPerTeam.setValue(1)
+        self.charNumber.setValue(1)
 
         self.bracketView.Update()
 
@@ -136,6 +178,21 @@ class TSHBracketWidget(QDockWidget):
         
         if self.phaseGroupSelection.currentData() != None:
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
+        
+    def RebuildBracket(self, playerNumber, seedMap=None):
+        self.bracket = Bracket(playerNumber, seedMap)
+
+        self.bracketView.SetBracket(
+            self.bracket,
+            progressionsIn=self.progressionsIn.value(),
+            progressionsOut=self.progressionsOut.value()
+        )
+
+        if self.progressionsIn.value() > 0:
+            for _set in self.bracket.rounds["1"]:
+                _set.score[0] = -1
+                _set.score[1] = -1
+                _set.finished = False
 
     def UpdatePhaseGroup(self, phaseGroupData):
         print(phaseGroupData)
@@ -158,22 +215,11 @@ class TSHBracketWidget(QDockWidget):
         self.playerList.signals.DataChanged.disconnect()
 
         self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
-        self.bracket = Bracket(
+        
+        self.RebuildBracket(
             len(phaseGroupData.get("entrants")),
             phaseGroupData.get("seedMap")
         )
-
-        self.bracketView.SetBracket(
-            self.bracket,
-            progressionsIn=self.progressionsIn.value(),
-            progressionsOut=self.progressionsOut.value()
-        )
-
-        if self.progressionsIn.value() > 0:
-            for _set in self.bracket.rounds["1"]:
-                _set.score[0] = -1
-                _set.score[1] = -1
-                _set.finished = False
 
         for r, round in phaseGroupData.get("sets", {}).items():
             for s, _set in enumerate(round):
