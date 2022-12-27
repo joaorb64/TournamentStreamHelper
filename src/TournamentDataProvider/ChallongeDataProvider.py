@@ -378,7 +378,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
     def ParseMatchData(self, match):
         p1_split = deep_get(
-            match, "player1.display_name").rsplit("|", 1)
+            match, "player1.display_name", "").rsplit("|", 1)
 
         p1_gamerTag = p1_split[-1].strip()
         p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
@@ -386,7 +386,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         p1_id = deep_get(match, "player1.id")
 
         p2_split = deep_get(
-            match, "player2.display_name").rsplit("|", 1)
+            match, "player2.display_name", "").rsplit("|", 1)
 
         p2_gamerTag = p2_split[-1].strip()
         p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
@@ -468,8 +468,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                     "Accept-Encoding": "gzip, deflate, br"
                 }
             )
-            print(data)
-
             data = json.loads(data.text)
             TSHPlayerDB.AddPlayers(self.GetAllEntrantsFromData(data))
         except Exception as e:
@@ -488,7 +486,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             for p in ["player1", "player2"]:
                 player = m.get(p)
 
-                if player.get("id", None) != None and not player.get("id") in added_list:
+                if player is not None and player.get("id", None) != None and not player.get("id") in added_list:
                     playerData = {}
 
                     split = player.get("display_name").rsplit("|", 1)
