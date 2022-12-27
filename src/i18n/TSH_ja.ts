@@ -941,17 +941,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="61"/>
+        <location filename="../TSHBracketWidget.py" line="67"/>
         <source>Number of slots</source>
         <translation>スロットの数</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="71"/>
+        <location filename="../TSHBracketWidget.py" line="80"/>
         <source>Players per slot</source>
         <translation>各スロットのプレイヤー数</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="81"/>
         <location filename="../TSHScoreboardWidget.py" line="92"/>
+        <location filename="../TSHBracketWidget.py" line="90"/>
         <source>Characters per player</source>
         <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
