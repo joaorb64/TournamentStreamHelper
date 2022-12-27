@@ -58,11 +58,7 @@
         (set.playerId[0] != -1 && set.playerId[1] == -1)
       ) {
         return animations[roundKey][setIndex].tweenTo("hidden");
-      } else if (
-        set.score[0] == set.score[1] ||
-        set.playerId[0] == -2 ||
-        set.playerId[1] == -2
-      ) {
+      } else if (!set.completed) {
         return animations[roundKey][setIndex].tweenTo("displayed");
       } else {
         return animations[roundKey][setIndex].tweenTo("done");
@@ -442,7 +438,7 @@
             },
             { baseClass: baseClass }
           );
-          if (slot.score[0] > slot.score[1]) {
+          if (slot.score[0] > slot.score[1] && slot.completed) {
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
@@ -453,7 +449,7 @@
                 i + 1
               } .slot_p_${1}.container`
             ).css("filter", "brightness(0.6)");
-          } else if (slot.score[1] > slot.score[0]) {
+          } else if (slot.score[1] > slot.score[0] && slot.completed) {
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1

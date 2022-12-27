@@ -158,7 +158,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 }
                 for g, group in enumerate(deep_get(data, "groups", [])):
                     phaseObj["groups"].append({
-                        "id": g,
+                        "id": f'group_stage_{g}',
                         "name": group.get('name'),
                         "bracketType": CHALLONGE_BRACKET_TYPE(group.get("requested_plotter"))
                     })
@@ -194,17 +194,12 @@ class ChallongeDataProvider(TournamentDataProvider):
             print(data.text)
             data = json.loads(data.text)
 
-            if id == "final_stage":
-                pass
-            else:
-                deep_get(data, "groups", [])[int(id)]
-
-            entrants = self.GetAllEntrantsFromData(data)
+            entrants = self.GetAllEntrantsFromData(data, id)
             entrants.sort(key=lambda e: e.get("seed"))
 
             finalData["entrants"] = entrants
 
-            all_matches = self.GetAllMatchesFromData(data)
+            all_matches = self.GetAllMatchesFromData(data, id)
 
             parsed_matches = []
 
@@ -325,38 +320,46 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetAllMatchesFromData(self, data):
+    def GetAllMatchesFromData(self, data, phaseId=None):
         rounds = deep_get(data, "rounds", {})
         matches = deep_get(data, "matches_by_round", {})
 
         all_matches = []
 
-        for r, round in enumerate(matches.values()):
-            for m, match in enumerate(round):
-                match["round_name"] = next(
-                    r["title"] for r in rounds if r["number"] == match.get("round"))
-                match["round"] = match.get("round")
-                if data.get("tournament", {}).get("tournament_type") == "round robin":
-                    match["phase"] = "Round Robin"
-                else:
-                    match["phase"] = "Bracket"
-                if r == len(matches.values()) - 1:
-                    if m == 0:
-                        match["isGF"] = True
-                    elif m == 1:
-                        match["isGFR"] = True
-                all_matches.append(match)
-
-        for group in deep_get(data, "groups", []):
-            rounds = deep_get(group, "rounds", {})
-            matches = deep_get(group, "matches_by_round", {})
-
-            for round in matches.values():
-                for match in round:
+        if phaseId in (None, "final_stage"):
+            for r, round in enumerate(matches.values()):
+                for m, match in enumerate(round):
                     match["round_name"] = next(
                         r["title"] for r in rounds if r["number"] == match.get("round"))
-                    match["phase"] = group.get("name")
+                    match["round"] = match.get("round")
+                    if data.get("tournament", {}).get("tournament_type") == "round robin":
+                        match["phase"] = "Round Robin"
+                    else:
+                        match["phase"] = "Bracket"
+                    if r == len(matches.values()) - 1:
+                        if m == 0:
+                            match["isGF"] = True
+                        elif m == 1:
+                            match["isGFR"] = True
                     all_matches.append(match)
+
+        if phaseId == None or phaseId.startswith("group_stage"):
+            groups = deep_get(data, "groups", [])
+            
+            if phaseId != None:
+                groupId = int(phaseId.split("_")[-1])
+                groups = [groups[groupId]]
+
+            for group in groups:
+                rounds = deep_get(group, "rounds", {})
+                matches = deep_get(group, "matches_by_round", {})
+
+                for round in matches.values():
+                    for match in round:
+                        match["round_name"] = next(
+                            r["title"] for r in rounds if r["number"] == match.get("round"))
+                        match["phase"] = group.get("name")
+                        all_matches.append(match)
 
         return all_matches
 
@@ -482,10 +485,10 @@ class ChallongeDataProvider(TournamentDataProvider):
         except Exception as e:
             traceback.print_exc()
     
-    def GetAllEntrantsFromData(self, data):
+    def GetAllEntrantsFromData(self, data, phaseId=None):
         final_data = []
 
-        all_matches = self.GetAllMatchesFromData(data)
+        all_matches = self.GetAllMatchesFromData(data, phaseId)
         all_matches.sort(key=lambda m: abs(m.get("identifier")), reverse=True)
 
         # do not add duplicates
