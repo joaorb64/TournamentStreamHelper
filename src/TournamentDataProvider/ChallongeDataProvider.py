@@ -227,7 +227,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             for match in parsed_matches:
                 roundNum = match.get("round")
 
-                score = [match.get("team1score", -1), match.get("team2score", -1)]
+                score = [match.get("team1score", 0), match.get("team2score", 0)]
                 finished = match.get("state", None) == "complete"
 
                 if int(roundNum) == -1:
@@ -261,10 +261,13 @@ class ChallongeDataProvider(TournamentDataProvider):
                             roundY = 2*m+1
                             break
 
-                    rounds[str(roundNum)][roundY]["score"] = score
+                    rounds[str(roundNum)][roundY] = {
+                        "score": score,
+                        "finished": finished
+                    }
                 # For first *losers* round, we work around the incomplete data Challonge gives us
                 # (-1) - 3 = -4
-                if roundNum == -4:
+                elif roundNum == -4:
                     nextRoundMatches = [s for s in parsed_matches if s.get("round") == roundNum+3-1]
                     
                     # Initially, fill in the round with -1 scores
@@ -274,8 +277,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                         # Round -1 has 2x the number of sets that Round -2 has
                         for i in range(len(nextRoundMatches) * 2):
                             rounds[str(roundNum)].append({
-                                "score": [-1, -1],
-                                "finished": True
+                                "score": [0, 0],
+                                "finished": False
                             })
                     
                     roundY = 0
@@ -288,7 +291,10 @@ class ChallongeDataProvider(TournamentDataProvider):
                             roundY = 2*m
                             break
 
-                    rounds[str(roundNum)][roundY]["score"] = score
+                    rounds[str(roundNum)][roundY] = {
+                        "score": score,
+                        "finished": finished
+                    }
                 else:
                     if not str(roundNum) in rounds:
                         rounds[str(roundNum)] = []
@@ -298,14 +304,17 @@ class ChallongeDataProvider(TournamentDataProvider):
                         "finished": finished
                     })
             
-            # In case LR1 was skipped, we add a mock LR1 with all -1 results
-            if "-3" not in rounds:
+            # In case LR1 was skipped, we move all sets back by one
+            negativeRounds = [r for r in rounds if int(r) < 0]
+
+            if len(negativeRounds) % 2 != 0:
                 rounds["-3"] = []
                 for s in rounds["-4"]:
                     rounds["-3"].append({
                         "score": [-1, -1],
                         "finished": True
                     })
+
             
             print("finalRounds")
             print(rounds)

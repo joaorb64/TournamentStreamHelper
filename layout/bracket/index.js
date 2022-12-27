@@ -51,7 +51,12 @@
 
   function AnimateElement(roundKey, setIndex, set) {
     if (animations[roundKey][setIndex]) {
-      if (set.playerId[0] == -2 && set.playerId[1] == -2) {
+      // Hide sets
+      if (
+        (set.playerId[0] == -2 && set.playerId[1] == -2) ||
+        (set.playerId[0] == -1 && set.playerId[1] != -1) ||
+        (set.playerId[0] != -1 && set.playerId[1] == -1)
+      ) {
         return animations[roundKey][setIndex].tweenTo("hidden");
       } else if (
         set.score[0] == set.score[1] ||

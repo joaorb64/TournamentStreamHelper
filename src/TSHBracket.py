@@ -55,6 +55,10 @@ class Bracket():
 
         self.rounds = {}
 
+        for i in range(len(seeds)):
+            if seeds[i] > self.originalPlayerNumber:
+                seeds[i] = -1
+
         # Create winners
         self.rounds["1"] = []
         for i in range(self.playerNumber):
@@ -70,6 +74,12 @@ class Bracket():
         for i in range(int(self.playerNumber/2)):
             self.rounds["-1"].append(BracketSet(self, [-1, len(self.rounds["-1"])]))
             self.rounds["-2"].append(BracketSet(self, [-2, len(self.rounds["-2"])]))
+        
+        # Fill with -1
+        for round in ["-1", "-2"]:
+            for _set in self.rounds[round]:
+                _set.score = [-1, -1]
+                _set.finished = True
         
         # Expand winners
         subBracket = []
@@ -140,6 +150,10 @@ class Bracket():
         self.rounds[str(gfsRound)][0].winNext = self.rounds[str(gfsResetRound)][0]
         self.rounds[str(gfsRound)][0].loseNext = self.rounds[str(gfsResetRound)][0]
     
+    def IsBye(self, playerId):
+        if playerId == -1 or playerId >= self.originalPlayerNumber: return True
+        return False
+    
     def UpdateBracket(self):
         for k, round in sorted(self.rounds.items(), key=lambda x: (int(x[0]) < 0, abs(int(x[0])))):
             for j, _set in enumerate(round):
@@ -157,11 +171,11 @@ class Bracket():
                     targetIdL = 1
 
                 if _set.winNext:
-                    if _set.playerIds[0] == -2 or _set.playerIds[1] == -2:
+                    if not _set.finished:
                         _set.winNext.playerIds[targetIdW] = -2
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = -2
-                    elif _set.playerIds[0] == -1 and _set.playerIds[1] == -1:
+                    elif self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1]):
                         won = 0
                         lost = 1
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
@@ -184,10 +198,10 @@ class Bracket():
                             # Advance higher seed, but note that -1 would in theory be a smaller seed
                             won = 0
                             lost = 1
-                            if _set.playerIds[1] == -1 and _set.playerIds[0] > 0:
+                            if self.IsBye(_set.playerIds[1]) and _set.playerIds[0] > 0:
                                 won = 0
                                 lost = 1
-                            elif _set.playerIds[0] == -1 and _set.playerIds[1] > 0:
+                            elif self.IsBye(_set.playerIds[0])and _set.playerIds[1] > 0:
                                 won = 1
                                 lost = 0
                             else:
