@@ -84,7 +84,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBracket.ui" line="120"/>
         <source>Limit exported bracket</source>
-        <translation>Limiter larbre exporté</translation>
+        <translation>Limiter l&apos;arbre exporté</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="127"/>
