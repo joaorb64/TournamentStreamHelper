@@ -173,6 +173,7 @@ class TSHBracketWidget(QDockWidget):
             for _set in self.bracket.rounds["1"]:
                 _set.score[0] = -1
                 _set.score[1] = -1
+                _set.finished = False
 
         for r, round in phaseGroupData.get("sets", {}).items():
             for s, _set in enumerate(round):
@@ -184,6 +185,7 @@ class TSHBracketWidget(QDockWidget):
                     roundIndex = str(r)
 
                     self.bracket.rounds[roundIndex][s].score = score
+                    self.bracket.rounds[roundIndex][s].finished = _set.get("finished")
                 except Exception as e:
                     print(e)
         

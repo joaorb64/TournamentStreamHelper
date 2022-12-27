@@ -540,7 +540,7 @@
               $(element).find(`.character_container`),
               charactersHtml,
               undefined,
-              0,
+              0.5,
               () => {
                 $(element)
                   .find(`.character_container .icon.stockicon div`)

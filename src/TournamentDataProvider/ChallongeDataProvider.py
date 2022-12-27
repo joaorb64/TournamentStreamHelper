@@ -228,8 +228,9 @@ class ChallongeDataProvider(TournamentDataProvider):
                 roundNum = match.get("round")
 
                 score = [match.get("team1score", -1), match.get("team2score", -1)]
+                finished = match.get("state", None) == "complete"
 
-                if int(roundNum) == -2:
+                if int(roundNum) == -1:
                     score.reverse()
                 
                 if roundNum < 0:
@@ -246,7 +247,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                         # Round 1 has 2x the number of sets that Round 2 has
                         for i in range(len(nextRoundMatches) * 2):
                             rounds[str(roundNum)].append({
-                                "score": [-1, -1]
+                                "score": [-1, -1],
+                                "finished": True
                             })
                     
                     roundY = 0
@@ -272,7 +274,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                         # Round -1 has 2x the number of sets that Round -2 has
                         for i in range(len(nextRoundMatches) * 2):
                             rounds[str(roundNum)].append({
-                                "score": [-1, -1]
+                                "score": [-1, -1],
+                                "finished": True
                             })
                     
                     roundY = 0
@@ -291,7 +294,17 @@ class ChallongeDataProvider(TournamentDataProvider):
                         rounds[str(roundNum)] = []
                     
                     rounds[str(roundNum)].append({
-                        "score": score
+                        "score": score,
+                        "finished": finished
+                    })
+            
+            # In case LR1 was skipped, we add a mock LR1 with all -1 results
+            if "-3" not in rounds:
+                rounds["-3"] = []
+                for s in rounds["-4"]:
+                    rounds["-3"].append({
+                        "score": [-1, -1],
+                        "finished": True
                     })
             
             print("finalRounds")
@@ -436,7 +449,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             "team2losers": team2losers,
             "identifier": match.get("identifier"),
             "player1_prereq_identifier": match.get("player1_prereq_identifier"),
-            "player2_prereq_identifier": match.get("player2_prereq_identifier")
+            "player2_prereq_identifier": match.get("player2_prereq_identifier"),
+            "state": match.get("state")
         })
 
     def GetEntrants(self):

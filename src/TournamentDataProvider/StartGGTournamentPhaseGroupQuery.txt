@@ -63,6 +63,7 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
         identifier
         entrant1Score
         entrant2Score
+        state
       }
     }
     progressionsOut {

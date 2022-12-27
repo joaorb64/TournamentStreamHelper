@@ -181,8 +181,11 @@ class StartGGDataProvider(TournamentDataProvider):
                 if not str(round) in finalSets:
                     finalSets[str(round)] = []
 
+                print(s)
+
                 finalSets[str(round)].append({
-                    "score": [s.get("entrant1Score"), s.get("entrant2Score")]
+                    "score": [s.get("entrant1Score"), s.get("entrant2Score")],
+                    "finished": s.get("state", 0) == 3
                 })
 
             finalData["sets"] = finalSets

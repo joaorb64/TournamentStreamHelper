@@ -11,6 +11,7 @@ class BracketSet():
         self.winNext: "BracketSet" = None
         self.loseNext: "BracketSet" = None
         self.pos = pos
+        self.finished = False
 
 # Bracket always has a power of 2 number of players
 # if there are less than that, we round up and add

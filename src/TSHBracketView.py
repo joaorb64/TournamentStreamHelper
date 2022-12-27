@@ -54,6 +54,10 @@ class BracketSetWidget(QWidget):
             hbox.layout().addWidget(score)
             score.setValue(-1)
             score.valueChanged.connect(lambda newVal, i=i: self.SetScore(i, newVal))
+
+        self.finished = QCheckBox("Finished")
+        self.layout().addWidget(self.finished)
+        self.finished.toggled.connect(lambda newVal: self.SetFinished(newVal)) 
         
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.sizePolicy().setRetainSizeWhenHidden(True)
@@ -66,9 +70,16 @@ class BracketSetWidget(QWidget):
         if updateDisplay:
             self.bracketSet.bracket.UpdateBracket()
             self.bracketView.Update()
+    
+    def SetFinished(self, finished, updateDisplay=True):
+        self.bracketSet.finished = finished
+
+        if updateDisplay:
+            self.bracketSet.bracket.UpdateBracket()
+            self.bracketView.Update()
 
     def Update(self):
-        if self.bracketSet:
+        if self.bracketSet is not None:
             self.playerId[0].setText(str(self.bracketSet.playerIds[0]))
             self.playerId[1].setText(str(self.bracketSet.playerIds[1]))
 
@@ -109,6 +120,11 @@ class BracketSetWidget(QWidget):
                     self.name[1].setText("")
             except:
                 pass
+
+            if self.bracketSet.finished is not None:
+                self.finished.blockSignals(True)
+                self.finished.setChecked(self.bracketSet.finished)
+                self.finished.blockSignals(False)
             
             winnersCutout, losersCutout = self.bracketView.GetCutouts()
             hasBye = \
@@ -191,12 +207,14 @@ class TSHBracketView(QGraphicsView):
         # Losers left side cutout
         losersCutout[0] = 2
 
-        # Losers R1 has total_players/2 sets. If more than half of losers R1 players are byes,
-        # it's an auto win for all players and R1 doesn't exist
-        # But do not apply this when using limited exporting
-        byes = self.bracket.playerNumber - self.bracket.originalPlayerNumber
+        # Losers R1 skipping
+        # Losers R1 has bracket_size / 2 (half bracket is sent to losers from WR1) / 2 (2 players per set) sets
+        # If WR1 has as many sets or less, LR1 will be all [player vs bye]
+        # So this round is hidden
+        validWR1Sets = self.bracket.originalPlayerNumber - self.bracket.playerNumber/2
+
         if not self.bracketWidget.limitExport.isChecked() and self.bracketWidget.limitExportNumber.value() > 0:
-            if self.progressionsIn == 0 and byes > 0 and byes/2 > self.bracket.originalPlayerNumber/4:
+            if self.progressionsIn == 0 and validWR1Sets <= self.bracket.playerNumber/2/2:
                 losersCutout[0] += 1
 
         if self.progressionsIn > 0 and not is_power_of_two(self.progressionsIn):
