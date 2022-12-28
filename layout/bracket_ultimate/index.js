@@ -20,6 +20,8 @@
   var entryAnim = gsap.timeline();
   var animations = {};
 
+  var iconAnimations = [];
+
   var players = [];
   var bracket = {};
 
@@ -202,14 +204,25 @@
                     <div class="name"></div>
                   </div>
                 `;
-              } else {
                 html += `<div class="slot_sibling_${
                   i + 1
                 }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+              } else {
+                // if (Object.keys(round.sets).length == 2) {
+                //   html += `<div class="slot_sibling_${
+                //     i + 1
+                //   }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+                // }
               }
               html += `<div class="slot_${
                 i + 1
               }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+
+              if (r % 2 == 1) {
+                html += `<div class="slot_sibling_${
+                  i + 1
+                }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+              }
             });
             html += "</div>";
           });
@@ -221,11 +234,10 @@
             html += `<div class="round round_base_l">`;
             Object.values(round.sets).forEach((slot, i) => {
               Object.values(slot.playerId).forEach((playerId, p) => {
-                if (p == 0) {
-                  html += `<div class="slot_sibling_${
-                    i + 1
-                  }" style="width: 32px; height: 32px; align-self: center;"></div>`;
-                }
+                html += `<div class="slot_sibling_${
+                  i + 1
+                }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+
                 html += `
                   <div class="slot_hanging slot_${
                     i + 1
@@ -492,6 +504,170 @@
         });
 
         $(".lines").html(slotLines);
+
+        // ICON ANIMATIONS
+        Object.entries(players).forEach(([teamId, team], t) => {
+          Object.entries(team.player).forEach(([playerId, player], p) => {
+            // Winners path
+            let icon_element = $(
+              `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
+            );
+            if (!icon_element) return;
+
+            let icon_anim = gsap.timeline();
+
+            Object.entries(winnersRounds)
+              .slice(0, -2)
+              .forEach(([roundKey, round], r) => {
+                Object.values(round.sets).forEach((slot, i) => {
+                  Object.values(slot.playerId).forEach(
+                    (slotPlayerId, slotIndex) => {
+                      if (slotPlayerId == teamId) {
+                        if (roundKey == "1") {
+                          let setElement = $(
+                            `.round_base_w .slot_${i + 1}.slot_p_${slotIndex}`
+                          );
+
+                          if (setElement && setElement.offset()) {
+                            icon_anim.set($(icon_element), {
+                              x:
+                                setElement.offset().left +
+                                setElement.outerWidth() -
+                                $(icon_element).outerWidth() / 4,
+                              y:
+                                setElement.offset().top +
+                                setElement.outerHeight() / 2 -
+                                $(icon_element).outerHeight() / 2,
+                            });
+                          }
+                        }
+
+                        let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+                        if (setElement && setElement.offset()) {
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            duration: 1,
+                          });
+
+                          // Only continue if won
+                          if (
+                            slot.score[slotIndex] >
+                            slot.score[(slotIndex + 1) % 2]
+                          ) {
+                            icon_anim.to($(icon_element), {
+                              x: setElement.offset().left,
+                              y: setElement.offset().top,
+                              duration: 1,
+                            });
+                          } else {
+                            // TODO: remove
+                            icon_anim.fromTo(
+                              $(icon_element).find(".icon_image"),
+                              { filter: "brightness(1)" },
+                              {
+                                filter: "brightness(.5)",
+                                duration: 0.4,
+                              }
+                            );
+                          }
+                        }
+                      }
+                    }
+                  );
+                });
+              });
+
+            // Losers path
+            icon_element = $(
+              `.losers_icons .bracket_icon.bracket_icon_p${teamId}`
+            );
+            if (!icon_element) return;
+
+            icon_anim = gsap.timeline();
+
+            let found = false;
+
+            Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+              Object.values(round.sets).forEach((slot, i) => {
+                Object.values(slot.playerId).forEach(
+                  (slotPlayerId, slotIndex) => {
+                    if (slotPlayerId == teamId) {
+                      if (roundKey == "-1") {
+                        let setElement = $(
+                          `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
+                        );
+
+                        if (setElement && setElement.offset()) {
+                          icon_anim.set($(icon_element), {
+                            x:
+                              setElement.offset().left -
+                              ($(icon_element).outerWidth() * 3) / 4,
+                            y:
+                              setElement.offset().top +
+                              setElement.outerHeight() / 2 -
+                              $(icon_element).outerHeight() / 2,
+                          });
+                        }
+                      } else if (!found) {
+                        let setElement = $(
+                          `.round_${parseInt(roundKey) + 1} .slot_hanging_${
+                            i + 1
+                          }`
+                        );
+
+                        if (setElement && setElement.offset()) {
+                          icon_anim.set($(icon_element), {
+                            x:
+                              setElement.offset().left -
+                              ($(icon_element).outerWidth() * 3) / 4,
+                            y:
+                              setElement.offset().top +
+                              setElement.outerHeight() / 2 -
+                              $(icon_element).outerHeight() / 2,
+                          });
+                        }
+                      }
+
+                      let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+                      if (setElement && setElement.offset()) {
+                        icon_anim.to($(icon_element), {
+                          x: setElement.offset().left,
+                          duration: 1,
+                        });
+                        // Only continue if won
+                        if (
+                          slot.score[slotIndex] >
+                          slot.score[(slotIndex + 1) % 2]
+                        ) {
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            y: setElement.offset().top,
+                            duration: 1,
+                          });
+                        } else {
+                          // TODO: remove
+                          icon_anim.fromTo(
+                            $(icon_element).find(".icon_image"),
+                            { filter: "brightness(1)" },
+                            {
+                              filter: "brightness(.5)",
+                              duration: 0.4,
+                            }
+                          );
+                        }
+                      }
+
+                      found = true;
+                    }
+                  }
+                );
+              });
+            });
+            return;
+          });
+        });
       }
 
       let GfResetRoundNum = Math.max.apply(
@@ -834,117 +1010,117 @@
         }
 
         // SET ICON POSITION
-        ["winners", "losers"].forEach((side) => {
-          let element = $(
-            `.${side}_icons .bracket_icon.bracket_icon_p${teamId}`
-          );
-          if (!element) return;
+        // ["winners", "losers"].forEach((side) => {
+        //   let element = $(
+        //     `.${side}_icons .bracket_icon.bracket_icon_p${teamId}`
+        //   );
+        //   if (!element) return;
 
-          let lastFoundRound = 0;
-          let lastFoundSetIndex = 0;
-          let prevLastFoundRound = 0;
-          let prevLastFoundSetIndex = 0;
+        //   let lastFoundRound = 0;
+        //   let lastFoundSetIndex = 0;
+        //   let prevLastFoundRound = 0;
+        //   let prevLastFoundSetIndex = 0;
 
-          let GfResetRoundNum = Math.max.apply(
-            null,
-            Object.keys(bracket).map((r) => parseInt(r))
-          );
+        //   let GfResetRoundNum = Math.max.apply(
+        //     null,
+        //     Object.keys(bracket).map((r) => parseInt(r))
+        //   );
 
-          Object.entries(bracket).forEach(function ([roundKey, round], r) {
-            if (side == "winners" && parseInt(roundKey) < 0) return;
-            if (side == "losers" && parseInt(roundKey) > 0) return;
-            Object.values(round.sets).forEach(function (set, setIndex) {
-              if (
-                ((side == "losers" &&
-                  parseInt(roundKey) < parseInt(lastFoundRound)) ||
-                  (side == "winners" &&
-                    parseInt(roundKey) > parseInt(lastFoundRound))) &&
-                (set.playerId[0] == teamId || set.playerId[1] == teamId) &&
-                roundKey != GfResetRoundNum
-              ) {
-                prevLastFoundRound = lastFoundRound;
-                prevLastFoundSetIndex = lastFoundSetIndex;
-                lastFoundRound = roundKey;
-                lastFoundSetIndex = setIndex;
-              }
-            });
-          });
+        //   Object.entries(bracket).forEach(function ([roundKey, round], r) {
+        //     if (side == "winners" && parseInt(roundKey) < 0) return;
+        //     if (side == "losers" && parseInt(roundKey) > 0) return;
+        //     Object.values(round.sets).forEach(function (set, setIndex) {
+        //       if (
+        //         ((side == "losers" &&
+        //           parseInt(roundKey) < parseInt(lastFoundRound)) ||
+        //           (side == "winners" &&
+        //             parseInt(roundKey) > parseInt(lastFoundRound))) &&
+        //         (set.playerId[0] == teamId || set.playerId[1] == teamId) &&
+        //         roundKey != GfResetRoundNum
+        //       ) {
+        //         prevLastFoundRound = lastFoundRound;
+        //         prevLastFoundSetIndex = lastFoundSetIndex;
+        //         lastFoundRound = roundKey;
+        //         lastFoundSetIndex = setIndex;
+        //       }
+        //     });
+        //   });
 
-          let index = 0;
+        //   let index = 0;
 
-          if (lastFoundRound != 0) {
-            index =
-              bracket[lastFoundRound].sets[lastFoundSetIndex].playerId[0] ==
-              teamId
-                ? 0
-                : 1;
-          }
-          if (lastFoundRound == "1") {
-            let setElement = $(
-              `.round_base_w .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
-            );
+        //   if (lastFoundRound != 0) {
+        //     index =
+        //       bracket[lastFoundRound].sets[lastFoundSetIndex].playerId[0] ==
+        //       teamId
+        //         ? 0
+        //         : 1;
+        //   }
+        //   if (lastFoundRound == "1") {
+        //     let setElement = $(
+        //       `.round_base_w .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
+        //     );
 
-            if (setElement && setElement.offset()) {
-              $(element).css(
-                "left",
-                setElement.offset().left +
-                  setElement.outerWidth() -
-                  $(element).outerWidth() / 4
-              );
-              $(element).css(
-                "top",
-                setElement.offset().top +
-                  setElement.outerHeight() / 2 -
-                  $(element).outerHeight() / 2
-              );
+        //     if (setElement && setElement.offset()) {
+        //       $(element).css(
+        //         "left",
+        //         setElement.offset().left +
+        //           setElement.outerWidth() -
+        //           $(element).outerWidth() / 4
+        //       );
+        //       $(element).css(
+        //         "top",
+        //         setElement.offset().top +
+        //           setElement.outerHeight() / 2 -
+        //           $(element).outerHeight() / 2
+        //       );
 
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            }
-          } else if (
-            lastFoundRound == "-1" ||
-            (parseInt(lastFoundRound) < 0 &&
-              parseInt(lastFoundRound) % 2 == 0 &&
-              index == 0)
-          ) {
-            let setElement = null;
+        //       $(element).find(".icon_name_arrow").css("opacity", 0);
+        //     }
+        //   } else if (
+        //     lastFoundRound == "-1" ||
+        //     (parseInt(lastFoundRound) < 0 &&
+        //       parseInt(lastFoundRound) % 2 == 0 &&
+        //       index == 0)
+        //   ) {
+        //     let setElement = null;
 
-            if (lastFoundRound == "-1") {
-              setElement = $(
-                `.round_base_l .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
-              );
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            } else if (index == 0) {
-              setElement = $(
-                `.round_${parseInt(lastFoundRound) + 1} .slot_hanging_${
-                  lastFoundSetIndex + 1
-                }`
-              );
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            }
+        //     if (lastFoundRound == "-1") {
+        //       setElement = $(
+        //         `.round_base_l .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
+        //       );
+        //       $(element).find(".icon_name_arrow").css("opacity", 0);
+        //     } else if (index == 0) {
+        //       setElement = $(
+        //         `.round_${parseInt(lastFoundRound) + 1} .slot_hanging_${
+        //           lastFoundSetIndex + 1
+        //         }`
+        //       );
+        //       $(element).find(".icon_name_arrow").css("opacity", 0);
+        //     }
 
-            if (setElement && setElement.offset()) {
-              $(element).css(
-                "left",
-                setElement.offset().left - ($(element).outerWidth() * 3) / 4
-              );
-              $(element).css(
-                "top",
-                setElement.offset().top +
-                  setElement.outerHeight() / 2 -
-                  $(element).outerHeight() / 2
-              );
-            }
-          } else {
-            let setElement = $(
-              `.round_${prevLastFoundRound} .slot_${prevLastFoundSetIndex + 1}`
-            );
+        //     if (setElement && setElement.offset()) {
+        //       $(element).css(
+        //         "left",
+        //         setElement.offset().left - ($(element).outerWidth() * 3) / 4
+        //       );
+        //       $(element).css(
+        //         "top",
+        //         setElement.offset().top +
+        //           setElement.outerHeight() / 2 -
+        //           $(element).outerHeight() / 2
+        //       );
+        //     }
+        //   } else {
+        //     let setElement = $(
+        //       `.round_${prevLastFoundRound} .slot_${prevLastFoundSetIndex + 1}`
+        //     );
 
-            if (setElement && setElement.offset()) {
-              $(element).css("left", setElement.offset().left);
-              $(element).css("top", setElement.offset().top);
-            }
-          }
-        });
+        //     if (setElement && setElement.offset()) {
+        //       $(element).css("left", setElement.offset().left);
+        //       $(element).css("top", setElement.offset().top);
+        //     }
+        //   }
+        // });
 
         return;
       });
