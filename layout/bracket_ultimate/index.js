@@ -4,6 +4,8 @@
   var ICON_TO_USE = "base_files/icon";
   var ICON_ZOOM = 1;
 
+  var USE_ONLINE_PICTURE = false;
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
@@ -161,6 +163,23 @@
 
         $(".winners_container").html(html);
 
+        html = "";
+
+        Object.entries(winnersRounds)
+          .slice(-2, -1)
+          .forEach(([roundKey, round], r) => {
+            html += `<div class="round round_${roundKey}">`;
+            html += `<div class="round_name"></div>`;
+            Object.values(round.sets).forEach((slot, i) => {
+              html += `<div class="slot_${
+                i + 1
+              }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+            });
+            html += "</div>";
+          });
+
+        $(".center_container").html(html);
+
         // LOSERS SIDE
         html = "";
 
@@ -231,6 +250,7 @@
             <div class="bracket_icon bracket_icon_p${teamId}">
               <div class="icon_name_arrow">
                 <div class="icon_name"></div>
+                <div class="icon_arrow_border"></div>
                 <div class="icon_arrow"></div>
               </div>
               <div class="icon_image"></div>
@@ -465,81 +485,6 @@
                       stroke="gray" fill="none" stroke-width="8" />`;
                   }
                 }
-
-                // Lines for progressions in
-                if (
-                  progressionsIn > 0 &&
-                  ((parseInt(roundKey) > 0 && parseInt(roundKey) == 1) ||
-                    (parseInt(roundKey) < 0 &&
-                      Math.abs(parseInt(roundKey)) == 1))
-                ) {
-                  slotLines += `<path class="${this.baseClass} line_in_r_${
-                    Math.sign(parseInt(roundKey)) * Math.abs(parseInt(roundKey))
-                  } s_${i + 1}" d="
-                  M${[
-                    slotElement.offset().left - 50,
-                    slotElement.offset().top + slotElement.outerHeight() / 2,
-                  ].join(" ")}
-                  ${[
-                    [
-                      slotElement.offset().left,
-                      slotElement.offset().top + slotElement.outerHeight() / 2,
-                    ],
-                  ]
-                    .map((point) => point.join(" "))
-                    .map((point) => "L" + point)
-                    .join(" ")}"
-                  stroke="gray" fill="none" stroke-width="8" />`;
-                }
-
-                // Lines for progressions out
-                if (
-                  progressionsOut > 0 &&
-                  ((parseInt(roundKey) > 0 &&
-                    parseInt(roundKey) == Object.keys(winnersRounds).length) ||
-                    (parseInt(roundKey) < 0 &&
-                      Math.abs(parseInt(roundKey)) ==
-                        Object.keys(losersRounds).length))
-                ) {
-                  slotLines += `<path class="${
-                    this.baseClass
-                  } line_out_r_${roundKey} s_${i + 1}" d="
-                  M${[
-                    slotElement.offset().left + slotElement.outerWidth(),
-                    slotElement.offset().top + slotElement.outerHeight() / 2,
-                  ].join(" ")}
-                  ${[
-                    [
-                      slotElement.offset().left + slotElement.outerWidth() + 45,
-                      slotElement.offset().top + slotElement.outerHeight() / 2,
-                    ],
-                  ]
-                    .map((point) => point.join(" "))
-                    .map((point) => "L" + point)
-                    .join(" ")}
-                  M${[
-                    slotElement.offset().left + slotElement.outerWidth() + 40,
-                    slotElement.offset().top +
-                      slotElement.outerHeight() / 2 -
-                      5,
-                  ].join(" ")}
-                  ${[
-                    [
-                      slotElement.offset().left + slotElement.outerWidth() + 45,
-                      slotElement.offset().top + slotElement.outerHeight() / 2,
-                    ],
-                    [
-                      slotElement.offset().left + slotElement.outerWidth() + 40,
-                      slotElement.offset().top +
-                        slotElement.outerHeight() / 2 +
-                        5,
-                    ],
-                  ]
-                    .map((point) => point.join(" "))
-                    .map((point) => "L" + point)
-                    .join(" ")}"
-                  stroke="gray" fill="none" stroke-width="8" />`;
-                }
               }
             },
             { baseClass: baseClass }
@@ -547,54 +492,6 @@
         });
 
         $(".lines").html(slotLines);
-
-        // ANIMATIONS
-        animations = {};
-
-        entryAnim = gsap.timeline();
-
-        Object.entries(bracket).forEach(function ([roundKey, round], r) {
-          animations[roundKey] = {};
-          Object.values(round.sets).forEach((set, setIndex) => {
-            let anim = gsap.timeline();
-
-            anim.addLabel("hidden");
-
-            anim.add(
-              AnimateLine($(`.line_in_r_${roundKey}.s_${setIndex + 1}`)),
-              0
-            );
-
-            // anim.from(
-            //   $(`.round_${roundKey} .slot_${setIndex + 1}`),
-            //   { x: -50, autoAlpha: 0, duration: 0.4 },
-            //   0.5
-            // );
-
-            anim.addLabel("displayed");
-
-            anim.add(
-              AnimateLine($(`.line_r_${roundKey}.s_${setIndex + 1}`)),
-              0.9
-            );
-            anim.add(
-              AnimateLine($(`.line_out_r_${roundKey}.s_${setIndex + 1}`)),
-              1.4
-            );
-
-            anim.addLabel("over");
-
-            animations[roundKey][setIndex] = anim;
-            anim.pause();
-
-            entryAnim.add(
-              AnimateElement(roundKey, setIndex, set),
-              Math.abs(parseInt(roundKey)) * 0.6
-            );
-          });
-        });
-
-        entryAnim.play();
       }
 
       let GfResetRoundNum = Math.max.apply(
@@ -632,19 +529,19 @@
             }
           }
 
-          if (roundKey == "1" || roundKey == "-1") {
-            let wonIndex = set.score[0] > set.score[1] ? 0 : 1;
+          // if (roundKey == "1" || roundKey == "-1") {
+          //   let wonIndex = set.score[0] > set.score[1] ? 0 : 1;
 
-            $(`.line_base_r_${roundKey}.s_${setIndex + 1}.p_${wonIndex}`).attr(
-              "stroke",
-              "yellow"
-            );
-          }
+          //   $(`.line_base_r_${roundKey}.s_${setIndex + 1}.p_${wonIndex}`).attr(
+          //     "stroke",
+          //     "yellow"
+          //   );
+          // }
 
-          $(`.line_r_${roundKey}.s_${setIndex + 1}`).attr(
-            "stroke",
-            won ? "yellow" : "gray"
-          );
+          // $(`.line_r_${roundKey}.s_${setIndex + 1}`).attr(
+          //   "stroke",
+          //   won ? "yellow" : "gray"
+          // );
         });
       });
 
@@ -659,63 +556,51 @@
 
       // UPDATE SCORES
       Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        if (parseInt(roundKey) < 0) {
-          baseClass = "losers_container";
-        } else {
-          baseClass = "winners_container";
-        }
-
-        SetInnerHtml(
-          $(`.${baseClass} .round_${parseInt(roundKey)} .round_name`),
-          round.name
-        );
+        SetInnerHtml($(`.round_${parseInt(roundKey)} .round_name`), round.name);
 
         Object.values(round.sets).forEach(function (slot, i) {
-          Object.values(slot.score).forEach(
-            function (score, p) {
-              SetInnerHtml(
-                $(
-                  `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
-                    i + 1
-                  }.slot_p_${p}.container .score`
-                ),
-                `
+          Object.values(slot.score).forEach(function (score, p) {
+            SetInnerHtml(
+              $(
+                `.round_${parseInt(roundKey)} .slot_${
+                  i + 1
+                }.slot_p_${p}.container .score`
+              ),
+              `
                   ${score == -1 ? "DQ" : score}
                 `
-              );
-            },
-            { baseClass: baseClass }
-          );
+            );
+          });
           if (slot.score[0] > slot.score[1]) {
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${0}.container`
             ).css("filter", "brightness(1)");
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${1}.container`
             ).css("filter", "brightness(0.6)");
           } else if (slot.score[1] > slot.score[0]) {
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${0}.container`
             ).css("filter", "brightness(0.6)");
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${1}.container`
             ).css("filter", "brightness(1)");
           } else {
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${0}.container`
             ).css("filter", "brightness(1)");
             $(
-              `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
+              `.round_${parseInt(roundKey)} .slot_${
                 i + 1
               }.slot_p_${1}.container`
             ).css("filter", "brightness(1)");
@@ -879,66 +764,72 @@
           $(element).find(`.icon_name`),
           `
             <span>
-              <span class="sponsor">
-                ${player && player.team ? player.team : ""}
-              </span>
               ${player ? player.name : ""}
             </span>
           `
         );
 
-        if (
-          player &&
-          (!oldData.bracket ||
-            JSON.stringify(oldData.bracket.players.slot[teamId]) !=
-              JSON.stringify(data.bracket.players.slot[teamId]))
-        ) {
-          if (player && player.character) {
-            Object.values(player.character).forEach((character, index) => {
-              if (character.assets[ICON_TO_USE]) {
-                charactersHtml += `
-                  <div class="floating_icon stockicon">
-                      <div
-                        style='background-image: url(../../${
-                          character.assets[ICON_TO_USE].asset
-                        })'
-                        data-asset='${JSON.stringify(
-                          character.assets[ICON_TO_USE]
-                        )}'
-                        data-zoom='${ICON_ZOOM}'
-                      >
-                      </div>
-                  </div>
-                  `;
+        if (!USE_ONLINE_PICTURE) {
+          if (
+            player &&
+            (!oldData.bracket ||
+              JSON.stringify(oldData.bracket.players.slot[teamId]) !=
+                JSON.stringify(data.bracket.players.slot[teamId]))
+          ) {
+            if (player && player.character) {
+              Object.values(player.character).forEach((character, index) => {
+                if (character.assets[ICON_TO_USE]) {
+                  charactersHtml += `
+                    <div class="floating_icon stockicon">
+                        <div
+                          style='background-image: url(../../${
+                            character.assets[ICON_TO_USE].asset
+                          })'
+                          data-asset='${JSON.stringify(
+                            character.assets[ICON_TO_USE]
+                          )}'
+                          data-zoom='${ICON_ZOOM}'
+                        >
+                        </div>
+                    </div>
+                    `;
+                }
+              });
+            }
+            SetInnerHtml(
+              $(element).find(".icon_image"),
+              charactersHtml,
+              undefined,
+              0,
+              () => {
+                $(element)
+                  .find(`.icon_image .floating_icon.stockicon div`)
+                  .each((e, i) => {
+                    if (
+                      player &&
+                      player.character[1] &&
+                      player.character[1].assets[ICON_TO_USE] != null
+                    ) {
+                      CenterImage(
+                        $(i),
+                        $(i).attr("data-asset"),
+                        $(i).attr("data-zoom"),
+                        { x: 0.5, y: 0.5 },
+                        $(i),
+                        true,
+                        true
+                      );
+                    }
+                  });
               }
-            });
+            );
           }
+        } else {
           SetInnerHtml(
             $(element).find(".icon_image"),
-            charactersHtml,
-            undefined,
-            0,
-            () => {
-              $(element)
-                .find(`.icon_image .floating_icon.stockicon div`)
-                .each((e, i) => {
-                  if (
-                    player &&
-                    player.character[1] &&
-                    player.character[1].assets[ICON_TO_USE] != null
-                  ) {
-                    CenterImage(
-                      $(i),
-                      $(i).attr("data-asset"),
-                      $(i).attr("data-zoom"),
-                      { x: 0.5, y: 0.5 },
-                      $(i),
-                      true,
-                      true
-                    );
-                  }
-                });
-            }
+            player && player.online_avatar
+              ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+              : '<div style="background: gray; width: 100%; height: 100%; border-radius: 8px;"></div>'
           );
         }
 
