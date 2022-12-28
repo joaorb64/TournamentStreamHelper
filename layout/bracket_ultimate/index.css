@@ -51,6 +51,26 @@ body {
   justify-content: flex-end;
 }
 
+.center_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 256px;
+  height: 100vh;
+  position: absolute;
+  top: 0%;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: flex-end;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .losers_container {
   display: flex;
   flex-direction: row;
@@ -136,8 +156,6 @@ body {
   flex-direction: column;
   overflow: hidden;
   justify-content: center;
-  padding-left: 8px;
-  padding-right: 8px;
   box-sizing: border-box;
   align-items: flex-start;
 }
@@ -149,9 +167,16 @@ body {
   flex-shrink: 0;
 }
 
-.name_twitter .name {
+.name {
   font-size: var(--name-size);
+  width: 100%;
   max-width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  align-items: flex-start;
 }
 
 .name_twitter .twitter {
@@ -327,17 +352,33 @@ body {
   width: 64px;
   left: 50%;
   transform: translateX(-50%);
-  top: -24px;
+  top: -34px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 4);
+  padding: 2px 4px;
 }
 
 .icon_arrow {
   position: absolute;
-  top: -8px;
+  top: -12px;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 8px solid #f00;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleX(75%);
+}
+
+.icon_arrow_border {
+  position: absolute;
+  top: -14px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid var(--bg-color);
+  left: 50%;
+  transform: translateX(-50%) scaleX(75%);
 }

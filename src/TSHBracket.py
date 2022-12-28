@@ -171,53 +171,47 @@ class Bracket():
                     targetIdL = 1
 
                 if _set.winNext:
-                    if not _set.finished:
-                        _set.winNext.playerIds[targetIdW] = -2
-                        if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = -2
-                    elif self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1]):
+                    # Both slots are bye OR slot 2 is bye, auto win for p1
+                    if (self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1])) or \
+                        (not self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1])):
                         won = 0
                         lost = 1
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
-                    elif _set.playerIds[1] < 0 and _set.playerIds[0] > 0:
-                        won = 0
-                        lost = 1
-                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
-                        if _set.loseNext:
-                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
-                    elif _set.playerIds[0] < 0 and _set.playerIds[1] > 0:
+                    # Slot 1 is bye, auto win
+                    elif self.IsBye(_set.playerIds[0]) and not self.IsBye(_set.playerIds[1]):
                         won = 1
                         lost = 0
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
                         if _set.loseNext:
                             _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
+                    # -1,-1 draw; advance higher seed
+                    elif _set.score[0] == -1 and _set.score[1] == -1:
+                        # Advance higher seed
+                        won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
+                        lost = 0 if won == 1 else 1
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
+                    # Set not finished, pass pending state
+                    elif not _set.finished:
+                        _set.winNext.playerIds[targetIdW] = -2
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = -2
+                    # Real match results
                     else:
-                        if _set.score[0] == -1 and _set.score[1] == -1:
-                            # Advance higher seed, but note that -1 would in theory be a smaller seed
-                            won = 0
-                            lost = 1
-                            if self.IsBye(_set.playerIds[1]) and _set.playerIds[0] > 0:
-                                won = 0
-                                lost = 1
-                            elif self.IsBye(_set.playerIds[0])and _set.playerIds[1] > 0:
-                                won = 1
-                                lost = 0
-                            else:
-                                won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
-                                lost = 0 if won == 1 else 1
-                            _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
-                            if _set.loseNext:
-                                _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
-                        elif _set.score[0] > _set.score[1]:
+                        # P1 wins
+                        if _set.score[0] > _set.score[1]:
                             _set.winNext.playerIds[targetIdW] = _set.playerIds[0]
                             if _set.loseNext:
                                 _set.loseNext.playerIds[targetIdL] = _set.playerIds[1]
+                        # P2 wins
                         elif _set.score[0] < _set.score[1]:
                             _set.winNext.playerIds[targetIdW] = _set.playerIds[1]
                             if _set.loseNext:
                                 _set.loseNext.playerIds[targetIdL] = _set.playerIds[0]
+                        # Draw
                         else:
                             _set.winNext.playerIds[targetIdW] = -2
                             if _set.loseNext:
