@@ -9,7 +9,9 @@ class BracketSet():
         self.playerIds = [BracketSet.BYE, BracketSet.BYE]
         self.score = [0, 0]
         self.winNext: "BracketSet" = None
+        self.winNextSlot: int = 0
         self.loseNext: "BracketSet" = None
+        self.loseNextSlot: int = 0
         self.pos = pos
         self.finished = False
 
@@ -116,6 +118,9 @@ class Bracket():
                 for j, _set in enumerate(round):
                     try:
                         _set.winNext = self.rounds[str(roundNum+1)][math.floor(j/2)]
+                        targetIdW = j%2
+                        if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
+                        _set.winNextSlot = targetIdW
                     except Exception as e:
                         print(e)
                     try:
@@ -127,6 +132,8 @@ class Bracket():
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(-1-j)%len(round)]
                         elif abs(roundNum)%4 == 3:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)-1-j)%len(round)]
+                        targetIdL = 0
+                        _set.loseNextSlot = targetIdL
                     except Exception as e:
                         print(e)
             else:
@@ -136,6 +143,9 @@ class Bracket():
                             _set.winNext = self.rounds[str(roundNum-1)][math.floor(j/2)]
                         else:
                             _set.winNext = self.rounds[str(roundNum-1)][j]
+                        targetIdW = j%2
+                        if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
+                        _set.winNextSlot = targetIdW
                     except Exception as e:
                         print(e)
         
@@ -151,7 +161,7 @@ class Bracket():
         self.rounds[str(gfsRound)][0].loseNext = self.rounds[str(gfsResetRound)][0]
     
     def IsBye(self, playerId):
-        if playerId == -1 or playerId >= self.originalPlayerNumber: return True
+        if playerId == -1 or playerId > self.originalPlayerNumber: return True
         return False
     
     def UpdateBracket(self):
