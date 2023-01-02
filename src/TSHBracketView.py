@@ -398,6 +398,8 @@ class TSHBracketView(QGraphicsView):
                         nextWin[0] += losersOffset
                 if nextLose:
                     nextLose[0] += losersOffset
+                    if nextLose[0] == 0:
+                        nextLose[0] = -1
                     
                 p1name = ""
 

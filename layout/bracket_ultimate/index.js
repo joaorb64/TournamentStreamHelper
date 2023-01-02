@@ -343,6 +343,10 @@
                   }`
                 );
 
+                if (!winElement.get(0)) {
+                  winElement = $(`.center_container .slot_${1}`);
+                }
+
                 // Initial line from base
                 if (roundKey == "1" || roundKey == "-1") {
                   [0, 1].forEach((index) => {
@@ -559,7 +563,7 @@
             // We follow the bracket and add the positions the player appeared
             // to the animation
             Object.entries(winnersRounds)
-              .slice(0, -2)
+              .slice(0, -1)
               .forEach(([roundKey, round], r) => {
                 Object.values(round.sets).forEach((slot, i) => {
                   Object.values(slot.playerId).forEach(
@@ -682,7 +686,7 @@
 
             let found = false;
 
-            if (t < Object.keys(players).length) {
+            if (t < Object.keys(players).length - 1) {
               Object.entries(losersRounds).forEach(([roundKey, round], r) => {
                 Object.values(round.sets).forEach((slot, i) => {
                   Object.values(slot.playerId).forEach(
@@ -858,6 +862,59 @@
                     }
                   );
                 });
+              });
+
+              // Add animations for GF and GF Reset
+              let GfResetRoundNum = Math.max.apply(
+                null,
+                Object.keys(bracket).map((r) => parseInt(r))
+              );
+
+              let lastLosersRoundNum = Math.min.apply(
+                null,
+                Object.keys(bracket).map((r) => parseInt(r))
+              );
+
+              [GfResetRoundNum - 1].forEach((roundNum, index) => {
+                icon_anim.add(
+                  AnimateLine(
+                    $(
+                      `.lines.win .losers_container.line_r_${
+                        lastLosersRoundNum - index - 1
+                      }.s_${1}.base`
+                    )
+                  )
+                );
+
+                let setElement = $(`.round_${roundNum} .slot_${1}`);
+
+                if (setElement.get(0)) {
+                  icon_anim.to($(icon_element), {
+                    x: setElement.offset().left,
+                    duration: 1,
+                  });
+                }
+
+                icon_anim.addLabel(`round_${lastLosersRoundNum - index - 1}`);
+
+                // Animation if won
+                icon_anim.add(
+                  AnimateLine(
+                    $(
+                      `.lines.win .losers_container.line_r_${
+                        lastLosersRoundNum - index - 1
+                      }.s_${1}.win`
+                    )
+                  )
+                );
+
+                if (setElement.get(0)) {
+                  icon_anim.to($(icon_element), {
+                    x: setElement.offset().left,
+                    y: setElement.offset().top,
+                    duration: 1,
+                  });
+                }
               });
 
               console.log(icon_anim.labels);
@@ -1043,7 +1100,18 @@
 
             let charactersHtml = "";
 
-            if (player && player.character) {
+            let oldCharacter = _.get(
+              oldData,
+              `bracket.players.slot.${pid}.player.${1}.character`
+            );
+
+            if (
+              player &&
+              player.character &&
+              (!oldCharacter ||
+                (oldCharacter &&
+                  JSON.parse(oldCharacter) != JSON.parse(player.character)))
+            ) {
               Object.values(player.character).forEach((character, index) => {
                 if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
@@ -1209,40 +1277,55 @@
         }
 
         // TRIGGER ANIMATIONS
+        let GfResetRoundNum = Math.max.apply(
+          null,
+          Object.keys(bracket).map((r) => parseInt(r))
+        );
+
+        let lastLosersRoundNum = Math.min.apply(
+          null,
+          Object.keys(bracket).map((r) => parseInt(r))
+        );
+
+        // Winners side - just detect if a player keeps showing up in the following round until they don't
         Object.entries(players).forEach(([teamId, team], t) => {
-          ["winners"].forEach((side) => {
-            let lastFoundRound = 0;
+          let lastFoundRound = 0;
 
-            let GfResetRoundNum = Math.max.apply(
-              null,
-              Object.keys(bracket).map((r) => parseInt(r))
-            );
+          let lost = false;
 
-            Object.entries(bracket).forEach(function ([roundKey, round], r) {
-              if (side == "winners" && parseInt(roundKey) < 0) return;
-              if (side == "losers" && parseInt(roundKey) > 0) return;
-              Object.values(round.sets).forEach(function (set, setIndex) {
-                if (
-                  ((side == "losers" &&
-                    parseInt(roundKey) < parseInt(lastFoundRound)) ||
-                    (side == "winners" &&
-                      parseInt(roundKey) > parseInt(lastFoundRound))) &&
-                  (set.playerId[0] == teamId || set.playerId[1] == teamId) &&
-                  roundKey != GfResetRoundNum
-                ) {
-                  lastFoundRound = roundKey;
-                }
-              });
+          Object.entries(bracket).forEach(function ([roundKey, round], r) {
+            // Skip losers rounds
+            if (parseInt(roundKey) < 0) return;
+
+            // If we don't find the player in a round, lost = true
+            // using this to avoid detecting a player that got into grand finals
+            // through losers
+            if (lost) return;
+            let foundInRound = false;
+            Object.values(round.sets).forEach(function (set, setIndex) {
+              if (
+                parseInt(roundKey) > parseInt(lastFoundRound) &&
+                (set.playerId[0] == teamId || set.playerId[1] == teamId)
+              ) {
+                lastFoundRound = roundKey;
+                foundInRound = true;
+              }
             });
-
-            iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`);
+            if (!foundInRound) lost = true;
           });
+
+          iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`);
         });
 
+        // Losers side
         let appearRounds = [];
 
         Object.entries(bracket).forEach(([roundKey, round], r) => {
-          if (parseInt(roundKey) < 0) return;
+          if (
+            parseInt(roundKey) < 0 &&
+            parseInt(roundKey) != GfResetRoundNum - 1
+          )
+            return;
           Object.values(round.sets).forEach((set, s) => {
             if (set.nextLose) {
               if (set.nextLose[0] == 0) set.nextLose[0] = -1;
@@ -1251,24 +1334,27 @@
           });
         });
 
-        console.log("Start");
+        // First, we assign players to the "losers slots"
+        // Since they appear in losers in an unpredictable order
+        // So we assign the player so we can later set their name, icon, etc
         Object.entries(players).forEach(([teamId, team], t) => {
           let lastFoundRound = 0;
           let losersIconId = null;
 
           Object.entries(bracket).forEach(function ([roundKey, round], r) {
-            if (parseInt(roundKey) > 0) return;
+            if (
+              parseInt(roundKey) > 0 &&
+              parseInt(roundKey) < GfResetRoundNum - 1
+            )
+              return;
             Object.values(round.sets).forEach(function (set, setIndex) {
               if (
                 parseInt(roundKey) < parseInt(lastFoundRound) &&
                 (set.playerId[0] == teamId || set.playerId[1] == teamId)
               ) {
-                console.log(set.playerId, teamId);
                 lastFoundRound = roundKey;
 
                 if (losersIconId == null) {
-                  let found = null;
-
                   appearRounds.forEach((appearRound, i) => {
                     if (
                       parseInt(roundKey) == appearRound[0] &&
@@ -1289,13 +1375,6 @@
                       }
                     }
                   });
-
-                  // if (roundKey == "-1") {
-                  //   losersId = set.playerId[(t + 1) % 2];
-                  // } else {
-                  //   losersId = set.playerId[0];
-                  // }
-                  console.log("player", teamId, "loserdId", losersIconId);
                 }
               }
             });
@@ -1304,6 +1383,15 @@
           if (lastFoundRound == 0 || losersIconId == null)
             iconAnimationsL[t].tweenTo(`start`);
           else {
+            // Get GF and GF Reset
+            if (lastFoundRound == lastLosersRoundNum) {
+              let gfSet = bracket[GfResetRoundNum - 1].sets[0];
+
+              if (gfSet.playerId[1] == teamId) {
+                lastFoundRound = lastLosersRoundNum - 1;
+              }
+            }
+
             if (
               iconAnimationsL[losersIconId].labels.hasOwnProperty(
                 `round_${lastFoundRound}`
@@ -1317,16 +1405,86 @@
             let element = $(
               `.losers_icons .bracket_icon.bracket_icon_p${losersIconId + 1}`
             );
-            if (!element) return;
+            if (element.get(0)) {
+              let player = team.player["1"];
 
-            SetInnerHtml(
-              $(element).find(`.icon_name`),
-              `
-                <span>
-                  ${team.player["1"] ? team.player["1"].name : ""}
-                </span>
-              `
-            );
+              SetInnerHtml(
+                $(element).find(`.icon_name`),
+                `
+                  <span>
+                    ${player ? player.name : ""}
+                  </span>
+                `
+              );
+
+              let charactersHtml = "";
+
+              if (!USE_ONLINE_PICTURE) {
+                if (
+                  player &&
+                  (!oldData.bracket ||
+                    JSON.stringify(oldData.bracket.players.slot[teamId]) !=
+                      JSON.stringify(data.bracket.players.slot[teamId]))
+                ) {
+                  if (player && player.character) {
+                    Object.values(player.character).forEach(
+                      (character, index) => {
+                        if (character.assets[ICON_TO_USE]) {
+                          charactersHtml += `
+                          <div class="floating_icon stockicon">
+                              <div
+                                style='background-image: url(../../${
+                                  character.assets[ICON_TO_USE].asset
+                                })'
+                                data-asset='${JSON.stringify(
+                                  character.assets[ICON_TO_USE]
+                                )}'
+                                data-zoom='${ICON_ZOOM}'
+                              >
+                              </div>
+                          </div>
+                          `;
+                        }
+                      }
+                    );
+                  }
+                  SetInnerHtml(
+                    $(element).find(".icon_image"),
+                    charactersHtml,
+                    undefined,
+                    0,
+                    () => {
+                      $(element)
+                        .find(`.icon_image .floating_icon.stockicon div`)
+                        .each((e, i) => {
+                          if (
+                            player &&
+                            player.character[1] &&
+                            player.character[1].assets[ICON_TO_USE] != null
+                          ) {
+                            CenterImage(
+                              $(i),
+                              $(i).attr("data-asset"),
+                              $(i).attr("data-zoom"),
+                              { x: 0.5, y: 0.5 },
+                              $(i),
+                              true,
+                              true
+                            );
+                          }
+                        });
+                    }
+                  );
+                }
+              } else {
+                SetInnerHtml(
+                  $(element).find(".icon_image"),
+                  player && player.online_avatar
+                    ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+                    : '<div style="background: gray; width: 100%; height: 100%; border-radius: 8px;"></div>'
+                );
+              }
+            }
           }
         });
 
