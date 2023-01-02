@@ -57,11 +57,7 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: 
-      contains('
-        refs/heads/main
-        refs/heads/feature/*
-      ', github.ref)
+    if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) }}
     strategy:
       fail-fast: false
       matrix:
