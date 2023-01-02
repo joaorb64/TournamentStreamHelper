@@ -4,6 +4,8 @@
   var ICON_TO_USE = "base_files/icon";
   var ICON_ZOOM = 1;
 
+  var MIDDLE_SPACE = 100;
+
   var USE_ONLINE_PICTURE = false;
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
@@ -124,7 +126,6 @@
         null,
         Object.values(bracket).map((r) => Object.keys(r.sets).length)
       );
-      console.log(biggestRound);
 
       let size = 32;
       $(":root").css("--player-height", size);
@@ -195,23 +196,6 @@
 
         $(".winners_container").html(html);
 
-        html = "";
-
-        Object.entries(winnersRounds)
-          .slice(-2, -1)
-          .forEach(([roundKey, round], r) => {
-            html += `<div class="round round_${roundKey}">`;
-            html += `<div class="round_name"></div>`;
-            Object.values(round.sets).forEach((slot, i) => {
-              html += `<div class="slot_${
-                i + 1
-              }" style="width: 32px; height: 32px; align-self: center;"></div>`;
-            });
-            html += "</div>";
-          });
-
-        $(".center_container").html(html);
-
         // LOSERS SIDE
         html = "";
 
@@ -277,6 +261,18 @@
           });
 
         $(".losers_container").html(html);
+
+        // Center area
+        html = "";
+
+        html += `<div class="round round_${
+          Object.keys(winnersRounds).reverse()[1]
+        }">`;
+        html += `<div class="round_name"></div>`;
+        html += `<div class="slot_1" style="width: 32px; height: 32px; align-self: center;"></div>`;
+        html += "</div>";
+
+        $(".center_container").html(html);
 
         // ICONS
         html = "";
@@ -402,6 +398,7 @@
                   });
                 }
 
+                // Winners side lines
                 if (
                   winElement &&
                   winElement.offset() &&
@@ -417,6 +414,14 @@
                       winElement.offset().top + winElement.outerHeight() / 2,
                     ],
                   ];
+
+                  // For last round, we don't want the lines to merge so we add a spacing
+                  if (
+                    parseInt(roundKey) ==
+                    parseInt(Object.keys(winnersRounds).reverse()[2])
+                  ) {
+                    points[1][0] -= MIDDLE_SPACE;
+                  }
 
                   slotLines += GetBracketLineHtml(
                     `${this.baseClass} line_r_${roundKey} s_${i + 1}`,
@@ -443,6 +448,7 @@
                   );
                 }
 
+                // Losers side lines
                 if (parseInt(roundKey) < 0) {
                   if (parseInt(roundKey) % 2 == -1) {
                     let hangingElement = $(
@@ -512,6 +518,14 @@
                         winElement.offset().top + winElement.outerHeight() / 2,
                       ],
                     ];
+
+                    // For last round, we don't want the lines to merge so we add a spacing
+                    if (
+                      parseInt(roundKey) ==
+                      parseInt(Object.keys(losersRounds).reverse()[0])
+                    ) {
+                      points[1][0] += MIDDLE_SPACE;
+                    }
 
                     slotLines += GetBracketLineHtml(
                       `${this.baseClass} line_r_${roundKey} s_${(i + 1) * 2}`,
@@ -622,7 +636,11 @@
 
                         if (setElement && setElement.offset()) {
                           icon_anim.to($(icon_element), {
-                            x: setElement.offset().left,
+                            x:
+                              roundKey !=
+                              Object.keys(winnersRounds).reverse()[1]
+                                ? setElement.offset().left
+                                : setElement.offset().left - MIDDLE_SPACE,
                             duration: 1,
                           });
 
@@ -651,7 +669,11 @@
                             );
                           }
                           icon_anim.to($(icon_element), {
-                            x: setElement.offset().left,
+                            x:
+                              roundKey !=
+                              Object.keys(winnersRounds).reverse()[1]
+                                ? setElement.offset().left
+                                : setElement.offset().left - MIDDLE_SPACE,
                             y: setElement.offset().top,
                             duration: 1,
                           });
@@ -890,7 +912,7 @@
 
                 if (setElement.get(0)) {
                   icon_anim.to($(icon_element), {
-                    x: setElement.offset().left,
+                    x: setElement.offset().left + MIDDLE_SPACE,
                     duration: 1,
                   });
                 }
@@ -910,14 +932,13 @@
 
                 if (setElement.get(0)) {
                   icon_anim.to($(icon_element), {
-                    x: setElement.offset().left,
+                    x: setElement.offset().left + MIDDLE_SPACE,
                     y: setElement.offset().top,
                     duration: 1,
                   });
                 }
               });
 
-              console.log(icon_anim.labels);
               iconAnimationsL.push(icon_anim);
             }
 
@@ -1488,294 +1509,7 @@
           }
         });
 
-        // TODO
-        // ICON ANIMATIONS
-        // For each player
-        // Object.entries(players).forEach(([teamId, team], t) => {
-        //   Object.entries(team.player).forEach(([playerId, player], p) => {
-        //     // Winners path
-        //     let icon_element = $(
-        //       `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
-        //     );
-        //     if (!icon_element) return;
-
-        //     let icon_anim = gsap.timeline();
-
-        //     // We follow the bracket and add the positions the player appeared
-        //     // to the animation
-        //     Object.entries(winnersRounds)
-        //       .slice(0, -2)
-        //       .forEach(([roundKey, round], r) => {
-        //         Object.values(round.sets).forEach((slot, i) => {
-        //           Object.values(slot.playerId).forEach(
-        //             (slotPlayerId, slotIndex) => {
-        //               if (slotPlayerId == teamId) {
-        //                 if (roundKey == "1") {
-        //                   let setElement = $(
-        //                     `.round_base_w .slot_${i + 1}.slot_p_${slotIndex}`
-        //                   );
-
-        //                   if (setElement && setElement.offset()) {
-        //                     icon_anim.set($(icon_element), {
-        //                       x:
-        //                         setElement.offset().left +
-        //                         setElement.outerWidth() -
-        //                         $(icon_element).outerWidth() / 4,
-        //                       y:
-        //                         setElement.offset().top +
-        //                         setElement.outerHeight() / 2 -
-        //                         $(icon_element).outerHeight() / 2,
-        //                     });
-        //                     icon_anim.addLabel("start");
-        //                   }
-
-        //                   icon_anim.add(
-        //                     AnimateLine(
-        //                       $(
-        //                         `.lines.win .winners_container.line_base_r_${roundKey}.s_${
-        //                           i + 1
-        //                         }.p_${slotIndex}.base`
-        //                       )
-        //                     )
-        //                   );
-        //                   icon_anim.addLabel("round_1");
-        //                 }
-
-        //                 let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
-
-        //                 icon_anim.add(
-        //                   AnimateLine(
-        //                     $(
-        //                       `.lines.win .winners_container.line_r_${roundKey}.s_${
-        //                         slotIndex + 1
-        //                       }.base`
-        //                     )
-        //                   )
-        //                 );
-
-        //                 if (setElement && setElement.offset()) {
-        //                   icon_anim.to($(icon_element), {
-        //                     x: setElement.offset().left,
-        //                     duration: 1,
-        //                   });
-
-        //                   // Only continue if won
-        //                   if (
-        //                     slot.score[slotIndex] >
-        //                     slot.score[(slotIndex + 1) % 2]
-        //                   ) {
-        //                     if (roundKey == "1") {
-        //                       icon_anim.add(
-        //                         AnimateLine(
-        //                           $(
-        //                             `.lines.win .winners_container.line_base_r_${roundKey}.s_${
-        //                               i + 1
-        //                             }.p_${slotIndex}.win`
-        //                           )
-        //                         )
-        //                       );
-        //                     } else {
-        //                       icon_anim.add(
-        //                         AnimateLine(
-        //                           $(
-        //                             `.lines.win .winners_container.line_r_${roundKey}.s_${
-        //                               slotIndex + 1
-        //                             }.win`
-        //                           )
-        //                         )
-        //                       );
-        //                     }
-        //                     icon_anim.to($(icon_element), {
-        //                       x: setElement.offset().left,
-        //                       y: setElement.offset().top,
-        //                       duration: 1,
-        //                     });
-        //                   } else {
-        //                     // TODO: remove
-        //                     icon_anim.fromTo(
-        //                       $(icon_element).find(".icon_image"),
-        //                       { filter: "brightness(1)" },
-        //                       {
-        //                         filter: "brightness(.5)",
-        //                         duration: 0.4,
-        //                       }
-        //                     );
-        //                   }
-        //                 }
-        //               }
-        //             }
-        //           );
-        //         });
-        //       });
-
-        //     iconAnimationsW.push(icon_anim);
-
-        //     // Losers path
-        //     icon_element = $(
-        //       `.losers_icons .bracket_icon.bracket_icon_p${teamId}`
-        //     );
-        //     if (!icon_element) return;
-
-        //     icon_anim = gsap.timeline();
-
-        //     let found = false;
-
-        //     Object.entries(losersRounds).forEach(([roundKey, round], r) => {
-        //       Object.values(round.sets).forEach((slot, i) => {
-        //         Object.values(slot.playerId).forEach(
-        //           (slotPlayerId, slotIndex) => {
-        //             if (slotPlayerId == teamId) {
-        //               if (roundKey == "-1") {
-        //                 let setElement = $(
-        //                   `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
-        //                 );
-
-        //                 if (setElement && setElement.offset()) {
-        //                   icon_anim.set($(icon_element), {
-        //                     x:
-        //                       setElement.offset().left -
-        //                       ($(icon_element).outerWidth() * 3) / 4,
-        //                     y:
-        //                       setElement.offset().top +
-        //                       setElement.outerHeight() / 2 -
-        //                       $(icon_element).outerHeight() / 2,
-        //                   });
-        //                 }
-
-        //                 icon_anim.add(
-        //                   AnimateLine(
-        //                     $(
-        //                       `.lines.win .losers_container.line_base_r_${roundKey}.s_${
-        //                         i + 1
-        //                       }.p_${slotIndex}.base`
-        //                     )
-        //                   )
-        //                 );
-        //               } else if (!found) {
-        //                 let setElement = $(
-        //                   `.round_${parseInt(roundKey) + 1} .slot_hanging_${
-        //                     i + 1
-        //                   }`
-        //                 );
-
-        //                 icon_anim.add(
-        //                   AnimateLine(
-        //                     $(
-        //                       `.lines.win .losers_container.line_hanging_r_${parseInt(
-        //                         roundKey
-        //                       )}.s_${2 * i + 1}.base`
-        //                     )
-        //                   )
-        //                 );
-
-        //                 if (setElement && setElement.offset()) {
-        //                   icon_anim.set($(icon_element), {
-        //                     x:
-        //                       setElement.offset().left -
-        //                       ($(icon_element).outerWidth() * 3) / 4,
-        //                     y:
-        //                       setElement.offset().top +
-        //                       setElement.outerHeight() / 2 -
-        //                       $(icon_element).outerHeight() / 2,
-        //                   });
-        //                 }
-        //               }
-
-        //               let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
-
-        //               if (parseInt(roundKey) % 2 == 0 && slotIndex % 2 == 1) {
-        //                 icon_anim.add(
-        //                   AnimateLine(
-        //                     $(
-        //                       `.lines.win .losers_container.line_r_${roundKey}.s_${
-        //                         2 * (i + 1)
-        //                       }.base`
-        //                     )
-        //                   )
-        //                 );
-        //               } else {
-        //                 icon_anim.add(
-        //                   AnimateLine(
-        //                     $(
-        //                       `.lines.win .losers_container.line_r_${roundKey}.s_${
-        //                         slotIndex + 1
-        //                       }.base`
-        //                     )
-        //                   )
-        //                 );
-        //               }
-
-        //               if (setElement && setElement.offset()) {
-        //                 icon_anim.to($(icon_element), {
-        //                   x: setElement.offset().left,
-        //                   duration: 1,
-        //                 });
-        //                 // Only continue if won
-        //                 if (
-        //                   slot.score[slotIndex] >
-        //                   slot.score[(slotIndex + 1) % 2]
-        //                 ) {
-        //                   if (roundKey == "-1") {
-        //                     icon_anim.add(
-        //                       AnimateLine(
-        //                         $(
-        //                           `.lines.win .losers_container.line_base_r_${-1}.s_${
-        //                             i + 1
-        //                           }.p_${slotIndex}.win`
-        //                         )
-        //                       )
-        //                     );
-        //                   } else if (found) {
-        //                     icon_anim.add(
-        //                       AnimateLine(
-        //                         $(
-        //                           `.lines.win .losers_container.line_r_${roundKey}.s_${
-        //                             slotIndex + 1
-        //                           }.win`
-        //                         )
-        //                       )
-        //                     );
-        //                   } else {
-        //                     icon_anim.add(
-        //                       AnimateLine(
-        //                         $(
-        //                           `.lines.win .losers_container.line_hanging_r_${roundKey}.s_${
-        //                             2 * i + 1
-        //                           }.win`
-        //                         )
-        //                       )
-        //                     );
-        //                   }
-        //                   icon_anim.to($(icon_element), {
-        //                     x: setElement.offset().left,
-        //                     y: setElement.offset().top,
-        //                     duration: 1,
-        //                   });
-        //                 } else {
-        //                   // TODO: remove
-        //                   icon_anim.fromTo(
-        //                     $(icon_element).find(".icon_image"),
-        //                     { filter: "brightness(1)" },
-        //                     {
-        //                       filter: "brightness(.5)",
-        //                       duration: 0.4,
-        //                     }
-        //                   );
-        //                 }
-        //               }
-
-        //               found = true;
-        //             }
-        //           }
-        //         );
-        //       });
-        //     });
-
-        //     iconAnimationsL.push(icon_anim);
-
-        //     return;
-        //   });
-        // });
+        SetInnerHtml($(".header .title"), data.tournamentInfo.tournamentName);
 
         return;
       });
