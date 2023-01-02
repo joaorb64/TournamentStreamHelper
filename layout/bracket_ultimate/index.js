@@ -20,6 +20,9 @@
   var entryAnim = gsap.timeline();
   var animations = {};
 
+  var iconAnimationsW = [];
+  var iconAnimationsL = [];
+
   var players = [];
   var bracket = {};
 
@@ -35,6 +38,7 @@
           duration: 0.4,
           "stroke-dashoffset": length,
           "stroke-dasharray": length,
+          "stroke-linecap": "butt",
           opacity: 0,
           onUpdate: function (tl) {
             let tlp = (this.progress() * 100) >> 0;
@@ -43,7 +47,8 @@
               TweenMax.set(element, {
                 "stroke-dashoffset": (length / 100) * (100 - tlp),
                 "stroke-dasharray": length,
-                opacity: 1,
+                "stroke-linecap": tlp == 0 ? "butt" : "square",
+                opacity: tlp == 0 ? 0 : 1,
               });
             }
           },
@@ -56,21 +61,48 @@
     return anim;
   }
 
-  function AnimateElement(roundKey, setIndex, set) {
-    if (animations[roundKey][setIndex]) {
-      if (set.playerId[0] == -2 && set.playerId[1] == -2) {
-        return animations[roundKey][setIndex].tweenTo("hidden");
-      } else if (
-        set.score[0] == set.score[1] ||
-        set.playerId[0] == -2 ||
-        set.playerId[1] == -2
-      ) {
-        return animations[roundKey][setIndex].tweenTo("displayed");
-      } else {
-        return animations[roundKey][setIndex].tweenTo("done");
-      }
-    }
-    return null;
+  /**
+   * @param {string} _class
+   * @param {Array} points
+   */
+  function GetBracketLineHtml(_class, points, color, hidden = false) {
+    let newPoints = [];
+
+    newPoints.push(points[0]);
+    newPoints.push([points[1][0], points[0][1]]);
+    newPoints.push(points[1]);
+
+    let line = `<path class="${_class}" d="
+    M${[newPoints[0][0], newPoints[0][1]].join(" ")}
+    ${newPoints
+      .slice(1)
+      .map((point) => point.join(" "))
+      .map((point) => "L" + point)
+      .join(" ")}"
+    stroke="${color}" fill="none" stroke-width="8" stroke-linecap="square" ${
+      hidden ? 'style="opacity: 0"' : ""
+    } />`;
+
+    return line;
+  }
+
+  /**
+   * @param {string} _class
+   * @param {Array} points
+   */
+  function GetLineHtml(_class, points, color, hidden = false) {
+    let line = `<path class="${_class}" d="
+    M${points[0].join(" ")}
+    ${points
+      .slice(1)
+      .map((point) => point.join(" "))
+      .map((point) => "L" + point)
+      .join(" ")}"
+    stroke="${color}" fill="none" stroke-width="8" stroke-linecap="square" ${
+      hidden ? 'style="opacity: 0"' : ""
+    } />`;
+
+    return line;
   }
 
   async function Update() {
@@ -202,14 +234,20 @@
                     <div class="name"></div>
                   </div>
                 `;
-              } else {
                 html += `<div class="slot_sibling_${
                   i + 1
                 }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+              } else {
               }
               html += `<div class="slot_${
                 i + 1
               }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+
+              if (r % 2 == 1) {
+                html += `<div class="slot_sibling_${
+                  i + 1
+                }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+              }
             });
             html += "</div>";
           });
@@ -221,11 +259,10 @@
             html += `<div class="round round_base_l">`;
             Object.values(round.sets).forEach((slot, i) => {
               Object.values(slot.playerId).forEach((playerId, p) => {
-                if (p == 0) {
-                  html += `<div class="slot_sibling_${
-                    i + 1
-                  }" style="width: 32px; height: 32px; align-self: center;"></div>`;
-                }
+                html += `<div class="slot_sibling_${
+                  i + 1
+                }" style="width: 32px; height: 32px; align-self: center;"></div>`;
+
                 html += `
                   <div class="slot_hanging slot_${
                     i + 1
@@ -265,6 +302,7 @@
         // BRACKET LINES
         // .line_r_(round) = Line going from (round) set to the next set
         let slotLines = "";
+        let slotLinesW = "";
 
         let baseClass = "winners_container";
 
@@ -317,27 +355,10 @@
                       }.slot_p_${index}`
                     );
 
-                    slotLines += `<path class="${
-                      this.baseClass
-                    } line_base_r_${roundKey} s_${i + 1} p_${index}" d="
-                    M${[
-                      baseElement.offset().left + baseElement.outerWidth() / 2,
-                      baseElement.offset().top + baseElement.outerHeight() / 2,
-                    ].join(" ")}
-                    ${[
+                    let points = [
                       [
                         baseElement.offset().left +
-                          baseElement.outerWidth() / 2 +
-                          (slotElement.offset().left -
-                            (baseElement.offset().left +
-                              baseElement.outerWidth() / 2)) /
-                            2,
-                        baseElement.offset().top +
-                          baseElement.outerHeight() / 2,
-                      ],
-                      [
-                        slotElement.offset().left +
-                          slotElement.outerWidth() / 2,
+                          baseElement.outerWidth() / 2,
                         baseElement.offset().top +
                           baseElement.outerHeight() / 2,
                       ],
@@ -347,11 +368,33 @@
                         slotElement.offset().top +
                           slotElement.outerHeight() / 2,
                       ],
-                    ]
-                      .map((point) => point.join(" "))
-                      .map((point) => "L" + point)
-                      .join(" ")}"
-                    stroke="gray" fill="none" stroke-width="8" />`;
+                    ];
+
+                    slotLines += GetBracketLineHtml(
+                      `${this.baseClass} line_base_r_${roundKey} s_${
+                        i + 1
+                      } p_${index}`,
+                      points,
+                      "gray"
+                    );
+
+                    slotLinesW += GetLineHtml(
+                      `${this.baseClass} line_base_r_${roundKey} s_${
+                        i + 1
+                      } p_${index} base`,
+                      [points[0], [points[1][0], points[0][1]]],
+                      "yellow",
+                      true
+                    );
+
+                    slotLinesW += GetLineHtml(
+                      `${this.baseClass} line_base_r_${roundKey} s_${
+                        i + 1
+                      } p_${index} win`,
+                      [[points[1][0], points[0][1]], points[1]],
+                      "yellow",
+                      true
+                    );
                   });
                 }
 
@@ -360,36 +403,40 @@
                   winElement.offset() &&
                   parseInt(roundKey) > 0
                 ) {
-                  slotLines += `<path class="${
-                    this.baseClass
-                  } line_r_${roundKey} s_${i + 1}" d="
-                  M${[
-                    slotElement.offset().left + slotElement.outerWidth() / 2,
-                    slotElement.offset().top + slotElement.outerHeight() / 2,
-                  ].join(" ")}
-                  ${[
+                  let points = [
                     [
-                      slotElement.offset().left +
-                        slotElement.outerWidth() / 2 +
-                        (winElement.offset().left -
-                          (slotElement.offset().left +
-                            slotElement.outerWidth() / 2)) /
-                          2,
-                      slotElement.offset().top + slotElement.outerHeight() / 2,
-                    ],
-                    [
-                      winElement.offset().left + winElement.outerWidth() / 2,
+                      slotElement.offset().left + slotElement.outerWidth() / 2,
                       slotElement.offset().top + slotElement.outerHeight() / 2,
                     ],
                     [
                       winElement.offset().left + winElement.outerWidth() / 2,
                       winElement.offset().top + winElement.outerHeight() / 2,
                     ],
-                  ]
-                    .map((point) => point.join(" "))
-                    .map((point) => "L" + point)
-                    .join(" ")}"
-                  stroke="gray" fill="none" stroke-width="8" />`;
+                  ];
+
+                  slotLines += GetBracketLineHtml(
+                    `${this.baseClass} line_r_${roundKey} s_${i + 1}`,
+                    points,
+                    "gray"
+                  );
+
+                  slotLinesW += GetBracketLineHtml(
+                    `${this.baseClass} line_r_${parseInt(roundKey) + 1} s_${
+                      i + 1
+                    } base`,
+                    [points[0], [points[1][0], points[0][1]]],
+                    "yellow",
+                    true
+                  );
+
+                  slotLinesW += GetBracketLineHtml(
+                    `${this.baseClass} line_r_${parseInt(roundKey) + 1} s_${
+                      i + 1
+                    } win`,
+                    [[points[1][0], points[0][1]], points[1]],
+                    "yellow",
+                    true
+                  );
                 }
 
                 if (parseInt(roundKey) < 0) {
@@ -406,71 +453,12 @@
                       hangingElement &&
                       hangingElement.offset()
                     ) {
-                      slotLines += `<path class="${
-                        this.baseClass
-                      } line_r_${roundKey} s_${i * 2 + 1}" d="
-                        M${[
+                      let points = [
+                        [
                           hangingElement.offset().left +
                             hangingElement.outerWidth() / 2,
                           hangingElement.offset().top +
                             hangingElement.outerHeight() / 2,
-                        ].join(" ")}
-                        ${[
-                          [
-                            hangingElement.offset().left +
-                              hangingElement.outerWidth() / 2 +
-                              (winElement.offset().left -
-                                (hangingElement.offset().left +
-                                  hangingElement.outerWidth() / 2)) /
-                                2,
-                            hangingElement.offset().top +
-                              hangingElement.outerHeight() / 2,
-                          ],
-                          [
-                            winElement.offset().left +
-                              winElement.outerWidth() / 2,
-                            hangingElement.offset().top +
-                              hangingElement.outerHeight() / 2,
-                          ],
-                          [
-                            winElement.offset().left +
-                              winElement.outerWidth() / 2,
-                            winElement.offset().top +
-                              winElement.outerHeight() / 2,
-                          ],
-                        ]
-                          .map((point) => point.join(" "))
-                          .map((point) => "L" + point)
-                          .join(" ")}"
-                        stroke="gray" fill="none" stroke-width="8" />`;
-                    }
-                  }
-                  if (winElement && winElement.offset()) {
-                    slotLines += `<path class="${
-                      this.baseClass
-                    } line_r_${roundKey} s_${(i + 1) * 2}" d="
-                      M${[
-                        slotElement.offset().left +
-                          slotElement.outerWidth() / 2,
-                        slotElement.offset().top +
-                          slotElement.outerHeight() / 2,
-                      ].join(" ")}
-                      ${[
-                        [
-                          slotElement.offset().left +
-                            slotElement.outerWidth() / 2 +
-                            (winElement.offset().left -
-                              (slotElement.offset().left +
-                                slotElement.outerWidth() / 2)) /
-                              2,
-                          slotElement.offset().top +
-                            slotElement.outerHeight() / 2,
-                        ],
-                        [
-                          winElement.offset().left +
-                            winElement.outerWidth() / 2,
-                          slotElement.offset().top +
-                            slotElement.outerHeight() / 2,
                         ],
                         [
                           winElement.offset().left +
@@ -478,11 +466,72 @@
                           winElement.offset().top +
                             winElement.outerHeight() / 2,
                         ],
-                      ]
-                        .map((point) => point.join(" "))
-                        .map((point) => "L" + point)
-                        .join(" ")}"
-                      stroke="gray" fill="none" stroke-width="8" />`;
+                      ];
+
+                      slotLines += GetBracketLineHtml(
+                        `${this.baseClass} line_hanging_r_${roundKey} s_${
+                          i + 1
+                        }`,
+                        points,
+                        "gray"
+                      );
+
+                      slotLinesW += GetBracketLineHtml(
+                        `${this.baseClass} line_hanging_r_${
+                          parseInt(roundKey) - 1
+                        } s_${2 * i + 1} base`,
+                        [points[0], [points[1][0], points[0][1]]],
+                        "yellow",
+                        true
+                      );
+
+                      slotLinesW += GetBracketLineHtml(
+                        `${this.baseClass} line_hanging_r_${
+                          parseInt(roundKey) - 1
+                        } s_${2 * i + 1} win`,
+                        [[points[1][0], points[0][1]], points[1]],
+                        "yellow",
+                        true
+                      );
+                    }
+                  }
+                  if (winElement && winElement.offset()) {
+                    let points = [
+                      [
+                        slotElement.offset().left +
+                          slotElement.outerWidth() / 2,
+                        slotElement.offset().top +
+                          slotElement.outerHeight() / 2,
+                      ],
+                      [
+                        winElement.offset().left + winElement.outerWidth() / 2,
+                        winElement.offset().top + winElement.outerHeight() / 2,
+                      ],
+                    ];
+
+                    slotLines += GetBracketLineHtml(
+                      `${this.baseClass} line_r_${roundKey} s_${(i + 1) * 2}`,
+                      points,
+                      "gray"
+                    );
+
+                    slotLinesW += GetBracketLineHtml(
+                      `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
+                        parseInt(roundKey) % 2 == -1 ? 2 * i + 2 : i + 1
+                      } base`,
+                      [points[0], [points[1][0], points[0][1]]],
+                      "yellow",
+                      true
+                    );
+
+                    slotLinesW += GetBracketLineHtml(
+                      `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
+                        parseInt(roundKey) % 2 == -1 ? 2 * i + 2 : i + 1
+                      } win`,
+                      [[points[1][0], points[0][1]], points[1]],
+                      "yellow",
+                      true
+                    );
                   }
                 }
               }
@@ -491,7 +540,333 @@
           );
         });
 
-        $(".lines").html(slotLines);
+        $(".lines.base").html(slotLines);
+        $(".lines.win").html(slotLinesW);
+
+        // ICON ANIMATIONS
+        // For each player
+        Object.entries(players).forEach(([teamId, team], t) => {
+          Object.entries(team.player).forEach(([playerId, player], p) => {
+            // Winners path
+            let icon_element = $(
+              `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
+            );
+            if (!icon_element) return;
+
+            let icon_anim = gsap.timeline();
+            let prevSlot = null;
+
+            // We follow the bracket and add the positions the player appeared
+            // to the animation
+            Object.entries(winnersRounds)
+              .slice(0, -2)
+              .forEach(([roundKey, round], r) => {
+                Object.values(round.sets).forEach((slot, i) => {
+                  Object.values(slot.playerId).forEach(
+                    (slotPlayerId, slotIndex) => {
+                      if (
+                        (roundKey == "1" && slotPlayerId == teamId) ||
+                        (prevSlot &&
+                          prevSlot.nextWin &&
+                          prevSlot.nextWin[0] == parseInt(roundKey) &&
+                          prevSlot.nextWin[1] == i &&
+                          slotIndex == prevSlot.winSlot)
+                      ) {
+                        prevSlot = slot;
+
+                        if (roundKey == "1") {
+                          let setElement = $(
+                            `.round_base_w .slot_${i + 1}.slot_p_${slotIndex}`
+                          );
+
+                          if (setElement && setElement.offset()) {
+                            icon_anim.set($(icon_element), {
+                              x:
+                                setElement.offset().left +
+                                setElement.outerWidth() -
+                                $(icon_element).outerWidth() / 4,
+                              y:
+                                setElement.offset().top +
+                                setElement.outerHeight() / 2 -
+                                $(icon_element).outerHeight() / 2,
+                            });
+                            icon_anim.addLabel("start");
+                          }
+
+                          icon_anim.add(
+                            AnimateLine(
+                              $(
+                                `.lines.win .winners_container.line_base_r_${roundKey}.s_${
+                                  i + 1
+                                }.p_${slotIndex}.base`
+                              )
+                            )
+                          );
+                        }
+
+                        let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+                        icon_anim.add(
+                          AnimateLine(
+                            $(
+                              `.lines.win .winners_container.line_r_${roundKey}.s_${
+                                2 * i + 1 + slotIndex
+                              }.base`
+                            )
+                          )
+                        );
+
+                        if (setElement && setElement.offset()) {
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            duration: 1,
+                          });
+
+                          icon_anim.addLabel(`round_${roundKey}`);
+
+                          // Animation if won
+                          if (roundKey == "1") {
+                            icon_anim.add(
+                              AnimateLine(
+                                $(
+                                  `.lines.win .winners_container.line_base_r_${roundKey}.s_${
+                                    i + 1
+                                  }.p_${slotIndex}.win`
+                                )
+                              )
+                            );
+                          } else {
+                            icon_anim.add(
+                              AnimateLine(
+                                $(
+                                  `.lines.win .winners_container.line_r_${roundKey}.s_${
+                                    2 * i + 1 + slotIndex
+                                  }.win`
+                                )
+                              )
+                            );
+                          }
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            y: setElement.offset().top,
+                            duration: 1,
+                          });
+                        }
+                      }
+                    }
+                  );
+                });
+              });
+
+            iconAnimationsW.push(icon_anim);
+
+            // Losers path
+            icon_element = $(
+              `.losers_icons .bracket_icon.bracket_icon_p${teamId}`
+            );
+            if (!icon_element) return;
+
+            icon_anim = gsap.timeline();
+            prevSlot = null;
+
+            let appearRounds = [];
+
+            Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
+              Object.values(round.sets).forEach((set, s) => {
+                if (set.nextLose) {
+                  if (set.nextLose[0] == 0) set.nextLose[0] = -1;
+                  appearRounds.push(set.nextLose);
+                }
+              });
+            });
+
+            let found = false;
+
+            if (t < Object.keys(players).length) {
+              Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+                Object.values(round.sets).forEach((slot, i) => {
+                  Object.values(slot.playerId).forEach(
+                    (slotPlayerId, slotIndex) => {
+                      if (
+                        (prevSlot &&
+                          prevSlot.nextWin &&
+                          prevSlot.nextWin[0] == parseInt(roundKey) &&
+                          prevSlot.nextWin[1] == i &&
+                          slotIndex == prevSlot.winSlot) ||
+                        (roundKey != "-1" &&
+                          appearRounds[t] &&
+                          parseInt(roundKey) == appearRounds[t][0] &&
+                          i == appearRounds[t][1] &&
+                          !found) ||
+                        (roundKey == "-1" &&
+                          appearRounds[t] &&
+                          parseInt(roundKey) == appearRounds[t][0] &&
+                          2 * i + slotIndex == appearRounds[t][1])
+                      ) {
+                        prevSlot = slot;
+
+                        if (roundKey == "-1") {
+                          let setElement = $(
+                            `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
+                          );
+
+                          if (setElement && setElement.offset()) {
+                            icon_anim.set($(icon_element), {
+                              x:
+                                setElement.offset().left -
+                                ($(icon_element).outerWidth() * 3) / 4,
+                              y:
+                                setElement.offset().top +
+                                setElement.outerHeight() / 2 -
+                                $(icon_element).outerHeight() / 2,
+                            });
+                          }
+                          icon_anim.addLabel(`start`);
+
+                          icon_anim.add(
+                            AnimateLine(
+                              $(
+                                `.lines.win .losers_container.line_base_r_${roundKey}.s_${
+                                  i + 1
+                                }.p_${slotIndex}.base`
+                              )
+                            )
+                          );
+
+                          // icon_anim.addLabel(`round_${roundKey}`);
+                        } else if (!found) {
+                          let setElement = $(
+                            `.round_${parseInt(roundKey) + 1} .slot_hanging_${
+                              i + 1
+                            }`
+                          );
+
+                          if (setElement && setElement.offset()) {
+                            icon_anim.set($(icon_element), {
+                              x:
+                                setElement.offset().left -
+                                ($(icon_element).outerWidth() * 3) / 4,
+                              y:
+                                setElement.offset().top +
+                                setElement.outerHeight() / 2 -
+                                $(icon_element).outerHeight() / 2,
+                            });
+                          }
+                          icon_anim.addLabel(`start`);
+
+                          icon_anim.add(
+                            AnimateLine(
+                              $(
+                                `.lines.win .losers_container.line_hanging_r_${parseInt(
+                                  roundKey
+                                )}.s_${2 * i + 1}.base`
+                              )
+                            )
+                          );
+
+                          // icon_anim.addLabel(`round_${parseInt(roundKey)}`);
+                        }
+
+                        let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+                        if (parseInt(roundKey) % 2 == 0 && slotIndex % 2 == 1) {
+                          icon_anim.add(
+                            AnimateLine(
+                              $(
+                                `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                  2 * (i + 1)
+                                }.base`
+                              )
+                            )
+                          );
+                        } else {
+                          icon_anim.add(
+                            AnimateLine(
+                              $(
+                                `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                  slotIndex + 1
+                                }.base`
+                              )
+                            )
+                          );
+                        }
+
+                        if (setElement && setElement.offset()) {
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            duration: 1,
+                          });
+
+                          icon_anim.addLabel(`round_${roundKey}`);
+
+                          // Animation if won
+                          if (roundKey == "-1") {
+                            icon_anim.add(
+                              AnimateLine(
+                                $(
+                                  `.lines.win .losers_container.line_base_r_${-1}.s_${
+                                    i + 1
+                                  }.p_${slotIndex}.win`
+                                )
+                              )
+                            );
+                          } else if (found) {
+                            if (
+                              parseInt(roundKey) % 2 == 0 &&
+                              slotIndex % 2 == 1
+                            ) {
+                              icon_anim.add(
+                                AnimateLine(
+                                  $(
+                                    `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                      2 * (i + 1)
+                                    }.win`
+                                  )
+                                )
+                              );
+                            } else {
+                              icon_anim.add(
+                                AnimateLine(
+                                  $(
+                                    `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                      slotIndex + 1
+                                    }.win`
+                                  )
+                                )
+                              );
+                            }
+                          } else {
+                            icon_anim.add(
+                              AnimateLine(
+                                $(
+                                  `.lines.win .losers_container.line_hanging_r_${roundKey}.s_${
+                                    2 * i + 1
+                                  }.win`
+                                )
+                              )
+                            );
+                          }
+                          icon_anim.to($(icon_element), {
+                            x: setElement.offset().left,
+                            y: setElement.offset().top,
+                            duration: 1,
+                          });
+                        }
+
+                        found = true;
+                      }
+                    }
+                  );
+                });
+              });
+
+              console.log(icon_anim.labels);
+              iconAnimationsL.push(icon_anim);
+            }
+
+            return;
+          });
+        });
       }
 
       let GfResetRoundNum = Math.max.apply(
@@ -756,7 +1131,7 @@
     // UPDATE ICONS
     Object.entries(players).forEach(([teamId, team], t) => {
       Object.entries(team.player).forEach(([playerId, player], p) => {
-        let element = $(`.bracket_icon.bracket_icon_p${teamId}`);
+        let element = $(`.winners_icons .bracket_icon.bracket_icon_p${teamId}`);
         if (!element) return;
         let charactersHtml = "";
 
@@ -833,118 +1208,416 @@
           );
         }
 
-        // SET ICON POSITION
-        ["winners", "losers"].forEach((side) => {
-          let element = $(
-            `.${side}_icons .bracket_icon.bracket_icon_p${teamId}`
-          );
-          if (!element) return;
+        // TRIGGER ANIMATIONS
+        Object.entries(players).forEach(([teamId, team], t) => {
+          ["winners"].forEach((side) => {
+            let lastFoundRound = 0;
 
+            let GfResetRoundNum = Math.max.apply(
+              null,
+              Object.keys(bracket).map((r) => parseInt(r))
+            );
+
+            Object.entries(bracket).forEach(function ([roundKey, round], r) {
+              if (side == "winners" && parseInt(roundKey) < 0) return;
+              if (side == "losers" && parseInt(roundKey) > 0) return;
+              Object.values(round.sets).forEach(function (set, setIndex) {
+                if (
+                  ((side == "losers" &&
+                    parseInt(roundKey) < parseInt(lastFoundRound)) ||
+                    (side == "winners" &&
+                      parseInt(roundKey) > parseInt(lastFoundRound))) &&
+                  (set.playerId[0] == teamId || set.playerId[1] == teamId) &&
+                  roundKey != GfResetRoundNum
+                ) {
+                  lastFoundRound = roundKey;
+                }
+              });
+            });
+
+            iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`);
+          });
+        });
+
+        let appearRounds = [];
+
+        Object.entries(bracket).forEach(([roundKey, round], r) => {
+          if (parseInt(roundKey) < 0) return;
+          Object.values(round.sets).forEach((set, s) => {
+            if (set.nextLose) {
+              if (set.nextLose[0] == 0) set.nextLose[0] = -1;
+              appearRounds.push(set.nextLose);
+            }
+          });
+        });
+
+        console.log("Start");
+        Object.entries(players).forEach(([teamId, team], t) => {
           let lastFoundRound = 0;
-          let lastFoundSetIndex = 0;
-          let prevLastFoundRound = 0;
-          let prevLastFoundSetIndex = 0;
-
-          let GfResetRoundNum = Math.max.apply(
-            null,
-            Object.keys(bracket).map((r) => parseInt(r))
-          );
+          let losersIconId = null;
 
           Object.entries(bracket).forEach(function ([roundKey, round], r) {
-            if (side == "winners" && parseInt(roundKey) < 0) return;
-            if (side == "losers" && parseInt(roundKey) > 0) return;
+            if (parseInt(roundKey) > 0) return;
             Object.values(round.sets).forEach(function (set, setIndex) {
               if (
-                ((side == "losers" &&
-                  parseInt(roundKey) < parseInt(lastFoundRound)) ||
-                  (side == "winners" &&
-                    parseInt(roundKey) > parseInt(lastFoundRound))) &&
-                (set.playerId[0] == teamId || set.playerId[1] == teamId) &&
-                roundKey != GfResetRoundNum
+                parseInt(roundKey) < parseInt(lastFoundRound) &&
+                (set.playerId[0] == teamId || set.playerId[1] == teamId)
               ) {
-                prevLastFoundRound = lastFoundRound;
-                prevLastFoundSetIndex = lastFoundSetIndex;
+                console.log(set.playerId, teamId);
                 lastFoundRound = roundKey;
-                lastFoundSetIndex = setIndex;
+
+                if (losersIconId == null) {
+                  let found = null;
+
+                  appearRounds.forEach((appearRound, i) => {
+                    if (
+                      parseInt(roundKey) == appearRound[0] &&
+                      setIndex == appearRound[1]
+                    ) {
+                      if (roundKey == "-1") {
+                        if (set.playerId[0] == teamId) {
+                          losersIconId = 2 * i;
+                          return;
+                        }
+                        if (set.playerId[1] == teamId) {
+                          losersIconId = 2 * i + 1;
+                          return;
+                        }
+                      } else {
+                        losersIconId = i;
+                        return;
+                      }
+                    }
+                  });
+
+                  // if (roundKey == "-1") {
+                  //   losersId = set.playerId[(t + 1) % 2];
+                  // } else {
+                  //   losersId = set.playerId[0];
+                  // }
+                  console.log("player", teamId, "loserdId", losersIconId);
+                }
               }
             });
           });
 
-          let index = 0;
+          if (lastFoundRound == 0 || losersIconId == null)
+            iconAnimationsL[t].tweenTo(`start`);
+          else {
+            if (
+              iconAnimationsL[losersIconId].labels.hasOwnProperty(
+                `round_${lastFoundRound}`
+              )
+            ) {
+              iconAnimationsL[losersIconId].tweenTo(`round_${lastFoundRound}`);
+            } else {
+              iconAnimationsL[losersIconId].tweenTo(`start`);
+            }
 
-          if (lastFoundRound != 0) {
-            index =
-              bracket[lastFoundRound].sets[lastFoundSetIndex].playerId[0] ==
-              teamId
-                ? 0
-                : 1;
-          }
-          if (lastFoundRound == "1") {
-            let setElement = $(
-              `.round_base_w .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
+            let element = $(
+              `.losers_icons .bracket_icon.bracket_icon_p${losersIconId + 1}`
             );
+            if (!element) return;
 
-            if (setElement && setElement.offset()) {
-              $(element).css(
-                "left",
-                setElement.offset().left +
-                  setElement.outerWidth() -
-                  $(element).outerWidth() / 4
-              );
-              $(element).css(
-                "top",
-                setElement.offset().top +
-                  setElement.outerHeight() / 2 -
-                  $(element).outerHeight() / 2
-              );
-
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            }
-          } else if (
-            lastFoundRound == "-1" ||
-            (parseInt(lastFoundRound) < 0 &&
-              parseInt(lastFoundRound) % 2 == 0 &&
-              index == 0)
-          ) {
-            let setElement = null;
-
-            if (lastFoundRound == "-1") {
-              setElement = $(
-                `.round_base_l .slot_${lastFoundSetIndex + 1}.slot_p_${index}`
-              );
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            } else if (index == 0) {
-              setElement = $(
-                `.round_${parseInt(lastFoundRound) + 1} .slot_hanging_${
-                  lastFoundSetIndex + 1
-                }`
-              );
-              $(element).find(".icon_name_arrow").css("opacity", 0);
-            }
-
-            if (setElement && setElement.offset()) {
-              $(element).css(
-                "left",
-                setElement.offset().left - ($(element).outerWidth() * 3) / 4
-              );
-              $(element).css(
-                "top",
-                setElement.offset().top +
-                  setElement.outerHeight() / 2 -
-                  $(element).outerHeight() / 2
-              );
-            }
-          } else {
-            let setElement = $(
-              `.round_${prevLastFoundRound} .slot_${prevLastFoundSetIndex + 1}`
+            SetInnerHtml(
+              $(element).find(`.icon_name`),
+              `
+                <span>
+                  ${team.player["1"] ? team.player["1"].name : ""}
+                </span>
+              `
             );
-
-            if (setElement && setElement.offset()) {
-              $(element).css("left", setElement.offset().left);
-              $(element).css("top", setElement.offset().top);
-            }
           }
         });
+
+        // TODO
+        // ICON ANIMATIONS
+        // For each player
+        // Object.entries(players).forEach(([teamId, team], t) => {
+        //   Object.entries(team.player).forEach(([playerId, player], p) => {
+        //     // Winners path
+        //     let icon_element = $(
+        //       `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
+        //     );
+        //     if (!icon_element) return;
+
+        //     let icon_anim = gsap.timeline();
+
+        //     // We follow the bracket and add the positions the player appeared
+        //     // to the animation
+        //     Object.entries(winnersRounds)
+        //       .slice(0, -2)
+        //       .forEach(([roundKey, round], r) => {
+        //         Object.values(round.sets).forEach((slot, i) => {
+        //           Object.values(slot.playerId).forEach(
+        //             (slotPlayerId, slotIndex) => {
+        //               if (slotPlayerId == teamId) {
+        //                 if (roundKey == "1") {
+        //                   let setElement = $(
+        //                     `.round_base_w .slot_${i + 1}.slot_p_${slotIndex}`
+        //                   );
+
+        //                   if (setElement && setElement.offset()) {
+        //                     icon_anim.set($(icon_element), {
+        //                       x:
+        //                         setElement.offset().left +
+        //                         setElement.outerWidth() -
+        //                         $(icon_element).outerWidth() / 4,
+        //                       y:
+        //                         setElement.offset().top +
+        //                         setElement.outerHeight() / 2 -
+        //                         $(icon_element).outerHeight() / 2,
+        //                     });
+        //                     icon_anim.addLabel("start");
+        //                   }
+
+        //                   icon_anim.add(
+        //                     AnimateLine(
+        //                       $(
+        //                         `.lines.win .winners_container.line_base_r_${roundKey}.s_${
+        //                           i + 1
+        //                         }.p_${slotIndex}.base`
+        //                       )
+        //                     )
+        //                   );
+        //                   icon_anim.addLabel("round_1");
+        //                 }
+
+        //                 let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+        //                 icon_anim.add(
+        //                   AnimateLine(
+        //                     $(
+        //                       `.lines.win .winners_container.line_r_${roundKey}.s_${
+        //                         slotIndex + 1
+        //                       }.base`
+        //                     )
+        //                   )
+        //                 );
+
+        //                 if (setElement && setElement.offset()) {
+        //                   icon_anim.to($(icon_element), {
+        //                     x: setElement.offset().left,
+        //                     duration: 1,
+        //                   });
+
+        //                   // Only continue if won
+        //                   if (
+        //                     slot.score[slotIndex] >
+        //                     slot.score[(slotIndex + 1) % 2]
+        //                   ) {
+        //                     if (roundKey == "1") {
+        //                       icon_anim.add(
+        //                         AnimateLine(
+        //                           $(
+        //                             `.lines.win .winners_container.line_base_r_${roundKey}.s_${
+        //                               i + 1
+        //                             }.p_${slotIndex}.win`
+        //                           )
+        //                         )
+        //                       );
+        //                     } else {
+        //                       icon_anim.add(
+        //                         AnimateLine(
+        //                           $(
+        //                             `.lines.win .winners_container.line_r_${roundKey}.s_${
+        //                               slotIndex + 1
+        //                             }.win`
+        //                           )
+        //                         )
+        //                       );
+        //                     }
+        //                     icon_anim.to($(icon_element), {
+        //                       x: setElement.offset().left,
+        //                       y: setElement.offset().top,
+        //                       duration: 1,
+        //                     });
+        //                   } else {
+        //                     // TODO: remove
+        //                     icon_anim.fromTo(
+        //                       $(icon_element).find(".icon_image"),
+        //                       { filter: "brightness(1)" },
+        //                       {
+        //                         filter: "brightness(.5)",
+        //                         duration: 0.4,
+        //                       }
+        //                     );
+        //                   }
+        //                 }
+        //               }
+        //             }
+        //           );
+        //         });
+        //       });
+
+        //     iconAnimationsW.push(icon_anim);
+
+        //     // Losers path
+        //     icon_element = $(
+        //       `.losers_icons .bracket_icon.bracket_icon_p${teamId}`
+        //     );
+        //     if (!icon_element) return;
+
+        //     icon_anim = gsap.timeline();
+
+        //     let found = false;
+
+        //     Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+        //       Object.values(round.sets).forEach((slot, i) => {
+        //         Object.values(slot.playerId).forEach(
+        //           (slotPlayerId, slotIndex) => {
+        //             if (slotPlayerId == teamId) {
+        //               if (roundKey == "-1") {
+        //                 let setElement = $(
+        //                   `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
+        //                 );
+
+        //                 if (setElement && setElement.offset()) {
+        //                   icon_anim.set($(icon_element), {
+        //                     x:
+        //                       setElement.offset().left -
+        //                       ($(icon_element).outerWidth() * 3) / 4,
+        //                     y:
+        //                       setElement.offset().top +
+        //                       setElement.outerHeight() / 2 -
+        //                       $(icon_element).outerHeight() / 2,
+        //                   });
+        //                 }
+
+        //                 icon_anim.add(
+        //                   AnimateLine(
+        //                     $(
+        //                       `.lines.win .losers_container.line_base_r_${roundKey}.s_${
+        //                         i + 1
+        //                       }.p_${slotIndex}.base`
+        //                     )
+        //                   )
+        //                 );
+        //               } else if (!found) {
+        //                 let setElement = $(
+        //                   `.round_${parseInt(roundKey) + 1} .slot_hanging_${
+        //                     i + 1
+        //                   }`
+        //                 );
+
+        //                 icon_anim.add(
+        //                   AnimateLine(
+        //                     $(
+        //                       `.lines.win .losers_container.line_hanging_r_${parseInt(
+        //                         roundKey
+        //                       )}.s_${2 * i + 1}.base`
+        //                     )
+        //                   )
+        //                 );
+
+        //                 if (setElement && setElement.offset()) {
+        //                   icon_anim.set($(icon_element), {
+        //                     x:
+        //                       setElement.offset().left -
+        //                       ($(icon_element).outerWidth() * 3) / 4,
+        //                     y:
+        //                       setElement.offset().top +
+        //                       setElement.outerHeight() / 2 -
+        //                       $(icon_element).outerHeight() / 2,
+        //                   });
+        //                 }
+        //               }
+
+        //               let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+        //               if (parseInt(roundKey) % 2 == 0 && slotIndex % 2 == 1) {
+        //                 icon_anim.add(
+        //                   AnimateLine(
+        //                     $(
+        //                       `.lines.win .losers_container.line_r_${roundKey}.s_${
+        //                         2 * (i + 1)
+        //                       }.base`
+        //                     )
+        //                   )
+        //                 );
+        //               } else {
+        //                 icon_anim.add(
+        //                   AnimateLine(
+        //                     $(
+        //                       `.lines.win .losers_container.line_r_${roundKey}.s_${
+        //                         slotIndex + 1
+        //                       }.base`
+        //                     )
+        //                   )
+        //                 );
+        //               }
+
+        //               if (setElement && setElement.offset()) {
+        //                 icon_anim.to($(icon_element), {
+        //                   x: setElement.offset().left,
+        //                   duration: 1,
+        //                 });
+        //                 // Only continue if won
+        //                 if (
+        //                   slot.score[slotIndex] >
+        //                   slot.score[(slotIndex + 1) % 2]
+        //                 ) {
+        //                   if (roundKey == "-1") {
+        //                     icon_anim.add(
+        //                       AnimateLine(
+        //                         $(
+        //                           `.lines.win .losers_container.line_base_r_${-1}.s_${
+        //                             i + 1
+        //                           }.p_${slotIndex}.win`
+        //                         )
+        //                       )
+        //                     );
+        //                   } else if (found) {
+        //                     icon_anim.add(
+        //                       AnimateLine(
+        //                         $(
+        //                           `.lines.win .losers_container.line_r_${roundKey}.s_${
+        //                             slotIndex + 1
+        //                           }.win`
+        //                         )
+        //                       )
+        //                     );
+        //                   } else {
+        //                     icon_anim.add(
+        //                       AnimateLine(
+        //                         $(
+        //                           `.lines.win .losers_container.line_hanging_r_${roundKey}.s_${
+        //                             2 * i + 1
+        //                           }.win`
+        //                         )
+        //                       )
+        //                     );
+        //                   }
+        //                   icon_anim.to($(icon_element), {
+        //                     x: setElement.offset().left,
+        //                     y: setElement.offset().top,
+        //                     duration: 1,
+        //                   });
+        //                 } else {
+        //                   // TODO: remove
+        //                   icon_anim.fromTo(
+        //                     $(icon_element).find(".icon_image"),
+        //                     { filter: "brightness(1)" },
+        //                     {
+        //                       filter: "brightness(.5)",
+        //                       duration: 0.4,
+        //                     }
+        //                   );
+        //                 }
+        //               }
+
+        //               found = true;
+        //             }
+        //           }
+        //         );
+        //       });
+        //     });
+
+        //     iconAnimationsL.push(icon_anim);
+
+        //     return;
+        //   });
+        // });
 
         return;
       });
@@ -959,7 +1632,7 @@
   $(window).on("load", () => {
     $("body").fadeTo(1000, 1000, async () => {
       Start();
-      setInterval(Update, 16);
+      setInterval(Update, 1000);
     });
   });
 })(jQuery);

@@ -421,7 +421,9 @@ class TSHBracketView(QGraphicsView):
                     "playerId": bracketSet.playerIds,
                     "score": bracketSet.score,
                     "nextWin": nextWin,
+                    "winSlot": bracketSet.winNextSlot,
                     "nextLose": nextLose,
+                    "loseSlot": bracketSet.loseNextSlot,
                     "playerName": [
                         p1name,
                         p2name
