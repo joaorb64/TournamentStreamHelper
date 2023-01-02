@@ -846,7 +846,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="420"/>
         <source>Contribute to the Asset Database</source>
-        <translation>Contribuer à la Base de ressources</translation>
+        <translation>Contribuer aux ressources</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="665"/>
