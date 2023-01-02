@@ -60,7 +60,7 @@ jobs:
     if: 
       contains('
         refs/heads/main
-        refs/heads/feature/
+        refs/heads/feature/*
       ', github.ref)
     strategy:
       fail-fast: false
