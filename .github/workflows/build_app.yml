@@ -57,10 +57,11 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: contains('
-      refs/heads/main
-      refs/heads/feature/
-    ', github.ref)
+    if: 
+      contains('
+        refs/heads/main
+        refs/heads/feature/
+      ', github.ref)
     strategy:
       fail-fast: false
       matrix:
