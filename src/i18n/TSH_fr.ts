@@ -47,6 +47,11 @@ p, li { white-space: pre-wrap; }
         <translation>Raccourci</translation>
     </message>
     <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="104"/>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
         <source>Tournament Name</source>
         <translation>Nom du Tournoi</translation>
