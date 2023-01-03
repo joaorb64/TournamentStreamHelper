@@ -119,8 +119,8 @@ body {
   width: 600px;
   height: 30px;
   color: var(--text-color);
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 16px;
+  padding-right: 16px;
   background-position: center;
   text-transform: uppercase;
   box-sizing: border-box;
@@ -143,7 +143,7 @@ body {
 .info.container.top {
   top: 4px;
   height: 50px;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .info.container.bottom {
@@ -158,16 +158,17 @@ body {
   top: unset;
   bottom: 4px;
   padding: 8px 16px;
+  gap: 2px;
 }
 
 .phase {
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: 2px;
   width: 100%;
 }
 
 .match {
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 2px;
   width: 100%;
 }
