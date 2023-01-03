@@ -12,6 +12,8 @@ query TournamentDataQuery($eventSlug: String!) {
         name
         shortSlug
         venueAddress
+        startAt
+        endAt
     }
   }
 }

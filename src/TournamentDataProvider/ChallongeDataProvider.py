@@ -3,6 +3,8 @@ import os
 import traceback
 import re
 import json
+from datetime import datetime
+from dateutil.parser import parse
 from ..Helpers.TSHDictHelper import deep_get
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
@@ -37,8 +39,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                 )
 
                 data = json.loads(data.text)
-
                 collection = deep_get(data, "collection", [{}])[0]
+                details = deep_get(collection, "details", [])
 
                 videogame = collection.get("filter", {}).get("id", None)
                 if videogame:
@@ -47,6 +49,20 @@ class ChallongeDataProvider(TournamentDataProvider):
                     self.videogame = videogame
 
                 finalData["tournamentName"] = deep_get(collection, "name")
+
+                # TODO necessary ?
+                if len(details) > 3:
+                    startAtStr = deep_get(details[2], "text", "")
+                    try:
+                        # test if date
+                        parse(startAtStr, fuzzy=False)
+                        # 'September 29, 2022'
+                        element = datetime.strptime(startAtStr, "%B %d, %Y")
+                        # to timestamp
+                        timestamp = datetime.timestamp(element)
+                        finalData["startAt"] = datetime.timestamp(element)
+                    except ValueError:
+                        print(' - no date defined')
 
                 details = collection.get("details", [])
                 participantsElement = next(
