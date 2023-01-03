@@ -21,6 +21,43 @@ body {
   letter-spacing: 1;
 }
 
+.header {
+  display: flex;
+  width: 100vw;
+  height: 64px;
+  top: 0;
+  position: absolute;
+  background: black;
+  justify-content: center;
+  align-items: center;
+}
+
+.header .bg {
+  position: absolute;
+  left: 64px;
+  right: 64px;
+  height: 100%;
+  background: var(--p1-score-bg-color);
+  clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
+}
+
+.header .title {
+  font-size: 42px;
+  width: 800px;
+  color: var(--text-color);
+  z-index: 1;
+}
+
+.trophy {
+  width: 92px;
+  height: 92px;
+  background-image: url("./trophy.svg");
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 64px);
+  transform: translate(-50%, -50%);
+}
+
 .container {
   color: var(--text-color);
   overflow: hidden;
@@ -59,7 +96,6 @@ body {
   justify-content: center;
   align-content: center;
   width: 256px;
-  height: 100vh;
   position: absolute;
   top: 0%;
   box-sizing: border-box;
@@ -79,7 +115,6 @@ body {
   justify-content: center;
   align-content: center;
   width: 50vw;
-  height: 100vh;
   position: absolute;
   top: 0%;
   padding-left: 128px;
@@ -99,6 +134,8 @@ body {
   flex: 1 1 0;
   max-width: 320px;
   min-width: 0;
+  height: calc(100vh - 120px);
+  top: 92px;
 }
 
 .round_base_w {
