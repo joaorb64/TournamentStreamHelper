@@ -51,11 +51,15 @@ body {
 .trophy {
   width: 92px;
   height: 92px;
-  background-image: url("./trophy.svg");
+  -webkit-mask-image: url("./trophy.svg");
   position: absolute;
   left: 50%;
   top: calc(50% + 64px);
   transform: translate(-50%, -50%);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: linear-gradient(225deg, #e8d15d 0%, #a15404 50%, #e8d15d 100%);
 }
 
 .container {
