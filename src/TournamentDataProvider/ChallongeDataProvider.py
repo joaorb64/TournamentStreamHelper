@@ -60,7 +60,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                         element = datetime.strptime(startAtStr, "%B %d, %Y")
                         # to timestamp
                         timestamp = datetime.timestamp(element)
-                        print('date', element, 'stamp', timestamp)
                         finalData["startAt"] = datetime.timestamp(element)
                     except ValueError:
                         print(' - no date defined')
