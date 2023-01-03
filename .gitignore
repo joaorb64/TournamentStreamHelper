@@ -48,3 +48,4 @@ tmp/*
 .qt_for_python/*
 layout_*/
 src/layout/ui_*.py
+layout_*/*

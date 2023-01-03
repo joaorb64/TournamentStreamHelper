@@ -95,6 +95,16 @@
         </property>
        </widget>
       </item>
+      <item row="5" column="1">
+       <widget class="QDateEdit" name="startAt"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Date</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
