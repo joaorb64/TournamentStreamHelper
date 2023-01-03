@@ -571,7 +571,7 @@
             );
             if (!icon_element) return;
 
-            let icon_anim = gsap.timeline();
+            let icon_anim = gsap.timeline({ paused: true });
             let prevSlot = null;
 
             // We follow the bracket and add the positions the player appeared
@@ -618,7 +618,8 @@
                                   i + 1
                                 }.p_${slotIndex}.base`
                               )
-                            )
+                            ),
+                            ">"
                           );
                         }
 
@@ -631,20 +632,25 @@
                                 2 * i + 1 + slotIndex
                               }.base`
                             )
-                          )
+                          ),
+                          ">"
                         );
 
                         if (setElement && setElement.offset()) {
-                          icon_anim.to($(icon_element), {
-                            x:
-                              roundKey !=
-                              Object.keys(winnersRounds).reverse()[1]
-                                ? setElement.offset().left
-                                : setElement.offset().left - MIDDLE_SPACE,
-                            duration: 1,
-                          });
+                          icon_anim.to(
+                            $(icon_element),
+                            {
+                              x:
+                                roundKey !=
+                                Object.keys(winnersRounds).reverse()[1]
+                                  ? setElement.offset().left
+                                  : setElement.offset().left - MIDDLE_SPACE,
+                              duration: 0.4,
+                            },
+                            "<"
+                          );
 
-                          icon_anim.addLabel(`round_${roundKey}`);
+                          icon_anim.addLabel(`round_${roundKey}`, "<+=0.4");
 
                           // Animation if won
                           if (roundKey == "1") {
@@ -655,7 +661,8 @@
                                     i + 1
                                   }.p_${slotIndex}.win`
                                 )
-                              )
+                              ),
+                              ">"
                             );
                           } else {
                             icon_anim.add(
@@ -665,18 +672,23 @@
                                     2 * i + 1 + slotIndex
                                   }.win`
                                 )
-                              )
+                              ),
+                              ">"
                             );
                           }
-                          icon_anim.to($(icon_element), {
-                            x:
-                              roundKey !=
-                              Object.keys(winnersRounds).reverse()[1]
-                                ? setElement.offset().left
-                                : setElement.offset().left - MIDDLE_SPACE,
-                            y: setElement.offset().top,
-                            duration: 1,
-                          });
+                          icon_anim.to(
+                            $(icon_element),
+                            {
+                              x:
+                                roundKey !=
+                                Object.keys(winnersRounds).reverse()[1]
+                                  ? setElement.offset().left
+                                  : setElement.offset().left - MIDDLE_SPACE,
+                              y: setElement.offset().top,
+                              duration: 0.4,
+                            },
+                            "<"
+                          );
                         }
                       }
                     }
@@ -692,7 +704,7 @@
             );
             if (!icon_element) return;
 
-            icon_anim = gsap.timeline();
+            icon_anim = gsap.timeline({ paused: true });
             prevSlot = null;
 
             let appearRounds = [];
@@ -756,7 +768,8 @@
                                   i + 1
                                 }.p_${slotIndex}.base`
                               )
-                            )
+                            ),
+                            "<"
                           );
 
                           // icon_anim.addLabel(`round_${roundKey}`);
@@ -786,7 +799,8 @@
                                 `.lines.win .losers_container.line_hanging_r_${parseInt(
                                   roundKey
                                 )}.s_${2 * i + 1}.base`
-                              )
+                              ),
+                              "<"
                             )
                           );
 
@@ -803,7 +817,8 @@
                                   2 * (i + 1)
                                 }.base`
                               )
-                            )
+                            ),
+                            ">"
                           );
                         } else {
                           icon_anim.add(
@@ -813,15 +828,20 @@
                                   slotIndex + 1
                                 }.base`
                               )
-                            )
+                            ),
+                            ">"
                           );
                         }
 
                         if (setElement && setElement.offset()) {
-                          icon_anim.to($(icon_element), {
-                            x: setElement.offset().left,
-                            duration: 1,
-                          });
+                          icon_anim.to(
+                            $(icon_element),
+                            {
+                              x: setElement.offset().left,
+                              duration: 0.4,
+                            },
+                            "<"
+                          );
 
                           icon_anim.addLabel(`round_${roundKey}`);
 
@@ -834,7 +854,8 @@
                                     i + 1
                                   }.p_${slotIndex}.win`
                                 )
-                              )
+                              ),
+                              ">"
                             );
                           } else if (found) {
                             if (
@@ -848,7 +869,8 @@
                                       2 * (i + 1)
                                     }.win`
                                   )
-                                )
+                                ),
+                                ">"
                               );
                             } else {
                               icon_anim.add(
@@ -858,7 +880,8 @@
                                       slotIndex + 1
                                     }.win`
                                   )
-                                )
+                                ),
+                                ">"
                               );
                             }
                           } else {
@@ -869,14 +892,19 @@
                                     2 * i + 1
                                   }.win`
                                 )
-                              )
+                              ),
+                              ">"
                             );
                           }
-                          icon_anim.to($(icon_element), {
-                            x: setElement.offset().left,
-                            y: setElement.offset().top,
-                            duration: 1,
-                          });
+                          icon_anim.to(
+                            $(icon_element),
+                            {
+                              x: setElement.offset().left,
+                              y: setElement.offset().top,
+                              duration: 0.4,
+                            },
+                            "<"
+                          );
                         }
 
                         found = true;
@@ -905,16 +933,21 @@
                         lastLosersRoundNum - index - 1
                       }.s_${1}.base`
                     )
-                  )
+                  ),
+                  ">"
                 );
 
                 let setElement = $(`.round_${roundNum} .slot_${1}`);
 
                 if (setElement.get(0)) {
-                  icon_anim.to($(icon_element), {
-                    x: setElement.offset().left + MIDDLE_SPACE,
-                    duration: 1,
-                  });
+                  icon_anim.to(
+                    $(icon_element),
+                    {
+                      x: setElement.offset().left + MIDDLE_SPACE,
+                      duration: 0.4,
+                    },
+                    "<"
+                  );
                 }
 
                 icon_anim.addLabel(`round_${lastLosersRoundNum - index - 1}`);
@@ -927,15 +960,20 @@
                         lastLosersRoundNum - index - 1
                       }.s_${1}.win`
                     )
-                  )
+                  ),
+                  ">"
                 );
 
                 if (setElement.get(0)) {
-                  icon_anim.to($(icon_element), {
-                    x: setElement.offset().left + MIDDLE_SPACE,
-                    y: setElement.offset().top,
-                    duration: 1,
-                  });
+                  icon_anim.to(
+                    $(icon_element),
+                    {
+                      x: setElement.offset().left + MIDDLE_SPACE,
+                      y: setElement.offset().top,
+                      duration: 0.4,
+                    },
+                    "<"
+                  );
                 }
               });
 
@@ -1524,7 +1562,7 @@
   $(window).on("load", () => {
     $("body").fadeTo(1000, 1000, async () => {
       Start();
-      setInterval(Update, 1000);
+      setInterval(Update, 5000);
     });
   });
 })(jQuery);
