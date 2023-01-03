@@ -7,4 +7,4 @@ Pillow
 Flask
 flask-cors
 asyncio
-dateutil
+python-dateutil
