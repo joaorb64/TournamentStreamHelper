@@ -161,13 +161,13 @@ body {
 }
 
 .phase {
-  font-size: 14px;
+  font-size: 18px;
   letter-spacing: 2px;
   width: 100%;
 }
 
 .match {
-  font-size: 16px;
+  font-size: 22px;
   letter-spacing: 2px;
   width: 100%;
 }
@@ -289,25 +289,25 @@ body {
 }
 
 .pronoun {
-  font-size: 14px;
+  font-size: 16px;
   text-transform: uppercase;
-  margin-left: 6px;
-  margin-right: 6px;
   letter-spacing: normal;
   padding-left: 8px;
   padding-right: 8px;
   border-radius: 6px;
   color: var(--bg-color);
   place-self: flex-end;
-  transform: translateY(-50%);
   position: absolute;
-  right: 0;
+  top: 48px;
+  z-index: 9;
 }
 
-.p1 .pronoun {
+.left .pronoun {
   background: var(--p1-sponsor-color);
+  left: 4px;
 }
 
-.p2 .pronoun {
+.right .pronoun {
   background: var(--p2-sponsor-color);
+  right: 4px;
 }
