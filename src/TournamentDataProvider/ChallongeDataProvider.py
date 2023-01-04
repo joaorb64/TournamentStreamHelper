@@ -480,6 +480,15 @@ class ChallongeDataProvider(TournamentDataProvider):
         scores = match.get("scores")
         if len(match.get("scores")) < 2:
             scores = [None, None]
+        
+        # If a match has a winner but no scores,
+        # we're assuming it's a DQ
+        if len(match.get("scores")) == 0:
+            if match.get("winner_id") == p1_id:
+                scores = [0, -1]
+            if match.get("winner_id") == p2_id:
+                scores = [-1, 0]
+            
 
         return({
             "id": deep_get(match, "id"),
