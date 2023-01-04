@@ -443,6 +443,9 @@ class TSHBracketView(QGraphicsView):
 
         self.bracketLines = []
 
+        path = QPainterPath()
+        dashedPath = QPainterPath()
+
         for i, round in enumerate(self.winnersBracketWidgets):
             for j, setWidget in enumerate(round):
                 _set = setWidget
@@ -455,8 +458,6 @@ class TSHBracketView(QGraphicsView):
                     nxtWidget = self.winnersBracketWidgets[i+1][math.floor(j/2)]
                     nxt = nxtWidget
 
-                    pen = QPen(Qt.black, 2, Qt.SolidLine)
-
                     start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                         QPointF(_set.width(), _set.height()/2)
                     end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
@@ -465,7 +466,6 @@ class TSHBracketView(QGraphicsView):
                     midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
                     midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
 
-                    path = QPainterPath()
                     path.addPolygon(
                         QPolygonF([
                             start,
@@ -474,16 +474,7 @@ class TSHBracketView(QGraphicsView):
                             end
                         ])
                     )
-
-                    item = self._scene.addPath(
-                        path,
-                        pen
-                    )
-
-                    self.bracketLines.append(item)
                 elif self.progressionsOut > 0:
-                    pen = QPen(Qt.black, 2, Qt.SolidLine)
-
                     start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                         QPointF(_set.width(), _set.height()/2)
                     end = start + QPointF(50, 0)
@@ -491,7 +482,6 @@ class TSHBracketView(QGraphicsView):
                     notch1 = end + QPointF(-10, +10)
                     notch2 = end + QPointF(-10, -10)
                     
-                    path = QPainterPath()
                     path.addPolygon(
                         QPolygonF([
                             start,
@@ -506,35 +496,18 @@ class TSHBracketView(QGraphicsView):
                         ])
                     )
 
-                    item = self._scene.addPath(
-                        path,
-                        pen
-                    )
-
-                    self.bracketLines.append(item)
-
                 # Progression in
                 if self.progressionsIn > 0 and i == 0:
-                    pen = QPen(Qt.black, 2, Qt.DashLine)
-
                     end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                         QPointF(0, _set.height()/2)
                     start = end - QPointF(50, 0)
                     
-                    path = QPainterPath()
-                    path.addPolygon(
+                    dashedPath.addPolygon(
                         QPolygonF([
                             start,
                             end
                         ])
                     )
-
-                    item = self._scene.addPath(
-                        path,
-                        pen
-                    )
-
-                    self.bracketLines.append(item)
         
         for i, round in enumerate(self.losersBracketWidgets):
             for j, setWidget in enumerate(round):
@@ -551,8 +524,6 @@ class TSHBracketView(QGraphicsView):
                             nxtWidget = self.losersBracketWidgets[i+1][j]
                         nxt = nxtWidget
 
-                        pen = QPen(Qt.black, 2, Qt.SolidLine)
-
                         start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                             QPointF(_set.width(), _set.height()/2)
                         end = QPointF(nxtWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), nxt.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
@@ -561,7 +532,6 @@ class TSHBracketView(QGraphicsView):
                         midpoint1 = QPointF(start.x()+(end.x()-start.x())/2, start.y())
                         midpoint2 = QPointF(start.x()+(end.x()-start.x())/2, end.y())
 
-                        path = QPainterPath()
                         path.addPolygon(
                             QPolygonF([
                                 start,
@@ -570,16 +540,7 @@ class TSHBracketView(QGraphicsView):
                                 end
                             ])
                         )
-
-                        item = self._scene.addPath(
-                            path,
-                            pen
-                        )
-
-                        self.bracketLines.append(item)
                     elif self.progressionsOut > 1:
-                        pen = QPen(Qt.black, 2, Qt.SolidLine)
-
                         start = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                             QPointF(_set.width(), _set.height()/2)
                         end = start + QPointF(50, 0)
@@ -587,7 +548,6 @@ class TSHBracketView(QGraphicsView):
                         notch1 = end + QPointF(-10, +10)
                         notch2 = end + QPointF(-10, -10)
                         
-                        path = QPainterPath()
                         path.addPolygon(
                             QPolygonF([
                                 start,
@@ -602,37 +562,35 @@ class TSHBracketView(QGraphicsView):
                             ])
                         )
 
-                        item = self._scene.addPath(
-                            path,
-                            pen
-                        )
-
-                        self.bracketLines.append(item)
-
                     # Progression in
                     if self.progressionsIn > 1 and i == 0:
-                        pen = QPen(Qt.black, 2, Qt.DashLine)
-
                         end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                             QPointF(0, _set.height()/2)
                         start = end - QPointF(50, 0)
                         
-                        path = QPainterPath()
-                        path.addPolygon(
+                        dashedPath.addPolygon(
                             QPolygonF([
                                 start,
                                 end
                             ])
                         )
-
-                        item = self._scene.addPath(
-                            path,
-                            pen
-                        )
-
-                        self.bracketLines.append(item)
                 except:
                     print(traceback.format_exc())
+        
+        pen = QPen(Qt.gray, 4, Qt.SolidLine)
+        pen2 = QPen(Qt.black, 6, Qt.SolidLine)
+
+        item = self._scene.addPath(path, pen2)
+        self.bracketLines.append(item)
+
+        item = self._scene.addPath(path, pen)
+        self.bracketLines.append(item)
+
+        item = self._scene.addPath(dashedPath, pen2)
+        self.bracketLines.append(item)
+
+        item = self._scene.addPath(dashedPath, pen)
+        self.bracketLines.append(item)
 
     def fitInView(self, scale=True):
         rect = QRectF(self.bracketLayout.rect())
