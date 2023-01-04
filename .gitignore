@@ -46,3 +46,4 @@ THS.includes
 
 tmp/*
 .qt_for_python/*
+layout_*/*
