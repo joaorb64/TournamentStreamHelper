@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-      - feature/ui-translations
       - locale/*
+      - feature/*
   workflow_dispatch:
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) }}
     strategy:
       fail-fast: false
       matrix:

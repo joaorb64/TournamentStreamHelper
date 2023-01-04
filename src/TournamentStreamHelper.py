@@ -381,6 +381,49 @@ class Window(QMainWindow):
 
         self.optionsBt.menu().addSeparator()
 
+        # Help menu code
+
+        help_messagebox = QMessageBox()
+        help_messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
+        help_messagebox.setText(QApplication.translate("app", "A new window has been opened in your default webbrowser."))
+
+        helpMenu = QMenu(QApplication.translate(
+            "app", "Help") + menu_margin, self.optionsBt.menu())
+        self.optionsBt.menu().addMenu(helpMenu)
+        action = helpMenu.addAction(
+            QApplication.translate("app", "Open the Wiki"))
+        wiki_url = "https://github.com/joaorb64/TournamentStreamHelper/wiki"
+        action.triggered.connect(lambda x: [
+            QDesktopServices.openUrl(QUrl(wiki_url)),
+            help_messagebox.exec()
+        ])
+
+        action = helpMenu.addAction(
+            QApplication.translate("app", "Report a bug"))
+        issues_url = "https://github.com/joaorb64/TournamentStreamHelper/issues"
+        action.triggered.connect(lambda x: [
+            QDesktopServices.openUrl(QUrl(issues_url)),
+            help_messagebox.exec()
+        ])
+
+        action = helpMenu.addAction(
+            QApplication.translate("app", "Ask for Help on Discord"))
+        discord_url = "https://discord.gg/X9Sp2FkcHF"
+        action.triggered.connect(lambda x: [
+            QDesktopServices.openUrl(QUrl(discord_url)),
+            help_messagebox.exec()
+        ])
+
+        helpMenu.addSeparator()
+
+        action = helpMenu.addAction(
+            QApplication.translate("app", "Contribute to the Asset Database"))
+        asset_url = "https://github.com/joaorb64/StreamHelperAssets/"
+        action.triggered.connect(lambda x: [
+            QDesktopServices.openUrl(QUrl(asset_url)),
+            help_messagebox.exec()
+        ])
+
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(
             QApplication.translate("About", "About"))
