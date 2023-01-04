@@ -312,7 +312,13 @@ class TSHBracketView(QGraphicsView):
         if self.bracketWidget.limitExport.isChecked():
             limitExportNumber = self.bracketWidget.limitExportNumber.value()
             winnersRounds = math.floor(limitExportNumber/8) + 3
-            losersRounds = math.floor(limitExportNumber/2) + 2
+
+            try:
+                losersRounds = int(math.log2(limitExportNumber)) + int(math.log2((limitExportNumber-1)/2)) + 2
+            except:
+                print(traceback.format_exc())
+            finally:
+                losersRounds = 0
 
             if StateManager.Get("bracket.bracket.progressionsIn", 0) > 0:
                 StateManager.Set("bracket.bracket.progressionsIn", 0)

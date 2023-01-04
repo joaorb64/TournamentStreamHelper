@@ -111,7 +111,8 @@ class TSHBracketWidget(QDockWidget):
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
                 progressionsOut=self.progressionsOut.value()
-            )
+            ),
+            self.bracketView.Update()
         ])
 
         self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
@@ -121,7 +122,8 @@ class TSHBracketWidget(QDockWidget):
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
                 progressionsOut=self.progressionsOut.value()
-            )
+            ),
+            self.bracketView.Update()
         ])
 
         self.limitExport: QCheckBox = self.findChild(QCheckBox, "limitExport")
