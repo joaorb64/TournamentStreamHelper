@@ -1,6 +1,6 @@
-query HeadToHeadSetsQuery($eventId: ID!, $pid1: ID!, $pid2: ID!, $page: Int!) {
+query HeadToHeadSetsQuery($eventId: ID!, $pid: ID!, $page: Int!) {
 	event(id: $eventId) {
-        sets(page: $page, perPage: 500, filters: {playerIds: [$pid1, $pid2]}) {
+        sets(page: $page, perPage: 500, filters: {playerIds: [$pid]}) {
             nodes {
                 entrant1Score
                 entrant2Score

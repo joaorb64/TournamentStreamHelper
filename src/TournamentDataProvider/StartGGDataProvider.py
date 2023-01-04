@@ -994,6 +994,155 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             traceback.print_exc()
             return []
+    
+    def GetHeadToHeadStandings(self, id1, id2, gameType, callback, progress_callback):
+        try:
+            id1 = [str(id1[0]), str(id1[1])]
+            id2 = [str(id2[0]), str(id2[1])]
+
+            pool = self.getRecentSetsThreadPool
+
+            recentSets = []
+
+            pool.clear()
+
+            print("Get recent sets start")
+
+            for _id1, _id2, inverted in [[id1, id2, False], [id2, id1, True]]:
+                for i in range(5):
+                    worker = Worker(self.GetRecentSetsWorker, **{
+                        "id1": _id1,
+                        "id2": _id2,
+                        "page": (i+1),
+                        "inverted": inverted
+                    })
+                    worker.signals.result.connect(lambda result: [
+                        recentSets.extend(result)
+                    ])
+                    pool.start(worker)
+
+            pool.waitForDone(20000)
+            QCoreApplication.processEvents()
+            byId = {_set.get("id"): _set for _set in recentSets}
+            recentSets = list(byId.values())
+            recentSets.sort(key=lambda s: s.get("timestamp"), reverse=True)
+            print("Recent sets size:", len(recentSets))
+            callback.emit({"sets": recentSets, "request_time": requestTime})
+        except Exception as e:
+            traceback.print_exc()
+            callback.emit({"sets": [], "request_time": requestTime})
+
+    def GetHeadToHeadSetsWorker(self, id1, id2, page, inverted, progress_callback):
+        try:
+            recentSets = []
+
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "RecentSetsQuery",
+                    "variables": {
+                        "pid1": id1[0],
+                        "uid1": id1[1],
+                        "pid2": id2[0],
+                        "uid2": id2[1],
+                        "page": page,
+                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                    },
+                    "query": StartGGDataProvider.RecentSetsQuery
+                }
+            )
+            data = json.loads(data.text)
+
+            events = deep_get(data, "data.user.events.nodes", [])
+
+            for event in events:
+                if not event:
+                    continue
+                if not event.get("sets"):
+                    continue
+
+                sets = deep_get(event, "sets.nodes")
+
+                for _set in sets:
+                    phaseName = ""
+                    phaseIdentifier = ""
+
+                    # This is because a display identifier at a major (Ex. Pools C12) will return C12,
+                    # otherwise startgg will just return a string containing "1"
+                    if deep_get(_set, "phaseGroup.displayIdentifier") != "1":
+                        phaseIdentifier = deep_get(
+                            _set, "phaseGroup.displayIdentifier")
+                    phaseName = deep_get(_set, "phaseGroup.phase.name")
+
+                    p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
+                        "participants", [{}])[0].get("player", {}).get("id")
+                    p2id = _set.get("slots", [{}])[1].get("entrant", {}).get(
+                        "participants", [{}])[0].get("player", {}).get("id")
+
+                    p1id = str(p1id)
+                    p2id = str(p2id)
+
+                    if not p1id in [id1[0], id2[0]] or not p2id in [id1[0], id2[0]]:
+                        continue
+
+                    if _set.get("entrant1Score") == -1 or _set.get("entrant2Score") == -1:
+                        continue
+
+                    playerToEntrant = {}
+
+                    playerToEntrant[id1[0]] = str(_set.get("slots", [{}])[
+                        0].get("entrant", {}).get("id"))
+                    playerToEntrant[id2[0]] = str(_set.get("slots", [{}])[
+                        1].get("entrant", {}).get("id"))
+
+                    winner = 0
+
+                    winner = 0 if str(_set.get("winnerId")
+                                      ) == playerToEntrant[p1id] else 1
+
+                    score = [0, 0]
+
+                    if _set.get("entrant1Score") != None and _set.get("entrant2Score") != None:
+                        if p1id == id1[0]:
+                            score = [_set.get("entrant1Score"),
+                                     _set.get("entrant2Score")]
+                        else:
+                            score = [_set.get("entrant2Score"),
+                                     _set.get("entrant1Score")]
+                    else:
+                        if (p1id == id1[0] and winner == 0) or (p1id == id1[1] and winner == 1):
+                            score = ["W", "L"]
+                        else:
+                            score = ["L", "W"]
+
+                    if inverted:
+                        score.reverse()
+                        if winner == 1:
+                            winner = 0
+                        elif winner == 0:
+                            winner = 1
+
+                    entry = {
+                        "id": _set.get("id"),
+                        "tournament": deep_get(event, "tournament.name"),
+                        "event": event.get("name"),
+                        "online": event.get("isOnline"),
+                        "score": score,
+                        "timestamp": event.get("startAt"),
+                        "winner": winner,
+                        "round": _set.get("fullRoundText"),
+                        "phase_name": phaseName,
+                        "phase_id": phaseIdentifier
+                    }
+                    recentSets.append(entry)
+            return recentSets
+        except Exception as e:
+            traceback.print_exc()
+            return []
 
     def GetEntrantsWorker(self, eventSlug, gameId, progress_callback):
         try:
