@@ -317,7 +317,6 @@ class TSHBracketView(QGraphicsView):
                 losersRounds = int(math.log2(limitExportNumber)) + int(math.log2((limitExportNumber-1)/2)) + 2
             except:
                 print(traceback.format_exc())
-            finally:
                 losersRounds = 0
 
             if StateManager.Get("bracket.bracket.progressionsIn", 0) > 0:
