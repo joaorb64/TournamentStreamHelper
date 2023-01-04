@@ -12,6 +12,7 @@ from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
+import traceback
 
 # Checks if a number is power of 2
 def is_power_of_two(n):
@@ -137,6 +138,9 @@ class TSHBracketWidget(QDockWidget):
         self.playerPerTeam.setValue(1)
         self.charNumber.setValue(1)
 
+        self.splitter = self.findChild(QSplitter, "splitter")
+        self.splitter.setSizes([1,1])
+
         self.bracketView.Update()
 
         StateManager.ReleaseSaving()
@@ -195,50 +199,60 @@ class TSHBracketWidget(QDockWidget):
                 _set.finished = False
 
     def UpdatePhaseGroup(self, phaseGroupData):
-        print(phaseGroupData)
-
-        if phaseGroupData.get("progressionsIn", {}) != None:
-            self.progressionsIn.setValue(len(phaseGroupData.get("progressionsIn", {})))
-        else:
-            self.progressionsIn.setValue(0)
-        
-        if phaseGroupData.get("progressionsOut", {}) != None:
-            self.progressionsOut.setValue(len(phaseGroupData.get("progressionsOut", {})))
-        else:
-            self.progressionsOut.setValue(0)
-        
-        # Make sure progressions are exported
-        QGuiApplication.processEvents()
-
         StateManager.BlockSaving()
-
         self.playerList.signals.DataChanged.disconnect()
 
-        self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
-        
-        self.RebuildBracket(
-            len(phaseGroupData.get("entrants")),
-            phaseGroupData.get("seedMap")
-        )
+        try:
 
-        for r, round in phaseGroupData.get("sets", {}).items():
-            for s, _set in enumerate(round):
-                try:
-                    score = _set.get("score")
-                    if score[0] == None: score[0] = 0
-                    if score[1] == None: score[1] = 0
+            print(phaseGroupData)
 
-                    roundIndex = str(r)
+            if phaseGroupData.get("progressionsIn", {}) != None:
+                self.progressionsIn.setValue(len(phaseGroupData.get("progressionsIn", {})))
+            else:
+                self.progressionsIn.setValue(0)
+            
+            if phaseGroupData.get("progressionsOut", {}) != None:
+                self.progressionsOut.setValue(len(phaseGroupData.get("progressionsOut", {})))
+            else:
+                self.progressionsOut.setValue(0)
+            
+            # Make sure progressions are exported
+            QGuiApplication.processEvents()
 
-                    self.bracket.rounds[roundIndex][s].score = score
-                    self.bracket.rounds[roundIndex][s].finished = _set.get("finished")
-                except Exception as e:
-                    print(e)
-        
-        QGuiApplication.processEvents()
-        self.bracket.UpdateBracket()
-        self.bracketView.Update()
+            self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
 
-        self.playerList.signals.DataChanged.connect(self.bracketView.Update)
-        
-        StateManager.ReleaseSaving()
+            self.slotNumber.blockSignals(True)
+            self.slotNumber.setValue(len(self.playerList.slotWidgets))
+            self.slotNumber.blockSignals(False)
+
+            self.playerPerTeam.blockSignals(True)
+            self.playerPerTeam.setValue(self.playerList.playersPerTeam)
+            self.playerPerTeam.blockSignals(False)
+            
+            self.RebuildBracket(
+                len(phaseGroupData.get("entrants")),
+                phaseGroupData.get("seedMap")
+            )
+
+            for r, round in phaseGroupData.get("sets", {}).items():
+                for s, _set in enumerate(round):
+                    try:
+                        score = _set.get("score")
+                        if score[0] == None: score[0] = 0
+                        if score[1] == None: score[1] = 0
+
+                        roundIndex = str(r)
+
+                        self.bracket.rounds[roundIndex][s].score = score
+                        self.bracket.rounds[roundIndex][s].finished = _set.get("finished")
+                    except Exception as e:
+                        print(e)
+            
+            QGuiApplication.processEvents()
+            self.bracket.UpdateBracket()
+            self.bracketView.Update()
+        except:
+            print(traceback.format_exc())
+        finally:
+            StateManager.ReleaseSaving()
+            self.playerList.signals.DataChanged.connect(self.bracketView.Update)
