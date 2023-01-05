@@ -1,11 +1,11 @@
 query HeadToHeadEventQuery($uid: ID!, $page: Int!, $videogameId: ID!) {
     user(id: $uid) {
         events(query: {page: $page, perPage: 500, filter: {videogameId: [$videogameId], eventType: 1}}) {
-      	pageInfo {
-          total
-          totalPages
-        }	
-      	nodes {
+      	  pageInfo {
+            total
+            totalPages
+          }	
+      	  nodes {
             id
           }
         }

@@ -27,12 +27,15 @@ class StartGGDataProvider(TournamentDataProvider):
     LastSetsQuery = None
     HistorySetsQuery = None
     TournamentStandingsQuery = None
+    HeadToHeadEventQuery = None
+    HeadToHeadSetsQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "StartGG"
         self.getMatchThreadPool = QThreadPool()
         self.getRecentSetsThreadPool = QThreadPool()
+        self.getHeadToHeadThreadPool = QThreadPool()
 
     def GetTournamentData(self):
         finalData = {}
@@ -1002,41 +1005,109 @@ class StartGGDataProvider(TournamentDataProvider):
             id1 = [str(id1[0]), str(id1[1])]
             id2 = [str(id2[0]), str(id2[1])]
 
-            pool = self.getRecentSetsThreadPool
-
-            recentSets = []
+            pool = self.getHeadToHeadThreadPool
 
             pool.clear()
 
-            print("Get recent sets start")
+            print("Head to Head Stats Start")
 
-            for _id1, _id2, inverted in [[id1, id2, False], [id2, id1, True]]:
-                for i in range(5):
-                    worker = Worker(self.GetRecentSetsWorker, **{
-                        "id1": _id1,
-                        "id2": _id2,
-                        "page": (i+1),
-                        "inverted": inverted
+            page = 1
+            totalPages = 1
+
+            p1EventIds = []
+
+            while page <= totalPages:
+                p1EventData = requests.post(
+                    "https://www.start.gg/api/-/gql",
+                    headers={
+                        "client-version": "20",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "HeadToHeadEventQuery",
+                        "variables": {
+                            "uid": id1[1],
+                            "page": page,
+                            "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                        },
+                        "query": StartGGDataProvider.HeadToHeadEventQuery
+                    }
+                )
+                p1EventData = json.loads(p1EventData.text)
+                totalPages = deep_get(
+                    p1EventData, "data.user.events.pageInfo.totalPages", [])
+                for id in deep_get(p1EventData, "data.user.events.nodes", []):
+                    p1EventIds.append(id.get("id"))
+                page += 1
+
+            totalPages = 1
+
+            p2EventIds = []
+
+            while page <= totalPages:
+                p2EventData = requests.post(
+                    "https://www.start.gg/api/-/gql",
+                    headers={
+                        "client-version": "20",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "HeadToHeadEventQuery",
+                        "variables": {
+                            "uid": id2[1],
+                            "page": page,
+                            "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                        },
+                        "query": StartGGDataProvider.HeadToHeadEventQuery
+                    }
+                )
+                p2EventData = json.loads(p2EventData.text)
+                totalPages = deep_get(
+                    p2EventData, "data.user.events.pageInfo.totalPages", [])
+                for id in deep_get(p2EventData, "data.user.events.nodes", []):
+                    p2EventIds.append(id.get("id"))
+                page += 1
+            
+            h2hSets = []
+
+            if len(p1EventIds) <= len(p2EventIds):
+                for event in p1EventIds:
+                    worker = Worker(self.GetHeadToHeadSetsWorker, **{
+                        "eventId": event,
+                        "id1": id1[0],
+                        "id2": id2[0]
                     })
                     worker.signals.result.connect(lambda result: [
-                        recentSets.extend(result)
+                        h2hSets.extend(result)
+                    ])
+                    pool.start(worker)
+            else:
+                for event in p2EventIds:
+                    worker = Worker(self.GetHeadToHeadSetsWorker, **{
+                        "eventId": event,
+                        "id1": id1[0],
+                        "id2": id2[0]
+                    })
+                    worker.signals.result.connect(lambda result: [
+                        h2hSets.extend(result)
                     ])
                     pool.start(worker)
 
             pool.waitForDone(20000)
+
+            # START OF SCORE CALCULATION TO PASS OFF
+            match_points = [0, 0]
+            total_points = [0, 0]
+
             QCoreApplication.processEvents()
-            byId = {_set.get("id"): _set for _set in recentSets}
-            recentSets = list(byId.values())
-            recentSets.sort(key=lambda s: s.get("timestamp"), reverse=True)
-            print("Recent sets size:", len(recentSets))
-            callback.emit({"sets": recentSets, "request_time": requestTime})
+            callback.emit({"scores": match_points, "total_points": total_points})
         except Exception as e:
             traceback.print_exc()
-            callback.emit({"sets": [], "request_time": requestTime})
+            callback.emit({"sets": []})
 
-    def GetHeadToHeadSetsWorker(self, id1, id2, page, inverted, progress_callback):
+    def GetHeadToHeadSetsWorker(self, eventId, id1, id2, progress_callback):
         try:
-            recentSets = []
+            sets = []
 
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -1045,103 +1116,60 @@ class StartGGDataProvider(TournamentDataProvider):
                     'Content-Type': 'application/json'
                 },
                 json={
-                    "operationName": "RecentSetsQuery",
+                    "operationName": "HeadToHeadSetsQuery",
                     "variables": {
-                        "pid1": id1[0],
-                        "uid1": id1[1],
-                        "pid2": id2[0],
-                        "uid2": id2[1],
-                        "page": page,
-                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                        "eventId": id1[0],
+                        "pid": id1[0],
                     },
-                    "query": StartGGDataProvider.RecentSetsQuery
+                    "query": StartGGDataProvider.HeadToHeadSetsQuery
                 }
             )
             data = json.loads(data.text)
 
-            events = deep_get(data, "data.user.events.nodes", [])
+            sets = deep_get(data, "data.event.sets.nodes", [])
 
-            for event in events:
-                if not event:
+            for _set in sets:
+
+                p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
+                    "participants", [{}])[0].get("player", {}).get("id")
+                p2id = _set.get("slots", [{}])[1].get("entrant", {}).get(
+                    "participants", [{}])[0].get("player", {}).get("id")
+
+                p1id = str(p1id)
+                p2id = str(p2id)
+
+                if not p1id in [id1[0], id2[0]] or not p2id in [id1[0], id2[0]]:
                     continue
-                if not event.get("sets"):
+
+                if _set.get("entrant1Score") == -1 or _set.get("entrant2Score") == -1:
                     continue
 
-                sets = deep_get(event, "sets.nodes")
+                playerToEntrant = {}
 
-                for _set in sets:
-                    phaseName = ""
-                    phaseIdentifier = ""
+                playerToEntrant[id1[0]] = str(_set.get("slots", [{}])[
+                    0].get("entrant", {}).get("id"))
+                playerToEntrant[id2[0]] = str(_set.get("slots", [{}])[
+                    1].get("entrant", {}).get("id"))
 
-                    # This is because a display identifier at a major (Ex. Pools C12) will return C12,
-                    # otherwise startgg will just return a string containing "1"
-                    if deep_get(_set, "phaseGroup.displayIdentifier") != "1":
-                        phaseIdentifier = deep_get(
-                            _set, "phaseGroup.displayIdentifier")
-                    phaseName = deep_get(_set, "phaseGroup.phase.name")
+                score = [0, 0]
+                total_points = [0, 0]
 
-                    p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
-                        "participants", [{}])[0].get("player", {}).get("id")
-                    p2id = _set.get("slots", [{}])[1].get("entrant", {}).get(
-                        "participants", [{}])[0].get("player", {}).get("id")
-
-                    p1id = str(p1id)
-                    p2id = str(p2id)
-
-                    if not p1id in [id1[0], id2[0]] or not p2id in [id1[0], id2[0]]:
-                        continue
-
-                    if _set.get("entrant1Score") == -1 or _set.get("entrant2Score") == -1:
-                        continue
-
-                    playerToEntrant = {}
-
-                    playerToEntrant[id1[0]] = str(_set.get("slots", [{}])[
-                        0].get("entrant", {}).get("id"))
-                    playerToEntrant[id2[0]] = str(_set.get("slots", [{}])[
-                        1].get("entrant", {}).get("id"))
-
-                    winner = 0
-
-                    winner = 0 if str(_set.get("winnerId")
-                                      ) == playerToEntrant[p1id] else 1
-
-                    score = [0, 0]
-
-                    if _set.get("entrant1Score") != None and _set.get("entrant2Score") != None:
-                        if p1id == id1[0]:
-                            score = [_set.get("entrant1Score"),
-                                     _set.get("entrant2Score")]
-                        else:
-                            score = [_set.get("entrant2Score"),
-                                     _set.get("entrant1Score")]
+                if _set.get("entrant1Score") != None and _set.get("entrant2Score") != None:
+                    if p1id == id1[0]:
+                        total_points = [_set.get("entrant1Score"),
+                                    _set.get("entrant2Score")]
+                        score = ["W", "L"]
                     else:
-                        if (p1id == id1[0] and winner == 0) or (p1id == id1[1] and winner == 1):
-                            score = ["W", "L"]
-                        else:
-                            score = ["L", "W"]
+                        total_points = [_set.get("entrant2Score"),
+                                    _set.get("entrant1Score")]
+                        score = ["L", "W"]
 
-                    if inverted:
-                        score.reverse()
-                        if winner == 1:
-                            winner = 0
-                        elif winner == 0:
-                            winner = 1
-
-                    entry = {
-                        "id": _set.get("id"),
-                        "tournament": deep_get(event, "tournament.name"),
-                        "event": event.get("name"),
-                        "online": event.get("isOnline"),
-                        "score": score,
-                        "timestamp": event.get("startAt"),
-                        "winner": winner,
-                        "round": _set.get("fullRoundText"),
-                        "phase_name": phaseName,
-                        "phase_id": phaseIdentifier
-                    }
-                    recentSets.append(entry)
-            return recentSets
+                entry = {
+                    "total_points": total_points,
+                    "winner": score,
+                }
+                sets.append(entry)
+            return sets
         except Exception as e:
             traceback.print_exc()
             return []
@@ -1380,3 +1408,9 @@ StartGGDataProvider.HistorySetsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGHeadToHeadEventQuery.txt", 'r')
+StartGGDataProvider.HeadToHeadEventQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGHeadToHeadSetsQuery.txt", 'r')
+StartGGDataProvider.HeadToHeadSetsQuery = f.read()
