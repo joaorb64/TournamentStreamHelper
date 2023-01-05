@@ -258,7 +258,7 @@
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="3" />`;
+                  stroke="black" fill="none" stroke-width="5" />`;
                 }
 
                 // Lines for progressions in
@@ -284,7 +284,7 @@
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="3" />`;
+                  stroke="black" fill="none" stroke-width="5" />`;
                 }
 
                 // Lines for progressions out
@@ -333,7 +333,7 @@
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="3" />`;
+                  stroke="black" fill="none" stroke-width="5" />`;
                 }
               }
             },

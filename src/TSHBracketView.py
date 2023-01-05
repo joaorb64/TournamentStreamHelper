@@ -402,9 +402,13 @@ class TSHBracketView(QGraphicsView):
                     else:
                         nextWin[0] += losersOffset
                 if nextLose:
-                    nextLose[0] += losersOffset
-                    if nextLose[0] == 0:
-                        nextLose[0] = -1
+                    if nextLose < 0:
+                        nextLose[0] += losersOffset
+                        if nextLose[0] == 0:
+                            nextLose[0] = -1
+                    # For grand finals into reset, nextLose is a positive round
+                    else:
+                        nextLose[0] -= winnersOffset
                     
                 p1name = ""
 

@@ -142,7 +142,8 @@ body {
   top: 92px;
 }
 
-.round_base_w {
+.round_base_w,
+.round_base_l.complete {
   min-width: 300px;
 }
 
@@ -165,7 +166,6 @@ body {
 
 .slot {
   display: flex;
-  flex-direction: column;
   gap: 2px;
   background-color: var(--bg-color);
   border-radius: calc(var(--border-radius) / 2);
@@ -288,6 +288,15 @@ body {
 .floating_icon.stockicon div {
   width: 32px;
   height: 32px;
+}
+
+.floating_online_avatar {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 100%;
+  background-position: center;
 }
 
 .flags {
