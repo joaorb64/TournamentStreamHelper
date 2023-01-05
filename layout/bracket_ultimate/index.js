@@ -1088,10 +1088,11 @@
 
             if (
               player &&
-              player.character &&
+              player.character != null &&
               (!oldCharacter ||
                 (oldCharacter &&
-                  JSON.parse(oldCharacter) != JSON.parse(player.character)))
+                  JSON.stringify(oldCharacter) !=
+                    JSON.stringify(player.character)))
             ) {
               Object.values(player.character).forEach((character, index) => {
                 if (character.assets[ASSET_TO_USE]) {
@@ -1309,8 +1310,6 @@
             });
           }
 
-          console.log(appearRounds);
-
           Object.entries(bracket).forEach(([roundKey, round], r) => {
             if (
               parseInt(roundKey) < 0 &&
@@ -1372,13 +1371,10 @@
               });
             });
 
-            if (lastFoundRound)
-              console.log(teamId, lastFoundRound, losersIconId);
-
             if (lastFoundRound == 0 || losersIconId == null) {
-            }
-            //iconAnimationsL[t].tweenTo(`start`);
-            else {
+              //if (iconAnimationsL != null && t < iconAnimationsL.length)
+              //iconAnimationsL[t].tweenTo(`start`);
+            } else {
               // Get GF and GF Reset
               if (lastFoundRound == lastLosersRoundNum) {
                 let gfSet = bracket[GfResetRoundNum - 1].sets[0];
@@ -1498,9 +1494,9 @@
     });
   }
 
-  Update();
+  //Update();
   $(window).on("load", () => {
-    $("body").fadeTo(1000, 1000, async () => {
+    $("body").fadeTo(1, 1, async () => {
       Start();
       setInterval(Update, 5000);
     });
