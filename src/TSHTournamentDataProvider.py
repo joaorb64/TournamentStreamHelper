@@ -25,6 +25,7 @@ class TSHTournamentDataProviderSignals(QObject):
     recent_sets_updated = pyqtSignal(dict)
     last_sets_updated = pyqtSignal(dict)
     history_sets_updated = pyqtSignal(dict)
+    h2h_updated = pyqtSignal(dict)
     get_sets_finished = pyqtSignal(list)
 
 
@@ -229,6 +230,14 @@ class TSHTournamentDataProvider:
             "playerNumber": playerNumber,
             "gameType": gameType,
             "callback": self.signals.history_sets_updated
+        })
+        self.threadPool.start(worker)
+
+    def GetHeadToHeadStandings(self, id1, id2):
+        worker = Worker(self.provider.GetPlayerHistoryStandings, **{
+            "id1": id1,
+            "id2": id2,
+            "callback": self.signals.h2h_updated
         })
         self.threadPool.start(worker)
 

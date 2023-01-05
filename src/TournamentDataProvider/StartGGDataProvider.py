@@ -1000,7 +1000,7 @@ class StartGGDataProvider(TournamentDataProvider):
             traceback.print_exc()
             return []
     
-    def GetHeadToHeadStandings(self, id1, id2, gameType, callback, progress_callback):
+    def GetHeadToHeadStandings(self, id1, id2, callback, progress_callback):
         try:
             id1 = [str(id1[0]), str(id1[1])]
             id2 = [str(id2[0]), str(id2[1])]
@@ -1068,36 +1068,39 @@ class StartGGDataProvider(TournamentDataProvider):
                     p2EventIds.append(id.get("id"))
                 page += 1
             
-            h2hSets = []
+            events = []
 
             if len(p1EventIds) <= len(p2EventIds):
                 for event in p1EventIds:
-                    worker = Worker(self.GetHeadToHeadSetsWorker, **{
-                        "eventId": event,
-                        "id1": id1[0],
-                        "id2": id2[0]
-                    })
-                    worker.signals.result.connect(lambda result: [
-                        h2hSets.extend(result)
-                    ])
-                    pool.start(worker)
+                    if event in p2EventIds:
+                        events.append(event)
             else:
                 for event in p2EventIds:
-                    worker = Worker(self.GetHeadToHeadSetsWorker, **{
-                        "eventId": event,
-                        "id1": id1[0],
-                        "id2": id2[0]
-                    })
-                    worker.signals.result.connect(lambda result: [
-                        h2hSets.extend(result)
-                    ])
-                    pool.start(worker)
+                    if event in p1EventIds:
+                        events.append(event)
+
+            h2hSets = []
+
+            for event in events:
+                worker = Worker(self.GetHeadToHeadSetsWorker, **{
+                    "eventId": event,
+                    "id1": id1[0],
+                    "id2": id2[0]
+                })
+                worker.signals.result.connect(lambda result: [
+                    h2hSets.extend(result)
+                ])
+                pool.start(worker)
 
             pool.waitForDone(20000)
 
             # START OF SCORE CALCULATION TO PASS OFF
             match_points = [0, 0]
             total_points = [0, 0]
+
+            for items in h2hSets:
+                total_points = [total_points[0] + items.get("total_points")[0], total_points[1] + items.get("total_points")[1]]
+                match_points = [match_points[0] + items.get("winner")[0], match_points[1] + items.get("winner")[1]]
 
             QCoreApplication.processEvents()
             callback.emit({"scores": match_points, "total_points": total_points})
@@ -1158,17 +1161,18 @@ class StartGGDataProvider(TournamentDataProvider):
                     if p1id == id1[0]:
                         total_points = [_set.get("entrant1Score"),
                                     _set.get("entrant2Score")]
-                        score = ["W", "L"]
+                        score = [1, 0]
                     else:
                         total_points = [_set.get("entrant2Score"),
                                     _set.get("entrant1Score")]
-                        score = ["L", "W"]
+                        score = [0, 1]
 
                 entry = {
                     "total_points": total_points,
                     "winner": score,
                 }
                 sets.append(entry)
+                
             return sets
         except Exception as e:
             traceback.print_exc()

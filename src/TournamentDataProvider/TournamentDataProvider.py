@@ -35,7 +35,7 @@ class TournamentDataProvider:
     def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
         pass
     
-    def GetHeadToHeadStandings(self, player1Id, player2Id, gameType):
+    def GetHeadToHeadStandings(self, id1, id2):
         pass
 
     def GetStandings(self, playerNumber):
