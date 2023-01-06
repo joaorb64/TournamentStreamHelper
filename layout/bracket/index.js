@@ -49,21 +49,28 @@
     return anim;
   }
 
-  function AnimateElement(roundKey, setIndex, set, bracket) {
-    let GfResetRoundNum = Math.max.apply(
-      null,
-      Object.keys(bracket).map((r) => parseInt(r))
-    );
+  function AnimateElement(roundKey, setIndex, set, bracket, progressionsOut) {
+    let isGf = false;
+    let isGfR = false;
+    let GfResetRoundNum = 0;
 
-    let isGf = parseInt(roundKey) == GfResetRoundNum - 1;
-    let isGfR = parseInt(roundKey) == GfResetRoundNum;
+    if (progressionsOut == 0) {
+      GfResetRoundNum = Math.max.apply(
+        null,
+        Object.keys(bracket).map((r) => parseInt(r))
+      );
+
+      isGf = parseInt(roundKey) == GfResetRoundNum - 1;
+      isGfR = parseInt(roundKey) == GfResetRoundNum;
+    }
 
     if (animations[roundKey][setIndex]) {
       if (
         (set.playerId[0] == -2 && set.playerId[1] == -2) ||
         (set.playerId[0] == -1 && set.playerId[1] != -1) ||
         (set.playerId[0] != -1 && set.playerId[1] == -1) ||
-        (isGfR &&
+        (progressionsOut == 0 &&
+          isGfR &&
           bracket[GfResetRoundNum - 1].sets[0].score[0] >
             bracket[GfResetRoundNum - 1].sets[0].score[1])
       ) {
@@ -409,7 +416,7 @@
             anim.pause();
 
             entryAnim.add(
-              AnimateElement(roundKey, setIndex, set, bracket),
+              AnimateElement(roundKey, setIndex, set, bracket, progressionsOut),
               Math.abs(parseInt(roundKey)) * 0.6
             );
           });
@@ -422,7 +429,7 @@
       if (entryAnim && entryAnim.progress() >= 1) {
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
           Object.values(round.sets).forEach((set, setIndex) => {
-            AnimateElement(roundKey, setIndex, set, bracket);
+            AnimateElement(roundKey, setIndex, set, bracket, progressionsOut);
           });
         });
       }

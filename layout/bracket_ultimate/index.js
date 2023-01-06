@@ -6,7 +6,7 @@
 
   var MIDDLE_SPACE = 100;
 
-  var USE_ONLINE_PICTURE = true;
+  var USE_ONLINE_PICTURE = false;
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
