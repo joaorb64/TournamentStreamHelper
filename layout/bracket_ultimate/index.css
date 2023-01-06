@@ -147,7 +147,7 @@ body {
   min-width: 300px;
 }
 
-.slot_hanging .character_container {
+.round:not(.complete) .slot_hanging .character_container {
   width: 32px;
 }
 

@@ -71,7 +71,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                         timestamp = datetime.timestamp(element)
                         finalData["startAt"] = datetime.timestamp(element)
                     except ValueError:
-                        print(' - no date defined')
+                        print('ChallongeDataProvider: No date defined')
 
                 details = collection.get("details", [])
                 participantsElement = next(
@@ -111,8 +111,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                 finalData = self.ParseMatchData(match)
         except:
             traceback.print_exc()
-
-        print(finalData)
 
         return finalData
 
@@ -164,7 +162,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                     "Accept-Encoding": "gzip, deflate, br"
                 }
             )
-            print(data.text)
             data = json.loads(data.text)
 
             if len(deep_get(data, "groups", [])) > 0:
@@ -208,7 +205,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                     "Accept-Encoding": "gzip, deflate, br"
                 }
             )
-            print(data.text)
             data = json.loads(data.text)
 
             entrants = self.GetAllEntrantsFromData(data, id)
@@ -363,9 +359,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                             "score": [-1, -1],
                             "finished": True
                         })
-            
-            print("finalRounds")
-            print(rounds)
 
             finalData["sets"] = rounds
         except:
@@ -442,22 +435,6 @@ class ChallongeDataProvider(TournamentDataProvider):
         return userSet
 
     def ParseMatchData(self, match):
-        p1_split = deep_get(
-            match, "player1.display_name", "").rsplit("|", 1)
-
-        p1_gamerTag = p1_split[-1].strip()
-        p1_prefix = p1_split[0].strip() if len(p1_split) > 1 else None
-        p1_avatar = deep_get(match, "player1.portrait_url")
-        p1_id = deep_get(match, "player1.id")
-
-        p2_split = deep_get(
-            match, "player2.display_name", "").rsplit("|", 1)
-
-        p2_gamerTag = p2_split[-1].strip()
-        p2_prefix = p2_split[0].strip() if len(p2_split) > 1 else None
-        p2_avatar = deep_get(match, "player2.portrait_url")
-        p2_id = deep_get(match, "player2.id")
-
         stream = deep_get(match, "station.stream_url", None)
 
         if not stream:
@@ -483,13 +460,15 @@ class ChallongeDataProvider(TournamentDataProvider):
         
         # If a match has a winner but no scores,
         # we're assuming it's a DQ
+        p1_id = deep_get(match, "player1.id")
+        p2_id = deep_get(match, "player2.id")
+
         if len(match.get("scores")) == 0:
             if match.get("winner_id") == p1_id:
                 scores = [0, -1]
             if match.get("winner_id") == p2_id:
                 scores = [-1, 0]
             
-
         return({
             "id": deep_get(match, "id"),
             "round_name": deep_get(match, "round_name"),
@@ -500,20 +479,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             "p1_seed": deep_get(match, "player1.seed"),
             "p2_seed": deep_get(match, "player2.seed"),
             "entrants": [
-                [{
-                    "id": [p1_id],
-                    "gamerTag": p1_gamerTag,
-                    "prefix": p1_prefix,
-                    "avatar": p1_avatar,
-                    "seed": deep_get(match, "player1.seed")
-                }],
-                [{
-                    "id": [p2_id],
-                    "gamerTag": p2_gamerTag,
-                    "prefix": p2_prefix,
-                    "avatar": p2_avatar,
-                    "seed": deep_get(match, "player2.seed")
-                }],
+                [self.ParseEntrant(deep_get(match, "player1"))],
+                [self.ParseEntrant(deep_get(match, "player2"))],
             ],
             "stream": stream,
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
@@ -543,9 +510,40 @@ class ChallongeDataProvider(TournamentDataProvider):
                 }
             )
             data = json.loads(data.text)
-            TSHPlayerDB.AddPlayers(self.GetAllEntrantsFromData(data))
+
+            entrants = self.GetAllEntrantsFromData(data)
+            players = []
+
+            for entrant in entrants:
+                for player in entrant.get("players", []):
+                    players.append(player)
+
+            TSHPlayerDB.AddPlayers(players)
         except Exception as e:
             traceback.print_exc()
+
+    def ParseEntrant(self, data):
+        # Here we're only supporting a single player per entrant
+        # Can be adapted later if we ever want to support more
+        playerData = {}
+
+        split = data.get("display_name").rsplit("|", 1)
+
+        gamerTag = split[-1].strip()
+        prefix = split[0].strip() if len(
+            split) > 1 else None
+
+        playerData["gamerTag"] = gamerTag
+        playerData["prefix"] = prefix
+
+        playerData["avatar"] = data.get("portrait_url")
+
+        playerData["seed"] = data.get("seed")
+
+        return({
+            "players": [playerData],
+            "seed": data.get("seed")
+        })
     
     def GetAllEntrantsFromData(self, data, phaseId=None):
         final_data = []
@@ -561,25 +559,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 player = m.get(p)
 
                 if player is not None and player.get("id", None) != None and not player.get("id") in added_list:
-                    playerData = {}
-
-                    split = player.get("display_name").rsplit("|", 1)
-
-                    gamerTag = split[-1].strip()
-                    prefix = split[0].strip() if len(
-                        split) > 1 else None
-
-                    playerData["gamerTag"] = gamerTag
-                    playerData["prefix"] = prefix
-
-                    playerData["avatar"] = player.get("portrait_url")
-
-                    playerData["seed"] = player.get("seed")
-
-                    final_data.append({
-                        "players": [playerData],
-                        "seed": player.get("seed")
-                    })
+                    final_data.append(self.ParseEntrant(player))
                     added_list.append(player.get("id"))
         
         return(final_data)
@@ -614,22 +594,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                     winner = m.get("player2")
                 
                 if not winner.get("id") in added_list:
-                    playerData = {}
-
-                    split = winner.get("display_name").rsplit("|", 1)
-
-                    gamerTag = split[-1].strip()
-                    prefix = split[0].strip() if len(
-                        split) > 1 else None
-
-                    playerData["gamerTag"] = gamerTag
-                    playerData["prefix"] = prefix
-
-                    playerData["avatar"] = winner.get("portrait_url")
-
-                    final_data.append({
-                        "players": [playerData]
-                    })
+                    final_data.append(self.ParseEntrant(winner))
                     added_list.append(winner.get("id"))
 
             return final_data

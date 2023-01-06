@@ -1,6 +1,6 @@
 (($) => {
   var ASSET_TO_USE = "full";
-  var ZOOM = 2;
+  var ZOOM = 1.8;
   var ICON_TO_USE = "base_files/icon";
   var ICON_ZOOM = 1;
 
