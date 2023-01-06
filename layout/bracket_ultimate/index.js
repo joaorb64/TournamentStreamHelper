@@ -331,7 +331,7 @@
           }
 
           Object.values(round.sets).forEach(
-            function (slot, i) {
+            function (set, setIndex) {
               let lastLosers =
                 parseInt(roundKey) ==
                 Math.min.apply(
@@ -340,23 +340,23 @@
                 );
 
               if (
-                slot.nextWin &&
+                set.nextWin &&
                 !(
-                  slot.playerId[0] > Object.keys(players).length ||
-                  slot.playerId[1] > Object.keys(players).length ||
-                  slot.playerId[0] == -1 ||
-                  slot.playerId[1] == -1
+                  set.playerId[0] > Object.keys(players).length ||
+                  set.playerId[1] > Object.keys(players).length ||
+                  set.playerId[0] == -1 ||
+                  set.playerId[1] == -1
                 )
               ) {
                 let slotElement = $(
-                  `.${this.baseClass} .round_${roundKey} .slot_${i + 1}`
+                  `.${this.baseClass} .round_${roundKey} .slot_${setIndex + 1}`
                 );
 
                 if (!slotElement || !slotElement.offset()) return;
 
                 let winElement = $(
-                  `.${this.baseClass} .round_${slot.nextWin[0]} .slot_${
-                    slot.nextWin[1] + 1
+                  `.${this.baseClass} .round_${set.nextWin[0]} .slot_${
+                    set.nextWin[1] + 1
                   }`
                 );
 
@@ -372,7 +372,7 @@
 
                     let baseElement = $(
                       `.${this.baseClass} .${className} .slot_${
-                        i + 1
+                        setIndex + 1
                       }.slot_p_${index}`
                     );
 
@@ -393,7 +393,7 @@
 
                     slotLines += GetBracketLineHtml(
                       `${this.baseClass} line_base_r_${roundKey} s_${
-                        i + 1
+                        setIndex + 1
                       } p_${index}`,
                       points,
                       "gray"
@@ -401,7 +401,7 @@
 
                     slotLinesW += GetLineHtml(
                       `${this.baseClass} line_base_r_${roundKey} s_${
-                        i + 1
+                        setIndex + 1
                       } p_${index} base`,
                       [points[0], [points[1][0], points[0][1]]],
                       "yellow",
@@ -410,7 +410,7 @@
 
                     slotLinesW += GetLineHtml(
                       `${this.baseClass} line_base_r_${roundKey} s_${
-                        i + 1
+                        setIndex + 1
                       } p_${index} win`,
                       [[points[1][0], points[0][1]], points[1]],
                       "yellow",
@@ -445,14 +445,14 @@
                   }
 
                   slotLines += GetBracketLineHtml(
-                    `${this.baseClass} line_r_${roundKey} s_${i + 1}`,
+                    `${this.baseClass} line_r_${roundKey} s_${setIndex + 1}`,
                     points,
                     "gray"
                   );
 
                   slotLinesW += GetBracketLineHtml(
                     `${this.baseClass} line_r_${parseInt(roundKey) + 1} s_${
-                      i + 1
+                      setIndex + 1
                     } base`,
                     [points[0], [points[1][0], points[0][1]]],
                     "yellow",
@@ -461,7 +461,7 @@
 
                   slotLinesW += GetBracketLineHtml(
                     `${this.baseClass} line_r_${parseInt(roundKey) + 1} s_${
-                      i + 1
+                      setIndex + 1
                     } win`,
                     [[points[1][0], points[0][1]], points[1]],
                     "yellow",
@@ -474,7 +474,7 @@
                   if (parseInt(roundKey) % 2 == -1) {
                     let hangingElement = $(
                       `.${this.baseClass} .round_${roundKey} .slot_hanging_${
-                        i + 1
+                        setIndex + 1
                       }`
                     );
 
@@ -500,26 +500,26 @@
                       ];
 
                       slotLines += GetBracketLineHtml(
-                        `${this.baseClass} line_hanging_r_${roundKey} s_${
-                          i + 1
+                        `${this.baseClass} line_r_${roundKey} s_${
+                          setIndex + 1
                         }`,
                         points,
                         "gray"
                       );
 
                       slotLinesW += GetBracketLineHtml(
-                        `${this.baseClass} line_hanging_r_${
-                          parseInt(roundKey) - 1
-                        } s_${2 * i + 1} base`,
+                        `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
+                          setIndex + 1
+                        } p_${0} base`,
                         [points[0], [points[1][0], points[0][1]]],
                         "yellow",
                         true
                       );
 
                       slotLinesW += GetBracketLineHtml(
-                        `${this.baseClass} line_hanging_r_${
-                          parseInt(roundKey) - 1
-                        } s_${2 * i + 1} win`,
+                        `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
+                          setIndex + 1
+                        } p_${0} win`,
                         [[points[1][0], points[0][1]], points[1]],
                         "yellow",
                         true
@@ -549,24 +549,45 @@
                     }
 
                     slotLines += GetBracketLineHtml(
-                      `${this.baseClass} line_r_${roundKey} s_${(i + 1) * 2}`,
+                      `${this.baseClass} line_r_${roundKey} s_${setIndex + 1}`,
                       points,
                       "gray"
                     );
 
+                    // Which set index to assign?
+                    let s = 0;
+                    if (parseInt(roundKey) % 2 == -1) {
+                      // Next round has the same amount of sets, so just use the current index
+                      s = setIndex + 1;
+                    } else {
+                      // Next round has half the number of sets, so we divide setIndex by 2
+                      s = Math.floor(setIndex / 2) + 1;
+                    }
+
+                    // Which player slot to assign?
+                    let p = 0;
+                    if (parseInt(roundKey) % 2 == -1) {
+                      // If in an odd round, it's always 1 because slot 0 is a hanging slot
+                      // (a player that came from winners as slot 0 vs this one as slot 1)
+                      p = 1;
+                    } else {
+                      // Just alternate between 0 and 1
+                      p = parseInt(setIndex) % 2 == 0 ? 0 : 1;
+                    }
+
                     slotLinesW += GetBracketLineHtml(
-                      `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
-                        parseInt(roundKey) % 2 == -1 ? 2 * i + 2 : i + 1
-                      } base`,
+                      `${this.baseClass} line_r_${
+                        parseInt(roundKey) - 1
+                      } s_${s} p_${p} base`,
                       [points[0], [points[1][0], points[0][1]]],
                       "yellow",
                       true
                     );
 
                     slotLinesW += GetBracketLineHtml(
-                      `${this.baseClass} line_r_${parseInt(roundKey) - 1} s_${
-                        parseInt(roundKey) % 2 == -1 ? 2 * i + 2 : i + 1
-                      } win`,
+                      `${this.baseClass} line_r_${
+                        parseInt(roundKey) - 1
+                      } s_${s} p_${p} win`,
                       [[points[1][0], points[0][1]], points[1]],
                       "yellow",
                       true
@@ -819,9 +840,9 @@
                           icon_anim.add(
                             AnimateLine(
                               $(
-                                `.lines.win .losers_container.line_hanging_r_${parseInt(
+                                `.lines.win .losers_container.line_r_${parseInt(
                                   roundKey
-                                )}.s_${2 * i + 1}.base`
+                                )}.s_${i + 1}.p_${slotIndex}.base`
                               ),
                               "<"
                             )
@@ -832,29 +853,16 @@
 
                         let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
 
-                        if (parseInt(roundKey) % 2 == 0 && slotIndex % 2 == 1) {
-                          icon_anim.add(
-                            AnimateLine(
-                              $(
-                                `.lines.win .losers_container.line_r_${roundKey}.s_${
-                                  2 * (i + 1)
-                                }.base`
-                              )
-                            ),
-                            ">"
-                          );
-                        } else {
-                          icon_anim.add(
-                            AnimateLine(
-                              $(
-                                `.lines.win .losers_container.line_r_${roundKey}.s_${
-                                  slotIndex + 1
-                                }.base`
-                              )
-                            ),
-                            ">"
-                          );
-                        }
+                        icon_anim.add(
+                          AnimateLine(
+                            $(
+                              `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                i + 1
+                              }.p_${slotIndex}.base`
+                            )
+                          ),
+                          ">"
+                        );
 
                         if (setElement && setElement.offset()) {
                           icon_anim.to(
@@ -880,40 +888,13 @@
                               ),
                               ">"
                             );
-                          } else if (found) {
-                            if (
-                              parseInt(roundKey) % 2 == 0 &&
-                              slotIndex % 2 == 1
-                            ) {
-                              icon_anim.add(
-                                AnimateLine(
-                                  $(
-                                    `.lines.win .losers_container.line_r_${roundKey}.s_${
-                                      2 * (i + 1)
-                                    }.win`
-                                  )
-                                ),
-                                ">"
-                              );
-                            } else {
-                              icon_anim.add(
-                                AnimateLine(
-                                  $(
-                                    `.lines.win .losers_container.line_r_${roundKey}.s_${
-                                      slotIndex + 1
-                                    }.win`
-                                  )
-                                ),
-                                ">"
-                              );
-                            }
                           } else {
                             icon_anim.add(
                               AnimateLine(
                                 $(
-                                  `.lines.win .losers_container.line_hanging_r_${roundKey}.s_${
-                                    2 * i + 1
-                                  }.win`
+                                  `.lines.win .losers_container.line_r_${roundKey}.s_${
+                                    i + 1
+                                  }.p_${slotIndex}.win`
                                 )
                               ),
                               ">"
@@ -1295,6 +1276,21 @@
                 ) {
                   lastFoundRound = roundKey;
                   foundInRound = true;
+
+                  if (set.completed) {
+                    if (
+                      set.playerId[0] == teamId &&
+                      set.score[0] <= set.score[1]
+                    ) {
+                      lost = true;
+                    }
+                    if (
+                      set.playerId[1] == teamId &&
+                      set.score[1] <= set.score[0]
+                    ) {
+                      lost = true;
+                    }
+                  }
                 }
               });
               if (!foundInRound) lost = true;
