@@ -1081,19 +1081,21 @@
 
             let charactersHtml = "";
 
-            let oldCharacter = _.get(
-              oldData,
-              `bracket.players.slot.${pid}.player.${1}.character`
-            );
+            let playerChanged =
+              _.get(
+                oldData,
+                `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
+              ) != pid;
 
-            if (
-              player &&
-              player.character != null &&
-              (!oldCharacter ||
-                (oldCharacter &&
-                  JSON.stringify(oldCharacter) !=
-                    JSON.stringify(player.character)))
-            ) {
+            let charactersChanged =
+              JSON.stringify(
+                _.get(
+                  oldData,
+                  `bracket.players.slot.${pid}.player.${1}.character`
+                )
+              ) != JSON.stringify(player.character);
+
+            if (playerChanged || charactersChanged) {
               Object.values(player.character).forEach((character, index) => {
                 if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
@@ -1112,32 +1114,33 @@
                     `;
                 }
               });
+
+              SetInnerHtml(
+                $(element).find(`.character_container`),
+                charactersHtml,
+                undefined,
+                0.5,
+                () => {
+                  $(element)
+                    .find(`.character_container .icon.stockicon div`)
+                    .each((e, i) => {
+                      if (
+                        player &&
+                        player.character[1] &&
+                        player.character[1].assets[ASSET_TO_USE] != null
+                      ) {
+                        CenterImage(
+                          $(i),
+                          $(i).attr("data-asset"),
+                          $(i).attr("data-zoom"),
+                          { x: 0.5, y: 0.5 },
+                          $(i).parent().parent()
+                        );
+                      }
+                    });
+                }
+              );
             }
-            SetInnerHtml(
-              $(element).find(`.character_container`),
-              charactersHtml,
-              undefined,
-              0.5,
-              () => {
-                $(element)
-                  .find(`.character_container .icon.stockicon div`)
-                  .each((e, i) => {
-                    if (
-                      player &&
-                      player.character[1] &&
-                      player.character[1].assets[ASSET_TO_USE] != null
-                    ) {
-                      CenterImage(
-                        $(i),
-                        $(i).attr("data-asset"),
-                        $(i).attr("data-zoom"),
-                        { x: 0.5, y: 0.5 },
-                        $(i).parent().parent()
-                      );
-                    }
-                  });
-              }
-            );
 
             SetInnerHtml(
               $(element).find(`.sponsor_icon`),

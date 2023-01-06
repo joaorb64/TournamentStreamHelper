@@ -49,16 +49,26 @@
     return anim;
   }
 
-  function AnimateElement(roundKey, setIndex, set) {
+  function AnimateElement(roundKey, setIndex, set, bracket) {
+    let GfResetRoundNum = Math.max.apply(
+      null,
+      Object.keys(bracket).map((r) => parseInt(r))
+    );
+
+    let isGf = parseInt(roundKey) == GfResetRoundNum - 1;
+    let isGfR = parseInt(roundKey) == GfResetRoundNum;
+
     if (animations[roundKey][setIndex]) {
-      // Hide sets
       if (
         (set.playerId[0] == -2 && set.playerId[1] == -2) ||
         (set.playerId[0] == -1 && set.playerId[1] != -1) ||
-        (set.playerId[0] != -1 && set.playerId[1] == -1)
+        (set.playerId[0] != -1 && set.playerId[1] == -1) ||
+        (isGfR &&
+          bracket[GfResetRoundNum - 1].sets[0].score[0] >
+            bracket[GfResetRoundNum - 1].sets[0].score[1])
       ) {
         return animations[roundKey][setIndex].tweenTo("hidden");
-      } else if (!set.completed) {
+      } else if (!set.completed || (isGf && set.score[0] >= set.score[1])) {
         return animations[roundKey][setIndex].tweenTo("displayed");
       } else {
         return animations[roundKey][setIndex].tweenTo("done");
@@ -104,7 +114,8 @@
 
       if (
         !oldData.bracket ||
-        oldData.bracket.bracket.length != data.bracket.bracket.length
+        Object.keys(oldData.bracket.bracket).length !=
+          Object.keys(data.bracket.bracket).length
       ) {
         // WINNERS SIDE
         let html = "";
@@ -348,9 +359,16 @@
 
         entryAnim = gsap.timeline();
 
+        let GfResetRoundNum = Math.max.apply(
+          null,
+          Object.keys(bracket).map((r) => parseInt(r))
+        );
+
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
           animations[roundKey] = {};
           Object.values(round.sets).forEach((set, setIndex) => {
+            let isGfR = parseInt(roundKey) == GfResetRoundNum;
+
             let anim = gsap.timeline();
 
             anim.addLabel("hidden");
@@ -359,6 +377,14 @@
               AnimateLine($(`.line_in_r_${roundKey}.s_${setIndex + 1}`)),
               0
             );
+
+            if (isGfR) {
+              anim.from(
+                $(`.round_${roundKey} .round_name`),
+                { autoAlpha: 0, duration: 0.4 },
+                0.5
+              );
+            }
 
             anim.from(
               $(`.round_${roundKey} .slot_${setIndex + 1}`),
@@ -383,7 +409,7 @@
             anim.pause();
 
             entryAnim.add(
-              AnimateElement(roundKey, setIndex, set),
+              AnimateElement(roundKey, setIndex, set, bracket),
               Math.abs(parseInt(roundKey)) * 0.6
             );
           });
@@ -392,19 +418,11 @@
         entryAnim.play();
       }
 
-      let GfResetRoundNum = Math.max.apply(
-        null,
-        Object.keys(bracket).map((r) => parseInt(r))
-      );
-
-      let gf = bracket[GfResetRoundNum - 1].sets[0];
-      let isReset = gf.score[0] < gf.score[1];
-
       // TRIGGER ANIMATIONS
       if (entryAnim && entryAnim.progress() >= 1) {
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
           Object.values(round.sets).forEach((set, setIndex) => {
-            AnimateElement(roundKey, setIndex, set);
+            AnimateElement(roundKey, setIndex, set, bracket);
           });
         });
       }
@@ -517,7 +535,21 @@
 
             let charactersHtml = "";
 
-            if (player && player.character) {
+            let playerChanged =
+              _.get(
+                oldData,
+                `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
+              ) != pid;
+
+            let charactersChanged =
+              JSON.stringify(
+                _.get(
+                  oldData,
+                  `bracket.players.slot.${pid}.player.${1}.character`
+                )
+              ) != JSON.stringify(player.character);
+
+            if (playerChanged || charactersChanged) {
               Object.values(player.character).forEach((character, index) => {
                 if (character.assets[ASSET_TO_USE]) {
                   charactersHtml += `
@@ -536,32 +568,33 @@
                     `;
                 }
               });
+
+              SetInnerHtml(
+                $(element).find(`.character_container`),
+                charactersHtml,
+                undefined,
+                0.5,
+                () => {
+                  $(element)
+                    .find(`.character_container .icon.stockicon div`)
+                    .each((e, i) => {
+                      if (
+                        player &&
+                        player.character[1] &&
+                        player.character[1].assets[ASSET_TO_USE] != null
+                      ) {
+                        CenterImage(
+                          $(i),
+                          $(i).attr("data-asset"),
+                          $(i).attr("data-zoom"),
+                          { x: 0.5, y: 0.5 },
+                          $(i).parent().parent()
+                        );
+                      }
+                    });
+                }
+              );
             }
-            SetInnerHtml(
-              $(element).find(`.character_container`),
-              charactersHtml,
-              undefined,
-              0.5,
-              () => {
-                $(element)
-                  .find(`.character_container .icon.stockicon div`)
-                  .each((e, i) => {
-                    if (
-                      player &&
-                      player.character[1] &&
-                      player.character[1].assets[ASSET_TO_USE] != null
-                    ) {
-                      CenterImage(
-                        $(i),
-                        $(i).attr("data-asset"),
-                        $(i).attr("data-zoom"),
-                        { x: 0.5, y: 0.5 },
-                        $(i).parent().parent()
-                      );
-                    }
-                  });
-              }
-            );
 
             SetInnerHtml(
               $(element).find(`.sponsor_icon`),
