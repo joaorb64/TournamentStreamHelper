@@ -22,8 +22,17 @@
   var entryAnim = gsap.timeline({ paused: true });
   var animations = {};
 
+  // Animations for the icons and lines
+  // All animations include the whole path as if the player won
+  // But we add labels as checkpoints for each round
+  // So we get where the player is last seen in bracket and animate to that point
   var iconAnimationsW = [];
   var iconAnimationsL = [];
+
+  // Animation for when a player loses
+  // (makes slot, lines, and icon darker)
+  var playerLoseAnimW = [];
+  var playerLoseAnimL = [];
 
   var players = [];
   var bracket = {};
@@ -614,7 +623,18 @@
             if (!icon_element) return;
 
             let icon_anim = gsap.timeline({ paused: true });
+            let icon_lose_anim = gsap.timeline({ paused: true });
             let prevSlot = null;
+
+            icon_lose_anim.fromTo(
+              $(icon_element),
+              { filter: "brightness(1)" },
+              {
+                duration: 0.5,
+                filter: "brightness(0.7)",
+              },
+              0
+            );
 
             // We follow the bracket and add the positions the player appeared
             // to the animation
@@ -637,6 +657,16 @@
                         if (roundKey == "1") {
                           let setElement = $(
                             `.round_base_w .slot_${i + 1}.slot_p_${slotIndex}`
+                          );
+
+                          icon_lose_anim.fromTo(
+                            $(setElement),
+                            { filter: "brightness(1)" },
+                            {
+                              duration: 0.5,
+                              filter: "brightness(0.7)",
+                            },
+                            0
                           );
 
                           if (setElement && setElement.offset()) {
@@ -739,6 +769,7 @@
               });
 
             iconAnimationsW.push(icon_anim);
+            playerLoseAnimW.push(icon_lose_anim);
 
             // Losers path
             icon_element = $(
@@ -747,7 +778,18 @@
             if (!icon_element) return;
 
             icon_anim = gsap.timeline({ paused: true });
+            icon_lose_anim = gsap.timeline({ paused: true });
             prevSlot = null;
+
+            icon_lose_anim.fromTo(
+              $(icon_element),
+              { filter: "brightness(1)" },
+              {
+                duration: 0.5,
+                filter: "brightness(0.7)",
+              },
+              0
+            );
 
             let appearRounds = [];
 
@@ -802,6 +844,16 @@
                                 setElement.outerHeight() / 2 -
                                 $(icon_element).outerHeight() / 2,
                             });
+
+                            icon_lose_anim.fromTo(
+                              $(setElement),
+                              { filter: "brightness(1)" },
+                              {
+                                duration: 0.5,
+                                filter: "brightness(0.7)",
+                              },
+                              0
+                            );
                           }
                           icon_anim.addLabel(`start`);
 
@@ -834,6 +886,16 @@
                                 setElement.outerHeight() / 2 -
                                 $(icon_element).outerHeight() / 2,
                             });
+
+                            icon_lose_anim.fromTo(
+                              $(setElement),
+                              { filter: "brightness(1)" },
+                              {
+                                duration: 0.5,
+                                filter: "brightness(0.7)",
+                              },
+                              0
+                            );
                           }
                           icon_anim.addLabel(`start`);
 
@@ -982,6 +1044,7 @@
               });
 
               iconAnimationsL.push(icon_anim);
+              playerLoseAnimL.push(icon_lose_anim);
             }
 
             return;
@@ -1039,7 +1102,11 @@
               `
                 <span>
                   <span class="sponsor">
-                    ${player && player.team ? player.team : ""}
+                    ${
+                      player && player.team && parseInt(roundKey) > 0
+                        ? player.team
+                        : ""
+                    }
                   </span>
                   ${player ? player.name : ""}
                 </span>
@@ -1293,8 +1360,10 @@
                   }
                 }
               });
-              if (!foundInRound) lost = true;
             });
+
+            if (lost) playerLoseAnimW[t].play();
+            else playerLoseAnimW[t].reverse();
 
             iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`);
           });
@@ -1327,7 +1396,9 @@
           // So we assign the player so we can later set their name, icon, etc
           Object.entries(players).forEach(([teamId, team], t) => {
             let lastFoundRound = 0;
+            let lastFoundSet = null;
             let losersIconId = null;
+            let lost = false;
 
             Object.entries(bracket).forEach(function ([roundKey, round], r) {
               if (
@@ -1341,6 +1412,7 @@
                   (set.playerId[0] == teamId || set.playerId[1] == teamId)
                 ) {
                   lastFoundRound = roundKey;
+                  lastFoundSet = set;
 
                   if (losersIconId == null) {
                     appearRounds.forEach((appearRound, i) => {
@@ -1374,6 +1446,24 @@
               //if (iconAnimationsL != null && t < iconAnimationsL.length)
               //iconAnimationsL[t].tweenTo(`start`);
             } else {
+              if (lastFoundSet && lastFoundSet.completed) {
+                if (
+                  lastFoundSet.playerId[0] == teamId &&
+                  lastFoundSet.score[0] <= lastFoundSet.score[1]
+                ) {
+                  lost = true;
+                }
+                if (
+                  lastFoundSet.playerId[1] == teamId &&
+                  lastFoundSet.score[1] <= lastFoundSet.score[0]
+                ) {
+                  lost = true;
+                }
+              }
+
+              if (lost) playerLoseAnimL[losersIconId].play();
+              else playerLoseAnimL[losersIconId].reverse();
+
               // Get GF and GF Reset
               if (lastFoundRound == lastLosersRoundNum) {
                 let gfSet = bracket[GfResetRoundNum - 1].sets[0];
