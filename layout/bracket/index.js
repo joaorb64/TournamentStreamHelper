@@ -103,7 +103,6 @@
         null,
         Object.values(bracket).map((r) => Object.keys(r.sets).length)
       );
-      console.log(biggestRound);
 
       let size = 32;
       $(":root").css("--player-height", size);
@@ -121,8 +120,10 @@
 
       if (
         !oldData.bracket ||
-        Object.keys(oldData.bracket.bracket).length !=
-          Object.keys(data.bracket.bracket).length
+        Object.keys(oldData.bracket.players).length !=
+          Object.keys(data.bracket.players).length ||
+        progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
+        progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut")
       ) {
         // WINNERS SIDE
         let html = "";
@@ -510,133 +511,244 @@
 
             if (!element) return;
 
-            let player = null;
+            let team = players[pid];
 
-            if (players[pid]) player = players[pid].player["1"];
+            if (Object.values(team.player).length == 1) {
+              // Singles
+              let player = null;
 
-            SetInnerHtml(
-              $(element).find(`.name`),
-              `
-                <span>
-                  <span class="sponsor">
-                    ${player && player.team ? player.team : ""}
+              if (players[pid]) player = players[pid].player["1"];
+
+              SetInnerHtml(
+                $(element).find(`.name`),
+                `
+                  <span>
+                    <span class="sponsor">
+                      ${player && player.team ? player.team : ""}
+                    </span>
+                    ${player ? player.name : ""}
                   </span>
-                  ${player ? player.name : ""}
-                </span>
-              `
-            );
+                `
+              );
 
-            SetInnerHtml(
-              $(element).find(`.flagcountry`),
-              player && player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-                : ""
-            );
+              SetInnerHtml(
+                $(element).find(`.flagcountry`),
+                player && player.country.asset
+                  ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                  : ""
+              );
 
-            SetInnerHtml(
-              $(element).find(`.flagstate`),
-              player && player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
-                : ""
-            );
+              SetInnerHtml(
+                $(element).find(`.flagstate`),
+                player && player.state.asset
+                  ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                  : ""
+              );
 
-            let charactersHtml = "";
+              let charactersHtml = "";
 
-            let playerChanged =
-              _.get(
-                oldData,
-                `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-              ) != pid;
-
-            let charactersChanged =
-              JSON.stringify(
+              let playerChanged =
                 _.get(
                   oldData,
-                  `bracket.players.slot.${pid}.player.${1}.character`
-                )
-              ) != JSON.stringify(player.character);
+                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
+                ) != pid;
 
-            if (playerChanged || charactersChanged) {
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets[ASSET_TO_USE]) {
-                  charactersHtml += `
-                    <div class="icon stockicon">
-                        <div
-                          style='background-image: url(../../${
-                            character.assets[ASSET_TO_USE].asset
-                          })'
-                          data-asset='${JSON.stringify(
-                            character.assets[ASSET_TO_USE]
-                          )}'
-                          data-zoom='${ZOOM}'
-                        >
-                        </div>
-                    </div>
-                    `;
+              let charactersChanged =
+                JSON.stringify(
+                  _.get(
+                    oldData,
+                    `bracket.players.slot.${pid}.player.${1}.character`
+                  )
+                ) != JSON.stringify(player.character);
+
+              if (playerChanged || charactersChanged) {
+                Object.values(player.character).forEach((character, index) => {
+                  if (character.assets[ASSET_TO_USE]) {
+                    charactersHtml += `
+                      <div class="icon stockicon">
+                          <div
+                            style='background-image: url(../../${
+                              character.assets[ASSET_TO_USE].asset
+                            })'
+                            data-asset='${JSON.stringify(
+                              character.assets[ASSET_TO_USE]
+                            )}'
+                            data-zoom='${ZOOM}'
+                          >
+                          </div>
+                      </div>
+                      `;
+                  }
+                });
+
+                SetInnerHtml(
+                  $(element).find(`.character_container`),
+                  charactersHtml,
+                  undefined,
+                  0.5,
+                  () => {
+                    $(element)
+                      .find(`.character_container .icon.stockicon div`)
+                      .each((e, i) => {
+                        if (
+                          player &&
+                          player.character[1] &&
+                          player.character[1].assets[ASSET_TO_USE] != null
+                        ) {
+                          CenterImage(
+                            $(i),
+                            $(i).attr("data-asset"),
+                            $(i).attr("data-zoom"),
+                            { x: 0.5, y: 0.5 },
+                            $(i).parent().parent()
+                          );
+                        }
+                      });
+                  }
+                );
+              }
+
+              SetInnerHtml(
+                $(element).find(`.sponsor_icon`),
+                player && player.sponsor_logo
+                  ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                  : "<div></div>"
+              );
+
+              SetInnerHtml(
+                $(element).find(`.avatar`),
+                player && player.avatar
+                  ? `<div style="background-image: url('../../${player.avatar}')"></div>`
+                  : ""
+              );
+
+              SetInnerHtml(
+                $(element).find(`.online_avatar`),
+                player && player.online_avatar
+                  ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+                  : '<div style="background: gray)"></div>'
+              );
+
+              SetInnerHtml(
+                $(element).find(`.twitter`),
+                player && player.twitter
+                  ? `<span class="twitter_logo"></span>${String(
+                      player.twitter
+                    )}`
+                  : ""
+              );
+
+              SetInnerHtml(
+                $(element).find(`.sponsor-container`),
+                `<div class='sponsor-logo' style='background-image: url(../../${
+                  player ? player.sponsor_logo : ""
+                })'></div>`
+              );
+            } else {
+              // Doubles/Teams
+              let teamName = team.name;
+
+              if (!teamName || teamName == "") {
+                let names = [];
+                Object.values(team.player).forEach((player, p) => {
+                  if (player) {
+                    names.push(player.name);
+                  }
+                });
+                teamName = names.join(" / ");
+              }
+
+              SetInnerHtml(
+                $(element).find(`.name`),
+                `
+                  <span>
+                    ${teamName}
+                  </span>
+                `
+              );
+
+              SetInnerHtml($(element).find(`.flagcountry`), "");
+              SetInnerHtml($(element).find(`.flagstate`), "");
+
+              let currCharacters = [];
+
+              Object.values(team.player).forEach((player, p) => {
+                if (_.get(player, "character.1")) {
+                  currCharacters.push(_.get(player, "character.1"));
                 }
               });
 
-              SetInnerHtml(
-                $(element).find(`.character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(element)
-                    .find(`.character_container .icon.stockicon div`)
-                    .each((e, i) => {
-                      if (
-                        player &&
-                        player.character[1] &&
-                        player.character[1].assets[ASSET_TO_USE] != null
-                      ) {
+              let oldCharacters = [];
+
+              Object.values(team.player).forEach((player, p) => {
+                if (
+                  _.get(
+                    oldData,
+                    `bracket.players.slot.${pid}.player.${p + 1}.character.1`
+                  )
+                ) {
+                  oldCharacters.push(_.get(player, "character.1"));
+                }
+              });
+
+              let charactersHtml = "";
+
+              let playerChanged =
+                _.get(
+                  oldData,
+                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
+                ) != pid;
+
+              let charactersChanged =
+                JSON.stringify(oldCharacters) != JSON.stringify(currCharacters);
+
+              if (playerChanged || charactersChanged) {
+                currCharacters.forEach((character, index) => {
+                  if (character.assets[ASSET_TO_USE]) {
+                    charactersHtml += `
+                        <div class="icon stockicon">
+                            <div
+                              style='background-image: url(../../${
+                                character.assets[ASSET_TO_USE].asset
+                              })'
+                              data-asset='${JSON.stringify(
+                                character.assets[ASSET_TO_USE]
+                              )}'
+                              data-zoom='${ZOOM}'
+                            >
+                            </div>
+                        </div>
+                        `;
+                  }
+                });
+
+                SetInnerHtml(
+                  $(element).find(`.character_container`),
+                  charactersHtml,
+                  undefined,
+                  0.5,
+                  () => {
+                    $(element)
+                      .find(`.character_container .icon.stockicon div`)
+                      .each((e, i) => {
                         CenterImage(
                           $(i),
                           $(i).attr("data-asset"),
                           $(i).attr("data-zoom"),
-                          { x: 0.5, y: 0.5 },
+                          { x: 0.5, y: 0.4 },
                           $(i).parent().parent()
                         );
-                      }
-                    });
-                }
-              );
+                      });
+                  }
+                );
+              }
+
+              SetInnerHtml($(element).find(`.sponsor_icon`), "");
+              SetInnerHtml($(element).find(`.avatar`), "");
+              SetInnerHtml($(element).find(`.online_avatar`), "");
+              SetInnerHtml($(element).find(`.twitter`), "");
+              SetInnerHtml($(element).find(`.sponsor-container`), "");
             }
-
-            SetInnerHtml(
-              $(element).find(`.sponsor_icon`),
-              player && player.sponsor_logo
-                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                : "<div></div>"
-            );
-
-            SetInnerHtml(
-              $(element).find(`.avatar`),
-              player && player.avatar
-                ? `<div style="background-image: url('../../${player.avatar}')"></div>`
-                : ""
-            );
-
-            SetInnerHtml(
-              $(element).find(`.online_avatar`),
-              player && player.online_avatar
-                ? `<div style="background-image: url('${player.online_avatar}')"></div>`
-                : '<div style="background: gray)"></div>'
-            );
-
-            SetInnerHtml(
-              $(element).find(`.twitter`),
-              player && player.twitter
-                ? `<span class="twitter_logo"></span>${String(player.twitter)}`
-                : ""
-            );
-
-            SetInnerHtml(
-              $(element).find(`.sponsor-container`),
-              `<div class='sponsor-logo' style='background-image: url(../../${
-                player ? player.sponsor_logo : ""
-              })'></div>`
-            );
           });
         });
       });

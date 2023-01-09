@@ -241,10 +241,12 @@ body {
 
 .character_container > div {
   overflow: hidden;
-  height: 100%;
-  gap: 4px;
+  gap: 2px;
   display: flex;
   width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 .character_container > div > div {
