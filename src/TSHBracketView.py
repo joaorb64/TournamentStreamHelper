@@ -107,19 +107,29 @@ class BracketSetWidget(QWidget):
             
             try:
                 if (self.bracketSet.playerIds[0]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[0] > 0:
-                    self.name[0].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[0]-1].findChild(QWidget, "name").text())
+                    team = StateManager.Get(f"bracket.players.slot.{self.bracketSet.playerIds[0]}", {})
+                    if team.get("name"):
+                        teamName = team.get("name")
+                    else:
+                        teamName = " / ".join([p.get("name", "") for p in team.get("player", {}).values()])
+                    self.name[0].setText(teamName)
                 else:
                     self.name[0].setText("")
             except:
-                pass
+                print(traceback.format_exc())
 
             try:
                 if (self.bracketSet.playerIds[1]-1) < len(self.bracketView.playerList.slotWidgets) and self.bracketSet.playerIds[1] > 0:
-                    self.name[1].setText(self.bracketView.playerList.slotWidgets[self.bracketSet.playerIds[1]-1].findChild(QWidget, "name").text())
+                    team = StateManager.Get(f"bracket.players.slot.{self.bracketSet.playerIds[1]}", {})
+                    if team.get("name"):
+                        teamName = team.get("name")
+                    else:
+                        teamName = " / ".join([p.get("name", "") for p in team.get("player", {}).values()])
+                    self.name[1].setText(teamName)
                 else:
                     self.name[1].setText("")
             except:
-                pass
+                print(traceback.format_exc())
 
             if self.bracketSet.finished is not None:
                 self.finished.blockSignals(True)
