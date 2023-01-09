@@ -28,6 +28,7 @@ class TSHTournamentDataProviderSignals(QObject):
     get_sets_finished = pyqtSignal(list)
     tournament_phases_updated = pyqtSignal(list)
     tournament_phasegroup_updated = pyqtSignal(dict)
+    game_changed = pyqtSignal(int)
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -37,6 +38,8 @@ class TSHTournamentDataProvider:
         self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
         self.entrantsModel: QStandardItemModel = None
         self.threadPool = QThreadPool()
+
+        self.signals.game_changed.connect(self.SetGameFromProvider)
 
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.SetGameFromProvider)
@@ -73,6 +76,8 @@ class TSHTournamentDataProvider:
 
         TSHTournamentDataProvider.instance.provider.GetEntrants()
         TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+        TSHTournamentDataProvider.instance.SetGameFromProvider()
 
         SettingsManager.Set("TOURNAMENT_URL", url)
 

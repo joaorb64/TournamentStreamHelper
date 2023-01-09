@@ -60,9 +60,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
             videogame = deep_get(data, "data.event.videogame.id", None)
             if videogame:
-                TSHGameAssetManager.instance.SetGameFromStartGGId(
-                    videogame)
                 self.videogame = videogame
+                self.parent.signals.game_changed.emit(videogame)
 
             finalData["tournamentName"] = deep_get(
                 data, "data.event.tournament.name", "")
@@ -826,12 +825,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
             if sets and len(sets) > 0:
                 userSet = sets[0]
-
-                videogame = deep_get(userSet, "event.videogame.id", None)
-                if videogame:
-                    TSHGameAssetManager.instance.SetGameFromStartGGId(
-                        videogame)
-                    self.videogame = videogame
 
                 self.parent.SetTournament(
                     "https://start.gg/"+deep_get(userSet, "event.slug"))

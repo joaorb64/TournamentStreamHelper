@@ -1062,7 +1062,16 @@
 
       // UPDATE ROUND NAMES
       Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        SetInnerHtml($(`.round_${parseInt(roundKey)} .round_name`), round.name);
+        let roundName = round.name;
+
+        if (parseInt(roundKey) < 0) {
+          roundName = roundName
+            .split(/ |-/)
+            .map((n) => n[0])
+            .join("");
+        }
+
+        SetInnerHtml($(`.round_${parseInt(roundKey)} .round_name`), roundName);
       });
 
       // UPDATE PLAYER DATA
@@ -1103,7 +1112,10 @@
                 <span>
                   <span class="sponsor">
                     ${
-                      player && player.team && parseInt(roundKey) > 0
+                      player &&
+                      player.team &&
+                      (parseInt(roundKey) > 0 ||
+                        (!allWinners && roundKey == "-1"))
                         ? player.team
                         : ""
                     }

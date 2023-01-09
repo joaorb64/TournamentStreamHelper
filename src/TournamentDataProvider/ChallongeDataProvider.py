@@ -53,9 +53,8 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                 videogame = collection.get("filter", {}).get("id", None)
                 if videogame:
-                    TSHGameAssetManager.instance.SetGameFromChallongeId(
-                        videogame)
                     self.videogame = videogame
+                    self.parent.signals.game_changed.emit(videogame)
 
                 finalData["tournamentName"] = deep_get(collection, "name")
 
