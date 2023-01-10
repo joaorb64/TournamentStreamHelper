@@ -306,9 +306,9 @@ class TSHBracketView(QGraphicsView):
             self.bracketWidgets.append(roundWidgets)
             currentWidgets.append(roundWidgets)
         
-        self.fitInView()
         QGuiApplication.processEvents()
         self.DrawLines()
+        self.fitInView()
 
     def GetLimitedExportingBracketOffsets(self):
         limitExportNumber = -1
@@ -329,7 +329,7 @@ class TSHBracketView(QGraphicsView):
                 print(traceback.format_exc())
                 losersRounds = 0
 
-            if StateManager.Get("bracket.bracket.progressionsIn", 0) > 0:
+            if self.bracketWidget.progressionsIn.value() > 0:
                 StateManager.Set("bracket.bracket.progressionsIn", 0)
                 losersRounds += 2
                 winnersRounds += 1
@@ -611,19 +611,17 @@ class TSHBracketView(QGraphicsView):
         item = self._scene.addPath(dashedPath, pen)
         self.bracketLines.append(item)
 
-    def fitInView(self, scale=True):
+    def fitInView(self):
         rect = QRectF(self.bracketLayout.rect())
         if not rect.isNull():
-            # self.setSceneRect(rect)
-
-            # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
-            # self.scale(1 / unity.width(), 1 / unity.height())
-            # viewrect = self.viewport().rect()
-            # scenerect = self.transform().mapRect(rect)
-            # factor = min(viewrect.width() / scenerect.width(),
-            #                 viewrect.height() / scenerect.height())
-            # self.scale(factor, factor)
-            
+            self.setSceneRect(rect)
+            unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
+            self.scale(1 / unity.width(), 1 / unity.height())
+            viewrect = self.viewport().rect()
+            scenerect = self.transform().mapRect(rect)
+            factor = min(viewrect.width() / scenerect.width(),
+                            viewrect.height() / scenerect.height())
+            self.scale(factor, factor)
             self._zoom = 0
 
     def wheelEvent(self, event):
@@ -633,12 +631,12 @@ class TSHBracketView(QGraphicsView):
         else:
             factor = 0.8
             self._zoom -= 1
-        # if self._zoom >= 0:
-        self.scale(factor, factor)
-        # elif self._zoom == 0:
-        #     self.fitInView()
-        # else:
-        #     self._zoom = 0
+        
+        if self._zoom > 0:
+            self.scale(factor, factor)
+        else:
+            self.fitInView()
+            self._zoom = 0
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
