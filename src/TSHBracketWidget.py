@@ -104,6 +104,11 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection: QComboBox = self.findChild(QComboBox, "phaseGroupSelection")
         self.phaseGroupSelection.currentIndexChanged.connect(self.PhaseGroupChanged)
 
+        self.btRefresh: QPushButton = self.findChild(QPushButton, "btRefresh")
+        updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
+        self.btRefresh.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
+        self.btRefresh.clicked.connect(self.PhaseGroupChanged)
+
         self.progressionsIn: QSpinBox = self.findChild(QSpinBox, "progressionsIn")
         self.progressionsIn.valueChanged.connect(lambda val: [
             StateManager.Set("bracket.bracket.progressionsIn", val),
