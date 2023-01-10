@@ -3,6 +3,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os
+import traceback
 
 from src.SettingsManager import SettingsManager
 
@@ -15,12 +16,12 @@ class TSHLocaleHelper(QObject):
     exportLocale = "en-US"
     programLocale = "en-US"
     roundLocale = "en-US"
+    roundNames = {}
     translator = None
     languages = []
     remapping = {}
 
     def LoadLocale():
-
         settingsProgramLocale = SettingsManager.Get("program_language", None)
         settingsExportLocale = SettingsManager.Get("export_language", None)
         settingsRoundLocale = SettingsManager.Get("round_language", None)
@@ -72,6 +73,31 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.remapping = languages_json.get("remapping")
         except Exception as e:
             raise Exception(f"Error loading languages") from e
+    
+    def LoadRoundNames():
+        # Load default round names and translation
+        try:
+            round_names: dict = json.load(open("./src/i18n/round_names/en.json", 'rt', encoding='utf-8'))
+
+            for f in os.listdir("./src/i18n/round_names/"):
+                if f.endswith(".json"):
+                    lang = f.split(".")[0]
+                    if lang == TSHLocaleHelper.exportLocale:
+                        translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
+                        round_names.update(translatedRoundNames)
+            
+            TSHLocaleHelper.roundNames = round_names
+        except:
+            print(traceback.format_exc())
+        
+        # Load user round names in a separate try/catch
+        try:
+            round_names: dict = json.load(open("./user_data/round_names.json", 'rt', encoding='utf-8'))
+            round_names = {k: v for k, v in round_names.items() if v}
+            TSHLocaleHelper.roundNames.update(round_names)
+        except:
+            print(traceback.format_exc())
+
 
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():

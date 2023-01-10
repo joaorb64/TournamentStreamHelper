@@ -81,6 +81,7 @@ class Window(QMainWindow):
         StateManager.BlockSaving()
 
         TSHLocaleHelper.LoadLocale()
+        TSHLocaleHelper.LoadRoundNames()
 
         self.signals = WindowSignals()
 

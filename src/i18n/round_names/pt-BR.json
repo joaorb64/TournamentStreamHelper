@@ -1,0 +1,12 @@
+{
+    "grand_final_reset": "Grande Final (Reset)",
+    "grand_final": "Grande Final",
+    "winners_final": "Final",
+    "winners_semi_final": "Semifinal",
+    "winners_quarter_final": "Quartas de Final",
+    "losers_final": "Final da Repescagem",
+    "losers_semi_final": "Semifinal da Repescagem",
+    "losers_quarter_final": "Quartas de Final da Repescagem",
+    "winners_round": "Rodada {0}",
+    "losers_round": "Repescagem Rodada {0}"
+}

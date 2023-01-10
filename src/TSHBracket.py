@@ -1,4 +1,5 @@
 import math
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 class BracketSet():
     BYE = -1
@@ -238,33 +239,31 @@ class Bracket():
     def GetRoundName(self, round: str, winnersCutout=[0,0], losersCutout=[0,0]):
         roundNumber = int(round)
 
-        prefix = "Winners" if roundNumber > 0 else "Losers"
-
         gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
         lastLosers = min([int(r) for r in self.rounds.keys()])
 
         if roundNumber > 0:
             if roundNumber == gfsRound:
-                return f"Grand Final"
+                return TSHLocaleHelper.roundNames.get("grand_final")
             if roundNumber == gfsRound + 1:
-                return f"Grand Final Reset"
+                return TSHLocaleHelper.roundNames.get("grand_final_reset")
             if roundNumber == gfsRound - 1:
-                return f"{prefix} Final"
+                return TSHLocaleHelper.roundNames.get("winners_final")
             if roundNumber == gfsRound - 2:
-                return f"{prefix} Semi-Final"
+                return TSHLocaleHelper.roundNames.get("winners_semi_final")
             if roundNumber == gfsRound - 3:
-                return f"{prefix} Quarter-Final"
+                return TSHLocaleHelper.roundNames.get("winners_quarter_final")
         else:
             if roundNumber == lastLosers:
-                return f"{prefix} Final"
+                return TSHLocaleHelper.roundNames.get("losers_final")
             if roundNumber == lastLosers + 1:
-                return f"{prefix} Semi-Final"
+                return TSHLocaleHelper.roundNames.get("losers_semi_final")
             if roundNumber == lastLosers + 2:
-                return f"{prefix} Quarter-Final"
+                return TSHLocaleHelper.roundNames.get("losers_quarter_final")
         
         if roundNumber > 0:
             roundNumber -= winnersCutout[0]
+            return TSHLocaleHelper.roundNames.get("winners_round").format(abs(roundNumber))
         if roundNumber < 0:
             roundNumber += losersCutout[0]
-
-        return f"{prefix} Round {abs(roundNumber)}"
+            return TSHLocaleHelper.roundNames.get("losers_round").format(abs(roundNumber))

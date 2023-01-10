@@ -1,0 +1,12 @@
+{
+    "grand_final_reset": "Grand Final Reset",
+    "grand_final": "Grand Final",
+    "winners_final": "Winners Final",
+    "winners_semi_final": "Winners Semi-Final",
+    "winners_quarter_final": "Winners Quarter-Final",
+    "losers_final": "Losers Final",
+    "losers_semi_final": "Losers Semi-Final",
+    "losers_quarter_final": "Losers Quarter-Final",
+    "winners_round": "Winners Round {0}",
+    "losers_round": "Losers Round {0}"
+}
