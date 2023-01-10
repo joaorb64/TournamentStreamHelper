@@ -12,6 +12,7 @@ from .TournamentDataProvider import TournamentDataProvider
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from ..Workers import Worker
+from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import next_power_of_2
 
 def CHALLONGE_BRACKET_TYPE(bracketType: str):
@@ -28,6 +29,10 @@ class ChallongeDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
+    
+    def GetEnglishUrl(self):
+        slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)[0]
+        return (f"https://challonge.com/{slug}")
 
     def GetTournamentData(self, progress_callback=None):
         finalData = {}
@@ -91,7 +96,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -118,7 +123,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -153,7 +158,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -196,7 +201,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         finalData = {}
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -374,8 +379,8 @@ class ChallongeDataProvider(TournamentDataProvider):
         if phaseId in (None, "final_stage"):
             for r, round in enumerate(matches.values()):
                 for m, match in enumerate(round):
-                    match["round_name"] = next(
-                        r["title"] for r in rounds if r["number"] == match.get("round"))
+                    # match["round_name"] = next(
+                    #     r["title"] for r in rounds if r["number"] == match.get("round"))
                     match["round"] = match.get("round")
                     if data.get("tournament", {}).get("tournament_type") == "round robin":
                         match["phase"] = "Round Robin"
@@ -386,6 +391,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                             match["isGF"] = True
                         elif m == 1:
                             match["isGFR"] = True
+                    match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds)
                     all_matches.append(match)
 
         if phaseId == None or phaseId.startswith("group_stage"):
@@ -401,9 +407,10 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                 for round in matches.values():
                     for match in round:
-                        match["round_name"] = next(
-                            r["title"] for r in rounds if r["number"] == match.get("round"))
+                        # match["round_name"] = next(
+                        #     r["title"] for r in rounds if r["number"] == match.get("round"))
                         match["phase"] = group.get("name")
+                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(match.get("round"), rounds)
                         all_matches.append(match)
 
         return all_matches
@@ -432,6 +439,37 @@ class ChallongeDataProvider(TournamentDataProvider):
             userSet["reverse"] = True
 
         return userSet
+    
+    def TranslateRoundName(match, rounds):
+        roundNums = [r.get("number") for r in rounds]
+
+        if match.get("round") > 0:
+            lastWinnersRoundNum = max(roundNums)
+
+            if match.get("round") == lastWinnersRoundNum:
+                if match.get("isGFR"):
+                    return TSHLocaleHelper.roundNames.get("grand_final_reset")
+                else:
+                    return TSHLocaleHelper.roundNames.get("grand_final")
+            elif match.get("round") == lastWinnersRoundNum - 1:
+                return TSHLocaleHelper.roundNames.get("winners_final")
+            elif match.get("round") == lastWinnersRoundNum - 2:
+                return TSHLocaleHelper.roundNames.get("winners_semi_final")
+            elif match.get("round") == lastWinnersRoundNum - 3:
+                return TSHLocaleHelper.roundNames.get("winners_quarter_final")
+            else:
+                return TSHLocaleHelper.roundNames.get("winners_round").format(match.get("round"))
+        else:
+            lastLosersRoundNum = min(roundNums)
+
+            if match.get("round") == lastLosersRoundNum:
+                return TSHLocaleHelper.roundNames.get("losers_final")
+            elif match.get("round") == lastLosersRoundNum + 1:
+                return TSHLocaleHelper.roundNames.get("losers_semi_final")
+            elif match.get("round") == lastLosersRoundNum + 2:
+                return TSHLocaleHelper.roundNames.get("losers_quarter_final")
+            else:
+                return TSHLocaleHelper.roundNames.get("losers_round").format(abs(match.get("round")))
 
     def ParseMatchData(self, match):
         stream = deep_get(match, "station.stream_url", None)
@@ -478,8 +516,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             "p1_seed": deep_get(match, "player1.seed"),
             "p2_seed": deep_get(match, "player2.seed"),
             "entrants": [
-                [self.ParseEntrant(deep_get(match, "player1"))],
-                [self.ParseEntrant(deep_get(match, "player2"))],
+                self.ParseEntrant(deep_get(match, "player1")).get("players"),
+                self.ParseEntrant(deep_get(match, "player2")).get("players"),
             ],
             "stream": stream,
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
@@ -500,7 +538,7 @@ class ChallongeDataProvider(TournamentDataProvider):
     def GetEntrantsWorker(self, progress_callback):
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -568,7 +606,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -603,7 +641,7 @@ class ChallongeDataProvider(TournamentDataProvider):
     def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
         try:
             data = requests.get(
-                self.url+".json",
+                self.GetEnglishUrl()+".json",
                 headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
                     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",

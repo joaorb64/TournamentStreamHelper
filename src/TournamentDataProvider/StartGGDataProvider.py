@@ -12,6 +12,7 @@ from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
 import json
+from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 from ..Workers import Worker
 
@@ -354,6 +355,34 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             traceback.print_exc()
         return([])
+    
+    def TranslateRoundName(name: str):
+        roundMapping = {
+            "Grand Final Reset": "grand_final_reset",
+            "Grand Final": "grand_final",
+            "Winners Final": "winners_final",
+            "Winners Semi-Final": "winners_semi_final",
+            "Winners Quarter-Final": "winners_quarter_final",
+            "Losers Final": "losers_final",
+            "Losers Semi-Final": "losers_semi_final",
+            "Losers Quarter-Final": "losers_quarter_final"
+        }
+
+        if name in roundMapping:
+            return TSHLocaleHelper.roundNames.get(roundMapping.get(name))
+        
+        try:
+            roundNumber = name.rsplit(" ")[-1]
+
+            if "Winners" in name:
+                return TSHLocaleHelper.roundNames.get("winners_round").format(roundNumber)
+            if "Losers" in name:
+                return TSHLocaleHelper.roundNames.get("losers_round").format(roundNumber)
+        except:
+            print(traceback.format_exc())
+        
+        return name
+
 
     def ParseMatchDataNewApi(self, _set):
         p1 = deep_get(_set, "slots", [])[0]
@@ -368,7 +397,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
         setData = {
             "id": _set.get("id"),
-            "round_name": _set.get("fullRoundText"),
+            "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
             "tournament_phase": phase_name,
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
@@ -911,7 +940,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 player_set = {
                     "phase_id": phaseIdentifier,
                     "phase_name": phaseName,
-                    "round_name": set.get("fullRoundText"),
+                    "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
                     f"player{players[0]}_score": set.get("entrant1Score"),
                     f"player{players[0]}_team": player1Info.get("prefix"),
                     f"player{players[0]}_name": player1Info.get("gamerTag"),
@@ -1122,7 +1151,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         "score": score,
                         "timestamp": event.get("startAt"),
                         "winner": winner,
-                        "round": _set.get("fullRoundText"),
+                        "round": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
                         "phase_name": phaseName,
                         "phase_id": phaseIdentifier
                     }
