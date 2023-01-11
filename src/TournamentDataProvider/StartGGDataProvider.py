@@ -795,7 +795,7 @@ class StartGGDataProvider(TournamentDataProvider):
             traceback.print_exc()
             callback.emit({"playerNumber": playerNumber,"last_sets": []})
         
-    def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback):
+    def GetPlayerHistoryStandings(self, playerID, playerNumber, callback, progress_callback):
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -807,7 +807,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     "operationName": "TournamentHistoryDataQuery",
                     "variables": {
                         "playerID": playerID,
-                        "gameID": gameType
+                        "gameID": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
                     },
                     "query": StartGGDataProvider.HistorySetsQuery
                 }
@@ -1040,7 +1040,10 @@ class StartGGDataProvider(TournamentDataProvider):
                     p1EventIds.append(id.get("id"))
                 page += 1
 
+            page = 1
             totalPages = 1
+
+            print("P1 Event Count: " + str(len(p1EventIds)))
 
             p2EventIds = []
 
@@ -1067,6 +1070,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 for id in deep_get(p2EventData, "data.user.events.nodes", []):
                     p2EventIds.append(id.get("id"))
                 page += 1
+
+            print("P2 Event Count: " + str(len(p2EventIds)))
             
             events = []
 
@@ -1079,13 +1084,14 @@ class StartGGDataProvider(TournamentDataProvider):
                     if event in p1EventIds:
                         events.append(event)
 
+            print("Total Event Overlap: " + str(len(events)))
             h2hSets = []
 
             for event in events:
                 worker = Worker(self.GetHeadToHeadSetsWorker, **{
                     "eventId": event,
-                    "id1": id1[0],
-                    "id2": id2[0]
+                    "id1": id1,
+                    "id2": id2
                 })
                 worker.signals.result.connect(lambda result: [
                     h2hSets.extend(result)
@@ -1093,6 +1099,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 pool.start(worker)
 
             pool.waitForDone(20000)
+            QCoreApplication.processEvents()
 
             # START OF SCORE CALCULATION TO PASS OFF
             match_points = [0, 0]
@@ -1102,7 +1109,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 total_points = [total_points[0] + items.get("total_points")[0], total_points[1] + items.get("total_points")[1]]
                 match_points = [match_points[0] + items.get("winner")[0], match_points[1] + items.get("winner")[1]]
 
-            QCoreApplication.processEvents()
             callback.emit({"scores": match_points, "total_points": total_points})
         except Exception as e:
             traceback.print_exc()
@@ -1110,7 +1116,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
     def GetHeadToHeadSetsWorker(self, eventId, id1, id2, progress_callback):
         try:
-            sets = []
+            scores = []
 
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -1121,7 +1127,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 json={
                     "operationName": "HeadToHeadSetsQuery",
                     "variables": {
-                        "eventId": id1[0],
+                        "eventId": eventId,
                         "pid": id1[0],
                     },
                     "query": StartGGDataProvider.HeadToHeadSetsQuery
@@ -1130,8 +1136,9 @@ class StartGGDataProvider(TournamentDataProvider):
             data = json.loads(data.text)
 
             sets = deep_get(data, "data.event.sets.nodes", [])
-
             for _set in sets:
+                if len(_set.get("slots", [{}])) < 2:
+                    continue
 
                 p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
                     "participants", [{}])[0].get("player", {}).get("id")
@@ -1147,13 +1154,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 if _set.get("entrant1Score") == -1 or _set.get("entrant2Score") == -1:
                     continue
 
-                playerToEntrant = {}
-
-                playerToEntrant[id1[0]] = str(_set.get("slots", [{}])[
-                    0].get("entrant", {}).get("id"))
-                playerToEntrant[id2[0]] = str(_set.get("slots", [{}])[
-                    1].get("entrant", {}).get("id"))
-
                 score = [0, 0]
                 total_points = [0, 0]
 
@@ -1166,14 +1166,13 @@ class StartGGDataProvider(TournamentDataProvider):
                         total_points = [_set.get("entrant2Score"),
                                     _set.get("entrant1Score")]
                         score = [0, 1]
-
                 entry = {
                     "total_points": total_points,
                     "winner": score,
                 }
-                sets.append(entry)
-                
-            return sets
+                scores.append(entry)
+
+            return scores
         except Exception as e:
             traceback.print_exc()
             return []
