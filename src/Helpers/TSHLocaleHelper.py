@@ -77,13 +77,24 @@ class TSHLocaleHelper(QObject):
     def LoadRoundNames():
         # Load default round names and translation
         try:
-            round_names: dict = json.load(open("./src/i18n/round_names/en.json", 'rt', encoding='utf-8'))
+            original_round_names: dict = json.load(open("./src/i18n/round_names/en.json", 'rt', encoding='utf-8'))
+            round_names = original_round_names.copy()
 
             for f in os.listdir("./src/i18n/round_names/"):
                 if f.endswith(".json"):
                     lang = f.split(".")[0]
+
                     if lang == TSHLocaleHelper.exportLocale:
+                        # We found the exact language file
                         translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
+                        round_names = original_round_names.copy()
+                        round_names.update(translatedRoundNames)
+                        break
+                    elif lang == TSHLocaleHelper.exportLocale.split("-")[0]:
+                        # We found a more generic language file
+                        # Good enough if we don't find a specific one
+                        translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
+                        round_names = original_round_names.copy()
                         round_names.update(translatedRoundNames)
             
             TSHLocaleHelper.roundNames = round_names
