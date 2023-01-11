@@ -30,62 +30,80 @@ class ChallongeDataProvider(TournamentDataProvider):
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
     
+    def GetSlug(self):
+        if "//challonge.com" in self.url:
+            # Regular challonge URL
+            slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)[0]
+            return slug
+        else:
+            # Tournament inside a Community
+            slug = re.findall(r"challonge\.com\/([^/]+)", self.url)[0]
+            return slug
+    
+    def GetCommunityPrefix(self):
+        if "//challonge.com" in self.url:
+            return ""
+        else:
+            # Tournament inside a Community
+            prefix = re.findall(r"//([^.]+)", self.url)[0]
+            return prefix
+
     def GetEnglishUrl(self):
-        slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)[0]
-        return (f"https://challonge.com/{slug}")
+        prefix = self.GetCommunityPrefix()
+        if prefix:
+            prefix = prefix+"."
+        return f"https://{prefix}challonge.com/{self.GetSlug()}"
 
     def GetTournamentData(self, progress_callback=None):
         finalData = {}
 
         try:
-            slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)
-            if len(slug) > 0:
-                slug = slug[0]
+            slug = self.GetSlug()
 
-                data = requests.get(
-                    f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
-                    headers={
-                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                        "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                        "Accept-Encoding": "gzip, deflate, br"
-                    }
-                )
+            data = requests.get(
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
 
-                data = json.loads(data.text)
-                collection = deep_get(data, "collection", [{}])[0]
-                details = deep_get(collection, "details", [])
+            data = json.loads(data.text)
+            collection = deep_get(data, "collection", [{}])[0]
+            details = deep_get(collection, "details", [])
 
-                videogame = collection.get("filter", {}).get("id", None)
-                if videogame:
-                    self.videogame = videogame
-                    self.parent.signals.game_changed.emit(videogame)
+            videogame = collection.get("filter", {}).get("id", None)
+            if videogame:
+                self.videogame = videogame
+                self.parent.signals.game_changed.emit(videogame)
 
-                finalData["tournamentName"] = deep_get(collection, "name")
+            finalData["tournamentName"] = deep_get(collection, "name")
 
-                # TODO necessary ?
-                if len(details) > 3:
-                    startAtStr = deep_get(details[2], "text", "")
-                    try:
-                        # test if date
-                        parse(startAtStr, fuzzy=False)
-                        # 'September 29, 2022'
-                        element = datetime.strptime(startAtStr, "%B %d, %Y")
-                        # to timestamp
-                        timestamp = datetime.timestamp(element)
-                        finalData["startAt"] = datetime.timestamp(element)
-                    except ValueError:
-                        print('ChallongeDataProvider: No date defined')
+            # TODO necessary ?
+            if len(details) > 3:
+                startAtStr = deep_get(details[2], "text", "")
+                try:
+                    # test if date
+                    parse(startAtStr, fuzzy=False)
+                    # 'September 29, 2022'
+                    element = datetime.strptime(startAtStr, "%B %d, %Y")
+                    # to timestamp
+                    timestamp = datetime.timestamp(element)
+                    finalData["startAt"] = datetime.timestamp(element)
+                except ValueError:
+                    print('ChallongeDataProvider: No date defined')
 
-                details = collection.get("details", [])
-                participantsElement = next(
-                    (d for d in details if d.get("icon") == "fa fa-users"), None)
-                if participantsElement:
-                    participants = int(
-                        participantsElement.get("text").split(" ")[0])
-                    finalData["numEntrants"] = participants
-                # finalData["address"] = deep_get(
-                #     data, "data.event.tournament.venueAddress", "")
+            details = collection.get("details", [])
+            participantsElement = next(
+                (d for d in details if d.get("icon") == "fa fa-users"), None)
+            if participantsElement:
+                participants = int(
+                    participantsElement.get("text").split(" ")[0])
+                finalData["numEntrants"] = participants
+            # finalData["address"] = deep_get(
+            #     data, "data.event.tournament.venueAddress", "")
         except:
             traceback.print_exc()
 
@@ -228,14 +246,21 @@ class ChallongeDataProvider(TournamentDataProvider):
             isPoolsPhase = id != None and id.startswith("group_stage")
 
             if not isPoolsPhase:
-                lastWinners = parsed_matches[0]
+                # If we have GF and GFR, last winners rounds will have 2 sets
+                # So we have to move the last one forward.
+                # If there wasn't a reset, don't do anything
+                lastWinnersMatch = parsed_matches[0]
 
                 for match in parsed_matches:
-                    if match.get("round") > lastWinners.get("round"):
-                        lastWinners = match
-                    elif match.get("round") == lastWinners.get("round") and match.get("identifier") > lastWinners.get("identifier"):
-                        lastWinners = match
-                lastWinners["round"] = lastWinners["round"]+1
+                    if match.get("round") > lastWinnersMatch.get("round"):
+                        lastWinnersMatch = match
+                    elif match.get("round") == lastWinnersMatch.get("round") and match.get("identifier") > lastWinnersMatch.get("identifier"):
+                        lastWinnersMatch = match
+                
+                hasReset = len([m for m in parsed_matches if m.get("round") == lastWinnersMatch.get("round")]) > 1
+
+                if hasReset:
+                    lastWinnersMatch["round"] = lastWinnersMatch["round"]+1
             else:
                 groups = deep_get(data, "groups", [])
             
