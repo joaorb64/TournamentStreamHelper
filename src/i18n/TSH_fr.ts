@@ -1284,12 +1284,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="195"/>
         <source>Group Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>Phase de poules</translation>
     </message>
     <message>
         <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="208"/>
         <source>Final Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>Phase finale</translation>
     </message>
 </context>
 <context>
