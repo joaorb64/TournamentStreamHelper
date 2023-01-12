@@ -35,6 +35,7 @@ jobs:
           lrelease -version
       - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
       - run: |
+          python3 src/i18n/gen_round_names_files.py
           python3 src/i18n/gen_translation_files.py
           python3 src/i18n/gen_translation_binaries.py
 

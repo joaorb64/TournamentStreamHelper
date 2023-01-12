@@ -1,10 +1,20 @@
 Arbre Winner
 Arbre Loser
-Quarts de finale Winner
-Demi-Finale Winner
-Finale Winner
-Quarts de finale Loser
-Demi-Finale Loser
-Finale Loser
+Grande Finale - Reset
 Grande Finale
-Grande Finale Reset
+Finale Winner
+Demi-finale Winner
+Quart de finale Winner
+Finale Loser
+Demi-finale Loser
+Quart de finale Loser
+Round 1 Winner
+Round 2 Winner
+Round 3 Winner
+Round 4 Winner
+Round 5 Winner
+Round 1 Loser
+Round 2 Loser
+Round 3 Loser
+Round 4 Loser
+Round 5 Loser

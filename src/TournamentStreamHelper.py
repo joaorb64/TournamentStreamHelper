@@ -360,37 +360,6 @@ class Window(QMainWindow):
             if SettingsManager.Get("export_language") == code:
                 action.setChecked(True)
 
-        languageSelect = QMenu(QApplication.translate(
-            "app", "Default Phase Name Language") + menu_margin, self.optionsBt.menu())
-        self.optionsBt.menu().addMenu(languageSelect)
-
-        languageSelectGroup = QActionGroup(languageSelect)
-        languageSelectGroup.setExclusive(True)
-
-        round_language_messagebox = generate_restart_messagebox(
-            QApplication.translate("app", "Default phase name language changed successfully."))
-
-        action = languageSelect.addAction(
-            QApplication.translate("app", "Same as program language"))
-        languageSelectGroup.addAction(action)
-        action.setCheckable(True)
-        action.setChecked(True)
-        action.triggered.connect(lambda x: [
-            SettingsManager.Set("round_language", "default"),
-            round_language_messagebox.exec()
-        ])
-
-        for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
-            action.setCheckable(True)
-            languageSelectGroup.addAction(action)
-            action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("round_language", c),
-                round_language_messagebox.exec()
-            ])
-            if SettingsManager.Get("round_language") == code:
-                action.setChecked(True)
-
         self.optionsBt.menu().addSeparator()
 
         # Help menu code

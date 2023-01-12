@@ -3,6 +3,9 @@ import os
 import traceback
 import re
 import json
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from datetime import datetime
 from dateutil.parser import parse
 from ..Helpers.TSHDictHelper import deep_get
@@ -190,7 +193,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             if len(deep_get(data, "groups", [])) > 0:
                 phaseObj = {
                     "id": "group_stage",
-                    "name": "Group Stage",
+                    "name": QApplication.translate("app", "Group Stage"),
                     "groups": []
                 }
                 for g, group in enumerate(deep_get(data, "groups", [])):
@@ -203,10 +206,10 @@ class ChallongeDataProvider(TournamentDataProvider):
             
             phases.append({
                 "id": "final_stage",
-                "name": "Final Stage",
+                "name": QApplication.translate("app", "Final Stage"),
                 "groups": [{
                         "id": "final_stage",
-                        "name": "Bracket",
+                        "name": QApplication.translate("app", "Bracket"),
                         "bracketType": CHALLONGE_BRACKET_TYPE(data.get("requested_plotter"))
                     }
                 ]

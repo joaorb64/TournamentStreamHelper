@@ -1,10 +1,20 @@
 Winners Bracket
 Losers Bracket
-Winners Quarters
-Winners Semis
-Winners Finals
-Losers Quarters
-Losers Semis
-Losers Finals
-Grand Finals
-Grand Finals Reset
+Grand Final Reset
+Grand Final
+Winners Final
+Winners Semi-Final
+Winners Quarter-Final
+Losers Final
+Losers Semi-Final
+Losers Quarter-Final
+Winners Round 1
+Winners Round 2
+Winners Round 3
+Winners Round 4
+Winners Round 5
+Losers Round 1
+Losers Round 2
+Losers Round 3
+Losers Round 4
+Losers Round 5
