@@ -28,6 +28,8 @@ class TSHBracketWidget(QDockWidget):
 
         uic.loadUi("src/layout/TSHBracket.ui", self)
 
+        StateManager.Set("bracket", {})
+
         TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(self.UpdatePhases)
         TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.connect(self.UpdatePhaseGroup)
 
@@ -119,6 +121,7 @@ class TSHBracketWidget(QDockWidget):
             ),
             self.bracketView.Update()
         ])
+        StateManager.Set("bracket.bracket.progressionsIn", 0)
 
         self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
         self.progressionsOut.valueChanged.connect(lambda val: [
@@ -130,6 +133,7 @@ class TSHBracketWidget(QDockWidget):
             ),
             self.bracketView.Update()
         ])
+        StateManager.Set("bracket.bracket.progressionsOut", 0)
 
         self.limitExport: QCheckBox = self.findChild(QCheckBox, "limitExport")
         self.limitExport.stateChanged.connect(self.bracketView.Update)
