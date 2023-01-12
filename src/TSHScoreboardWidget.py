@@ -368,13 +368,13 @@ class TSHScoreboardWidget(QDockWidget):
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
         default_tournament_phases_file = './assets/tournament_phases.txt'
-        locale = TSHLocaleHelper.roundLocale
+        locale = TSHLocaleHelper.exportLocale
         path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
+        if os.path.isdir(path_to_localized_assets) and os.path.exists(f"{path_to_localized_assets}/tournament_phases.txt"):
             default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
         else:
             path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
+            if os.path.isdir(path_to_localized_assets) and os.path.exists(f"{path_to_localized_assets}/tournament_phases.txt"):
                 default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
 
         for file in [default_tournament_phases_file, './user_data/tournament_phases.txt']:
@@ -390,13 +390,13 @@ class TSHScoreboardWidget(QDockWidget):
 
         # Add default and user tournament match title files
         default_tournament_match_file = './assets/tournament_matches.txt'
-        locale = TSHLocaleHelper.roundLocale
+        locale = TSHLocaleHelper.exportLocale
         path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
+        if os.path.isdir(path_to_localized_assets) and os.path.exists(f"{path_to_localized_assets}/tournament_matches.txt"):
             default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
         else:
             path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
+            if os.path.isdir(path_to_localized_assets) and os.path.exists(f"{path_to_localized_assets}/tournament_matches.txt"):
                 default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
 
         for file in [default_tournament_match_file, './user_data/tournament_matches.txt']:

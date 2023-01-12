@@ -15,7 +15,6 @@ class TSHLocaleHelperSignals(QObject):
 class TSHLocaleHelper(QObject):
     exportLocale = "en-US"
     programLocale = "en-US"
-    roundLocale = "en-US"
     roundNames = {}
     translator = None
     languages = []
@@ -24,7 +23,6 @@ class TSHLocaleHelper(QObject):
     def LoadLocale():
         settingsProgramLocale = SettingsManager.Get("program_language", None)
         settingsExportLocale = SettingsManager.Get("export_language", None)
-        settingsRoundLocale = SettingsManager.Get("round_language", None)
 
         if settingsProgramLocale and settingsProgramLocale != "default":
             current_locale = [settingsProgramLocale]
@@ -60,11 +58,6 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.exportLocale = settingsExportLocale
         else:
             TSHLocaleHelper.exportLocale = current_locale[0]
-
-        if settingsRoundLocale and settingsRoundLocale != "default":
-            TSHLocaleHelper.roundLocale = settingsRoundLocale
-        else:
-            TSHLocaleHelper.roundLocale = current_locale[0]
 
     def LoadLanguages():
         try:
