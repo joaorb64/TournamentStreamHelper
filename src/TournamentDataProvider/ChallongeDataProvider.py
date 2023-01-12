@@ -34,14 +34,15 @@ class ChallongeDataProvider(TournamentDataProvider):
         self.name = "Challonge"
     
     def GetSlug(self):
-        if "//challonge.com" in self.url:
-            # Regular challonge URL
-            slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)[0]
-            return slug
-        else:
-            # Tournament inside a Community
-            slug = re.findall(r"challonge\.com\/([^/]+)", self.url)[0]
-            return slug
+        # URL with language
+        slug = re.findall(r"challonge\.com\/.*\/([^/]+)", self.url)
+
+        if len(slug) > 0:
+            return slug[0]
+        
+        # URL has no language in it
+        slug = re.findall(r"challonge\.com\/([^/]+)", self.url)
+        return slug[0]
     
     def GetCommunityPrefix(self):
         if "//challonge.com" in self.url:
@@ -438,7 +439,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                         # match["round_name"] = next(
                         #     r["title"] for r in rounds if r["number"] == match.get("round"))
                         match["phase"] = group.get("name")
-                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(match.get("round"), rounds)
+                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds)
                         all_matches.append(match)
 
         return all_matches
@@ -528,7 +529,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         p1_id = deep_get(match, "player1.id")
         p2_id = deep_get(match, "player2.id")
 
-        if len(match.get("scores")) == 0:
+        if len(match.get("scores")) == 0 and match.get("state") == "complete":
             if match.get("winner_id") == p1_id:
                 scores = [0, -1]
             if match.get("winner_id") == p2_id:
@@ -592,7 +593,10 @@ class ChallongeDataProvider(TournamentDataProvider):
         # Can be adapted later if we ever want to support more
         playerData = {}
 
-        split = data.get("display_name").rsplit("|", 1)
+        if data == None:
+            return({})
+
+        split = data.get("display_name", "").rsplit("|", 1)
 
         gamerTag = split[-1].strip()
         prefix = split[0].strip() if len(
