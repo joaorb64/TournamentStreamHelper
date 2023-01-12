@@ -740,6 +740,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="156"/>
+        <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="212"/>
         <source>Bracket</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1252,12 +1253,12 @@ p, li { white-space: pre-wrap; }
         <translation>Itálica</translation>
     </message>
     <message>
-        <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="195"/>
+        <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="196"/>
         <source>Group Stage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="208"/>
+        <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="209"/>
         <source>Final Stage</source>
         <translation type="unfinished"></translation>
     </message>
