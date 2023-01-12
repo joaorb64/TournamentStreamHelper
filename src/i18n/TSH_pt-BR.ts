@@ -552,7 +552,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="84"/>
         <source>Pool A, Bracket, Top 8, etc</source>
-        <translation></translation>
+        <translation>Grupo A, Chave, Top 8, etc</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="102"/>
@@ -562,7 +562,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="125"/>
         <source>Winners Finals, Losers Semis, etc</source>
-        <translation></translation>
+        <translation>Final, Semifinal da Repescagem, etc</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="146"/>
@@ -1171,12 +1171,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1139"/>
         <source>Winners Finals</source>
-        <translation></translation>
+        <translation>Final</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1140"/>
         <source>Pool {0}</source>
-        <translation></translation>
+        <translation>Grupo {0}</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1158"/>
