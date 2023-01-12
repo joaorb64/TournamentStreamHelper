@@ -515,6 +515,20 @@
 
             let team = players[pid];
 
+            if (!team) {
+              SetInnerHtml($(element).find(`.name`), "");
+              SetInnerHtml($(element).find(`.flagcountry`), "");
+              SetInnerHtml($(element).find(`.flagstate`), "");
+              SetInnerHtml($(element).find(`.character_container`), "");
+              SetInnerHtml($(element).find(`.sponsor_icon`), "");
+              SetInnerHtml($(element).find(`.avatar`), "");
+              SetInnerHtml($(element).find(`.online_avatar`), "");
+              SetInnerHtml($(element).find(`.twitter`), "");
+              SetInnerHtml($(element).find(`.sponsor-container`), "");
+
+              return;
+            }
+
             if (Object.values(team.player).length == 1) {
               // Singles
               let player = null;
