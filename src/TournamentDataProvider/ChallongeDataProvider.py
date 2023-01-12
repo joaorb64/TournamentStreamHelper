@@ -208,7 +208,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 "name": QApplication.translate("app", "Final Stage"),
                 "groups": [{
                         "id": "final_stage",
-                        "name": "Bracket",
+                        "name": QApplication.translate("app", "Bracket"),
                         "bracketType": CHALLONGE_BRACKET_TYPE(data.get("requested_plotter"))
                     }
                 ]
