@@ -154,7 +154,12 @@
 
       if (
         !oldData.bracket ||
-        oldData.bracket.bracket.length != data.bracket.bracket.length
+        Object.keys(oldData.bracket.players).length !=
+          Object.keys(data.bracket.players).length ||
+        progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
+        progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
+        Object.keys(oldData.bracket.bracket.rounds).length !=
+          Object.keys(data.bracket.bracket.rounds).length
       ) {
         // WINNERS SIDE
         let html = "";
@@ -215,7 +220,7 @@
         );
 
         allWinners =
-          Object.values(winnersRounds)[0].sets.length >=
+          Object.keys(Object.values(winnersRounds)[0].sets).length >=
           Object.values(players).length / 2;
 
         Object.entries(losersRounds)
@@ -803,7 +808,11 @@
             Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
               Object.values(round.sets).forEach((set, s) => {
                 if (set.nextLose) {
-                  appearRounds.push([set.nextLose[0], set.nextLose[1], 0]);
+                  appearRounds.push([
+                    set.nextLose[0],
+                    set.nextLose[1],
+                    set.loseSlot,
+                  ]);
                 }
               });
             });
@@ -835,7 +844,7 @@
                           );
 
                           if (setElement && setElement.offset()) {
-                            icon_anim.set($(icon_element), {
+                            gsap.set($(icon_element), {
                               x:
                                 setElement.offset().left -
                                 ($(icon_element).outerWidth() * 3) / 4,
@@ -877,7 +886,7 @@
                           );
 
                           if (setElement && setElement.offset()) {
-                            icon_anim.set($(icon_element), {
+                            gsap.set($(icon_element), {
                               x:
                                 setElement.offset().left -
                                 ($(icon_element).outerWidth() * 3) / 4,
@@ -1153,12 +1162,13 @@
                   oldData,
                   `bracket.players.slot.${pid}.player.${1}.character`
                 )
-              ) != JSON.stringify(player.character);
+              ) != JSON.stringify(_.get(player, "character"));
 
             if (playerChanged || charactersChanged) {
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets[ASSET_TO_USE]) {
-                  charactersHtml += `
+              Object.values(_.get(player, "character", {})).forEach(
+                (character, index) => {
+                  if (character.assets[ASSET_TO_USE]) {
+                    charactersHtml += `
                     <div class="icon stockicon">
                         <div
                           style='background-image: url(../../${
@@ -1172,8 +1182,9 @@
                         </div>
                     </div>
                     `;
+                  }
                 }
-              });
+              );
 
               SetInnerHtml(
                 $(element).find(`.character_container`),
@@ -1398,10 +1409,20 @@
               return;
             Object.values(round.sets).forEach((set, s) => {
               if (set.nextLose) {
-                appearRounds.push([set.nextLose[0], set.nextLose[1], 0]);
+                appearRounds.push([
+                  set.nextLose[0],
+                  set.nextLose[1],
+                  set.loseSlot,
+                ]);
               }
             });
           });
+
+          console.log(appearRounds);
+
+          // Keep track of which icons were animated
+          // Because we have to deactivate the rest
+          let managedIcons = [];
 
           // First, we assign players to the "losers slots"
           // Since they appear in losers in an unpredictable order
@@ -1418,7 +1439,10 @@
                 parseInt(roundKey) < GfResetRoundNum - 1
               )
                 return;
-              Object.values(round.sets).forEach(function (set, setIndex) {
+              Object.values(Object.values(round.sets)).forEach(function (
+                set,
+                setIndex
+              ) {
                 if (
                   parseInt(roundKey) < parseInt(lastFoundRound) &&
                   (set.playerId[0] == teamId || set.playerId[1] == teamId)
@@ -1436,11 +1460,11 @@
                       ) {
                         if (roundKey == "-1" && allWinners) {
                           if (set.playerId[0] == teamId) {
-                            losersIconId = 2 * i;
+                            losersIconId = i;
                             return;
                           }
                           if (set.playerId[1] == teamId) {
-                            losersIconId = 2 * i + 1;
+                            losersIconId = i;
                             return;
                           }
                         } else {
@@ -1454,10 +1478,14 @@
               });
             });
 
+            console.log("id", teamId, "icon:", losersIconId);
+
             if (lastFoundRound == 0 || losersIconId == null) {
               //if (iconAnimationsL != null && t < iconAnimationsL.length)
               //iconAnimationsL[t].tweenTo(`start`);
             } else {
+              managedIcons.push(losersIconId);
+
               if (lastFoundSet && lastFoundSet.completed) {
                 if (
                   lastFoundSet.playerId[0] == teamId &&
@@ -1473,8 +1501,10 @@
                 }
               }
 
-              if (lost) playerLoseAnimL[losersIconId].play();
-              else playerLoseAnimL[losersIconId].reverse();
+              if (playerLoseAnimL.length > losersIconId) {
+                if (lost) playerLoseAnimL[losersIconId].play();
+                else playerLoseAnimL[losersIconId].reverse();
+              }
 
               // Get GF and GF Reset
               if (lastFoundRound == lastLosersRoundNum) {
@@ -1485,16 +1515,18 @@
                 }
               }
 
-              if (
-                iconAnimationsL[losersIconId].labels.hasOwnProperty(
-                  `round_${lastFoundRound}`
-                )
-              ) {
-                iconAnimationsL[losersIconId].tweenTo(
-                  `round_${lastFoundRound}`
-                );
-              } else {
-                iconAnimationsL[losersIconId].tweenTo(`start`);
+              if (playerLoseAnimL.length > losersIconId) {
+                if (
+                  iconAnimationsL[losersIconId].labels.hasOwnProperty(
+                    `round_${lastFoundRound}`
+                  )
+                ) {
+                  iconAnimationsL[losersIconId].tweenTo(
+                    `round_${lastFoundRound}`
+                  );
+                } else {
+                  iconAnimationsL[losersIconId].tweenTo(`start`);
+                }
               }
 
               let element = $(
@@ -1579,6 +1611,24 @@
                       : '<div style="background: gray; width: 100%; height: 100%; border-radius: 8px;"></div>'
                   );
                 }
+              }
+            }
+          });
+
+          console.log(managedIcons);
+          console.log(iconAnimationsL);
+
+          // Return unmanaged icons to start
+          iconAnimationsL.forEach((anim, index) => {
+            if (!managedIcons.includes(index)) {
+              console.log("running for", index);
+              anim.tweenTo(0);
+
+              let element = $(
+                `.losers_icons .bracket_icon.bracket_icon_p${index + 1}`
+              );
+              if (element.get(0)) {
+                SetInnerHtml($(element).find(`.icon_name`), `---`);
               }
             }
           });
