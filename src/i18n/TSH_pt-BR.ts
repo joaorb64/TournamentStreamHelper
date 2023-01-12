@@ -49,7 +49,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="118"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
@@ -64,42 +64,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBracket.ui" line="17"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Chave</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="40"/>
         <source>Phase</source>
-        <translation type="unfinished">Fase</translation>
+        <translation>Fase</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="60"/>
         <source>Phase Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grupo</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="108"/>
         <source>Progressions in</source>
-        <translation type="unfinished"></translation>
+        <translation>Progressões de entrada</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="128"/>
         <source>Progressions out</source>
-        <translation type="unfinished"></translation>
+        <translation>Progressões de saída</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="148"/>
         <source>Limit exported bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Limitar a chave exportada</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="155"/>
         <source> players</source>
-        <translation type="unfinished"></translation>
+        <translation> jogadores</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="158"/>
         <source>Top </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -462,7 +462,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
         <source>Proportional character scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala proporcional de personagens</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="967"/>
@@ -521,17 +521,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
         <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1089"/>
         <source>Angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ângulo</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1096"/>
         <source>º</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1157"/>
@@ -673,7 +673,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="156"/>
         <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="212"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>Chave</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="164"/>
@@ -889,32 +889,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="369"/>
         <source>A new window has been opened in your default webbrowser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uma janela foi aberta no seu navegador de internet padrão.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="375"/>
         <source>Open the Wiki</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir a Wiki</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="383"/>
         <source>Report a bug</source>
-        <translation type="unfinished"></translation>
+        <translation>Reportar um bug</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="391"/>
         <source>Ask for Help on Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Pedir ajuda no Discord</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="401"/>
         <source>Contribute to the Asset Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Contribuir para a Asset Database</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="646"/>
@@ -1092,7 +1092,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="506"/>
         <source>The text for banByMaxGames is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>O texto para bans por número de partidas é inválido.</translation>
     </message>
     <message>
         <source>Paste the tournament URL.</source>
@@ -1309,12 +1309,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="196"/>
         <source>Group Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>Fase de Grupos</translation>
     </message>
     <message>
         <location filename="../TournamentDataProvider/ChallongeDataProvider.py" line="209"/>
         <source>Final Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>Fase Final</translation>
     </message>
 </context>
 <context>

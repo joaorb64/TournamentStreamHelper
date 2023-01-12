@@ -1129,7 +1129,7 @@
                         : ""
                     }
                   </span>
-                  ${player ? player.name : ""}
+                  ${player ? player.name : "---"}
                 </span>
               `
             );
