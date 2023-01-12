@@ -123,7 +123,9 @@
         Object.keys(oldData.bracket.players).length !=
           Object.keys(data.bracket.players).length ||
         progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
-        progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut")
+        progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
+        Object.keys(oldData.bracket.bracket.rounds).length !=
+          Object.keys(data.bracket.bracket.rounds).length
       ) {
         // WINNERS SIDE
         let html = "";
