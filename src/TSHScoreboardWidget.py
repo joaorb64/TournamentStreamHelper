@@ -371,18 +371,22 @@ class TSHScoreboardWidget(QDockWidget):
         for phaseString in TSHLocaleHelper.phaseNames.values():
             if "{0}" in phaseString:
                 for letter in ["A", "B", "C", "D"]:
-                    self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString.format(letter))
+                    if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString.format(letter)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString.format(letter))
             else:
-                self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString)
+                if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString)
 
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
         for matchString in TSHLocaleHelper.matchNames.values():
             if "{0}" in matchString:
                 for number in ["1", "2", "3", "4"]:
-                    self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(number))
+                    if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(number)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(number))
             else:
-                self.scoreColumn.findChild(QComboBox, "match").addItem(matchString)
+                if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "match").addItem(matchString)
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
