@@ -94,6 +94,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBracket.ui" line="155"/>
         <source> players</source>
+        <translatorcomment>Emptied for clearer view</translatorcomment>
         <translation>‎</translation>
     </message>
     <message>
