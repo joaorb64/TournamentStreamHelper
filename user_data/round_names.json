@@ -1,12 +1,29 @@
 {
-    "grand_final_reset": "",
-    "grand_final": "",
-    "winners_final": "",
-    "winners_semi_final": "",
-    "winners_quarter_final": "",
-    "losers_final": "",
-    "losers_semi_final": "",
-    "losers_quarter_final": "",
-    "winners_round": "",
-    "losers_round": ""
+    "match": {
+        "grand_final_reset": "",
+        "grand_final": "",
+        "winners_final": "",
+        "winners_semi_final": "",
+        "winners_quarter_final": "",
+        "losers_final": "",
+        "losers_semi_final": "",
+        "losers_quarter_final": "",
+        "winners_round": "",
+        "losers_round": ""
+    },
+    "phase": {
+        "group_stage": "",
+        "group": "",
+        "final_stage": "",
+        "bracket": "",
+        "winners_bracket": "",
+        "losers_bracket": "",
+        "casuals": "",
+        "friendlies": "",
+        "round_robin": "",
+        "crew_battle": "",
+        "top_8": "",
+        "top_16": "",
+        "top_32": ""
+    }
 }

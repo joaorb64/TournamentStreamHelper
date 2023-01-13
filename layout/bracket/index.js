@@ -107,9 +107,12 @@
       let size = 32;
       $(":root").css("--player-height", size);
 
+      let containerSize = $(".winners_container").height();
+      if (window.LOSERS_ONLY) containerSize = $(".losers_container").height();
+
       while (
         biggestRound * (2 * parseInt($(":root").css("--player-height")) + 4) >
-        $(".winners_container").height() - 20
+        containerSize - 20
       ) {
         size -= 1;
         $(":root").css("--player-height", size);
@@ -165,41 +168,43 @@
         $(".winners_container").html(html);
 
         // LOSERS SIDE
-        html = "";
+        if (!window.WINNERS_ONLY) {
+          html = "";
 
-        let losersRounds = Object.fromEntries(
-          Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
-        );
+          let losersRounds = Object.fromEntries(
+            Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+          );
 
-        Object.entries(losersRounds).forEach(([roundKey, round], r) => {
-          html += `<div class="round round_${roundKey}">`;
-          html += `<div class="round_name"></div>`;
-          Object.values(round.sets).forEach((slot, i) => {
-            html += `<div class="slot slot_${i + 1}">`;
-            Object.values(slot.playerId).forEach((playerId, p) => {
-              html += `
-                <div class="slot_p_${p} player container">
-                  <div class="icon avatar"></div>
-                  <div class="icon online_avatar"></div>
-                  <div class="name_twitter">
-                  <div class="name"></div>
+          Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+            html += `<div class="round round_${roundKey}">`;
+            html += `<div class="round_name"></div>`;
+            Object.values(round.sets).forEach((slot, i) => {
+              html += `<div class="slot slot_${i + 1}">`;
+              Object.values(slot.playerId).forEach((playerId, p) => {
+                html += `
+                  <div class="slot_p_${p} player container">
+                    <div class="icon avatar"></div>
+                    <div class="icon online_avatar"></div>
+                    <div class="name_twitter">
+                    <div class="name"></div>
+                    </div>
+                    <div class="sponsor_icon"></div>
+                    <div class="flags">
+                      <div class="flagcountry"></div>
+                      <div class="flagstate"></div>
+                    </div>
+                    <div class="character_container"></div>
+                    <div class="score">0</div>
                   </div>
-                  <div class="sponsor_icon"></div>
-                  <div class="flags">
-                    <div class="flagcountry"></div>
-                    <div class="flagstate"></div>
-                  </div>
-                  <div class="character_container"></div>
-                  <div class="score">0</div>
-                </div>
-              `;
+                `;
+              });
+              html += "</div>";
             });
             html += "</div>";
           });
-          html += "</div>";
-        });
 
-        $(".losers_container").html(html);
+          $(".losers_container").html(html);
+        }
 
         // BRACKET LINES
         // .line_r_(round) = Line going from (round) set to the next set
@@ -232,6 +237,9 @@
                   slot.playerId[1] == -1
                 )
               ) {
+                if (window.WINNERS_ONLY && parseInt(roundKey) < 0) return;
+                if (window.LOSERS_ONLY && parseInt(roundKey) > 0) return;
+
                 let slotElement = $(
                   `.${this.baseClass} .round_${roundKey} .slot_${i + 1}`
                 );
@@ -768,6 +776,11 @@
           });
         });
       });
+
+      SetInnerHtml($(`.tournament_name`), data.tournamentInfo.tournamentName);
+      SetInnerHtml($(`.event_name`), data.tournamentInfo.eventName);
+      SetInnerHtml($(`.bracket_name`), data.bracket.phase);
+      SetInnerHtml($(`.pool_name`), data.bracket.phaseGroup);
     }
 
     $(".text").each(function (e) {

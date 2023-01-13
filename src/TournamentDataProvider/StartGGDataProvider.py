@@ -114,7 +114,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 for phaseGroup in deep_get(phase, "phaseGroups.nodes", []):
                     phaseObj["groups"].append({
                         "id": phaseGroup.get("id"),
-                        "name": f"Pool {phaseGroup.get('displayIdentifier')}",
+                        "name": TSHLocaleHelper.phaseNames.get("group").format(phaseGroup.get('displayIdentifier')),
                         "bracketType": phaseGroup.get("bracketType")
                     })
 
@@ -369,15 +369,15 @@ class StartGGDataProvider(TournamentDataProvider):
         }
 
         if name in roundMapping:
-            return TSHLocaleHelper.roundNames.get(roundMapping.get(name))
+            return TSHLocaleHelper.matchNames.get(roundMapping.get(name))
         
         try:
             roundNumber = name.rsplit(" ")[-1]
 
             if "Winners" in name:
-                return TSHLocaleHelper.roundNames.get("winners_round").format(roundNumber)
+                return TSHLocaleHelper.matchNames.get("winners_round").format(roundNumber)
             if "Losers" in name:
-                return TSHLocaleHelper.roundNames.get("losers_round").format(roundNumber)
+                return TSHLocaleHelper.matchNames.get("losers_round").format(roundNumber)
         except:
             print(traceback.format_exc())
         
@@ -392,8 +392,7 @@ class StartGGDataProvider(TournamentDataProvider):
         phase_name = deep_get(_set, "phaseGroup.phase.name")
 
         if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
-            phase_name += " - Pool " + \
-                deep_get(_set, "phaseGroup.displayIdentifier")
+            phase_name += " - " + TSHLocaleHelper.phaseNames.get("group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
         setData = {
             "id": _set.get("id"),

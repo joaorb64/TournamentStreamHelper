@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os
 import traceback
+from copy import deepcopy
 
 from src.SettingsManager import SettingsManager
 
@@ -15,7 +16,8 @@ class TSHLocaleHelperSignals(QObject):
 class TSHLocaleHelper(QObject):
     exportLocale = "en-US"
     programLocale = "en-US"
-    roundNames = {}
+    matchNames = {}
+    phaseNames = {}
     translator = None
     languages = []
     remapping = {}
@@ -71,7 +73,7 @@ class TSHLocaleHelper(QObject):
         # Load default round names and translation
         try:
             original_round_names: dict = json.load(open("./src/i18n/round_names/en.json", 'rt', encoding='utf-8'))
-            round_names = original_round_names.copy()
+            round_names = deepcopy(original_round_names)
 
             for f in os.listdir("./src/i18n/round_names/"):
                 if f.endswith(".json"):
@@ -90,15 +92,20 @@ class TSHLocaleHelper(QObject):
                         round_names = original_round_names.copy()
                         round_names.update(translatedRoundNames)
             
-            TSHLocaleHelper.roundNames = round_names
+            TSHLocaleHelper.matchNames = round_names.get("match")
+            TSHLocaleHelper.phaseNames = round_names.get("phase")
         except:
             print(traceback.format_exc())
         
         # Load user round names in a separate try/catch
         try:
             round_names: dict = json.load(open("./user_data/round_names.json", 'rt', encoding='utf-8'))
-            round_names = {k: v for k, v in round_names.items() if v}
-            TSHLocaleHelper.roundNames.update(round_names)
+            
+            round_names["phase"] = {k: v for k, v in round_names.get("phase", {}).items() if v}
+            round_names["match"] = {k: v for k, v in round_names.get("match", {}).items() if v}
+
+            TSHLocaleHelper.phaseNames.update(round_names["phase"])
+            TSHLocaleHelper.matchNames.update(round_names["match"])
         except:
             print(traceback.format_exc())
 
