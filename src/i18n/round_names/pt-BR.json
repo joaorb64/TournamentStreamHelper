@@ -13,7 +13,7 @@
     },
     "phase": {
         "group_stage": "Fase de Grupos",
-        "group": "Grupo",
+        "group": "Grupo {0}",
         "final_stage": "Fase Final",
         "bracket": "Chave",
         "winners_bracket": "Chave do Torneio",
