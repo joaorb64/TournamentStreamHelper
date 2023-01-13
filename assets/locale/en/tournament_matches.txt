@@ -1,20 +1,4 @@
 Winners Bracket
 Losers Bracket
-Grand Final Reset
-Grand Final
-Winners Final
-Winners Semi-Final
-Winners Quarter-Final
-Losers Final
-Losers Semi-Final
-Losers Quarter-Final
-Winners Round 1
-Winners Round 2
-Winners Round 3
-Winners Round 4
-Winners Round 5
-Losers Round 1
-Losers Round 2
-Losers Round 3
-Losers Round 4
-Losers Round 5
+{'grand_final_reset': 'Grand Final Reset', 'grand_final': 'Grand Final', 'winners_final': 'Winners Final', 'winners_semi_final': 'Winners Semi-Final', 'winners_quarter_final': 'Winners Quarter-Final', 'losers_final': 'Losers Final', 'losers_semi_final': 'Losers Semi-Final', 'losers_quarter_final': 'Losers Quarter-Final', 'winners_round': 'Winners Round {0}', 'losers_round': 'Losers Round {0}'}
+{'group_stage': 'Pools', 'group': 'Pool', 'final_stage': 'Final Stage', 'bracket': 'Bracket', 'winners_bracket': 'Winners Bracket', 'losers_bracket': 'Losers Bracket', 'casuals': 'Casuals', 'friendlies': 'Friendlies', 'round_robin': 'Round Robin', 'crew_battle': 'Crew Battle', 'top_8': 'Top 8', 'top_16': 'Top 16', 'top_32': 'Top 32'}
