@@ -1008,7 +1008,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="58"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="815"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="824"/>
         <source>Save new player</source>
         <translation>プレイヤーエントリーを保存</translation>
     </message>
@@ -1031,7 +1031,7 @@ p, li { white-space: pre-wrap; }
         <translation>プレイヤー{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="812"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="821"/>
         <source>Update player</source>
         <translation>プレイヤーエントリーを更新</translation>
     </message>
