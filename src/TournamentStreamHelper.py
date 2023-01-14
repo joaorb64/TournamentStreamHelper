@@ -330,14 +330,14 @@ class Window(QMainWindow):
                 action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
-            "app", "Export Language") + menu_margin, self.optionsBt.menu())
+            "app", "Game Asset Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        export_language_messagebox = generate_restart_messagebox(
-            QApplication.translate("app", "Export language changed successfully."))
+        game_asset_language_messagebox = generate_restart_messagebox(
+            QApplication.translate("app", "Game Asset Language changed successfully."))
 
         action = languageSelect.addAction(
             QApplication.translate("app", "Same as program language"))
@@ -345,8 +345,8 @@ class Window(QMainWindow):
         action.setCheckable(True)
         action.setChecked(True)
         action.triggered.connect(lambda x: [
-            SettingsManager.Set("export_language", "default"),
-            export_language_messagebox.exec()
+            SettingsManager.Set("game_asset_language", "default"),
+            game_asset_language_messagebox.exec()
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
@@ -354,21 +354,21 @@ class Window(QMainWindow):
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("export_language", c),
-                export_language_messagebox.exec()
+                SettingsManager.Set("game_asset_language", c),
+                game_asset_language_messagebox.exec()
             ])
-            if SettingsManager.Get("export_language") == code:
+            if SettingsManager.Get("game_asset_language") == code:
                 action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
-            "app", "Match and phase term language") + menu_margin, self.optionsBt.menu())
+            "app", "Tournament term language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
         fg_language_messagebox = generate_restart_messagebox(
-            QApplication.translate("app", "Match and phase term language changed successfully."))
+            QApplication.translate("app", "Tournament term language changed successfully."))
 
         action = languageSelect.addAction(
             QApplication.translate("app", "Same as program language"))

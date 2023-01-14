@@ -25,7 +25,7 @@ class TSHLocaleHelper(QObject):
 
     def LoadLocale():
         settingsProgramLocale = SettingsManager.Get("program_language", None)
-        settingsExportLocale = SettingsManager.Get("export_language", None)
+        settingsExportLocale = SettingsManager.Get("game_asset_language", None)
         settingsFgTerm = SettingsManager.Get("fg_term_language", None)
 
         if settingsProgramLocale and settingsProgramLocale != "default":
@@ -79,40 +79,40 @@ class TSHLocaleHelper(QObject):
     def LoadRoundNames():
         # Load default round names and translation
         try:
-            original_round_names: dict = json.load(open("./src/i18n/round_names/en.json", 'rt', encoding='utf-8'))
-            round_names = deepcopy(original_round_names)
+            original_term_names: dict = json.load(open("./src/i18n/tournament_term/en.json", 'rt', encoding='utf-8'))
+            term_names = deepcopy(original_term_names)
 
-            for f in os.listdir("./src/i18n/round_names/"):
+            for f in os.listdir("./src/i18n/tournament_term/"):
                 if f.endswith(".json"):
                     lang = f.split(".")[0]
 
                     if lang == TSHLocaleHelper.fgTermLocale:
                         # We found the exact language file
-                        translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
-                        round_names = original_round_names.copy()
-                        round_names.update(translatedRoundNames)
+                        translatedRoundNames = json.load(open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                        term_names = original_term_names.copy()
+                        term_names.update(translatedRoundNames)
                         break
                     elif lang == TSHLocaleHelper.fgTermLocale.split("-")[0]:
                         # We found a more generic language file
                         # Good enough if we don't find a specific one
-                        translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
-                        round_names = original_round_names.copy()
-                        round_names.update(translatedRoundNames)
+                        translatedRoundNames = json.load(open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                        term_names = original_term_names.copy()
+                        term_names.update(translatedRoundNames)
             
-            TSHLocaleHelper.matchNames = round_names.get("match")
-            TSHLocaleHelper.phaseNames = round_names.get("phase")
+            TSHLocaleHelper.matchNames = term_names.get("match")
+            TSHLocaleHelper.phaseNames = term_names.get("phase")
         except:
             print(traceback.format_exc())
         
         # Load user round names in a separate try/catch
         try:
-            round_names: dict = json.load(open("./user_data/round_names.json", 'rt', encoding='utf-8'))
+            term_names: dict = json.load(open("./user_data/tournament_terms.json", 'rt', encoding='utf-8'))
             
-            round_names["phase"] = {k: v for k, v in round_names.get("phase", {}).items() if v}
-            round_names["match"] = {k: v for k, v in round_names.get("match", {}).items() if v}
+            term_names["phase"] = {k: v for k, v in term_names.get("phase", {}).items() if v}
+            term_names["match"] = {k: v for k, v in term_names.get("match", {}).items() if v}
 
-            TSHLocaleHelper.phaseNames.update(round_names["phase"])
-            TSHLocaleHelper.matchNames.update(round_names["match"])
+            TSHLocaleHelper.phaseNames.update(term_names["phase"])
+            TSHLocaleHelper.matchNames.update(term_names["match"])
         except:
             print(traceback.format_exc())
 
