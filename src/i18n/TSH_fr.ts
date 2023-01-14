@@ -868,22 +868,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Game Asset Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Langue de la terminologie du jeu</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Game Asset Language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>La langue de la terminologie du jeu a été modifiée.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
         <source>Tournament term language</source>
-        <translation type="unfinished"></translation>
+        <translation>Langue de la terminologie de tournoi</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
         <source>Tournament term language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>La langue de la terminologie de tournoi a été modifiée.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="400"/>
