@@ -809,9 +809,8 @@ p, li { white-space: pre-wrap; }
         <translation>Idioma del sistema</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Export Language</source>
-        <translation>Exportar idioma</translation>
+        <translation type="vanished">Exportar idioma</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
@@ -828,13 +827,23 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Idioma de nombre de fase modificado con éxito.</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
+        <source>Game Asset Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="340"/>
+        <source>Game Asset Language changed successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
-        <source>Match and phase term language</source>
+        <source>Tournament term language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
-        <source>Match and phase term language changed successfully.</source>
+        <source>Tournament term language changed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -949,9 +958,8 @@ p, li { white-space: pre-wrap; }
         <translation>El idioma del programa ha sido cambiado exitosamente</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Export language changed successfully.</source>
-        <translation>El idioma de exportación de archivos ha sido cambiado existosamente</translation>
+        <translation type="vanished">El idioma de exportación de archivos ha sido cambiado existosamente</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="171"/>

@@ -742,25 +742,14 @@ p, li { white-space: pre-wrap; }
         <translation>システムの表示言語と同じにする</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Export Language</source>
-        <translation>エクスポート物の言語</translation>
+        <translation type="vanished">エクスポート物の言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
         <location filename="../TournamentStreamHelper.py" line="374"/>
         <source>Same as program language</source>
         <translation>プログラムの表示言語と同じにする</translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="363"/>
-        <source>Match and phase term language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="371"/>
-        <source>Match and phase term language changed successfully.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="400"/>
@@ -828,9 +817,8 @@ p, li { white-space: pre-wrap; }
         <translation>プログラムの表示言語を変更しました。</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Export language changed successfully.</source>
-        <translation>エクスポート物の言語を変更しました。</translation>
+        <translation type="vanished">エクスポート物の言語を変更しました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="604"/>
@@ -861,6 +849,26 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="578"/>
         <source>Failed to fetch version from github:</source>
         <translation>最新のバージョンをGitHubから読み込むのに失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
+        <source>Game Asset Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="340"/>
+        <source>Game Asset Language changed successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="363"/>
+        <source>Tournament term language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="371"/>
+        <source>Tournament term language changed successfully.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="601"/>

@@ -803,9 +803,8 @@ p, li { white-space: pre-wrap; }
         <translation>Langue système</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Export Language</source>
-        <translation>Langue d&apos;export</translation>
+        <translation type="vanished">Langue d&apos;export</translation>
     </message>
     <message>
         <source>Export language changed succsssfully.</source>
@@ -816,16 +815,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="374"/>
         <source>Same as program language</source>
         <translation>Identique à la langue du programme</translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="363"/>
-        <source>Match and phase term language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="371"/>
-        <source>Match and phase term language changed successfully.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="601"/>
@@ -865,9 +854,8 @@ p, li { white-space: pre-wrap; }
         <translation>La langue du programme a été modifiée.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Export language changed successfully.</source>
-        <translation>La langue d&apos;export a été modifiée.</translation>
+        <translation type="vanished">La langue d&apos;export a été modifiée.</translation>
     </message>
     <message>
         <source>Default Phase Name Language</source>
@@ -876,6 +864,26 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Default phase name language changed successfully.</source>
         <translation type="vanished">La langue par défaut des noms de phase a été modifiée.</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
+        <source>Game Asset Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="340"/>
+        <source>Game Asset Language changed successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="363"/>
+        <source>Tournament term language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="371"/>
+        <source>Tournament term language changed successfully.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="400"/>

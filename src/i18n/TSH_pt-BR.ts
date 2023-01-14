@@ -854,9 +854,8 @@ p, li { white-space: pre-wrap; }
         <translation>Idioma do sistema</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Export Language</source>
-        <translation>Idioma de exportação</translation>
+        <translation type="vanished">Idioma de exportação</translation>
     </message>
     <message>
         <source>Export language changed succsssfully.</source>
@@ -868,9 +867,8 @@ p, li { white-space: pre-wrap; }
         <translation>Idioma do programa modificado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Export language changed successfully.</source>
-        <translation>Idioma de exportação modificado com sucesso.</translation>
+        <translation type="vanished">Idioma de exportação modificado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
@@ -887,13 +885,23 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Idioma de nome de fase modificado com sucesso.</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
+        <source>Game Asset Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="340"/>
+        <source>Game Asset Language changed successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
-        <source>Match and phase term language</source>
+        <source>Tournament term language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
-        <source>Match and phase term language changed successfully.</source>
+        <source>Tournament term language changed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -804,9 +804,8 @@ p, li { white-space: pre-wrap; }
         <translation>Systemsprache</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Export Language</source>
-        <translation>Sprache für Exportiertes</translation>
+        <translation type="vanished">Sprache für Exportiertes</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="343"/>
@@ -823,13 +822,23 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Standardsprache Turnierphasenbezeichnung geändert.</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="332"/>
+        <source>Game Asset Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="340"/>
+        <source>Game Asset Language changed successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
-        <source>Match and phase term language</source>
+        <source>Tournament term language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
-        <source>Match and phase term language changed successfully.</source>
+        <source>Tournament term language changed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -940,9 +949,8 @@ p, li { white-space: pre-wrap; }
         <translation>Sprache erfolgreich geändert.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Export language changed successfully.</source>
-        <translation>Sprache zum Exportieren erfolgreich geändert.</translation>
+        <translation type="vanished">Sprache zum Exportieren erfolgreich geändert.</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="171"/>
