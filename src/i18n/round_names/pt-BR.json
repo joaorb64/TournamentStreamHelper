@@ -9,7 +9,8 @@
         "losers_semi_final": "Semifinal da Repescagem",
         "losers_quarter_final": "Quartas de Final da Repescagem",
         "winners_round": "Rodada {0}",
-        "losers_round": "Repescagem Rodada {0}"
+        "losers_round": "Repescagem Rodada {0}",
+        "best_of": "Melhor de {0}"
     },
     "phase": {
         "group_stage": "Fase de Grupos",
@@ -24,6 +25,9 @@
         "crew_battle": "Disputa de Grupos",
         "top_8": "Top 8",
         "top_16": "Top 16",
-        "top_32": "Top 32"
+        "top_32": "Top 32",
+        "exhibition": "Exibição",
+        "freeplay": "Freeplay",
+        "money_match": "Money Match"
     }
 }

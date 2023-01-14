@@ -9,7 +9,8 @@
         "losers_semi_final": "",
         "losers_quarter_final": "",
         "winners_round": "",
-        "losers_round": ""
+        "losers_round": "",
+        "best_of": ""
     },
     "phase": {
         "group_stage": "",
@@ -24,6 +25,9 @@
         "crew_battle": "",
         "top_8": "",
         "top_16": "",
-        "top_32": ""
+        "top_32": "",
+        "exhibition": "",
+        "freeplay": "",
+        "money_match": ""
     }
 }

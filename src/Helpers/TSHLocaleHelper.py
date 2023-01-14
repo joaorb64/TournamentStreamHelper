@@ -16,6 +16,7 @@ class TSHLocaleHelperSignals(QObject):
 class TSHLocaleHelper(QObject):
     exportLocale = "en-US"
     programLocale = "en-US"
+    fgTermLocale = "en-US"
     matchNames = {}
     phaseNames = {}
     translator = None
@@ -25,6 +26,7 @@ class TSHLocaleHelper(QObject):
     def LoadLocale():
         settingsProgramLocale = SettingsManager.Get("program_language", None)
         settingsExportLocale = SettingsManager.Get("export_language", None)
+        settingsFgTerm = SettingsManager.Get("fg_term_language", None)
 
         if settingsProgramLocale and settingsProgramLocale != "default":
             current_locale = [settingsProgramLocale]
@@ -60,6 +62,11 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.exportLocale = settingsExportLocale
         else:
             TSHLocaleHelper.exportLocale = current_locale[0]
+        
+        if settingsFgTerm and settingsFgTerm != "default":
+            TSHLocaleHelper.fgTermLocale = settingsFgTerm
+        else:
+            TSHLocaleHelper.fgTermLocale = current_locale[0]
 
     def LoadLanguages():
         try:
@@ -79,13 +86,13 @@ class TSHLocaleHelper(QObject):
                 if f.endswith(".json"):
                     lang = f.split(".")[0]
 
-                    if lang == TSHLocaleHelper.exportLocale:
+                    if lang == TSHLocaleHelper.fgTermLocale:
                         # We found the exact language file
                         translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))
                         round_names = original_round_names.copy()
                         round_names.update(translatedRoundNames)
                         break
-                    elif lang == TSHLocaleHelper.exportLocale.split("-")[0]:
+                    elif lang == TSHLocaleHelper.fgTermLocale.split("-")[0]:
                         # We found a more generic language file
                         # Good enough if we don't find a specific one
                         translatedRoundNames = json.load(open(f"./src/i18n/round_names/{f}", 'rt', encoding='utf-8'))

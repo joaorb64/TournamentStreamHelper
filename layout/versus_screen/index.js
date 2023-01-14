@@ -11,11 +11,15 @@
   var zoom = 1;
 
   // Where to center character eyesights. [ 0.0 - 1.0 ]
-  var EYESIGHT_CENTERING = {x: 0.5, y: 0.4};
+  var EYESIGHT_CENTERING = { x: 0.5, y: 0.4 };
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .from([".phase.container"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
+    .from(
+      [".phase.container"],
+      { duration: 0.8, opacity: "0", ease: "power2.inOut" },
+      0
+    )
     .from([".match"], { duration: 0.8, opacity: "0", ease: "power2.inOut" }, 0)
     .from(
       [".score_container"],
@@ -44,7 +48,7 @@
 
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
-    if(!isDoubles){
+    if (!isDoubles) {
       Object.values(data.score.team).forEach((team, t) => {
         Object.values(team.player).forEach((player, p) => {
           SetInnerHtml(
@@ -62,7 +66,7 @@
             `
           );
 
-          SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun)
+          SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun);
 
           SetInnerHtml(
             $(`.p${t + 1} > .sponsor_logo`),
@@ -117,7 +121,8 @@
             !oldData.score ||
             JSON.stringify(player.character) !=
               JSON.stringify(
-                oldData.score.team[String(t + 1)].player[String(p + 1)].character
+                oldData.score.team[String(t + 1)].player[String(p + 1)]
+                  .character
               )
           ) {
             let html = "";
@@ -163,7 +168,9 @@
                     t == 1 ? c : characters.length - 1 - c
                   }" style="z-index: ${c * zIndexMultiplyier};">
                     <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
-                      <source src="../../${character.assets[ASSET_TO_USE].asset}">
+                      <source src="../../${
+                        character.assets[ASSET_TO_USE].asset
+                      }">
                     </video>
                   </div>
                     `;
@@ -187,30 +194,29 @@
 
             characters.forEach((character, c) => {
               if (character) {
-                gsap.timeline().fromTo(
-                  [`.p${t + 1}.character .char${c}`],
-                  {
-                    x: zIndexMultiplyier * -800 + "px",
-                    z: 0,
-                    rotationY: zIndexMultiplyier * 15 * (c + 1),
-                  },
-                  {
-                    duration: .4,
-                    x: zIndexMultiplyier * -40 + "px",
-                    z: -c * 50 + "px",
-                    rotationY: zIndexMultiplyier * 15 * (c + 1),
-                    ease: "in",
-                  },
-                  c / 10
-                )
-                .to(
-                  [`.p${t + 1}.character .char${c}`],
-                  {
+                gsap
+                  .timeline()
+                  .fromTo(
+                    [`.p${t + 1}.character .char${c}`],
+                    {
+                      x: zIndexMultiplyier * -800 + "px",
+                      z: 0,
+                      rotationY: zIndexMultiplyier * 15 * (c + 1),
+                    },
+                    {
+                      duration: 0.4,
+                      x: zIndexMultiplyier * -40 + "px",
+                      z: -c * 50 + "px",
+                      rotationY: zIndexMultiplyier * 15 * (c + 1),
+                      ease: "in",
+                    },
+                    c / 10
+                  )
+                  .to([`.p${t + 1}.character .char${c}`], {
                     duration: 3,
                     x: 0,
                     ease: "out",
-                  }
-                );;
+                  });
 
                 gsap
                   .timeline()
@@ -269,54 +275,50 @@
           `
         );
 
-        SetInnerHtml(
-          $(`.p${t + 1} > .sponsor_logo`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} > .sponsor_logo`), "");
 
         SetInnerHtml($(`.p${t + 1} .real_name`), ``);
 
-        SetInnerHtml(
-          $(`.p${t + 1} .twitter`),
-          ``
-        );
+        SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
-        SetInnerHtml(
-          $(`.p${t + 1} .flagcountry`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
 
-        SetInnerHtml(
-          $(`.p${t + 1} .flagstate`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
         let charactersHtml = "";
 
         let charactersChanged = false;
 
-        if(!oldData){
+        if (!oldData) {
           charactersChanged = true;
         } else {
           Object.values(team.player).forEach((player, p) => {
             Object.values(player.character).forEach((character, index) => {
               try {
-                if(JSON.stringify(player.character) != JSON.stringify(oldData.score.team[`${t + 1}`].player[`${p + 1}`].character)){
+                if (
+                  JSON.stringify(player.character) !=
+                  JSON.stringify(
+                    oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+                  )
+                ) {
                   charactersChanged = true;
                 }
               } catch {
                 charactersChanged = true;
               }
-            })
-          })
+            });
+          });
         }
 
-        if(charactersChanged){
+        if (charactersChanged) {
           let html = "";
           let characters = [];
 
           Object.values(team.player).forEach((player, p) => {
             Object.values(player.character).forEach((character, index) => {
-              characters.push(character)
-            })
-          })
+              characters.push(character);
+            });
+          });
 
           if (t == 1) characters = characters.reverse();
           let zIndexMultiplyier = 1;
@@ -370,7 +372,7 @@
           $(`.p${t + 1}.character`).html(html);
 
           characters = characters.reverse();
-          
+
           characters.forEach((character, c) => {
             if (character.assets[ASSET_TO_USE]) {
               CenterImage(
@@ -384,30 +386,29 @@
 
           characters.forEach((character, c) => {
             if (character) {
-              gsap.timeline().fromTo(
-                [`.p${t + 1}.character .char${c}`],
-                {
-                  x: zIndexMultiplyier * -800 + "px",
-                  z: 0,
-                  rotationY: zIndexMultiplyier * 15 * (c + 1),
-                },
-                {
-                  duration: .4,
-                  x: zIndexMultiplyier * -40 + "px",
-                  z: -c * 50 + "px",
-                  rotationY: zIndexMultiplyier * 15 * (c + 1),
-                  ease: "in",
-                },
-                c / 10
-              )
-              .to(
-                [`.p${t + 1}.character .char${c}`],
-                {
+              gsap
+                .timeline()
+                .fromTo(
+                  [`.p${t + 1}.character .char${c}`],
+                  {
+                    x: zIndexMultiplyier * -800 + "px",
+                    z: 0,
+                    rotationY: zIndexMultiplyier * 15 * (c + 1),
+                  },
+                  {
+                    duration: 0.4,
+                    x: zIndexMultiplyier * -40 + "px",
+                    z: -c * 50 + "px",
+                    rotationY: zIndexMultiplyier * 15 * (c + 1),
+                    ease: "in",
+                  },
+                  c / 10
+                )
+                .to([`.p${t + 1}.character .char${c}`], {
                   duration: 3,
                   x: 0,
                   ease: "out",
-                }
-              );;
+                });
 
               gsap
                 .timeline()
@@ -445,28 +446,42 @@
     SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
     SetInnerHtml($(".match"), data.score.match);
 
-    if(data.score.phase){
-      gsap.to($(".phase.container"), {autoAlpha: 1, overwrite: true, duration: 0.8})
+    if (data.score.phase) {
+      gsap.to($(".phase.container"), {
+        autoAlpha: 1,
+        overwrite: true,
+        duration: 0.8,
+      });
 
       SetInnerHtml(
         $(".phase:not(.container)"),
         data.score.phase ? `${data.score.phase}` : ""
       );
     } else {
-      gsap.to($(".phase.container"), {autoAlpha: 0, overwrite: true, duration: 0.8})
+      gsap.to($(".phase.container"), {
+        autoAlpha: 0,
+        overwrite: true,
+        duration: 0.8,
+      });
     }
 
-    if(data.score.best_of){
-      gsap.to($(".best_of.container"), {opacity: 1, overwrite: true, duration: 0.8})
+    if (data.score.best_of_text) {
+      gsap.to($(".best_of.container"), {
+        opacity: 1,
+        overwrite: true,
+        duration: 0.8,
+      });
 
       SetInnerHtml(
         $(".container .best_of"),
-        data.score.best_of
-          ? `Best of ${data.score.best_of}`
-          : ""
+        data.score.best_of_text ? `${data.score.best_of_text}` : ""
       );
     } else {
-      gsap.to($(".best_of.container"), {opacity: 0, overwrite: true, duration: 0.8})
+      gsap.to($(".best_of.container"), {
+        opacity: 0,
+        overwrite: true,
+        duration: 0.8,
+      });
     }
   }
 

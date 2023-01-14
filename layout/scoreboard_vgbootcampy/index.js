@@ -118,7 +118,8 @@
 
     let phaseTexts = [];
     if (data.score.phase) phaseTexts.push(data.score.phase.toUpperCase());
-    if (data.score.best_of) phaseTexts.push(`BEST OF ${data.score.best_of}`);
+    if (data.score.best_of_text)
+      phaseTexts.push(`${data.score.best_of_text}`.toUpperCase());
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 

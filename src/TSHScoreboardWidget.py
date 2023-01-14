@@ -325,8 +325,10 @@ class TSHScoreboardWidget(QDockWidget):
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.best_of", value)
+            lambda value: [
+                StateManager.Set(f"score.best_of", value),
+                StateManager.Set(f"score.best_of_text", TSHLocaleHelper.matchNames.get("best_of").format(value)) if value > 0 else "",
+            ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
