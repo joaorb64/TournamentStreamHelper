@@ -3,6 +3,8 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os
+import traceback
+from copy import deepcopy
 
 from src.SettingsManager import SettingsManager
 
@@ -14,16 +16,17 @@ class TSHLocaleHelperSignals(QObject):
 class TSHLocaleHelper(QObject):
     exportLocale = "en-US"
     programLocale = "en-US"
-    roundLocale = "en-US"
+    fgTermLocale = "en-US"
+    matchNames = {}
+    phaseNames = {}
     translator = None
     languages = []
     remapping = {}
 
     def LoadLocale():
-
         settingsProgramLocale = SettingsManager.Get("program_language", None)
-        settingsExportLocale = SettingsManager.Get("export_language", None)
-        settingsRoundLocale = SettingsManager.Get("round_language", None)
+        settingsExportLocale = SettingsManager.Get("game_asset_language", None)
+        settingsFgTerm = SettingsManager.Get("fg_term_language", None)
 
         if settingsProgramLocale and settingsProgramLocale != "default":
             current_locale = [settingsProgramLocale]
@@ -59,11 +62,11 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.exportLocale = settingsExportLocale
         else:
             TSHLocaleHelper.exportLocale = current_locale[0]
-
-        if settingsRoundLocale and settingsRoundLocale != "default":
-            TSHLocaleHelper.roundLocale = settingsRoundLocale
+        
+        if settingsFgTerm and settingsFgTerm != "default":
+            TSHLocaleHelper.fgTermLocale = settingsFgTerm
         else:
-            TSHLocaleHelper.roundLocale = current_locale[0]
+            TSHLocaleHelper.fgTermLocale = current_locale[0]
 
     def LoadLanguages():
         try:
@@ -72,6 +75,47 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.remapping = languages_json.get("remapping")
         except Exception as e:
             raise Exception(f"Error loading languages") from e
+    
+    def LoadRoundNames():
+        # Load default round names and translation
+        try:
+            original_term_names: dict = json.load(open("./src/i18n/tournament_term/en.json", 'rt', encoding='utf-8'))
+            term_names = deepcopy(original_term_names)
+
+            for f in os.listdir("./src/i18n/tournament_term/"):
+                if f.endswith(".json"):
+                    lang = f.split(".")[0]
+
+                    if lang == TSHLocaleHelper.fgTermLocale:
+                        # We found the exact language file
+                        translatedRoundNames = json.load(open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                        term_names = original_term_names.copy()
+                        term_names.update(translatedRoundNames)
+                        break
+                    elif lang == TSHLocaleHelper.fgTermLocale.split("-")[0]:
+                        # We found a more generic language file
+                        # Good enough if we don't find a specific one
+                        translatedRoundNames = json.load(open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                        term_names = original_term_names.copy()
+                        term_names.update(translatedRoundNames)
+            
+            TSHLocaleHelper.matchNames = term_names.get("match")
+            TSHLocaleHelper.phaseNames = term_names.get("phase")
+        except:
+            print(traceback.format_exc())
+        
+        # Load user round names in a separate try/catch
+        try:
+            term_names: dict = json.load(open("./user_data/tournament_terms.json", 'rt', encoding='utf-8'))
+            
+            term_names["phase"] = {k: v for k, v in term_names.get("phase", {}).items() if v}
+            term_names["match"] = {k: v for k, v in term_names.get("match", {}).items() if v}
+
+            TSHLocaleHelper.phaseNames.update(term_names["phase"])
+            TSHLocaleHelper.matchNames.update(term_names["match"])
+        except:
+            print(traceback.format_exc())
+
 
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():

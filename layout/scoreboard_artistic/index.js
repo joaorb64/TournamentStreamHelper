@@ -341,7 +341,7 @@
     SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
-      data.score.best_of ? `Best of ${data.score.best_of}` : ""
+      data.score.best_of_text ? data.score.best_of_text : ""
     );
 
     $(".text").each(function (e) {

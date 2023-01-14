@@ -284,7 +284,7 @@
 
     SetInnerHtml($(".phase"), data.score.phase);
     SetInnerHtml($(".match"), data.score.match);
-    SetInnerHtml($(".best_of"), `Best of ${data.score.best_of}`);
+    SetInnerHtml($(".best_of"), data.score.best_of_text);
 
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));

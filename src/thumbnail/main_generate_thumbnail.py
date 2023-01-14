@@ -1136,8 +1136,8 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
         },
         "score": {
             "best_of": 0,
-            "match": QApplication.translate("app","Winners Finals"),
-            "phase": QApplication.translate("app","Pool {0}").format("A"),
+            "match": TSHLocaleHelper.matchNames.get("winners_final"),
+            "phase": TSHLocaleHelper.phaseNames.get("group").format("A"),
             "team": {
                 "1": {
                     "losers": False,

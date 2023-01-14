@@ -11,15 +11,27 @@
   var zoom = 1.2;
 
   // Where to center character eyesights. [ 0.0 - 1.0 ]
-  var EYESIGHT_CENTERING = {x: 0.5, y: 0.4};
+  var EYESIGHT_CENTERING = { x: 0.5, y: 0.4 };
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .to([".logo"], {duration: 0.8, top: 160}, 0)
-    .to([".logo"], {duration: 0.8, scale: 0.4}, 0)
-    .from([".tournament"], { duration: 0.6, opacity: "0", ease: "power2.inOut" }, 0.2)
-    .from([".match"], { duration: 0.6, opacity: "0", ease: "power2.inOut" }, 0.4)
-    .from([".phase_best_of"], { duration: 0.6, opacity: "0", ease: "power2.inOut" }, 0.6)
+    .to([".logo"], { duration: 0.8, top: 160 }, 0)
+    .to([".logo"], { duration: 0.8, scale: 0.4 }, 0)
+    .from(
+      [".tournament"],
+      { duration: 0.6, opacity: "0", ease: "power2.inOut" },
+      0.2
+    )
+    .from(
+      [".match"],
+      { duration: 0.6, opacity: "0", ease: "power2.inOut" },
+      0.4
+    )
+    .from(
+      [".phase_best_of"],
+      { duration: 0.6, opacity: "0", ease: "power2.inOut" },
+      0.6
+    )
     .from(
       [".score_container"],
       { duration: 0.8, opacity: "0", ease: "power2.inOut" },
@@ -32,9 +44,9 @@
     )
     .from([".vs1"], { duration: 0.1, opacity: "0", scale: 10, ease: "in" }, 1.2)
     .from([".vs2"], { duration: 0.01, opacity: "0" }, 1.3)
-    .to([".vs2"], { opacity:0, scale: 2, ease: "power2.out" }, 1.31)
+    .to([".vs2"], { opacity: 0, scale: 2, ease: "power2.out" }, 1.31)
     .from([".p1.container"], { duration: 1, x: "-200px", ease: "out" }, 0)
-    .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0)
+    .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0);
 
   async function Start() {
     startingAnimation.restart();
@@ -49,7 +61,7 @@
 
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
-    if(!isDoubles){
+    if (!isDoubles) {
       Object.values(data.score.team).forEach((team, t) => {
         Object.values(team.player).forEach((player, p) => {
           SetInnerHtml(
@@ -67,8 +79,8 @@
             `
           );
 
-          SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun)
-  
+          SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun);
+
           SetInnerHtml(
             $(`.p${t + 1} > .sponsor_logo`),
             player.sponsor_logo
@@ -77,9 +89,9 @@
                 `
               : ""
           );
-  
+
           SetInnerHtml($(`.p${t + 1} .real_name`), `${player.real_name}`);
-  
+
           SetInnerHtml(
             $(`.p${t + 1} .twitter`),
             `
@@ -93,7 +105,7 @@
               }
           `
           );
-  
+
           SetInnerHtml(
             $(`.p${t + 1} .flagcountry`),
             player.country.asset
@@ -105,7 +117,7 @@
               </div>`
               : ""
           );
-  
+
           SetInnerHtml(
             $(`.p${t + 1} .flagstate`),
             player.state.asset
@@ -117,12 +129,13 @@
               </div>`
               : ""
           );
-  
+
           if (
             !oldData.score ||
             JSON.stringify(player.character) !=
               JSON.stringify(
-                oldData.score.team[String(t + 1)].player[String(p + 1)].character
+                oldData.score.team[String(t + 1)].player[String(p + 1)]
+                  .character
               )
           ) {
             let html = "";
@@ -138,7 +151,9 @@
                 if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
                   // if asset is a image, add a image element
                   html += `
-                  <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
+                  <div class="bg char${c}" style="z-index: ${
+                    c * zIndexMultiplyier
+                  };">
                     <div class="portrait_container">
                       <div
                         class="portrait ${
@@ -161,18 +176,22 @@
                 } else {
                   // if asset is a video, add a video element
                   html += `
-                  <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
+                  <div class="bg char${c}" style="z-index: ${
+                    c * zIndexMultiplyier
+                  };">
                     <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
-                      <source src="../../${character.assets[ASSET_TO_USE].asset}">
+                      <source src="../../${
+                        character.assets[ASSET_TO_USE].asset
+                      }">
                     </video>
                   </div>
                     `;
                 }
               }
             });
-  
+
             $(`.p${t + 1}.character`).html(html);
-  
+
             characters.forEach((character, c) => {
               if (character.assets[ASSET_TO_USE]) {
                 CenterImage(
@@ -183,11 +202,26 @@
                 );
               }
             });
-  
+
             characters.forEach((character, c) => {
               if (character) {
-                gsap.timeline().fromTo([`.p${t + 1}.character .char${c}`], {x: -zIndexMultiplyier * 100+"%"}, {x: -zIndexMultiplyier * 10+"%", duration: 0.3, ease: "power2.out"}, 0.6 + c/10)
-                  .to([`.p${t + 1}.character .char${c}`], {duration: 5, x: 0, ease: "power2.out"})
+                gsap
+                  .timeline()
+                  .fromTo(
+                    [`.p${t + 1}.character .char${c}`],
+                    { x: -zIndexMultiplyier * 100 + "%" },
+                    {
+                      x: -zIndexMultiplyier * 10 + "%",
+                      duration: 0.3,
+                      ease: "power2.out",
+                    },
+                    0.6 + c / 10
+                  )
+                  .to([`.p${t + 1}.character .char${c}`], {
+                    duration: 5,
+                    x: 0,
+                    ease: "power2.out",
+                  });
               }
             });
           }
@@ -221,54 +255,50 @@
           `
         );
 
-        SetInnerHtml(
-          $(`.p${t + 1} > .sponsor_logo`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} > .sponsor_logo`), "");
 
         SetInnerHtml($(`.p${t + 1} .real_name`), ``);
 
-        SetInnerHtml(
-          $(`.p${t + 1} .twitter`),
-          ``
-        );
+        SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
-        SetInnerHtml(
-          $(`.p${t + 1} .flagcountry`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
 
-        SetInnerHtml(
-          $(`.p${t + 1} .flagstate`), ""
-        );
+        SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
         let charactersHtml = "";
 
         let charactersChanged = false;
 
-        if(!oldData){
+        if (!oldData) {
           charactersChanged = true;
         } else {
           Object.values(team.player).forEach((player, p) => {
             Object.values(player.character).forEach((character, index) => {
               try {
-                if(JSON.stringify(player.character) != JSON.stringify(oldData.score.team[`${t + 1}`].player[`${p + 1}`].character)){
+                if (
+                  JSON.stringify(player.character) !=
+                  JSON.stringify(
+                    oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
+                  )
+                ) {
                   charactersChanged = true;
                 }
               } catch {
                 charactersChanged = true;
               }
-            })
-          })
+            });
+          });
         }
 
-        if(charactersChanged){
+        if (charactersChanged) {
           let html = "";
           let characters = [];
 
           Object.values(team.player).forEach((player, p) => {
             Object.values(player.character).forEach((character, index) => {
-              characters.push(character)
-            })
-          })
+              characters.push(character);
+            });
+          });
 
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
@@ -281,7 +311,9 @@
               if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
                 // if asset is a image, add a image element
                 html += `
-                <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
+                <div class="bg char${c}" style="z-index: ${
+                  c * zIndexMultiplyier
+                };">
                   <div class="portrait_container">
                     <div
                       class="portrait ${
@@ -304,7 +336,9 @@
               } else {
                 // if asset is a video, add a video element
                 html += `
-                <div class="bg char${c}" style="z-index: ${c * zIndexMultiplyier};">
+                <div class="bg char${c}" style="z-index: ${
+                  c * zIndexMultiplyier
+                };">
                   <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
                     <source src="../../${character.assets[ASSET_TO_USE].asset}">
                   </video>
@@ -315,7 +349,7 @@
           });
 
           $(`.p${t + 1}.character`).html(html);
-          
+
           characters.forEach((character, c) => {
             if (character.assets[ASSET_TO_USE]) {
               CenterImage(
@@ -329,8 +363,23 @@
 
           characters.forEach((character, c) => {
             if (character) {
-              gsap.timeline().fromTo([`.p${t + 1}.character .char${c}`], {x: -zIndexMultiplyier * 100+"%"}, {x: -zIndexMultiplyier * 10+"%", duration: 0.3, ease: "power2.out"}, 0.6 + c/10)
-                .to([`.p${t + 1}.character .char${c}`], {duration: 5, x: 0, ease: "power2.out"})
+              gsap
+                .timeline()
+                .fromTo(
+                  [`.p${t + 1}.character .char${c}`],
+                  { x: -zIndexMultiplyier * 100 + "%" },
+                  {
+                    x: -zIndexMultiplyier * 10 + "%",
+                    duration: 0.3,
+                    ease: "power2.out",
+                  },
+                  0.6 + c / 10
+                )
+                .to([`.p${t + 1}.character .char${c}`], {
+                  duration: 5,
+                  x: 0,
+                  ease: "power2.out",
+                });
             }
           });
         }
@@ -345,7 +394,8 @@
 
     SetInnerHtml(
       $(".phase_best_of"),
-      data.score.phase + (data.score.best_of ? ` | Best of ${data.score.best_of}`: "")
+      data.score.phase +
+        (data.score.best_of_text ? ` | ${data.score.best_of_text}` : "")
     );
   }
 

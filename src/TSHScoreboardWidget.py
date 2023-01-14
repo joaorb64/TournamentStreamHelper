@@ -325,8 +325,10 @@ class TSHScoreboardWidget(QDockWidget):
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.best_of", value)
+            lambda value: [
+                StateManager.Set(f"score.best_of", value),
+                StateManager.Set(f"score.best_of_text", TSHLocaleHelper.matchNames.get("best_of").format(value)) if value > 0 else "",
+            ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
@@ -367,46 +369,26 @@ class TSHScoreboardWidget(QDockWidget):
 
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
-        default_tournament_phases_file = './assets/tournament_phases.txt'
-        locale = TSHLocaleHelper.roundLocale
-        path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
-            default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
-        else:
-            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
-                default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
-
-        for file in [default_tournament_phases_file, './user_data/tournament_phases.txt']:
-            try:
-                with open(file, 'r', encoding="utf-8") as f:
-                    self.scoreColumn.findChild(QComboBox, "phase").addItems(
-                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
-            except Exception as e:
-                print(f"ERROR: Did not find {file}")
-                print(traceback.format_exc())
+        
+        for phaseString in TSHLocaleHelper.phaseNames.values():
+            if "{0}" in phaseString:
+                for letter in ["A", "B", "C", "D"]:
+                    if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString.format(letter)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString.format(letter))
+            else:
+                if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString)
 
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
-        # Add default and user tournament match title files
-        default_tournament_match_file = './assets/tournament_matches.txt'
-        locale = TSHLocaleHelper.roundLocale
-        path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
-            default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
-        else:
-            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
-                default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
-
-        for file in [default_tournament_match_file, './user_data/tournament_matches.txt']:
-            try:
-                with open(file, 'r', encoding="utf-8") as f:
-                    self.scoreColumn.findChild(QComboBox, "match").addItems(
-                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
-            except Exception as e:
-                print(f"ERROR: Did not find {file}")
-                print(traceback.format_exc())
+        for matchString in TSHLocaleHelper.matchNames.values():
+            if "{0}" in matchString:
+                for number in ["1", "2", "3", "4"]:
+                    if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(number)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(number))
+            else:
+                if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "match").addItem(matchString)
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):

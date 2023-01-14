@@ -63,7 +63,7 @@ jobs:
       matrix:
         os: ["windows-latest"]
     needs:
-    - locale_build
+      - locale_build
 
     steps:
       - uses: actions/checkout@v2

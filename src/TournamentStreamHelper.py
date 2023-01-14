@@ -38,6 +38,7 @@ from .TSHAlertNotification import TSHAlertNotification
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHBracketWidget import TSHBracketWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
@@ -80,6 +81,7 @@ class Window(QMainWindow):
         StateManager.BlockSaving()
 
         TSHLocaleHelper.LoadLocale()
+        TSHLocaleHelper.LoadRoundNames()
 
         self.signals = WindowSignals()
 
@@ -148,6 +150,14 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
         self.dockWidgets.append(thumbnailSetting)
 
+        bracket = TSHBracketWidget()
+        bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
+        bracket.setObjectName(
+            QApplication.translate("app", "Bracket"))
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, bracket)
+        self.dockWidgets.append(bracket)
+
         tournamentInfo = TSHTournamentInfoWidget()
         tournamentInfo.setWindowIcon(QIcon('assets/icons/info.svg'))
         tournamentInfo.setObjectName(
@@ -191,6 +201,7 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
         self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
+        self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
 
         # pre_base_layout.setSpacing(0)
@@ -283,6 +294,7 @@ class Window(QMainWindow):
         toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
+        toggleWidgets.addAction(bracket.toggleViewAction())
 
         self.optionsBt.menu().addSeparator()
 
@@ -318,14 +330,14 @@ class Window(QMainWindow):
                 action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
-            "app", "Export Language") + menu_margin, self.optionsBt.menu())
+            "app", "Game Asset Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        export_language_messagebox = generate_restart_messagebox(
-            QApplication.translate("app", "Export language changed successfully."))
+        game_asset_language_messagebox = generate_restart_messagebox(
+            QApplication.translate("app", "Game Asset Language changed successfully."))
 
         action = languageSelect.addAction(
             QApplication.translate("app", "Same as program language"))
@@ -333,8 +345,8 @@ class Window(QMainWindow):
         action.setCheckable(True)
         action.setChecked(True)
         action.triggered.connect(lambda x: [
-            SettingsManager.Set("export_language", "default"),
-            export_language_messagebox.exec()
+            SettingsManager.Set("game_asset_language", "default"),
+            game_asset_language_messagebox.exec()
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
@@ -342,21 +354,21 @@ class Window(QMainWindow):
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("export_language", c),
-                export_language_messagebox.exec()
+                SettingsManager.Set("game_asset_language", c),
+                game_asset_language_messagebox.exec()
             ])
-            if SettingsManager.Get("export_language") == code:
+            if SettingsManager.Get("game_asset_language") == code:
                 action.setChecked(True)
 
         languageSelect = QMenu(QApplication.translate(
-            "app", "Default Phase Name Language") + menu_margin, self.optionsBt.menu())
+            "app", "Tournament term language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
 
         languageSelectGroup = QActionGroup(languageSelect)
         languageSelectGroup.setExclusive(True)
 
-        round_language_messagebox = generate_restart_messagebox(
-            QApplication.translate("app", "Default phase name language changed successfully."))
+        fg_language_messagebox = generate_restart_messagebox(
+            QApplication.translate("app", "Tournament term language changed successfully."))
 
         action = languageSelect.addAction(
             QApplication.translate("app", "Same as program language"))
@@ -364,8 +376,8 @@ class Window(QMainWindow):
         action.setCheckable(True)
         action.setChecked(True)
         action.triggered.connect(lambda x: [
-            SettingsManager.Set("round_language", "default"),
-            round_language_messagebox.exec()
+            SettingsManager.Set("fg_term_language", "default"),
+            fg_language_messagebox.exec()
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
@@ -373,10 +385,10 @@ class Window(QMainWindow):
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x, c=code: [
-                SettingsManager.Set("round_language", c),
-                round_language_messagebox.exec()
+                SettingsManager.Set("fg_term_language", c),
+                fg_language_messagebox.exec()
             ])
-            if SettingsManager.Get("round_language") == code:
+            if SettingsManager.Get("fg_term_language") == code:
                 action.setChecked(True)
 
         self.optionsBt.menu().addSeparator()
