@@ -1,6 +1,14 @@
 (($) => {
-  let ASSET_TO_USE = "full"
-  let ZOOM = 1
+  let CONFIG = {
+    default: {
+      asset: "full",
+      zoom: 1,
+    },
+    ssbm: {
+      asset: "full",
+      zoom: 1.4,
+    },
+  };
 
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -43,9 +51,21 @@
   var data = {};
   var oldData = {};
 
+  var GAME_CONFIG = CONFIG["default"];
+
   async function Update() {
     oldData = data;
     data = await getData();
+
+    if (data.game) {
+      if (data.game.codename) {
+        if (CONFIG[data.game.codename]) {
+          GAME_CONFIG = CONFIG[data.game.codename];
+        } else {
+          GAME_CONFIG = CONFIG["default"];
+        }
+      }
+    }
 
     Object.values(data.score.team).forEach((team, t) => {
       console.log(team);
@@ -79,7 +99,13 @@
               <span class="sponsor">${
                 player.team ? player.team + "&nbsp;" : ""
               }</span>${String(player.name)}
-              <span class="pronoun">${player.pronoun}</span>
+            `
+          );
+
+          SetInnerHtml(
+            $(`.${team_id} .p${p + 1} .pronoun`),
+            `
+              ${player.pronoun}
             `
           );
 
@@ -131,8 +157,10 @@
                 ).each((i, e) => {
                   CenterImage(
                     $(e),
-                    Object.values(player.character)[i].assets[ASSET_TO_USE],
-                    ZOOM
+                    Object.values(player.character)[i].assets[
+                      GAME_CONFIG["asset"]
+                    ],
+                    GAME_CONFIG["zoom"]
                   );
                 });
               }
@@ -162,7 +190,7 @@
 
     let phaseTexts = [];
     if (data.score.phase) phaseTexts.push(data.score.phase);
-    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+    if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 

@@ -279,7 +279,7 @@ body {
   background-position: center;
   width: 32px;
   height: 22px;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .flagstate .text div {
@@ -366,7 +366,12 @@ body {
   text-transform: uppercase;
   margin-top: auto;
   margin-left: 6px;
+  margin-right: 6px;
   letter-spacing: normal;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--bg-color);
 }
 
 .p1 .score {
@@ -383,7 +388,7 @@ body {
 }
 
 .p1 .pronoun {
-  color: var(--p1-sponsor-color);
+  background-color: var(--p1-sponsor-color);
 }
 
 .p2 .score {
@@ -396,7 +401,7 @@ body {
 }
 
 .p2 .pronoun {
-  color: var(--p2-sponsor-color);
+  background-color: var(--p2-sponsor-color);
 }
 
 .losers {

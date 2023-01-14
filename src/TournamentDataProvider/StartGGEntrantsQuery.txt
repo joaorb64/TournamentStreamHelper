@@ -16,6 +16,9 @@ query EventEntrantsListQuery($eventSlug: String!, $videogameId: Int, $page: Int!
       nodes {
         id
         name
+        seeds {
+          seedNum
+        }
         participants {
           player {
             id

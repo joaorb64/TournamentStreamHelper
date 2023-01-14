@@ -31,7 +31,7 @@
       playersRecentSets == null ||
       (playersRecentSets.state == "done" && playersRecentSets.sets.length == 0)
     ) {
-      recentSetsHtml = ``;
+      recentSetsHtml = `No sets found`;
     } else if (playersRecentSets.state != "done") {
       recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
     } else {

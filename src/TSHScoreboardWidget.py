@@ -13,6 +13,7 @@ from .SettingsManager import *
 from .StateManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
+from .TSHStatsUtil import TSHStatsUtil
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .TSHThumbnailSettingsWidget import *
@@ -42,6 +43,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.signals.SetSelection.connect(self.LoadSetClicked)
         self.signals.StreamSetSelection.connect(self.LoadStreamSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
+
+        TSHStatsUtil.instance.scoreboard = self
 
         self.lastSetSelected = None
 
@@ -322,8 +325,10 @@ class TSHScoreboardWidget(QDockWidget):
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.best_of", value)
+            lambda value: [
+                StateManager.Set(f"score.best_of", value),
+                StateManager.Set(f"score.best_of_text", TSHLocaleHelper.matchNames.get("best_of").format(value)) if value > 0 else "",
+            ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
@@ -362,57 +367,28 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
 
-        TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
-            self.UpdateRecentSets)
-
-        TSHTournamentDataProvider.instance.signals.last_sets_updated.connect(
-            self.UpdateLastSets)
-
-        TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
-            self.UpdateHistorySets)
-
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
-        default_tournament_phases_file = './assets/tournament_phases.txt'
-        locale = TSHLocaleHelper.roundLocale
-        path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
-            default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
-        else:
-            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
-                default_tournament_phases_file = f"{path_to_localized_assets}/tournament_phases.txt"
-
-        for file in [default_tournament_phases_file, './user_data/tournament_phases.txt']:
-            try:
-                with open(file, 'r', encoding="utf-8") as f:
-                    self.scoreColumn.findChild(QComboBox, "phase").addItems(
-                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
-            except Exception as e:
-                print(f"ERROR: Did not find {file}")
-                print(traceback.format_exc())
+        
+        for phaseString in TSHLocaleHelper.phaseNames.values():
+            if "{0}" in phaseString:
+                for letter in ["A", "B", "C", "D"]:
+                    if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString.format(letter)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString.format(letter))
+            else:
+                if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "phase").addItem(phaseString)
 
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
-        # Add default and user tournament match title files
-        default_tournament_match_file = './assets/tournament_matches.txt'
-        locale = TSHLocaleHelper.roundLocale
-        path_to_localized_assets = f"./assets/locale/{locale}"
-        if os.path.isdir(path_to_localized_assets):
-            default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
-        else:
-            path_to_localized_assets = f"./assets/locale/{locale.split('-')[0]}"
-            if os.path.isdir(path_to_localized_assets):
-                default_tournament_match_file = f"{path_to_localized_assets}/tournament_matches.txt"
-
-        for file in [default_tournament_match_file, './user_data/tournament_matches.txt']:
-            try:
-                with open(file, 'r', encoding="utf-8") as f:
-                    self.scoreColumn.findChild(QComboBox, "match").addItems(
-                        [l.replace("\n", "").strip() for l in f.readlines() if l.strip() != None])
-            except Exception as e:
-                print(f"ERROR: Did not find {file}")
-                print(traceback.format_exc())
+        for matchString in TSHLocaleHelper.matchNames.values():
+            if "{0}" in matchString:
+                for number in ["1", "2", "3", "4"]:
+                    if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(number)) < 0:
+                        self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(number))
+            else:
+                if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
+                    self.scoreColumn.findChild(QComboBox, "match").addItem(matchString)
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -491,9 +467,12 @@ class TSHScoreboardWidget(QDockWidget):
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
-            p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
-            p.instanceSignals.player1Id_changed.connect(self.GetLastSetsP1)
-            p.instanceSignals.player1Id_changed.connect(self.GetHistorySetsP1)
+            p.instanceSignals.playerId_changed.connect(
+                TSHStatsUtil.instance.signals.RecentSetsSignal.emit)
+            p.instanceSignals.player1Id_changed.connect(
+                TSHStatsUtil.instance.signals.LastSetsP1Signal.emit)
+            p.instanceSignals.player1Id_changed.connect(
+                TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit)
 
             self.team1playerWidgets.append(p)
 
@@ -513,9 +492,12 @@ class TSHScoreboardWidget(QDockWidget):
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
-            p.instanceSignals.playerId_changed.connect(self.GetRecentSets)
-            p.instanceSignals.player2Id_changed.connect(self.GetLastSetsP2)
-            p.instanceSignals.player2Id_changed.connect(self.GetHistorySetsP2)
+            p.instanceSignals.playerId_changed.connect(
+                TSHStatsUtil.instance.signals.RecentSetsSignal.emit)
+            p.instanceSignals.player2Id_changed.connect(
+                TSHStatsUtil.instance.signals.LastSetsP2Signal.emit)
+            p.instanceSignals.player2Id_changed.connect(
+                TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit)
 
             self.team2playerWidgets.append(p)
 
@@ -614,111 +596,6 @@ class TSHScoreboardWidget(QDockWidget):
 
         StateManager.Set(f"score.teamsSwapped", self.teamsSwapped)
 
-        StateManager.ReleaseSaving()
-
-    def GetRecentSets(self):
-        updated = False
-        # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
-            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
-                StateManager.Set(f"score.recent_sets", {
-                    "state": "loading",
-                    "sets": []
-                })
-                TSHTournamentDataProvider.instance.GetRecentSets(p1id, p2id)
-                updated = True
-
-        if not updated:
-            StateManager.Set(f"score.recent_sets", {
-                "state": "done",
-                "sets": []
-            })
-
-    def UpdateRecentSets(self, data):
-        lastUpdateTime = StateManager.Get(f"score.recent_sets.request_time", 0)
-
-        if data.get("request_time", 0) > lastUpdateTime:
-            StateManager.Set(f"score.recent_sets", {
-                "state": "done",
-                "sets": data.get("sets"),
-                "request_time": data.get("request_time")
-            })
-    
-    def GetLastSetsP1(self):
-        # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
-            if p1id:
-                TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
-            else:
-                StateManager.Set(f"score.last_sets.1", {})
-    
-    def GetLastSetsP2(self):
-        # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
-            if p2id:
-                TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
-            else:
-                StateManager.Set(f"score.last_sets.2", {})
-    
-    def UpdateLastSets(self, data):
-        StateManager.BlockSaving()
-        i = 1
-        winner = ""
-        loser = ""
-        for set in data.get("last_sets", []):
-            if set.get("player1_score") > set.get("player2_score"):
-                winner = "player1"
-                loser = "player2"
-            else:
-                winner = "player2"
-                loser = "player1"
-            StateManager.Set(f"score.last_sets." + data.get("playerNumber") + "." + str(i), {
-                "phase_id": set.get("phase_id"),
-                "phase_name": set.get("phase_name"),
-                "round_name": set.get("round_name"),
-                "winner_score": set.get(winner + "_score"),
-                "loser_score": set.get(loser + "_score"),
-                "winner_team": set.get(winner + "_team"),
-                "winner_name": set.get(winner + "_name"),
-                "loser_team": set.get(loser + "_team"),
-                "loser_name": set.get(loser + "_name")
-            })
-            i+=1
-        StateManager.ReleaseSaving()
-    
-    def GetHistorySetsP1(self):
-        # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
-            if p1id:
-                TSHTournamentDataProvider.instance.GetHistorySets(p1id, "1", StateManager.Get(f"game.smashgg_id"))
-            else:
-                StateManager.Set(f"score.history_sets.1", {})
-    
-    def GetHistorySetsP2(self):
-        # Only if 1 player on each side
-        if len(self.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
-            if p2id:
-                TSHTournamentDataProvider.instance.GetHistorySets(p2id, "2", StateManager.Get(f"game.smashgg_id"))
-            else:
-                StateManager.Set(f"score.history_sets.2", {})
-    
-    def UpdateHistorySets(self, data):
-        StateManager.BlockSaving()
-        i = 1
-        for set in data.get("history_sets", []):
-            StateManager.Set(f"score.history_sets." + data.get("playerNumber") + "." + str(i), {
-                "placement": set.get("placement"),
-                "event_name": set.get("event_name"),
-                "tournament_name": set.get("tournament_name"),
-                "tournament_picture": set.get("tournament_picture")
-            })
-            i+=1
         StateManager.ReleaseSaving()
 
     def ResetScore(self):

@@ -104,7 +104,7 @@
             `
           );
 
-          SetInnerHtml($(`.t${t + 1}.p${p + 1} .pronoun`), player.pronoun)
+          SetInnerHtml($(`.t${t + 1}.p${p + 1} .pronoun`), player.pronoun);
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .flagcountry`),
@@ -148,7 +148,7 @@
 
     let phaseTexts = [];
     if (data.score.phase) phaseTexts.push(data.score.phase);
-    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+    if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".info.material_container .phase"), phaseTexts.join(" - "));
     SetInnerHtml(

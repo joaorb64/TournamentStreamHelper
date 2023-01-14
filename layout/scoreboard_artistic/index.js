@@ -68,7 +68,7 @@
     if (data.game) {
       if (data.game.codename == "ssbu") {
         ASSET_TO_USE = "mural_art";
-        ZOOM = .8;
+        ZOOM = 0.8;
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssbm") {
         ASSET_TO_USE = "full";
@@ -76,7 +76,7 @@
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssb64") {
         ASSET_TO_USE = "artwork";
-        ZOOM = 2.0;
+        ZOOM = 1.6;
         FLIP_P2_ASSET = true;
       } else {
         ASSET_TO_USE = "full";
@@ -171,7 +171,7 @@
                         $(e),
                         Object.values(player.character)[i].assets[ASSET_TO_USE],
                         ZOOM,
-                        {x: 0.5, y: 0.4}
+                        { x: 0.5, y: 0.4 }
                       );
                     }
                   );
@@ -287,12 +287,10 @@
             () => {
               $(`.p${t + 1}.character_container .stockicon div`).each(
                 (i, e) => {
-                  CenterImage(
-                    $(e),
-                    characters[i].assets[ASSET_TO_USE],
-                    ZOOM,
-                    {x: 0.5, y: 0.4},
-                  );
+                  CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM, {
+                    x: 0.5,
+                    y: 0.4,
+                  });
                 }
               );
             }
@@ -343,7 +341,7 @@
     SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
-      data.score.best_of ? `Best of ${data.score.best_of}` : ""
+      data.score.best_of_text ? data.score.best_of_text : ""
     );
 
     $(".text").each(function (e) {

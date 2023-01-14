@@ -28,7 +28,7 @@ body {
   letter-spacing: 1;
 }
 
-.player1_content {
+.container {
   position: absolute;
   top: 10px;
   left: 50%;
@@ -40,6 +40,11 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.player1_content {
+  display: flex;
+  position: relative;
 }
 
 .player2_content {
@@ -60,8 +65,7 @@ body {
   display: flex;
   flex-direction: row;
   background-color: var(--bg-color);
-  margin-bottom: 5px;
-  padding: 5px 10px;
+  padding: 5px 16px;
   border-radius: 10px;
 }
 
@@ -70,6 +74,9 @@ body {
   color: var(--text-color);
   margin: 10px;
   overflow: hidden;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .phase {
@@ -81,11 +88,23 @@ body {
   justify-content: left;
 }
 
+.phase .text {
+  text-align: left;
+  align-items: left;
+  justify-content: left;
+}
+
 .match {
   font-size: 18px;
   letter-spacing: 2px;
   width: 200px;
   text-align: right;
+}
+
+.match .text {
+  text-align: right;
+  align-items: right;
+  justify-content: right;
 }
 
 .sponsor {
@@ -103,21 +122,24 @@ body {
   overflow: hidden;
 }
 
-.winner .name {
+.name {
   align-items: center;
-  width: 400px;
+  flex-grow: 1;
   text-align: left;
-  padding-left: 10px;
   font-size: 24px;
+  padding-left: 16px;
+  padding-right: 16px;
+  flex-shrink: 1;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.winner .sponsor {
+.color1 .sponsor {
   color: var(--p1-sponsor-color);
   font-size: 24px;
 }
 
 .loser {
-  margin-top: 5px;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -126,17 +148,10 @@ body {
   align-items: center;
   border-radius: 10px;
   overflow: hidden;
+  filter: brightness(0.5);
 }
 
-.loser .name {
-  align-items: center;
-  width: 400px;
-  text-align: left;
-  padding-left: 10px;
-  font-size: 24px;
-}
-
-.loser .sponsor {
+.color2 .sponsor {
   color: var(--p2-sponsor-color);
   font-size: 24px;
 }
@@ -174,17 +189,45 @@ body {
   font-size: 40px;
   color: var(--text-color);
   overflow: hidden;
-  width: 100px;
+  width: 80px;
   height: 100%;
   align-items: center;
   justify-content: center;
   text-align: center;
+  flex-shrink: 0;
 }
 
-.winner .score {
+.color1 .score {
   background: var(--p1-score-bg-color);
 }
 
-.loser .score {
+.color2 .score {
   background: var(--p2-score-bg-color);
+}
+
+.bracket_line {
+  position: absolute;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    var(--bg-color) 10%
+  );
+  height: 20px;
+  left: -120px;
+  top: 60%;
+  transform: translateY(-50%);
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.line_arrow {
+  position: absolute;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 48px solid var(--bg-color);
+  top: 50%;
+  transform: translateY(-50%) scaleY(50%) translateX(50%);
+  border-top: 48px solid transparent;
+  border-bottom: 48px solid transparent;
 }

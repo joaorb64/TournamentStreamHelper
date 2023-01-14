@@ -18,6 +18,7 @@ class TSHScoreboardPlayerWidgetSignals(QObject):
     playerId_changed = pyqtSignal()
     player1Id_changed = pyqtSignal()
     player2Id_changed = pyqtSignal()
+    dataChanged = pyqtSignal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -119,16 +120,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c.editingFinished.connect(
                 lambda element=c: [
                     StateManager.Set(
-                        f"{self.path}.{element.objectName()}", element.text())
+                        f"{self.path}.{element.objectName()}", element.text()),
+                    self.instanceSignals.dataChanged.emit()
                 ])
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
                 lambda text, element=c: [
                     StateManager.Set(
-                        f"{self.path}.{element.objectName()}", element.currentData(
-                        )
-                    )
+                        f"{self.path}.{element.objectName()}", element.currentData()
+                    ),
+                    self.instanceSignals.dataChanged.emit()
                 ]
             )
             c.currentIndexChanged.emit(0)
@@ -750,6 +752,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             color_element.setCurrentIndex(int(main[1]))
                         else:
                             color_element.setCurrentIndex(0)
+        
+        if data.get("seed"):
+            StateManager.Set(f"{self.path}.seed", data.get("seed"))
                             
         StateManager.ReleaseSaving()
 

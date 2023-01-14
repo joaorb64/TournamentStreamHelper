@@ -1,0 +1,33 @@
+{
+    "match": {
+        "grand_final_reset": "Grande Final (Reset)",
+        "grand_final": "Grande Final",
+        "winners_final": "Final",
+        "winners_semi_final": "Semifinal",
+        "winners_quarter_final": "Quartas de Final",
+        "losers_final": "Final da Repescagem",
+        "losers_semi_final": "Semifinal da Repescagem",
+        "losers_quarter_final": "Quartas de Final da Repescagem",
+        "winners_round": "Rodada {0}",
+        "losers_round": "Repescagem Rodada {0}",
+        "best_of": "Melhor de {0}"
+    },
+    "phase": {
+        "group_stage": "Fase de Grupos",
+        "group": "Grupo {0}",
+        "final_stage": "Fase Final",
+        "bracket": "Chave",
+        "winners_bracket": "Chave do Torneio",
+        "losers_bracket": "Chave de Repescagem",
+        "casuals": "Amistosos",
+        "friendlies": "Partida Amigável",
+        "round_robin": "Todos Contra Todos",
+        "crew_battle": "Disputa de Grupos",
+        "top_8": "Top 8",
+        "top_16": "Top 16",
+        "top_32": "Top 32",
+        "exhibition": "Exibição",
+        "freeplay": "Freeplay",
+        "money_match": "Money Match"
+    }
+}

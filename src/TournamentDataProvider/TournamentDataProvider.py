@@ -11,7 +11,7 @@ class TournamentDataProvider:
     def GetEntrants(self):
         pass
 
-    def GetTournamentData(self):
+    def GetTournamentData(self, progress_callback=None):
         pass
 
     def GetMatch(self, setId):
@@ -32,7 +32,13 @@ class TournamentDataProvider:
     def GetLastSets(self, playerId, playerNumber):
         pass
     
-    def GetPlayerHistorySets(self, playerId, playerNumber, gameType):
+    def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
+        pass
+
+    def GetTournamentPhases(self, progress_callback=None):
+        pass
+
+    def GetTournamentPhaseGroup(self, id, progress_callback=None):
         pass
 
     def GetStandings(self, playerNumber):
