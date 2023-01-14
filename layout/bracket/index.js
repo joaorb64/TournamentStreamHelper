@@ -1,6 +1,16 @@
 (($) => {
-  var ASSET_TO_USE = "full";
-  var ZOOM = 2;
+  var ASSET_CONFIG = {
+    default: {
+      asset: "full",
+      zoom: 2,
+    },
+    ssbu: {
+      asset: "full",
+      zoom: 2,
+    },
+  };
+
+  var ASSET_TO_USE = {};
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
@@ -88,6 +98,16 @@
     oldData = data;
     data = await getData();
 
+    if (data.game) {
+      if (data.game.codename) {
+        if (ASSET_CONFIG[data.game.codename]) {
+          ASSET_TO_USE = ASSET_CONFIG[data.game.codename];
+        } else {
+          ASSET_TO_USE = ASSET_CONFIG["default"];
+        }
+      }
+    }
+
     if (
       !oldData.bracket ||
       JSON.stringify(data.bracket.bracket) !=
@@ -128,7 +148,11 @@
         progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
         progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
         Object.keys(oldData.bracket.bracket.rounds).length !=
-          Object.keys(data.bracket.bracket.rounds).length
+          Object.keys(data.bracket.bracket.rounds).length ||
+        _.get(oldData, "bracket.phase") ||
+        _.get(data, "bracket.phase") ||
+        _.get(oldData, "bracket.phaseGroup") ||
+        _.get(data, "bracket.phaseGroup")
       ) {
         // WINNERS SIDE
         let html = "";
@@ -433,7 +457,7 @@
           });
         });
 
-        entryAnim.play();
+        entryAnim.play(0);
       }
 
       // TRIGGER ANIMATIONS
@@ -587,17 +611,17 @@
 
               if (playerChanged || charactersChanged) {
                 Object.values(player.character).forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE]) {
+                  if (character.assets[ASSET_TO_USE.asset]) {
                     charactersHtml += `
                       <div class="icon stockicon">
                           <div
                             style='background-image: url(../../${
-                              character.assets[ASSET_TO_USE].asset
+                              character.assets[ASSET_TO_USE.asset].asset
                             })'
                             data-asset='${JSON.stringify(
-                              character.assets[ASSET_TO_USE]
+                              character.assets[ASSET_TO_USE.asset]
                             )}'
-                            data-zoom='${ZOOM}'
+                            data-zoom='${ASSET_TO_USE.zoom}'
                           >
                           </div>
                       </div>
@@ -617,7 +641,7 @@
                         if (
                           player &&
                           player.character[1] &&
-                          player.character[1].assets[ASSET_TO_USE] != null
+                          player.character[1].assets[ASSET_TO_USE.asset] != null
                         ) {
                           CenterImage(
                             $(i),
@@ -636,7 +660,7 @@
                 $(element).find(`.sponsor_icon`),
                 player && player.sponsor_logo
                   ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                  : "<div></div>"
+                  : ""
               );
 
               SetInnerHtml(
@@ -728,17 +752,17 @@
 
               if (playerChanged || charactersChanged) {
                 currCharacters.forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE]) {
+                  if (character.assets[ASSET_TO_USE.asset]) {
                     charactersHtml += `
                         <div class="icon stockicon">
                             <div
                               style='background-image: url(../../${
-                                character.assets[ASSET_TO_USE].asset
+                                character.assets[ASSET_TO_USE.asset].asset
                               })'
                               data-asset='${JSON.stringify(
-                                character.assets[ASSET_TO_USE]
+                                character.assets[ASSET_TO_USE.asset]
                               )}'
-                              data-zoom='${ZOOM}'
+                              data-zoom='${ASSET_TO_USE.zoom}'
                             >
                             </div>
                         </div>
