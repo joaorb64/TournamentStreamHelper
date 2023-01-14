@@ -381,11 +381,16 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
 
-        for matchString in TSHLocaleHelper.matchNames.values():
+        for key in TSHLocaleHelper.matchNames.keys():
+            matchString = TSHLocaleHelper.matchNames[key]
             if "{0}" in matchString:
-                for number in ["1", "2", "3", "4"]:
-                    if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(number)) < 0:
-                        self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(number))
+                for number in range(5):
+                    if key == "best_of":
+                        if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
+                            self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(str(2*number+1)))
+                    else:
+                        if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(number+1))) < 0:
+                            self.scoreColumn.findChild(QComboBox, "match").addItem(matchString.format(str(number+1)))
             else:
                 if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
                     self.scoreColumn.findChild(QComboBox, "match").addItem(matchString)
