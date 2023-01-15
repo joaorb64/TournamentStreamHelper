@@ -67,6 +67,7 @@ class TSHBracketWidget(QDockWidget):
         col.setContentsMargins(0, 0, 0, 0)
         col.layout().setSpacing(0)
         self.slotNumber = QSpinBox()
+        self.slotNumber.setMinimum(2)
         col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
         col.layout().addWidget(self.slotNumber)
         self.slotNumber.valueChanged.connect(lambda val: [
