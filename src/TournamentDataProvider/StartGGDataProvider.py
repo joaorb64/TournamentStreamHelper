@@ -1581,16 +1581,14 @@ StartGGDataProvider.HistorySetsQuery = f.read()
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()
 
-<<<<<<< HEAD
 f = open("src/TournamentDataProvider/StartGGHeadToHeadEventQuery.txt", 'r')
 StartGGDataProvider.HeadToHeadEventQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGHeadToHeadSetsQuery.txt", 'r')
 StartGGDataProvider.HeadToHeadSetsQuery = f.read()
-=======
+
 f = open("src/TournamentDataProvider/StartGGTournamentPhasesQuery.txt", 'r')
 StartGGDataProvider.TournamentPhasesQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
 StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
->>>>>>> 5179529fb37b7e7a8765b6995f6ca2251c97946c
