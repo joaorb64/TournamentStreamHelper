@@ -13,6 +13,7 @@ from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
 import json
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
+from ..TSHBracket import is_power_of_two
 
 from ..Workers import Worker
 
@@ -202,11 +203,31 @@ class StartGGDataProvider(TournamentDataProvider):
             if len(finalData["progressionsIn"]) > 0:
                 originalKeys = list(finalData["sets"].keys())
                 originalKeys.reverse()
+
+                # If we have a non-power2 number of progressions in, we shift 2 rounds
+                shift = 1 if is_power_of_two(len(finalData["progressionsIn"])) else 2
+
                 for roundKey in originalKeys:
                     round = int(roundKey)
 
+                    # If we have progressions in, shift winners scores to the right
                     if round > 0:
-                        finalData["sets"][str(round+1)] = finalData["sets"].pop(roundKey)
+                        finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
+                
+                # Add forced progressions for initial round(s)
+                roundSize = len(finalData["sets"][str(1+shift)])
+
+                for i in range(shift):
+                    roundSize = roundSize * 2
+                    roundIndex = shift-i
+
+                    finalData["sets"][roundIndex] = []
+
+                    for s in range(roundSize):
+                        finalSets[roundIndex].append({
+                            "score": [-1, -1],
+                            "finished": True
+                        })
 
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
 
