@@ -50,12 +50,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
         <source>Short Link</source>
-        <translation type="unfinished"></translation>
+        <translation>短縮URL</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="118"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>日付</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
@@ -70,42 +70,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBracket.ui" line="17"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>トーナメント表</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="40"/>
         <source>Phase</source>
-        <translation type="unfinished">フェーズ</translation>
+        <translation>フェーズ</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="60"/>
         <source>Phase Group</source>
-        <translation type="unfinished"></translation>
+        <translation>フェーズグループ</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="108"/>
         <source>Progressions in</source>
-        <translation type="unfinished"></translation>
+        <translation>進行回数</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="128"/>
         <source>Progressions out</source>
-        <translation type="unfinished"></translation>
+        <translation>退行回数</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="148"/>
         <source>Limit exported bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポートするトーナメント表を制限する</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="155"/>
         <source> players</source>
-        <translation type="unfinished"></translation>
+        <translation>のプレイヤーたち</translation>
     </message>
     <message>
         <location filename="../layout/TSHBracket.ui" line="158"/>
         <source>Top </source>
-        <translation type="unfinished"></translation>
+        <translation>トップ</translation>
     </message>
 </context>
 <context>
@@ -228,7 +228,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
         <source>Validation</source>
-        <translation type="unfinished"></translation>
+        <translation>検証</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="163"/>
@@ -334,7 +334,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="45"/>
         <source>General Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>一般設定</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="346"/>
@@ -374,12 +374,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="834"/>
         <source>Game Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ゲームの設定</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
         <source>Smooth scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>スムーススケーリング</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="889"/>
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="648"/>
         <source>Sponsor Font Color</source>
-        <translation type="unfinished"></translation>
+        <translation>スポンサーのフォントの色</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
@@ -417,7 +417,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="59"/>
         <source>Template</source>
-        <translation type="unfinished"></translation>
+        <translation>テンプレート</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="525"/>
@@ -461,37 +461,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
         <source>Proportional character scaling</source>
-        <translation type="unfinished"></translation>
+        <translation>プロポーショナルキャラスケーリング</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="967"/>
         <source>Scale to fit X</source>
-        <translation type="unfinished"></translation>
+        <translation>Xに合うようにサイズを変える</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="974"/>
         <source>Scale to fit Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Yに合うようにサイズを変える</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="994"/>
         <source>Horizontal Align</source>
-        <translation type="unfinished"></translation>
+        <translation>横に整列させる</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1025"/>
         <source>Vertical Align</source>
-        <translation type="unfinished"></translation>
+        <translation>縦に整列させる</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1049"/>
         <source>Invert separator orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>分離の向きを変える</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1056"/>
         <source>Hide separators between characters</source>
-        <translation type="unfinished"></translation>
+        <translation>キャラクターの間の分離戦を隠す</translation>
     </message>
     <message>
         <source>UI Options</source>
@@ -505,7 +505,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1164"/>
         <source>Generate Thumbnail</source>
-        <translation type="unfinished">サムネイルを作成する</translation>
+        <translation>サムネイルを作成する</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1171"/>
@@ -520,17 +520,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
         <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>距離</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1089"/>
         <source>Angle</source>
-        <translation type="unfinished"></translation>
+        <translation>角度</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1096"/>
         <source>º</source>
-        <translation type="unfinished"></translation>
+        <translation>º</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1157"/>
@@ -582,12 +582,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="449"/>
         <source>Scale: {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>スケール: {0}</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="460"/>
         <source>Eyesight offset: ({0}, {1})</source>
-        <translation type="unfinished"></translation>
+        <translation>アイサイトオフセット: ({0}, {1})</translation>
     </message>
 </context>
 <context>
@@ -754,32 +754,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="400"/>
         <source>A new window has been opened in your default webbrowser.</source>
-        <translation type="unfinished"></translation>
+        <translation>既定のウェブブラウザで新しいウィンドウが開きました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="402"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘルプ</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="406"/>
         <source>Open the Wiki</source>
-        <translation type="unfinished"></translation>
+        <translation>ウィキを開く</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="414"/>
         <source>Report a bug</source>
-        <translation type="unfinished"></translation>
+        <translation>バグを報告する</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="422"/>
         <source>Ask for Help on Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>ディスコードで質問する</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="432"/>
         <source>Contribute to the Asset Database</source>
-        <translation type="unfinished"></translation>
+        <translation>アセットデータベースに貢献する</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="677"/>
@@ -809,7 +809,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="156"/>
         <source>Bracket</source>
-        <translation type="unfinished"></translation>
+        <translation>トーナメント表</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="309"/>
@@ -853,22 +853,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Game Asset Language</source>
-        <translation type="unfinished"></translation>
+        <translation>ゲームアセットの言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="340"/>
         <source>Game Asset Language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>ゲームアセットの言語を変更しました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
         <source>Tournament term language</source>
-        <translation type="unfinished"></translation>
+        <translation>トーナメント用語の言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="371"/>
         <source>Tournament term language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>トーナメント用語の言語を変更しました</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="601"/>
@@ -920,7 +920,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="162"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>状態</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="167"/>
@@ -950,7 +950,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="274"/>
         <source>Update all</source>
-        <translation type="unfinished"></translation>
+        <translation>全てを更新する</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="297"/>
@@ -966,7 +966,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="360"/>
         <source>Downloading {0}... ({1}/{2})</source>
-        <translation type="unfinished"></translation>
+        <translation>{0}... ({1}/{2})をダウンロード中…</translation>
     </message>
     <message>
         <source>Downloading {0}...</source>
@@ -1004,7 +1004,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHPlayerListWidget.py" line="92"/>
         <source>Load tournament standings</source>
-        <translation type="unfinished"></translation>
+        <translation>トーナメントの順位表をロードする</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="58"/>
@@ -1038,7 +1038,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="45"/>
         <source>Ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation>ルールセット</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="126"/>
@@ -1053,17 +1053,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="449"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>拒否ステージの数とニュートラルのステージの数が合いません。もう{0}つステージを拒否して下さい。</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="456"/>
         <source>The current ruleset is valid!</source>
-        <translation type="unfinished"></translation>
+        <translation>このルールセットは有効です!</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="506"/>
         <source>The text for banByMaxGames is invalid.</source>
-        <translation type="unfinished"></translation>
+        <translation>banByMaxGamesのテキストが無効です。</translation>
     </message>
     <message>
         <source>Paste the tournament URL.</source>
@@ -1104,7 +1104,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
         <source>Show completed sets</source>
-        <translation type="unfinished"></translation>
+        <translation>完了したセットを表示する</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="78"/>
@@ -1316,7 +1316,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="411"/>
         <source>The thumbnail has been generated here:</source>
-        <translation type="unfinished"></translation>
+        <translation>サムネイルはここに作成されました:</translation>
     </message>
 </context>
 </TS>
