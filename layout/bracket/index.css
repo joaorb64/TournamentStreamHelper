@@ -1,0 +1,351 @@
+:root {
+  --player-height: 24;
+  --name-size: 14;
+  --score-size: 14;
+  --set-gap: 2;
+  --flag-height: 8;
+  --title-size: 100px;
+}
+
+body {
+  font-family: var(--font);
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1;
+}
+
+.container {
+  color: var(--text-color);
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: calc(var(--border-radius) / 2);
+  background-color: var(--bg-color);
+  align-items: center;
+  justify-content: center;
+  place-content: center;
+}
+
+.title {
+  width: 100%;
+  height: var(--title-size);
+  padding: 16px 24px;
+  box-sizing: border-box;
+  font-size: 20px;
+}
+
+.title .container {
+  width: 100%;
+  height: 100%;
+}
+
+.tournament_name .text,
+.event_name .text {
+  justify-content: left;
+}
+
+.bracket_name .text,
+.pool_name .text {
+  justify-content: right;
+}
+
+.title .col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.tournament_name {
+  font-size: 24px;
+}
+
+.winners_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 32px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 100vw;
+  height: calc(50vh - var(--title-size));
+  position: absolute;
+  top: calc(0% + var(--title-size));
+  padding-left: 150px;
+  padding-right: 150px;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: center;
+}
+
+.losers_only .winners_container {
+  height: 0;
+  visibility: hidden;
+}
+
+.winners_only .winners_container {
+  height: calc(100vh - var(--title-size));
+}
+
+.losers_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 32px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 100vw;
+  height: 50vh;
+  position: absolute;
+  top: 50%;
+  padding-left: 150px;
+  padding-right: 150px;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: center;
+}
+
+.losers_only .losers_container {
+  height: calc(100vh - var(--title-size));
+  top: calc(0% + var(--title-size));
+}
+
+.winners_only .losers_container {
+  height: 0;
+  visibility: hidden;
+}
+
+.round {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 0px;
+  flex: 1 1 0;
+  max-width: 320px;
+  min-width: 0;
+}
+
+.round_name {
+  position: absolute;
+  top: -30px;
+  align-self: center;
+  width: 100%;
+  font-size: 20px;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 2);
+  background-color: var(--bg-color);
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background-color: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+  overflow: hidden;
+}
+
+.slot .title {
+  width: 100%;
+  font-size: 34px;
+  margin: 0px 0;
+  padding: 8px 8px;
+  height: 70px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.player.container {
+  position: relative;
+  width: 100%;
+  height: var(--player-height);
+  transition: filter 0.4s linear;
+}
+
+.name_twitter {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+.filler {
+  display: flex;
+  width: 120px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.name_twitter .name {
+  font-size: var(--name-size);
+  max-width: 100%;
+}
+
+.name_twitter .twitter {
+  font-size: 24px;
+  max-width: 100%;
+}
+
+.twitter_logo {
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  background-image: url("../logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--border-radius);
+  margin-left: 16px;
+}
+
+.icon {
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  background-color: #3f3f46;
+  height: var(--player-height);
+}
+
+.icon div:not(.text) {
+  width: var(--player-height);
+  height: var(--player-height);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #3f3f46;
+}
+
+.icon.stockicon div {
+  width: 100%;
+  height: 100%;
+}
+
+.flags {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  height: 100%;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.flag {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: var(--flag-height);
+  height: calc(var(--flag-height) * 0.7px);
+  border-radius: 4px;
+}
+
+.sponsor_icon > div > div {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: var(--flag-height);
+  height: var(--flag-height);
+  border-radius: var(--border-radius);
+}
+
+.character_container {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+  width: 40px;
+  flex-shrink: 0;
+  margin-top: 0;
+  right: 0;
+}
+
+.character_container > div {
+  overflow: hidden;
+  gap: 2px;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.character_container > div > div {
+  overflow: hidden;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  border-radius: 0;
+}
+
+.score {
+  width: 40px;
+  height: 100px;
+  font-size: var(--score-size);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  color: var(--p1-score-color);
+  margin-left: 0;
+  padding-right: 8px;
+  margin-right: -8px;
+  background: var(--p1-score-bg-color);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.sponsor {
+  color: var(--p1-sponsor-color);
+}
+
+.slot_p_0 {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.slot_p_1 {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.lines {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+}

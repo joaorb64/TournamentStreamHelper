@@ -337,3 +337,15 @@ async function FindImages(folder = "") {
 
   return files;
 }
+
+function powerOf2(v) {
+  return v && !(v & (v - 1));
+}
+
+function nextPow2(v) {
+  var p = 2;
+  while ((v >>= 1)) {
+    p <<= 1;
+  }
+  return p;
+}

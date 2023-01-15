@@ -11,12 +11,18 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
+class TSHPlayerListSlotWidgetSignals(QObject):
+    dataChanged = pyqtSignal()
 
 class TSHPlayerListSlotWidget(QGroupBox):
-    def __init__(self, index, playerList, *args):
+    def __init__(self, index, playerList, base="player_list", *args):
         super().__init__(*args)
         self.index = index
         self.playerList = playerList
+
+        self.base = base
+
+        self.signals = TSHPlayerListSlotWidgetSignals()
 
         self.setLayout(QVBoxLayout())
         self.slotName = QLineEdit()
@@ -25,7 +31,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.slotName.editingFinished.connect(
             lambda: [
                 StateManager.Set(
-                    f"player_list.slot.{self.index}.name", self.slotName.text())
+                    f"{self.base}.slot.{self.index}.name", self.slotName.text())
             ]
         )
 
@@ -39,11 +45,11 @@ class TSHPlayerListSlotWidget(QGroupBox):
         StateManager.BlockSaving()
         while len(self.playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
-                index=len(self.playerWidgets)+1, teamNumber=1, path=f'player_list.slot.{self.index}.player.{len(self.playerWidgets)+1}')
+                index=len(self.playerWidgets)+1, teamNumber=1, path=f'{self.base}.slot.{self.index}.player.{len(self.playerWidgets)+1}')
             self.playerWidgets.append(p)
             self.list.layout().addWidget(p)
 
-            p.SetCharactersPerPlayer(self.playerList.charNumber.value())
+            p.SetCharactersPerPlayer(self.playerList.charactersPerPlayer)
 
             index = len(self.playerWidgets)-1
 
@@ -51,6 +57,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
                 self.playerWidgets[index-1 if index > 0 else 0]))
             p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
                 self.playerWidgets[index+1 if index < len(self.playerWidgets) - 1 else index]))
+            
+            p.instanceSignals.dataChanged.connect(self.signals.dataChanged.emit)
 
         while len(self.playerWidgets) > number:
             p = self.playerWidgets[-1]
@@ -60,6 +68,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
             p.deleteLater()
         
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()
 
         # if number > 1:
         #     self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -75,6 +84,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()
 
     def SetTeamData(self, data):
         StateManager.BlockSaving()
@@ -84,5 +94,6 @@ class TSHPlayerListSlotWidget(QGroupBox):
             self.slotName.setText("")
         
         for i, pw in enumerate(self.playerWidgets):
-            pw.SetData(data.get("players")[i], True)
+            pw.SetData(data.get("players")[i])
         StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()

@@ -289,7 +289,7 @@
 
     let phaseTexts = [];
     if (data.score.phase) phaseTexts.push(data.score.phase);
-    if (data.score.best_of) phaseTexts.push(`Best of ${data.score.best_of}`);
+    if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 

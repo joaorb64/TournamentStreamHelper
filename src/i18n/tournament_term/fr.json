@@ -1,0 +1,33 @@
+{
+    "match": {
+        "grand_final_reset": "Grande Finale - Reset",
+        "grand_final": "Grande Finale",
+        "winners_final": "Finale Winner",
+        "winners_semi_final": "Demi-finale Winner",
+        "winners_quarter_final": "Quart de finale Winner",
+        "losers_final": "Finale Loser",
+        "losers_semi_final": "Demi-finale Loser",
+        "losers_quarter_final": "Quart de finale Loser",
+        "winners_round": "Tour {0} Winner",
+        "losers_round": "Tour {0} Loser",
+        "best_of": "Best of {0}"
+    },
+    "phase": {
+        "group_stage": "Poules",
+        "group": "Poule {0}",
+        "final_stage": "Phase finale",
+        "bracket": "Arbre",
+        "winners_bracket": "Arbre Winner",
+        "losers_bracket": "Arbre Loser",
+        "casuals": "Matchs amicaux",
+        "friendlies": "Matchs amicaux",
+        "round_robin": "Round Robin",
+        "crew_battle": "Crew Battle",
+        "top_8": "Top 8",
+        "top_16": "Top 16",
+        "top_32": "Top 32",
+        "exhibition": "Exhibition",
+        "freeplay": "Freeplay",
+        "money_match": "Money Match"
+    }
+}

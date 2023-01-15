@@ -12,6 +12,8 @@ from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
 import json
+from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
+from ..TSHBracket import is_power_of_two
 
 from ..Workers import Worker
 
@@ -29,6 +31,8 @@ class StartGGDataProvider(TournamentDataProvider):
     TournamentStandingsQuery = None
     HeadToHeadEventQuery = None
     HeadToHeadSetsQuery = None
+    TournamentPhasesQuery = None
+    TournamentPhaseGroupQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
@@ -37,7 +41,7 @@ class StartGGDataProvider(TournamentDataProvider):
         self.getRecentSetsThreadPool = QThreadPool()
         self.getHeadToHeadThreadPool = QThreadPool()
 
-    def GetTournamentData(self):
+    def GetTournamentData(self, progress_callback=None):
         finalData = {}
 
         try:
@@ -61,9 +65,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
             videogame = deep_get(data, "data.event.videogame.id", None)
             if videogame:
-                TSHGameAssetManager.instance.SetGameFromStartGGId(
-                    videogame)
                 self.videogame = videogame
+                self.parent.signals.game_changed.emit(videogame)
 
             finalData["tournamentName"] = deep_get(
                 data, "data.event.tournament.name", "")
@@ -77,6 +80,151 @@ class StartGGDataProvider(TournamentDataProvider):
                 data, "data.event.tournament.shortSlug", "")
             finalData["startAt"] = deep_get(
                 data, "data.event.tournament.startAt", "")
+        except:
+            traceback.print_exc()
+
+        return finalData
+    
+    def GetTournamentPhases(self, progress_callback=None):
+        phases = []
+
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentPhasesQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.TournamentPhasesQuery
+                }
+
+            )
+
+            data = json.loads(data.text)
+            print(data)
+
+            for phase in deep_get(data, "data.event.phases", []):
+                phaseObj = {
+                    "id": phase.get("id"),
+                    "name": phase.get("name"),
+                    "groups": []
+                }
+
+                for phaseGroup in deep_get(phase, "phaseGroups.nodes", []):
+                    phaseObj["groups"].append({
+                        "id": phaseGroup.get("id"),
+                        "name": TSHLocaleHelper.phaseNames.get("group").format(phaseGroup.get('displayIdentifier')),
+                        "bracketType": phaseGroup.get("bracketType")
+                    })
+
+                phases.append(phaseObj)
+        except:
+            traceback.print_exc()
+
+        return phases
+
+    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+        finalData = {}
+
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentPhaseGroupQuery",
+                    "variables": {
+                        "id": id,
+                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                    },
+                    "query": StartGGDataProvider.TournamentPhaseGroupQuery
+                }
+            )
+            data = json.loads(data.text)
+
+            seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
+            seeds.sort(key=lambda s: s.get("seedNum"))
+
+            seedMap: list = deep_get(data, "data.phaseGroup.seedMap.1")
+            
+            if seedMap:
+                seedMap = [s if s != "bye" else -1 for s in seedMap]
+                finalData["seedMap"] = seedMap
+
+            teams = []
+
+            for seed in seeds:
+                team = {}
+                participants = deep_get(seed, "entrant.participants")
+
+                if len(participants) > 1:
+                    team["name"] = deep_get(seed, "entrant.name")
+
+                team["players"] = []
+
+                for entrant in participants:
+                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(seed, "entrant.paginatedSets.nodes")))
+                
+                teams.append(team)
+            
+            finalData["entrants"] = teams
+
+            sets = deep_get(data, "data.phaseGroup.sets.nodes", [])
+            sets.sort(key=lambda s: (abs(int(s.get("round"))), s.get("id")))
+
+            finalSets = {}
+
+            for s in sets:
+                round = int(s.get("round"))
+                
+                if not str(round) in finalSets:
+                    finalSets[str(round)] = []
+
+                print(s)
+
+                finalSets[str(round)].append({
+                    "score": [s.get("entrant1Score"), s.get("entrant2Score")],
+                    "finished": s.get("state", 0) == 3
+                })
+
+            finalData["sets"] = finalSets
+
+            finalData["progressionsIn"] = []
+            
+            for s in seeds:
+                originPhaseId = deep_get(s, "progressionSource.originPhaseGroup.id")
+                if originPhaseId:
+                    finalData["progressionsIn"].append(originPhaseId)
+            
+            if len(finalData["progressionsIn"]) > 0:
+                originalKeys = list(finalData["sets"].keys())
+                originalKeys.reverse()
+
+                # If we have a non-power2 number of progressions in, we shift 2 rounds
+                shift = 1 if is_power_of_two(len(finalData["progressionsIn"])) else 2
+
+                for roundKey in originalKeys:
+                    round = int(roundKey)
+
+                    # If we have progressions in, shift winners scores to the right
+                    if round > 0:
+                        finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
+            
+            finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
+
+            # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
+            if finalData["progressionsOut"] == None or len(finalData["progressionsOut"]) == 0:
+                lastRound = max([int(r) for r in finalData["sets"].keys()])
+                if len(finalData["sets"][str(lastRound)]) > 1:
+                    gfsReset = finalData["sets"][str(lastRound)].pop()
+                    finalData["sets"][str(lastRound+1)] = [gfsReset]
         except:
             traceback.print_exc()
 
@@ -216,6 +364,34 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             traceback.print_exc()
         return([])
+    
+    def TranslateRoundName(name: str):
+        roundMapping = {
+            "Grand Final Reset": "grand_final_reset",
+            "Grand Final": "grand_final",
+            "Winners Final": "winners_final",
+            "Winners Semi-Final": "winners_semi_final",
+            "Winners Quarter-Final": "winners_quarter_final",
+            "Losers Final": "losers_final",
+            "Losers Semi-Final": "losers_semi_final",
+            "Losers Quarter-Final": "losers_quarter_final"
+        }
+
+        if name in roundMapping:
+            return TSHLocaleHelper.matchNames.get(roundMapping.get(name))
+        
+        try:
+            roundNumber = name.rsplit(" ")[-1]
+
+            if "Winners" in name:
+                return TSHLocaleHelper.matchNames.get("winners_round").format(roundNumber)
+            if "Losers" in name:
+                return TSHLocaleHelper.matchNames.get("losers_round").format(roundNumber)
+        except:
+            print(traceback.format_exc())
+        
+        return name
+
 
     def ParseMatchDataNewApi(self, _set):
         p1 = deep_get(_set, "slots", [])[0]
@@ -225,12 +401,11 @@ class StartGGDataProvider(TournamentDataProvider):
         phase_name = deep_get(_set, "phaseGroup.phase.name")
 
         if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
-            phase_name += " - Pool " + \
-                deep_get(_set, "phaseGroup.displayIdentifier")
+            phase_name += " - " + TSHLocaleHelper.phaseNames.get("group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
         setData = {
             "id": _set.get("id"),
-            "round_name": _set.get("fullRoundText"),
+            "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
             "tournament_phase": phase_name,
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
@@ -688,12 +863,6 @@ class StartGGDataProvider(TournamentDataProvider):
             if sets and len(sets) > 0:
                 userSet = sets[0]
 
-                videogame = deep_get(userSet, "event.videogame.id", None)
-                if videogame:
-                    TSHGameAssetManager.instance.SetGameFromStartGGId(
-                        videogame)
-                    self.videogame = videogame
-
                 self.parent.SetTournament(
                     "https://start.gg/"+deep_get(userSet, "event.slug"))
 
@@ -779,7 +948,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 player_set = {
                     "phase_id": phaseIdentifier,
                     "phase_name": phaseName,
-                    "round_name": set.get("fullRoundText"),
+                    "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
                     f"player{players[0]}_score": set.get("entrant1Score"),
                     f"player{players[0]}_team": player1Info.get("prefix"),
                     f"player{players[0]}_name": player1Info.get("gamerTag"),
@@ -990,7 +1159,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         "score": score,
                         "timestamp": event.get("startAt"),
                         "winner": winner,
-                        "round": _set.get("fullRoundText"),
+                        "round": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
                         "phase_name": phaseName,
                         "phase_id": phaseIdentifier
                     }
@@ -1412,8 +1581,16 @@ StartGGDataProvider.HistorySetsQuery = f.read()
 f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
 StartGGDataProvider.TournamentStandingsQuery = f.read()
 
+<<<<<<< HEAD
 f = open("src/TournamentDataProvider/StartGGHeadToHeadEventQuery.txt", 'r')
 StartGGDataProvider.HeadToHeadEventQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGHeadToHeadSetsQuery.txt", 'r')
 StartGGDataProvider.HeadToHeadSetsQuery = f.read()
+=======
+f = open("src/TournamentDataProvider/StartGGTournamentPhasesQuery.txt", 'r')
+StartGGDataProvider.TournamentPhasesQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
+StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
+>>>>>>> 5179529fb37b7e7a8765b6995f6ca2251c97946c

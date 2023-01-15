@@ -1,0 +1,434 @@
+:root {
+  --player-height: 24;
+  --name-size: 14;
+  --score-size: 14;
+  --set-gap: 2;
+  --flag-height: 8;
+}
+
+body {
+  font-family: var(--font);
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1;
+}
+
+.header {
+  display: flex;
+  width: 100vw;
+  height: 64px;
+  top: 0;
+  position: absolute;
+  background: black;
+  justify-content: center;
+  align-items: center;
+}
+
+.header .bg {
+  position: absolute;
+  left: 64px;
+  right: 64px;
+  height: 100%;
+  background: var(--p1-score-bg-color);
+  clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
+}
+
+.header .title {
+  font-size: 42px;
+  width: 800px;
+  color: var(--text-color);
+  z-index: 1;
+}
+
+.trophy {
+  width: 92px;
+  height: 92px;
+  -webkit-mask-image: url("./trophy.svg");
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 64px);
+  transform: translate(-50%, -50%);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: linear-gradient(225deg, #e8d15d 0%, #a15404 50%, #e8d15d 100%);
+}
+
+.container {
+  color: var(--text-color);
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: calc(var(--border-radius) / 2);
+  background-color: var(--bg-color);
+  align-items: center;
+  justify-content: center;
+  place-content: center;
+}
+
+.winners_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 50vw;
+  height: 100vh;
+  position: absolute;
+  top: 0%;
+  padding-left: 64px;
+  padding-right: 128px;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: flex-end;
+}
+
+.center_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 256px;
+  position: absolute;
+  top: 0%;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: flex-end;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.losers_container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  width: 50vw;
+  position: absolute;
+  top: 0%;
+  padding-left: 128px;
+  padding-right: 64px;
+  box-sizing: border-box;
+  padding-top: 30px;
+  justify-content: flex-end;
+  left: 50%;
+}
+
+.round {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0px;
+  flex: 1 1 0;
+  max-width: 320px;
+  min-width: 0;
+  height: calc(100vh - 120px);
+  top: 92px;
+}
+
+.round_base_w,
+.round_base_l.complete {
+  min-width: 300px;
+}
+
+.round:not(.complete) .slot_hanging .character_container {
+  width: 32px;
+}
+
+.round_name {
+  position: absolute;
+  top: -30px;
+  align-self: center;
+  width: 100%;
+  font-size: 20px;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 2);
+  background-color: var(--bg-color);
+}
+
+.slot {
+  display: flex;
+  gap: 2px;
+  background-color: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.slot .title {
+  width: 100%;
+  font-size: 34px;
+  margin: 0px 0;
+  padding: 8px 8px;
+  height: 70px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.player.container {
+  position: relative;
+  width: 100%;
+  height: var(--player-height);
+  transition: filter 0.4s linear;
+}
+
+.name_twitter {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  justify-content: center;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+.filler {
+  display: flex;
+  width: 120px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.name {
+  font-size: var(--name-size);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+.name_twitter .twitter {
+  font-size: 24px;
+  max-width: 100%;
+}
+
+.twitter_logo {
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.logo {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 74px;
+  height: 74px;
+  background-image: url("../logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--border-radius);
+  z-index: 9;
+}
+
+.icon {
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  background-color: #3f3f46;
+  height: var(--player-height);
+}
+
+.icon div:not(.text) {
+  width: var(--player-height);
+  height: var(--player-height);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #3f3f46;
+}
+
+.icon.stockicon div {
+  width: 100%;
+  height: 100%;
+}
+
+.floating_icon {
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  height: 32px;
+  width: 32px;
+}
+
+.floating_icon.stockicon div {
+  width: 32px;
+  height: 32px;
+}
+
+.floating_online_avatar {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 100%;
+  background-position: center;
+}
+
+.flags {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  height: 100%;
+  justify-content: center;
+  width: calc(var(--flag-height) * 2px + 8px);
+  flex-shrink: 0;
+}
+
+.flag {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: var(--flag-height);
+  height: calc(var(--flag-height) * 0.7px);
+  border-radius: 2px;
+}
+
+.sponsor_icon > div > div {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: var(--flag-height);
+  height: var(--flag-height);
+  border-radius: var(--border-radius);
+}
+
+.character_container {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+  width: 80px;
+  flex-shrink: 0;
+  margin-top: 0;
+  right: 0;
+}
+
+.character_container > div {
+  overflow: hidden;
+  height: 100%;
+  gap: 4px;
+  display: flex;
+  width: 100%;
+}
+
+.character_container > div > div {
+  overflow: hidden;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  border-radius: 0;
+}
+
+.score {
+  width: 40px;
+  height: 100px;
+  font-size: var(--score-size);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  color: var(--p1-score-color);
+  margin-left: 0;
+  padding-right: 8px;
+  margin-right: -8px;
+  background: var(--p1-score-bg-color);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.sponsor {
+  color: var(--p1-sponsor-color);
+}
+
+.lines {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+}
+
+.bracket_icon {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+}
+
+.icon_name_arrow {
+  position: relative;
+}
+
+.icon_name {
+  position: absolute;
+  font-size: 12px;
+  width: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -34px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 4);
+  padding: 2px 4px;
+}
+
+.icon_arrow {
+  position: absolute;
+  top: -12px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #f00;
+  left: 50%;
+  transform: translateX(-50%) scaleX(75%);
+}
+
+.icon_arrow_border {
+  position: absolute;
+  top: -14px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid var(--bg-color);
+  left: 50%;
+  transform: translateX(-50%) scaleX(75%);
+}

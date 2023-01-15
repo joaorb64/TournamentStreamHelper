@@ -308,7 +308,7 @@ class TSHGameAssetManager(QObject):
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
-        self.assetsLoaderThread = AssetsLoaderThread(self)
+        self.assetsLoaderThread = AssetsLoaderThread(TSHGameAssetManager.instance)
         self.assetsLoaderThread.game = game
         self.assetsLoaderThread.lock = self.assetsLoaderLock
         self.assetsLoaderThread.start()
