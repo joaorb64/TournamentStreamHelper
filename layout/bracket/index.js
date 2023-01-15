@@ -408,8 +408,7 @@
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
           animations[roundKey] = {};
           Object.values(round.sets).forEach((set, setIndex) => {
-            let isGfR =
-              parseInt(roundKey) == GfResetRoundNum && progressionsIn == 0;
+            let isGfR = parseInt(roundKey) == GfResetRoundNum;
 
             let anim = gsap.timeline();
 
@@ -420,7 +419,7 @@
               0
             );
 
-            if (isGfR) {
+            if (isGfR && progressionsOut == 0) {
               anim.from(
                 $(`.round_${roundKey} .round_name`),
                 { autoAlpha: 0, duration: 0.4 },

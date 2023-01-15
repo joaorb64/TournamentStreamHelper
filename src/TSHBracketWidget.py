@@ -186,8 +186,12 @@ class TSHBracketWidget(QDockWidget):
     
     def PhaseGroupChanged(self):
         try:
-            selectedGroup = self.phaseGroupSelection.currentData()
-            StateManager.Set("bracket.phaseGroup", selectedGroup.get("name"))
+            # Do not export phaseGroup name if there's only one phaseGroup
+            if len(self.phaseSelection.currentData().get("groups", [])) > 1:
+                selectedGroup = self.phaseGroupSelection.currentData()
+                StateManager.Set("bracket.phaseGroup", selectedGroup.get("name"))
+            else:
+                StateManager.Set("bracket.phaseGroup", "")
         except:
             StateManager.Set("bracket.phaseGroup", "")
         
