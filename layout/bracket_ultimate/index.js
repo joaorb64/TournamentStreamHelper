@@ -159,7 +159,10 @@
         progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
         progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
         Object.keys(oldData.bracket.bracket.rounds).length !=
-          Object.keys(data.bracket.bracket.rounds).length
+          Object.keys(data.bracket.bracket.rounds).length ||
+        _.get(oldData, "bracket.phase") != _.get(data, "bracket.phase") ||
+        _.get(oldData, "bracket.phaseGroup") !=
+          _.get(data, "bracket.phaseGroup")
       ) {
         // WINNERS SIDE
         let html = "";

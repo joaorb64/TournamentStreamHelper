@@ -149,10 +149,9 @@
         progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
         Object.keys(oldData.bracket.bracket.rounds).length !=
           Object.keys(data.bracket.bracket.rounds).length ||
-        _.get(oldData, "bracket.phase") ||
-        _.get(data, "bracket.phase") ||
-        _.get(oldData, "bracket.phaseGroup") ||
-        _.get(data, "bracket.phaseGroup")
+        _.get(oldData, "bracket.phase") != _.get(data, "bracket.phase") ||
+        _.get(oldData, "bracket.phaseGroup") !=
+          _.get(data, "bracket.phaseGroup")
       ) {
         // WINNERS SIDE
         let html = "";
@@ -191,13 +190,13 @@
 
         $(".winners_container").html(html);
 
+        let losersRounds = Object.fromEntries(
+          Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+        );
+
         // LOSERS SIDE
         if (!window.WINNERS_ONLY) {
           html = "";
-
-          let losersRounds = Object.fromEntries(
-            Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
-          );
 
           Object.entries(losersRounds).forEach(([roundKey, round], r) => {
             html += `<div class="round round_${roundKey}">`;
@@ -366,10 +365,10 @@
                     .map((point) => "L" + point)
                     .join(" ")}
                   M${[
-                    slotElement.offset().left + slotElement.outerWidth() + 40,
+                    slotElement.offset().left + slotElement.outerWidth() + 35,
                     slotElement.offset().top +
                       slotElement.outerHeight() / 2 -
-                      5,
+                      8,
                   ].join(" ")}
                   ${[
                     [
@@ -377,16 +376,16 @@
                       slotElement.offset().top + slotElement.outerHeight() / 2,
                     ],
                     [
-                      slotElement.offset().left + slotElement.outerWidth() + 40,
+                      slotElement.offset().left + slotElement.outerWidth() + 35,
                       slotElement.offset().top +
                         slotElement.outerHeight() / 2 +
-                        5,
+                        8,
                     ],
                   ]
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="5" />`;
+                  stroke="black" fill="none" stroke-width="5"  />`;
                 }
               }
             },
@@ -409,7 +408,8 @@
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
           animations[roundKey] = {};
           Object.values(round.sets).forEach((set, setIndex) => {
-            let isGfR = parseInt(roundKey) == GfResetRoundNum;
+            let isGfR =
+              parseInt(roundKey) == GfResetRoundNum && progressionsIn == 0;
 
             let anim = gsap.timeline();
 
