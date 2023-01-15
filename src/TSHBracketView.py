@@ -229,6 +229,9 @@ class TSHBracketView(QGraphicsView):
 
         if self.progressionsIn > 0 and not is_power_of_two(self.progressionsIn):
             losersCutout[0] += 1
+        
+        if self.progressionsOut > 0 and not is_power_of_two(self.progressionsOut):
+            losersCutout[1] += 1
     
         return (winnersCutout, losersCutout)
 
