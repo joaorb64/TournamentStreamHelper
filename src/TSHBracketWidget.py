@@ -35,7 +35,7 @@ class TSHBracketWidget(QDockWidget):
 
         self.signals = TSHBracketWidgetSignals()
 
-        self.bracket = Bracket(8)
+        self.bracket = Bracket(8, 0)
 
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
@@ -195,7 +195,7 @@ class TSHBracketWidget(QDockWidget):
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
         
     def RebuildBracket(self, playerNumber, seedMap=None):
-        self.bracket = Bracket(playerNumber, seedMap)
+        self.bracket = Bracket(playerNumber, self.progressionsIn.value(), seedMap)
 
         self.bracketView.SetBracket(
             self.bracket,

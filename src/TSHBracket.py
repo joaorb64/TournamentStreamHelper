@@ -44,9 +44,11 @@ def nextLayer(pls):
     return out
 
 class Bracket():
-    def __init__(self, playerNumber, seedMap=None) -> None:
+    def __init__(self, playerNumber, progressionsIn, seedMap=None) -> None:
         self.originalPlayerNumber = playerNumber
         self.playerNumber = next_power_of_2(playerNumber)
+
+        self.progressionsIn = progressionsIn
 
         if seedMap:
             if len(seedMap) < self.playerNumber:
@@ -173,20 +175,31 @@ class Bracket():
         return False
     
     def UpdateBracket(self):
-        for k, round in sorted(self.rounds.items(), key=lambda x: (int(x[0]) < 0, abs(int(x[0])))):
+        for roundKey, round in sorted(self.rounds.items(), key=lambda x: (int(x[0]) < 0, abs(int(x[0])))):
             for j, _set in enumerate(round):
                 targetIdW = j%2
                 targetIdL = 0
-                if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
+                if int(roundKey) < 0 and abs(int(roundKey))%2 == 1: targetIdW = 1
 
                 lastLosers = min([int(r) for r in self.rounds.keys()])
-                if k == str(lastLosers):
+                if roundKey == str(lastLosers):
                     targetIdW = 1
 
                 gfsRound = max([int(r) for r in self.rounds.keys()]) - 1
-                if k == str(gfsRound):
+                if roundKey == str(gfsRound):
                     targetIdW = 0
                     targetIdL = 1
+                
+                # When we have progressions in, force first (hidden) sets to double DQs
+                # If we have a non-power of 2 number of progressions, we do it for 2 rounds
+                if self.progressionsIn > 0:
+                    if int(roundKey) == 1:
+                        _set.score = [-1, -1]
+                        _set.finished = True
+                    
+                    if int(roundKey) == 2 and not is_power_of_two(self.progressionsIn):
+                        _set.score = [-1, -1]
+                        _set.finished = True
 
                 if _set.winNext:
                     # Both slots are bye OR slot 2 is bye, auto win for p1

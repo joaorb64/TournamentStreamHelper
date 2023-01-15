@@ -213,22 +213,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     # If we have progressions in, shift winners scores to the right
                     if round > 0:
                         finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
-                
-                # Add forced progressions for initial round(s)
-                roundSize = len(finalData["sets"][str(1+shift)])
-
-                for i in range(shift):
-                    roundSize = roundSize * 2
-                    roundIndex = shift-i
-
-                    finalData["sets"][roundIndex] = []
-
-                    for s in range(roundSize):
-                        finalSets[roundIndex].append({
-                            "score": [-1, -1],
-                            "finished": True
-                        })
-
+            
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
 
             # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
