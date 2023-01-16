@@ -127,5 +127,6 @@ class TSHSelectSetWindow(QDialog):
         setId = self.startggSetSelectionItemList.model().index(row, 5).data(Qt.ItemDataRole.UserRole)
         self.close()
 
-        setId["auto_update"] = "set"
-        self.parent().signals.NewSetSelected.emit(setId)
+        if setId:
+            setId["auto_update"] = "set"
+            self.parent().signals.NewSetSelected.emit(setId)

@@ -5,7 +5,6 @@ from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
-import py7zr
 import qdarkstyle
 import requests
 import urllib
@@ -13,15 +12,8 @@ import json
 import traceback
 import time
 import os
-import threading
-import re
-import csv
-import copy
-from collections import Counter
 import unicodedata
 import sys
-import PyQt5
-from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *

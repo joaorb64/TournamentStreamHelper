@@ -1,6 +1,6 @@
-query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}) {
+query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}, $perPage: Int = 256) {
   event(slug: $eventSlug) {
-    sets(page: $page, perPage: 999, sortType: MAGIC, filters: $filters) {
+    sets(page: $page, perPage: $perPage, sortType: MAGIC, filters: $filters) {
       pageInfo {
         page
         total

@@ -239,6 +239,8 @@ class TSHBracketView(QGraphicsView):
     def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0):
         self.bracket = bracket
 
+        bracket.progressionsIn = progressionsIn
+
         self.bracketLines = []
         self._scene.clear()
 

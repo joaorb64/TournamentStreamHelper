@@ -332,37 +332,51 @@ class StartGGDataProvider(TournamentDataProvider):
             if getFinished:
                 states.append(3)
 
-            data = requests.post(
-                "https://www.start.gg/api/-/gql",
-                headers={
-                    "client-version": "20",
-                    'Content-Type': 'application/json'
-                },
-                json={
-                    "operationName": "EventMatchListQuery",
-                    "variables": {
-                        "filters": {
-                            "state": states,
-                            "hideEmpty": True
-                        },
-                        "eventSlug": self.url.split("start.gg/")[1]
-                    },
-                    "query": StartGGDataProvider.SetsQuery
-                }
-
-            )
-
-            data = json.loads(data.text)
-
-            sets = deep_get(data, "data.event.sets.nodes", [])
             final_data = []
+            
+            page = 1
+            totalPages = 1
 
-            for _set in sets:
-                final_data.append(self.ParseMatchDataNewApi(_set))
+            print("Fetching sets")
+
+            while page <= totalPages:
+                data = requests.post(
+                    "https://www.start.gg/api/-/gql",
+                    headers={
+                        "client-version": "20",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "EventMatchListQuery",
+                        "variables": {
+                            "filters": {
+                                "state": states,
+                                "hideEmpty": True
+                            },
+                            "eventSlug": self.url.split("start.gg/")[1],
+                            "page": page,
+                            "perPage": 512
+                        },
+                        "query": StartGGDataProvider.SetsQuery
+                    }
+                )
+                data = json.loads(data.text)
+
+                totalPages = deep_get(data, "data.event.sets.pageInfo.totalPages", 0)
+
+                sets = deep_get(data, "data.event.sets.nodes", [])
+
+                for _set in sets:
+                    final_data.append(self.ParseMatchDataNewApi(_set))
+                
+                page += 1
+
+                print(f"Fetching sets... {page}/{totalPages}")
 
             return(final_data)
         except Exception as e:
             traceback.print_exc()
+            return(final_data)
         return([])
     
     def TranslateRoundName(name: str):
@@ -1376,7 +1390,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 data = json.loads(data.text)
 
                 totalPages = deep_get(
-                    data, "data.event.entrants.pageInfo.totalPages", [])
+                    data, "data.event.entrants.pageInfo.totalPages", 0)
 
                 entrants = deep_get(data, "data.event.entrants.nodes", [])
                 print("Entrants: ", len(entrants))

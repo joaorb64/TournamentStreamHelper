@@ -1,0 +1,33 @@
+{
+    "match": {
+        "grand_final_reset": "Gran Final (Real)",
+        "grand_final": "Gran Final",
+        "winners_final": "Final",
+        "winners_semi_final": "Semifinal",
+        "winners_quarter_final": "Cuartos de Final",
+        "losers_final": "Final de Repesca",
+        "losers_semi_final": "Semifinal de Repesca",
+        "losers_quarter_final": "Cuartos de Final de Repesca",
+        "winners_round": "Ronda {0}",
+        "losers_round": "Repesca Ronda {0}",
+        "best_of": "Mejor de {0}"
+    },
+    "phase": {
+        "group_stage": "Fase de Grupos",
+        "group": "Grupo {0}",
+        "final_stage": "Fase Final",
+        "bracket": "Llave",
+        "winners_bracket": "Llave del Torneo",
+        "losers_bracket": "Llave de Repesca",
+        "casuals": "Partidas Casuales",
+        "friendlies": "Partidas Amistosas",
+        "round_robin": "Todos Contra Todos",
+        "crew_battle": "Disputa de Grupos",
+        "top_8": "Top 8",
+        "top_16": "Top 16",
+        "top_32": "Top 32",
+        "exhibition": "Exibición",
+        "freeplay": "Amistoso",
+        "money_match": "Partido Apostado"
+    }
+}
