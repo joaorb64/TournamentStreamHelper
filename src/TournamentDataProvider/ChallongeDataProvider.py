@@ -17,6 +17,7 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from ..Workers import Worker
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import next_power_of_2
+import math
 
 def CHALLONGE_BRACKET_TYPE(bracketType: str):
     mapping = {
@@ -249,6 +250,8 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             parsed_matches.sort(key=lambda match: abs(int(match.get("round"))), reverse=True)
 
+            groups = deep_get(data, "groups", [])
+
             isPoolsPhase = id != None and id.startswith("group_stage")
 
             if not isPoolsPhase:
@@ -267,15 +270,24 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                 if hasReset:
                     lastWinnersMatch["round"] = lastWinnersMatch["round"]+1
+                
+                if len(groups) > 0:
+                    finalData["progressionsIn"] = [{}] * deep_get(groups[0], "tournament.participant_count_to_advance", 0) * len(groups)
             else:
-                groups = deep_get(data, "groups", [])
-            
                 if id != None:
                     groupId = int(id.split("_")[-1])
                     groups = [groups[groupId]]
                 
 
-                finalData["progressionsOut"] = [{}] * deep_get(groups[0], "tournament.participant_count_to_advance", 0)
+                if len(groups) > 0:
+                    finalData["progressionsOut"] = [{}] * deep_get(groups[0], "tournament.participant_count_to_advance", 0)
+            
+            # If split_participants==True, half players start in losers
+            # Force progressions
+            isSplit = deep_get(data, "tournament.split_participants", False)
+
+            if not isPoolsPhase and isSplit and len(finalData.get("progressionsIn", [])) == 0:
+                finalData["progressionsIn"] = [{}] * len(entrants)
 
             rounds = {}
 
@@ -283,25 +295,14 @@ class ChallongeDataProvider(TournamentDataProvider):
             finalBracketSize = next_power_of_2(len(entrants))
             validWR1Sets = len(entrants) - finalBracketSize/2
 
-            cutout = False
-            
-            if validWR1Sets <= finalBracketSize / 2 / 2:
-                cutout = True
-
             for match in parsed_matches:
                 roundNum = match.get("round")
 
                 score = [match.get("team1score", 0), match.get("team2score", 0)]
                 finished = match.get("state", None) == "complete"
-
-                if roundNum == -1 and cutout:
-                    score.reverse()
                 
                 if roundNum < 0:
                     roundNum -= 2
-
-                    if cutout:
-                        roundNum -= 1
 
                 # For first round, we work around the incomplete data Challonge gives us
                 if roundNum == 1:
@@ -334,7 +335,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                     }
                 # For first *losers* round, we work around the incomplete data Challonge gives us
                 # (-1) - 2 = -3
-                elif (not cutout and roundNum == -3) or (cutout and roundNum == -4):
+                elif roundNum == -3:
                     nextRoundMatches = [s for s in parsed_matches if s.get("round") == -2]
                     
                     # Initially, fill in the round with -1 scores
@@ -352,10 +353,10 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                     for m, roundMatch in enumerate(nextRoundMatches):
                         if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
-                            roundY = 2*m-1 if cutout else m-1
+                            roundY = m-1
                             break
                         if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
-                            roundY = 2*m if cutout else m
+                            roundY = m
                             break
 
                     rounds[str(roundNum)][roundY] = {
@@ -372,28 +373,43 @@ class ChallongeDataProvider(TournamentDataProvider):
                     })
             
             # In case LR1 was skipped, we move all sets back by one
-            # finalBracketSize = next_power_of_2(len(entrants))
-            # validWR1Sets = len(entrants) - finalBracketSize/2
-            
-            # if validWR1Sets <= finalBracketSize / 2 / 2:
-            #     negativeRounds = [r for r in rounds if int(r) < 0]
-            #     negativeRounds.sort(reverse=False)
+            # It happens when the number of losers rounds is an odd number
+            losersRoundKeys = [k for k in list(rounds.keys()) if int(k) < 0]
+            losersRoundKeys.sort(key=lambda x: int(x))
 
-            #     print(negativeRounds)
+            if len(losersRoundKeys) % 2 == 1:
+                for s in rounds[str(losersRoundKeys[0])]:
+                    s["score"].reverse()
+                
+                for r in losersRoundKeys:
+                    if int(r) < 0:
+                        rounds[int(r)-1] = rounds[r]
+                        print(str(r), "=>", str(int(r)-2))
 
-            #     for r in negativeRounds:
-            #         rounds[str(int(r)+1)] = rounds[str(r)]
+            # If we had progressions in, we have to add a fake R1 to send half players to losers side
+            if len(finalData.get("progressionsIn", [])) > 0:
+                sortedRounds = list(rounds.keys())
+                sortedRounds.sort(key=lambda x: int(x), reverse=True)
+                for r in sortedRounds:
+                    if int(r) > 0:
+                        rounds[int(r)+1] = rounds[r]
+                        print(str(r), "=>", str(int(r)+2))
+                
+                rounds["1"] = []
 
-            #     print(negativeRounds)
+                for s in range(int(finalBracketSize/2)):
+                    rounds["1"].append({
+                        "score": [-1, -1],
+                        "finished": True
+                    })
+                
+                rounds["2"] = []
 
-            if cutout:
-                if "-3" not in rounds and "-4" in rounds:
-                    rounds["-3"] = []
-                    for s in rounds["-4"]:
-                        rounds["-3"].append({
-                            "score": [-1, -1],
-                            "finished": True
-                        })
+                for s in range(int(finalBracketSize/2/2)):
+                    rounds["2"].append({
+                        "score": [-1, -1],
+                        "finished": True
+                    })
 
             finalData["sets"] = rounds
         except:
