@@ -378,7 +378,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             losersRoundKeys.sort(key=lambda x: int(x))
 
             if len(losersRoundKeys) % 2 == 1:
-                for s in rounds[str(losersRoundKeys[0])]:
+                for s in rounds[str(losersRoundKeys[1])]:
                     s["score"].reverse()
                 
                 for r in losersRoundKeys:
