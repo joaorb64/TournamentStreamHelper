@@ -252,14 +252,15 @@ class TSHGameAssetManager(QObject):
                         
                         # Set average size
                         for assetsKey in list(gameObj["assets"].keys()):
-                            try:
-                                if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
-                                    gameObj["assets"][assetsKey]["average_size"] = {
-                                        "x": sum(widths[assetsKey])/len(widths[assetsKey]),
-                                        "y": sum(heights[assetsKey])/len(heights[assetsKey])
-                                    }
-                            except:
-                                print(traceback.format_exc())
+                            if assetsKey != "base_files":
+                                try:
+                                    if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
+                                        gameObj["assets"][assetsKey]["average_size"] = {
+                                            "x": sum(widths[assetsKey])/len(widths[assetsKey]),
+                                            "y": sum(heights[assetsKey])/len(heights[assetsKey])
+                                        }
+                                except:
+                                    print(traceback.format_exc())
 
                         assetsKey = ""
                         if len(list(gameObj.get("assets", {}).keys())) > 0:
