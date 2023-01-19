@@ -887,22 +887,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="324"/>
         <source>Game Asset Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma dos arquivos de jogo</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="332"/>
         <source>Game Asset Language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma dos arquivos de jogo alterado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="355"/>
         <source>Tournament term language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma dos termos de torneio</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="363"/>
         <source>Tournament term language changed successfully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma dos termos de torneio alterado com sucesso.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="392"/>
