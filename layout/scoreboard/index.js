@@ -73,24 +73,10 @@
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
-                ${
-                  t == 1
-                    ? `<span class="pronoun">
-                        ${player.pronoun ? player.pronoun : ""}
-                      </span>`
-                    : ""
-                }
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
                 ${player.name}
-                ${
-                  t == 0
-                    ? `<span class="pronoun">
-                        ${player.pronoun ? player.pronoun : ""}
-                      </span>`
-                    : ""
-                }
                 ${team.losers ? "<span class='losers'>L</span>" : ""}
               `
             );
@@ -171,6 +157,11 @@
               player.twitter
                 ? `<span class="twitter_logo"></span>${String(player.twitter)}`
                 : ""
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .pronoun`),
+              player.pronoun ? player.pronoun : ""
             );
 
             let score = [data.score.score_left, data.score.score_right];

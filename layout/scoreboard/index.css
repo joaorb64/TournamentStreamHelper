@@ -145,6 +145,7 @@ body {
   padding-left: 8px;
   padding-right: 8px;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 .fgc .name_twitter {
@@ -172,12 +173,33 @@ body {
   justify-content: flex-end;
 }
 
-.name_twitter .twitter {
-  font-size: 16px;
+.name_twitter {
+  overflow: hidden;
+  max-width: 100%;
 }
 
-.fgc .name_twitter .twitter {
-  width: 40%;
+.name_twitter .extra {
+  display: flex;
+  overflow: hidden;
+  gap: 2px;
+  justify-content: center;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.p2 .extra {
+  flex-direction: row-reverse;
+}
+
+.fgc .name_twitter .extra {
+  width: 38%;
+  flex-direction: column;
+}
+
+.name_twitter .twitter {
+  font-size: 18px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .fgc .p1 .name_twitter .twitter .text {
@@ -186,6 +208,14 @@ body {
 
 .fgc .p2 .name_twitter .twitter .text {
   justify-content: flex-start;
+}
+
+.fgc .p1 .name_twitter .pronoun {
+  align-self: flex-end;
+}
+
+.fgc .p2 .name_twitter .pronoun {
+  align-self: flex-start;
 }
 
 .twitter_logo {
@@ -445,16 +475,17 @@ body {
 }
 
 .pronoun {
-  font-size: 14px;
+  font-size: 18px;
   text-transform: uppercase;
-  margin-top: auto;
-  margin-left: 6px;
-  margin-right: 6px;
   letter-spacing: normal;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
   border-radius: 6px;
   color: var(--bg-color);
+  align-self: center;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .p1 .score {
