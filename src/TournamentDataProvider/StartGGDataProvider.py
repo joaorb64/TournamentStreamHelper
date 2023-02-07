@@ -200,7 +200,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 if originPhaseId:
                     finalData["progressionsIn"].append(originPhaseId)
             
-            if len(finalData["progressionsIn"]) > 0:
+            if len(finalData["progressionsIn"]) > 0 and not -1 in finalData.get("seedMap", []):
                 originalKeys = list(finalData["sets"].keys())
                 originalKeys.reverse()
 

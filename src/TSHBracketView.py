@@ -203,7 +203,7 @@ class TSHBracketView(QGraphicsView):
             winnersCutout[1] = len(winnersRounds) - (int(math.log2(progressionsWinners)) + 1)
     
         # Winners left side cutout
-        if self.progressionsIn > 0:
+        if self.progressionsIn > 0 and not self.bracket.winnersOnlyProgressions:
             if not is_power_of_two(self.progressionsIn):
                 winnersCutout[0] = 2
             else:
