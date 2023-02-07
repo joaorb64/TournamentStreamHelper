@@ -295,6 +295,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             finalBracketSize = next_power_of_2(len(entrants))
             validWR1Sets = len(entrants) - finalBracketSize/2
 
+            lr1ReverseMap = []
+
             for match in parsed_matches:
                 roundNum = match.get("round")
 
@@ -342,6 +344,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                     if not str(roundNum) in rounds:
                         rounds[str(roundNum)] = []
 
+                        lr1ReverseMap = [False] * len(nextRoundMatches)
+
                         # Round -1 has 2x the number of sets that Round -2 has
                         for i in range(len(nextRoundMatches) * 2):
                             rounds[str(roundNum)].append({
@@ -354,9 +358,11 @@ class ChallongeDataProvider(TournamentDataProvider):
                     for m, roundMatch in enumerate(nextRoundMatches):
                         if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
                             roundY = m-1
+                            lr1ReverseMap[m] = True
                             break
                         if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
                             roundY = m
+                            lr1ReverseMap[m] = True
                             break
 
                     rounds[str(roundNum)][roundY] = {
@@ -375,11 +381,17 @@ class ChallongeDataProvider(TournamentDataProvider):
             # In case LR1 was skipped, we move all sets back by one
             # It happens when the number of losers rounds is an odd number
             losersRoundKeys = [k for k in list(rounds.keys()) if int(k) < 0]
-            losersRoundKeys.sort(key=lambda x: int(x))
+            losersRoundKeys.sort(key=lambda x: int(x), reverse=True)
 
             if len(losersRoundKeys) % 2 == 1:
-                for s in rounds[str(losersRoundKeys[1])]:
-                    s["score"].reverse()
+                print(lr1ReverseMap)
+
+                for i, s in enumerate(rounds[str(losersRoundKeys[1])]):
+                    if len(lr1ReverseMap) > i and lr1ReverseMap[i] == True:
+                        print("Reverseee")
+                        print(s["score"])
+                        s["score"].reverse()
+                        print(s["score"])
                 
                 for r in losersRoundKeys:
                     if int(r) < 0:
