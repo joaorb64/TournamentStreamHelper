@@ -213,6 +213,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     # If we have progressions in, shift winners scores to the right
                     if round > 0:
                         finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
+            elif len(finalData["progressionsIn"]) > 0 and -1 in finalData.get("seedMap", []):
+                finalData["winnersOnlyProgressions"] = True
             
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
 

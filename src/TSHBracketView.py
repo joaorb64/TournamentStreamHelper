@@ -236,10 +236,11 @@ class TSHBracketView(QGraphicsView):
         return (winnersCutout, losersCutout)
 
 
-    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0):
+    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0, winnersOnlyProgressions=False):
         self.bracket = bracket
 
         bracket.progressionsIn = progressionsIn
+        bracket.winnersOnlyProgressions = winnersOnlyProgressions
 
         self.bracketLines = []
         self._scene.clear()
@@ -587,7 +588,7 @@ class TSHBracketView(QGraphicsView):
                         )
 
                     # Progression in
-                    if self.progressionsIn > 1 and i == 0:
+                    if self.progressionsIn > 1 and i == 0 and not self.bracket.winnersOnlyProgressions:
                         end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                             QPointF(0, _set.height()/2)
                         start = end - QPointF(50, 0)
