@@ -295,6 +295,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             finalBracketSize = next_power_of_2(len(entrants))
             validWR1Sets = len(entrants) - finalBracketSize/2
 
+            # Used to detect reverse slots on LR2
+            # When a player from LR1 meets a player coming from Winners, slots are reversed
             lr1ReverseMap = []
 
             for match in parsed_matches:
@@ -388,15 +390,11 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                 for i, s in enumerate(rounds[str(losersRoundKeys[1])]):
                     if len(lr1ReverseMap) > i and lr1ReverseMap[i] == True:
-                        print("Reverseee")
-                        print(s["score"])
                         s["score"].reverse()
-                        print(s["score"])
                 
                 for r in losersRoundKeys:
                     if int(r) < 0:
                         rounds[int(r)-1] = rounds[r]
-                        print(str(r), "=>", str(int(r)-2))
 
             # If we had progressions in, we have to add a fake R1 to send half players to losers side
             if len(finalData.get("progressionsIn", [])) > 0:
@@ -405,7 +403,6 @@ class ChallongeDataProvider(TournamentDataProvider):
                 for r in sortedRounds:
                     if int(r) > 0:
                         rounds[int(r)+1] = rounds[r]
-                        print(str(r), "=>", str(int(r)+2))
                 
                 rounds["1"] = []
 
