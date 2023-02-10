@@ -313,12 +313,12 @@ class ChallongeDataProvider(TournamentDataProvider):
                     nextRoundMatches = [s for s in parsed_matches if s.get("round") == roundNum+1]
                     
                     # Initially, fill in the round with -1 scores
-                    if not str(roundNum) in rounds:
-                        rounds[str(roundNum)] = []
+                    if not int(roundNum) in rounds:
+                        rounds[int(roundNum)] = []
 
                         # Round 1 has 2x the number of sets that Round 2 has
                         for i in range(len(nextRoundMatches) * 2):
-                            rounds[str(roundNum)].append({
+                            rounds[int(roundNum)].append({
                                 "score": [-1, -1],
                                 "finished": True
                             })
@@ -333,7 +333,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                             roundY = 2*m+1
                             break
 
-                    rounds[str(roundNum)][roundY] = {
+                    rounds[int(roundNum)][roundY] = {
                         "score": score,
                         "finished": finished
                     }
@@ -343,14 +343,14 @@ class ChallongeDataProvider(TournamentDataProvider):
                     nextRoundMatches = [s for s in parsed_matches if s.get("round") == -2]
                     
                     # Initially, fill in the round with -1 scores
-                    if not str(roundNum) in rounds:
-                        rounds[str(roundNum)] = []
+                    if not int(roundNum) in rounds:
+                        rounds[int(roundNum)] = []
 
                         lr1ReverseMap = [False] * len(nextRoundMatches)
 
                         # Round -1 has 2x the number of sets that Round -2 has
                         for i in range(len(nextRoundMatches) * 2):
-                            rounds[str(roundNum)].append({
+                            rounds[int(roundNum)].append({
                                 "score": [0, 0],
                                 "finished": False
                             })
@@ -359,23 +359,26 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                     for m, roundMatch in enumerate(nextRoundMatches):
                         if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
-                            roundY = m-1
-                            lr1ReverseMap[m] = True
+                            roundY = 2*m
+                            lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
                         if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
-                            roundY = m
-                            lr1ReverseMap[m] = True
+                            if roundMatch.get("player1_is_prereq_match_loser"):
+                                roundY = 2*m
+                            else:
+                                roundY = 2*m+1
+                            lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
 
-                    rounds[str(roundNum)][roundY] = {
+                    rounds[int(roundNum)][roundY] = {
                         "score": score,
                         "finished": finished
                     }
                 else:
-                    if not str(roundNum) in rounds:
-                        rounds[str(roundNum)] = []
+                    if not int(roundNum) in rounds:
+                        rounds[int(roundNum)] = []
                     
-                    rounds[str(roundNum)].append({
+                    rounds[int(roundNum)].append({
                         "score": score,
                         "finished": finished
                     })
@@ -383,12 +386,12 @@ class ChallongeDataProvider(TournamentDataProvider):
             # In case LR1 was skipped, we move all sets back by one
             # It happens when the number of losers rounds is an odd number
             losersRoundKeys = [k for k in list(rounds.keys()) if int(k) < 0]
-            losersRoundKeys.sort(key=lambda x: int(x), reverse=True)
+            losersRoundKeys.sort(key=lambda x: int(x), reverse=False)
 
             if len(losersRoundKeys) % 2 == 1:
                 print(lr1ReverseMap)
 
-                for i, s in enumerate(rounds[str(losersRoundKeys[1])]):
+                for i, s in enumerate(rounds[int(losersRoundKeys[-2])]):
                     if len(lr1ReverseMap) > i and lr1ReverseMap[i] == True:
                         s["score"].reverse()
                 
@@ -404,18 +407,18 @@ class ChallongeDataProvider(TournamentDataProvider):
                     if int(r) > 0:
                         rounds[int(r)+1] = rounds[r]
                 
-                rounds["1"] = []
+                rounds[1] = []
 
                 for s in range(int(finalBracketSize/2)):
-                    rounds["1"].append({
+                    rounds[1].append({
                         "score": [-1, -1],
                         "finished": True
                     })
                 
-                rounds["2"] = []
+                rounds[2] = []
 
                 for s in range(int(finalBracketSize/2/2)):
-                    rounds["2"].append({
+                    rounds[2].append({
                         "score": [-1, -1],
                         "finished": True
                     })
@@ -561,6 +564,13 @@ class ChallongeDataProvider(TournamentDataProvider):
                 scores = [0, -1]
             if match.get("winner_id") == p2_id:
                 scores = [-1, 0]
+        
+        # If the match has a winner but score-wise it's a draw, put it as 1-0
+        if match.get("state") == "complete" and scores[0] == scores[1]:
+            if match.get("winner_id", None) == deep_get(match, "player1.id"):
+                scores = [1, 0]
+            else:
+                scores = [0, 1]
             
         return({
             "id": deep_get(match, "id"),
@@ -583,7 +593,9 @@ class ChallongeDataProvider(TournamentDataProvider):
             "team2losers": team2losers,
             "identifier": match.get("identifier"),
             "player1_prereq_identifier": match.get("player1_prereq_identifier"),
+            "player1_is_prereq_match_loser": match.get("player1_is_prereq_match_loser"),
             "player2_prereq_identifier": match.get("player2_prereq_identifier"),
+            "player2_is_prereq_match_loser": match.get("player2_is_prereq_match_loser"),
             "state": match.get("state")
         })
 
