@@ -300,6 +300,10 @@ class ChallongeDataProvider(TournamentDataProvider):
             # When a player from LR1 meets a player coming from Winners, slots are reversed
             lr1ReverseMap = []
 
+            roundsInLosers = len(set([s["round"] for s in parsed_matches if int(s["round"]) < 0]))
+            setsInLr2 = len([s for s in parsed_matches if int(s["round"]) == -2])
+            setsInLr1 = setsInLr2 if roundsInLosers % 2 == 0 else 2*setsInLr2
+
             for match in parsed_matches:
                 roundNum = match.get("round")
 
@@ -347,10 +351,10 @@ class ChallongeDataProvider(TournamentDataProvider):
                     if not int(roundNum) in rounds:
                         rounds[int(roundNum)] = []
 
-                        lr1ReverseMap = [False] * len(nextRoundMatches)
+                        lr1ReverseMap = [False] * setsInLr1
 
                         # Round -1 has 2x the number of sets that Round -2 has
-                        for i in range(len(nextRoundMatches) * 2):
+                        for i in range(setsInLr1):
                             rounds[int(roundNum)].append({
                                 "score": [0, 0],
                                 "finished": False
@@ -360,14 +364,11 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                     for m, roundMatch in enumerate(nextRoundMatches):
                         if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
-                            roundY = 2*m
+                            roundY = 2*m if setsInLr1 % 2 == 1 else m
                             lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
                         if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
-                            if roundMatch.get("player1_is_prereq_match_loser"):
-                                roundY = 2*m
-                            else:
-                                roundY = 2*m+1
+                            roundY = 2*m+1 if setsInLr1 % 2 == 1 else m
                             lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
 
@@ -416,13 +417,13 @@ class ChallongeDataProvider(TournamentDataProvider):
                         "finished": True
                     })
                 
-                rounds[2] = []
+                # rounds[2] = []
 
-                for s in range(int(finalBracketSize/2/2)):
-                    rounds[2].append({
-                        "score": [-1, -1],
-                        "finished": True
-                    })
+                # for s in range(int(finalBracketSize/2/2)):
+                #     rounds[2].append({
+                #         "score": [-1, -1],
+                #         "finished": True
+                #     })
 
             finalData["sets"] = rounds
         except:
