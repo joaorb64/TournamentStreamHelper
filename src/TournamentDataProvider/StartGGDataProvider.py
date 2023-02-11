@@ -161,14 +161,15 @@ class StartGGDataProvider(TournamentDataProvider):
                 team = {}
                 participants = deep_get(seed, "entrant.participants")
 
-                if len(participants) > 1:
-                    team["name"] = deep_get(seed, "entrant.name")
+                if participants is not None:
+                    if len(participants) > 1:
+                        team["name"] = deep_get(seed, "entrant.name")
 
-                team["players"] = []
+                    team["players"] = []
 
-                for entrant in participants:
-                    team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(seed, "entrant.paginatedSets.nodes")))
-                
+                    for entrant in participants:
+                        team["players"].append(StartGGDataProvider.ProcessEntrantData(entrant, deep_get(seed, "entrant.paginatedSets.nodes")))
+                    
                 teams.append(team)
             
             finalData["entrants"] = teams
