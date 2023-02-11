@@ -396,8 +396,10 @@ class StartGGDataProvider(TournamentDataProvider):
 
             if "Winners" in name:
                 return TSHLocaleHelper.matchNames.get("winners_round").format(roundNumber)
-            if "Losers" in name:
+            elif "Losers" in name:
                 return TSHLocaleHelper.matchNames.get("losers_round").format(roundNumber)
+            elif name.startswith("Round "):
+                return TSHLocaleHelper.matchNames.get("round").format(roundNumber)
         except:
             print(traceback.format_exc())
         

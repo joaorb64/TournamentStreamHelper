@@ -10,6 +10,7 @@
         "losers_quarter_final": "Losers Quarter-Final",
         "winners_round": "Winners Round {0}",
         "losers_round": "Losers Round {0}",
+        "round": "Round {0}",
         "best_of": "Best of {0}"
     },
     "phase": {
