@@ -21,6 +21,7 @@ import math
 
 def CHALLONGE_BRACKET_TYPE(bracketType: str):
     mapping = {
+        "MatchPlotter": "ROUND_ROBIN",
         "DoubleEliminationBracketPlotter": "DOUBLE_ELIMINATION"
     }
     if bracketType in mapping:
@@ -450,7 +451,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                             match["isGF"] = True
                         elif m == 1:
                             match["isGFR"] = True
-                    match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds)
+                    match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds, CHALLONGE_BRACKET_TYPE(data.get("requested_plotter")))
                     all_matches.append(match)
 
         if phaseId == None or phaseId.startswith("group_stage"):
@@ -469,7 +470,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                         # match["round_name"] = next(
                         #     r["title"] for r in rounds if r["number"] == match.get("round"))
                         match["phase"] = group.get("name")
-                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds)
+                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(match, rounds, CHALLONGE_BRACKET_TYPE(group.get("requested_plotter")))
                         all_matches.append(match)
 
         return all_matches
@@ -499,36 +500,39 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return userSet
     
-    def TranslateRoundName(match, rounds):
-        roundNums = [r.get("number") for r in rounds]
-
-        if match.get("round") > 0:
-            lastWinnersRoundNum = max(roundNums)
-
-            if match.get("round") == lastWinnersRoundNum:
-                if match.get("isGFR"):
-                    return TSHLocaleHelper.matchNames.get("grand_final_reset")
-                else:
-                    return TSHLocaleHelper.matchNames.get("grand_final")
-            elif match.get("round") == lastWinnersRoundNum - 1:
-                return TSHLocaleHelper.matchNames.get("winners_final")
-            elif match.get("round") == lastWinnersRoundNum - 2:
-                return TSHLocaleHelper.matchNames.get("winners_semi_final")
-            elif match.get("round") == lastWinnersRoundNum - 3:
-                return TSHLocaleHelper.matchNames.get("winners_quarter_final")
-            else:
-                return TSHLocaleHelper.matchNames.get("winners_round").format(match.get("round"))
+    def TranslateRoundName(match, rounds, bracketType):
+        if bracketType == "ROUND_ROBIN":
+            return TSHLocaleHelper.matchNames.get("round").format(match.get("round"))
         else:
-            lastLosersRoundNum = min(roundNums)
+            roundNums = [r.get("number") for r in rounds]
 
-            if match.get("round") == lastLosersRoundNum:
-                return TSHLocaleHelper.matchNames.get("losers_final")
-            elif match.get("round") == lastLosersRoundNum + 1:
-                return TSHLocaleHelper.matchNames.get("losers_semi_final")
-            elif match.get("round") == lastLosersRoundNum + 2:
-                return TSHLocaleHelper.matchNames.get("losers_quarter_final")
+            if match.get("round") > 0:
+                lastWinnersRoundNum = max(roundNums)
+
+                if match.get("round") == lastWinnersRoundNum:
+                    if match.get("isGFR"):
+                        return TSHLocaleHelper.matchNames.get("grand_final_reset")
+                    else:
+                        return TSHLocaleHelper.matchNames.get("grand_final")
+                elif match.get("round") == lastWinnersRoundNum - 1:
+                    return TSHLocaleHelper.matchNames.get("winners_final")
+                elif match.get("round") == lastWinnersRoundNum - 2:
+                    return TSHLocaleHelper.matchNames.get("winners_semi_final")
+                elif match.get("round") == lastWinnersRoundNum - 3:
+                    return TSHLocaleHelper.matchNames.get("winners_quarter_final")
+                else:
+                    return TSHLocaleHelper.matchNames.get("winners_round").format(match.get("round"))
             else:
-                return TSHLocaleHelper.matchNames.get("losers_round").format(abs(match.get("round")))
+                lastLosersRoundNum = min(roundNums)
+
+                if match.get("round") == lastLosersRoundNum:
+                    return TSHLocaleHelper.matchNames.get("losers_final")
+                elif match.get("round") == lastLosersRoundNum + 1:
+                    return TSHLocaleHelper.matchNames.get("losers_semi_final")
+                elif match.get("round") == lastLosersRoundNum + 2:
+                    return TSHLocaleHelper.matchNames.get("losers_quarter_final")
+                else:
+                    return TSHLocaleHelper.matchNames.get("losers_round").format(abs(match.get("round")))
 
     def ParseMatchData(self, match):
         stream = deep_get(match, "station.stream_url", None)
