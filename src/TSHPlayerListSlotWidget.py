@@ -99,6 +99,9 @@ class TSHPlayerListSlotWidget(QGroupBox):
                 try:
                     pw.SetData(data.get("players")[i])
                 except:
+                    pw.Clear()
                     print(traceback.format_exc())
+            else:
+                pw.Clear()
         StateManager.ReleaseSaving()
         self.signals.dataChanged.emit()
