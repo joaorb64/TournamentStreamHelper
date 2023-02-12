@@ -118,6 +118,8 @@
 
       let progressionsOut = data.bracket.bracket.progressionsOut;
       let progressionsIn = data.bracket.bracket.progressionsIn;
+      let winnersOnlyProgressions =
+        data.bracket.bracket.winnersOnlyProgressions;
 
       let biggestRound = Math.max.apply(
         null,
@@ -318,7 +320,8 @@
                   progressionsIn > 0 &&
                   ((parseInt(roundKey) > 0 && parseInt(roundKey) == 1) ||
                     (parseInt(roundKey) < 0 &&
-                      Math.abs(parseInt(roundKey)) == 1))
+                      Math.abs(parseInt(roundKey)) == 1 &&
+                      !winnersOnlyProgressions))
                 ) {
                   slotLines += `<path class="${this.baseClass} line_in_r_${
                     Math.sign(parseInt(roundKey)) * Math.abs(parseInt(roundKey))

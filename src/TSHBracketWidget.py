@@ -125,7 +125,7 @@ class TSHBracketWidget(QDockWidget):
         ])
         StateManager.Set("bracket.bracket.progressionsIn", 0)
 
-        self.winnersOnly: QCheckBox = self.findChild(QCheckBox, "winnersOnly")
+        self.winnersOnly: QCheckBox = self.findChild(QCheckBox, "winnersOnlyProgressions")
         self.winnersOnly.toggled.connect(lambda newVal: [
             StateManager.Set("bracket.bracket.winnersOnly", self.winnersOnly.isChecked()),
             self.bracketView.SetBracket(
