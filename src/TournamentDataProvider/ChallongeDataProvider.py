@@ -351,9 +351,10 @@ class ChallongeDataProvider(TournamentDataProvider):
                     if not int(roundNum) in rounds:
                         rounds[int(roundNum)] = []
 
+                        # Round -1 has either the same number of sets
+                        # or 2x the number of sets that Round -2 has
                         lr1ReverseMap = [False] * setsInLr1
 
-                        # Round -1 has 2x the number of sets that Round -2 has
                         for i in range(setsInLr1):
                             rounds[int(roundNum)].append({
                                 "score": [0, 0],
@@ -364,11 +365,14 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                     for m, roundMatch in enumerate(nextRoundMatches):
                         if roundMatch.get("player1_prereq_identifier") == match.get("identifier"):
-                            roundY = 2*m if setsInLr1 % 2 == 1 else m
+                            roundY = 2*m if roundsInLosers % 2 == 1 else m
                             lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
                         if roundMatch.get("player2_prereq_identifier") == match.get("identifier"):
-                            roundY = 2*m+1 if setsInLr1 % 2 == 1 else m
+                            if not roundMatch.get("player1_is_prereq_match_loser"):
+                                roundY = 2*m+1 if roundsInLosers % 2 == 1 else m
+                            else:
+                                roundY = 2*m if roundsInLosers % 2 == 1 else m
                             lr1ReverseMap[m] = not lr1ReverseMap[m]
                             break
 
