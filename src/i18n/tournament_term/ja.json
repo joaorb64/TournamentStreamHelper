@@ -10,6 +10,7 @@
     "losers_quarter_final": "敗者側準々決勝",
     "winners_round": "勝者側{0}回戦",
     "losers_round": "敗者側{0}回戦",
+    "round": "{0}回戦",
     "best_of": "Best of {0}"
   },
   "phase": {

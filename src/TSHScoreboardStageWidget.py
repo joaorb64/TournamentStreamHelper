@@ -473,7 +473,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                     i, 0).data(Qt.ItemDataRole.UserRole))
             else:
                 ruleset.neutralStages.append(self.stagesNeutral.model().item(
-                    i, 0).data(Qt.ItemDataRole.UserRole).get("name"))
+                    i, 0).data(Qt.ItemDataRole.UserRole).get("en_name"))
 
         ruleset.counterpickStages = []
         for i in range(self.stagesCounterpick.model().rowCount()):
@@ -482,7 +482,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                     i, 0).data(Qt.ItemDataRole.UserRole))
             else:
                 ruleset.counterpickStages.append(self.stagesCounterpick.model().item(
-                    i, 0).data(Qt.ItemDataRole.UserRole).get("name"))
+                    i, 0).data(Qt.ItemDataRole.UserRole).get("en_name"))
 
         ruleset.useDSR = self.DSR.isChecked()
         ruleset.useMDSR = self.MDSR.isChecked()
