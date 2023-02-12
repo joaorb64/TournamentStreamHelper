@@ -90,8 +90,8 @@ class BracketSetWidget(QWidget):
             
             self.score[0].blockSignals(True)
             self.score[1].blockSignals(True)
-            self.score[0].setValue(self.bracketSet.score[0])
-            self.score[1].setValue(self.bracketSet.score[1])
+            self.score[0].setValue(min(self.bracketSet.score[0], self.score[0].maximum()))
+            self.score[1].setValue(min(self.bracketSet.score[1], self.score[1].maximum()))
             self.score[0].blockSignals(False)
             self.score[1].blockSignals(False)
 
