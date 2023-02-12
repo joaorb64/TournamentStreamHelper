@@ -10,6 +10,7 @@
         "losers_quarter_final": "Quart de finale Loser",
         "winners_round": "Tour {0} Winner",
         "losers_round": "Tour {0} Loser",
+        "round": "Tour {0}",
         "best_of": "Best of {0}"
     },
     "phase": {
