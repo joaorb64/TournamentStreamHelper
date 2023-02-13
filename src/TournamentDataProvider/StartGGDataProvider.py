@@ -146,6 +146,15 @@ class StartGGDataProvider(TournamentDataProvider):
             )
             data = json.loads(data.text)
 
+            oldData = requests.get(
+                f"https://api.smash.gg/phase_group/{id}",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                }
+            )
+            oldData = json.loads(oldData.text)
+
             seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
             seeds.sort(key=lambda s: s.get("seedNum"))
 
@@ -185,8 +194,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 if not str(round) in finalSets:
                     finalSets[str(round)] = []
 
-                print(s)
-
                 finalSets[str(round)].append({
                     "score": [s.get("entrant1Score"), s.get("entrant2Score")],
                     "finished": s.get("state", 0) == 3
@@ -214,8 +221,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     # If we have progressions in, shift winners scores to the right
                     if round > 0:
                         finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
-            elif len(finalData["progressionsIn"]) > 0 and -1 in finalData.get("seedMap", []):
-                finalData["winnersOnlyProgressions"] = True
+
+            finalData["winnersOnlyProgressions"] = deep_get(oldData, "entities.groups.hasCustomWinnerByes")
             
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
 
