@@ -141,7 +141,7 @@ class BracketSetWidget(QWidget):
                 ((self.bracketSet.playerIds[0] == -1 and not self.bracketSet.playerIds[1] == -1) or \
                 (self.bracketSet.playerIds[1] == -1 and not self.bracketSet.playerIds[0] == -1))
 
-            if self.bracketSet.pos[0] < 0 and abs(self.bracketSet.pos[0]) < losersCutout[0]+2 and hasBye:
+            if self.bracketSet.pos[0] < 0 and hasBye:
                 self.hide()
             elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
                 self.hide()
