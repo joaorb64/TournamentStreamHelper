@@ -240,7 +240,11 @@ class TSHBracketView(QGraphicsView):
         self.bracket = bracket
 
         bracket.progressionsIn = progressionsIn
-        bracket.winnersOnlyProgressions = winnersOnlyProgressions
+
+        if bracket.progressionsIn > 0:
+            bracket.winnersOnlyProgressions = winnersOnlyProgressions
+        else:
+            bracket.winnersOnlyProgressions = False
 
         self.bracketLines = []
         self._scene.clear()
