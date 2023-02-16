@@ -221,6 +221,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 if finalData["winnersOnlyProgressions"] == False:
                     break
             
+            finalData["customSeeding"] = deep_get(oldData, "entities.groups.hasCustomWinnerByes")
+            
             if len(finalData["progressionsIn"]) > 0 and not finalData["winnersOnlyProgressions"]:
                 originalKeys = list(finalData["sets"].keys())
                 originalKeys.reverse()
@@ -230,8 +232,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 if deep_get(oldData, "entities.groups.hasCustomWinnerByes"):
                     shift = 1
-
-                print("shift", shift)
 
                 for roundKey in originalKeys:
                     round = int(roundKey)

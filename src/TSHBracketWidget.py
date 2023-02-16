@@ -119,7 +119,8 @@ class TSHBracketWidget(QDockWidget):
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
                 progressionsOut=self.progressionsOut.value(),
-                winnersOnlyProgressions=self.winnersOnly.isChecked()
+                winnersOnlyProgressions=self.winnersOnly.isChecked(),
+                customSeeding=self.bracket.customSeeding
             ),
             self.bracketView.Update()
         ])
@@ -132,7 +133,8 @@ class TSHBracketWidget(QDockWidget):
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
                 progressionsOut=self.progressionsOut.value(),
-                winnersOnlyProgressions=self.winnersOnly.isChecked()
+                winnersOnlyProgressions=self.winnersOnly.isChecked(),
+                customSeeding=self.bracket.customSeeding
             ),
             self.bracketView.Update()
         ])
@@ -213,14 +215,15 @@ class TSHBracketWidget(QDockWidget):
         if self.phaseGroupSelection.currentData() != None:
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
         
-    def RebuildBracket(self, playerNumber, seedMap=None):
+    def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
         self.bracket = Bracket(playerNumber, self.progressionsIn.value(), seedMap, self.winnersOnly.isChecked())
 
         self.bracketView.SetBracket(
             self.bracket,
             progressionsIn=self.progressionsIn.value(),
             progressionsOut=self.progressionsOut.value(),
-            winnersOnlyProgressions=self.winnersOnly.isChecked()
+            winnersOnlyProgressions=self.winnersOnly.isChecked(),
+            customSeeding=customSeeding
         )
 
         if self.progressionsIn.value() > 0:
@@ -251,6 +254,8 @@ class TSHBracketWidget(QDockWidget):
             else:
                 self.winnersOnly.setChecked(False)
             
+            self.bracket.customSeeding = phaseGroupData.get("customSeeding", False)
+            
             # Make sure progressions are exported
             QGuiApplication.processEvents()
 
@@ -266,7 +271,8 @@ class TSHBracketWidget(QDockWidget):
             
             self.RebuildBracket(
                 len(phaseGroupData.get("entrants")),
-                phaseGroupData.get("seedMap")
+                phaseGroupData.get("seedMap"),
+                phaseGroupData.get("customSeeding", False)
             )
 
             for r, round in phaseGroupData.get("sets", {}).items():

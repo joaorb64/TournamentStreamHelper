@@ -204,7 +204,7 @@ class TSHBracketView(QGraphicsView):
     
         # Winners left side cutout
         if self.progressionsIn > 0 and not self.bracket.winnersOnlyProgressions:
-            if not is_power_of_two(self.progressionsIn) and not -1 in self.bracket.seedMap:
+            if not is_power_of_two(self.progressionsIn) and not self.bracket.customSeeding:
                 winnersCutout[0] = 2
             else:
                 winnersCutout[0] = 1
@@ -236,7 +236,7 @@ class TSHBracketView(QGraphicsView):
         return (winnersCutout, losersCutout)
 
 
-    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0, winnersOnlyProgressions=False):
+    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0, winnersOnlyProgressions=False, customSeeding=False):
         self.bracket = bracket
 
         bracket.progressionsIn = progressionsIn
@@ -245,6 +245,8 @@ class TSHBracketView(QGraphicsView):
             bracket.winnersOnlyProgressions = winnersOnlyProgressions
         else:
             bracket.winnersOnlyProgressions = False
+        
+        bracket.customSeeding = customSeeding
 
         self.bracketLines = []
         self._scene.clear()

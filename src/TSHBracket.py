@@ -44,7 +44,7 @@ def nextLayer(pls):
     return out
 
 class Bracket():
-    def __init__(self, playerNumber, progressionsIn, seedMap=None, winnersOnlyProgressions=False) -> None:
+    def __init__(self, playerNumber, progressionsIn, seedMap=None, winnersOnlyProgressions=False, customSeeding=False) -> None:
         self.originalPlayerNumber = playerNumber
         self.playerNumber = next_power_of_2(playerNumber)
 
@@ -61,6 +61,8 @@ class Bracket():
         self.seedMap = seeds
 
         self.winnersOnlyProgressions = winnersOnlyProgressions
+
+        self.customSeeding = customSeeding
         
         if progressionsIn > 0 and -1 in self.seedMap:
             self.winnersOnlyProgressions = True
@@ -204,7 +206,7 @@ class Bracket():
                         _set.score = [-1, -1]
                         _set.finished = True
                     
-                    if int(roundKey) == 2 and not is_power_of_two(self.progressionsIn) and not -1 in self.seedMap:
+                    if int(roundKey) == 2 and not self.customSeeding:
                         _set.score = [-1, -1]
                         _set.finished = True
 
