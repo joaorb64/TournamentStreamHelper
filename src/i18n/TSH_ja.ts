@@ -73,37 +73,42 @@ p, li { white-space: pre-wrap; }
         <translation>トーナメント表</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="40"/>
+        <location filename="../layout/TSHBracket.ui" line="64"/>
         <source>Phase</source>
         <translation>フェーズ</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="60"/>
+        <location filename="../layout/TSHBracket.ui" line="93"/>
         <source>Phase Group</source>
         <translation>フェーズグループ</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="108"/>
+        <location filename="../layout/TSHBracket.ui" line="38"/>
         <source>Progressions in</source>
         <translation>進行回数</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="128"/>
+        <location filename="../layout/TSHBracket.ui" line="51"/>
+        <source>Winners Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHBracket.ui" line="77"/>
         <source>Progressions out</source>
         <translation>退行回数</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="148"/>
+        <location filename="../layout/TSHBracket.ui" line="137"/>
         <source>Limit exported bracket</source>
         <translation>エクスポートするトーナメント表を制限する</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="155"/>
+        <location filename="../layout/TSHBracket.ui" line="144"/>
         <source> players</source>
         <translation>のプレイヤーたち</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="158"/>
+        <location filename="../layout/TSHBracket.ui" line="147"/>
         <source>Top </source>
         <translation>トップ</translation>
     </message>
@@ -1266,6 +1271,22 @@ p, li { white-space: pre-wrap; }
         <source>Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Italic</translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="56"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="57"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="100"/>
+        <source>The tournament URL could not be loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="100"/>
+        <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

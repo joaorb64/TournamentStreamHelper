@@ -64,6 +64,9 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
         entrant1Score
         entrant2Score
         state
+        slots {
+          prereqType
+        }
       }
     }
     progressionsOut {

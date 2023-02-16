@@ -141,7 +141,7 @@ class BracketSetWidget(QWidget):
                 ((self.bracketSet.playerIds[0] == -1 and not self.bracketSet.playerIds[1] == -1) or \
                 (self.bracketSet.playerIds[1] == -1 and not self.bracketSet.playerIds[0] == -1))
 
-            if self.bracketSet.pos[0] < 0 and abs(self.bracketSet.pos[0]) < losersCutout[0]+2 and hasBye:
+            if self.bracketSet.pos[0] < 0 and hasBye:
                 self.hide()
             elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
                 self.hide()
@@ -203,8 +203,8 @@ class TSHBracketView(QGraphicsView):
             winnersCutout[1] = len(winnersRounds) - (int(math.log2(progressionsWinners)) + 1)
     
         # Winners left side cutout
-        if self.progressionsIn > 0:
-            if not is_power_of_two(self.progressionsIn):
+        if self.progressionsIn > 0 and not self.bracket.winnersOnlyProgressions:
+            if not is_power_of_two(self.progressionsIn) and not self.bracket.customSeeding:
                 winnersCutout[0] = 2
             else:
                 winnersCutout[0] = 1
@@ -236,10 +236,17 @@ class TSHBracketView(QGraphicsView):
         return (winnersCutout, losersCutout)
 
 
-    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0):
+    def SetBracket(self, bracket, progressionsIn=0, progressionsOut=0, winnersOnlyProgressions=False, customSeeding=False):
         self.bracket = bracket
 
         bracket.progressionsIn = progressionsIn
+
+        if bracket.progressionsIn > 0:
+            bracket.winnersOnlyProgressions = winnersOnlyProgressions
+        else:
+            bracket.winnersOnlyProgressions = False
+        
+        bracket.customSeeding = customSeeding
 
         self.bracketLines = []
         self._scene.clear()
@@ -587,7 +594,7 @@ class TSHBracketView(QGraphicsView):
                         )
 
                     # Progression in
-                    if self.progressionsIn > 1 and i == 0:
+                    if self.progressionsIn > 1 and i == 0 and not self.bracket.winnersOnlyProgressions:
                         end = QPointF(setWidget.mapTo(self.bracketLayout, QPoint(0, 0)).x(), _set.mapTo(self.bracketLayout, QPoint(0, 0)).y()) + \
                             QPointF(0, _set.height()/2)
                         start = end - QPointF(50, 0)

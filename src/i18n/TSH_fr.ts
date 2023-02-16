@@ -67,38 +67,43 @@ p, li { white-space: pre-wrap; }
         <translation>Arbre</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="40"/>
+        <location filename="../layout/TSHBracket.ui" line="64"/>
         <source>Phase</source>
         <translation>Phase</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="60"/>
+        <location filename="../layout/TSHBracket.ui" line="93"/>
         <source>Phase Group</source>
         <translation>Groupe</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="108"/>
+        <location filename="../layout/TSHBracket.ui" line="38"/>
         <source>Progressions in</source>
         <translation>Progressions entrantes</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="128"/>
+        <location filename="../layout/TSHBracket.ui" line="51"/>
+        <source>Winners Only</source>
+        <translation>Arbre Winner uniquement</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHBracket.ui" line="77"/>
         <source>Progressions out</source>
         <translation>Progressions sortantes</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="148"/>
+        <location filename="../layout/TSHBracket.ui" line="137"/>
         <source>Limit exported bracket</source>
         <translation>Limiter l&apos;arbre exporté</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="155"/>
+        <location filename="../layout/TSHBracket.ui" line="144"/>
         <source> players</source>
         <translatorcomment>Emptied for clearer view</translatorcomment>
         <translation>‎</translation>
     </message>
     <message>
-        <location filename="../layout/TSHBracket.ui" line="158"/>
+        <location filename="../layout/TSHBracket.ui" line="147"/>
         <source>Top </source>
         <translation>Top </translation>
     </message>
@@ -1306,6 +1311,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Final Stage</source>
         <translation>Phase finale</translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="56"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="57"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="100"/>
+        <source>The tournament URL could not be loaded.</source>
+        <translation>L&apos;URL du tournoi n&apos;a pas pu être chargée.</translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="100"/>
+        <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
+        <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
 </context>
 <context>
