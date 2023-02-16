@@ -204,7 +204,7 @@ class Bracket():
                         _set.score = [-1, -1]
                         _set.finished = True
                     
-                    if int(roundKey) == 2 and not is_power_of_two(self.progressionsIn):
+                    if int(roundKey) == 2 and not is_power_of_two(self.progressionsIn) and not -1 in self.seedMap:
                         _set.score = [-1, -1]
                         _set.finished = True
 

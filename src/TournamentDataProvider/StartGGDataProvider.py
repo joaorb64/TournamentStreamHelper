@@ -189,6 +189,8 @@ class StartGGDataProvider(TournamentDataProvider):
             finalSets = {}
 
             for s in sets:
+                print(s)
+
                 round = int(s.get("round"))
                 
                 if not str(round) in finalSets:
@@ -207,13 +209,29 @@ class StartGGDataProvider(TournamentDataProvider):
                 originPhaseId = deep_get(s, "progressionSource.originPhaseGroup.id")
                 if originPhaseId:
                     finalData["progressionsIn"].append(originPhaseId)
+
+            finalData["winnersOnlyProgressions"] = deep_get(oldData, "entities.groups.hasCustomWinnerByes")
+
+            for s in sets:
+                if s.get("slots", []) and int(s.get("round")) == -2:
+                    for slot in s.get("slots", []):
+                        if slot.get("prereqType") == "seed":
+                            finalData["winnersOnlyProgressions"] = False
+
+                if finalData["winnersOnlyProgressions"] == False:
+                    break
             
-            if len(finalData["progressionsIn"]) > 0 and not -1 in finalData.get("seedMap", []):
+            if len(finalData["progressionsIn"]) > 0 and not finalData["winnersOnlyProgressions"]:
                 originalKeys = list(finalData["sets"].keys())
                 originalKeys.reverse()
 
                 # If we have a non-power2 number of progressions in, we shift 2 rounds
                 shift = 1 if is_power_of_two(len(finalData["progressionsIn"])) else 2
+
+                if deep_get(oldData, "entities.groups.hasCustomWinnerByes"):
+                    shift = 1
+
+                print("shift", shift)
 
                 for roundKey in originalKeys:
                     round = int(roundKey)
@@ -221,8 +239,6 @@ class StartGGDataProvider(TournamentDataProvider):
                     # If we have progressions in, shift winners scores to the right
                     if round > 0:
                         finalData["sets"][str(round+shift)] = finalData["sets"].pop(roundKey)
-
-            finalData["winnersOnlyProgressions"] = deep_get(oldData, "entities.groups.hasCustomWinnerByes")
             
             finalData["progressionsOut"] = deep_get(data, "data.phaseGroup.progressionsOut")
 
