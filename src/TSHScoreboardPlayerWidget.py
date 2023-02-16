@@ -581,14 +581,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             item.setData(assetData, Qt.ItemDataRole.UserRole)
 
             # Set to use first asset as a fallback
-            key = list(assetData.keys())[0]
-
-            for k, asset in list(assetData.items()):
-                if "full" in asset.get("type", []):
-                    key = k
-                    break
-                if "icon" in asset.get("type", []):
-                    key = k
+            key = TSHGameAssetManager.instance.biggestCompletePack
+            asset = assetData[key]
 
             pix = QPixmap.fromImage(QImage(assetData[key]["asset"]))
 
