@@ -72,7 +72,7 @@ class TSHBracketWidget(QDockWidget):
         col.layout().addWidget(self.slotNumber)
         self.slotNumber.valueChanged.connect(lambda val: [
             self.playerList.SetSlotNumber(val),
-            self.RebuildBracket(val)
+            self.RebuildBracket(val),
         ])
         row.layout().addWidget(col)
 
@@ -118,11 +118,27 @@ class TSHBracketWidget(QDockWidget):
             self.bracketView.SetBracket(
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
-                progressionsOut=self.progressionsOut.value()
+                progressionsOut=self.progressionsOut.value(),
+                winnersOnlyProgressions=self.winnersOnly.isChecked(),
+                customSeeding=self.bracket.customSeeding
             ),
             self.bracketView.Update()
         ])
         StateManager.Set("bracket.bracket.progressionsIn", 0)
+
+        self.winnersOnly: QCheckBox = self.findChild(QCheckBox, "winnersOnly")
+        self.winnersOnly.toggled.connect(lambda newVal: [
+            StateManager.Set("bracket.bracket.winnersOnlyProgressions", self.winnersOnly.isChecked()),
+            self.bracketView.SetBracket(
+                self.bracket,
+                progressionsIn=self.progressionsIn.value(),
+                progressionsOut=self.progressionsOut.value(),
+                winnersOnlyProgressions=self.winnersOnly.isChecked(),
+                customSeeding=self.bracket.customSeeding
+            ),
+            self.bracketView.Update()
+        ])
+        StateManager.Set("bracket.bracket.winnersOnly", False)
 
         self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
         self.progressionsOut.valueChanged.connect(lambda val: [
@@ -199,13 +215,15 @@ class TSHBracketWidget(QDockWidget):
         if self.phaseGroupSelection.currentData() != None:
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
         
-    def RebuildBracket(self, playerNumber, seedMap=None):
-        self.bracket = Bracket(playerNumber, self.progressionsIn.value(), seedMap)
+    def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
+        self.bracket = Bracket(playerNumber, self.progressionsIn.value(), seedMap, self.winnersOnly.isChecked())
 
         self.bracketView.SetBracket(
             self.bracket,
             progressionsIn=self.progressionsIn.value(),
-            progressionsOut=self.progressionsOut.value()
+            progressionsOut=self.progressionsOut.value(),
+            winnersOnlyProgressions=self.winnersOnly.isChecked(),
+            customSeeding=customSeeding
         )
 
         if self.progressionsIn.value() > 0:
@@ -219,7 +237,6 @@ class TSHBracketWidget(QDockWidget):
         self.playerList.signals.DataChanged.disconnect()
 
         try:
-
             print(phaseGroupData)
 
             if phaseGroupData.get("progressionsIn", {}) != None:
@@ -231,6 +248,13 @@ class TSHBracketWidget(QDockWidget):
                 self.progressionsOut.setValue(len(phaseGroupData.get("progressionsOut", {})))
             else:
                 self.progressionsOut.setValue(0)
+            
+            if phaseGroupData.get("winnersOnlyProgressions", False) != None:
+                self.winnersOnly.setChecked(phaseGroupData.get("winnersOnlyProgressions", False))
+            else:
+                self.winnersOnly.setChecked(False)
+            
+            self.bracket.customSeeding = phaseGroupData.get("customSeeding", False)
             
             # Make sure progressions are exported
             QGuiApplication.processEvents()
@@ -247,7 +271,8 @@ class TSHBracketWidget(QDockWidget):
             
             self.RebuildBracket(
                 len(phaseGroupData.get("entrants")),
-                phaseGroupData.get("seedMap")
+                phaseGroupData.get("seedMap"),
+                phaseGroupData.get("customSeeding", False)
             )
 
             for r, round in phaseGroupData.get("sets", {}).items():
