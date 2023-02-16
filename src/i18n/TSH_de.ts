@@ -509,7 +509,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UI Options</source>
-        <translation type="vanished">UI-Optionen</translation>
+        <translation>UI-Optionen</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1171"/>
@@ -805,7 +805,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export Language</source>
-        <translation type="vanished">Sprache für Exportiertes</translation>
+        <translation>Sprache für Exportiertes</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="335"/>
@@ -815,11 +815,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default Phase Name Language</source>
-        <translation type="vanished">Standardsprache Turnierphasenbezeichnung</translation>
+        <translation>Standardsprache Turnierphasenbezeichnung</translation>
     </message>
     <message>
         <source>Default phase name language changed successfully.</source>
-        <translation type="vanished">Standardsprache Turnierphasenbezeichnung geändert.</translation>
+        <translation>Standardsprache Turnierphasenbezeichnung geändert.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="324"/>
@@ -922,7 +922,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Update complete. The program will now close.</source>
-        <translation type="vanished">Update durchgeführt! Das Programm wird beendet.</translation>
+        <translation>Update durchgeführt! Das Programm wird beendet.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="684"/>
@@ -941,7 +941,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name of the game</source>
-        <translation type="vanished">Name des Spiels</translation>
+        <translation>Name des Spiels</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="301"/>
@@ -950,7 +950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export language changed successfully.</source>
-        <translation type="vanished">Sprache zum Exportieren erfolgreich geändert.</translation>
+        <translation>Sprache zum Exportieren erfolgreich geändert.</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="171"/>
@@ -1020,43 +1020,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Downloading {0}...</source>
-        <translation type="vanished">{0} wird heruntergeladen...</translation>
+        <translation>{0} wird heruntergeladen...</translation>
     </message>
     <message>
         <source>Paste the tournament URL.</source>
-        <translation type="vanished">URL des Turniers einfügen.</translation>
+        <translation>URL des Turniers einfügen.</translation>
     </message>
     <message>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="vanished">Wird StartGG verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
+        <translation>Wird StartGG verwendet, so muss der Link den Teil mit /event/ beinhalten</translation>
     </message>
     <message>
         <source>Set tournament URL</source>
-        <translation type="vanished">Turnier-URL einstellen</translation>
+        <translation>Turnier-URL einstellen</translation>
     </message>
     <message>
         <source>Set Twitch username</source>
-        <translation type="vanished">Twitch-Usernamen einstellen</translation>
+        <translation>Twitch-Usernamen einstellen</translation>
     </message>
     <message>
         <source>Twitch Username:</source>
-        <translation type="vanished">Twitch-Username:</translation>
+        <translation>Twitch-Username:</translation>
     </message>
     <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="vanished">URL des Spielerprofils auf StartGG einfügen</translation>
+        <translation>URL des Spielerprofils auf StartGG einfügen</translation>
     </message>
     <message>
         <source>Insert the player&apos;s name in bracket</source>
-        <translation type="vanished">Spielername einfügen</translation>
+        <translation>Spielername einfügen</translation>
     </message>
     <message>
         <source>Invalid tournament data provider</source>
-        <translation type="vanished">Ungültiger Turnierdaten-Provider</translation>
+        <translation>Ungültiger Turnierdaten-Provider</translation>
     </message>
     <message>
         <source>Set player</source>
-        <translation type="vanished">Spieler auswählen</translation>
+        <translation>Spieler auswählen</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
@@ -1114,7 +1114,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation type="vanished">Punkte</translation>
+        <translation>Punkte</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="171"/>

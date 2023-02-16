@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
+import traceback
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
 from .Helpers.TSHCountryHelper import TSHCountryHelper
@@ -94,6 +95,13 @@ class TSHPlayerListSlotWidget(QGroupBox):
             self.slotName.setText("")
         
         for i, pw in enumerate(self.playerWidgets):
-            pw.SetData(data.get("players")[i])
+            if data.get("players"):
+                try:
+                    pw.SetData(data.get("players")[i])
+                except:
+                    pw.Clear()
+                    print(traceback.format_exc())
+            else:
+                pw.Clear()
         StateManager.ReleaseSaving()
         self.signals.dataChanged.emit()

@@ -495,7 +495,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UI Options</source>
-        <translation type="vanished">UIオプション</translation>
+        <translation>UIオプション</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1139"/>
@@ -743,7 +743,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export Language</source>
-        <translation type="vanished">エクスポート物の言語</translation>
+        <translation>エクスポート物の言語</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="335"/>
@@ -818,7 +818,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export language changed successfully.</source>
-        <translation type="vanished">エクスポート物の言語を変更しました。</translation>
+        <translation>エクスポート物の言語を変更しました。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="596"/>
@@ -882,7 +882,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Update complete. The program will now close.</source>
-        <translation type="vanished">更新が完了しました。ソフトを閉じます。</translation>
+        <translation>更新が完了しました。ソフトを閉じます。</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="684"/>
@@ -896,11 +896,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Filter...</source>
-        <translation type="vanished">フィルター...</translation>
+        <translation>フィルター...</translation>
     </message>
     <message>
         <source>Name of the game</source>
-        <translation type="vanished">ゲームのタイトル</translation>
+        <translation>ゲームのタイトル</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="171"/>
@@ -970,7 +970,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Downloading {0}...</source>
-        <translation type="vanished">{0}をダウンロード中...</translation>
+        <translation>{0}をダウンロード中...</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="41"/>
@@ -1067,39 +1067,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste the tournament URL.</source>
-        <translation type="vanished">大会のURLをここに貼って下さい</translation>
+        <translation>大会のURLをここに貼って下さい</translation>
     </message>
     <message>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="vanished">StartGGのリンクには/event/partを含めて下さい</translation>
+        <translation>StartGGのリンクには/event/partを含めて下さい</translation>
     </message>
     <message>
         <source>Set tournament URL</source>
-        <translation type="vanished">大会のURLを貼る</translation>
+        <translation>大会のURLを貼る</translation>
     </message>
     <message>
         <source>Set Twitch username</source>
-        <translation type="vanished">Twitchでのユーザー名を入力</translation>
+        <translation>Twitchでのユーザー名を入力</translation>
     </message>
     <message>
         <source>Twitch Username:</source>
-        <translation type="vanished">Twitchでのユーザー名:</translation>
+        <translation>Twitchでのユーザー名:</translation>
     </message>
     <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="vanished">プレイヤーのStartGGのプロフィールへのURLをここに貼ってください</translation>
+        <translation>プレイヤーのStartGGのプロフィールへのURLをここに貼ってください</translation>
     </message>
     <message>
         <source>Insert the player&apos;s name in bracket</source>
-        <translation type="vanished">ブラケット表にプレイヤー名を記入して下さい</translation>
+        <translation>ブラケット表にプレイヤー名を記入して下さい</translation>
     </message>
     <message>
         <source>Invalid tournament data provider</source>
-        <translation type="vanished">無効な大会データプロバイダです</translation>
+        <translation>無効な大会データプロバイダです</translation>
     </message>
     <message>
         <source>Set player</source>
-        <translation type="vanished">プレイヤーを選ぶ</translation>
+        <translation>プレイヤーを選ぶ</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
@@ -1133,11 +1133,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Winners Finals</source>
-        <translation type="vanished">勝者側決勝</translation>
+        <translation>勝者側決勝</translation>
     </message>
     <message>
         <source>Pool {0}</source>
-        <translation type="vanished">予選プール{0}</translation>
+        <translation>予選プール{0}</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1158"/>
@@ -1147,7 +1147,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation type="vanished">スコア</translation>
+        <translation>スコア</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="171"/>

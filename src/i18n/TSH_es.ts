@@ -514,7 +514,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UI Options</source>
-        <translation type="vanished">Opciones de Interfaz</translation>
+        <translation>Opciones de Interfaz</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1171"/>
@@ -810,7 +810,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export Language</source>
-        <translation type="vanished">Exportar idioma</translation>
+        <translation>Exportar idioma</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="335"/>
@@ -820,11 +820,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default Phase Name Language</source>
-        <translation type="vanished">Idioma predeterminado del nombre de la fase</translation>
+        <translation>Idioma predeterminado del nombre de la fase</translation>
     </message>
     <message>
         <source>Default phase name language changed successfully.</source>
-        <translation type="vanished">Idioma de nombre de fase modificado con éxito.</translation>
+        <translation>Idioma de nombre de fase modificado con éxito.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="324"/>
@@ -927,7 +927,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Update complete. The program will now close.</source>
-        <translation type="vanished">Actualizacion completa. El programa se cerrará ahora.</translation>
+        <translation>Actualizacion completa. El programa se cerrará ahora.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="684"/>
@@ -941,7 +941,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Filter...</source>
-        <translation type="vanished">Filtrar...</translation>
+        <translation>Filtrar...</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="163"/>
@@ -950,7 +950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name of the game</source>
-        <translation type="vanished">Nombre del juego</translation>
+        <translation>Nombre del juego</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="301"/>
@@ -959,7 +959,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export language changed successfully.</source>
-        <translation type="vanished">El idioma de exportación de archivos ha sido cambiado existosamente</translation>
+        <translation>El idioma de exportación de archivos ha sido cambiado existosamente</translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="171"/>
@@ -1029,43 +1029,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Downloading {0}...</source>
-        <translation type="vanished">Descargando {0}...</translation>
+        <translation>Descargando {0}...</translation>
     </message>
     <message>
         <source>Paste the tournament URL.</source>
-        <translation type="vanished">Pega la URL del torneo.</translation>
+        <translation>Pega la URL del torneo.</translation>
     </message>
     <message>
         <source>For StartGG, the link must contain the /event/ part</source>
-        <translation type="vanished">Para pegar desde StartGG, el link debe contener la parte /evento/</translation>
+        <translation>Para pegar desde StartGG, el link debe contener la parte /evento/</translation>
     </message>
     <message>
         <source>Set tournament URL</source>
-        <translation type="vanished">Establecer URL del torneo</translation>
+        <translation>Establecer URL del torneo</translation>
     </message>
     <message>
         <source>Set Twitch username</source>
-        <translation type="vanished">Establecer usuario de Twitch</translation>
+        <translation>Establecer usuario de Twitch</translation>
     </message>
     <message>
         <source>Twitch Username:</source>
-        <translation type="vanished">Usuario de Twitch:</translation>
+        <translation>Usuario de Twitch:</translation>
     </message>
     <message>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
-        <translation type="vanished">Pega la URL del perfil de StartGG del jugador</translation>
+        <translation>Pega la URL del perfil de StartGG del jugador</translation>
     </message>
     <message>
         <source>Insert the player&apos;s name in bracket</source>
-        <translation type="vanished">Inserta el nombre del jugador en el bracket</translation>
+        <translation>Inserta el nombre del jugador en el bracket</translation>
     </message>
     <message>
         <source>Invalid tournament data provider</source>
-        <translation type="vanished">Proveedor de datos de torneo no válido</translation>
+        <translation>Proveedor de datos de torneo no válido</translation>
     </message>
     <message>
         <source>Set player</source>
-        <translation type="vanished">Establecer jugador</translation>
+        <translation>Establecer jugador</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="31"/>
@@ -1123,7 +1123,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation type="vanished">Marcador</translation>
+        <translation>Marcador</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="171"/>
@@ -1226,7 +1226,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pool {0}</source>
-        <translation type="vanished">Grupo {0}</translation>
+        <translation>Grupo {0}</translation>
     </message>
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1158"/>

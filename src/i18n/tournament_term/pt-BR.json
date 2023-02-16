@@ -10,6 +10,7 @@
         "losers_quarter_final": "Quartas de Final da Repescagem",
         "winners_round": "Rodada {0}",
         "losers_round": "Repescagem Rodada {0}",
+        "round": "Rodada {0}",
         "best_of": "Melhor de {0}"
     },
     "phase": {
