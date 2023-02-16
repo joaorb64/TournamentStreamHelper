@@ -132,6 +132,8 @@
 
       let progressionsOut = data.bracket.bracket.progressionsOut;
       let progressionsIn = data.bracket.bracket.progressionsIn;
+      let winnersOnlyProgressions =
+        data.bracket.bracket.winnersOnlyProgressions;
 
       let biggestRound = Math.max.apply(
         null,
@@ -159,7 +161,10 @@
         progressionsIn != _.get(oldData, "bracket.bracket.progressionsIn") ||
         progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
         Object.keys(oldData.bracket.bracket.rounds).length !=
-          Object.keys(data.bracket.bracket.rounds).length
+          Object.keys(data.bracket.bracket.rounds).length ||
+        _.get(oldData, "bracket.phase") != _.get(data, "bracket.phase") ||
+        _.get(oldData, "bracket.phaseGroup") !=
+          _.get(data, "bracket.phaseGroup")
       ) {
         // WINNERS SIDE
         let html = "";
@@ -222,6 +227,8 @@
         allWinners =
           Object.keys(Object.values(winnersRounds)[0].sets).length >=
           Object.values(players).length / 2;
+
+        if (winnersOnlyProgressions) allWinners = true;
 
         Object.entries(losersRounds)
           .reverse()
@@ -357,9 +364,7 @@
                 set.nextWin &&
                 !(
                   set.playerId[0] > Object.keys(players).length ||
-                  set.playerId[1] > Object.keys(players).length ||
-                  set.playerId[0] == -1 ||
-                  set.playerId[1] == -1
+                  set.playerId[1] > Object.keys(players).length
                 )
               ) {
                 let slotElement = $(
@@ -485,7 +490,11 @@
 
                 // Losers side lines
                 if (parseInt(roundKey) < 0) {
-                  if (parseInt(roundKey) % 2 == -1) {
+                  if (
+                    (parseInt(roundKey) % 2 == -1 &&
+                      !winnersOnlyProgressions) ||
+                    (parseInt(roundKey) % 2 == 0 && winnersOnlyProgressions)
+                  ) {
                     let hangingElement = $(
                       `.${this.baseClass} .round_${roundKey} .slot_hanging_${
                         setIndex + 1
@@ -570,7 +579,11 @@
 
                     // Which set index to assign?
                     let s = 0;
-                    if (parseInt(roundKey) % 2 == -1) {
+                    if (
+                      (!winnersOnlyProgressions &&
+                        parseInt(roundKey) % 2 == -1) ||
+                      (winnersOnlyProgressions && parseInt(roundKey) % 2 == 0)
+                    ) {
                       // Next round has the same amount of sets, so just use the current index
                       s = setIndex + 1;
                     } else {
@@ -580,7 +593,11 @@
 
                     // Which player slot to assign?
                     let p = 0;
-                    if (parseInt(roundKey) % 2 == -1) {
+                    if (
+                      (!winnersOnlyProgressions &&
+                        parseInt(roundKey) % 2 == -1) ||
+                      (winnersOnlyProgressions && parseInt(roundKey) % 2 == 0)
+                    ) {
                       // If in an odd round, it's always 1 because slot 0 is a hanging slot
                       // (a player that came from winners as slot 0 vs this one as slot 1)
                       p = 1;

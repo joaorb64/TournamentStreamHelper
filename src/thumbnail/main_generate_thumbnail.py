@@ -821,7 +821,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
                 individual_color_mask += [player_text_color["font_color"]] * len(current_team[key].get("name", ""))
                 
                 if current_data:
-                    current_data = current_data.rstrip("[L]").strip()
+                    current_data = current_data.strip()
                 
                 if (not use_sponsors) or (not current_data):
                     current_data = current_team[key].get("name", "")

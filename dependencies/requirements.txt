@@ -1,3 +1,5 @@
+chardet
+charset-normalizer
 pyqt5
 requests
 py7zr

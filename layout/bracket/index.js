@@ -118,6 +118,8 @@
 
       let progressionsOut = data.bracket.bracket.progressionsOut;
       let progressionsIn = data.bracket.bracket.progressionsIn;
+      let winnersOnlyProgressions =
+        data.bracket.bracket.winnersOnlyProgressions;
 
       let biggestRound = Math.max.apply(
         null,
@@ -149,10 +151,9 @@
         progressionsOut != _.get(oldData, "bracket.bracket.progressionsOut") ||
         Object.keys(oldData.bracket.bracket.rounds).length !=
           Object.keys(data.bracket.bracket.rounds).length ||
-        _.get(oldData, "bracket.phase") ||
-        _.get(data, "bracket.phase") ||
-        _.get(oldData, "bracket.phaseGroup") ||
-        _.get(data, "bracket.phaseGroup")
+        _.get(oldData, "bracket.phase") != _.get(data, "bracket.phase") ||
+        _.get(oldData, "bracket.phaseGroup") !=
+          _.get(data, "bracket.phaseGroup")
       ) {
         // WINNERS SIDE
         let html = "";
@@ -191,13 +192,13 @@
 
         $(".winners_container").html(html);
 
+        let losersRounds = Object.fromEntries(
+          Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+        );
+
         // LOSERS SIDE
         if (!window.WINNERS_ONLY) {
           html = "";
-
-          let losersRounds = Object.fromEntries(
-            Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
-          );
 
           Object.entries(losersRounds).forEach(([roundKey, round], r) => {
             html += `<div class="round round_${roundKey}">`;
@@ -319,7 +320,8 @@
                   progressionsIn > 0 &&
                   ((parseInt(roundKey) > 0 && parseInt(roundKey) == 1) ||
                     (parseInt(roundKey) < 0 &&
-                      Math.abs(parseInt(roundKey)) == 1))
+                      Math.abs(parseInt(roundKey)) == 1 &&
+                      !winnersOnlyProgressions))
                 ) {
                   slotLines += `<path class="${this.baseClass} line_in_r_${
                     Math.sign(parseInt(roundKey)) * Math.abs(parseInt(roundKey))
@@ -366,10 +368,10 @@
                     .map((point) => "L" + point)
                     .join(" ")}
                   M${[
-                    slotElement.offset().left + slotElement.outerWidth() + 40,
+                    slotElement.offset().left + slotElement.outerWidth() + 35,
                     slotElement.offset().top +
                       slotElement.outerHeight() / 2 -
-                      5,
+                      8,
                   ].join(" ")}
                   ${[
                     [
@@ -377,16 +379,16 @@
                       slotElement.offset().top + slotElement.outerHeight() / 2,
                     ],
                     [
-                      slotElement.offset().left + slotElement.outerWidth() + 40,
+                      slotElement.offset().left + slotElement.outerWidth() + 35,
                       slotElement.offset().top +
                         slotElement.outerHeight() / 2 +
-                        5,
+                        8,
                     ],
                   ]
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="5" />`;
+                  stroke="black" fill="none" stroke-width="5"  />`;
                 }
               }
             },
@@ -420,7 +422,7 @@
               0
             );
 
-            if (isGfR) {
+            if (isGfR && progressionsOut == 0) {
               anim.from(
                 $(`.round_${roundKey} .round_name`),
                 { autoAlpha: 0, duration: 0.4 },
