@@ -2,7 +2,6 @@ import copy
 from multiprocessing import Lock
 import os
 import json
-from turtle import update
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
