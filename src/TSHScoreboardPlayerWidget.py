@@ -586,31 +586,118 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             pix = QPixmap.fromImage(QImage(assetData[key]["asset"]))
 
+            targetW = 128
+            targetH = 96
+
+            originalW = pix.width()
             originalH = pix.height()
 
-            pix = pix.scaledToWidth(
-                128, Qt.TransformationMode.SmoothTransformation)
-
-            if asset.get("eyesight", {}).get("y", 0):
-                newImg = QImage(QSize(128, 96), QImage.Format.Format_RGBA64)
-                newImg.fill(QColor(0, 0, 0, 0))
-                painter = QPainter()
-                painter.begin(newImg)
-
-                moveY = int(96/2 -
-                            float(asset.get("eyesight").get("y", 0)) /
-                            originalH*pix.height())
-                moveY = min(moveY, 16)
-                moveY = max(moveY, -16)
-
-                painter.drawPixmap(
-                    0,
-                    moveY,
-                    pix
+            proportional_zoom = 1
+            
+            if asset.get("average_size"):
+                proportional_zoom = 0
+                proportional_zoom = max(
+                    proportional_zoom,
+                    (targetW / asset.get("average_size", {}).get("x", 0)) * 1.2
                 )
-                painter.end()
+                proportional_zoom = max(
+                    proportional_zoom,
+                    (targetH / asset.get("average_size", {}).get("y", 0)) * 1.2
+                )
+            
+            # For cropped assets, zoom to fill
+            # Calculate max zoom
+            zoom_x = targetW / originalW
+            zoom_y = targetH / originalH
 
-                pix = QPixmap.fromImage(newImg)
+            minZoom = 1
+            rescalingFactor = 1
+            customZoom = 1
+
+            if asset.get("rescaling_factor"):
+                rescalingFactor = asset.get("rescaling_factor")
+
+            uncropped_edge = asset.get("uncropped_edge", [])
+
+            if not uncropped_edge or len(uncropped_edge) == 0:
+                if zoom_x > zoom_y:
+                    minZoom = zoom_x
+                else:
+                    minZoom = zoom_y
+            else:
+                if (
+                    "u" in uncropped_edge and
+                    "d" in uncropped_edge and
+                    "l" in uncropped_edge and
+                    "r" in uncropped_edge
+                    ):
+                    customZoom = 1.2 # Add zoom in for uncropped assets
+                    minZoom = customZoom * proportional_zoom * rescalingFactor
+                elif (
+                    not "l" in uncropped_edge and
+                    not "r" in uncropped_edge
+                    ):
+                    minZoom = zoom_x
+                elif (
+                    not "u" in uncropped_edge and
+                    not "d" in uncropped_edge
+                    ):
+                    minZoom = zoom_y;
+                else:
+                    minZoom = customZoom * proportional_zoom * rescalingFactor
+
+            zoom = max(minZoom, customZoom * minZoom);
+
+            # Centering
+            xx = 0
+            yy = 0
+
+            eyesight = asset.get("eyesight")
+
+            if not eyesight:
+                eyesight = {
+                    "x": originalW / 2,
+                    "y": originalH / 2
+                }
+
+            xx = -eyesight["x"] * zoom + targetW / 2
+
+            maxMoveX = targetW - originalW * zoom;
+
+            if not uncropped_edge or not "l" in uncropped_edge:
+                if (xx > 0): xx = 0
+            
+            if not uncropped_edge or not "r" in uncropped_edge:
+                if (xx < maxMoveX): xx = maxMoveX
+
+            yy = -eyesight["y"] * zoom + targetH / 2
+
+            maxMoveY = targetH - originalH * zoom;
+
+            if not uncropped_edge or not "u" in uncropped_edge:
+                if (yy > 0): yy = 0
+            
+            if not uncropped_edge or not "d" in uncropped_edge:
+                if (yy < maxMoveY): yy = maxMoveY
+            
+            newImg = QImage(QSize(128, 96), QImage.Format.Format_RGBA64)
+            newImg.fill(QColor(0, 0, 0, 0))
+            painter = QPainter()
+            painter.begin(newImg)
+
+            painter.drawPixmap(
+                int(xx),
+                int(yy),
+                pix.scaled(
+                    int(originalW*zoom),
+                    int(originalH*zoom),
+                    Qt.AspectRatioMode.IgnoreAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                )
+            )
+            painter.end()
+
+            pix = QPixmap.fromImage(newImg)
 
             item.setIcon(
                 QIcon(pix)
