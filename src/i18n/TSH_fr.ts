@@ -1041,7 +1041,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="58"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="824"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="818"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1064,7 +1064,7 @@ p, li { white-space: pre-wrap; }
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="821"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="815"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
