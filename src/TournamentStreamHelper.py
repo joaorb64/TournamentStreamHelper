@@ -610,6 +610,7 @@ class Window(QMainWindow):
                     def Update():
                         db = QFontDatabase()
                         db.removeAllApplicationFonts()
+                        QFontDatabase.removeAllApplicationFonts()
                         self.downloadDialogue = QProgressDialog(
                             QApplication.translate("app", "Downloading update..."), QApplication.translate("app", "Cancel"), 0, 0, self)
                         self.downloadDialogue.setWindowModality(
