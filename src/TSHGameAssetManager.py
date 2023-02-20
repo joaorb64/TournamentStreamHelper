@@ -442,8 +442,7 @@ class TSHGameAssetManager(QObject):
                                 charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
                                     str(skin))
                             else:
-                                charFiles[assetKey]["rescaling_factor"] = list(
-                                    rescaling_factor.values())[0]
+                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get("0", 1)
                     
                     if asset.get("unflippable"):
                         unflippable = asset.get("unflippable", {}).get(
