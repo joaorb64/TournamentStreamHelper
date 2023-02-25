@@ -88,6 +88,18 @@ body {
   overflow: hidden;
 }
 
+.fullwidth .base_container_outer {
+  width: 100vw;
+  top: 0;
+  left: 0;
+  transform: none;
+}
+
+.fullwidth .base_container {
+  width: 100vw;
+  border-radius: 0;
+}
+
 .base_container .line {
   overflow: hidden;
   box-sizing: border-box;
@@ -107,6 +119,10 @@ body {
   height: 92px;
   justify-content: space-evenly;
   box-sizing: border-box;
+}
+
+.fullwidth .mid_col {
+  max-width: 100%;
 }
 
 .divider {
@@ -339,6 +355,10 @@ body {
   width: 500px;
   position: absolute;
   z-index: -999;
+}
+
+.fullwidth .character_container {
+  width: 50%;
 }
 
 .p1.character_container {

@@ -9,7 +9,7 @@
     .timeline({ paused: true })
     .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
     .from(
-      [".anim_container_outer"],
+      [".floating .anim_container_outer"],
       {
         duration: 1,
         width: "0",
@@ -18,40 +18,13 @@
       1
     )
     .from(
-      [".base_container_outer"],
+      [".floating .base_container_outer"],
       {
         duration: 1,
         width: 0,
         ease: "power2.inOut",
       },
       1
-    )
-    .from(
-      [".fgc .top", ".fgc .player"],
-      {
-        duration: 1,
-        y: "-100px",
-        ease: "power2.inOut",
-      },
-      0
-    )
-    .from(
-      [".fgc:not(.bblue) .bottom"],
-      {
-        duration: 1,
-        y: "+100px",
-        ease: "power2.inOut",
-      },
-      0
-    )
-    .from(
-      [".fgc.bblue .bottom"],
-      {
-        duration: 1,
-        autoAlpha: 0,
-        ease: "power2.inOut",
-      },
-      0.2
     );
 
   function Start() {
@@ -72,15 +45,15 @@
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssbm") {
         ASSET_TO_USE = "full";
-        ZOOM = 2.4;
+        ZOOM = 1;
         FLIP_P2_ASSET = true;
       } else if (data.game.codename == "ssb64") {
         ASSET_TO_USE = "artwork";
-        ZOOM = 1.6;
+        ZOOM = 1;
         FLIP_P2_ASSET = true;
       } else {
         ASSET_TO_USE = "full";
-        ZOOM = 1.5;
+        ZOOM = 1;
         FLIP_P2_ASSET = true;
       }
     }

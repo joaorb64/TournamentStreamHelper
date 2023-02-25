@@ -82,14 +82,14 @@
             );
 
             SetInnerHtml(
-              $(`.p${t + 1}.container .flagcountry`),
+              $(`.p${t + 1} .flagcountry`),
               player.country.asset
                 ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
                 : ""
             );
 
             SetInnerHtml(
-              $(`.p${t + 1}.container .flagstate`),
+              $(`.p${t + 1} .flagstate`),
               player.state.asset
                 ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
                 : ""
@@ -153,15 +153,20 @@
             );
 
             SetInnerHtml(
-              $(`.p${t + 1}.container .twitter`),
+              $(`.p${t + 1} .twitter`),
               player.twitter
                 ? `<span class="twitter_logo"></span>${String(player.twitter)}`
                 : ""
             );
 
             SetInnerHtml(
-              $(`.p${t + 1}.container .pronoun`),
+              $(`.p${t + 1} .pronoun`),
               player.pronoun ? player.pronoun : ""
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1} .seed`),
+              player.seed ? `Seed ${player.seed}` : ""
             );
 
             let score = [data.score.score_left, data.score.score_right];
@@ -199,9 +204,9 @@
           `
         );
 
-        SetInnerHtml($(`.p${t + 1}.container .flagcountry`), "");
+        SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
 
-        SetInnerHtml($(`.p${t + 1}.container .flagstate`), "");
+        SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
         let charactersHtml = "";
 
@@ -264,7 +269,7 @@
 
         SetInnerHtml($(`.p${t + 1}.container .online_avatar`), "");
 
-        SetInnerHtml($(`.p${t + 1}.container .twitter`), "");
+        SetInnerHtml($(`.p${t + 1} .twitter`), "");
 
         let score = [data.score.score_left, data.score.score_right];
 

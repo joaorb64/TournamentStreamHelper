@@ -136,6 +136,7 @@ body {
   right: 164px;
 }
 
+.name,
 .name_twitter {
   display: flex;
   width: 100%;
@@ -146,6 +147,43 @@ body {
   padding-right: 8px;
   box-sizing: border-box;
   max-width: 100%;
+  font-size: 30px;
+}
+
+.chips {
+  display: flex;
+  position: absolute;
+  top: 112px;
+  width: 500px;
+  height: 24px;
+  justify-content: right;
+  align-content: center;
+}
+
+.p1.chips {
+  left: 380px;
+}
+
+.p2.chips {
+  flex-direction: row-reverse;
+  left: 1040px;
+  justify-content: left;
+}
+
+.chips > div {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.chip {
+  height: 24px;
+  font-size: 18px;
+  box-sizing: border-box;
+  padding-left: 12px;
+  padding-right: 12px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 2);
 }
 
 .fgc .name_twitter {
@@ -185,6 +223,7 @@ body {
   justify-content: center;
   overflow: hidden;
   max-width: 100%;
+  font-size: 18px;
 }
 
 .p2 .extra {
@@ -224,9 +263,10 @@ body {
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   background: var(--text-color);
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  margin-left: -4px;
 }
 
 .light .twitter_logo {
@@ -403,13 +443,9 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 32px;
-  height: 22px;
-  border-radius: 6px;
-}
-
-.ssbu .flagstate .text div {
-  margin-top: 4px;
+  width: 36px;
+  height: 24px;
+  border-radius: 4px;
 }
 
 .sponsor_icon > div > div {
@@ -474,20 +510,6 @@ body {
   width: 48px;
 }
 
-.pronoun {
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: normal;
-  padding-left: 6px;
-  padding-right: 6px;
-  border-radius: 6px;
-  color: var(--bg-color);
-  align-self: center;
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
 .p1 .score {
   color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
@@ -501,10 +523,6 @@ body {
   color: var(--p1-sponsor-color);
 }
 
-.p1 .pronoun {
-  background-color: var(--p1-sponsor-color);
-}
-
 .p2 .score {
   color: var(--p2-score-color);
   margin-left: -8px;
@@ -514,10 +532,6 @@ body {
 
 .p2 .sponsor {
   color: var(--p2-sponsor-color);
-}
-
-.p2 .pronoun {
-  background-color: var(--p2-sponsor-color);
 }
 
 .losers {

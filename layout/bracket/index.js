@@ -8,7 +8,13 @@
       asset: "full",
       zoom: 2,
     },
+    ssb64: {
+      asset: "artwork",
+      zoom: 1.6,
+    },
   };
+
+  window.ALWAYS_EXPAND = true;
 
   var ASSET_TO_USE = {};
 
@@ -75,20 +81,38 @@
     }
 
     if (animations[roundKey][setIndex]) {
-      if (
-        (set.playerId[0] == -2 && set.playerId[1] == -2) ||
-        (set.playerId[0] == -1 && set.playerId[1] != -1) ||
-        (set.playerId[0] != -1 && set.playerId[1] == -1) ||
-        (progressionsOut == 0 &&
-          isGfR &&
-          bracket[GfResetRoundNum - 1].sets[0].score[0] >
-            bracket[GfResetRoundNum - 1].sets[0].score[1])
-      ) {
-        return animations[roundKey][setIndex].tweenTo("hidden");
-      } else if (!set.completed || (isGf && set.score[0] >= set.score[1])) {
-        return animations[roundKey][setIndex].tweenTo("displayed");
+      if (window.ALWAYS_EXPAND) {
+        if (!isGf && !isGfR)
+          return animations[roundKey][setIndex].tweenTo("done");
+
+        if (isGf && set.score[0] >= set.score[1])
+          return animations[roundKey][setIndex].tweenTo("displayed");
+
+        if (isGf)
+          if (
+            progressionsOut == 0 &&
+            isGfR &&
+            bracket[GfResetRoundNum - 1].sets[0].score[0] >
+              bracket[GfResetRoundNum - 1].sets[0].score[1]
+          ) {
+            return animations[roundKey][setIndex].tweenTo("hidden");
+          }
       } else {
-        return animations[roundKey][setIndex].tweenTo("done");
+        if (
+          (set.playerId[0] == -2 && set.playerId[1] == -2) ||
+          (set.playerId[0] == -1 && set.playerId[1] != -1) ||
+          (set.playerId[0] != -1 && set.playerId[1] == -1) ||
+          (progressionsOut == 0 &&
+            isGfR &&
+            bracket[GfResetRoundNum - 1].sets[0].score[0] >
+              bracket[GfResetRoundNum - 1].sets[0].score[1])
+        ) {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        } else if (!set.completed || (isGf && set.score[0] >= set.score[1])) {
+          return animations[roundKey][setIndex].tweenTo("displayed");
+        } else {
+          return animations[roundKey][setIndex].tweenTo("done");
+        }
       }
     }
     return null;
@@ -494,7 +518,7 @@
                   } .slot_p_${p}.container .score`
                 ),
                 `
-                  ${score == -1 ? "DQ" : score}
+                  ${slot.completed ? (score == -1 ? "DQ" : score) : ""}
                 `
               );
             },

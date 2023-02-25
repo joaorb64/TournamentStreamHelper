@@ -75,6 +75,22 @@ function SetInnerHtml(
         },
       });
     }
+
+    if (html.length == 0) {
+      gsap.to(element, {
+        width: 0,
+        overflow: "hidden",
+        padding: 0,
+        margin: 0,
+      });
+    } else {
+      gsap.to(element, {
+        width: "",
+        overflow: "",
+        padding: "",
+        margin: "",
+      });
+    }
   });
 }
 
