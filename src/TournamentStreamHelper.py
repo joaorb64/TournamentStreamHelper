@@ -668,7 +668,7 @@ class Window(QMainWindow):
                             atexit.register(ExtractUpdate)
 
                             messagebox = generate_restart_messagebox(
-                                QApplication.translate("app", "Download complete. The program will now close to extract the update."))
+                                QApplication.translate("app", "Update download complete. The program will extract the update upon closing."))
                                 
                             messagebox.exec()
 
