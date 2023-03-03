@@ -87,6 +87,11 @@ class WebServer(QThread):
         WebServer.team_scoreup(teams[int(json.loads(request.get_data()).get("winner"))])
         
         return "OK"
+
+    @app.route('/set_gentlemans', methods=['POST'])
+    def set_gentlemans():
+        WebServer.stageWidget.stageStrikeLogic.SetGentlemans(json.loads(request.get_data()).get("value"))
+        return "OK"
     
     @app.route('/reset', methods=['POST'])
     def reset():

@@ -18,6 +18,7 @@ class TSHStageStrikeLogic():
         self.bestOf = None
         self.timestamp = 0
         self.serverTimestamp = 0
+        self.gentlemans = False
     
     def ExportState(self):
         StateManager.Set("score.stage_strike", {
@@ -29,7 +30,8 @@ class TSHStageStrikeLogic():
             "stagesWon": self.stagesWon,
             "stagesPicked": self.stagesPicked,
             "selectedStage": self.selectedStage,
-            "lastWinner": self.lastWinner
+            "lastWinner": self.lastWinner,
+            "gentlemans": self.gentlemans
         })
 
     def SetRuleset(self, ruleset):
@@ -48,6 +50,7 @@ class TSHStageStrikeLogic():
         self.selectedStage = None
         self.lastWinner = -1
         self.serverTimestamp = 0
+        self.gentlemans = False
 
         self.ExportState()
 
@@ -55,6 +58,7 @@ class TSHStageStrikeLogic():
     
     def RpsResult(self, player):
         print("RPS won by", player)
+        self.lastWinner = player
         self.currPlayer = player
         self.ExportState()
     
@@ -103,7 +107,7 @@ class TSHStageStrikeLogic():
     def StageClicked(self, stage):
         print("Clicked on stage", stage.get("codename"))
 
-        if self.currGame > 0 and self.currStep > 0:
+        if (self.currGame > 0 and self.currStep > 0) or self.gentlemans:
             # we're picking
             if not self.IsStageBanned(stage.get("codename")) and not self.IsStageStriked(stage.get("codename")):
                 self.selectedStage = stage.get("codename")
@@ -162,6 +166,7 @@ class TSHStageStrikeLogic():
         self.strikedStages = [[]]
         self.selectedStage = None
         self.strikedBy = [[], []]
+        self.gentlemans = False
 
         self.lastWinner = id
 
@@ -171,3 +176,15 @@ class TSHStageStrikeLogic():
 
         self.ExportState()
         #self.UpdateStreamScore();
+    
+    def SetGentlemans(self, value):
+        print(f"Setting gentlemans to {value}")
+        self.gentlemans = value
+
+        self.currPlayer = self.lastWinner
+        self.currStep = 0
+        self.strikedStages = [[]]
+        self.strikedBy = [[], []]
+        self.selectedStage = None
+
+        self.ExportState()

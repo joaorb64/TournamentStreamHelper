@@ -65,6 +65,7 @@ class App extends Component {
     phase: null,
     match: null,
     bestOf: null,
+    gentlemans: false,
   };
 
   Initialize(resetStreamScore = false) {
@@ -75,9 +76,13 @@ class App extends Component {
   }
 
   GetStage(stage) {
-    let found = this.state.ruleset.neutralStages.find((s) => s.codename === stage);
+    let found = this.state.ruleset.neutralStages.find(
+      (s) => s.codename === stage
+    );
     if (found) return found;
-    found = this.state.ruleset.counterpickStages.find((s) => s.codename === stage);
+    found = this.state.ruleset.counterpickStages.find(
+      (s) => s.codename === stage
+    );
     if (found) return found;
     return null;
   }
@@ -169,8 +174,16 @@ class App extends Component {
     fetch("http://" + window.location.hostname + ":5000/match_win", {
       method: "POST",
       contentType: "application/json",
-      body: JSON.stringify({"winner": id})
-    })
+      body: JSON.stringify({ winner: id }),
+    });
+  }
+
+  SetGentlemans(value) {
+    fetch("http://" + window.location.hostname + ":5000/set_gentlemans", {
+      method: "POST",
+      contentType: "application/json",
+      body: JSON.stringify({ value: value }),
+    });
   }
 
   GetStrikeNumber() {
@@ -213,10 +226,7 @@ class App extends Component {
           bestOf: data.best_of,
         });
 
-        if (
-          data.state &&
-          Object.keys(data.state).length > 0
-        ) {
+        if (data.state && Object.keys(data.state).length > 0) {
           this.setState({
             currGame: data.state.currGame,
             currPlayer: data.state.currPlayer,
@@ -227,6 +237,7 @@ class App extends Component {
             stagesPicked: data.state.stagesPicked,
             selectedStage: data.state.selectedStage,
             lastWinner: data.state.lastWinner,
+            gentlemans: data.state.gentlemans,
           });
         }
       })
@@ -302,34 +313,49 @@ class App extends Component {
                       >
                         {this.state.selectedStage ? (
                           <>{i18n.t("report_results")}</>
-                        ) : this.state.currGame > 0 &&
-                          this.state.currStep > 0 ? (
-                          <>
-                            <span
-                              style={{
-                                color:
-                                  darkTheme.palette[
-                                    `p${this.state.currPlayer + 1}color`
-                                  ].main,
-                              }}
-                            >
-                              {this.state.playerNames[this.state.currPlayer]}
-                            </span>
-                            , {i18n.t("pick_a_stage")}
-                          </>
                         ) : (
                           <>
-                            <span
-                              style={{
-                                color:
-                                  darkTheme.palette[
-                                    `p${this.state.currPlayer + 1}color`
-                                  ].main,
-                              }}
-                            >
-                              {this.state.playerNames[this.state.currPlayer]}
-                            </span>
-                            , {i18n.t("ban")} {this.GetStrikeNumber()} stage(s)
+                            {this.state.gentlemans ? (
+                              <>{i18n.t("GENTLEMANS: Pick a stage")}</>
+                            ) : this.state.currGame > 0 &&
+                              this.state.currStep > 0 ? (
+                              <>
+                                <span
+                                  style={{
+                                    color:
+                                      darkTheme.palette[
+                                        `p${this.state.currPlayer + 1}color`
+                                      ].main,
+                                  }}
+                                >
+                                  {
+                                    this.state.playerNames[
+                                      this.state.currPlayer
+                                    ]
+                                  }
+                                </span>
+                                , {i18n.t("pick_a_stage")}
+                              </>
+                            ) : (
+                              <>
+                                <span
+                                  style={{
+                                    color:
+                                      darkTheme.palette[
+                                        `p${this.state.currPlayer + 1}color`
+                                      ].main,
+                                  }}
+                                >
+                                  {
+                                    this.state.playerNames[
+                                      this.state.currPlayer
+                                    ]
+                                  }
+                                </span>
+                                , {i18n.t("ban")} {this.GetStrikeNumber()}{" "}
+                                stage(s)
+                              </>
+                            )}
                           </>
                         )}
                       </Typography>
@@ -366,7 +392,28 @@ class App extends Component {
                         : this.state.ruleset.neutralStages
                       ).map((stage) => (
                         <Grid item xs={4} sm={3} md={2}>
-                          <Card>
+                          <Card
+                            style={{
+                              borderStyle: "solid",
+                              borderWidth: 3,
+                              borderColor:
+                                this.IsStageStriked(stage.codename) ||
+                                this.IsStageBanned(stage.codename)
+                                  ? "#f44336ff"
+                                  : this.state.selectedStage === stage.codename
+                                  ? "#4caf50ff"
+                                  : "gray",
+                              boxShadow:
+                                this.IsStageStriked(stage.codename) ||
+                                this.IsStageBanned(stage.codename)
+                                  ? "0 0 10px #f44336ff"
+                                  : this.state.selectedStage === stage.codename
+                                  ? "0 0 10px #4caf50ff"
+                                  : "0 0 0px #ffffff00",
+                              transitionProperty: "border-color box-shadow",
+                              transitionDuration: "500ms",
+                            }}
+                          >
                             <CardActionArea
                               onClick={() => this.StageClicked(stage)}
                             >
@@ -395,22 +442,41 @@ class App extends Component {
                               ) : null}
                               {this.state.selectedStage === stage.codename ? (
                                 <>
-                                  <div className="stamp stage-selected"></div>
-                                  <div className="banned_by">
-                                    <Typography
-                                      variant="button"
-                                      component="div"
-                                      fontWeight={"bold"}
-                                      noWrap
-                                      fontSize={{ xs: 8, md: "" }}
-                                    >
-                                      {
-                                        this.state.playerNames[
-                                          this.state.currPlayer
-                                        ]
-                                      }
-                                    </Typography>
-                                  </div>
+                                  {this.state.gentlemans ? (
+                                    <>
+                                      <div className="stamp stage-gentlemans"></div>
+                                      <div className="banned_by">
+                                        <Typography
+                                          variant="button"
+                                          component="div"
+                                          fontWeight={"bold"}
+                                          noWrap
+                                          fontSize={{ xs: 8, md: "" }}
+                                        >
+                                          {i18n.t("Gentlemans")}
+                                        </Typography>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="stamp stage-selected"></div>
+                                      <div className="banned_by">
+                                        <Typography
+                                          variant="button"
+                                          component="div"
+                                          fontWeight={"bold"}
+                                          noWrap
+                                          fontSize={{ xs: 8, md: "" }}
+                                        >
+                                          {
+                                            this.state.playerNames[
+                                              this.state.currPlayer
+                                            ]
+                                          }
+                                        </Typography>
+                                      </div>
+                                    </>
+                                  )}
                                 </>
                               ) : null}
                               <CardMedia
@@ -519,6 +585,21 @@ class App extends Component {
                         {i18n.t("reset")}
                       </Button>
                     </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => {
+                          this.SetGentlemans(!this.state.gentlemans);
+                        }}
+                      >
+                        {i18n.t("gentlemans")}
+                      </Button>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Box>
@@ -564,11 +645,16 @@ class App extends Component {
                         color="p1color"
                         variant="contained"
                         onClick={() =>
-                          fetch("http://" + window.location.hostname + ":5000/rps_win", {
-                            method: "POST",
-                            contentType: "application/json",
-                            body: JSON.stringify({"winner": 0})
-                          })
+                          fetch(
+                            "http://" +
+                              window.location.hostname +
+                              ":5000/rps_win",
+                            {
+                              method: "POST",
+                              contentType: "application/json",
+                              body: JSON.stringify({ winner: 0 }),
+                            }
+                          )
                         }
                       >
                         {this.state.playerNames[0]} {i18n.t("won")}
@@ -584,11 +670,16 @@ class App extends Component {
                         color="p2color"
                         variant="contained"
                         onClick={() =>
-                          fetch("http://" + window.location.hostname + ":5000/rps_win", {
-                            method: "POST",
-                            contentType: "application/json",
-                            body: JSON.stringify({"winner": 1})
-                          })
+                          fetch(
+                            "http://" +
+                              window.location.hostname +
+                              ":5000/rps_win",
+                            {
+                              method: "POST",
+                              contentType: "application/json",
+                              body: JSON.stringify({ winner: 1 }),
+                            }
+                          )
                         }
                       >
                         {this.state.playerNames[1]} {i18n.t("won")}
@@ -608,11 +699,16 @@ class App extends Component {
                     color="success"
                     variant="outlined"
                     onClick={() =>
-                      fetch("http://" + window.location.hostname + ":5000/rps_win", {
-                        method: "POST",
-                        contentType: "application/json",
-                        body: JSON.stringify({"winner": Math.random() > 0.5 ? 1 : 0})
-                      })
+                      fetch(
+                        "http://" + window.location.hostname + ":5000/rps_win",
+                        {
+                          method: "POST",
+                          contentType: "application/json",
+                          body: JSON.stringify({
+                            winner: Math.random() > 0.5 ? 1 : 0,
+                          }),
+                        }
+                      )
                     }
                   >
                     {i18n.t("randomize")}

@@ -84,3 +84,6 @@ body {
 .stamp.stage-selected {
   background-image: url(./stage_select.svg);
 }
+.stamp.stage-selected-gentlemans {
+  background-image: url(./stage_gentlemans.svg);
+}
