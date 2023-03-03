@@ -6,7 +6,6 @@
     "ban": "ban",
     "stage": "stage(s)",
     "confirm": "confirm",
-    "reset": "reset",
     "report_results": "Report Results",
     "pick_a_stage": "pick a stage",
     "rock_paper_scissors": "Rock-Paper-Scissors",
@@ -14,5 +13,8 @@
     "p2": "P2",
     "no_ruleset_error": "No ruleset is selected. Please notify production/TO to select a ruleset.",
     "game": "Game",
-    "best_of": "Best of"
+    "best_of": "Best of",
+    "restart_all": "Restart All",
+    "gentlemans": "Gentleman's",
+    "gentlemans_pick": "Gentleman's pick"
 }

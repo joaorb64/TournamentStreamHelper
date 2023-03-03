@@ -26,6 +26,8 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import i18n from "./i18n/config";
+import { Check, Handshake, RestartAlt } from "@mui/icons-material";
+import i18next from "i18next";
 
 const defaultTheme = createTheme({
   palette: {
@@ -316,7 +318,10 @@ class App extends Component {
                         ) : (
                           <>
                             {this.state.gentlemans ? (
-                              <>{i18n.t("GENTLEMANS: Pick a stage")}</>
+                              <>
+                                {i18n.t("gentlemans_pick")}:{" "}
+                                {i18n.t("pick_a_stage")}
+                              </>
                             ) : this.state.currGame > 0 &&
                               this.state.currStep > 0 ? (
                               <>
@@ -396,13 +401,14 @@ class App extends Component {
                             style={{
                               borderStyle: "solid",
                               borderWidth: 3,
+                              borderRadius: 8,
                               borderColor:
                                 this.IsStageStriked(stage.codename) ||
                                 this.IsStageBanned(stage.codename)
                                   ? "#f44336ff"
                                   : this.state.selectedStage === stage.codename
                                   ? "#4caf50ff"
-                                  : "gray",
+                                  : "lightgray",
                               boxShadow:
                                 this.IsStageStriked(stage.codename) ||
                                 this.IsStageBanned(stage.codename)
@@ -453,7 +459,7 @@ class App extends Component {
                                           noWrap
                                           fontSize={{ xs: 8, md: "" }}
                                         >
-                                          {i18n.t("Gentlemans")}
+                                          {i18n.t("gentlemans")}
                                         </Typography>
                                       </div>
                                     </>
@@ -566,8 +572,27 @@ class App extends Component {
                         color="success"
                         variant={this.CanConfirm() ? "contained" : "outlined"}
                         onClick={() => this.ConfirmClicked()}
+                        startIcon={<Check />}
                       >
                         {i18n.t("confirm")}
+                      </Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant={
+                          this.state.gentlemans ? "contained" : "outlined"
+                        }
+                        startIcon={<Handshake />}
+                        onClick={() => {
+                          this.SetGentlemans(!this.state.gentlemans);
+                        }}
+                      >
+                        {i18n.t("gentlemans_pick")}
                       </Button>
                     </Grid>
                     <Grid item xs={4}>
@@ -581,23 +606,9 @@ class App extends Component {
                         onClick={() => {
                           this.Initialize(true);
                         }}
+                        startIcon={<RestartAlt />}
                       >
-                        {i18n.t("reset")}
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => {
-                          this.SetGentlemans(!this.state.gentlemans);
-                        }}
-                      >
-                        {i18n.t("gentlemans")}
+                        {i18n.t("restart_all")}
                       </Button>
                     </Grid>
                   </Grid>
