@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   let ASSET_TO_USE = "full";
   let ZOOM = 1;
   let FLIP_P2_ASSET = true;
@@ -31,12 +31,9 @@
     startingAnimation.restart();
   }
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  async function Update(eventData) {
+    let data = eventData.data;
+    let oldData = eventData.oldData;
 
     if (data.game) {
       if (data.game.codename == "ssbu") {
@@ -60,7 +57,7 @@
 
     if (Object.keys(data.score.team["1"].player).length == 1) {
       [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-        [team.player["1"]].forEach((player, p) => {
+        [team.player["1"]].forEach(async (player, p) => {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -79,7 +76,7 @@
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
-                ${player.name}
+                ${await Transcript(player.name)}
                 ${
                   t == 0
                     ? `
@@ -106,51 +103,6 @@
                 ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
                 : ""
             );
-
-            if (
-              !oldData.score ||
-              JSON.stringify(player.character) !=
-                JSON.stringify(
-                  oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                )
-            ) {
-              let charactersHtml = "";
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets[ASSET_TO_USE]) {
-                  charactersHtml += `
-                    <div class="icon stockicon">
-                        <div style='
-                          ${
-                            t == 1 && FLIP_P2_ASSET
-                              ? "transform: scaleX(-1);"
-                              : ""
-                          }
-                          background-image: url(../../${
-                            character.assets[ASSET_TO_USE].asset
-                          })'></div>
-                    </div>
-                    `;
-                }
-              });
-              SetInnerHtml(
-                $(`.p${t + 1}.character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(`.p${t + 1}.character_container .stockicon div`).each(
-                    (i, e) => {
-                      CenterImage(
-                        $(e),
-                        Object.values(player.character)[i].assets[ASSET_TO_USE],
-                        ZOOM,
-                        { x: 0.5, y: 0.4 }
-                      );
-                    }
-                  );
-                }
-              );
-            }
 
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
@@ -227,49 +179,6 @@
           player.state.asset ? `` : ""
         );
 
-        let oldCharacters = oldData.score
-          ? Object.values(oldData.score.team[`${t + 1}`].player)
-              .map((p) => Object.values(p.character))
-              .map((p) => p[0])
-          : null;
-
-        let characters = Object.values(team.player)
-          .map((p) => Object.values(p.character))
-          .map((p) => p[0]);
-
-        if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
-          let charactersHtml = "";
-          characters.forEach((character, index) => {
-            if (character.assets[ASSET_TO_USE]) {
-              charactersHtml += `
-                <div class="icon stockicon">
-                    <div style='
-                      ${t == 1 && FLIP_P2_ASSET ? "transform: scaleX(-1);" : ""}
-                      background-image: url(../../${
-                        character.assets[ASSET_TO_USE].asset
-                      })'></div>
-                </div>
-                `;
-            }
-          });
-          SetInnerHtml(
-            $(`.p${t + 1}.character_container`),
-            charactersHtml,
-            undefined,
-            0.5,
-            () => {
-              $(`.p${t + 1}.character_container .stockicon div`).each(
-                (i, e) => {
-                  CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM, {
-                    x: 0.5,
-                    y: 0.4,
-                  });
-                }
-              );
-            }
-          );
-        }
-
         SetInnerHtml(
           $(`.p${t + 1}.container .sponsor_icon`),
           player.sponsor_logo ? `` : ""
@@ -311,23 +220,13 @@
     let phaseTexts = [];
 
     SetInnerHtml($(".phase"), data.score.phase);
-    SetInnerHtml($(".match"), data.score.match);
+    // SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
       data.score.best_of_text ? data.score.best_of_text : ""
     );
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
   }
 
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Update();
-      Start();
-      setInterval(Update, 100);
-    });
-  });
-})(jQuery);
+  Start();
+  document.addEventListener("tsh_update", Update);
+});

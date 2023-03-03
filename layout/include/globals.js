@@ -1,9 +1,77 @@
+var data = {};
+var oldData = {};
+
+async function UpdateData() {
+  oldData = data;
+  data = await getData();
+  let event = new CustomEvent("tsh_update");
+  event.data = data;
+  event.oldData = oldData;
+  document.dispatchEvent(event);
+}
+
+async function LoadEverything() {
+  let libPath = "../include/";
+  let scripts = [
+    "node_modules/kuroshiro/dist/kuroshiro.min.js",
+    "node_modules/kuroshiro-analyzer-kuromoji/dist/kuroshiro-analyzer-kuromoji.min.js",
+    "jquery-3.6.0.min.js",
+    "gsap.min.js",
+    "he.js",
+    "node_modules/lodash/lodash.min.js",
+    "assetUtils.js",
+  ];
+
+  let loadPromises = [];
+
+  for (let i = 0; i < scripts.length; i += 1) {
+    let script = document.createElement("script");
+    script.src = libPath + scripts[i];
+    document.head.appendChild(script);
+    loadPromises.push(
+      new Promise((resolve, reject) => {
+        script.onload = () => {
+          console.log(`Loaded script: ${libPath + scripts[i]}`);
+          resolve();
+        };
+        script.onerror = () => {
+          console.log(`Error loading script: ${libPath + scripts[i]}`);
+          reject();
+        };
+      })
+    );
+  }
+
+  return Promise.all(loadPromises).then(async (values) => {
+    console.log("== Loading complete ==");
+    await InitAll();
+  });
+}
+
+async function InitAll() {
+  await LoadKuroshiro();
+
+  setInterval(async () => {
+    await UpdateData();
+  }, 200);
+
+  console.log("== Init complete ==");
+  document.dispatchEvent(new CustomEvent("tsh_init"));
+}
+
 function getData() {
   return $.ajax({
     dataType: "json",
     url: "../../out/program_state.json",
     cache: false,
   });
+}
+
+function RegisterFit(element) {
+  if (!$(element).hasClass("tsh-fit-content")) {
+    $(element).addClass("tsh-fit-content");
+    divResizeObserver.observe($(element).get(0));
+  }
 }
 
 function FitText(target) {
@@ -13,6 +81,7 @@ function FitText(target) {
     if (target.css("width") == null) return;
 
     let textElement = target.find(".text");
+    RegisterFit(target);
 
     if (textElement.text().trim().toLowerCase() == "undefined") {
       textElement.html("");
@@ -21,19 +90,51 @@ function FitText(target) {
     textElement.css("transform", "");
     let scaleX = 1;
 
-    while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
-      scaleX -= 0.01;
+    if (textElement[0].scrollWidth * scaleX > target.width()) {
+      scaleX = target.width() / textElement[0].scrollWidth;
       textElement.css("transform", "scaleX(" + scaleX + ")");
     }
   });
 }
 
-function SetInnerHtml(
+async function LoadKuroshiro() {
+  window.kuroshiro = new Kuroshiro.default();
+  await window.kuroshiro.init(
+    new KuromojiAnalyzer({
+      dictPath: "../include/node_modules/kuromoji/dict",
+    })
+  );
+}
+
+async function Transcript(text) {
+  if (text == null || text.length == 0) return text;
+
+  try {
+    if (window.Kuroshiro.default.Util.hasJapanese(text)) {
+      return window.kuroshiro
+        .convert(text, {
+          mode: "furigana",
+          to: "romaji",
+          romajiSystem: "nippon",
+        })
+        .then((res) => {
+          return res;
+        });
+    } else {
+      return text;
+    }
+  } catch {
+    return text;
+  }
+}
+
+async function SetInnerHtml(
   element,
   html,
   force = undefined,
   fadeTime = 0.5,
-  middleFunction = undefined
+  middleFunction = undefined,
+  options = {}
 ) {
   if (element == null) return;
   if (force == false) return;
@@ -68,27 +169,13 @@ function SetInnerHtml(
           if (middleFunction != undefined) {
             middleFunction();
           }
-          gsap.to(element.find(".text"), {
-            autoAlpha: 1,
-            duration: fadeInTime,
+          $(element).ready((e) => {
+            gsap.to(element.find(".text"), {
+              autoAlpha: 1,
+              duration: fadeInTime,
+            });
           });
         },
-      });
-    }
-
-    if (html.length == 0) {
-      gsap.to(element, {
-        width: 0,
-        overflow: "hidden",
-        padding: 0,
-        margin: 0,
-      });
-    } else {
-      gsap.to(element, {
-        width: "",
-        overflow: "",
-        padding: "",
-        margin: "",
       });
     }
   });
@@ -156,183 +243,255 @@ function resizeInCanvas(image, width, height) {
   return dataURI;
 }
 
-function CenterImage(
-  element,
-  assetData,
-  customZoom = 1,
-  customCenter = null,
-  customElement = null,
-  scale_fill_x = false,
-  scale_fill_y = false
-) {
-  element.css("opacity", "0");
+var imageResizeObserver = new ResizeObserver((entries) => {
+  entries.forEach((entry) => {
+    console.log("Resized");
+    CenterImageDo(entry.target);
+  });
+});
 
-  if (typeof assetData == "string") {
-    assetData = JSON.parse(assetData);
-  }
+var divResizeObserver = new ResizeObserver((entries) => {
+  entries.forEach((entry) => {
+    FitText($(entry.target));
+  });
+});
 
-  let image = 'url("../../' + assetData.asset + '")';
+async function CenterImage(element, assetData, options = {}) {
+  return new Promise((accept, reject) => {
+    try {
+      options = _.defaults(options, {
+        customZoom: 1,
+        customCenter: null,
+        customElement: null,
+        scale_fill_x: false,
+        scale_fill_y: false,
+      });
 
-  if (image != undefined && image.includes("url(")) {
-    let img = new Image();
-    img.src = image.split('url("')[1].split('")')[0];
-
-    $(img).on("load", () => {
-      let eyesight = assetData.eyesight;
-
-      if (!eyesight) {
-        eyesight = {
-          x: img.naturalWidth / 2,
-          y: img.naturalHeight / 2,
-        };
+      if (!assetData) {
+        reject();
       }
-
-      if (!customElement) customElement = element;
 
       console.log(assetData);
 
-      let proportional_zoom = 1;
-      if (assetData.average_size) {
-        proportional_zoom = 0;
-        proportional_zoom = Math.max(
-          proportional_zoom,
-          (customElement.innerWidth() / assetData.average_size.x) * 1.2
-        );
-        proportional_zoom = Math.max(
-          proportional_zoom,
-          (customElement.innerHeight() / assetData.average_size.y) * 1.2
-        );
-      }
-      console.log(proportional_zoom);
+      $(element).attr("data-assetData", JSON.stringify(assetData));
+      $(element).attr("data-customZoom", JSON.stringify(options.customZoom));
+      $(element).attr(
+        "data-customCenter",
+        JSON.stringify(options.customCenter)
+      );
+      $(element).attr(
+        "data-customElement",
+        JSON.stringify(options.customElement)
+      );
+      $(element).attr(
+        "data-scale_fill_x",
+        JSON.stringify(options.scale_fill_x)
+      );
+      $(element).attr(
+        "data-scale_fill_y",
+        JSON.stringify(options.scale_fill_y)
+      );
 
-      // For cropped assets, zoom to fill
-      // Calculate max zoom
-      zoom_x = customElement.innerWidth() / img.naturalWidth;
-      zoom_y = customElement.innerHeight() / img.naturalHeight;
-
-      let minZoom = 1;
-
-      let rescalingFactor = 1;
-
-      if (assetData.rescaling_factor)
-        rescalingFactor = assetData.rescaling_factor;
-
-      let uncropped_edge = assetData.uncropped_edge;
-
-      if (
-        !uncropped_edge ||
-        uncropped_edge == "undefined" ||
-        uncropped_edge.length == 0
-      ) {
-        if (zoom_x > zoom_y) {
-          minZoom = zoom_x;
-        } else {
-          minZoom = zoom_y;
+      CenterImageDo($(element)).then(() => {
+        if (!$(element).hasClass("tsh-center-image")) {
+          $(element).addClass("tsh-center-image");
+          $(element).ready(() => {
+            imageResizeObserver.observe($(element).get(0));
+          });
         }
-      } else {
-        if (
-          uncropped_edge.includes("u") &&
-          uncropped_edge.includes("d") &&
-          uncropped_edge.includes("l") &&
-          uncropped_edge.includes("r")
-        ) {
-          minZoom = customZoom * proportional_zoom * rescalingFactor;
-        } else if (
-          !uncropped_edge.includes("l") &&
-          !uncropped_edge.includes("r")
-        ) {
-          minZoom = zoom_x;
-        } else if (
-          !uncropped_edge.includes("u") &&
-          !uncropped_edge.includes("d")
-        ) {
-          minZoom = zoom_y;
-        } else {
-          minZoom = customZoom * proportional_zoom * rescalingFactor;
-        }
+        accept();
+      });
+    } catch (e) {
+      console.log(e);
+      reject();
+    }
+  });
+}
+
+async function CenterImageDo(element) {
+  return new Promise((accept, reject) => {
+    try {
+      let assetData = JSON.parse($(element).attr("data-assetData"));
+      let customZoom = JSON.parse($(element).attr("data-customZoom"));
+      let customCenter = JSON.parse($(element).attr("data-customCenter"));
+      let customElement = JSON.parse($(element).attr("data-customElement"));
+      let scale_fill_x = JSON.parse($(element).attr("data-scale_fill_x"));
+      let scale_fill_y = JSON.parse($(element).attr("data-scale_fill_y"));
+
+      if (typeof assetData == "string") {
+        assetData = JSON.parse(assetData);
       }
+      if (!assetData) return;
 
-      if (scale_fill_x && !scale_fill_y) {
-        minZoom = zoom_x;
-      } else if (scale_fill_y && !scale_fill_x) {
-        minZoom = zoom_y;
-      } else if (scale_fill_x && scale_fill_y) {
-        minZoom = Math.max(zoom_x, zoom_y);
+      let image = 'url("../../' + assetData.asset + '")';
+
+      if (image != undefined && image.includes("url(")) {
+        let img = new Image();
+        img.src = "../../" + assetData.asset;
+
+        $(img).on("load", () => {
+          let eyesight = assetData.eyesight;
+
+          if (!eyesight) {
+            eyesight = {
+              x: img.naturalWidth / 2,
+              y: img.naturalHeight / 2,
+            };
+          }
+
+          if (!customElement) customElement = element;
+
+          let proportional_zoom = 1;
+          if (assetData.average_size) {
+            proportional_zoom = 0;
+            proportional_zoom = Math.max(
+              proportional_zoom,
+              ($(customElement).innerWidth() / assetData.average_size.x) * 1.2
+            );
+            proportional_zoom = Math.max(
+              proportional_zoom,
+              ($(customElement).innerHeight() / assetData.average_size.y) * 1.2
+            );
+          }
+          console.log(proportional_zoom);
+
+          // For cropped assets, zoom to fill
+          // Calculate max zoom
+          zoom_x = $(customElement).innerWidth() / img.naturalWidth;
+          zoom_y = $(customElement).innerHeight() / img.naturalHeight;
+
+          let minZoom = 1;
+
+          let rescalingFactor = 1;
+
+          if (assetData.rescaling_factor)
+            rescalingFactor = assetData.rescaling_factor;
+
+          let uncropped_edge = assetData.uncropped_edge;
+
+          if (
+            !uncropped_edge ||
+            uncropped_edge == "undefined" ||
+            uncropped_edge.length == 0
+          ) {
+            if (zoom_x > zoom_y) {
+              minZoom = zoom_x;
+            } else {
+              minZoom = zoom_y;
+            }
+          } else {
+            if (
+              uncropped_edge.includes("u") &&
+              uncropped_edge.includes("d") &&
+              uncropped_edge.includes("l") &&
+              uncropped_edge.includes("r")
+            ) {
+              minZoom = customZoom * proportional_zoom * rescalingFactor;
+            } else if (
+              !uncropped_edge.includes("l") &&
+              !uncropped_edge.includes("r")
+            ) {
+              minZoom = zoom_x;
+            } else if (
+              !uncropped_edge.includes("u") &&
+              !uncropped_edge.includes("d")
+            ) {
+              minZoom = zoom_y;
+            } else {
+              minZoom = customZoom * proportional_zoom * rescalingFactor;
+            }
+          }
+
+          if (scale_fill_x && !scale_fill_y) {
+            minZoom = zoom_x;
+          } else if (scale_fill_y && !scale_fill_x) {
+            minZoom = zoom_y;
+          } else if (scale_fill_x && scale_fill_y) {
+            minZoom = Math.max(zoom_x, zoom_y);
+          }
+
+          zoom = Math.max(minZoom, customZoom * minZoom);
+
+          // Cetering
+          let xx = 0;
+          let yy = 0;
+
+          if (!customCenter) {
+            xx = -eyesight.x * zoom + $(element).innerWidth() / 2;
+          } else {
+            xx = -eyesight.x * zoom + $(element).innerWidth() * customCenter.x;
+          }
+
+          let maxMoveX = $(element).innerWidth() - img.naturalWidth * zoom;
+
+          if (!uncropped_edge || !uncropped_edge.includes("l")) {
+            if (xx > 0) xx = 0;
+          }
+          if (!uncropped_edge || !uncropped_edge.includes("r")) {
+            if (xx < maxMoveX) xx = maxMoveX;
+          }
+
+          if (!customCenter) {
+            yy = -eyesight.y * zoom + $(element).innerHeight() / 2;
+          } else {
+            yy = -eyesight.y * zoom + $(element).innerHeight() * customCenter.y;
+          }
+
+          let maxMoveY = $(element).innerHeight() - img.naturalHeight * zoom;
+
+          if (!uncropped_edge || !uncropped_edge.includes("u")) {
+            if (yy > 0) yy = 0;
+          }
+          if (!uncropped_edge || !uncropped_edge.includes("d")) {
+            if (yy < maxMoveY) yy = maxMoveY;
+          }
+
+          console.log("zoom", zoom);
+
+          $(element).css(
+            "background-position",
+            `
+              ${xx}px
+              ${yy}px
+            `
+          );
+
+          $(element).css(
+            "background-size",
+            `
+              ${img.naturalWidth * zoom}px
+              ${img.naturalHeight * zoom}px
+            `
+          );
+          $(element).css("background-repeat", "no-repeat");
+
+          $(element)
+            .css(
+              "background-image",
+              "url(" +
+                resizeInCanvas(
+                  img,
+                  img.naturalWidth * zoom,
+                  img.naturalHeight * zoom
+                ) +
+                ")"
+            )
+            .promise()
+            .done(() => {
+              accept();
+            });
+
+          //element.css("background-position", "initial");
+          //element.css("position", "fixed");
+          //element.css("width", img.naturalWidth * zoom);
+          //element.css("height", img.naturalHeight * zoom);
+        });
       }
-
-      zoom = Math.max(minZoom, customZoom * minZoom);
-
-      // Cetering
-      let xx = 0;
-      let yy = 0;
-
-      if (!customCenter) {
-        xx = -eyesight.x * zoom + element.innerWidth() / 2;
-      } else {
-        xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x;
-      }
-
-      let maxMoveX = element.innerWidth() - img.naturalWidth * zoom;
-
-      if (!uncropped_edge || !uncropped_edge.includes("l")) {
-        if (xx > 0) xx = 0;
-      }
-      if (!uncropped_edge || !uncropped_edge.includes("r")) {
-        if (xx < maxMoveX) xx = maxMoveX;
-      }
-
-      if (!customCenter) {
-        yy = -eyesight.y * zoom + element.innerHeight() / 2;
-      } else {
-        yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y;
-      }
-
-      let maxMoveY = element.innerHeight() - img.naturalHeight * zoom;
-
-      if (!uncropped_edge || !uncropped_edge.includes("u")) {
-        if (yy > 0) yy = 0;
-      }
-      if (!uncropped_edge || !uncropped_edge.includes("d")) {
-        if (yy < maxMoveY) yy = maxMoveY;
-      }
-
-      console.log("zoom", zoom);
-
-      element.css(
-        "background-position",
-        `
-          ${xx}px
-          ${yy}px
-        `
-      );
-
-      element.css(
-        "background-size",
-        `
-          ${img.naturalWidth * zoom}px
-          ${img.naturalHeight * zoom}px
-        `
-      );
-
-      element.css(
-        "background-image",
-        "url(" +
-          resizeInCanvas(
-            img,
-            img.naturalWidth * zoom,
-            img.naturalHeight * zoom
-          ) +
-          ")"
-      );
-      element.css("background-repeat", "no-repeat");
-      element.css("opacity", "1");
-
-      //element.css("background-position", "initial");
-      //element.css("position", "fixed");
-      //element.css("width", img.naturalWidth * zoom);
-      //element.css("height", img.naturalHeight * zoom);
-    });
-  }
+    } catch (e) {
+      console.log(e);
+      reject();
+    }
+  });
 }
 
 async function FindImages(folder = "") {
