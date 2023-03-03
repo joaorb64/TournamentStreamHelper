@@ -13,12 +13,12 @@ async function UpdateData() {
 async function LoadEverything() {
   let libPath = "../include/";
   let scripts = [
-    "node_modules/kuroshiro/dist/kuroshiro.min.js",
-    "node_modules/kuroshiro-analyzer-kuromoji/dist/kuroshiro-analyzer-kuromoji.min.js",
+    "kuroshiro.min.js",
+    "kuroshiro-analyzer-kuromoji.min.js",
     "jquery-3.6.0.min.js",
     "gsap.min.js",
     "he.js",
-    "node_modules/lodash/lodash.min.js",
+    "lodash.min.js",
     "assetUtils.js",
   ];
 
@@ -101,7 +101,7 @@ async function LoadKuroshiro() {
   window.kuroshiro = new Kuroshiro.default();
   await window.kuroshiro.init(
     new KuromojiAnalyzer({
-      dictPath: "../include/node_modules/kuromoji/dict",
+      dictPath: "../include/kuromoji",
     })
   );
 }
