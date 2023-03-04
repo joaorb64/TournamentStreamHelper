@@ -92,6 +92,16 @@ class WebServer(QThread):
     def set_gentlemans():
         WebServer.stageWidget.stageStrikeLogic.SetGentlemans(json.loads(request.get_data()).get("value"))
         return "OK"
+
+    @app.route('/stage_strike_undo', methods=['POST'])
+    def stage_strike_undo():
+        WebServer.stageWidget.stageStrikeLogic.Undo()
+        return "OK"
+
+    @app.route('/stage_strike_redo', methods=['POST'])
+    def stage_strike_redo():
+        WebServer.stageWidget.stageStrikeLogic.Redo()
+        return "OK"
     
     @app.route('/reset', methods=['POST'])
     def reset():

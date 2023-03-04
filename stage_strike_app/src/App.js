@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import i18n from "./i18n/config";
-import { Check, Handshake, RestartAlt } from "@mui/icons-material";
+import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
 import i18next from "i18next";
 
 const defaultTheme = createTheme({
@@ -69,6 +69,8 @@ class App extends Component {
     match: null,
     bestOf: null,
     gentlemans: false,
+    canUndo: false,
+    canRedo: false,
   };
 
   Initialize(resetStreamScore = false) {
@@ -140,6 +142,20 @@ class App extends Component {
     fetch("http://" + window.location.hostname + ":5000/stage_clicked", {
       method: "POST",
       body: JSON.stringify(stage),
+      contentType: "application/json",
+    });
+  }
+
+  Undo() {
+    fetch("http://" + window.location.hostname + ":5000/stage_strike_undo", {
+      method: "POST",
+      contentType: "application/json",
+    });
+  }
+
+  Redo() {
+    fetch("http://" + window.location.hostname + ":5000/stage_strike_redo", {
+      method: "POST",
       contentType: "application/json",
     });
   }
@@ -241,6 +257,8 @@ class App extends Component {
             selectedStage: data.state.selectedStage,
             lastWinner: data.state.lastWinner,
             gentlemans: data.state.gentlemans,
+            canUndo: data.state.canUndo,
+            canRedo: data.state.canRedo,
           });
         }
       })
@@ -433,7 +451,7 @@ class App extends Component {
                                       component="div"
                                       fontWeight={"bold"}
                                       noWrap
-                                      fontSize={{ xs: 8, md: "" }}
+                                      fontSize={{ xs: 16, md: "" }}
                                     >
                                       {this.state.strikedBy[0].findIndex(
                                         (s) => s == stage.codename
@@ -458,7 +476,7 @@ class App extends Component {
                                           component="div"
                                           fontWeight={"bold"}
                                           noWrap
-                                          fontSize={{ xs: 8, md: "" }}
+                                          fontSize={{ xs: 16, md: "" }}
                                         >
                                           {i18n.t("gentlemans")}
                                         </Typography>
@@ -473,7 +491,7 @@ class App extends Component {
                                           component="div"
                                           fontWeight={"bold"}
                                           noWrap
-                                          fontSize={{ xs: 8, md: "" }}
+                                          fontSize={{ xs: 16, md: "" }}
                                         >
                                           {
                                             this.state.playerNames[
@@ -607,7 +625,7 @@ class App extends Component {
                     spacing={2}
                     justifyContent="center"
                   >
-                    <Grid item xs={4}>
+                    <Grid item xs>
                       <Button
                         sx={{
                           flexDirection: { xs: "column", lg: "unset" },
@@ -629,27 +647,49 @@ class App extends Component {
                         {i18n.t("gentlemans_pick")}
                       </Button>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs>
                       <Button
-                        sx={{
-                          flexDirection: { xs: "column", lg: "unset" },
-                          fontSize: { xs: 10, lg: "unset" },
-                        }}
                         size={
                           darkTheme.breakpoints.up("md") ? "large" : "small"
                         }
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
+                        disabled={!this.state.canUndo}
                         variant="outlined"
-                        onClick={() => {
-                          this.Initialize(true);
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
                         }}
-                        startIcon={<RestartAlt />}
+                        onClick={() => {
+                          this.Undo();
+                        }}
+                        startIcon={<Undo />}
                       >
-                        {i18n.t("restart_current")}
+                        {i18n.t("undo")}
                       </Button>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        disabled={!this.state.canRedo}
+                        variant="outlined"
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
+                        }}
+                        onClick={() => {
+                          this.Redo();
+                        }}
+                        startIcon={<Redo />}
+                      >
+                        {i18n.t("redo")}
+                      </Button>
+                    </Grid>
+                    <Grid item xs>
                       <Button
                         size={
                           darkTheme.breakpoints.up("md") ? "large" : "small"
