@@ -23,6 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Fab,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import i18n from "./i18n/config";
@@ -487,21 +488,23 @@ class App extends Component {
                               ) : null}
                               <CardMedia
                                 component="img"
-                                height={{ sm: "50", md: "100" }}
+                                style={{ aspectRatio: "3 / 2" }}
                                 image={`http://${window.location.hostname}:5000/${stage.path}`}
                               />
-                              <CardContent
-                                style={{ padding: darkTheme.spacing(1) }}
+                              <Box
+                                sx={{
+                                  padding: { xs: "4px", sm: "6px", lg: "8px" },
+                                }}
                               >
                                 <Typography
                                   variant="button"
                                   component="div"
                                   noWrap
-                                  fontSize={{ xs: 8, md: "" }}
+                                  fontSize={{ xs: 8, sm: 12, lg: "" }}
                                 >
                                   {stage.name}
                                 </Typography>
-                              </CardContent>
+                              </Box>
                             </CardActionArea>
                           </Card>
                         </Grid>
@@ -517,44 +520,86 @@ class App extends Component {
                   justifyItems="center"
                   style={{ flexGrow: 0 }}
                 >
-                  {this.state.selectedStage ? (
-                    <Grid
-                      container
-                      item
-                      xs={12}
-                      spacing={2}
-                      justifyContent="center"
-                    >
-                      <Grid item xs={4}>
-                        <Button
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          color="p1color"
-                          variant="contained"
-                          onClick={() => this.MatchWinner(0)}
-                        >
-                          {this.state.playerNames[0]} {i18n.t("won")}
-                        </Button>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Button
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          color="p2color"
-                          variant="contained"
-                          onClick={() => this.MatchWinner(1)}
-                        >
-                          {this.state.playerNames[1]} {i18n.t("won")}
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  ) : null}
+                  <Box style={{ position: "relative", width: "100%" }}>
+                    {this.CanConfirm() && (
+                      <Fab
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        color="success"
+                        variant="extended"
+                        onClick={() => this.ConfirmClicked()}
+                        style={{
+                          top: -16,
+                          left: "50%",
+                          transform: "translateX(-50%) translateY(-100%)",
+                          position: "absolute",
+                        }}
+                        sx={{
+                          minWidth: {
+                            xs: "100%",
+                            md: "33%",
+                          },
+                        }}
+                      >
+                        <Check sx={{ mr: 1 }} />
+                        {i18n.t("confirm")}
+                      </Fab>
+                    )}
+                    {this.state.selectedStage && (
+                      <Fab
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        color="p1color"
+                        variant="extended"
+                        onClick={() => this.MatchWinner(0)}
+                        style={{
+                          top: -16,
+                          left: 16,
+                          transform: "translateY(-100%)",
+                          position: "absolute",
+                        }}
+                        sx={{
+                          width: {
+                            xs: "45%",
+                            md: "33%",
+                          },
+                        }}
+                      >
+                        {this.state.playerNames[0]} {i18n.t("won")}
+                      </Fab>
+                    )}
+
+                    {this.state.selectedStage && (
+                      <Fab
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        color="p2color"
+                        variant="extended"
+                        onClick={() => this.MatchWinner(1)}
+                        style={{
+                          top: -16,
+                          right: 16,
+                          transform: "translateY(-100%)",
+                          position: "absolute",
+                        }}
+                        sx={{
+                          width: {
+                            xs: "45%",
+                            md: "33%",
+                          },
+                        }}
+                      >
+                        {this.state.playerNames[1]} {i18n.t("won")}
+                      </Fab>
+                    )}
+                  </Box>
                   <Grid
                     container
                     item
@@ -564,21 +609,10 @@ class App extends Component {
                   >
                     <Grid item xs={4}>
                       <Button
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        color="success"
-                        variant={this.CanConfirm() ? "contained" : "outlined"}
-                        onClick={() => this.ConfirmClicked()}
-                        startIcon={<Check />}
-                      >
-                        {i18n.t("confirm")}
-                      </Button>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
+                        }}
                         size={
                           darkTheme.breakpoints.up("md") ? "large" : "small"
                         }
@@ -597,12 +631,36 @@ class App extends Component {
                     </Grid>
                     <Grid item xs={4}>
                       <Button
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
+                        }}
                         size={
                           darkTheme.breakpoints.up("md") ? "large" : "small"
                         }
                         fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                         fullWidth
                         variant="outlined"
+                        onClick={() => {
+                          this.Initialize(true);
+                        }}
+                        startIcon={<RestartAlt />}
+                      >
+                        {i18n.t("restart_current")}
+                      </Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant="outlined"
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
+                        }}
                         onClick={() => {
                           this.Initialize(true);
                         }}

@@ -10,9 +10,10 @@
     "p1": "P1",
     "p2": "P2",
     "no_ruleset_error": "Regras não selecionadas. Notifique a produção ou os organizadores para selecionar as regras.",
-    "game": "Game",
+    "game": "Partida",
     "best_of": "Melhor de",
-    "restart_all": "reiniciar tudo",
+    "restart_current": "Reiniciar seleção atual",
+    "restart_all": "Reiniciar tudo",
     "gentlemans": "Acordo",
     "gentlemans_pick": "Escolha em acordo"
 }
