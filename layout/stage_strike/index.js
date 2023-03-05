@@ -159,7 +159,11 @@
                     data.score.stage_strike.selectedStage == stage.codename
                       ? `<div class="banned-by-name">
                         <div class="text">
-                          ${teamNames[data.score.stage_strike.currPlayer]}
+                          ${
+                            data.score.stage_strike.gentlemans
+                              ? "Gentlemans"
+                              : teamNames[data.score.stage_strike.currPlayer]
+                          }
                         </div>
                       </div>`
                       : ""

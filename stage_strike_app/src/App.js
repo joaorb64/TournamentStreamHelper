@@ -165,7 +165,8 @@ class App extends Component {
       if (this.state.currGame === 0) {
         if (
           this.state.strikedStages[this.state.currStep].length ===
-          this.state.ruleset.strikeOrder[this.state.currStep]
+            this.state.ruleset.strikeOrder[this.state.currStep] &&
+          !this.state.selectedStage
         ) {
           return true;
         }
@@ -392,12 +393,7 @@ class App extends Component {
                   textAlign={"center"}
                   spacing={1}
                   justifyItems="center"
-                  alignContent={"center"}
-                  alignItems="center"
-                  sx={{
-                    overflow: { xs: "scroll", lg: "hidden" },
-                    "flex-wrap": { xs: "nowrap", lg: "wrap" },
-                  }}
+                  style={{ overflow: "auto", height: "100%" }}
                 >
                   <Grid
                     item
@@ -406,128 +402,125 @@ class App extends Component {
                     spacing={2}
                     justifyContent="center"
                     alignContent={"center"}
-                    style={{ height: "100%" }}
                   >
-                    <>
-                      {(this.state.currGame > 0
-                        ? this.state.ruleset.neutralStages.concat(
-                            this.state.ruleset.counterpickStages
-                          )
-                        : this.state.ruleset.neutralStages
-                      ).map((stage) => (
-                        <Grid item xs={4} sm={3} md={2}>
-                          <Card
-                            style={{
-                              borderStyle: "solid",
-                              borderWidth: 3,
-                              borderRadius: 8,
-                              borderColor:
-                                this.IsStageStriked(stage.codename) ||
-                                this.IsStageBanned(stage.codename)
-                                  ? "#f44336ff"
-                                  : this.state.selectedStage === stage.codename
-                                  ? "#4caf50ff"
-                                  : "lightgray",
-                              boxShadow:
-                                this.IsStageStriked(stage.codename) ||
-                                this.IsStageBanned(stage.codename)
-                                  ? "0 0 10px #f44336ff"
-                                  : this.state.selectedStage === stage.codename
-                                  ? "0 0 10px #4caf50ff"
-                                  : "0 0 0px #ffffff00",
-                              transitionProperty: "border-color box-shadow",
-                              transitionDuration: "500ms",
-                            }}
+                    {(this.state.currGame > 0
+                      ? this.state.ruleset.neutralStages.concat(
+                          this.state.ruleset.counterpickStages
+                        )
+                      : this.state.ruleset.neutralStages
+                    ).map((stage) => (
+                      <Grid item xs={4} sm={3} md={2}>
+                        <Card
+                          style={{
+                            borderStyle: "solid",
+                            borderWidth: 3,
+                            borderRadius: 8,
+                            borderColor:
+                              this.IsStageStriked(stage.codename) ||
+                              this.IsStageBanned(stage.codename)
+                                ? "#f44336ff"
+                                : this.state.selectedStage === stage.codename
+                                ? "#4caf50ff"
+                                : "lightgray",
+                            boxShadow:
+                              this.IsStageStriked(stage.codename) ||
+                              this.IsStageBanned(stage.codename)
+                                ? "0 0 10px #f44336ff"
+                                : this.state.selectedStage === stage.codename
+                                ? "0 0 10px #4caf50ff"
+                                : "0 0 0px #ffffff00",
+                            transitionProperty: "border-color box-shadow",
+                            transitionDuration: "500ms",
+                          }}
+                        >
+                          <CardActionArea
+                            onClick={() => this.StageClicked(stage)}
                           >
-                            <CardActionArea
-                              onClick={() => this.StageClicked(stage)}
+                            {this.IsStageStriked(stage.codename) ? (
+                              <>
+                                <div className="stamp stage-striked"></div>
+                                <div className="banned_by">
+                                  <Typography
+                                    variant="button"
+                                    component="div"
+                                    fontWeight={"bold"}
+                                    noWrap
+                                    fontSize={{ xs: 16, md: "" }}
+                                  >
+                                    {this.state.strikedBy[0].findIndex(
+                                      (s) => s == stage.codename
+                                    ) != -1
+                                      ? this.state.playerNames[0]
+                                      : this.state.playerNames[1]}
+                                  </Typography>
+                                </div>
+                              </>
+                            ) : null}
+                            {this.IsStageBanned(stage.codename) ? (
+                              <div className="stamp stage-dsr"></div>
+                            ) : null}
+                            {this.state.selectedStage === stage.codename ? (
+                              <>
+                                {this.state.gentlemans ? (
+                                  <>
+                                    <div className="stamp stage-gentlemans"></div>
+                                    <div className="banned_by">
+                                      <Typography
+                                        variant="button"
+                                        component="div"
+                                        fontWeight={"bold"}
+                                        noWrap
+                                        fontSize={{ xs: 16, md: "" }}
+                                      >
+                                        {i18n.t("gentlemans")}
+                                      </Typography>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="stamp stage-selected"></div>
+                                    <div className="banned_by">
+                                      <Typography
+                                        variant="button"
+                                        component="div"
+                                        fontWeight={"bold"}
+                                        noWrap
+                                        fontSize={{ xs: 16, md: "" }}
+                                      >
+                                        {
+                                          this.state.playerNames[
+                                            this.state.currPlayer
+                                          ]
+                                        }
+                                      </Typography>
+                                    </div>
+                                  </>
+                                )}
+                              </>
+                            ) : null}
+                            <CardMedia
+                              component="img"
+                              style={{ aspectRatio: "3 / 2" }}
+                              image={`http://${window.location.hostname}:5000/${stage.path}`}
+                            />
+                            <Box
+                              sx={{
+                                padding: { xs: "4px", sm: "6px", lg: "8px" },
+                              }}
                             >
-                              {this.IsStageStriked(stage.codename) ? (
-                                <>
-                                  <div className="stamp stage-striked"></div>
-                                  <div className="banned_by">
-                                    <Typography
-                                      variant="button"
-                                      component="div"
-                                      fontWeight={"bold"}
-                                      noWrap
-                                      fontSize={{ xs: 16, md: "" }}
-                                    >
-                                      {this.state.strikedBy[0].findIndex(
-                                        (s) => s == stage.codename
-                                      ) != -1
-                                        ? this.state.playerNames[0]
-                                        : this.state.playerNames[1]}
-                                    </Typography>
-                                  </div>
-                                </>
-                              ) : null}
-                              {this.IsStageBanned(stage.codename) ? (
-                                <div className="stamp stage-dsr"></div>
-                              ) : null}
-                              {this.state.selectedStage === stage.codename ? (
-                                <>
-                                  {this.state.gentlemans ? (
-                                    <>
-                                      <div className="stamp stage-gentlemans"></div>
-                                      <div className="banned_by">
-                                        <Typography
-                                          variant="button"
-                                          component="div"
-                                          fontWeight={"bold"}
-                                          noWrap
-                                          fontSize={{ xs: 16, md: "" }}
-                                        >
-                                          {i18n.t("gentlemans")}
-                                        </Typography>
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="stamp stage-selected"></div>
-                                      <div className="banned_by">
-                                        <Typography
-                                          variant="button"
-                                          component="div"
-                                          fontWeight={"bold"}
-                                          noWrap
-                                          fontSize={{ xs: 16, md: "" }}
-                                        >
-                                          {
-                                            this.state.playerNames[
-                                              this.state.currPlayer
-                                            ]
-                                          }
-                                        </Typography>
-                                      </div>
-                                    </>
-                                  )}
-                                </>
-                              ) : null}
-                              <CardMedia
-                                component="img"
-                                style={{ aspectRatio: "3 / 2" }}
-                                image={`http://${window.location.hostname}:5000/${stage.path}`}
-                              />
-                              <Box
-                                sx={{
-                                  padding: { xs: "4px", sm: "6px", lg: "8px" },
-                                }}
+                              <Typography
+                                variant="button"
+                                component="div"
+                                noWrap
+                                fontSize={{ xs: 8, sm: 12, lg: "" }}
                               >
-                                <Typography
-                                  variant="button"
-                                  component="div"
-                                  noWrap
-                                  fontSize={{ xs: 8, sm: 12, lg: "" }}
-                                >
-                                  {stage.name}
-                                </Typography>
-                              </Box>
-                            </CardActionArea>
-                          </Card>
-                        </Grid>
-                      ))}
-                    </>
+                                {stage.name}
+                              </Typography>
+                            </Box>
+                          </CardActionArea>
+                        </Card>
+                      </Grid>
+                    ))}
                   </Grid>
                 </Grid>
                 <Grid

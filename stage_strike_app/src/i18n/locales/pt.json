@@ -15,5 +15,7 @@
     "restart_current": "Reiniciar seleção atual",
     "restart_all": "Reiniciar tudo",
     "gentlemans": "Acordo",
-    "gentlemans_pick": "Escolha em acordo"
+    "gentlemans_pick": "Escolha em acordo",
+    "undo": "Desfazer",
+    "redo": "Refazer"
 }
