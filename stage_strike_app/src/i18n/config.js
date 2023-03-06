@@ -27,6 +27,7 @@ i18n.use(LanguageDetector).init({
   ns: ["translations"],
   defaultNS: "translations",
   debug: true,
+  interpolation: { escapeValue: false },
 });
 
 i18n.languages = ["en", "pt", "es", "ja", "fr"];

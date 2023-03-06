@@ -1,6 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Component } from "react";
+import ReactDOMServer from "react-dom/server";
 import "./NoSleep";
 import {
   useTheme,
@@ -40,11 +41,11 @@ let darkTheme = createTheme({
   palette: {
     mode: "dark",
     p1color: defaultTheme.palette.augmentColor({
-      color: { main: "#ff3837ff" },
+      color: { main: "#ff7a6d" },
       name: "p1color",
     }),
     p2color: defaultTheme.palette.augmentColor({
-      color: { main: "#1255a3ff" },
+      color: { main: "#29b6f6" },
       name: "p2color",
     }),
   },
@@ -239,7 +240,10 @@ class App extends Component {
         let oldRuleset = this.state.ruleset;
 
         this.setState({
-          playerNames: [data.p1 ? data.p1 : "P1", data.p2 ? data.p2 : "P2"],
+          playerNames: [
+            data.p1 ? data.p1 : i18n.t("p1"),
+            data.p2 ? data.p2 : i18n.t("p2"),
+          ],
           ruleset: data.ruleset,
           phase: data.phase,
           match: data.match,
@@ -303,12 +307,10 @@ class App extends Component {
                     >
                       {this.state.phase ? this.state.phase + " / " : ""}
                       {this.state.match ? this.state.match + " / " : ""}
-                      {i18n.t("game")} {this.state.currGame + 1}
+                      {i18n.t("game", { value: this.state.currGame + 1 })}
                       {this.state.bestOf
                         ? " (" +
-                          i18n.t("best_of") +
-                          " " +
-                          this.state.bestOf +
+                          i18n.t("best_of", { value: this.state.bestOf }) +
                           ")"
                         : ""}
                     </Typography>
@@ -339,47 +341,65 @@ class App extends Component {
                           <>
                             {this.state.gentlemans ? (
                               <>
-                                {i18n.t("gentlemans_pick")}:{" "}
-                                {i18n.t("pick_a_stage")}
+                                {i18n.t("gentlemans_prompt", {
+                                  gentlemans_pick: i18n.t("gentlemans_pick"),
+                                })}
                               </>
                             ) : this.state.currGame > 0 &&
                               this.state.currStep > 0 ? (
-                              <>
-                                <span
-                                  style={{
-                                    color:
-                                      darkTheme.palette[
-                                        `p${this.state.currPlayer + 1}color`
-                                      ].main,
-                                  }}
-                                >
-                                  {
-                                    this.state.playerNames[
-                                      this.state.currPlayer
-                                    ]
-                                  }
-                                </span>
-                                , {i18n.t("pick_a_stage")}
-                              </>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: i18n.t("select_a_stage_prompt", {
+                                    player: ReactDOMServer.renderToStaticMarkup(
+                                      <span
+                                        style={{
+                                          color:
+                                            darkTheme.palette[
+                                              `p${
+                                                this.state.currPlayer + 1
+                                              }color`
+                                            ].main,
+                                        }}
+                                      >
+                                        {
+                                          this.state.playerNames[
+                                            this.state.currPlayer
+                                          ]
+                                        }
+                                      </span>
+                                    ),
+                                    val: this.GetStrikeNumber(),
+                                    interpolation: { escapeValue: false },
+                                  }),
+                                }}
+                              ></div>
                             ) : (
-                              <>
-                                <span
-                                  style={{
-                                    color:
-                                      darkTheme.palette[
-                                        `p${this.state.currPlayer + 1}color`
-                                      ].main,
-                                  }}
-                                >
-                                  {
-                                    this.state.playerNames[
-                                      this.state.currPlayer
-                                    ]
-                                  }
-                                </span>
-                                , {i18n.t("ban")} {this.GetStrikeNumber()}{" "}
-                                stage(s)
-                              </>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: i18n.t("ban_prompt", {
+                                    player: ReactDOMServer.renderToStaticMarkup(
+                                      <span
+                                        style={{
+                                          color:
+                                            darkTheme.palette[
+                                              `p${
+                                                this.state.currPlayer + 1
+                                              }color`
+                                            ].main,
+                                        }}
+                                      >
+                                        {
+                                          this.state.playerNames[
+                                            this.state.currPlayer
+                                          ]
+                                        }
+                                      </span>
+                                    ),
+                                    val: this.GetStrikeNumber(),
+                                    interpolation: { escapeValue: false },
+                                  }),
+                                }}
+                              ></div>
                             )}
                           </>
                         )}
@@ -580,7 +600,9 @@ class App extends Component {
                           },
                         }}
                       >
-                        {this.state.playerNames[0]} {i18n.t("won")}
+                        {i18n.t("player_won", {
+                          player: this.state.playerNames[0],
+                        })}
                       </Fab>
                     )}
 
@@ -607,7 +629,9 @@ class App extends Component {
                           },
                         }}
                       >
-                        {this.state.playerNames[1]} {i18n.t("won")}
+                        {i18n.t("player_won", {
+                          player: this.state.playerNames[1],
+                        })}
                       </Fab>
                     )}
                   </Box>
@@ -618,28 +642,6 @@ class App extends Component {
                     spacing={2}
                     justifyContent="center"
                   >
-                    <Grid item xs>
-                      <Button
-                        sx={{
-                          flexDirection: { xs: "column", lg: "unset" },
-                          fontSize: { xs: 10, lg: "unset" },
-                        }}
-                        size={
-                          darkTheme.breakpoints.up("md") ? "large" : "small"
-                        }
-                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                        fullWidth
-                        variant={
-                          this.state.gentlemans ? "contained" : "outlined"
-                        }
-                        startIcon={<Handshake />}
-                        onClick={() => {
-                          this.SetGentlemans(!this.state.gentlemans);
-                        }}
-                      >
-                        {i18n.t("gentlemans_pick")}
-                      </Button>
-                    </Grid>
                     <Grid item xs>
                       <Button
                         size={
@@ -680,6 +682,28 @@ class App extends Component {
                         startIcon={<Redo />}
                       >
                         {i18n.t("redo")}
+                      </Button>
+                    </Grid>
+                    <Grid item xs>
+                      <Button
+                        sx={{
+                          flexDirection: { xs: "column", lg: "unset" },
+                          fontSize: { xs: 10, lg: "unset" },
+                        }}
+                        size={
+                          darkTheme.breakpoints.up("md") ? "large" : "small"
+                        }
+                        fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                        fullWidth
+                        variant={
+                          this.state.gentlemans ? "contained" : "outlined"
+                        }
+                        startIcon={<Handshake />}
+                        onClick={() => {
+                          this.SetGentlemans(!this.state.gentlemans);
+                        }}
+                      >
+                        {i18n.t("gentlemans_pick")}
                       </Button>
                     </Grid>
                     <Grid item xs>
