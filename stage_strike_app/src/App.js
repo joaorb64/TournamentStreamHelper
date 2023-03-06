@@ -534,7 +534,11 @@ class App extends Component {
                                 noWrap
                                 fontSize={{ xs: 8, sm: 12, lg: "" }}
                               >
-                                {stage.name}
+                                {i18n.t("{{name}}", {
+                                  name:
+                                    stage.locale[i18next.language] ||
+                                    stage.en_name,
+                                })}
                               </Typography>
                             </Box>
                           </CardActionArea>
