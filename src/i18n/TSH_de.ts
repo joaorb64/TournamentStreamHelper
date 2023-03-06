@@ -702,17 +702,17 @@ p, li { white-space: pre-wrap; }
         <translation>Im Browser {0} öffnen, um Stages zu streichen.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="449"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="451"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="456"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="458"/>
         <source>The current ruleset is valid!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="506"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="508"/>
         <source>The text for banByMaxGames is invalid.</source>
         <translation type="unfinished"></translation>
     </message>
