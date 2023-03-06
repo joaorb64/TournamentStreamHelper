@@ -534,10 +534,20 @@ class App extends Component {
                                 noWrap
                                 fontSize={{ xs: 8, sm: 12, lg: "" }}
                               >
-                                {i18n.t("{{name}}", {
-                                  name:
-                                    stage.locale[i18next.language] ||
-                                    stage.en_name,
+                                {i18next.t("{{name}}", {
+                                  name: stage.locale
+                                    ? stage.locale.hasOwnProperty(
+                                        i18next.language
+                                      )
+                                      ? stage.locale[i18next.language]
+                                      : stage.locale.hasOwnProperty(
+                                          i18next.options.fallbackLng[0]
+                                        )
+                                      ? stage.locale[
+                                          i18next.options.fallbackLng[0]
+                                        ]
+                                      : stage.en_name
+                                    : stage.en_name,
                                 })}
                               </Typography>
                             </Box>
@@ -787,7 +797,9 @@ class App extends Component {
                           )
                         }
                       >
-                        {this.state.playerNames[0]} {i18n.t("won")}
+                        {i18n.t("player_won", {
+                          player: this.state.playerNames[0],
+                        })}
                       </Button>
                     </Grid>
                     <Grid item xs>
@@ -812,7 +824,9 @@ class App extends Component {
                           )
                         }
                       >
-                        {this.state.playerNames[1]} {i18n.t("won")}
+                        {i18n.t("player_won", {
+                          player: this.state.playerNames[1],
+                        })}
                       </Button>
                     </Grid>
                   </Grid>
