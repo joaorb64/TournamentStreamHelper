@@ -13,5 +13,11 @@
     "p1": "J1",
     "p2": "J2",
     "no_ruleset_error": "Aucun règlement selectionné. Veuillez demander à un régisseur ou un TO de sélectionner un règlement.",
-    "game": "Manche"
+    "game": "Manche",
+    "best_of": "Best of",
+    "restart_all": "Redémarrer",
+    "gentlemans": "Gentleman",
+    "gentlemans_pick": "Clause du Gentleman",
+    "undo": "Annuler",
+    "redo": "Rétablir"
 }
