@@ -243,6 +243,8 @@ class TSHScoreboardStageWidget(QDockWidget):
     def SetupOptions(self):
         self.rulesetsBox.clear()
 
+        self.ClearRuleset()
+
         self.LoadRulesets()
 
         self.stagesModel = QStandardItemModel()

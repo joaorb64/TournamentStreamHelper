@@ -61,42 +61,66 @@ class WebServer(QThread):
 
         return data
 
-    @app.route('/stage_clicked', methods=['POST'])
+    @app.route('/stage_strike_stage_clicked', methods=['POST'])
     def stage_clicked():
         WebServer.stageWidget.stageStrikeLogic.StageClicked(json.loads(request.get_data()))
         return "OK"
     
-    @app.route('/confirm_clicked', methods=['POST'])
+    @app.route('/stage_strike_confirm_clicked', methods=['POST'])
     def confirm_clicked():
         WebServer.stageWidget.stageStrikeLogic.ConfirmClicked()
         return "OK"
     
-    @app.route('/rps_win', methods=['POST'])
+    @app.route('/stage_strike_rps_win', methods=['POST'])
     def rps_win():
         WebServer.stageWidget.stageStrikeLogic.RpsResult(int(json.loads(request.get_data()).get("winner")))
         return "OK"
     
-    @app.route('/match_win', methods=['POST'])
+    @app.route('/stage_strike_match_win', methods=['POST'])
     def match_win():
         WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
+        WebServer.UpdateScore()
+        return "OK"
 
-        teams = ["1", "2"]
-        if WebServer.scoreboard.teamsSwapped:
-            teams.reverse()
-        
-        WebServer.team_scoreup(teams[int(json.loads(request.get_data()).get("winner"))])
-        
+    @app.route('/stage_strike_set_gentlemans', methods=['POST'])
+    def set_gentlemans():
+        WebServer.stageWidget.stageStrikeLogic.SetGentlemans(json.loads(request.get_data()).get("value"))
+        return "OK"
+
+    @app.route('/stage_strike_undo', methods=['POST'])
+    def stage_strike_undo():
+        WebServer.stageWidget.stageStrikeLogic.Undo()
+        WebServer.UpdateScore()
+        return "OK"
+
+    @app.route('/stage_strike_redo', methods=['POST'])
+    def stage_strike_redo():
+        WebServer.stageWidget.stageStrikeLogic.Redo()
+        WebServer.UpdateScore()
         return "OK"
     
-    @app.route('/reset', methods=['POST'])
+    @app.route('/stage_strike_reset', methods=['POST'])
     def reset():
         WebServer.stageWidget.stageStrikeLogic.Initialize()
-        WebServer.reset_scores()
+        WebServer.UpdateScore()
         return "OK"
+
+    def UpdateScore():
+        score = [
+            len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[0]),
+            len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[1]),
+        ]
+        
+        WebServer.scoreboard.signals.UpdateSetData.emit({
+            "team1score": score[0],
+            "team2score": score[1],
+            "reset_score": True
+        })
 
     @app.route('/score', methods=['POST'])
     def post_score():
         score = json.loads(request.get_data())
+        score.update({"reset_score": True})
         WebServer.scoreboard.signals.UpdateSetData.emit(score)
         return "OK"
 
@@ -252,7 +276,10 @@ class WebServer(QThread):
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():
-        WebServer.scoreboard.ResetScore()
+        WebServer.scoreboard.signals.UpdateSetData.emit({
+            "team1score": 0,
+            "team2score": 0
+        })
         return "OK"
 
     # Resets scores, match, phase, and losers status
