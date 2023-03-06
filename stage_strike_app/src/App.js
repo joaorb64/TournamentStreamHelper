@@ -539,12 +539,14 @@ class App extends Component {
                                     ? stage.locale.hasOwnProperty(
                                         i18next.language
                                       )
-                                      ? stage.locale[i18next.language]
+                                      ? stage.locale[
+                                          i18next.language.replace("-", "_")
+                                        ]
                                       : stage.locale.hasOwnProperty(
-                                          i18next.options.fallbackLng[0]
+                                          i18next.language.split("-")[0]
                                         )
                                       ? stage.locale[
-                                          i18next.options.fallbackLng[0]
+                                          i18next.language.split("-")[0]
                                         ]
                                       : stage.en_name
                                     : stage.en_name,
