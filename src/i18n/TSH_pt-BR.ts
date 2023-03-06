@@ -941,7 +941,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="671"/>
-        <source>Download complete. The program will now close to extract the update.</source>
+        <source>Update download complete. The program will extract the update upon closing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

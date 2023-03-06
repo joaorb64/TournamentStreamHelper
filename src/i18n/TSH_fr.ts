@@ -922,8 +922,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="671"/>
-        <source>Download complete. The program will now close to extract the update.</source>
-        <translation type="unfinished"></translation>
+        <source>Update download complete. The program will extract the update upon closing.</source>
+        <translation>Le téléchargement de la mise à jour est terminé. Celle-ci sera installée lors de la fermeture du programme.</translation>
     </message>
     <message>
         <source>Update complete.</source>

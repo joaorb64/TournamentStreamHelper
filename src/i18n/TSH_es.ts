@@ -814,6 +814,11 @@ p, li { white-space: pre-wrap; }
         <translation>Idioma del sistema</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="671"/>
+        <source>Update download complete. The program will extract the update upon closing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Export Language</source>
         <translation>Exportar idioma</translation>
     </message>
@@ -905,11 +910,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="614"/>
         <source>NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES</source>
         <translation>NOTA: REALIZARÁ UNA COPIA DE SEGURIDAD DE /layout/ Y SOBRESCRIBIRÁ LOS DATOS EN TODOS LOS DEMÁS DIRECTORIOS</translation>
-    </message>
-    <message>
-        <location filename="../TournamentStreamHelper.py" line="671"/>
-        <source>Download complete. The program will now close to extract the update.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="298"/>
