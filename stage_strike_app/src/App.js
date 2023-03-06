@@ -74,8 +74,8 @@ class App extends Component {
     canRedo: false,
   };
 
-  Initialize(resetStreamScore = false) {
-    fetch("http://" + window.location.hostname + ":5000/reset", {
+  Initialize() {
+    fetch("http://" + window.location.hostname + ":5000/stage_strike_reset", {
       method: "POST",
       contentType: "application/json",
     });
@@ -140,11 +140,14 @@ class App extends Component {
   }
 
   StageClicked(stage) {
-    fetch("http://" + window.location.hostname + ":5000/stage_clicked", {
-      method: "POST",
-      body: JSON.stringify(stage),
-      contentType: "application/json",
-    });
+    fetch(
+      "http://" + window.location.hostname + ":5000/stage_strike_stage_clicked",
+      {
+        method: "POST",
+        body: JSON.stringify(stage),
+        contentType: "application/json",
+      }
+    );
   }
 
   Undo() {
@@ -185,26 +188,41 @@ class App extends Component {
   }
 
   ConfirmClicked() {
-    fetch("http://" + window.location.hostname + ":5000/confirm_clicked", {
-      method: "POST",
-      contentType: "application/json",
-    });
+    fetch(
+      "http://" +
+        window.location.hostname +
+        ":5000/stage_strike_confirm_clicked",
+      {
+        method: "POST",
+        contentType: "application/json",
+      }
+    );
   }
 
   MatchWinner(id) {
-    fetch("http://" + window.location.hostname + ":5000/match_win", {
-      method: "POST",
-      contentType: "application/json",
-      body: JSON.stringify({ winner: id }),
-    });
+    fetch(
+      "http://" + window.location.hostname + ":5000/stage_strike_match_win",
+      {
+        method: "POST",
+        contentType: "application/json",
+        body: JSON.stringify({
+          winner: id,
+        }),
+      }
+    );
   }
 
   SetGentlemans(value) {
-    fetch("http://" + window.location.hostname + ":5000/set_gentlemans", {
-      method: "POST",
-      contentType: "application/json",
-      body: JSON.stringify({ value: value }),
-    });
+    fetch(
+      "http://" +
+        window.location.hostname +
+        ":5000/stage_strike_set_gentlemans",
+      {
+        method: "POST",
+        contentType: "application/json",
+        body: JSON.stringify({ value: value }),
+      }
+    );
   }
 
   GetStrikeNumber() {
@@ -268,12 +286,6 @@ class App extends Component {
         }
       })
       .catch(console.log);
-  }
-
-  ResetStreamScore() {
-    fetch("http://" + window.location.hostname + ":5000/reset-scores", {
-      method: "GET",
-    });
   }
 
   render() {
@@ -565,7 +577,7 @@ class App extends Component {
                   textAlign={"center"}
                   spacing={1}
                   justifyItems="center"
-                  style={{ flexGrow: 0 }}
+                  style={{ flexGrow: 0, zIndex: 9999 }}
                 >
                   <Box style={{ position: "relative", width: "100%" }}>
                     {this.CanConfirm() && (
@@ -790,7 +802,7 @@ class App extends Component {
                           fetch(
                             "http://" +
                               window.location.hostname +
-                              ":5000/rps_win",
+                              ":5000/stage_strike_rps_win",
                             {
                               method: "POST",
                               contentType: "application/json",
@@ -817,7 +829,7 @@ class App extends Component {
                           fetch(
                             "http://" +
                               window.location.hostname +
-                              ":5000/rps_win",
+                              ":5000/stage_strike_rps_win",
                             {
                               method: "POST",
                               contentType: "application/json",
@@ -846,7 +858,9 @@ class App extends Component {
                     variant="outlined"
                     onClick={() =>
                       fetch(
-                        "http://" + window.location.hostname + ":5000/rps_win",
+                        "http://" +
+                          window.location.hostname +
+                          ":5000/stage_strike_rps_win",
                         {
                           method: "POST",
                           contentType: "application/json",

@@ -743,6 +743,10 @@ class TSHScoreboardWidget(QDockWidget):
         if self.teamsSwapped:
             scoreContainers.reverse()
 
+        if data.get("reset_score"):
+            scoreContainers[0].setValue(0)
+            scoreContainers[1].setValue(0)
+        
         if data.get("team1score"):
             scoreContainers[0].setValue(data.get("team1score"))
         if data.get("team2score"):

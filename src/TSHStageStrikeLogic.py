@@ -31,17 +31,20 @@ class TSHStageStrikeLogic():
         self.history: list(TSHStageStrikeState) = [TSHStageStrikeState()]
         self.historyIndex = 0
     
-    def AddHistory(self, state, export=True):
+    def AddHistory(self, state, justOverwrite=False):
         self.history = self.history[:self.historyIndex+1]
-        self.history.append(state)
-        self.historyIndex += 1
+
+        if justOverwrite:
+            self.history[self.historyIndex] = state
+        else:
+            self.history.append(state)
+            self.historyIndex += 1
 
         if len(self.history) > 10:
             self.history.pop(0)
             self.historyIndex -= 1
         
-        if export:
-            self.ExportState()
+        self.ExportState()
     
     def Undo(self):
         self.historyIndex -= 1
@@ -165,9 +168,7 @@ class TSHStageStrikeLogic():
                     newState.strikedBy[newState.currPlayer].pop(foundIndex)
                     self.AddHistory(newState)
     
-    def ConfirmClicked(self, export=True):
-        historyChanged = False
-
+    def ConfirmClicked(self, justOverwrite=False):
         # For first game, user should have banned the correct number of stages before confirming
         if self.CurrentState().currGame == 0:
             if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) == self.ruleset.strikeOrder[self.CurrentState().currStep]:
@@ -175,8 +176,7 @@ class TSHStageStrikeLogic():
                 newState.currStep += 1
                 newState.currPlayer = (newState.currPlayer + 1) % 2
                 newState.strikedStages.append([])
-                self.AddHistory(newState, export=False)
-                historyChanged = True
+                self.AddHistory(newState, justOverwrite=justOverwrite)
         # For other games, user should have banned the correct bancount
         else:
             if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) == self.ruleset.banCount:
@@ -184,8 +184,7 @@ class TSHStageStrikeLogic():
                 newState.currStep += 1
                 newState.currPlayer = (newState.currPlayer + 1) % 2
                 newState.strikedStages.append([])
-                self.AddHistory(newState, export=False)
-                historyChanged = True
+                self.AddHistory(newState, justOverwrite=justOverwrite)
         
         # For first game, when no more stages are available we know the remaining one is the picked stage
         if self.CurrentState().currGame == 0 and self.CurrentState().currStep >= len(self.ruleset.strikeOrder):
@@ -193,11 +192,7 @@ class TSHStageStrikeLogic():
             selectedStage = next((stage for stage in self.ruleset.neutralStages if not self.IsStageStriked(stage.get("codename"))), None)
             newState.selectedStage = selectedStage.get("codename")
             newState.stagesPicked.append(selectedStage.get("codename"))
-            self.AddHistory(newState, export=False)
-            historyChanged = True
-        
-        if export and historyChanged:
-            self.ExportState()
+            self.AddHistory(newState, justOverwrite=True)
     
     def MatchWinner(self, id):
         newState = self.CurrentState().Clone()
@@ -215,13 +210,11 @@ class TSHStageStrikeLogic():
 
         newState.lastWinner = id
 
-        self.AddHistory(newState, export=False)
+        self.AddHistory(newState)
 
         # If next step has no bans, skip it
         if self.GetStrikeNumber() == 0:
-            self.ConfirmClicked(export=False)
-        
-        self.ExportState()
+            self.ConfirmClicked(justOverwrite=True)
     
     def SetGentlemans(self, value):
         print(f"Setting gentlemans to {value}")
