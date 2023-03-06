@@ -1,0 +1,22 @@
+{
+    "title": "ステージストライキ",
+    "initial_explanation": "じゃんけんで先攻を決めるか、ランダムボタンを押してください。",
+    "player_won": "{{player}}の勝ち",
+    "randomize": "ランダム",
+    "confirm": "決定",
+    "report_results": "結果報告",
+    "rock_paper_scissors": "じゃんけん",
+    "p1": "プレイヤー1",
+    "p2": "プレイヤー2",
+    "select_a_stage_prompt": "{{player}}、ステージを選んでください",
+    "ban_prompt": "{{player}}、{{val}}つのステージを禁止してください",
+    "no_ruleset_error": "ルールセットが選択されていません。プロダクション/TOに通知して、ルールセットを選択してください。",
+    "game": "ゲーム{{value}}",
+    "best_of": "{{value}}本先取",
+    "restart_all": "リスタート",
+    "gentlemans": "紳士協定",
+    "gentlemans_pick": "紳士協定ピック",
+    "gentlemans_prompt": "{{gentlemans_pick}}：ステージを選んでください",
+    "undo": "取り消し",
+    "redo": "やり直し"
+}
