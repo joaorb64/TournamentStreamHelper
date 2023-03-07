@@ -11,6 +11,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+import copy
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -167,12 +168,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         for i, (element, character, color) in enumerate(self.character_elements):
             data = character.currentData()
+
+            if data == None:
+                data = {}
+
             if character.currentData() == None:
                 data = {"name": character.currentText()}
+            
+            if color.currentData() and color.currentData().get("name", ""):
+                data["name"] = color.currentData().get("name", "")
+            
+            if color.currentData() and color.currentData().get("en_name", ""):
+                data["en_name"] = color.currentData().get("en_name", "")
 
-            data["assets"] = color.currentData()
+            if character.currentData():
+                data["assets"] = color.currentData().get("assets", {})
 
-            if data["assets"] == None:
+            if data.get("assets") == None:
                 data["assets"] = {}
 
             data["skin"] = color.currentText()
@@ -530,8 +542,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             "name": export_name,
                             "en_name": c,
                             "display_name": display_name,
-                            "codename": TSHGameAssetManager.instance.characters[c].get("codename"),
-                            "skin_name": TSHGameAssetManager.instance.characters[c].get("skin_name", {})
+                            "codename": TSHGameAssetManager.instance.characters[c].get("codename")
                         }
                         item.setData(data, Qt.ItemDataRole.UserRole)
                         TSHScoreboardPlayerWidget.characterModel.appendRow(
@@ -564,27 +575,51 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         skinModel = QStandardItemModel()
 
         for skin in sortedSkins:
-            assetData = TSHGameAssetManager.instance.GetCharacterAssets(
+            assetData = {}
+            assetData["assets"] = TSHGameAssetManager.instance.GetCharacterAssets(
                 element.currentData().get("codename"), skin)
-            if assetData == None:
-                assetData = {}
+            if assetData["assets"] == None:
+                assetData["assets"] = {}
             item = QStandardItem()
 
-            skinName = str(skin)
+            skinIndex = str(skin)
 
-            print("characterData", characterData)
+            # Get skin name
+            skinNameData = TSHGameAssetManager.instance.characters.get(element.currentData().get("en_name"), {}).get("skin_name", {})
 
-            if skinName in characterData.get("skin_name", {}):
-                skinName = characterData.get("skin_name", {})[skinName].get("name")
+            skin_name = element.currentData().get("name")
+            skin_name_en = element.currentData().get("en_name")
 
-            item.setData(skinName, Qt.ItemDataRole.EditRole)
+            locale = TSHLocaleHelper.programLocale
+            if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
+                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
+            elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
+                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[re.split("-|_", locale)[0]]
+            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
+                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
+                    TSHLocaleHelper.exportLocale)]
+            elif skinNameData.get(skinIndex, {}).get("name"):
+                skin_name = skinNameData.get(skinIndex, {}).get("name")
+            
+            if skinNameData.get(skinIndex, {}).get("name"):
+                skin_name_en = skinNameData.get(skinIndex, {}).get("name")
+
+            if skinIndex is None:
+                skinIndex = str(skin)
+            
+            assetData["name"] = skin_name
+            assetData["en_name"] = skin_name_en
+
+            print("assetdata", assetData)
+
+            item.setData(skinIndex, Qt.ItemDataRole.EditRole)
             item.setData(assetData, Qt.ItemDataRole.UserRole)
 
             # Set to use first asset as a fallback
             key = TSHGameAssetManager.instance.biggestCompletePack
-            asset = assetData[key]
+            asset = assetData["assets"].get(key, {})
 
-            pix = QPixmap.fromImage(QImage(assetData[key]["asset"]))
+            pix = QPixmap.fromImage(QImage(assetData["assets"][key]["asset"]))
 
             targetW = 128
             targetH = 96
