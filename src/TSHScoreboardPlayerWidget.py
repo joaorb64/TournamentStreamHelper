@@ -590,22 +590,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             skin_name = element.currentData().get("name")
             skin_name_en = element.currentData().get("en_name")
 
-            locale = TSHLocaleHelper.programLocale
-            if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
-                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
-            elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
-                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[re.split("-|_", locale)[0]]
-            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
-                skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
-                    TSHLocaleHelper.exportLocale)]
-            elif skinNameData.get(skinIndex, {}).get("name"):
-                skin_name = skinNameData.get(skinIndex, {}).get("name")
-            
-            if skinNameData.get(skinIndex, {}).get("name"):
-                skin_name_en = skinNameData.get(skinIndex, {}).get("name")
-
-            if skinIndex is None:
-                skinIndex = str(skin)
+            try:
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
+                elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[re.split("-|_", locale)[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
+                        TSHLocaleHelper.exportLocale)]
+                elif skinNameData.get(skinIndex, {}).get("name"):
+                    skin_name = skinNameData.get(skinIndex, {}).get("name")
+                
+                if skinNameData.get(skinIndex, {}).get("name"):
+                    skin_name_en = skinNameData.get(skinIndex, {}).get("name")
+            except:
+                print(traceback.format_exc())
             
             assetData["name"] = skin_name
             assetData["en_name"] = skin_name_en
