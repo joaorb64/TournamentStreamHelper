@@ -109,6 +109,7 @@ document.addEventListener("tsh_update", async (event) => {
           }
 
           Promise.all(loads).then((values) => {
+            console.log("animate", $(e));
             gsap.fromTo(
               $(e).children(".tsh_character").children(),
               anim_out,

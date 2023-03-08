@@ -217,16 +217,16 @@ LoadEverything().then(() => {
       data.tournamentInfo.tournamentName + " - " + data.tournamentInfo.eventName
     );
 
-    let phaseTexts = [];
-
     SetInnerHtml($(".phase"), data.score.phase);
-    // SetInnerHtml($(".match"), data.score.match);
+    SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
       data.score.best_of_text ? data.score.best_of_text : ""
     );
   }
 
-  Start();
+  $("body").fadeTo(1, 1, async () => {
+    Start();
+  });
   document.addEventListener("tsh_update", Update);
 });
