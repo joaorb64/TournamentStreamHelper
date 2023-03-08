@@ -11,6 +11,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+import copy
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -167,12 +168,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         for i, (element, character, color) in enumerate(self.character_elements):
             data = character.currentData()
+
+            if data == None:
+                data = {}
+
             if character.currentData() == None:
                 data = {"name": character.currentText()}
+            
+            if color.currentData() and color.currentData().get("name", ""):
+                data["name"] = color.currentData().get("name", "")
+            
+            if color.currentData() and color.currentData().get("en_name", ""):
+                data["en_name"] = color.currentData().get("en_name", "")
 
-            data["assets"] = color.currentData()
+            if character.currentData():
+                data["assets"] = color.currentData().get("assets", {})
 
-            if data["assets"] == None:
+            if data.get("assets") == None:
                 data["assets"] = {}
 
             data["skin"] = color.currentText()
@@ -315,7 +327,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_character_color.setMaximumWidth(120)
             player_character_color.setFont(QFont(player_character_color.font().family(), 9))
             view = QListView()
-            view.setIconSize(QSize(64, 64))
+            view.setIconSize(QSize(128, 128))
             player_character_color.setView(view)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
@@ -563,51 +575,164 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         skinModel = QStandardItemModel()
 
         for skin in sortedSkins:
-            assetData = TSHGameAssetManager.instance.GetCharacterAssets(
+            assetData = {}
+            assetData["assets"] = TSHGameAssetManager.instance.GetCharacterAssets(
                 element.currentData().get("codename"), skin)
-            if assetData == None:
-                assetData = {}
+            if assetData["assets"] == None:
+                assetData["assets"] = {}
             item = QStandardItem()
-            item.setData(str(skin), Qt.ItemDataRole.EditRole)
+
+            skinIndex = str(skin)
+
+            # Get skin name
+            skinNameData = TSHGameAssetManager.instance.characters.get(element.currentData().get("en_name"), {}).get("skin_name", {})
+
+            skin_name = element.currentData().get("name")
+            skin_name_en = element.currentData().get("en_name")
+
+            try:
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
+                elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[re.split("-|_", locale)[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
+                    skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
+                        TSHLocaleHelper.exportLocale)]
+                elif skinNameData.get(skinIndex, {}).get("name"):
+                    skin_name = skinNameData.get(skinIndex, {}).get("name")
+                
+                if skinNameData.get(skinIndex, {}).get("name"):
+                    skin_name_en = skinNameData.get(skinIndex, {}).get("name")
+            except:
+                print(traceback.format_exc())
+            
+            assetData["name"] = skin_name
+            assetData["en_name"] = skin_name_en
+
+            print("assetdata", assetData)
+
+            item.setData(skinIndex, Qt.ItemDataRole.EditRole)
             item.setData(assetData, Qt.ItemDataRole.UserRole)
 
             # Set to use first asset as a fallback
-            key = list(assetData.keys())[0]
+            key = TSHGameAssetManager.instance.biggestCompletePack
+            asset = assetData["assets"].get(key, {})
 
-            for k, asset in list(assetData.items()):
-                if "portrait" in asset.get("type", []):
-                    key = k
-                    break
-                if "icon" in asset.get("type", []):
-                    key = k
+            pix = QPixmap.fromImage(QImage(assetData["assets"][key]["asset"]))
 
-            pix = QPixmap.fromImage(QImage(assetData[key]["asset"]))
+            targetW = 128
+            targetH = 96
 
+            originalW = pix.width()
             originalH = pix.height()
 
-            pix = pix.scaledToWidth(
-                64, Qt.TransformationMode.SmoothTransformation)
-
-            if asset.get("eyesight", {}).get("y", 0):
-                newImg = QImage(QSize(64, 48), QImage.Format.Format_RGBA64)
-                newImg.fill(QColor(0, 0, 0, 0))
-                painter = QPainter()
-                painter.begin(newImg)
-
-                moveY = int(32/2 -
-                            float(asset.get("eyesight").get("y", 0)) /
-                            originalH*pix.height())
-                moveY = min(moveY, 16)
-                moveY = max(moveY, -16)
-
-                painter.drawPixmap(
-                    0,
-                    moveY,
-                    pix
+            proportional_zoom = 1
+            
+            if asset.get("average_size"):
+                proportional_zoom = 0
+                proportional_zoom = max(
+                    proportional_zoom,
+                    (targetW / asset.get("average_size", {}).get("x", 0)) * 1.2
                 )
-                painter.end()
+                proportional_zoom = max(
+                    proportional_zoom,
+                    (targetH / asset.get("average_size", {}).get("y", 0)) * 1.2
+                )
+            
+            # For cropped assets, zoom to fill
+            # Calculate max zoom
+            zoom_x = targetW / originalW
+            zoom_y = targetH / originalH
 
-                pix = QPixmap.fromImage(newImg)
+            minZoom = 1
+            rescalingFactor = 1
+            customZoom = 1
+
+            if asset.get("rescaling_factor"):
+                rescalingFactor = asset.get("rescaling_factor")
+
+            uncropped_edge = asset.get("uncropped_edge", [])
+
+            if not uncropped_edge or len(uncropped_edge) == 0:
+                if zoom_x > zoom_y:
+                    minZoom = zoom_x
+                else:
+                    minZoom = zoom_y
+            else:
+                if (
+                    "u" in uncropped_edge and
+                    "d" in uncropped_edge and
+                    "l" in uncropped_edge and
+                    "r" in uncropped_edge
+                    ):
+                    customZoom = 1.2 # Add zoom in for uncropped assets
+                    minZoom = customZoom * proportional_zoom * rescalingFactor
+                elif (
+                    not "l" in uncropped_edge and
+                    not "r" in uncropped_edge
+                    ):
+                    minZoom = zoom_x
+                elif (
+                    not "u" in uncropped_edge and
+                    not "d" in uncropped_edge
+                    ):
+                    minZoom = zoom_y;
+                else:
+                    minZoom = customZoom * proportional_zoom * rescalingFactor
+
+            zoom = max(minZoom, customZoom * minZoom);
+
+            # Centering
+            xx = 0
+            yy = 0
+
+            eyesight = asset.get("eyesight")
+
+            if not eyesight:
+                eyesight = {
+                    "x": originalW / 2,
+                    "y": originalH / 2
+                }
+
+            xx = -eyesight["x"] * zoom + targetW / 2
+
+            maxMoveX = targetW - originalW * zoom;
+
+            if not uncropped_edge or not "l" in uncropped_edge:
+                if (xx > 0): xx = 0
+            
+            if not uncropped_edge or not "r" in uncropped_edge:
+                if (xx < maxMoveX): xx = maxMoveX
+
+            yy = -eyesight["y"] * zoom + targetH / 2
+
+            maxMoveY = targetH - originalH * zoom;
+
+            if not uncropped_edge or not "u" in uncropped_edge:
+                if (yy > 0): yy = 0
+            
+            if not uncropped_edge or not "d" in uncropped_edge:
+                if (yy < maxMoveY): yy = maxMoveY
+            
+            newImg = QImage(QSize(128, 96), QImage.Format.Format_RGBA64)
+            newImg.fill(QColor(0, 0, 0, 0))
+            painter = QPainter()
+            painter.begin(newImg)
+
+            painter.drawPixmap(
+                int(xx),
+                int(yy),
+                pix.scaled(
+                    int(originalW*zoom),
+                    int(originalH*zoom),
+                    Qt.AspectRatioMode.IgnoreAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                )
+            )
+            painter.end()
+
+            pix = QPixmap.fromImage(newImg)
 
             item.setIcon(
                 QIcon(pix)
