@@ -662,11 +662,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
-<<<<<<< HEAD
-        <location filename="../TournamentStreamHelper.py" line="187"/>
-=======
         <location filename="../TournamentStreamHelper.py" line="205"/>
->>>>>>> 1e5cb61b82c90aa7991c7c4d1221772770bbd815
         <location filename="../TSHPlayerListWidget.py" line="28"/>
         <source>Player List</source>
         <translation>Spielerliste</translation>
@@ -722,11 +718,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardStageWidget.py" line="201"/>
-<<<<<<< HEAD
-        <location filename="../TournamentStreamHelper.py" line="602"/>
-=======
         <location filename="../TournamentStreamHelper.py" line="620"/>
->>>>>>> 1e5cb61b82c90aa7991c7c4d1221772770bbd815
         <source>Update</source>
         <translation></translation>
     </message>
@@ -1110,7 +1102,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="58"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="905"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="815"/>
         <source>Save new player</source>
         <translation>Neuen Spieler speichern</translation>
     </message>
@@ -1125,7 +1117,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="902"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="812"/>
         <source>Update player</source>
         <translation>Spielereintrag aktualisieren</translation>
     </message>
