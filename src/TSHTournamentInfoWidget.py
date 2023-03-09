@@ -25,7 +25,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         for widget in self.findChildren(QDateEdit):
             widget.dateChanged.connect(lambda value, element=widget: [
                 StateManager.Set(
-                    f"tournamentInfo.{element.objectName()}", value.toString('dd/MM/yyyy'))
+                    f"tournamentInfo.{element.objectName()}", value.toString(Qt.DateFormat.LocaleDate))
             ])
             # widget.setDate(d)
             # widget.setValue(StateManager.Get(
