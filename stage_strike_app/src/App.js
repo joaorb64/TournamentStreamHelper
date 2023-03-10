@@ -448,18 +448,18 @@ class App extends Component {
                             borderWidth: 3,
                             borderRadius: 8,
                             borderColor:
-                              this.IsStageStriked(stage.codename) ||
-                              this.IsStageBanned(stage.codename)
+                            this.state.selectedStage === stage.codename
+                            ? "#4caf50ff"
+                            : (this.IsStageStriked(stage.codename) ||
+                              this.IsStageBanned(stage.codename))
                                 ? "#f44336ff"
-                                : this.state.selectedStage === stage.codename
-                                ? "#4caf50ff"
                                 : "lightgray",
                             boxShadow:
-                              this.IsStageStriked(stage.codename) ||
-                              this.IsStageBanned(stage.codename)
+                            this.state.selectedStage === stage.codename
+                            ? "0 0 10px #4caf50ff"
+                            : (this.IsStageStriked(stage.codename) ||
+                              this.IsStageBanned(stage.codename))
                                 ? "0 0 10px #f44336ff"
-                                : this.state.selectedStage === stage.codename
-                                ? "0 0 10px #4caf50ff"
                                 : "0 0 0px #ffffff00",
                             transitionProperty: "border-color box-shadow",
                             transitionDuration: "500ms",
