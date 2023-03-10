@@ -140,19 +140,19 @@ class TSHScoreboardWidget(QDockWidget):
 
         self.eyeBt.menu().addSection("Players")
 
-        elements = [
+        self.elements = [
             ["Real Name", ["real_name", "real_nameLabel"]],
             ["Twitter", ["twitter", "twitterLabel"]],
             ["Location", ["locationLabel", "state", "country"]],
             ["Characters", ["characters"]],
             ["Pronouns", ["pronoun", "pronounLabel"]],
         ]
-        elements[0][0] = QApplication.translate("app", "Real Name")
-        elements[1][0] = QApplication.translate("app", "Twitter")
-        elements[2][0] = QApplication.translate("app", "Location")
-        elements[3][0] = QApplication.translate("app", "Characters")
-        elements[4][0] = QApplication.translate("app", "Pronouns")
-        for element in elements:
+        self.elements[0][0] = QApplication.translate("app", "Real Name")
+        self.elements[1][0] = QApplication.translate("app", "Twitter")
+        self.elements[2][0] = QApplication.translate("app", "Location")
+        self.elements[3][0] = QApplication.translate("app", "Characters")
+        self.elements[4][0] = QApplication.translate("app", "Pronouns")
+        for element in self.elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
             action.setCheckable(True)
             action.setChecked(True)
@@ -539,6 +539,10 @@ class TSHScoreboardWidget(QDockWidget):
             self.team2column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(
                 QLineEdit, "teamName").editingFinished.emit()
+  
+        for x, element in enumerate(self.elements, start=1):
+            action: QAction = self.eyeBt.menu().actions()[x]
+            self.ToggleElements(action, element[1])
 
     def SwapTeams(self):
         StateManager.BlockSaving()
