@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   let ASSET_TO_USE = "base_files/icon";
   let ZOOM = 1;
 
@@ -300,10 +300,8 @@
   }
 
   Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
+  $("body").fadeTo(1, 1, async () => {
+    Start();
+    setInterval(Update, 500);
   });
-})(jQuery);
+});
