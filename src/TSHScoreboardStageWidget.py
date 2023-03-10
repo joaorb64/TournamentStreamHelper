@@ -509,7 +509,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                 traceback.print_exc()
 
         ruleset.strikeOrder = [
-            int(n.strip()) for n in self.strikeOrder.text().split(",") if n.strip() != ""
+            int(n.strip()) for n in (self.strikeOrder.text().split(",") if self.strikeOrder.text() != "" else "1,2,1".split(",")) if n.strip() != ""
         ]
 
         return ruleset
