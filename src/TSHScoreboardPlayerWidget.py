@@ -617,9 +617,16 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             # Set to use first asset as a fallback
             key = TSHGameAssetManager.instance.biggestCompletePack
-            asset = assetData["assets"].get(key, {})
+            asset = None
+            
+            if assetData["assets"].get(key): asset = assetData["assets"][key]
+            elif assetData["assets"].get("full"): asset = assetData["assets"]["full"]
+            elif assetData["assets"].get("base_files/icon"): asset = assetData["assets"]["base_files/icon"]
 
-            pix = QPixmap.fromImage(QImage(assetData["assets"][key]["asset"]))
+            if asset:
+                pix = QPixmap.fromImage(QImage(asset["asset"]))
+            else:
+                pix = QPixmap.fromImage(QImage("./assets/icons/cancel.svg").scaled(16,16))
 
             targetW = 128
             targetH = 96
