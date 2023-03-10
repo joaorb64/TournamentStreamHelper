@@ -205,6 +205,8 @@ class TSHGameAssetManager(QObject):
 
                         self.parent().skins = {}
 
+                        packSkinMask = {}
+
                         widths = {}
                         heights = {}
 
@@ -230,6 +232,14 @@ class TSHGameAssetManager(QObject):
                                     except:
                                         pass
                                     self.parent().skins[c][number] = True
+                                    
+                                    if c not in packSkinMask:
+                                        packSkinMask[c] = {}
+                                    
+                                    if assetsKey not in packSkinMask[c]:
+                                        packSkinMask[c][assetsKey] = set()
+                                    
+                                    packSkinMask[c][assetsKey].add(number)
                                 
                                     # Get image dimensions
                                     imgfile = QImageReader('./user_data/games/'+game+'/'+assetsKey+'/'+f)
@@ -261,19 +271,40 @@ class TSHGameAssetManager(QObject):
                                         }
                                 except:
                                     print(traceback.format_exc())
+                        
+                        # Set complete
+                        for assetsKey in list(gameObj["assets"].keys()):
+                            try:
+                                complete = True
 
-                        assetsKey = ""
-                        if len(list(gameObj.get("assets", {}).keys())) > 0:
-                            assetsKey = list(gameObj.get(
-                                "assets", {}).keys())[0]
+                                for c in self.parent().characters.keys():
+                                    if "random" in c.lower():
+                                        continue
+                                    for skin in self.parent().skins[c].keys():
+                                        if assetsKey not in packSkinMask[c] or skin not in packSkinMask[c][assetsKey]:
+                                            complete = False
+                                            break
+                                
+                                gameObj["assets"][assetsKey]["complete"] = complete
+                            except:
+                                print(traceback.format_exc())
+
+                        # Get biggest complete pack
+                        assetsKey = "base_files/icon"
+                        biggestAverage = 0
 
                         for asset in list(gameObj.get("assets", {}).keys()):
-                            if "portrait" in gameObj["assets"][asset].get("type", []):
-                                assetsKey = asset
-                                break
-                            if "icon" in gameObj["assets"][asset].get("type", []):
-                                assetsKey = asset
+                            if gameObj["assets"][asset].get("complete") and gameObj["assets"][asset].get("average_size"):
+                                size = sum(gameObj["assets"][asset].get("average_size").values())
 
+                                if size > biggestAverage:
+                                    assetsKey = asset
+                                    biggestAverage = size
+                        
+                        self.parent().biggestCompletePack = assetsKey
+                        print("Biggest complete assets:", assetsKey)
+
+                        # Get stage icon
                         assetsKey = None
 
                         for asset in list(gameObj.get("assets", {}).keys()):
@@ -411,8 +442,7 @@ class TSHGameAssetManager(QObject):
                                 charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
                                     str(skin))
                             else:
-                                charFiles[assetKey]["rescaling_factor"] = list(
-                                    rescaling_factor.values())[0]
+                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get("0", 1)
                     
                     if asset.get("unflippable"):
                         unflippable = asset.get("unflippable", {}).get(

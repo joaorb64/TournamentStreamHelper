@@ -102,6 +102,9 @@ body {
 .stamp.stage-selected {
   background-image: url(../../assets/icons/stage_select.svg);
 }
+.stamp.stage-gentlemans {
+  background-image: url(../../assets/icons/stage_gentlemans.svg);
+}
 
 .banned_by {
   background-color: #000000aa;

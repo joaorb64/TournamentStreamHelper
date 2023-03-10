@@ -22,7 +22,7 @@
   function IsStageBanned(ruleset, state, stage) {
     let banList = GetBannedStages(ruleset, state);
 
-    console.log("banList", banList)
+    console.log("banList", banList);
 
     let found = banList.findIndex((e) => e === stage);
     if (found !== -1) {
@@ -32,15 +32,8 @@
   }
 
   function IsStageStriked(state, stage, previously = false) {
-    for (
-      let i = 0;
-      i < Object.values(state.strikedStages).length;
-      i += 1
-    ) {
-      if (
-        i === Object.values(state.strikedStages).length - 1 &&
-        previously
-      ) {
+    for (let i = 0; i < Object.values(state.strikedStages).length; i += 1) {
+      if (i === Object.values(state.strikedStages).length - 1 && previously) {
         continue;
       }
       let round = Object.values(state.strikedStages)[i];
@@ -82,30 +75,30 @@
             teamName = team.teamName;
           }
 
-          if(teamName == ""){
-            teamName = "P"+(t+1)
+          if (teamName == "") {
+            teamName = "P" + (t + 1);
           }
 
           teamNames.push(teamName);
         });
 
-        console.log(data.score.teamsSwapped)
+        console.log(data.score.teamsSwapped);
 
-        if(data.score.teamsSwapped == true){
-          teamNames = teamNames.reverse()
+        if (data.score.teamsSwapped == true) {
+          teamNames = teamNames.reverse();
         }
 
-        console.log(teamNames)
+        console.log(teamNames);
 
-        console.log(data.score.stage_strike)
+        console.log(data.score.stage_strike);
 
         let allStages = data.score.ruleset.neutralStages;
 
-        if(data.score.stage_strike.currGame > 0){
-          allStages = allStages.concat(data.score.ruleset.counterpickStages)
+        if (data.score.stage_strike.currGame > 0) {
+          allStages = allStages.concat(data.score.ruleset.counterpickStages);
         }
 
-        console.log(allStages)
+        console.log(allStages);
 
         allStages.forEach((stage) => {
           let path = stage.path;
@@ -117,14 +110,21 @@
                           ? `<div class="stage-striked stamp"></div>`
                           : ""
                       }
-                      ${IsStageBanned(data.score.ruleset, data.score.stage_strike, stage.codename)
+                      ${
+                        IsStageBanned(
+                          data.score.ruleset,
+                          data.score.stage_strike,
+                          stage.codename
+                        )
                           ? `<div class="stage-dsr stamp"></div>`
                           : ""
                       }
                       ${
                         data.score.stage_strike.selectedStage &&
                         data.score.stage_strike.selectedStage == stage.codename
-                          ? `<div class="stage-selected stamp"></div>`
+                          ? data.score.stage_strike.gentlemans
+                            ? `<div class="stage-selected-gentlemans stamp"></div>`
+                            : `<div class="stage-selected stamp"></div>`
                           : ""
                       }
                   </div>
@@ -135,12 +135,18 @@
                   </div>
                   ${
                     IsStageStriked(data.score.stage_strike, stage.codename) &&
-                    (data.score.stage_strike.strikedBy[0].includes(stage.codename) ||
-                      data.score.stage_strike.strikedBy[1].includes(stage.codename))
+                    (data.score.stage_strike.strikedBy[0].includes(
+                      stage.codename
+                    ) ||
+                      data.score.stage_strike.strikedBy[1].includes(
+                        stage.codename
+                      ))
                       ? `<div class="banned-by-name">
                         <div class="text">
                           ${
-                            data.score.stage_strike.strikedBy[0].includes(stage.codename)
+                            data.score.stage_strike.strikedBy[0].includes(
+                              stage.codename
+                            )
                               ? teamNames[0]
                               : teamNames[1]
                           }
@@ -153,7 +159,11 @@
                     data.score.stage_strike.selectedStage == stage.codename
                       ? `<div class="banned-by-name">
                         <div class="text">
-                          ${teamNames[data.score.stage_strike.currPlayer]}
+                          ${
+                            data.score.stage_strike.gentlemans
+                              ? "Gentlemans"
+                              : teamNames[data.score.stage_strike.currPlayer]
+                          }
                         </div>
                       </div>`
                       : ""
