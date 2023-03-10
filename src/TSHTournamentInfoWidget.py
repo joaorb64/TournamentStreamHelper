@@ -10,6 +10,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import traceback
 
 
@@ -25,7 +26,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         for widget in self.findChildren(QDateEdit):
             widget.dateChanged.connect(lambda value, element=widget: [
                 StateManager.Set(
-                    f"tournamentInfo.{element.objectName()}", value.toString(Qt.DateFormat.LocaleDate))
+                    f"tournamentInfo.{element.objectName()}", value.toString(QLocale(TSHLocaleHelper.exportLocale).dateFormat(QLocale.FormatType.ShortFormat)))
             ])
             # widget.setDate(d)
             # widget.setValue(StateManager.Get(
