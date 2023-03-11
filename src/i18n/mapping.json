@@ -155,14 +155,6 @@
     "vi-VN": [
       "Ti\u1ebfng Vi\u1ec7t",
       "Vietnamese"
-    ],
-    "zh-CN": [
-      "\u4e2d\u6587 (\u4e2d\u56fd\u5927\u9646)",
-      "Chinese (PRC)"
-    ],
-    "zh-TW": [
-      "\u4e2d\u6587 (\u53f0\u7063)",
-      "Chinese (Taiwan)"
     ]
   },
   "languages": {
@@ -217,6 +209,14 @@
     "pt-BR": [
       "Portugu\u00eas (Brasil)",
       "Portuguese (Brazil)"
+    ],
+    "zh-CN": [
+      "\u4e2d\u6587 (\u4e2d\u56fd\u5927\u9646)",
+      "Chinese (PRC)"
+    ],
+    "zh-TW": [
+      "\u4e2d\u6587 (\u53f0\u7063)",
+      "Chinese (Taiwan)"
     ]
   },
   "remapping": {

@@ -20,7 +20,9 @@ languages = [
     "ja",
     "es",
     "de",
-    "it"
+    "it",
+    "zh-CN",
+    "zh-TW"
 ]
 
 output = [f'src/i18n/TSH_{lang}.ts' for lang in languages]
