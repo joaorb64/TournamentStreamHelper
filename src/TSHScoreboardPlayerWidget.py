@@ -277,6 +277,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"{w.path}.online_avatar")
             data["id"] = StateManager.Get(
                 f"{w.path}.id")
+            data["seed"] = StateManager.Get(
+                f"{w.path}.seed")
             tmpData.append(data)
 
         # Load state
@@ -292,6 +294,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             QCoreApplication.processEvents()
             w.ExportPlayerImages(tmpData[i]["online_avatar"])
             w.ExportPlayerId(tmpData[i]["id"])
+            StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(

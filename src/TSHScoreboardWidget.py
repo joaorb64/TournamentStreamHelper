@@ -561,6 +561,8 @@ class TSHScoreboardWidget(QDockWidget):
                     f"score.team.{t+1}.player.{i+1}.online_avatar")
                 data["id"] = StateManager.Get(
                     f"score.team.{t+1}.player.{i+1}.id")
+                data["seed"] = StateManager.Get(
+                    f"score.team.{t+1}.player.{i+1}.seed")
                 tmpData[t].append(data)
 
         # Load state
@@ -577,6 +579,8 @@ class TSHScoreboardWidget(QDockWidget):
                 QCoreApplication.processEvents()
                 team[i].ExportPlayerImages(tmpData[t][i]["online_avatar"])
                 team[i].ExportPlayerId(tmpData[t][i]["id"])
+                StateManager.Set(
+                    f"score.team.{len(tmpData[t])-t+1}.player.{i+1}.seed", tmpData[t][i]["seed"])
 
         # Scores
         scoreLeft = self.scoreColumn.findChild(QSpinBox, "score_left").value()
