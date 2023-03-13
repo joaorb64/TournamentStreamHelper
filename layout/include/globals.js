@@ -271,8 +271,6 @@ async function CenterImage(element, assetData, options = {}) {
         reject();
       }
 
-      console.log(assetData);
-
       $(element).attr("data-assetData", JSON.stringify(assetData));
       $(element).attr("data-customZoom", JSON.stringify(options.customZoom));
       $(element).attr(
@@ -353,7 +351,6 @@ async function CenterImageDo(element) {
               ($(customElement).innerHeight() / assetData.average_size.y) * 1.2
             );
           }
-          console.log(proportional_zoom);
 
           // For cropped assets, zoom to fill
           // Calculate max zoom
@@ -445,8 +442,6 @@ async function CenterImageDo(element) {
           if (!uncropped_edge || !uncropped_edge.includes("d")) {
             if (yy < maxMoveY) yy = maxMoveY;
           }
-
-          console.log("zoom", zoom);
 
           $(element).css(
             "background-position",

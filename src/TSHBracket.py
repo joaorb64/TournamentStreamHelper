@@ -136,8 +136,6 @@ class Bracket():
                     except Exception as e:
                         print(e)
                     try:
-                        if roundNum == 1:
-                            _set.loseNext = self.rounds["-1"][math.floor(j/2)]
                         if abs(roundNum)%4 == 0:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)+j)%len(round)]
                         elif abs(roundNum)%4 == 1:

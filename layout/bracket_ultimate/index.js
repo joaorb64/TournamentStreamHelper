@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   var ASSET_TO_USE = "full";
   var ZOOM = 1.8;
   var ICON_TO_USE = "base_files/icon";
@@ -135,6 +135,8 @@
       let winnersOnlyProgressions =
         data.bracket.bracket.winnersOnlyProgressions;
 
+      if (winnersOnlyProgressions === undefined) winnersOnlyProgressions = true;
+
       let biggestRound = Math.max.apply(
         null,
         Object.values(bracket).map((r) => Object.keys(r.sets).length)
@@ -144,8 +146,8 @@
       $(":root").css("--player-height", size);
 
       while (
-        biggestRound * (2 * parseInt($(":root").css("--player-height")) + 4) >
-        $(".winners_container").height() - 20
+        biggestRound * (2 * parseInt($(":root").css("--player-height")) + 2) >
+        $(".winners_container").height() - 92
       ) {
         size -= 1;
         $(":root").css("--player-height", size);
@@ -317,6 +319,7 @@
         $(".center_container").html(html);
 
         // ICONS
+        // Winners side: one icon per player
         html = "";
 
         Object.entries(players).forEach(([teamId, team], t) => {
@@ -335,6 +338,24 @@
         });
 
         $(".winners_icons").html(html);
+
+        // Losers side: one icon per slot considering a power2 sized bracket
+        html = "";
+
+        let size = nextPow2(Object.entries(players).length);
+
+        for (let t = 0; t < size; t += 1) {
+          html += `
+            <div class="bracket_icon bracket_icon_p${t + 1}">
+              <div class="icon_name_arrow">
+                <div class="icon_name"></div>
+                <div class="icon_arrow_border"></div>
+                <div class="icon_arrow"></div>
+              </div>
+              <div class="icon_image"></div>
+            </div>`;
+        }
+
         $(".losers_icons").html(html);
 
         // BRACKET LINES
@@ -792,290 +813,286 @@
 
             iconAnimationsW.push(icon_anim);
             playerLoseAnimW.push(icon_lose_anim);
+          });
+        });
+        for (let t = 0; t < size; t += 1) {
+          // Losers path
+          icon_element = $(
+            `.losers_icons .bracket_icon.bracket_icon_p${t + 1}`
+          );
+          if (!icon_element) continue;
 
-            // Losers path
-            icon_element = $(
-              `.losers_icons .bracket_icon.bracket_icon_p${teamId}`
-            );
-            if (!icon_element) return;
+          icon_anim = gsap.timeline({ paused: true });
+          icon_lose_anim = gsap.timeline({ paused: true });
+          prevSlot = null;
 
-            icon_anim = gsap.timeline({ paused: true });
-            icon_lose_anim = gsap.timeline({ paused: true });
-            prevSlot = null;
+          icon_lose_anim.fromTo(
+            $(icon_element),
+            { filter: "brightness(1)" },
+            {
+              duration: 0.5,
+              filter: "brightness(0.7)",
+            },
+            0
+          );
 
-            icon_lose_anim.fromTo(
-              $(icon_element),
-              { filter: "brightness(1)" },
-              {
-                duration: 0.5,
-                filter: "brightness(0.7)",
-              },
-              0
-            );
+          let appearRounds = [];
 
-            let appearRounds = [];
-
-            if (!allWinners) {
-              Object.values(bracket["-1"].sets).forEach((set, index) => {
-                appearRounds.push([-1, index, 0]);
-                appearRounds.push([-1, index, 1]);
-              });
-            }
-
-            Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
-              Object.values(round.sets).forEach((set, s) => {
-                if (set.nextLose) {
-                  appearRounds.push([
-                    set.nextLose[0],
-                    set.nextLose[1],
-                    set.loseSlot,
-                  ]);
-                }
-              });
+          if (!allWinners) {
+            Object.values(bracket["-1"].sets).forEach((set, index) => {
+              appearRounds.push([-1, index, 0]);
+              appearRounds.push([-1, index, 1]);
             });
+          }
 
-            let found = false;
+          Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
+            Object.values(round.sets).forEach((set, s) => {
+              if (set.nextLose) {
+                appearRounds.push([
+                  set.nextLose[0],
+                  set.nextLose[1],
+                  set.loseSlot,
+                ]);
+              }
+            });
+          });
 
-            if (t < Object.keys(players).length - 1) {
-              Object.entries(losersRounds).forEach(([roundKey, round], r) => {
-                Object.values(round.sets).forEach((slot, i) => {
-                  Object.values(slot.playerId).forEach(
-                    (slotPlayerId, slotIndex) => {
-                      if (
-                        (prevSlot &&
-                          prevSlot.nextWin &&
-                          prevSlot.nextWin[0] == parseInt(roundKey) &&
-                          prevSlot.nextWin[1] == i &&
-                          slotIndex == prevSlot.winSlot) ||
-                        (appearRounds[t] &&
-                          parseInt(roundKey) == appearRounds[t][0] &&
-                          i == appearRounds[t][1] &&
-                          slotIndex == appearRounds[t][2] &&
-                          !found)
-                      ) {
-                        prevSlot = slot;
+          let found = false;
 
-                        if (roundKey == "-1") {
-                          let setElement = $(
-                            `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
-                          );
+          Object.entries(losersRounds).forEach(([roundKey, round], r) => {
+            Object.values(round.sets).forEach((slot, i) => {
+              Object.values(slot.playerId).forEach(
+                (slotPlayerId, slotIndex) => {
+                  if (
+                    (prevSlot &&
+                      prevSlot.nextWin &&
+                      prevSlot.nextWin[0] == parseInt(roundKey) &&
+                      prevSlot.nextWin[1] == i &&
+                      slotIndex == prevSlot.winSlot) ||
+                    (appearRounds[t] &&
+                      parseInt(roundKey) == appearRounds[t][0] &&
+                      i == appearRounds[t][1] &&
+                      slotIndex == appearRounds[t][2] &&
+                      !found)
+                  ) {
+                    prevSlot = slot;
 
-                          if (setElement && setElement.offset()) {
-                            gsap.set($(icon_element), {
-                              x:
-                                setElement.offset().left -
-                                ($(icon_element).outerWidth() * 3) / 4,
-                              y:
-                                setElement.offset().top +
-                                setElement.outerHeight() / 2 -
-                                $(icon_element).outerHeight() / 2,
-                            });
+                    if (roundKey == "-1") {
+                      let setElement = $(
+                        `.round_base_l .slot_${i + 1}.slot_p_${slotIndex}`
+                      );
 
-                            icon_lose_anim.fromTo(
-                              $(setElement),
-                              { filter: "brightness(1)" },
-                              {
-                                duration: 0.5,
-                                filter: "brightness(0.7)",
-                              },
-                              0
-                            );
-                          }
-                          icon_anim.addLabel(`start`);
+                      if (setElement && setElement.offset()) {
+                        gsap.set($(icon_element), {
+                          x:
+                            setElement.offset().left -
+                            ($(icon_element).outerWidth() * 3) / 4,
+                          y:
+                            setElement.offset().top +
+                            setElement.outerHeight() / 2 -
+                            $(icon_element).outerHeight() / 2,
+                        });
 
-                          icon_anim.add(
-                            AnimateLine(
-                              $(
-                                `.lines.win .losers_container.line_base_r_${roundKey}.s_${
-                                  i + 1
-                                }.p_${slotIndex}.base`
-                              )
-                            ),
-                            "<"
-                          );
+                        icon_lose_anim.fromTo(
+                          $(setElement),
+                          { filter: "brightness(1)" },
+                          {
+                            duration: 0.5,
+                            filter: "brightness(0.7)",
+                          },
+                          0
+                        );
+                      }
 
-                          // icon_anim.addLabel(`round_${roundKey}`);
-                        } else if (!found) {
-                          let setElement = $(
-                            `.round_${parseInt(roundKey) + 1} .slot_hanging_${
+                      icon_anim.add(
+                        AnimateLine(
+                          $(
+                            `.lines.win .losers_container.line_base_r_${roundKey}.s_${
                               i + 1
-                            }`
-                          );
+                            }.p_${slotIndex}.base`
+                          )
+                        ),
+                        "<"
+                      );
 
-                          if (setElement && setElement.offset()) {
-                            gsap.set($(icon_element), {
-                              x:
-                                setElement.offset().left -
-                                ($(icon_element).outerWidth() * 3) / 4,
-                              y:
-                                setElement.offset().top +
-                                setElement.outerHeight() / 2 -
-                                $(icon_element).outerHeight() / 2,
-                            });
+                      // icon_anim.addLabel(`round_${roundKey}`);
+                    } else if (!found) {
+                      let setElement = $(
+                        `.round_${parseInt(roundKey) + 1} .slot_hanging_${
+                          i + 1
+                        }`
+                      );
 
-                            icon_lose_anim.fromTo(
-                              $(setElement),
-                              { filter: "brightness(1)" },
-                              {
-                                duration: 0.5,
-                                filter: "brightness(0.7)",
-                              },
-                              0
-                            );
-                          }
-                          icon_anim.addLabel(`start`);
+                      if (setElement && setElement.offset()) {
+                        gsap.set($(icon_element), {
+                          x:
+                            setElement.offset().left -
+                            ($(icon_element).outerWidth() * 3) / 4,
+                          y:
+                            setElement.offset().top +
+                            setElement.outerHeight() / 2 -
+                            $(icon_element).outerHeight() / 2,
+                        });
 
-                          icon_anim.add(
-                            AnimateLine(
-                              $(
-                                `.lines.win .losers_container.line_r_${parseInt(
-                                  roundKey
-                                )}.s_${i + 1}.p_${slotIndex}.base`
-                              ),
-                              "<"
+                        icon_lose_anim.fromTo(
+                          $(setElement),
+                          { filter: "brightness(1)" },
+                          {
+                            duration: 0.5,
+                            filter: "brightness(0.7)",
+                          },
+                          0
+                        );
+                      }
+                      icon_anim.addLabel(`start`);
+
+                      icon_anim.add(
+                        AnimateLine(
+                          $(
+                            `.lines.win .losers_container.line_r_${parseInt(
+                              roundKey
+                            )}.s_${i + 1}.p_${slotIndex}.base`
+                          ),
+                          "<"
+                        )
+                      );
+
+                      // icon_anim.addLabel(`round_${parseInt(roundKey)}`);
+                    }
+
+                    let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
+
+                    icon_anim.add(
+                      AnimateLine(
+                        $(
+                          `.lines.win .losers_container.line_r_${roundKey}.s_${
+                            i + 1
+                          }.p_${slotIndex}.base`
+                        )
+                      ),
+                      ">"
+                    );
+
+                    if (setElement && setElement.offset()) {
+                      icon_anim.to(
+                        $(icon_element),
+                        {
+                          x: setElement.offset().left,
+                          duration: 0.4,
+                        },
+                        "<"
+                      );
+
+                      icon_anim.addLabel(`round_${roundKey}`);
+
+                      // Animation if won
+                      if (roundKey == "-1") {
+                        icon_anim.add(
+                          AnimateLine(
+                            $(
+                              `.lines.win .losers_container.line_base_r_${-1}.s_${
+                                i + 1
+                              }.p_${slotIndex}.win`
                             )
-                          );
-
-                          // icon_anim.addLabel(`round_${parseInt(roundKey)}`);
-                        }
-
-                        let setElement = $(`.round_${roundKey} .slot_${i + 1}`);
-
+                          ),
+                          ">"
+                        );
+                      } else {
                         icon_anim.add(
                           AnimateLine(
                             $(
                               `.lines.win .losers_container.line_r_${roundKey}.s_${
                                 i + 1
-                              }.p_${slotIndex}.base`
+                              }.p_${slotIndex}.win`
                             )
                           ),
                           ">"
                         );
-
-                        if (setElement && setElement.offset()) {
-                          icon_anim.to(
-                            $(icon_element),
-                            {
-                              x: setElement.offset().left,
-                              duration: 0.4,
-                            },
-                            "<"
-                          );
-
-                          icon_anim.addLabel(`round_${roundKey}`);
-
-                          // Animation if won
-                          if (roundKey == "-1") {
-                            icon_anim.add(
-                              AnimateLine(
-                                $(
-                                  `.lines.win .losers_container.line_base_r_${-1}.s_${
-                                    i + 1
-                                  }.p_${slotIndex}.win`
-                                )
-                              ),
-                              ">"
-                            );
-                          } else {
-                            icon_anim.add(
-                              AnimateLine(
-                                $(
-                                  `.lines.win .losers_container.line_r_${roundKey}.s_${
-                                    i + 1
-                                  }.p_${slotIndex}.win`
-                                )
-                              ),
-                              ">"
-                            );
-                          }
-                          icon_anim.to(
-                            $(icon_element),
-                            {
-                              x: setElement.offset().left,
-                              y: setElement.offset().top,
-                              duration: 0.4,
-                            },
-                            "<"
-                          );
-                        }
-
-                        found = true;
                       }
+                      icon_anim.to(
+                        $(icon_element),
+                        {
+                          x: setElement.offset().left,
+                          y: setElement.offset().top,
+                          duration: 0.4,
+                        },
+                        "<"
+                      );
                     }
-                  );
-                });
-              });
 
-              // Add animations for GF and GF Reset
-              let GfResetRoundNum = Math.max.apply(
-                null,
-                Object.keys(bracket).map((r) => parseInt(r))
-              );
-
-              let lastLosersRoundNum = Math.min.apply(
-                null,
-                Object.keys(bracket).map((r) => parseInt(r))
-              );
-
-              [GfResetRoundNum - 1].forEach((roundNum, index) => {
-                icon_anim.add(
-                  AnimateLine(
-                    $(
-                      `.lines.win .losers_container.line_r_${
-                        lastLosersRoundNum - index - 1
-                      }.s_${1}.base`
-                    )
-                  ),
-                  ">"
-                );
-
-                let setElement = $(`.round_${roundNum} .slot_${1}`);
-
-                if (setElement.get(0)) {
-                  icon_anim.to(
-                    $(icon_element),
-                    {
-                      x: setElement.offset().left + MIDDLE_SPACE,
-                      duration: 0.4,
-                    },
-                    "<"
-                  );
+                    found = true;
+                  }
                 }
+              );
+            });
+          });
 
-                icon_anim.addLabel(`round_${lastLosersRoundNum - index - 1}`);
+          // Add animations for GF and GF Reset
+          let GfResetRoundNum = Math.max.apply(
+            null,
+            Object.keys(bracket).map((r) => parseInt(r))
+          );
 
-                // Animation if won
-                icon_anim.add(
-                  AnimateLine(
-                    $(
-                      `.lines.win .losers_container.line_r_${
-                        lastLosersRoundNum - index - 1
-                      }.s_${1}.win`
-                    )
-                  ),
-                  ">"
-                );
+          let lastLosersRoundNum = Math.min.apply(
+            null,
+            Object.keys(bracket).map((r) => parseInt(r))
+          );
 
-                if (setElement.get(0)) {
-                  icon_anim.to(
-                    $(icon_element),
-                    {
-                      x: setElement.offset().left + MIDDLE_SPACE,
-                      y: setElement.offset().top,
-                      duration: 0.4,
-                    },
-                    "<"
-                  );
-                }
-              });
+          [GfResetRoundNum - 1].forEach((roundNum, index) => {
+            icon_anim.add(
+              AnimateLine(
+                $(
+                  `.lines.win .losers_container.line_r_${
+                    lastLosersRoundNum - index - 1
+                  }.s_${1}.base`
+                )
+              ),
+              ">"
+            );
 
-              iconAnimationsL.push(icon_anim);
-              playerLoseAnimL.push(icon_lose_anim);
+            let setElement = $(`.round_${roundNum} .slot_${1}`);
+
+            if (setElement.get(0)) {
+              icon_anim.to(
+                $(icon_element),
+                {
+                  x: setElement.offset().left + MIDDLE_SPACE,
+                  duration: 0.4,
+                },
+                "<"
+              );
             }
 
-            return;
+            icon_anim.addLabel(`round_${lastLosersRoundNum - index - 1}`);
+
+            // Animation if won
+            icon_anim.add(
+              AnimateLine(
+                $(
+                  `.lines.win .losers_container.line_r_${
+                    lastLosersRoundNum - index - 1
+                  }.s_${1}.win`
+                )
+              ),
+              ">"
+            );
+
+            if (setElement.get(0)) {
+              icon_anim.to(
+                $(icon_element),
+                {
+                  x: setElement.offset().left + MIDDLE_SPACE,
+                  y: setElement.offset().top,
+                  duration: 0.4,
+                },
+                "<"
+              );
+            }
           });
-        });
+
+          iconAnimationsL.push(icon_anim);
+          playerLoseAnimL.push(icon_lose_anim);
+        }
       }
 
       let GfResetRoundNum = Math.max.apply(
@@ -1495,11 +1512,20 @@
               });
             });
 
-            console.log("id", teamId, "icon:", losersIconId);
+            console.log(
+              "id",
+              teamId,
+              "name",
+              players["" + teamId]["player"],
+              "icon:",
+              losersIconId,
+              "lastfoundound",
+              lastFoundRound
+            );
 
             if (lastFoundRound == 0 || losersIconId == null) {
               //if (iconAnimationsL != null && t < iconAnimationsL.length)
-              //iconAnimationsL[t].tweenTo(`start`);
+              //  iconAnimationsL[t].tweenTo(`start`);
             } else {
               managedIcons.push(losersIconId);
 
@@ -1638,7 +1664,7 @@
           // Return unmanaged icons to start
           iconAnimationsL.forEach((anim, index) => {
             if (!managedIcons.includes(index)) {
-              console.log("running for", index);
+              console.log("unmanaged:", index);
               anim.tweenTo(0);
 
               let element = $(
@@ -1662,11 +1688,8 @@
     });
   }
 
-  //Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 5000);
-    });
+  $("body").fadeTo(1, 1, async () => {
+    Start();
   });
-})(jQuery);
+  document.addEventListener("tsh_update", Update);
+});

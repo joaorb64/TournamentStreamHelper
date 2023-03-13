@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   var ASSET_CONFIG = {
     default: {
       asset: "full",
@@ -14,7 +14,7 @@
     },
   };
 
-  window.ALWAYS_EXPAND = true;
+  window.ALWAYS_EXPAND = false;
 
   var ASSET_TO_USE = {};
 
@@ -838,11 +838,8 @@
     });
   }
 
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1000, 1000, async () => {
-      Start();
-      setInterval(Update, 16);
-    });
+  $("body").fadeTo(1, 1, async () => {
+    Start();
   });
-})(jQuery);
+  document.addEventListener("tsh_update", Update);
+});
