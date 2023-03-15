@@ -181,7 +181,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             if color.currentData() and color.currentData().get("en_name", ""):
                 data["en_name"] = color.currentData().get("en_name", "")
 
-            if character.currentData():
+            if color.currentData() and character.currentData():
                 data["assets"] = color.currentData().get("assets", {})
 
             if data.get("assets") == None:
