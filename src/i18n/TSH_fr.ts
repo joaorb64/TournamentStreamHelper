@@ -223,7 +223,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="419"/>
         <source>IP</source>
-        <translation></translation>
+        <translation>IP</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
@@ -540,12 +540,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHScoreboardScore.ui" line="43"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="174"/>
         <source>SCORE</source>
-        <translation></translation>
+        <translation>SCORE</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="61"/>
         <source>PHASE</source>
-        <translation></translation>
+        <translation>PHASE</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="84"/>
@@ -555,17 +555,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="102"/>
         <source>MATCH</source>
-        <translation></translation>
+        <translation>MATCH</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="125"/>
         <source>Winners Finals, Losers Semis, etc</source>
-        <translation>Finale des Gagnants, Demi-finale des Perdants, etc</translation>
+        <translation>Finale Winner, Demi-finale Loser, etc</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="146"/>
         <source>BEST OF</source>
-        <translation></translation>
+        <translation>BEST OF</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="213"/>
