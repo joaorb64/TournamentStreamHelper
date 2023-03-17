@@ -1,244 +1,244 @@
 {
-    "unsupported_languages": {
-        "af-ZA": [
-            "Afrikaans",
-            "Afrikaans"
-        ],
-        "ar": [
-            "العربية",
-            "Arabic"
-        ],
-        "bg-BG": [
-            "Български",
-            "Bulgarian"
-        ],
-        "ca-AD": [
-            "Català",
-            "Catalan"
-        ],
-        "cs-CZ": [
-            "Čeština",
-            "Czech"
-        ],
-        "cy-GB": [
-            "Cymraeg",
-            "Welsh"
-        ],
-        "da-DK": [
-            "Dansk",
-            "Danish"
-        ],
-        "el-GR": [
-            "Ελληνικά",
-            "Greek"
-        ],
-        "et-EE": [
-            "Eesti keel",
-            "Estonian"
-        ],
-        "eu": [
-            "Euskara",
-            "Basque"
-        ],
-        "fa-IR": [
-            "فارسی",
-            "Persian"
-        ],
-        "fi-FI": [
-            "Suomi",
-            "Finnish"
-        ],
-        "he-IL": [
-            "עברית",
-            "Hebrew"
-        ],
-        "hi-IN": [
-            "हिंदी",
-            "Hindi"
-        ],
-        "hr-HR": [
-            "Hrvatski",
-            "Croatian"
-        ],
-        "hu-HU": [
-            "Magyar",
-            "Hungarian"
-        ],
-        "id-ID": [
-            "Bahasa Indonesia",
-            "Indonesian"
-        ],
-        "is-IS": [
-            "Íslenska",
-            "Icelandic"
-        ],
-        "it-IT": [
-            "Italiano",
-            "Italian"
-        ],
-        "km-KH": [
-            "ភាសាខ្មែរ",
-            "Khmer"
-        ],
-        "ko-KR": [
-            "한국어",
-            "Korean"
-        ],
-        "la": [
-            "Latina",
-            "Latin"
-        ],
-        "lt-LT": [
-            "Lietuvių kalba",
-            "Lithuanian"
-        ],
-        "lv-LV": [
-            "Latviešu",
-            "Latvian"
-        ],
-        "mn-MN": [
-            "Монгол",
-            "Mongolian"
-        ],
-        "nb-NO": [
-            "Norsk bokmål",
-            "Norwegian (Bokmål)"
-        ],
-        "nl-NL": [
-            "Nederlands",
-            "Dutch"
-        ],
-        "nn-NO": [
-            "Norsk nynorsk",
-            "Norwegian (Nynorsk)"
-        ],
-        "pl-PL": [
-            "Polski",
-            "Polish"
-        ],
-        "pt-PT": [
-            "Português (Portugal)",
-            "Portuguese (Portugal)"
-        ],
-        "ro-RO": [
-            "Română",
-            "Romanian"
-        ],
-        "ru-RU": [
-            "Русский",
-            "Russian"
-        ],
-        "sk-SK": [
-            "Slovenčina",
-            "Slovak"
-        ],
-        "sl-SI": [
-            "Slovenščina",
-            "Slovenian"
-        ],
-        "sr-RS": [
-            "Српски / Srpski",
-            "Serbian"
-        ],
-        "sv-SE": [
-            "Svenska",
-            "Swedish"
-        ],
-        "th-TH": [
-            "ไทย",
-            "Thai"
-        ],
-        "tr-TR": [
-            "Türkçe",
-            "Turkish"
-        ],
-        "uk-UA": [
-            "Українська",
-            "Ukrainian"
-        ],
-        "vi-VN": [
-            "Tiếng Việt",
-            "Vietnamese"
-        ],
-        "zh-CN": [
-            "中文 (中国大陆)",
-            "Chinese (PRC)"
-        ],
-        "zh-TW": [
-            "中文 (台灣)",
-            "Chinese (Taiwan)"
-        ]
-    },
-    "languages": {
-        "de-AT": [
-            "Deutsch (Österreich)",
-            "German (Austria)"
-        ],
-        "de-CH": [
-            "Deutsch (Schweiz)",
-            "German (Switzerland)"
-        ],
-        "de-DE": [
-            "Deutsch (Deutschland)",
-            "German (Germany)"
-        ],
-        "en-GB": [
-            "English (UK)",
-            "English (UK)"
-        ],
-        "en-US": [
-            "English (US)",
-            "English (US)"
-        ],
-        "es-CL": [
-            "Español (Chile)",
-            "Spanish (Chile)"
-        ],
-        "es-ES": [
-            "Español (España)",
-            "Spanish (Spain)"
-        ],
-        "es-MX": [
-            "Español (México)",
-            "Spanish (Mexico)"
-        ],
-        "fr-CA": [
-            "Français (Canada)",
-            "French (Canada)"
-        ],
-        "fr-FR": [
-            "Français (France)",
-            "French (France)"
-        ],
-        "ja-JP": [
-            "日本語",
-            "Japanese"
-        ],
-        "pt-BR": [
-            "Português (Brasil)",
-            "Portuguese (Brazil)"
-        ]
-    },
-    "remapping": {
-        "es_LA": [
-            "es_AR",
-            "es_BO",
-            "es_CL",
-            "es_CO",
-            "es_CR",
-            "es_DO",
-            "es_EC",
-            "es_SV",
-            "es_GT",
-            "es_HN",
-            "es_MX",
-            "es_NI",
-            "es_PA",
-            "es_PY",
-            "es_PE",
-            "es_PR",
-            "es_UY",
-            "es_VE"
-        ]
-    }
+  "unsupported_languages": {
+    "af-ZA": [
+      "Afrikaans",
+      "Afrikaans"
+    ],
+    "ar": [
+      "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+      "Arabic"
+    ],
+    "bg-BG": [
+      "\u0411\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438",
+      "Bulgarian"
+    ],
+    "ca-AD": [
+      "Catal\u00e0",
+      "Catalan"
+    ],
+    "cs-CZ": [
+      "\u010ce\u0161tina",
+      "Czech"
+    ],
+    "cy-GB": [
+      "Cymraeg",
+      "Welsh"
+    ],
+    "da-DK": [
+      "Dansk",
+      "Danish"
+    ],
+    "el-GR": [
+      "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",
+      "Greek"
+    ],
+    "et-EE": [
+      "Eesti keel",
+      "Estonian"
+    ],
+    "eu": [
+      "Euskara",
+      "Basque"
+    ],
+    "fa-IR": [
+      "\u0641\u0627\u0631\u0633\u06cc",
+      "Persian"
+    ],
+    "fi-FI": [
+      "Suomi",
+      "Finnish"
+    ],
+    "he-IL": [
+      "\u05e2\u05d1\u05e8\u05d9\u05ea",
+      "Hebrew"
+    ],
+    "hi-IN": [
+      "\u0939\u093f\u0902\u0926\u0940",
+      "Hindi"
+    ],
+    "hr-HR": [
+      "Hrvatski",
+      "Croatian"
+    ],
+    "hu-HU": [
+      "Magyar",
+      "Hungarian"
+    ],
+    "id-ID": [
+      "Bahasa Indonesia",
+      "Indonesian"
+    ],
+    "is-IS": [
+      "\u00cdslenska",
+      "Icelandic"
+    ],
+    "km-KH": [
+      "\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a",
+      "Khmer"
+    ],
+    "ko-KR": [
+      "\ud55c\uad6d\uc5b4",
+      "Korean"
+    ],
+    "la": [
+      "Latina",
+      "Latin"
+    ],
+    "lt-LT": [
+      "Lietuvi\u0173 kalba",
+      "Lithuanian"
+    ],
+    "lv-LV": [
+      "Latvie\u0161u",
+      "Latvian"
+    ],
+    "mn-MN": [
+      "\u041c\u043e\u043d\u0433\u043e\u043b",
+      "Mongolian"
+    ],
+    "nb-NO": [
+      "Norsk bokm\u00e5l",
+      "Norwegian (Bokm\u00e5l)"
+    ],
+    "nl-NL": [
+      "Nederlands",
+      "Dutch"
+    ],
+    "nn-NO": [
+      "Norsk nynorsk",
+      "Norwegian (Nynorsk)"
+    ],
+    "pl-PL": [
+      "Polski",
+      "Polish"
+    ],
+    "pt-PT": [
+      "Portugu\u00eas (Portugal)",
+      "Portuguese (Portugal)"
+    ],
+    "ro-RO": [
+      "Rom\u00e2n\u0103",
+      "Romanian"
+    ],
+    "ru-RU": [
+      "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "Russian"
+    ],
+    "sk-SK": [
+      "Sloven\u010dina",
+      "Slovak"
+    ],
+    "sl-SI": [
+      "Sloven\u0161\u010dina",
+      "Slovenian"
+    ],
+    "sr-RS": [
+      "\u0421\u0440\u043f\u0441\u043a\u0438 / Srpski",
+      "Serbian"
+    ],
+    "sv-SE": [
+      "Svenska",
+      "Swedish"
+    ],
+    "th-TH": [
+      "\u0e44\u0e17\u0e22",
+      "Thai"
+    ],
+    "tr-TR": [
+      "T\u00fcrk\u00e7e",
+      "Turkish"
+    ],
+    "uk-UA": [
+      "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
+      "Ukrainian"
+    ],
+    "vi-VN": [
+      "Ti\u1ebfng Vi\u1ec7t",
+      "Vietnamese"
+    ]
+  },
+  "languages": {
+    "de-AT": [
+      "Deutsch (\u00d6sterreich)",
+      "German (Austria)"
+    ],
+    "de-CH": [
+      "Deutsch (Schweiz)",
+      "German (Switzerland)"
+    ],
+    "de-DE": [
+      "Deutsch (Deutschland)",
+      "German (Germany)"
+    ],
+    "en-GB": [
+      "English (UK)",
+      "English (UK)"
+    ],
+    "en-US": [
+      "English (US)",
+      "English (US)"
+    ],
+    "es-CL": [
+      "Espa\u00f1ol (Chile)",
+      "Spanish (Chile)"
+    ],
+    "es-ES": [
+      "Espa\u00f1ol (Espa\u00f1a)",
+      "Spanish (Spain)"
+    ],
+    "es-MX": [
+      "Espa\u00f1ol (M\u00e9xico)",
+      "Spanish (Mexico)"
+    ],
+    "fr-CA": [
+      "Fran\u00e7ais (Canada)",
+      "French (Canada)"
+    ],
+    "fr-FR": [
+      "Fran\u00e7ais (France)",
+      "French (France)"
+    ],
+    "it-IT": [
+      "Italiano (Italia)",
+      "Italian (Italy)"
+    ],
+    "ja-JP": [
+      "\u65e5\u672c\u8a9e",
+      "Japanese"
+    ],
+    "pt-BR": [
+      "Portugu\u00eas (Brasil)",
+      "Portuguese (Brazil)"
+    ],
+    "zh-CN": [
+      "\u4e2d\u6587 (\u4e2d\u56fd\u5927\u9646)",
+      "Chinese (PRC)"
+    ],
+    "zh-TW": [
+      "\u4e2d\u6587 (\u53f0\u7063)",
+      "Chinese (Taiwan)"
+    ]
+  },
+  "remapping": {
+    "es_LA": [
+      "es_AR",
+      "es_BO",
+      "es_CL",
+      "es_CO",
+      "es_CR",
+      "es_DO",
+      "es_EC",
+      "es_SV",
+      "es_GT",
+      "es_HN",
+      "es_MX",
+      "es_NI",
+      "es_PA",
+      "es_PY",
+      "es_PE",
+      "es_PR",
+      "es_UY",
+      "es_VE"
+    ]
+  }
 }
