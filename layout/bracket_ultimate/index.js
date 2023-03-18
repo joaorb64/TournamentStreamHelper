@@ -8,6 +8,8 @@ LoadEverything().then(() => {
 
   var USE_ONLINE_PICTURE = false;
 
+  var firstUpdate = true;
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
@@ -1422,7 +1424,9 @@ LoadEverything().then(() => {
             if (lost) playerLoseAnimW[t].play();
             else playerLoseAnimW[t].reverse();
 
-            iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`);
+            iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`, {
+              delay: firstUpdate ? 2 : 0,
+            });
           });
 
           // Losers side
@@ -1565,7 +1569,10 @@ LoadEverything().then(() => {
                   )
                 ) {
                   iconAnimationsL[losersIconId].tweenTo(
-                    `round_${lastFoundRound}`
+                    `round_${lastFoundRound}`,
+                    {
+                      delay: firstUpdate ? 2 : 0,
+                    }
                   );
                 } else {
                   iconAnimationsL[losersIconId].tweenTo(`start`);
@@ -1586,6 +1593,8 @@ LoadEverything().then(() => {
                   </span>
                 `
                 );
+
+                gsap.to($(element), { autoAlpha: 1 });
 
                 let charactersHtml = "";
 
@@ -1672,6 +1681,7 @@ LoadEverything().then(() => {
               );
               if (element.get(0)) {
                 SetInnerHtml($(element).find(`.icon_name`), `---`);
+                gsap.to($(element), { autoAlpha: 0 });
               }
             }
           });
@@ -1681,11 +1691,9 @@ LoadEverything().then(() => {
           return;
         });
       });
-    }
 
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
+      firstUpdate = false;
+    }
   }
 
   $("body").fadeTo(1, 1, async () => {

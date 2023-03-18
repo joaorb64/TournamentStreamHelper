@@ -147,7 +147,15 @@ LoadEverything().then(() => {
 
       let biggestRound = Math.max.apply(
         null,
-        Object.values(bracket).map((r) => Object.keys(r.sets).length)
+        Object.values(bracket).map((r) => {
+          const setMap = Object.values(r.sets).map((s) => {
+            return s.playerId[0] == -1 || s.playerId[1] == -1 ? 0 : 1;
+          });
+          console.log(setMap);
+          return setMap.reduce(function (result, item) {
+            return result + item;
+          }, 0);
+        })
       );
 
       let size = 32;
@@ -160,10 +168,11 @@ LoadEverything().then(() => {
         biggestRound * (2 * parseInt($(":root").css("--player-height")) + 4) >
         containerSize - 20
       ) {
+        console.log(biggestRound, containerSize);
         size -= 1;
         $(":root").css("--player-height", size);
       }
-      $(":root").css("--name-size", Math.min(size - size * 0.3, 16));
+      $(":root").css("--name-size", Math.min(size - size * 0.4, 16));
       $(":root").css("--score-size", size - size * 0.3);
       $(":root").css("--flag-height", size - size * 0.4);
 
@@ -326,7 +335,7 @@ LoadEverything().then(() => {
                           (slotElement.offset().left +
                             slotElement.outerWidth())) /
                           2,
-                      winElement.offset().top + slotElement.outerHeight() / 2,
+                      winElement.offset().top + winElement.outerHeight() / 2,
                     ],
                     [
                       winElement.offset().left,

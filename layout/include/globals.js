@@ -244,16 +244,16 @@ function resizeInCanvas(image, width, height) {
 }
 
 var imageResizeObserver = new ResizeObserver((entries) => {
-  entries.forEach((entry) => {
+  for (const entry of entries) {
     console.log("Resized");
     CenterImageDo(entry.target);
-  });
+  }
 });
 
 var divResizeObserver = new ResizeObserver((entries) => {
-  entries.forEach((entry) => {
+  for (const entry of entries) {
     FitText($(entry.target));
-  });
+  }
 });
 
 async function CenterImage(element, assetData, options = {}) {
