@@ -267,7 +267,7 @@ body {
   background-position: center;
   width: var(--flag-height);
   height: calc(var(--flag-height) * 0.7px);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .sponsor_icon > div > div {

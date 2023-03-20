@@ -116,7 +116,7 @@ class Bracket():
         while i > 1:
             i = math.floor(i/2)
             for j in range(2):
-                round = [BracketSet(self, [-3-len(subBracket), i]) for i in range(math.floor(i))]
+                round = [BracketSet(self, [-1-len(subBracket), i]) for i in range(math.floor(i))]
                 subBracket.append(round)
 
         for r, round in enumerate(subBracket):

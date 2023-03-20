@@ -514,9 +514,8 @@ LoadEverything().then(() => {
                 // Losers side lines
                 if (parseInt(roundKey) < 0) {
                   if (
-                    (parseInt(roundKey) % 2 == -1 &&
-                      !winnersOnlyProgressions) ||
-                    (parseInt(roundKey) % 2 == 0 && winnersOnlyProgressions)
+                    (parseInt(roundKey) % 2 == -1 && !allWinners) ||
+                    (parseInt(roundKey) % 2 == 0 && allWinners)
                   ) {
                     let hangingElement = $(
                       `.${this.baseClass} .round_${roundKey} .slot_hanging_${
@@ -603,9 +602,8 @@ LoadEverything().then(() => {
                     // Which set index to assign?
                     let s = 0;
                     if (
-                      (!winnersOnlyProgressions &&
-                        parseInt(roundKey) % 2 == -1) ||
-                      (winnersOnlyProgressions && parseInt(roundKey) % 2 == 0)
+                      (!allWinners && parseInt(roundKey) % 2 == -1) ||
+                      (allWinners && parseInt(roundKey) % 2 == 0)
                     ) {
                       // Next round has the same amount of sets, so just use the current index
                       s = setIndex + 1;
@@ -617,9 +615,8 @@ LoadEverything().then(() => {
                     // Which player slot to assign?
                     let p = 0;
                     if (
-                      (!winnersOnlyProgressions &&
-                        parseInt(roundKey) % 2 == -1) ||
-                      (winnersOnlyProgressions && parseInt(roundKey) % 2 == 0)
+                      (!allWinners && parseInt(roundKey) % 2 == -1) ||
+                      (allWinners && parseInt(roundKey) % 2 == 0)
                     ) {
                       // If in an odd round, it's always 1 because slot 0 is a hanging slot
                       // (a player that came from winners as slot 0 vs this one as slot 1)
@@ -1424,9 +1421,13 @@ LoadEverything().then(() => {
             if (lost) playerLoseAnimW[t].play();
             else playerLoseAnimW[t].reverse();
 
-            iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`, {
-              delay: firstUpdate ? 2 : 0,
-            });
+            if (lastFoundRound >= 1) {
+              iconAnimationsW[t].tweenTo(`round_${lastFoundRound}`, {
+                delay: firstUpdate ? 0.6 : 0,
+              });
+            } else {
+              iconAnimationsW[t].tweenTo(`start`);
+            }
           });
 
           // Losers side
@@ -1467,6 +1468,7 @@ LoadEverything().then(() => {
           // So we assign the player so we can later set their name, icon, etc
           Object.entries(players).forEach(([teamId, team], t) => {
             let lastFoundRound = 0;
+            let firstFoundRound = 0;
             let lastFoundSet = null;
             let losersIconId = null;
             let lost = false;
@@ -1487,6 +1489,8 @@ LoadEverything().then(() => {
                 ) {
                   lastFoundRound = roundKey;
                   lastFoundSet = set;
+
+                  if (!firstFoundRound) firstFoundRound = roundKey;
 
                   if (losersIconId == null) {
                     appearRounds.forEach((appearRound, i) => {
@@ -1527,7 +1531,7 @@ LoadEverything().then(() => {
               lastFoundRound
             );
 
-            if (lastFoundRound == 0 || losersIconId == null) {
+            if (lastFoundRound == 0 || losersIconId === null) {
               //if (iconAnimationsL != null && t < iconAnimationsL.length)
               //  iconAnimationsL[t].tweenTo(`start`);
             } else {
@@ -1571,7 +1575,7 @@ LoadEverything().then(() => {
                   iconAnimationsL[losersIconId].tweenTo(
                     `round_${lastFoundRound}`,
                     {
-                      delay: firstUpdate ? 2 : 0,
+                      delay: firstUpdate ? 0.6 * -firstFoundRound : 0,
                     }
                   );
                 } else {

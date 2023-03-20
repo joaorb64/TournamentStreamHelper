@@ -223,7 +223,7 @@ class TSHBracketView(QGraphicsView):
         # So this round is hidden
         validWR1Sets = self.bracket.originalPlayerNumber - self.bracket.playerNumber/2
 
-        if not (self.bracketWidget.limitExport.isChecked() and self.bracketWidget.limitExportNumber.value() > 0) or not forExport:
+        if not (self.bracketWidget.limitExport.isChecked() and self.bracketWidget.limitExportNumber.value() > 0):
             if self.progressionsIn == 0 and validWR1Sets <= self.bracket.playerNumber/2/2:
                 losersCutout[0] += 1
 
@@ -425,17 +425,23 @@ class TSHBracketView(QGraphicsView):
                 nextWin = bracketSet.winNext.pos.copy() if bracketSet.winNext else None
                 nextLose = bracketSet.loseNext.pos.copy() if bracketSet.loseNext else None
 
+                # print(f"Round pos {bracketSet.pos} W→ {nextWin}")
+                # print(f"Round pos {bracketSet.pos} L→ {nextLose}")
+
                 # Reassign rounds based on export number
                 if nextWin:
                     if nextWin[0] > 0:
                         nextWin[0] -= winnersOffset
                     else:
-                        nextWin[0] += losersOffset
+                        nextWin[0] += losersOffset - 2
                 if nextLose:
                     if nextLose[0] < 0:
-                        nextLose[0] += losersOffset-2
-                        if nextLose[0] == 0:
-                            nextLose[0] = -1
+                        nextLose[0] += losersOffset - 2
+
+                        """if self.bracket.progressionsIn <= 0:
+                            nextLose[0] -= 1
+                        else:
+                            nextLose[0] -= 2"""
                     # For grand finals into reset, nextLose is a positive round
                     else:
                         nextLose[0] -= winnersOffset
