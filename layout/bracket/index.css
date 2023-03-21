@@ -79,8 +79,8 @@ body {
   height: calc(50vh - var(--title-size));
   position: absolute;
   top: calc(0% + var(--title-size));
-  padding-left: 100px;
-  padding-right: 100px;
+  padding-left: 80px;
+  padding-right: 80px;
   box-sizing: border-box;
   padding-top: 30px;
   justify-content: center;
@@ -106,8 +106,8 @@ body {
   height: 50vh;
   position: absolute;
   top: 50%;
-  padding-left: 100px;
-  padding-right: 100px;
+  padding-left: 80px;
+  padding-right: 80px;
   box-sizing: border-box;
   padding-top: 30px;
   justify-content: center;

@@ -158,7 +158,7 @@ class BracketSetWidget(QWidget):
                     self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
                     self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 0);")
             elif self.bracketSet.pos[0] < 0:
-                if self.bracketSet.pos[0] + 2 + losersOffset >= 0:
+                if self.bracketSet.pos[0] + losersOffset >= 0:
                     self.name[0].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                     self.name[1].setStyleSheet("background-color: rgba(0, 0, 0, 80);")
                 else:

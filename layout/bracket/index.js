@@ -2,19 +2,17 @@ LoadEverything().then(() => {
   var ASSET_CONFIG = {
     default: {
       asset: "full",
-      zoom: 2,
+      zoom: 1.4,
     },
     ssbu: {
       asset: "full",
-      zoom: 2,
+      zoom: 1.4,
     },
     ssb64: {
       asset: "artwork",
       zoom: 1.6,
     },
   };
-
-  window.ALWAYS_EXPAND = false;
 
   var ASSET_TO_USE = {};
 
@@ -82,21 +80,36 @@ LoadEverything().then(() => {
 
     if (animations[roundKey][setIndex]) {
       if (window.ALWAYS_EXPAND) {
+        // Hide incomplete sets (-1), but not pending (-2)
+        if (
+          (set.playerId[0] == -1 && set.playerId[1] != -1) ||
+          (set.playerId[0] != -1 && set.playerId[1] == -1)
+        ) {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        }
+
         if (!isGf && !isGfR)
           return animations[roundKey][setIndex].tweenTo("done");
 
-        if (isGf && set.score[0] >= set.score[1])
-          return animations[roundKey][setIndex].tweenTo("displayed");
-
-        if (isGf)
-          if (
-            progressionsOut == 0 &&
-            isGfR &&
-            bracket[GfResetRoundNum - 1].sets[0].score[0] >
-              bracket[GfResetRoundNum - 1].sets[0].score[1]
-          ) {
-            return animations[roundKey][setIndex].tweenTo("hidden");
+        if (isGf) {
+          if (set.score[0] >= set.score[1] || !set.completed) {
+            return animations[roundKey][setIndex].tweenTo("displayed");
+          } else {
+            return animations[roundKey][setIndex].tweenTo("done");
           }
+        }
+
+        if (
+          progressionsOut == 0 &&
+          isGfR &&
+          bracket[GfResetRoundNum - 1].sets[0].score[0] <
+            bracket[GfResetRoundNum - 1].sets[0].score[1] &&
+          bracket[GfResetRoundNum - 1].sets[0].completed
+        ) {
+          return animations[roundKey][setIndex].tweenTo("displayed");
+        } else {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        }
       } else {
         if (
           (set.playerId[0] == -2 && set.playerId[1] == -2) ||
@@ -664,31 +677,22 @@ LoadEverything().then(() => {
                   }
                 });
 
-                SetInnerHtml(
-                  $(element).find(`.character_container`),
-                  charactersHtml,
-                  undefined,
-                  0.5,
-                  () => {
-                    $(element)
-                      .find(`.character_container .icon.stockicon div`)
-                      .each((e, i) => {
-                        if (
-                          player &&
-                          player.character[1] &&
-                          player.character[1].assets[ASSET_TO_USE.asset] != null
-                        ) {
-                          CenterImage(
-                            $(i),
-                            $(i).attr("data-asset"),
-                            $(i).attr("data-zoom"),
-                            { x: 0.5, y: 0.5 },
-                            $(i).parent().parent()
-                          );
-                        }
+                $(element).find(`.character_container`).html(charactersHtml);
+
+                $(element)
+                  .find(`.character_container .icon.stockicon div`)
+                  .each((e, i) => {
+                    if (
+                      player &&
+                      player.character[1] &&
+                      player.character[1].assets[ASSET_TO_USE.asset] != null
+                    ) {
+                      CenterImage($(i), $(i).attr("data-asset"), {
+                        customZoom: $(i).attr("data-zoom"),
+                        customElement: -2,
                       });
-                  }
-                );
+                    }
+                  });
               }
 
               SetInnerHtml(
@@ -814,13 +818,10 @@ LoadEverything().then(() => {
                     $(element)
                       .find(`.character_container .icon.stockicon div`)
                       .each((e, i) => {
-                        CenterImage(
-                          $(i),
-                          $(i).attr("data-asset"),
-                          $(i).attr("data-zoom"),
-                          { x: 0.5, y: 0.4 },
-                          $(i).parent().parent()
-                        );
+                        CenterImage($(i), $(i).attr("data-asset"), {
+                          customZoom: $(i).attr("data-zoom"),
+                          customElement: $(i).parent().parent(),
+                        });
                       });
                   }
                 );

@@ -277,6 +277,7 @@ async function CenterImage(element, assetData, options = {}) {
         "data-customCenter",
         JSON.stringify(options.customCenter)
       );
+      console.log(options.customElement);
       $(element).attr(
         "data-customElement",
         JSON.stringify(options.customElement)
@@ -315,6 +316,17 @@ async function CenterImageDo(element) {
       let customElement = JSON.parse($(element).attr("data-customElement"));
       let scale_fill_x = JSON.parse($(element).attr("data-scale_fill_x"));
       let scale_fill_y = JSON.parse($(element).attr("data-scale_fill_y"));
+
+      if (customElement) {
+        let el = element;
+        while (customElement != 0) {
+          if (customElement < 0) {
+            el = el.parent();
+            customElement += 1;
+          }
+        }
+        customElement = el;
+      }
 
       if (typeof assetData == "string") {
         assetData = JSON.parse(assetData);
