@@ -87,7 +87,7 @@ class Bracket():
         self.rounds["-2"] = []
         for i in range(int(self.playerNumber/2)):
             self.rounds["-1"].append(BracketSet(self, [-1, int(len(self.rounds["-1"])/2)]))
-            self.rounds["-2"].append(BracketSet(self, [-2, int(len(self.rounds["-2"])/2)]))
+            self.rounds["-2"].append(BracketSet(self, [-1, int(len(self.rounds["-2"])/2)]))
         
         # Fill with -1
         for round in ["-1", "-2"]:

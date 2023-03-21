@@ -514,8 +514,10 @@ LoadEverything().then(() => {
                 // Losers side lines
                 if (parseInt(roundKey) < 0) {
                   if (
-                    (parseInt(roundKey) % 2 == -1 && !allWinners) ||
-                    (parseInt(roundKey) % 2 == 0 && allWinners)
+                    (parseInt(roundKey) % 2 == -1 &&
+                      Object.keys(losersRounds).length % 2 == 0) ||
+                    (parseInt(roundKey) % 2 == 0 &&
+                      Object.keys(losersRounds).length % 2 == 1)
                   ) {
                     let hangingElement = $(
                       `.${this.baseClass} .round_${roundKey} .slot_hanging_${
@@ -602,8 +604,10 @@ LoadEverything().then(() => {
                     // Which set index to assign?
                     let s = 0;
                     if (
-                      (!allWinners && parseInt(roundKey) % 2 == -1) ||
-                      (allWinners && parseInt(roundKey) % 2 == 0)
+                      (parseInt(roundKey) % 2 == -1 &&
+                        Object.keys(losersRounds).length % 2 == 0) ||
+                      (parseInt(roundKey) % 2 == 0 &&
+                        Object.keys(losersRounds).length % 2 == 1)
                     ) {
                       // Next round has the same amount of sets, so just use the current index
                       s = setIndex + 1;
@@ -615,8 +619,10 @@ LoadEverything().then(() => {
                     // Which player slot to assign?
                     let p = 0;
                     if (
-                      (!allWinners && parseInt(roundKey) % 2 == -1) ||
-                      (allWinners && parseInt(roundKey) % 2 == 0)
+                      (parseInt(roundKey) % 2 == -1 &&
+                        Object.keys(losersRounds).length % 2 == 0) ||
+                      (parseInt(roundKey) % 2 == 0 &&
+                        Object.keys(losersRounds).length % 2 == 1)
                     ) {
                       // If in an odd round, it's always 1 because slot 0 is a hanging slot
                       // (a player that came from winners as slot 0 vs this one as slot 1)
@@ -837,7 +843,7 @@ LoadEverything().then(() => {
 
           let appearRounds = [];
 
-          if (!allWinners) {
+          if (Object.keys(losersRounds).length % 2 == 0 && !allWinners) {
             Object.values(bracket["-1"].sets).forEach((set, index) => {
               appearRounds.push([-1, index, 0]);
               appearRounds.push([-1, index, 1]);
@@ -1433,7 +1439,11 @@ LoadEverything().then(() => {
           // Losers side
           let appearRounds = [];
 
-          if (!allWinners) {
+          let losersRounds = Object.fromEntries(
+            Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+          );
+
+          if (Object.keys(losersRounds).length % 2 == 0 && !allWinners) {
             Object.values(bracket["-1"].sets).forEach((set, index) => {
               appearRounds.push([-1, index, 0]);
               appearRounds.push([-1, index, 1]);
