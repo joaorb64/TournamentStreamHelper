@@ -5,8 +5,8 @@ LoadEverything().then(() => {
       zoom: 1.4,
     },
     ssbu: {
-      asset: "full",
-      zoom: 1.4,
+      asset: "mural_art",
+      zoom: 1.6,
     },
     ssb64: {
       asset: "artwork",
@@ -641,59 +641,11 @@ LoadEverything().then(() => {
                   : ""
               );
 
-              let charactersHtml = "";
-
-              let playerChanged =
-                _.get(
-                  oldData,
-                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-                ) != pid;
-
-              let charactersChanged =
-                JSON.stringify(
-                  _.get(
-                    oldData,
-                    `bracket.players.slot.${pid}.player.${1}.character`
-                  )
-                ) != JSON.stringify(player.character);
-
-              if (playerChanged || charactersChanged) {
-                Object.values(player.character).forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE.asset]) {
-                    charactersHtml += `
-                      <div class="icon stockicon">
-                          <div
-                            style='background-image: url(../../${
-                              character.assets[ASSET_TO_USE.asset].asset
-                            })'
-                            data-asset='${JSON.stringify(
-                              character.assets[ASSET_TO_USE.asset]
-                            )}'
-                            data-zoom='${ASSET_TO_USE.zoom}'
-                          >
-                          </div>
-                      </div>
-                      `;
-                  }
-                });
-
-                $(element).find(`.character_container`).html(charactersHtml);
-
-                $(element)
-                  .find(`.character_container .icon.stockicon div`)
-                  .each((e, i) => {
-                    if (
-                      player &&
-                      player.character[1] &&
-                      player.character[1].assets[ASSET_TO_USE.asset] != null
-                    ) {
-                      CenterImage($(i), $(i).attr("data-asset"), {
-                        customZoom: $(i).attr("data-zoom"),
-                        customElement: -2,
-                      });
-                    }
-                  });
-              }
+              CharacterDisplay($(element).find(`.character_container`), {
+                custom_zoom: ASSET_TO_USE.zoom,
+                asset_key: ASSET_TO_USE.asset,
+                source: `bracket.players.slot.${pid}`,
+              });
 
               SetInnerHtml(
                 $(element).find(`.sponsor_icon`),
@@ -778,54 +730,25 @@ LoadEverything().then(() => {
                 }
               });
 
-              let charactersHtml = "";
+              $(element)
+                .find(`.character_container`)
+                .addClass("tsh_character_container");
 
-              let playerChanged =
-                _.get(
-                  oldData,
-                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-                ) != pid;
+              $(element)
+                .find(`.character_container`)
+                .attr("data-zoom", ASSET_TO_USE.zoom);
 
-              let charactersChanged =
-                JSON.stringify(oldCharacters) != JSON.stringify(currCharacters);
+              $(element)
+                .find(`.character_container`)
+                .attr("data-asset", ASSET_TO_USE.asset);
 
-              if (playerChanged || charactersChanged) {
-                currCharacters.forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE.asset]) {
-                    charactersHtml += `
-                        <div class="icon stockicon">
-                            <div
-                              style='background-image: url(../../${
-                                character.assets[ASSET_TO_USE.asset].asset
-                              })'
-                              data-asset='${JSON.stringify(
-                                character.assets[ASSET_TO_USE.asset]
-                              )}'
-                              data-zoom='${ASSET_TO_USE.zoom}'
-                            >
-                            </div>
-                        </div>
-                        `;
-                  }
-                });
+              $(element)
+                .find(`.character_container`)
+                .attr("data-slice_character", "[0,1]");
 
-                SetInnerHtml(
-                  $(element).find(`.character_container`),
-                  charactersHtml,
-                  undefined,
-                  0.5,
-                  () => {
-                    $(element)
-                      .find(`.character_container .icon.stockicon div`)
-                      .each((e, i) => {
-                        CenterImage($(i), $(i).attr("data-asset"), {
-                          customZoom: $(i).attr("data-zoom"),
-                          customElement: $(i).parent().parent(),
-                        });
-                      });
-                  }
-                );
-              }
+              $(element)
+                .find(`.character_container`)
+                .attr("data-source", `bracket.players.slot.${pid}`);
 
               SetInnerHtml($(element).find(`.sponsor_icon`), "");
               SetInnerHtml($(element).find(`.avatar`), "");

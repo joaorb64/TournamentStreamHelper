@@ -23,6 +23,12 @@ function GetBiggestAsset(character) {
   else return null;
 }
 
+function GetCharacterAsset(asset, character) {
+  if (character.assets.hasOwnProperty(asset)) {
+    return character.assets[asset];
+  } else return GetBiggestAsset(character);
+}
+
 function GetRecommendedZoom(asset) {
   if (asset.uncropped_edge) {
     if (
@@ -49,35 +55,83 @@ document.addEventListener("tsh_update", (event) => {
   });
 });
 
+function CharacterDisplay(element, settings) {
+  $(element).data(settings);
+  $(element).addClass("tsh_character_container");
+}
+
 document.addEventListener("tsh_update", async (event) => {
   $(".tsh_character_container").each(async (i, e) => {
-    let path = $(e).attr("data-source");
+    let settings = _.defaults($(e).data(), {
+      custom_zoom: 1,
+      custom_center: null,
+      custom_element: null,
+      scale_fill_x: false,
+      scale_fill_y: false,
+    });
+
+    let path = settings.source;
+
+    let slice_player = [0, Infinity];
+
+    try {
+      if (settings.slice_player) {
+        slice_player = settings.slice_player;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    let slice_character = [0, Infinity];
+
+    try {
+      if (settings.slice_character) {
+        slice_character = settings.slice_character;
+      }
+    } catch (e) {
+      console.log(e);
+    }
 
     let team = _.get(event.data, path);
 
-    let characters = Object.values(_.get(team, "player")).map((p, index) => {
-      return Object.values(_.get(p, "character")).map((c, index) => {
-        return c;
+    let characters = Object.values(_.get(team, "player"))
+      .slice(slice_player)
+      .map((p, index) => {
+        return Object.values(_.get(p, "character"))
+          .map((c, index) => {
+            return c;
+          })
+          .slice(slice_character[0], slice_character[1]);
       });
-    });
 
     let oldTeam = _.get(event.oldData, path);
 
-    let oldCharacters = Object.values(_.get(oldTeam, "player", [])).map(
-      (p, index) => {
-        return Object.values(_.get(p, "character")).map((c, index) => {
-          return c;
-        });
-      }
-    );
+    let oldCharacters = Object.values(_.get(oldTeam, "player", []))
+      .slice(slice_player)
+      .map((p, index) => {
+        return Object.values(_.get(p, "character"))
+          .map((c, index) => {
+            return c;
+          })
+          .slice(slice_character[0], slice_character[1]);
+      });
 
-    let anim_in = JSON.parse($(e).attr("data-anim-in"));
-    let anim_out = JSON.parse($(e).attr("data-anim-out"));
+    let anim_in = { autoAlpha: 1, duration: 1 };
+
+    if (settings.anim_in) {
+      anim_in = anim_in;
+    }
+
+    let anim_out = { autoAlpha: 0, duration: 1 };
+
+    if (settings.anim_out) {
+      anim_out = settings.anim_out;
+    }
 
     let changed = JSON.stringify(characters) != JSON.stringify(oldCharacters);
 
-    if (changed) {
-      console.log("Characters changed");
+    if (changed || !$(e).hasClass("tsh_character_container_active")) {
+      $(e).addClass("tsh_character_container_active");
 
       await gsap
         .to($(e).children(".tsh_character"), anim_out)
@@ -95,14 +149,15 @@ document.addEventListener("tsh_update", async (event) => {
                 e.appendChild($(_div).get(0));
 
                 window.requestAnimationFrame(() => {
-                  let asset = GetBiggestAsset(character);
-                  let zoom = GetRecommendedZoom(asset);
+                  let asset = settings.asset_key
+                    ? GetCharacterAsset(settings.asset_key, character)
+                    : GetBiggestAsset(character);
 
-                  loads.push(
-                    CenterImage($(_div).children(0), asset, {
-                      customZoom: zoom,
-                    })
-                  );
+                  let zoom = settings.zoom
+                    ? settings.zoom
+                    : GetRecommendedZoom(asset);
+
+                  loads.push(CenterImage($(_div).children(0), asset, settings));
                 });
               }
             }

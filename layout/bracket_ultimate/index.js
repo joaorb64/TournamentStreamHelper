@@ -1,6 +1,5 @@
 LoadEverything().then(() => {
-  var ASSET_TO_USE = "full";
-  var ZOOM = 1.8;
+  var ZOOM = 1.4;
   var ICON_TO_USE = "base_files/icon";
   var ICON_ZOOM = 1;
 
@@ -1187,70 +1186,10 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let charactersHtml = "";
-
-            let playerChanged =
-              _.get(
-                oldData,
-                `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-              ) != pid;
-
-            let charactersChanged =
-              JSON.stringify(
-                _.get(
-                  oldData,
-                  `bracket.players.slot.${pid}.player.${1}.character`
-                )
-              ) != JSON.stringify(_.get(player, "character"));
-
-            if (playerChanged || charactersChanged) {
-              Object.values(_.get(player, "character", {})).forEach(
-                (character, index) => {
-                  if (character.assets[ASSET_TO_USE]) {
-                    charactersHtml += `
-                    <div class="icon stockicon">
-                        <div
-                          style='background-image: url(../../${
-                            character.assets[ASSET_TO_USE].asset
-                          })'
-                          data-asset='${JSON.stringify(
-                            character.assets[ASSET_TO_USE]
-                          )}'
-                          data-zoom='${ZOOM}'
-                        >
-                        </div>
-                    </div>
-                    `;
-                  }
-                }
-              );
-
-              SetInnerHtml(
-                $(element).find(`.character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(element)
-                    .find(`.character_container .icon.stockicon div`)
-                    .each((e, i) => {
-                      if (
-                        player &&
-                        player.character[1] &&
-                        player.character[1].assets[ASSET_TO_USE] != null
-                      ) {
-                        CenterImage(
-                          $(i),
-                          $(i).attr("data-asset"),
-                          $(i).attr("data-zoom"),
-                          { x: 0.5, y: 0.5 },
-                          $(i).parent().parent()
-                        );
-                      }
-                    });
-                }
-              );
-            }
+            CharacterDisplay($(element).find(`.character_container`), {
+              source: `bracket.players.slot.${pid}`,
+              custom_zoom: ZOOM,
+            });
 
             SetInnerHtml(
               $(element).find(`.sponsor_icon`),
@@ -1309,60 +1248,11 @@ LoadEverything().then(() => {
           );
 
           if (!USE_ONLINE_PICTURE) {
-            if (
-              player &&
-              (!oldData.bracket ||
-                JSON.stringify(oldData.bracket.players.slot[teamId]) !=
-                  JSON.stringify(data.bracket.players.slot[teamId]))
-            ) {
-              if (player && player.character) {
-                Object.values(player.character).forEach((character, index) => {
-                  if (character.assets[ICON_TO_USE]) {
-                    charactersHtml += `
-                    <div class="floating_icon stockicon">
-                        <div
-                          style='background-image: url(../../${
-                            character.assets[ICON_TO_USE].asset
-                          })'
-                          data-asset='${JSON.stringify(
-                            character.assets[ICON_TO_USE]
-                          )}'
-                          data-zoom='${ICON_ZOOM}'
-                        >
-                        </div>
-                    </div>
-                    `;
-                  }
-                });
-              }
-              SetInnerHtml(
-                $(element).find(".icon_image"),
-                charactersHtml,
-                undefined,
-                0,
-                () => {
-                  $(element)
-                    .find(`.icon_image .floating_icon.stockicon div`)
-                    .each((e, i) => {
-                      if (
-                        player &&
-                        player.character[1] &&
-                        player.character[1].assets[ICON_TO_USE] != null
-                      ) {
-                        CenterImage(
-                          $(i),
-                          $(i).attr("data-asset"),
-                          $(i).attr("data-zoom"),
-                          { x: 0.5, y: 0.5 },
-                          $(i),
-                          true,
-                          true
-                        );
-                      }
-                    });
-                }
-              );
-            }
+            CharacterDisplay($(element).find(`.icon_image`), {
+              asset_key: ICON_TO_USE,
+              slice_character: [0, 1],
+              source: `bracket.players.slot.${teamId}`,
+            });
           } else {
             SetInnerHtml(
               $(element).find(".icon_image"),
@@ -1613,62 +1503,11 @@ LoadEverything().then(() => {
                 let charactersHtml = "";
 
                 if (!USE_ONLINE_PICTURE) {
-                  if (
-                    player &&
-                    (!oldData.bracket ||
-                      JSON.stringify(oldData.bracket.players.slot[teamId]) !=
-                        JSON.stringify(data.bracket.players.slot[teamId]))
-                  ) {
-                    if (player && player.character) {
-                      Object.values(player.character).forEach(
-                        (character, index) => {
-                          if (character.assets[ICON_TO_USE]) {
-                            charactersHtml += `
-                          <div class="floating_icon stockicon">
-                              <div
-                                style='background-image: url(../../${
-                                  character.assets[ICON_TO_USE].asset
-                                })'
-                                data-asset='${JSON.stringify(
-                                  character.assets[ICON_TO_USE]
-                                )}'
-                                data-zoom='${ICON_ZOOM}'
-                              >
-                              </div>
-                          </div>
-                          `;
-                          }
-                        }
-                      );
-                    }
-                    SetInnerHtml(
-                      $(element).find(".icon_image"),
-                      charactersHtml,
-                      undefined,
-                      0,
-                      () => {
-                        $(element)
-                          .find(`.icon_image .floating_icon.stockicon div`)
-                          .each((e, i) => {
-                            if (
-                              player &&
-                              player.character[1] &&
-                              player.character[1].assets[ICON_TO_USE] != null
-                            ) {
-                              CenterImage(
-                                $(i),
-                                $(i).attr("data-asset"),
-                                $(i).attr("data-zoom"),
-                                { x: 0.5, y: 0.5 },
-                                $(i),
-                                true,
-                                true
-                              );
-                            }
-                          });
-                      }
-                    );
-                  }
+                  CharacterDisplay($(element).find(`.icon_image`), {
+                    asset_key: ICON_TO_USE,
+                    slice_character: [0, 1],
+                    source: `bracket.players.slot.${teamId}`,
+                  });
                 } else {
                   SetInnerHtml(
                     $(element).find(".icon_image"),
@@ -1682,7 +1521,6 @@ LoadEverything().then(() => {
           });
 
           console.log(managedIcons);
-          console.log(iconAnimationsL);
 
           // Return unmanaged icons to start
           iconAnimationsL.forEach((anim, index) => {

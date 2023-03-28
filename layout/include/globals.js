@@ -260,9 +260,9 @@ async function CenterImage(element, assetData, options = {}) {
   return new Promise((accept, reject) => {
     try {
       options = _.defaults(options, {
-        customZoom: 1,
-        customCenter: null,
-        customElement: null,
+        custom_zoom: 1,
+        custom_center: null,
+        custom_element: null,
         scale_fill_x: false,
         scale_fill_y: false,
       });
@@ -271,25 +271,9 @@ async function CenterImage(element, assetData, options = {}) {
         reject();
       }
 
-      $(element).attr("data-assetData", JSON.stringify(assetData));
-      $(element).attr("data-customZoom", JSON.stringify(options.customZoom));
-      $(element).attr(
-        "data-customCenter",
-        JSON.stringify(options.customCenter)
-      );
-      console.log(options.customElement);
-      $(element).attr(
-        "data-customElement",
-        JSON.stringify(options.customElement)
-      );
-      $(element).attr(
-        "data-scale_fill_x",
-        JSON.stringify(options.scale_fill_x)
-      );
-      $(element).attr(
-        "data-scale_fill_y",
-        JSON.stringify(options.scale_fill_y)
-      );
+      options.asset_data = assetData;
+
+      $(element).data(options);
 
       CenterImageDo($(element)).then(() => {
         if (!$(element).hasClass("tsh-center-image")) {
@@ -310,12 +294,16 @@ async function CenterImage(element, assetData, options = {}) {
 async function CenterImageDo(element) {
   return new Promise((accept, reject) => {
     try {
-      let assetData = JSON.parse($(element).attr("data-assetData"));
-      let customZoom = JSON.parse($(element).attr("data-customZoom"));
-      let customCenter = JSON.parse($(element).attr("data-customCenter"));
-      let customElement = JSON.parse($(element).attr("data-customElement"));
-      let scale_fill_x = JSON.parse($(element).attr("data-scale_fill_x"));
-      let scale_fill_y = JSON.parse($(element).attr("data-scale_fill_y"));
+      let data = $(element).data();
+
+      let assetData = data.asset_data;
+      let customZoom = data.custom_zoom;
+      let customCenter = data.custom_center;
+      let customElement = data.custom_element;
+      let scale_fill_x = data.scale_fill_x;
+      let scale_fill_y = data.scale_fill_y;
+
+      console.log(data);
 
       if (customElement) {
         let el = element;
