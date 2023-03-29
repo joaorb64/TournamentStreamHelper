@@ -76,7 +76,7 @@ body {
   justify-content: center;
   align-content: center;
   width: 100vw;
-  height: calc(50vh - var(--title-size));
+  height: calc(60vh - var(--title-size));
   position: absolute;
   top: calc(0% + var(--title-size));
   padding-left: 80px;
@@ -103,9 +103,9 @@ body {
   justify-content: center;
   align-content: center;
   width: 100vw;
-  height: 50vh;
+  height: 40vh;
   position: absolute;
-  top: 50%;
+  top: 60vh;
   padding-left: 80px;
   padding-right: 80px;
   box-sizing: border-box;

@@ -53,7 +53,7 @@ async function InitAll() {
 
   setInterval(async () => {
     await UpdateData();
-  }, 200);
+  }, 16);
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));
@@ -259,9 +259,9 @@ var divResizeObserver = new ResizeObserver((entries) => {
 async function CenterImage(element, assetData, options = {}) {
   return new Promise((accept, reject) => {
     try {
-      options = _.defaults(options, {
+      options = _.defaultsDeep(options, {
         custom_zoom: 1,
-        custom_center: null,
+        custom_center: [0.5, 0.5],
         custom_element: null,
         scale_fill_x: false,
         scale_fill_y: false,
@@ -278,11 +278,9 @@ async function CenterImage(element, assetData, options = {}) {
       CenterImageDo($(element)).then(() => {
         if (!$(element).hasClass("tsh-center-image")) {
           $(element).addClass("tsh-center-image");
-          $(element).ready(() => {
-            imageResizeObserver.observe($(element).get(0));
-          });
+          imageResizeObserver.observe($(element).get(0));
+          accept();
         }
-        accept();
       });
     } catch (e) {
       console.log(e);
@@ -291,7 +289,7 @@ async function CenterImage(element, assetData, options = {}) {
   });
 }
 
-async function CenterImageDo(element) {
+function CenterImageDo(element) {
   return new Promise((accept, reject) => {
     try {
       let data = $(element).data();
@@ -302,8 +300,6 @@ async function CenterImageDo(element) {
       let customElement = data.custom_element;
       let scale_fill_x = data.scale_fill_x;
       let scale_fill_y = data.scale_fill_y;
-
-      console.log(data);
 
       if (customElement) {
         let el = element;
@@ -416,7 +412,7 @@ async function CenterImageDo(element) {
           if (!customCenter) {
             xx = -eyesight.x * zoom + $(element).innerWidth() / 2;
           } else {
-            xx = -eyesight.x * zoom + $(element).innerWidth() * customCenter.x;
+            xx = -eyesight.x * zoom + $(element).innerWidth() * customCenter[0];
           }
 
           let maxMoveX = $(element).innerWidth() - img.naturalWidth * zoom;
@@ -431,7 +427,8 @@ async function CenterImageDo(element) {
           if (!customCenter) {
             yy = -eyesight.y * zoom + $(element).innerHeight() / 2;
           } else {
-            yy = -eyesight.y * zoom + $(element).innerHeight() * customCenter.y;
+            yy =
+              -eyesight.y * zoom + $(element).innerHeight() * customCenter[1];
           }
 
           let maxMoveY = $(element).innerHeight() - img.naturalHeight * zoom;
@@ -443,34 +440,36 @@ async function CenterImageDo(element) {
             if (yy < maxMoveY) yy = maxMoveY;
           }
 
-          $(element).css(
-            "background-position",
-            `
-              ${xx}px
-              ${yy}px
-            `
-          );
+          if (!data.use_dividers) {
+            $(element).parent().css("position", "absolute");
+          }
 
-          $(element).css(
-            "background-size",
-            `
-              ${img.naturalWidth * zoom}px
-              ${img.naturalHeight * zoom}px
-            `
-          );
-          $(element).css("background-repeat", "no-repeat");
+          if (data.z_index) {
+            $(element).parent().css("z-index", data.z_index);
+          } else {
+            $(element).parent().css("z-index", 0);
+          }
 
           $(element)
-            .css(
-              "background-image",
-              "url(" +
+            .css({
+              "background-position": `
+              ${xx}px
+              ${yy}px
+            `,
+              "background-size": `
+              ${img.naturalWidth * zoom}px
+              ${img.naturalHeight * zoom}px
+            `,
+              "background-repeat": "no-repeat",
+              "background-image":
+                "url(" +
                 resizeInCanvas(
                   img,
                   img.naturalWidth * zoom,
                   img.naturalHeight * zoom
                 ) +
-                ")"
-            )
+                ")",
+            })
             .promise()
             .done(() => {
               accept();

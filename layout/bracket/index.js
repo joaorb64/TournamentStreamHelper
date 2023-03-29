@@ -5,8 +5,8 @@ LoadEverything().then(() => {
       zoom: 1.4,
     },
     ssbu: {
-      asset: "mural_art",
-      zoom: 1.6,
+      asset: "full",
+      zoom: 3,
     },
     ssb64: {
       asset: "artwork",

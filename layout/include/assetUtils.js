@@ -62,12 +62,13 @@ function CharacterDisplay(element, settings) {
 
 document.addEventListener("tsh_update", async (event) => {
   $(".tsh_character_container").each(async (i, e) => {
-    let settings = _.defaults($(e).data(), {
+    let settings = _.defaultsDeep($(e).data(), {
       custom_zoom: 1,
-      custom_center: null,
+      custom_center: [0.5, 0.5],
       custom_element: null,
       scale_fill_x: false,
       scale_fill_y: false,
+      use_dividers: true,
     });
 
     let path = settings.source;
@@ -101,6 +102,7 @@ document.addEventListener("tsh_update", async (event) => {
           .map((c, index) => {
             return c;
           })
+          .filter((c) => Object.values(c.assets).length > 0)
           .slice(slice_character[0], slice_character[1]);
       });
 
@@ -113,16 +115,17 @@ document.addEventListener("tsh_update", async (event) => {
           .map((c, index) => {
             return c;
           })
+          .filter((c) => Object.values(c.assets).length > 0)
           .slice(slice_character[0], slice_character[1]);
       });
 
-    let anim_in = { autoAlpha: 1, duration: 1 };
+    let anim_in = { autoAlpha: 1, duration: 1, stagger: 0.1 };
 
     if (settings.anim_in) {
       anim_in = anim_in;
     }
 
-    let anim_out = { autoAlpha: 0, duration: 1 };
+    let anim_out = { autoAlpha: 0, duration: 1, stagger: 0.1 };
 
     if (settings.anim_out) {
       anim_out = settings.anim_out;
@@ -133,45 +136,63 @@ document.addEventListener("tsh_update", async (event) => {
     if (changed || !$(e).hasClass("tsh_character_container_active")) {
       $(e).addClass("tsh_character_container_active");
 
-      await gsap
-        .to($(e).children(".tsh_character"), anim_out)
-        .then(async () => {
-          let loads = [];
+      gsap.to($(e).children(".tsh_character"), anim_out).then(() => {
+        let loads = [];
 
-          $(e).html("");
+        $(e).html("");
 
-          if (characters) {
-            for (let player of Object.values(characters)) {
-              for (let character of player) {
-                if (!_.get(character, "codename")) continue;
-                console.log(character);
-                let _div = $("<div class='tsh_character'><div></div></div>");
-                e.appendChild($(_div).get(0));
+        let index = 0;
 
-                window.requestAnimationFrame(() => {
-                  let asset = settings.asset_key
-                    ? GetCharacterAsset(settings.asset_key, character)
-                    : GetBiggestAsset(character);
+        if (characters) {
+          for (let i = 0; i < Object.values(characters).length; i += 1) {
+            let player = Object.values(characters)[i];
+            for (let j = 0; j < player.length; j += 1) {
+              let character = player[j];
+              if (!_.get(character, "codename")) continue;
+              let _div = $(
+                "<div class='tsh_character' style='opacity: 0;'><div></div></div>"
+              );
+              e.appendChild($(_div).get(0));
 
-                  let zoom = settings.zoom
-                    ? settings.zoom
-                    : GetRecommendedZoom(asset);
+              let settingsClone = Object.assign({}, settings);
 
-                  loads.push(CenterImage($(_div).children(0), asset, settings));
-                });
+              settingsClone.z_index = Object.values(player).length - index;
+
+              // If not using dividers, calculate proper placement for each character
+              if (!settings.use_dividers) {
+                console.log(Object.values(player));
+                settingsClone.custom_center = GenerateMulticharacterPositions(
+                  Object.values(player).length,
+                  settings.custom_center
+                )[index];
+                console.log(settingsClone.custom_center);
               }
+
+              let asset = settingsClone.asset_key
+                ? GetCharacterAsset(settingsClone.asset_key, character)
+                : GetBiggestAsset(character);
+
+              let zoom = settingsClone.zoom
+                ? settingsClone.zoom
+                : GetRecommendedZoom(asset);
+
+              loads.push(
+                CenterImage($(_div).children(0), asset, settingsClone)
+              );
+
+              index += 1;
             }
           }
+        }
 
-          Promise.all(loads).then((values) => {
-            console.log("animate", $(e));
-            gsap.fromTo(
-              $(e).children(".tsh_character").children(),
-              anim_out,
-              anim_in
-            );
-          });
+        console.log(loads);
+
+        Promise.allSettled(loads).then((values) => {
+          console.log("animate");
+          console.log(loads);
+          gsap.fromTo($(e).children(".tsh_character"), anim_out, anim_in);
         });
+      });
     }
   });
 });
