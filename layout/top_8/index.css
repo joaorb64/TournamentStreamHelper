@@ -48,6 +48,11 @@ body {
   height: 100%;
 }
 
+.same_size .slot {
+  max-width: calc(25% - 16px);
+  max-height: calc(50% - 16px);
+}
+
 .slot .title {
   width: 100%;
   font-size: 34px;
@@ -301,6 +306,10 @@ body {
 
 .top8_container {
   flex-grow: 4;
+}
+
+.same_size .top8_container {
+  flex-wrap: wrap;
 }
 
 .score {

@@ -106,12 +106,16 @@ LoadEverything().then(() => {
       for (let i = 0; i < htmls.length; i++) {
         let html = htmls[i];
 
-        if (i == 0) {
-          $(".top1_container").html($(".top1_container").html() + html);
-        } else if (i < 4) {
-          $(".top4_container").html($(".top4_container").html() + html);
-        } else {
+        if (window.SAME_SIZE) {
           $(".top8_container").html($(".top8_container").html() + html);
+        } else {
+          if (i == 0) {
+            $(".top1_container").html($(".top1_container").html() + html);
+          } else if (i < 4) {
+            $(".top4_container").html($(".top4_container").html() + html);
+          } else {
+            $(".top8_container").html($(".top8_container").html() + html);
+          }
         }
       }
 
