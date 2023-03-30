@@ -119,13 +119,13 @@ document.addEventListener("tsh_update", async (event) => {
           .slice(slice_character[0], slice_character[1]);
       });
 
-    let anim_in = { autoAlpha: 1, duration: 1, stagger: 0.1 };
+    let anim_in = { autoAlpha: 1, duration: 0.5, stagger: 0.1 };
 
     if (settings.anim_in) {
-      anim_in = anim_in;
+      anim_in = settings.anim_in;
     }
 
-    let anim_out = { autoAlpha: 0, duration: 1, stagger: 0.1 };
+    let anim_out = { autoAlpha: 0, duration: 0.5, stagger: 0.1 };
 
     if (settings.anim_out) {
       anim_out = settings.anim_out;
@@ -133,7 +133,13 @@ document.addEventListener("tsh_update", async (event) => {
 
     let changed = JSON.stringify(characters) != JSON.stringify(oldCharacters);
 
-    if (changed || !$(e).hasClass("tsh_character_container_active")) {
+    let firstRun = !$(e).hasClass("tsh_character_container_active");
+
+    if (firstRun) {
+      anim_out.duration = 0;
+    }
+
+    if (changed || firstRun) {
       $(e).addClass("tsh_character_container_active");
 
       gsap.to($(e).children(".tsh_character"), anim_out).then(() => {

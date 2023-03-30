@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   // Change this to the name of the assets pack you want to use
   // It's basically the folder name: user_data/games/game/ASSETPACK
   var ASSET_TO_USE = "full";
@@ -117,14 +117,31 @@
               : ""
           );
 
-          if (
-            !oldData.score ||
-            JSON.stringify(player.character) !=
-              JSON.stringify(
-                oldData.score.team[String(t + 1)].player[String(p + 1)]
-                  .character
-              )
-          ) {
+          let zIndexMultiplyier = 1;
+          if (t == 1) zIndexMultiplyier = -1;
+
+          CharacterDisplay($(`.p${t + 1}.character`), {
+            source: `score.team.${t + 1}`,
+            custom_center: [0.5, 0.4],
+            custom_element: -2,
+            anim_out: {
+              x: zIndexMultiplyier * -800 + "px",
+              z: 0,
+              rotationY: zIndexMultiplyier * 15,
+              stagger: 0.1,
+            },
+            anim_in: {
+              duration: 0.4,
+              x: zIndexMultiplyier * -40 + "px",
+              z: 50 + "px",
+              rotationY: zIndexMultiplyier * 15,
+              ease: "in",
+              autoAlpha: 1,
+              stagger: 0.1,
+            },
+          });
+
+          if (false) {
             let html = "";
             let characters = Object.values(player.character);
             if (t == 0) characters = characters.reverse();
@@ -285,32 +302,13 @@
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
-        let charactersHtml = "";
+        CharacterDisplay($(`.p${t + 1}.character`), {
+          source: `score.team.${t + 1}`,
+          custom_center: [0.5, 0.4],
+          custom_element: -2,
+        });
 
-        let charactersChanged = false;
-
-        if (!oldData) {
-          charactersChanged = true;
-        } else {
-          Object.values(team.player).forEach((player, p) => {
-            Object.values(player.character).forEach((character, index) => {
-              try {
-                if (
-                  JSON.stringify(player.character) !=
-                  JSON.stringify(
-                    oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                  )
-                ) {
-                  charactersChanged = true;
-                }
-              } catch {
-                charactersChanged = true;
-              }
-            });
-          });
-        }
-
-        if (charactersChanged) {
+        if (false) {
           let html = "";
           let characters = [];
 
@@ -485,13 +483,8 @@
     }
   }
 
-  // Using update here to set images as soon as possible
-  // so that on window.load they are already preloaded
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(0, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
+  $("body").fadeTo(1, 1, async () => {
+    Start();
   });
-})(jQuery);
+  document.addEventListener("tsh_update", Update);
+});

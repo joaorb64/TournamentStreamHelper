@@ -51,6 +51,8 @@ async function LoadEverything() {
 async function InitAll() {
   await LoadKuroshiro();
 
+  UpdateData();
+
   setInterval(async () => {
     await UpdateData();
   }, 16);

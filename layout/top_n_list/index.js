@@ -15,9 +15,9 @@ LoadEverything().then(() => {
   var data = {};
   var oldData = {};
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  async function Update(event) {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.player_list ||
@@ -156,20 +156,11 @@ LoadEverything().then(() => {
 
         gsap.from(
           $(`.slot${t + 1}`),
-          { x: -100, autoAlpha: 0, duration: 0.4, delay: 1 },
+          { x: -100, autoAlpha: 0, duration: 0.4, delay: 0 },
           0.5 + 0.3 * t
         );
       });
     }
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-
-    $(".container div:has(>.text:empty)").css("margin-right", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
-    $(".container div:has(>.text:empty)").css("margin-left", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   }
 
   $("body").fadeTo(1, 1, async () => {
