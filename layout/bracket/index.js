@@ -24,9 +24,6 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   }
 
-  var data = {};
-  var oldData = {};
-
   var entryAnim = gsap.timeline();
   var animations = {};
 
@@ -131,9 +128,13 @@ LoadEverything().then(() => {
     return null;
   }
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  var lock = false;
+
+  async function Update(event) {
+    if (lock) return;
+    lock = true;
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (data.game) {
       if (data.game.codename) {
@@ -584,14 +585,22 @@ LoadEverything().then(() => {
       });
 
       // UPDATE PLAYER DATA
-      Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        Object.values(round.sets).forEach((set, setIndex) => {
-          set.playerId.forEach((pid, index) => {
+      for (const [roundKey, round] of Object.entries(bracket)) {
+        for (const [setIndex, set] of Object.entries(round.sets)) {
+          for (const [index, pid] of set.playerId.entries()) {
             let element = $(
-              `.round_${roundKey} .slot_${setIndex + 1} .slot_p_${index}`
+              `.round_${roundKey} .slot_${
+                parseInt(setIndex) + 1
+              } .slot_p_${index}`
             ).get(0);
 
-            if (!element) return;
+            console.log(
+              `.round_${roundKey} .slot_${
+                parseInt(setIndex) + 1
+              } .slot_p_${index}`
+            );
+
+            if (!element) continue;
 
             let team = players[pid];
 
@@ -606,7 +615,7 @@ LoadEverything().then(() => {
               SetInnerHtml($(element).find(`.twitter`), "");
               SetInnerHtml($(element).find(`.sponsor-container`), "");
 
-              return;
+              continue;
             }
 
             if (Object.values(team.player).length == 1) {
@@ -641,11 +650,15 @@ LoadEverything().then(() => {
                   : ""
               );
 
-              CharacterDisplay($(element).find(`.character_container`), {
-                custom_zoom: ASSET_TO_USE.zoom,
-                asset_key: ASSET_TO_USE.asset,
-                source: `bracket.players.slot.${pid}`,
-              });
+              await CharacterDisplay(
+                $(element).find(`.character_container`),
+                {
+                  custom_zoom: ASSET_TO_USE.zoom,
+                  asset_key: ASSET_TO_USE.asset,
+                  source: `bracket.players.slot.${pid}`,
+                },
+                event
+              );
 
               SetInnerHtml(
                 $(element).find(`.sponsor_icon`),
@@ -756,9 +769,9 @@ LoadEverything().then(() => {
               SetInnerHtml($(element).find(`.twitter`), "");
               SetInnerHtml($(element).find(`.sponsor-container`), "");
             }
-          });
-        });
-      });
+          }
+        }
+      }
 
       SetInnerHtml($(`.tournament_name`), data.tournamentInfo.tournamentName);
       SetInnerHtml($(`.event_name`), data.tournamentInfo.eventName);
@@ -766,13 +779,20 @@ LoadEverything().then(() => {
       SetInnerHtml($(`.pool_name`), data.bracket.phaseGroup);
     }
 
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
+    window.requestAnimationFrame(() => {
+      if (gsap.globalTimeline.timeScale() == 0) {
+        $(document).waitForImages(function () {
+          $("body").fadeTo(1, 1, () => {
+            Start();
+            gsap.globalTimeline.timeScale(1);
+          });
+        });
+      }
     });
+
+    lock = false;
   }
 
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-  });
   document.addEventListener("tsh_update", Update);
+  gsap.globalTimeline.timeScale(0);
 });

@@ -299,12 +299,22 @@ body {
   flex-direction: column;
 }
 
-.character .portrait {
-  -webkit-mask-image: -webkit-linear-gradient(left, #FFFFFF 0%, #FFFFFF 60%, #FFFFFF00 100%);
+.character .tsh_character {
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0%,
+    #ffffff 60%,
+    #ffffff00 100%
+  );
 }
 
-.character .portrait.invert_shadow {
-  -webkit-mask-image: -webkit-linear-gradient(left, #FFFFFF00 0%, #FFFFFF 60%, #FFFFFF 100%);
+.p2.character > .tsh_character {
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff00 0%,
+    #ffffff 60%,
+    #ffffff 100%
+  );
 }
 
 .character .video {

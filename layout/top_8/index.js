@@ -223,19 +223,15 @@ LoadEverything().then(() => {
         });
       });
     }
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-
-    $(".container div:has(>.text:empty)").css("margin-right", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
-    $(".container div:has(>.text:empty)").css("margin-left", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   }
 
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-  });
   document.addEventListener("tsh_update", Update);
+  gsap.globalTimeline.timeScale(0);
+
+  window.setTimeout(() => {
+    $("body").fadeTo(1, 1, async () => {
+      gsap.globalTimeline.timeScale(1);
+      Start();
+    });
+  }, 64);
 });

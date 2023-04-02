@@ -119,9 +119,13 @@ LoadEverything().then(() => {
     return line;
   }
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  var lock = false;
+
+  async function Update(event) {
+    if (lock) return;
+    lock = true;
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.bracket ||
@@ -1122,32 +1126,34 @@ LoadEverything().then(() => {
       });
 
       // UPDATE PLAYER DATA
-      Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        Object.values(round.sets).forEach((set, setIndex) => {
-          set.playerId.forEach((pid, index) => {
-            if (parseInt(roundKey) > 0 && roundKey != "1") return;
+      for (const [roundKey, round] of Object.entries(bracket)) {
+        for (const [setIndex, set] of Object.entries(round.sets)) {
+          for (const [index, pid] of set.playerId.entries()) {
+            if (parseInt(roundKey) > 0 && roundKey != "1") continue;
 
             let element = null;
 
             if (parseInt(roundKey) > 0) {
               element = $(
-                `.round_base_w .slot_${setIndex + 1}.slot_p_${index}`
+                `.round_base_w .slot_${parseInt(setIndex) + 1}.slot_p_${index}`
               ).get(0);
             } else {
               if (roundKey == "-1") {
                 element = $(
-                  `.round_base_l .slot_${setIndex + 1}.slot_p_${index}`
+                  `.round_base_l .slot_${
+                    parseInt(setIndex) + 1
+                  }.slot_p_${index}`
                 ).get(0);
               } else {
                 element = $(
                   `.round_${parseInt(roundKey) + 1} .slot_hanging_${
-                    setIndex + 1
+                    parseInt(setIndex) + 1
                   }.slot_p_${index}`
                 ).get(0);
               }
             }
 
-            if (!element) return;
+            if (!element) continue;
 
             let player = null;
 
@@ -1186,10 +1192,14 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            CharacterDisplay($(element).find(`.character_container`), {
-              source: `bracket.players.slot.${pid}`,
-              custom_zoom: ZOOM,
-            });
+            await CharacterDisplay(
+              $(element).find(`.character_container`),
+              {
+                source: `bracket.players.slot.${pid}`,
+                custom_zoom: ZOOM,
+              },
+              event
+            );
 
             SetInnerHtml(
               $(element).find(`.sponsor_icon`),
@@ -1225,17 +1235,17 @@ LoadEverything().then(() => {
                 player ? player.sponsor_logo : ""
               })'></div>`
             );
-          });
-        });
-      });
+          }
+        }
+      }
 
       // UPDATE ICONS
-      Object.entries(players).forEach(([teamId, team], t) => {
-        Object.entries(team.player).forEach(([playerId, player], p) => {
+      for (const [teamId, team] of Object.entries(players)) {
+        for (const [playerId, player] of Object.entries(team.player)) {
           let element = $(
             `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
           );
-          if (!element) return;
+          if (!element) continue;
           let charactersHtml = "";
 
           SetInnerHtml(
@@ -1248,11 +1258,15 @@ LoadEverything().then(() => {
           );
 
           if (!USE_ONLINE_PICTURE) {
-            CharacterDisplay($(element).find(`.icon_image`), {
-              asset_key: ICON_TO_USE,
-              slice_character: [0, 1],
-              source: `bracket.players.slot.${teamId}`,
-            });
+            await CharacterDisplay(
+              $(element).find(`.icon_image`),
+              {
+                asset_key: ICON_TO_USE,
+                slice_character: [0, 1],
+                source: `bracket.players.slot.${teamId}`,
+              },
+              event
+            );
           } else {
             SetInnerHtml(
               $(element).find(".icon_image"),
@@ -1357,8 +1371,6 @@ LoadEverything().then(() => {
             });
           });
 
-          console.log(appearRounds);
-
           // Keep track of which icons were animated
           // Because we have to deactivate the rest
           let managedIcons = [];
@@ -1366,19 +1378,19 @@ LoadEverything().then(() => {
           // First, we assign players to the "losers slots"
           // Since they appear in losers in an unpredictable order
           // So we assign the player so we can later set their name, icon, etc
-          Object.entries(players).forEach(([teamId, team], t) => {
+          for (const [teamId, team] of Object.entries(players)) {
             let lastFoundRound = 0;
             let firstFoundRound = 0;
             let lastFoundSet = null;
             let losersIconId = null;
             let lost = false;
 
-            Object.entries(bracket).forEach(function ([roundKey, round], r) {
+            for (const [roundKey, round] of Object.entries(bracket)) {
               if (
                 parseInt(roundKey) > 0 &&
                 parseInt(roundKey) < GfResetRoundNum - 1
               )
-                return;
+                continue;
               Object.values(Object.values(round.sets)).forEach(function (
                 set,
                 setIndex
@@ -1418,18 +1430,7 @@ LoadEverything().then(() => {
                   }
                 }
               });
-            });
-
-            console.log(
-              "id",
-              teamId,
-              "name",
-              players["" + teamId]["player"],
-              "icon:",
-              losersIconId,
-              "lastfoundound",
-              lastFoundRound
-            );
+            }
 
             if (lastFoundRound == 0 || losersIconId === null) {
               //if (iconAnimationsL != null && t < iconAnimationsL.length)
@@ -1503,11 +1504,15 @@ LoadEverything().then(() => {
                 let charactersHtml = "";
 
                 if (!USE_ONLINE_PICTURE) {
-                  CharacterDisplay($(element).find(`.icon_image`), {
-                    asset_key: ICON_TO_USE,
-                    slice_character: [0, 1],
-                    source: `bracket.players.slot.${teamId}`,
-                  });
+                  await CharacterDisplay(
+                    $(element).find(`.icon_image`),
+                    {
+                      asset_key: ICON_TO_USE,
+                      slice_character: [0, 1],
+                      source: `bracket.players.slot.${teamId}`,
+                    },
+                    event
+                  );
                 } else {
                   SetInnerHtml(
                     $(element).find(".icon_image"),
@@ -1518,38 +1523,48 @@ LoadEverything().then(() => {
                 }
               }
             }
-          });
-
-          console.log(managedIcons);
+          }
 
           // Return unmanaged icons to start
-          iconAnimationsL.forEach((anim, index) => {
+          for (const [index, anim] of iconAnimationsL.entries()) {
             if (!managedIcons.includes(index)) {
-              console.log("unmanaged:", index);
-              anim.tweenTo(0);
+              anim.tweenTo(0, { duration: firstUpdate ? 0 : undefined });
 
               let element = $(
                 `.losers_icons .bracket_icon.bracket_icon_p${index + 1}`
               );
               if (element.get(0)) {
                 SetInnerHtml($(element).find(`.icon_name`), `---`);
-                gsap.to($(element), { autoAlpha: 0 });
+                gsap.to($(element), {
+                  autoAlpha: 0,
+                  duration: firstUpdate ? 0 : undefined,
+                });
               }
             }
-          });
+          }
 
           SetInnerHtml($(".header .title"), data.tournamentInfo.tournamentName);
 
-          return;
-        });
-      });
+          continue;
+        }
+      }
 
       firstUpdate = false;
     }
+    window.requestAnimationFrame(() => {
+      if (gsap.globalTimeline.timeScale() == 0) {
+        $(document).waitForImages(function () {
+          $("body").fadeTo(1, 1, () => {
+            Start();
+            gsap.globalTimeline.timeScale(1);
+          });
+        });
+      }
+    });
+
+    lock = false;
   }
 
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-  });
   document.addEventListener("tsh_update", Update);
+  gsap.globalTimeline.timeScale(0);
 });

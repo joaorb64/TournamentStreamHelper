@@ -12,10 +12,12 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   }
 
-  var data = {};
-  var oldData = {};
+  var lock = false;
 
   async function Update(event) {
+    if (lock) return;
+    lock = true;
+
     let data = event.data;
     let oldData = event.oldData;
 
@@ -25,15 +27,16 @@ LoadEverything().then(() => {
     ) {
       let htmls = [];
 
-      Object.values(data.player_list.slot).forEach((slot, i) => {
+      for (const [i, slot] of Object.entries(data.player_list.slot)) {
         let html = `<div class="slot slot${i + 1}">`;
-
-        Object.values(slot.player).forEach((player, p) => {
+        for (const [p, player] of Object.entries(slot.player)) {
           html += `
             <div class="p${p + 1} player container">
               <div class="score">${
                 // TODO: Standings formula
-                Array(1, 2, 3, 4, 5, 5, 7, 7, 17, 17, 17, 17, 21, 21, 21, 21)[i]
+                Array(1, 2, 3, 4, 5, 5, 7, 7, 17, 17, 17, 17, 21, 21, 21, 21)[
+                  i - 1
+                ]
               }</div>
               <div class="icon avatar"></div>
               <div class="icon online_avatar"></div>
@@ -50,12 +53,12 @@ LoadEverything().then(() => {
               <div class="character_container"></div>
             </div>
           `;
-        });
+        }
 
         html += "</div>";
 
         htmls.push(html);
-      });
+      }
 
       $(".players_container").html("");
 
@@ -64,9 +67,9 @@ LoadEverything().then(() => {
         $(".players_container").html($(".players_container").html() + html);
       }
 
-      Object.values(data.player_list.slot).forEach((slot, t) => {
-        SetInnerHtml($(`.slot${t + 1} .title`), slot.name);
-        Object.values(slot.player).forEach((player, p) => {
+      for (const [t, slot] of Object.entries(data.player_list.slot)) {
+        SetInnerHtml($(`.slot${parseInt(t) + 1} .title`), slot.name);
+        for (const [p, player] of Object.entries(slot.player)) {
           if (player) {
             SetInnerHtml(
               $(`.slot${t + 1} .p${p + 1}.container .name`),
@@ -100,13 +103,14 @@ LoadEverything().then(() => {
               0
             );
 
-            CharacterDisplay(
+            await CharacterDisplay(
               $(`.slot${t + 1} .p${p + 1}.container .character_container`),
               {
-                source: `player_list.slot.${t + 1}`,
+                source: `player_list.slot.${t}`,
                 custom_center: [0.5, 0.4],
                 custom_element: -2,
-              }
+              },
+              event
             );
 
             SetInnerHtml(
@@ -152,19 +156,30 @@ LoadEverything().then(() => {
               0
             );
           }
-        });
+        }
 
         gsap.from(
           $(`.slot${t + 1}`),
           { x: -100, autoAlpha: 0, duration: 0.4, delay: 0 },
           0.5 + 0.3 * t
         );
-      });
+      }
     }
+
+    window.requestAnimationFrame(() => {
+      if (gsap.globalTimeline.timeScale() == 0) {
+        $(document).waitForImages(function () {
+          $("body").fadeTo(1, 1, () => {
+            Start();
+            gsap.globalTimeline.timeScale(1);
+          });
+        });
+      }
+    });
+
+    lock = false;
   }
 
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-  });
   document.addEventListener("tsh_update", Update);
+  gsap.globalTimeline.timeScale(0);
 });

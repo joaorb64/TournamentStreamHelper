@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   // Change this to the name of the assets pack you want to use
   // It's basically the folder name: user_data/games/game/ASSETPACK
   var ASSET_TO_USE = "full";
@@ -55,15 +55,21 @@
   var data = {};
   var oldData = {};
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  var lock = false;
+
+  async function Update(event) {
+    if (lock) return;
+    lock = true;
+    let data = event.data;
+    let oldData = event.oldData;
 
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
     if (!isDoubles) {
-      Object.values(data.score.team).forEach((team, t) => {
-        Object.values(team.player).forEach((player, p) => {
+      const teams = Object.values(data.score.team);
+      for (const [t, team] of teams.entries()) {
+        const players = Object.values(team.player);
+        for (const [p, player] of players.entries()) {
           SetInnerHtml(
             $(`.p${t + 1} .name`),
             `
@@ -130,103 +136,31 @@
               : ""
           );
 
-          if (
-            !oldData.score ||
-            JSON.stringify(player.character) !=
-              JSON.stringify(
-                oldData.score.team[String(t + 1)].player[String(p + 1)]
-                  .character
-              )
-          ) {
-            let html = "";
-            let characters = Object.values(player.character);
-            let zIndexMultiplyier = 1;
-            if (t == 1) zIndexMultiplyier = -1;
-            characters.forEach((character, c) => {
-              if (
-                character &&
-                character.assets &&
-                character.assets[ASSET_TO_USE]
-              ) {
-                if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
-                  // if asset is a image, add a image element
-                  html += `
-                  <div class="bg char${c}" style="z-index: ${
-                    c * zIndexMultiplyier
-                  };">
-                    <div class="portrait_container">
-                      <div
-                        class="portrait ${
-                          !FLIP_P2_ASSET && t == 1 ? "invert_shadow" : ""
-                        }"
-                        style='
-                            background-image: url(../../${
-                              character.assets[ASSET_TO_USE].asset
-                            });
-                            ${
-                              t == 1 && FLIP_P2_ASSET
-                                ? "transform: scaleX(-1)"
-                                : ""
-                            }
-                        '>
-                        </div>
-                      </div>
-                  </div>
-                    `;
-                } else {
-                  // if asset is a video, add a video element
-                  html += `
-                  <div class="bg char${c}" style="z-index: ${
-                    c * zIndexMultiplyier
-                  };">
-                    <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
-                      <source src="../../${
-                        character.assets[ASSET_TO_USE].asset
-                      }">
-                    </video>
-                  </div>
-                    `;
-                }
-              }
-            });
+          let zIndexMultiplyier = 1;
+          if (t == 1) zIndexMultiplyier = -1;
 
-            $(`.p${t + 1}.character`).html(html);
-
-            characters.forEach((character, c) => {
-              if (character.assets[ASSET_TO_USE]) {
-                CenterImage(
-                  $(`.p${t + 1}.character .char${c} .portrait`),
-                  character.assets[ASSET_TO_USE],
-                  zoom,
-                  EYESIGHT_CENTERING
-                );
-              }
-            });
-
-            characters.forEach((character, c) => {
-              if (character) {
-                gsap
-                  .timeline()
-                  .fromTo(
-                    [`.p${t + 1}.character .char${c}`],
-                    { x: -zIndexMultiplyier * 100 + "%" },
-                    {
-                      x: -zIndexMultiplyier * 10 + "%",
-                      duration: 0.3,
-                      ease: "power2.out",
-                    },
-                    0.6 + c / 10
-                  )
-                  .to([`.p${t + 1}.character .char${c}`], {
-                    duration: 5,
-                    x: 0,
-                    ease: "power2.out",
-                  });
-              }
-            });
-          }
-        });
-      });
+          await CharacterDisplay(
+            $(`.p${t + 1}.character`),
+            {
+              source: `score.team.${t + 1}`,
+              custom_center: [zIndexMultiplyier == 1 ? 0.4 : 0.6, 0.4],
+              custom_element: -2,
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
+            },
+            event
+          );
+        }
+      }
     } else {
       Object.values(data.score.team).forEach((team, t) => {
         let teamName = "";
@@ -397,15 +331,21 @@
       data.score.phase +
         (data.score.best_of_text ? ` | ${data.score.best_of_text}` : "")
     );
+
+    window.requestAnimationFrame(() => {
+      if (gsap.globalTimeline.timeScale() == 0) {
+        $(document).waitForImages(function () {
+          $("body").fadeTo(1, 1, () => {
+            Start();
+            gsap.globalTimeline.timeScale(1);
+          });
+        });
+      }
+    });
+
+    lock = false;
   }
 
-  // Using update here to set images as soon as possible
-  // so that on window.load they are already preloaded
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(0, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
-  });
-})(jQuery);
+  document.addEventListener("tsh_update", Update);
+  gsap.globalTimeline.timeScale(0);
+});

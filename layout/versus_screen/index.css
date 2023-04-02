@@ -298,7 +298,7 @@ body {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 540px;
+  width: 480px;
   top: 50%;
   transform: translateY(-50%);
   height: 640px;
@@ -341,7 +341,7 @@ body {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 540px;
+  width: 480px;
   top: 50%;
   transform: translateY(-50%);
   height: 640px;

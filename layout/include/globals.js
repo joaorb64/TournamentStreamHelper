@@ -13,49 +13,45 @@ async function UpdateData() {
 async function LoadEverything() {
   let libPath = "../include/";
   let scripts = [
-    "kuroshiro.min.js",
-    "kuroshiro-analyzer-kuromoji.min.js",
     "jquery-3.6.0.min.js",
     "gsap.min.js",
     "he.js",
     "lodash.min.js",
+    "kuroshiro.min.js",
+    "kuroshiro-analyzer-kuromoji.min.js",
+    "jquery.waitforimages.min.js",
     "assetUtils.js",
   ];
 
-  let loadPromises = [];
-
   for (let i = 0; i < scripts.length; i += 1) {
-    let script = document.createElement("script");
-    script.src = libPath + scripts[i];
-    document.head.appendChild(script);
-    loadPromises.push(
-      new Promise((resolve, reject) => {
-        script.onload = () => {
-          console.log(`Loaded script: ${libPath + scripts[i]}`);
-          resolve();
-        };
-        script.onerror = () => {
-          console.log(`Error loading script: ${libPath + scripts[i]}`);
-          reject();
-        };
-      })
-    );
+    const script = scripts[i];
+    const src = libPath + script;
+    try {
+      await new Promise((resolve, reject) => {
+        const scriptElement = document.createElement("script");
+        scriptElement.src = src;
+        scriptElement.onload = resolve;
+        scriptElement.onerror = reject;
+        document.head.appendChild(scriptElement);
+      });
+      console.log(`Loaded script: ${src}`);
+    } catch (error) {
+      console.error(`Error loading script: ${src}`, error);
+      throw error;
+    }
   }
 
-  return Promise.all(loadPromises).then(async (values) => {
-    console.log("== Loading complete ==");
-    await InitAll();
-  });
+  console.log("== Loading complete ==");
+
+  await InitAll();
 }
 
 async function InitAll() {
   await LoadKuroshiro();
 
-  UpdateData();
-
   setInterval(async () => {
     await UpdateData();
-  }, 16);
+  }, 32);
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));
@@ -162,23 +158,34 @@ async function SetInnerHtml(
       he.decode(String(element.find(".text").html()).replace(/'/g, '"')) !=
         he.decode(String(html).replace(/'/g, '"'))
     ) {
-      gsap.to(element.find(".text"), {
-        autoAlpha: 0,
-        duration: fadeOutTime,
-        onComplete: () => {
-          element.find(".text").html(html);
-          FitText(element);
-          if (middleFunction != undefined) {
-            middleFunction();
-          }
-          $(element).ready((e) => {
-            gsap.to(element.find(".text"), {
+      const callback = () => {
+        element.find(".text").html(html);
+        FitText(element);
+        if (middleFunction != undefined) {
+          middleFunction();
+        }
+        $(element).ready((e) => {
+          gsap.fromTo(
+            element.find(".text"),
+            { autoAlpha: 0 },
+            {
               autoAlpha: 1,
               duration: fadeInTime,
-            });
-          });
-        },
-      });
+            }
+          );
+        });
+      };
+
+      if (fadeOutTime == 0) {
+        $(element).find(".text").css("opacity", "0");
+        callback();
+      } else {
+        gsap.to(element.find(".text"), {
+          autoAlpha: 0,
+          duration: fadeOutTime,
+          onComplete: callback,
+        });
+      }
     }
   });
 }
@@ -232,12 +239,12 @@ function resizeInCanvas(image, width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  ctx.imageSmoothingQuality = "high";
+  ctx.imageSmoothingQuality = "medium";
   ctx.imageSmoothingEnabled = true;
 
   // Draw image and export to a data-uri
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const dataURI = canvas.toDataURL();
+  const dataURI = canvas.toDataURL("image/webp");
 
   canvas.remove();
 
@@ -259,235 +266,235 @@ var divResizeObserver = new ResizeObserver((entries) => {
 });
 
 async function CenterImage(element, assetData, options = {}) {
-  return new Promise((accept, reject) => {
-    try {
-      options = _.defaultsDeep(options, {
-        custom_zoom: 1,
-        custom_center: [0.5, 0.5],
-        custom_element: null,
-        scale_fill_x: false,
-        scale_fill_y: false,
-      });
+  try {
+    options = _.defaultsDeep(options, {
+      custom_zoom: 1,
+      custom_center: [0.5, 0.5],
+      custom_element: null,
+      scale_fill_x: false,
+      scale_fill_y: false,
+    });
 
-      if (!assetData) {
-        reject();
-      }
-
-      options.asset_data = assetData;
-
-      $(element).data(options);
-
-      CenterImageDo($(element)).then(() => {
-        if (!$(element).hasClass("tsh-center-image")) {
-          $(element).addClass("tsh-center-image");
-          imageResizeObserver.observe($(element).get(0));
-          accept();
-        }
-      });
-    } catch (e) {
-      console.log(e);
+    if (!assetData) {
       reject();
     }
-  });
+
+    options.asset_data = assetData;
+
+    $(element).data(options);
+
+    await CenterImageDo($(element)).then(() => {
+      if (!$(element).hasClass("tsh-center-image")) {
+        $(element).addClass("tsh-center-image");
+        imageResizeObserver.observe($(element).get(0));
+      }
+    });
+    console.log("awaited");
+  } catch (e) {
+    console.log(e);
+  }
 }
 
-function CenterImageDo(element) {
-  return new Promise((accept, reject) => {
-    try {
-      let data = $(element).data();
+async function CenterImageDo(element) {
+  try {
+    let data = $(element).data();
 
-      let assetData = data.asset_data;
-      let customZoom = data.custom_zoom;
-      let customCenter = data.custom_center;
-      let customElement = data.custom_element;
-      let scale_fill_x = data.scale_fill_x;
-      let scale_fill_y = data.scale_fill_y;
+    let assetData = data.asset_data;
+    let customZoom = data.custom_zoom;
+    let customCenter = data.custom_center;
+    let customElement = data.custom_element;
+    let scale_fill_x = data.scale_fill_x;
+    let scale_fill_y = data.scale_fill_y;
 
-      if (customElement) {
-        let el = element;
-        while (customElement != 0) {
-          if (customElement < 0) {
-            el = el.parent();
-            customElement += 1;
-          }
+    if (customElement) {
+      let el = element;
+      while (customElement != 0) {
+        if (customElement < 0) {
+          el = el.parent();
+          customElement += 1;
         }
-        customElement = el;
       }
+      customElement = el;
+    }
 
-      if (typeof assetData == "string") {
-        assetData = JSON.parse(assetData);
-      }
-      if (!assetData) return;
+    if (typeof assetData == "string") {
+      assetData = JSON.parse(assetData);
+    }
+    if (!assetData) return;
 
-      let image = 'url("../../' + assetData.asset + '")';
+    let image = 'url("../../' + assetData.asset + '")';
 
-      if (image != undefined && image.includes("url(")) {
-        let img = new Image();
-        img.src = "../../" + assetData.asset;
+    if (image != undefined && image.includes("url(")) {
+      function loadImage() {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = "../../" + assetData.asset;
+          img.onload = async () => {
+            let eyesight = assetData.eyesight;
 
-        $(img).on("load", () => {
-          let eyesight = assetData.eyesight;
-
-          if (!eyesight) {
-            eyesight = {
-              x: img.naturalWidth / 2,
-              y: img.naturalHeight / 2,
-            };
-          }
-
-          if (!customElement) customElement = element;
-
-          let proportional_zoom = 1;
-          if (assetData.average_size) {
-            proportional_zoom = 0;
-            proportional_zoom = Math.max(
-              proportional_zoom,
-              ($(customElement).innerWidth() / assetData.average_size.x) * 1.2
-            );
-            proportional_zoom = Math.max(
-              proportional_zoom,
-              ($(customElement).innerHeight() / assetData.average_size.y) * 1.2
-            );
-          }
-
-          // For cropped assets, zoom to fill
-          // Calculate max zoom
-          zoom_x = $(customElement).innerWidth() / img.naturalWidth;
-          zoom_y = $(customElement).innerHeight() / img.naturalHeight;
-
-          let minZoom = 1;
-
-          let rescalingFactor = 1;
-
-          if (assetData.rescaling_factor)
-            rescalingFactor = assetData.rescaling_factor;
-
-          let uncropped_edge = assetData.uncropped_edge;
-
-          if (
-            !uncropped_edge ||
-            uncropped_edge == "undefined" ||
-            uncropped_edge.length == 0
-          ) {
-            if (zoom_x > zoom_y) {
-              minZoom = zoom_x;
-            } else {
-              minZoom = zoom_y;
+            if (!eyesight) {
+              eyesight = {
+                x: img.naturalWidth / 2,
+                y: img.naturalHeight / 2,
+              };
             }
-          } else {
+
+            if (!customElement) customElement = element;
+
+            let proportional_zoom = 1;
+            if (assetData.average_size) {
+              proportional_zoom = 0;
+              proportional_zoom = Math.max(
+                proportional_zoom,
+                ($(customElement).innerWidth() / assetData.average_size.x) * 1.2
+              );
+              proportional_zoom = Math.max(
+                proportional_zoom,
+                ($(customElement).innerHeight() / assetData.average_size.y) *
+                  1.2
+              );
+            }
+
+            // For cropped assets, zoom to fill
+            // Calculate max zoom
+            zoom_x = $(customElement).innerWidth() / img.naturalWidth;
+            zoom_y = $(customElement).innerHeight() / img.naturalHeight;
+
+            let minZoom = 1;
+
+            let rescalingFactor = 1;
+
+            if (assetData.rescaling_factor)
+              rescalingFactor = assetData.rescaling_factor;
+
+            let uncropped_edge = assetData.uncropped_edge;
+
             if (
-              uncropped_edge.includes("u") &&
-              uncropped_edge.includes("d") &&
-              uncropped_edge.includes("l") &&
-              uncropped_edge.includes("r")
+              !uncropped_edge ||
+              uncropped_edge == "undefined" ||
+              uncropped_edge.length == 0
             ) {
-              minZoom = customZoom * proportional_zoom * rescalingFactor;
-            } else if (
-              !uncropped_edge.includes("l") &&
-              !uncropped_edge.includes("r")
-            ) {
-              minZoom = zoom_x;
-            } else if (
-              !uncropped_edge.includes("u") &&
-              !uncropped_edge.includes("d")
-            ) {
-              minZoom = zoom_y;
+              if (zoom_x > zoom_y) {
+                minZoom = zoom_x;
+              } else {
+                minZoom = zoom_y;
+              }
             } else {
-              minZoom = customZoom * proportional_zoom * rescalingFactor;
+              if (
+                uncropped_edge.includes("u") &&
+                uncropped_edge.includes("d") &&
+                uncropped_edge.includes("l") &&
+                uncropped_edge.includes("r")
+              ) {
+                minZoom = customZoom * proportional_zoom * rescalingFactor;
+              } else if (
+                !uncropped_edge.includes("l") &&
+                !uncropped_edge.includes("r")
+              ) {
+                minZoom = zoom_x;
+              } else if (
+                !uncropped_edge.includes("u") &&
+                !uncropped_edge.includes("d")
+              ) {
+                minZoom = zoom_y;
+              } else {
+                minZoom = customZoom * proportional_zoom * rescalingFactor;
+              }
             }
-          }
 
-          if (scale_fill_x && !scale_fill_y) {
-            minZoom = zoom_x;
-          } else if (scale_fill_y && !scale_fill_x) {
-            minZoom = zoom_y;
-          } else if (scale_fill_x && scale_fill_y) {
-            minZoom = Math.max(zoom_x, zoom_y);
-          }
+            if (scale_fill_x && !scale_fill_y) {
+              minZoom = zoom_x;
+            } else if (scale_fill_y && !scale_fill_x) {
+              minZoom = zoom_y;
+            } else if (scale_fill_x && scale_fill_y) {
+              minZoom = Math.max(zoom_x, zoom_y);
+            }
 
-          zoom = Math.max(minZoom, customZoom * minZoom);
+            zoom = Math.max(minZoom, customZoom * minZoom);
 
-          // Cetering
-          let xx = 0;
-          let yy = 0;
+            // Cetering
+            let xx = 0;
+            let yy = 0;
 
-          if (!customCenter) {
-            xx = -eyesight.x * zoom + $(element).innerWidth() / 2;
-          } else {
-            xx = -eyesight.x * zoom + $(element).innerWidth() * customCenter[0];
-          }
+            if (!customCenter) {
+              xx = -eyesight.x * zoom + $(element).innerWidth() / 2;
+            } else {
+              xx =
+                -eyesight.x * zoom + $(element).innerWidth() * customCenter[0];
+            }
 
-          let maxMoveX = $(element).innerWidth() - img.naturalWidth * zoom;
+            let maxMoveX = $(element).innerWidth() - img.naturalWidth * zoom;
 
-          if (!uncropped_edge || !uncropped_edge.includes("l")) {
-            if (xx > 0) xx = 0;
-          }
-          if (!uncropped_edge || !uncropped_edge.includes("r")) {
-            if (xx < maxMoveX) xx = maxMoveX;
-          }
+            if (!uncropped_edge || !uncropped_edge.includes("l")) {
+              if (xx > 0) xx = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("r")) {
+              if (xx < maxMoveX) xx = maxMoveX;
+            }
 
-          if (!customCenter) {
-            yy = -eyesight.y * zoom + $(element).innerHeight() / 2;
-          } else {
-            yy =
-              -eyesight.y * zoom + $(element).innerHeight() * customCenter[1];
-          }
+            if (!customCenter) {
+              yy = -eyesight.y * zoom + $(element).innerHeight() / 2;
+            } else {
+              yy =
+                -eyesight.y * zoom + $(element).innerHeight() * customCenter[1];
+            }
 
-          let maxMoveY = $(element).innerHeight() - img.naturalHeight * zoom;
+            let maxMoveY = $(element).innerHeight() - img.naturalHeight * zoom;
 
-          if (!uncropped_edge || !uncropped_edge.includes("u")) {
-            if (yy > 0) yy = 0;
-          }
-          if (!uncropped_edge || !uncropped_edge.includes("d")) {
-            if (yy < maxMoveY) yy = maxMoveY;
-          }
+            if (!uncropped_edge || !uncropped_edge.includes("u")) {
+              if (yy > 0) yy = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("d")) {
+              if (yy < maxMoveY) yy = maxMoveY;
+            }
 
-          if (!data.use_dividers) {
-            $(element).parent().css("position", "absolute");
-          }
+            if (!data.use_dividers) {
+              $(element).parent().css("position", "absolute");
+            }
 
-          if (data.z_index) {
-            $(element).parent().css("z-index", data.z_index);
-          } else {
-            $(element).parent().css("z-index", 0);
-          }
+            if (data.z_index) {
+              $(element).parent().css("z-index", data.z_index);
+            } else {
+              $(element).parent().css("z-index", 0);
+            }
 
-          $(element)
-            .css({
-              "background-position": `
+            $(element)
+              .css({
+                "background-position": `
               ${xx}px
               ${yy}px
             `,
-              "background-size": `
+                "background-size": `
               ${img.naturalWidth * zoom}px
               ${img.naturalHeight * zoom}px
             `,
-              "background-repeat": "no-repeat",
-              "background-image":
-                "url(" +
-                resizeInCanvas(
-                  img,
-                  img.naturalWidth * zoom,
-                  img.naturalHeight * zoom
-                ) +
-                ")",
-            })
-            .promise()
-            .done(() => {
-              accept();
-            });
+                "background-repeat": "no-repeat",
+                "background-image":
+                  "url(" +
+                  resizeInCanvas(
+                    img,
+                    img.naturalWidth * zoom,
+                    img.naturalHeight * zoom
+                  ) +
+                  ")",
+              })
+              .promise();
 
-          //element.css("background-position", "initial");
-          //element.css("position", "fixed");
-          //element.css("width", img.naturalWidth * zoom);
-          //element.css("height", img.naturalHeight * zoom);
+            //element.css("background-position", "initial");
+            //element.css("position", "fixed");
+            //element.css("width", img.naturalWidth * zoom);
+            //element.css("height", img.naturalHeight * zoom);
+            resolve();
+          };
         });
       }
-    } catch (e) {
-      console.log(e);
-      reject();
+
+      await loadImage();
+      console.log("Loaded");
     }
-  });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 async function FindImages(folder = "") {
