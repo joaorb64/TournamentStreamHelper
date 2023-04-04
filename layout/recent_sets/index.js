@@ -1,20 +1,17 @@
-(($) => {
+LoadEverything().then(() => {
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from($(".recent_sets"), { autoAlpha: 0 });
 
   var playersRecentSets = null;
 
-  async function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.score ||
@@ -35,7 +32,7 @@
     } else if (playersRecentSets.state != "done") {
       recentSetsHtml += `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
     } else {
-      playersRecentSets.sets.slice(0, 5).forEach((_set) => {
+      for (const _set of playersRecentSets.sets.slice(0, 5)) {
         recentSetsHtml += `
             <div class="set_container">
               <div class="${_set.winner == 0 ? "set_winner" : "set_loser"}">
@@ -62,19 +59,9 @@
               </div>
             </div>
           `;
-      });
+      }
     }
 
     SetInnerHtml($(`.recent_sets_content`), recentSetsHtml);
-  }
-
-  // Using update here to set images as soon as possible
-  // so that on window.load they are already preloaded
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(0, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+  };
+});

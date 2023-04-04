@@ -5,16 +5,13 @@ LoadEverything().then(() => {
     .timeline({ paused: true })
     .from([".container"], { duration: 1, width: "0", ease: "power2.inOut" }, 0);
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (data.game) {
       var DIVIDERS = false;
@@ -119,18 +116,17 @@ LoadEverything().then(() => {
         }
       }
 
-      Object.values(data.player_list.slot).forEach((slot, t) => {
-        SetInnerHtml($(`.slot${t + 1} .title`), slot.name);
-        Object.values(slot.player).forEach((player, p) => {
+      for (const [t, slot] of Object.entries(data.player_list.slot)) {
+        for (const [p, player] of Object.entries(slot.player)) {
           if (player) {
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .name`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .name`),
               `
             <span>
               <span class="sponsor">
                 ${player.team ? player.team : ""}
               </span>
-              ${player.name}
+              ${await Transcript(player.name)}
             </span>
             `,
               undefined,
@@ -138,7 +134,7 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .flagcountry`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagcountry`),
               player.country.asset
                 ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
                 : "",
@@ -147,7 +143,7 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .flagstate`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagstate`),
               player.state.asset
                 ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
                 : "",
@@ -166,19 +162,24 @@ LoadEverything().then(() => {
               ZOOM = ZOOM_5_to_7;
             }
 
-            CharacterDisplay(
-              $(`.slot${t + 1} .p${p + 1}.container .character_container`),
+            await CharacterDisplay(
+              $(
+                `.slot${parseInt(t)} .p${parseInt(
+                  p
+                )}.container .character_container`
+              ),
               {
                 custom_zoom: ZOOM,
                 asset_key: ASSET_TO_USE,
-                source: `player_list.slot.${t + 1}`,
+                source: `player_list.slot.${parseInt(t)}`,
                 use_dividers: false,
                 custom_center: [0.5, 0.4],
-              }
+              },
+              event
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .sponsor_icon`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .sponsor_icon`),
               player.sponsor_logo
                 ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
                 : "<div></div>",
@@ -187,7 +188,7 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .avatar`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .avatar`),
               player.avatar
                 ? `<div style="background-image: url('../../${player.avatar}')"></div>`
                 : "",
@@ -196,7 +197,9 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .online_avatar`),
+              $(
+                `.slot${parseInt(t)} .p${parseInt(p)}.container .online_avatar`
+              ),
               player.online_avatar
                 ? `<div style="background-image: url('${player.online_avatar}')"></div>`
                 : "",
@@ -205,7 +208,7 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .twitter`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .twitter`),
               player.twitter
                 ? `<span class="twitter_logo"></span>${String(player.twitter)}`
                 : "",
@@ -214,24 +217,18 @@ LoadEverything().then(() => {
             );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .sponsor-container`),
+              $(
+                `.slot${parseInt(t)} .p${parseInt(
+                  p
+                )}.container .sponsor-container`
+              ),
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
               undefined,
               0
             );
           }
-        });
-      });
+        }
+      }
     }
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
-
-  window.setTimeout(() => {
-    $("body").fadeTo(1, 1, async () => {
-      gsap.globalTimeline.timeScale(1);
-      Start();
-    });
-  }, 64);
+  };
 });

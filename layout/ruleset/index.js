@@ -1,12 +1,9 @@
-(($) => {
-  function Start() {}
+LoadEverything().then(() => {
+  Start = async (event) => {};
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.score ||
@@ -55,6 +52,12 @@
           FitText($(this));
         });
 
+      if (Object.values(data.score.ruleset.counterpickStages).length == 0) {
+        $(".counterpick_stages").css("display", "none");
+      } else {
+        $(".counterpick_stages").css("display", "");
+      }
+
       let rules = [];
 
       if (data.score.ruleset.useDSR) {
@@ -83,13 +86,5 @@
 
       $(".title.ruleset").html(data.score.ruleset.name);
     }
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(0, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
-  });
-})(jQuery);
+  };
+});
