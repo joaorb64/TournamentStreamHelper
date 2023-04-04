@@ -186,6 +186,7 @@ body {
   position: absolute;
   right: 0;
   width: 200px;
+  background-color: #3f3f46;
 }
 
 .character_container > div {

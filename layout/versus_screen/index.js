@@ -35,15 +35,11 @@ LoadEverything().then(() => {
     .from([".p1.container"], { duration: 1, x: "-100px", ease: "out" }, 0)
     .from([".p2.container"], { duration: 1, x: "100px", ease: "out" }, 0);
 
-  async function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var lock = false;
-
-  async function Update(event) {
-    if (lock) return;
-    lock = true;
+  Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
 
@@ -62,7 +58,7 @@ LoadEverything().then(() => {
                     <span class='sponsor'>
                         ${player.team ? player.team : ""}
                     </span>
-                    ${player.name}
+                    ${await Transcript(player.name)}
                   </div>
                   ${team.losers ? "<span class='losers'>L</span>" : ""}
               </span>
@@ -132,14 +128,12 @@ LoadEverything().then(() => {
               anim_out: {
                 x: zIndexMultiplyier * -800 + "px",
                 z: 0,
-                rotationY: zIndexMultiplyier * 15,
                 stagger: 0.1,
               },
               anim_in: {
                 duration: 0.4,
                 x: zIndexMultiplyier * 20 + "px",
                 z: 50 + "px",
-                rotationY: zIndexMultiplyier * 15,
                 ease: "in",
                 autoAlpha: 1,
                 stagger: 0.1,
@@ -150,16 +144,17 @@ LoadEverything().then(() => {
         }
       }
     } else {
-      Object.values(data.score.team).forEach((team, t) => {
+      const teams = Object.values(data.score.team);
+      for (const [t, team] of teams.entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
+          for (const [p, player] of Object.values(team.player).entries()) {
             if (player) {
-              names.push(player.name);
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
@@ -187,12 +182,32 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
-        CharacterDisplay($(`.p${t + 1}.character`), {
-          source: `score.team.${t + 1}`,
-          custom_center: [0.5, 0.4],
-          custom_element: -2,
-        });
-      });
+        let zIndexMultiplyier = 1;
+        if (t == 1) zIndexMultiplyier = -1;
+
+        await CharacterDisplay(
+          $(`.p${t + 1}.character`),
+          {
+            source: `score.team.${t + 1}`,
+            custom_center: [0.5, 0.4],
+            custom_element: -2,
+            anim_out: {
+              x: zIndexMultiplyier * -800 + "px",
+              z: 0,
+              stagger: 0.1,
+            },
+            anim_in: {
+              duration: 0.4,
+              x: zIndexMultiplyier * 20 + "px",
+              z: 50 + "px",
+              ease: "in",
+              autoAlpha: 1,
+              stagger: 0.1,
+            },
+          },
+          event
+        );
+      }
     }
 
     SetInnerHtml($(`.p1 .score`), String(data.score.team["1"].score));
@@ -238,21 +253,5 @@ LoadEverything().then(() => {
         duration: 0.8,
       });
     }
-
-    window.requestAnimationFrame(() => {
-      if (gsap.globalTimeline.timeScale() == 0) {
-        $(document).waitForImages(function () {
-          $("body").fadeTo(1, 1, () => {
-            Start();
-            gsap.globalTimeline.timeScale(1);
-          });
-        });
-      }
-    });
-
-    lock = false;
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
+  };
 });

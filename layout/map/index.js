@@ -18,7 +18,7 @@ var map = L.map("map", {
 
 baseMap.addTo(map);
 
-(($) => {
+LoadEverything().then(() => {
   var markers = [];
   var polylines = [];
   var positions = [];
@@ -26,7 +26,7 @@ baseMap.addTo(map);
   // for country latlng the icon pulses and there's more zoom out
   var isPrecise = [];
 
-  async function Start() {}
+  Start = async (event) => {};
 
   function UpdateMap() {
     console.log(pingData);
@@ -49,10 +49,10 @@ baseMap.addTo(map);
     Object.values(data.score.team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
         let pos = [
-          player.state.latitude != null
+          player.state.latitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.latitude)
             : parseFloat(player.country.latitude),
-          player.state.longitude != null
+          player.state.longitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.longitude)
             : parseFloat(player.country.longitude),
         ];
@@ -89,7 +89,7 @@ baseMap.addTo(map);
 
         markers.push(marker);
 
-        if (!player.state.latitude) {
+        if (!player.state.latitude || window.COUNTRY_ONLY) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
               html: '<div class="gps_ring"></div>',
@@ -99,7 +99,7 @@ baseMap.addTo(map);
           }).addTo(map);
 
           markers.push(marker);
-          isPrecise.push(false);
+          isPrecise.push(true);
         } else {
           isPrecise.push(true);
         }
@@ -261,13 +261,13 @@ baseMap.addTo(map);
     return (degree * Math.PI) / 180;
   }
 
-  var data = {};
-  var oldData = {};
+  var pingData = null;
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
-    pingData = await getPings();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
+
+    if (!pingData) pingData = await getPings();
 
     if (
       Object.keys(oldData).length == 0 ||
@@ -278,7 +278,7 @@ baseMap.addTo(map);
     ) {
       UpdateMap();
     }
-  }
+  };
 
   Math.getDistance = function (x1, y1, x2, y2) {
     var xs = x2 - x1,
@@ -303,11 +303,4 @@ baseMap.addTo(map);
       cache: false,
     });
   }
-
-  $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
-  });
-})(jQuery);
+});

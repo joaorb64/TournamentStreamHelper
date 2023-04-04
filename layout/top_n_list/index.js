@@ -8,16 +8,11 @@ LoadEverything().then(() => {
     .timeline({ paused: true })
     .from([".container"], { duration: 1, ease: "power2.inOut" }, 0);
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var lock = false;
-
-  async function Update(event) {
-    if (lock) return;
-    lock = true;
-
+  Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
 
@@ -78,7 +73,7 @@ LoadEverything().then(() => {
               <span class="sponsor">
                 ${player.team ? player.team : ""}
               </span>
-              ${player.name}
+              ${await Transcript(player.name)}
             </span>
             `,
               undefined,
@@ -165,21 +160,5 @@ LoadEverything().then(() => {
         );
       }
     }
-
-    window.requestAnimationFrame(() => {
-      if (gsap.globalTimeline.timeScale() == 0) {
-        $(document).waitForImages(function () {
-          $("body").fadeTo(1, 1, () => {
-            Start();
-            gsap.globalTimeline.timeScale(1);
-          });
-        });
-      }
-    });
-
-    lock = false;
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
+  };
 });
