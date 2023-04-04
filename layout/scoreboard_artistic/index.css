@@ -356,7 +356,7 @@ body {
   width: 50%;
 }
 
-.tsh_character {
+.tsh_character > div {
   opacity: 0.4;
 }
 

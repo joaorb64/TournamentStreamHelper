@@ -48,18 +48,11 @@ LoadEverything().then(() => {
     .from([".p1.container"], { duration: 1, x: "-200px", ease: "out" }, 0)
     .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0);
 
-  async function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  var lock = false;
-
-  async function Update(event) {
-    if (lock) return;
-    lock = true;
+  Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
 
@@ -78,7 +71,7 @@ LoadEverything().then(() => {
                     <span class='sponsor'>
                         ${player.team ? player.team : ""}
                     </span>
-                    ${player.name}
+                    ${await Transcript(player.name)}
                   </div>
                   ${team.losers ? "<span class='losers'>L</span>" : ""}
               </span>
@@ -143,7 +136,7 @@ LoadEverything().then(() => {
             $(`.p${t + 1}.character`),
             {
               source: `score.team.${t + 1}`,
-              custom_center: [zIndexMultiplyier == 1 ? 0.4 : 0.6, 0.4],
+              custom_center: [0.6, 0.4],
               custom_element: -2,
               anim_out: {
                 x: -zIndexMultiplyier * 100 + "%",
@@ -162,16 +155,17 @@ LoadEverything().then(() => {
         }
       }
     } else {
-      Object.values(data.score.team).forEach((team, t) => {
+      const teams = Object.values(data.score.team);
+      for (const [t, team] of teams.entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
+          for (const [p, player] of Object.values(team.player).entries()) {
             if (player) {
-              names.push(player.name);
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
@@ -199,125 +193,30 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
-        let charactersHtml = "";
+        let zIndexMultiplyier = 1;
+        if (t == 1) zIndexMultiplyier = -1;
 
-        let charactersChanged = false;
-
-        if (!oldData) {
-          charactersChanged = true;
-        } else {
-          Object.values(team.player).forEach((player, p) => {
-            Object.values(player.character).forEach((character, index) => {
-              try {
-                if (
-                  JSON.stringify(player.character) !=
-                  JSON.stringify(
-                    oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                  )
-                ) {
-                  charactersChanged = true;
-                }
-              } catch {
-                charactersChanged = true;
-              }
-            });
-          });
-        }
-
-        if (charactersChanged) {
-          let html = "";
-          let characters = [];
-
-          Object.values(team.player).forEach((player, p) => {
-            Object.values(player.character).forEach((character, index) => {
-              characters.push(character);
-            });
-          });
-
-          let zIndexMultiplyier = 1;
-          if (t == 1) zIndexMultiplyier = -1;
-          characters.forEach((character, c) => {
-            if (
-              character &&
-              character.assets &&
-              character.assets[ASSET_TO_USE]
-            ) {
-              if (!character.assets[ASSET_TO_USE].asset.endsWith(".webm")) {
-                // if asset is a image, add a image element
-                html += `
-                <div class="bg char${c}" style="z-index: ${
-                  c * zIndexMultiplyier
-                };">
-                  <div class="portrait_container">
-                    <div
-                      class="portrait ${
-                        !FLIP_P2_ASSET && t == 1 ? "invert_shadow" : ""
-                      }"
-                      style='
-                          background-image: url(../../${
-                            character.assets[ASSET_TO_USE].asset
-                          });
-                          ${
-                            t == 1 && FLIP_P2_ASSET
-                              ? "transform: scaleX(-1)"
-                              : ""
-                          }
-                      '>
-                      </div>
-                    </div>
-                </div>
-                  `;
-              } else {
-                // if asset is a video, add a video element
-                html += `
-                <div class="bg char${c}" style="z-index: ${
-                  c * zIndexMultiplyier
-                };">
-                  <video id="video_${p}" class="video" width="auto" height="100%" autoplay muted>
-                    <source src="../../${character.assets[ASSET_TO_USE].asset}">
-                  </video>
-                </div>
-                  `;
-              }
-            }
-          });
-
-          $(`.p${t + 1}.character`).html(html);
-
-          characters.forEach((character, c) => {
-            if (character.assets[ASSET_TO_USE]) {
-              CenterImage(
-                $(`.p${t + 1}.character .char${c} .portrait`),
-                character.assets[ASSET_TO_USE],
-                zoom,
-                EYESIGHT_CENTERING
-              );
-            }
-          });
-
-          characters.forEach((character, c) => {
-            if (character) {
-              gsap
-                .timeline()
-                .fromTo(
-                  [`.p${t + 1}.character .char${c}`],
-                  { x: -zIndexMultiplyier * 100 + "%" },
-                  {
-                    x: -zIndexMultiplyier * 10 + "%",
-                    duration: 0.3,
-                    ease: "power2.out",
-                  },
-                  0.6 + c / 10
-                )
-                .to([`.p${t + 1}.character .char${c}`], {
-                  duration: 5,
-                  x: 0,
-                  ease: "power2.out",
-                });
-            }
-          });
-        }
-      });
+        await CharacterDisplay(
+          $(`.p${t + 1}.character`),
+          {
+            source: `score.team.${t + 1}`,
+            custom_center: [0.6, 0.4],
+            custom_element: -2,
+            anim_out: {
+              x: -zIndexMultiplyier * 100 + "%",
+              stagger: 0.1,
+            },
+            anim_in: {
+              x: 0,
+              duration: 1,
+              ease: "expo.out",
+              autoAlpha: 1,
+              stagger: 0.2,
+            },
+          },
+          event
+        );
+      }
     }
 
     SetInnerHtml($(`.p1 .score`), String(data.score.team["1"].score));
@@ -326,26 +225,45 @@ LoadEverything().then(() => {
     SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
     SetInnerHtml($(".match"), data.score.match);
 
+    let stage = null;
+
+    if (_.get(data, "score.stage_strike.selectedStage")) {
+      let stageId = _.get(data, "score.stage_strike.selectedStage");
+
+      let allStages = _.get(data, "score.ruleset.neutralStages", []).concat(
+        _.get(data, "score.ruleset.counterpickStages", [])
+      );
+
+      stage = allStages.find((s) => s.codename == stageId);
+    }
+
+    if (
+      stage &&
+      _.get(data, "score.stage_strike.selectedStage") !=
+        _.get(oldData, "score.stage_strike.selectedStage")
+    ) {
+      gsap.fromTo(
+        $(`.stage`),
+        { scale: 2 },
+        { scale: 1.2, duration: 0.8, ease: "power2.out" }
+      );
+    }
+
+    SetInnerHtml(
+      $(`.stage`),
+      stage
+        ? `
+        <div>
+            <div class='' style='background-image: url(../../${stage.path});'>
+            </div>
+        </div>`
+        : ""
+    );
+
     SetInnerHtml(
       $(".phase_best_of"),
       data.score.phase +
         (data.score.best_of_text ? ` | ${data.score.best_of_text}` : "")
     );
-
-    window.requestAnimationFrame(() => {
-      if (gsap.globalTimeline.timeScale() == 0) {
-        $(document).waitForImages(function () {
-          $("body").fadeTo(1, 1, () => {
-            Start();
-            gsap.globalTimeline.timeScale(1);
-          });
-        });
-      }
-    });
-
-    lock = false;
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
+  };
 });

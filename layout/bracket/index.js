@@ -128,11 +128,7 @@ LoadEverything().then(() => {
     return null;
   }
 
-  var lock = false;
-
-  async function Update(event) {
-    if (lock) return;
-    lock = true;
+  Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
 
@@ -778,21 +774,5 @@ LoadEverything().then(() => {
       SetInnerHtml($(`.bracket_name`), data.bracket.phase);
       SetInnerHtml($(`.pool_name`), data.bracket.phaseGroup);
     }
-
-    window.requestAnimationFrame(() => {
-      if (gsap.globalTimeline.timeScale() == 0) {
-        $(document).waitForImages(function () {
-          $("body").fadeTo(1, 1, () => {
-            Start();
-            gsap.globalTimeline.timeScale(1);
-          });
-        });
-      }
-    });
-
-    lock = false;
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
+  };
 });

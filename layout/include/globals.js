@@ -1,6 +1,36 @@
 var data = {};
 var oldData = {};
 
+var Start = async () => {
+  console.log("Start(): Implement me");
+};
+
+var Update = async (event) => {
+  console.log("Update(): Implement me");
+};
+
+var tsh_update_lock = false;
+
+async function UpdateWrapper(event) {
+  if (tsh_update_lock) return;
+  tsh_update_lock = true;
+
+  await Update(event);
+
+  window.requestAnimationFrame(() => {
+    if (gsap.globalTimeline.timeScale() == 0) {
+      $(document).waitForImages(function () {
+        $("body").fadeTo(1, 1, () => {
+          Start();
+          gsap.globalTimeline.timeScale(1);
+        });
+      });
+    }
+  });
+
+  tsh_update_lock = false;
+}
+
 async function UpdateData() {
   oldData = data;
   data = await getData();
@@ -20,6 +50,7 @@ async function LoadEverything() {
     "kuroshiro.min.js",
     "kuroshiro-analyzer-kuromoji.min.js",
     "jquery.waitforimages.min.js",
+    "color-thief.min.js",
     "assetUtils.js",
   ];
 
@@ -47,6 +78,8 @@ async function LoadEverything() {
 }
 
 async function InitAll() {
+  $("head").prepend('<meta charset="utf-8" />');
+
   await LoadKuroshiro();
 
   setInterval(async () => {
@@ -55,6 +88,9 @@ async function InitAll() {
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));
+
+  document.addEventListener("tsh_update", UpdateWrapper);
+  gsap.globalTimeline.timeScale(0);
 }
 
 function getData() {
@@ -67,8 +103,10 @@ function getData() {
 
 function RegisterFit(element) {
   if (!$(element).hasClass("tsh-fit-content")) {
-    $(element).addClass("tsh-fit-content");
-    divResizeObserver.observe($(element).get(0));
+    if ($(element).get(0)) {
+      $(element).addClass("tsh-fit-content");
+      divResizeObserver.observe($(element).get(0));
+    }
   }
 }
 
@@ -121,7 +159,8 @@ async function Transcript(text) {
     } else {
       return text;
     }
-  } catch {
+  } catch (e) {
+    console.log(e);
     return text;
   }
 }

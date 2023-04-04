@@ -14,17 +14,25 @@ body {
   height: 1080px;
 }
 
-.background {
+.stage {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -999;
+}
+
+.stage .text div {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 100vw;
   height: 100%;
   z-index: -999;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-image: url(./bg.png);
+  filter: blur(5px) brightness(0.9);
 }
 
 .container {
@@ -182,11 +190,11 @@ body {
 }
 
 .p1 .losers {
-  background-color: #ff3837ff;
+  background-color: var(--p1-sponsor-color);
 }
 
 .p2 .losers {
-  background-color: #308affff;
+  background-color: var(--p2-sponsor-color);
 }
 
 .info {
@@ -309,12 +317,7 @@ body {
 }
 
 .p2.character > .tsh_character {
-  -webkit-mask-image: -webkit-linear-gradient(
-    left,
-    #ffffff00 0%,
-    #ffffff 60%,
-    #ffffff 100%
-  );
+  transform: scaleX(-1);
 }
 
 .character .video {

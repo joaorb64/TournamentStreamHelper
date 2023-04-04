@@ -105,31 +105,36 @@ async function updateCharacterContainer(e, event) {
     console.log(e);
   }
 
-  let team = _.get(event.data, path);
+  let players = [];
+  let oldPlayers = [];
 
-  let characters = Object.values(_.get(team, "player"))
-    .slice(slice_player)
-    .map((p, index) => {
-      return Object.values(_.get(p, "character"))
-        .map((c, index) => {
-          return c;
-        })
-        .filter((c) => Object.values(c.assets).length > 0)
-        .slice(slice_character[0], slice_character[1]);
-    });
+  let team = _.get(event.data, path + ".player");
 
-  let oldTeam = _.get(event.oldData, path);
+  if (team) {
+    players = Object.values(_.get(event.data, path + ".player", {}));
+    oldPlayers = Object.values(_.get(event.data, path + ".player", {}));
+  } else {
+    players = [_.get(event.data, path, {})];
+    oldPlayers = [_.get(event.data, path, {})];
+  }
 
-  let oldCharacters = Object.values(_.get(oldTeam, "player", []))
-    .slice(slice_player)
-    .map((p, index) => {
-      return Object.values(_.get(p, "character"))
-        .map((c, index) => {
-          return c;
-        })
-        .filter((c) => Object.values(c.assets).length > 0)
-        .slice(slice_character[0], slice_character[1]);
-    });
+  let characters = players.slice(slice_player).map((p, index) => {
+    return Object.values(_.get(p, "character"))
+      .map((c, index) => {
+        return c;
+      })
+      .filter((c) => Object.values(c.assets).length > 0)
+      .slice(slice_character[0], slice_character[1]);
+  });
+
+  let oldCharacters = oldPlayers.slice(slice_player).map((p, index) => {
+    return Object.values(_.get(p, "character"))
+      .map((c, index) => {
+        return c;
+      })
+      .filter((c) => Object.values(c.assets).length > 0)
+      .slice(slice_character[0], slice_character[1]);
+  });
 
   let anim_in = { autoAlpha: 1, duration: 0.5, stagger: 0.1 };
 
@@ -228,3 +233,63 @@ document.addEventListener("tsh_update", (event) => {
     }
   });
 });
+
+function GetLogoColors() {
+  let img = new Image();
+  img.src = "../logo.png";
+
+  img.onload = () => {
+    const colorThief = new ColorThief();
+
+    let palette = colorThief.getPalette(img, 2);
+
+    let text = setContrast(palette[0]);
+
+    $(`:root`).css({
+      "--text-color": `rgb(${text.join(",")})`,
+      "--bg-color": `rgb(${palette[0].join(",")})`,
+      "--p1-score-bg-color": `rgb(${palette[1].join(",")})`,
+      "--p2-score-bg-color": `rgb(${palette[1].join(",")})`,
+      "--p1-sponsor-color": `rgb(${palette[1].join(",")})`,
+      "--p2-sponsor-color": `rgb(${palette[1].join(",")})`,
+      "--p1-score-color": `rgb(${setContrast(palette[1]).join(",")})`,
+      "--p2-score-color": `rgb(${setContrast(palette[1]).join(",")})`,
+    });
+  };
+}
+
+const setContrast = (rgb) =>
+  (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 > 125
+    ? [0, 0, 0]
+    : [255, 255, 255];
+
+// GetLogoColors();
+
+/* $(`.p${t + 1}.character .tsh-center-image`).each((i, e) => {
+  let img = new Image();
+
+  img.src = $(e)
+    .css("background-image")
+    .split('url("')[1]
+    .split('")')[0];
+
+  img.onload = () => {
+    const colorThief = new ColorThief();
+
+    let palette = colorThief.getPalette(img, 2);
+
+    console.log(
+      `linear-gradient(90deg, rgb(${palette[0].join(
+        ","
+      )}), rgb(${palette[1].join(",")}))`
+    );
+
+    $(`.p${t + 1}.player.container`).css({
+      background: `linear-gradient(90deg, rgb(${palette[0].join(
+        ","
+      )}), rgb(${palette[1].join(",")}))`,
+      //"background-color": `rgb(${palette[1].join(",")})`,
+      //color: `rgb(${palette[0].join(",")})`,
+    });
+  };
+}); */

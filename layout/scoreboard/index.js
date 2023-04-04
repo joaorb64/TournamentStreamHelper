@@ -53,16 +53,13 @@ LoadEverything().then(() => {
       0.2
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
@@ -289,19 +286,9 @@ LoadEverything().then(() => {
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
 
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-
     $(".container div:has(>.text:empty)").css("margin-right", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-right", "");
     $(".container div:has(>.text:empty)").css("margin-left", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-left", "");
-  }
-
-  Update();
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-    setInterval(Update, 500);
-  });
+  };
 });
