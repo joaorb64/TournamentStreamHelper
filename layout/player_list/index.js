@@ -89,7 +89,7 @@ LoadEverything().then(() => {
               $(`.slot${t + 1} .p${p + 1}.container .character_container`),
               {
                 source: `player_list.slot.${t + 1}`,
-                custom_center: [0.5, 0.4],
+                custom_center: [0.5, 0.5],
                 custom_element: -2,
               },
               event

@@ -6,11 +6,7 @@ LoadEverything().then(() => {
     },
     ssbu: {
       asset: "full",
-      zoom: 3,
-    },
-    ssb64: {
-      asset: "artwork",
-      zoom: 1.6,
+      zoom: 1.4,
     },
   };
 
@@ -20,9 +16,9 @@ LoadEverything().then(() => {
 
   let startingAnimation = gsap.timeline({ paused: true });
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
   var entryAnim = gsap.timeline();
   var animations = {};
@@ -161,7 +157,6 @@ LoadEverything().then(() => {
           const setMap = Object.values(r.sets).map((s) => {
             return s.playerId[0] == -1 || s.playerId[1] == -1 ? 0 : 1;
           });
-          console.log(setMap);
           return setMap.reduce(function (result, item) {
             return result + item;
           }, 0);
@@ -178,7 +173,6 @@ LoadEverything().then(() => {
         biggestRound * (2 * parseInt($(":root").css("--player-height")) + 4) >
         containerSize - 20
       ) {
-        console.log(biggestRound, containerSize);
         size -= 1;
         $(":root").css("--player-height", size);
       }
@@ -590,12 +584,6 @@ LoadEverything().then(() => {
               } .slot_p_${index}`
             ).get(0);
 
-            console.log(
-              `.round_${roundKey} .slot_${
-                parseInt(setIndex) + 1
-              } .slot_p_${index}`
-            );
-
             if (!element) continue;
 
             let team = players[pid];
@@ -627,7 +615,7 @@ LoadEverything().then(() => {
                     <span class="sponsor">
                       ${player && player.team ? player.team : ""}
                     </span>
-                    ${player ? player.name : ""}
+                    ${player ? await Transcript(player.name) : ""}
                   </span>
                 `
               );
@@ -698,11 +686,13 @@ LoadEverything().then(() => {
 
               if (!teamName || teamName == "") {
                 let names = [];
-                Object.values(team.player).forEach((player, p) => {
+                for (const [p, player] of Object.values(
+                  team.player
+                ).entries()) {
                   if (player) {
-                    names.push(player.name);
+                    names.push(await Transcript(player.name));
                   }
-                });
+                }
                 teamName = names.join(" / ");
               }
 
@@ -718,46 +708,16 @@ LoadEverything().then(() => {
               SetInnerHtml($(element).find(`.flagcountry`), "");
               SetInnerHtml($(element).find(`.flagstate`), "");
 
-              let currCharacters = [];
-
-              Object.values(team.player).forEach((player, p) => {
-                if (_.get(player, "character.1")) {
-                  currCharacters.push(_.get(player, "character.1"));
-                }
-              });
-
-              let oldCharacters = [];
-
-              Object.values(team.player).forEach((player, p) => {
-                if (
-                  _.get(
-                    oldData,
-                    `bracket.players.slot.${pid}.player.${p + 1}.character.1`
-                  )
-                ) {
-                  oldCharacters.push(_.get(player, "character.1"));
-                }
-              });
-
-              $(element)
-                .find(`.character_container`)
-                .addClass("tsh_character_container");
-
-              $(element)
-                .find(`.character_container`)
-                .attr("data-zoom", ASSET_TO_USE.zoom);
-
-              $(element)
-                .find(`.character_container`)
-                .attr("data-asset", ASSET_TO_USE.asset);
-
-              $(element)
-                .find(`.character_container`)
-                .attr("data-slice_character", "[0,1]");
-
-              $(element)
-                .find(`.character_container`)
-                .attr("data-source", `bracket.players.slot.${pid}`);
+              await CharacterDisplay(
+                $(element).find(`.character_container`),
+                {
+                  custom_zoom: ASSET_TO_USE.zoom,
+                  asset_key: ASSET_TO_USE.asset,
+                  slice_character: [0, 1],
+                  source: `bracket.players.slot.${pid}`,
+                },
+                event
+              );
 
               SetInnerHtml($(element).find(`.sponsor_icon`), "");
               SetInnerHtml($(element).find(`.avatar`), "");

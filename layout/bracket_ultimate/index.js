@@ -13,9 +13,9 @@ LoadEverything().then(() => {
 
   let startingAnimation = gsap.timeline({ paused: true });
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
   var data = {};
   var oldData = {};
@@ -119,11 +119,7 @@ LoadEverything().then(() => {
     return line;
   }
 
-  var lock = false;
-
-  async function Update(event) {
-    if (lock) return;
-    lock = true;
+  Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
 
@@ -1173,7 +1169,7 @@ LoadEverything().then(() => {
                         : ""
                     }
                   </span>
-                  ${player ? player.name : "---"}
+                  ${player ? await Transcript(player.name) : "---"}
                 </span>
               `
             );
@@ -1252,7 +1248,7 @@ LoadEverything().then(() => {
             $(element).find(`.icon_name`),
             `
             <span>
-              ${player ? player.name : ""}
+              ${player ? await Transcript(player.name) : ""}
             </span>
           `
           );
@@ -1494,7 +1490,7 @@ LoadEverything().then(() => {
                   $(element).find(`.icon_name`),
                   `
                   <span>
-                    ${player ? player.name : ""}
+                    ${player ? await Transcript(player.name) : ""}
                   </span>
                 `
                 );
@@ -1551,20 +1547,5 @@ LoadEverything().then(() => {
 
       firstUpdate = false;
     }
-    window.requestAnimationFrame(() => {
-      if (gsap.globalTimeline.timeScale() == 0) {
-        $(document).waitForImages(function () {
-          $("body").fadeTo(1, 1, () => {
-            Start();
-            gsap.globalTimeline.timeScale(1);
-          });
-        });
-      }
-    });
-
-    lock = false;
-  }
-
-  document.addEventListener("tsh_update", Update);
-  gsap.globalTimeline.timeScale(0);
+  };
 });
