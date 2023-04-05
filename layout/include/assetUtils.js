@@ -62,7 +62,6 @@ async function CharacterDisplay(element, settings, event) {
     $(element).addClass("tsh_character_container");
     if ($(element).get(0)) {
       await updateCharacterContainer($(element).get(0), event);
-      console.log("awaitarbase");
     }
   }
 }
@@ -112,10 +111,10 @@ async function updateCharacterContainer(e, event) {
 
   if (team) {
     players = Object.values(_.get(event.data, path + ".player", {}));
-    oldPlayers = Object.values(_.get(event.data, path + ".player", {}));
+    oldPlayers = Object.values(_.get(event.oldData, path + ".player", {}));
   } else {
     player = [_.get(event.data, path)];
-    oldPlayer = [_.get(event.data, path)];
+    oldPlayer = [_.get(event.oldData, path)];
   }
 
   let characters = players.slice(slice_player).map((p, index) => {
@@ -155,6 +154,8 @@ async function updateCharacterContainer(e, event) {
   if (firstRun) {
     anim_out.duration = 0;
   }
+
+  if (changed) console.log("Hi", changed, characters, oldCharacters);
 
   if (changed || firstRun) {
     $(e).addClass("tsh_character_container_active");
@@ -213,7 +214,6 @@ async function updateCharacterContainer(e, event) {
 
     if (firstRun) {
       await callback();
-      console.log("yes");
     } else {
       await gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
     }

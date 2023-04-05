@@ -64,8 +64,11 @@ LoadEverything().then(() => {
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
     if (!isDoubles) {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-        [team.player["1"]].forEach((player, p) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -73,7 +76,7 @@ LoadEverything().then(() => {
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
-                ${player.name}
+                ${await Transcript(player.name)}
                 ${team.losers ? "<span class='losers'>L</span>" : ""}
               `
             );
@@ -92,41 +95,14 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            if (
-              !oldData.score ||
-              JSON.stringify(player.character) !=
-                JSON.stringify(
-                  oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                )
-            ) {
-              let charactersHtml = "";
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets["base_files/icon"]) {
-                  charactersHtml += `
-                    <div class="icon stockicon">
-                        <div style='background-image: url(../../${character.assets["base_files/icon"].asset})'></div>
-                    </div>
-                    `;
-                }
-              });
-              SetInnerHtml(
-                $(`.p${t + 1}.container .character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(
-                    `.p${t + 1}.container .character_container .stockicon div`
-                  ).each((i, e) => {
-                    CenterImage(
-                      $(e),
-                      Object.values(player.character)[i].assets[ASSET_TO_USE],
-                      ZOOM
-                    );
-                  });
-                }
-              );
-            }
+            await CharacterDisplay(
+              $(`.p${t + 1}.container .character_container`),
+              {
+                asset_key: "base_files/icon",
+                source: `score.team.${t + 1}`,
+              },
+              event
+            );
 
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
@@ -175,8 +151,8 @@ LoadEverything().then(() => {
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
           }
-        });
-      });
+        }
+      }
     } else {
       [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
         let teamName = "";
@@ -285,10 +261,5 @@ LoadEverything().then(() => {
     if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
-
-    $(".container div:has(>.text:empty)").css("margin-right", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
-    $(".container div:has(>.text:empty)").css("margin-left", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
   };
 });

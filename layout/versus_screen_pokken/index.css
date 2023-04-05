@@ -406,9 +406,9 @@ body {
 .sponsor_logo {
   overflow: visible;
   position: fixed;
-  width: 120px;
-  height: 120px;
-  top: -125px;
+  width: 160px;
+  height: 160px;
+  top: -170px;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

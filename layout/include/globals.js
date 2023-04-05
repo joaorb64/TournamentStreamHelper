@@ -37,7 +37,9 @@ async function UpdateData() {
   let event = new CustomEvent("tsh_update");
   event.data = data;
   event.oldData = oldData;
-  document.dispatchEvent(event);
+
+  if (JSON.stringify(data) != JSON.stringify(oldData))
+    document.dispatchEvent(event);
 }
 
 async function LoadEverything() {
@@ -199,6 +201,11 @@ async function SetInnerHtml(
     ) {
       const callback = () => {
         element.find(".text").html(html);
+        if (html.length == 0) {
+          element.find(".text").addClass("text_empty");
+        } else {
+          element.find(".text").removeClass("text_empty");
+        }
         FitText(element);
         if (middleFunction != undefined) {
           middleFunction();

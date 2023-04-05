@@ -136,7 +136,7 @@ LoadEverything().then(() => {
             $(`.p${t + 1}.character`),
             {
               source: `score.team.${t + 1}`,
-              custom_center: [0.6, 0.4],
+              custom_center: [0.5, 0.4],
               custom_element: -2,
               anim_out: {
                 x: -zIndexMultiplyier * 100 + "%",
@@ -200,7 +200,7 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.character`),
           {
             source: `score.team.${t + 1}`,
-            custom_center: [0.6, 0.4],
+            custom_center: [0.5, 0.4],
             custom_element: -2,
             anim_out: {
               x: -zIndexMultiplyier * 100 + "%",
