@@ -154,7 +154,10 @@ LoadEverything().then(() => {
         }
       }
     } else {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
@@ -181,60 +184,15 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
-        let charactersHtml = "";
-
-        let charactersChanged = false;
-
-        if (!oldData) {
-          charactersChanged = true;
-        } else {
-          Object.values(team.player).forEach((player, p) => {
-            Object.values(player.character).forEach((character, index) => {
-              try {
-                if (
-                  JSON.stringify(player.character) !=
-                  JSON.stringify(
-                    oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                  )
-                ) {
-                  charactersChanged = true;
-                }
-              } catch {
-                charactersChanged = true;
-              }
-            });
-          });
-        }
-
-        if (charactersChanged) {
-          Object.values(team.player).forEach((player, p) => {
-            Object.values(player.character).forEach((character, index) => {
-              if (character.assets[ASSET_TO_USE]) {
-                charactersHtml += `
-                  <div class="icon stockicon">
-                    <div data-asset='${JSON.stringify(
-                      character.assets[ASSET_TO_USE]
-                    )}'></div>
-                  </div>
-                  `;
-              }
-            });
-          });
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .character_container`),
-            charactersHtml,
-            undefined,
-            0.5,
-            () => {
-              $(
-                `.p${t + 1}.container .character_container .stockicon div`
-              ).each((i, e) => {
-                CenterImage($(e), JSON.parse($(e).attr("data-asset")), ZOOM);
-              });
-            }
-          );
-        }
+        await CharacterDisplay(
+          $(`.p${t + 1}.container .character_container`),
+          {
+            asset_key: "base_files/icon",
+            source: `score.team.${t + 1}`,
+            slice_character: [0, 1],
+          },
+          event
+        );
 
         SetInnerHtml($(`.p${t + 1}.container .sponsor_icon`), "");
 
@@ -249,7 +207,7 @@ LoadEverything().then(() => {
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
         SetInnerHtml($(`.p${t + 1}.container .sponsor-container`), "");
-      });
+      }
     }
 
     SetInnerHtml($(".tournament_name"), data.tournamentInfo.tournamentName);

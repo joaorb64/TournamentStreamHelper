@@ -1,13 +1,6 @@
-(($) => {
+LoadEverything().then(() => {
   let CONFIG = {
-    default: {
-      asset: "full",
-      zoom: 1,
-    },
-    ssbm: {
-      asset: "full",
-      zoom: 1.4,
-    },
+    default: {},
   };
 
   let startingAnimation = gsap
@@ -44,18 +37,18 @@
       0
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
   var data = {};
   var oldData = {};
 
   var GAME_CONFIG = CONFIG["default"];
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (data.game) {
       if (data.game.codename) {
@@ -67,7 +60,10 @@
       }
     }
 
-    Object.values(data.score.team).forEach((team, t) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
       console.log(team);
 
       let team_id = ["left", "right"][t];
@@ -91,7 +87,7 @@
         });
       }
 
-      Object.values(team.player).forEach((player, p) => {
+      for (const [p, player] of Object.values(team.player).entries()) {
         if (player) {
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .name`),
@@ -129,41 +125,14 @@
               : ""
           );
 
-          let charactersHtml = "";
-
-          if (
-            $(".cameras").length == 0 &&
-            (!oldData.score ||
-              JSON.stringify(
-                oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-              ) != JSON.stringify(player.character))
-          ) {
-            Object.values(player.character).forEach((character) => {
-              if (character.assets["full"]) {
-                charactersHtml += `
-                <div class='character' style='background-image: url(../../${character.assets["full"].asset})'></div>
-              `;
-              }
-            });
-
-            SetInnerHtml(
-              $(`.${team_id} .p${p + 1} .character_container`),
-              charactersHtml,
-              undefined,
-              0.5,
-              () => {
-                $(
-                  `.${team_id} .p${p + 1} .character_container .character`
-                ).each((i, e) => {
-                  CenterImage(
-                    $(e),
-                    Object.values(player.character)[i].assets[
-                      GAME_CONFIG["asset"]
-                    ],
-                    GAME_CONFIG["zoom"]
-                  );
-                });
-              }
+          if ($(".cameras").length == 0) {
+            await CharacterDisplay(
+              $(`.${team_id} .p${p + 1}.container .character_container`),
+              {
+                source: `score.team.${t + 1}.player.${p + 1}`,
+                custom_center: [0.5, 0.4],
+              },
+              event
             );
           }
 
@@ -181,8 +150,8 @@
             )})'></div>`
           );
         }
-      });
-    });
+      }
+    }
 
     SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
 
@@ -197,7 +166,7 @@
     $(".text").each(function (e) {
       FitText($($(this)[0].parentNode));
     });
-  }
+  };
 
   Update();
   $(window).on("load", () => {
@@ -206,4 +175,4 @@
       setInterval(Update, 500);
     });
   });
-})(jQuery);
+});

@@ -113,8 +113,8 @@ async function updateCharacterContainer(e, event) {
     players = Object.values(_.get(event.data, path + ".player", {}));
     oldPlayers = Object.values(_.get(event.oldData, path + ".player", {}));
   } else {
-    player = [_.get(event.data, path)];
-    oldPlayer = [_.get(event.oldData, path)];
+    players = [_.get(event.data, path, {})];
+    oldPlayers = [_.get(event.oldData, path, {})];
   }
 
   let characters = players.slice(slice_player).map((p, index) => {
@@ -127,7 +127,7 @@ async function updateCharacterContainer(e, event) {
   });
 
   let oldCharacters = oldPlayers.slice(slice_player).map((p, index) => {
-    return Object.values(_.get(p, "character"))
+    return Object.values(_.get(p, "character", {}))
       .map((c, index) => {
         return c;
       })

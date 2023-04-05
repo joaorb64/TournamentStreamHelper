@@ -1242,7 +1242,6 @@ LoadEverything().then(() => {
             `.winners_icons .bracket_icon.bracket_icon_p${teamId}`
           );
           if (!element) continue;
-          let charactersHtml = "";
 
           SetInnerHtml(
             $(element).find(`.icon_name`),
