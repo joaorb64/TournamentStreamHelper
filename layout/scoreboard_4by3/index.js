@@ -41,9 +41,6 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   };
 
-  var data = {};
-  var oldData = {};
-
   var GAME_CONFIG = CONFIG["default"];
 
   Update = async (event) => {
@@ -94,7 +91,7 @@ LoadEverything().then(() => {
             `
               <span class="sponsor">${
                 player.team ? player.team + "&nbsp;" : ""
-              }</span>${String(player.name)}
+              }</span>${await Transcript(player.name)}
             `
           );
 

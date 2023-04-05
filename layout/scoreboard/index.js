@@ -162,11 +162,11 @@ LoadEverything().then(() => {
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
+          for (const [p, player] of Object.values(team.player).entries()) {
             if (player) {
-              names.push(player.name);
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
