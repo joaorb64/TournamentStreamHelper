@@ -147,6 +147,8 @@ async function updateCharacterContainer(e, event) {
     anim_out = settings.anim_out;
   }
 
+  anim_out.overwrite = true;
+
   let changed = JSON.stringify(characters) != JSON.stringify(oldCharacters);
 
   let firstRun = !$(e).hasClass("tsh_character_container_active");
@@ -154,8 +156,6 @@ async function updateCharacterContainer(e, event) {
   if (firstRun) {
     anim_out.duration = 0;
   }
-
-  if (changed) console.log("Hi", changed, characters, oldCharacters);
 
   if (changed || firstRun) {
     $(e).addClass("tsh_character_container_active");
@@ -208,14 +208,13 @@ async function updateCharacterContainer(e, event) {
       }
 
       await Promise.allSettled(loads);
-      console.log(loads);
       gsap.fromTo($(e).children(".tsh_character"), anim_out, anim_in);
     };
 
     if (firstRun) {
       await callback();
     } else {
-      await gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
+      gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
     }
   }
 }
