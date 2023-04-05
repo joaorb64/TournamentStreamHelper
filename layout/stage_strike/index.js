@@ -8,7 +8,7 @@ LoadEverything().then(() => {
     let banList = [];
 
     if (ruleset.useDSR) {
-      banList = state.stagesPicked;
+      banList = state.stagesPicked ? state.stagesPicked : [];
     } else if (ruleset.useMDSR && state.lastWinner !== -1) {
       banList =
         state.stagesWon && state.stagesWon.length > 0
