@@ -196,9 +196,9 @@ async function updateCharacterContainer(e, event) {
               ? GetCharacterAsset(settingsClone.asset_key, character)
               : GetBiggestAsset(character);
 
-            let zoom = settingsClone.zoom
-              ? settingsClone.zoom
-              : GetRecommendedZoom(asset);
+            console.log(settingsClone);
+            if (!settingsClone.zoom)
+              settingsClone.custom_zoom = GetRecommendedZoom(asset);
 
             loads.push(CenterImage($(_div).children(0), asset, settingsClone));
 

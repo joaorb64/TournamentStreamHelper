@@ -24,9 +24,6 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   };
 
-  var data = {};
-  var oldData = {};
-
   Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;

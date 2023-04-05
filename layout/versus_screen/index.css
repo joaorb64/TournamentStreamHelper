@@ -302,7 +302,7 @@ body {
   top: 50%;
   transform: translateY(-50%);
   height: 640px;
-  perspective: 400px;
+  perspective: 500px;
   perspective-origin: right;
   z-index: -1;
   display: flex;
