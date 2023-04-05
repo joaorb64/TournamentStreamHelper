@@ -74,7 +74,6 @@ document.addEventListener("tsh_update", async (event) => {
 
 async function updateCharacterContainer(e, event) {
   let settings = _.defaultsDeep($(e).data(), {
-    custom_zoom: 1,
     custom_center: [0.5, 0.5],
     custom_element: null,
     scale_fill_x: false,
@@ -197,7 +196,7 @@ async function updateCharacterContainer(e, event) {
               : GetBiggestAsset(character);
 
             console.log(settingsClone);
-            if (!settingsClone.zoom)
+            if (!settingsClone.custom_zoom)
               settingsClone.custom_zoom = GetRecommendedZoom(asset);
 
             loads.push(CenterImage($(_div).children(0), asset, settingsClone));

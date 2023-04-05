@@ -1,7 +1,7 @@
 LoadEverything().then(() => {
   var ASSET_CONFIG = {
     default: {
-      asset: "full",
+      asset: undefined,
       zoom: 1.4,
     },
     ssbu: {
