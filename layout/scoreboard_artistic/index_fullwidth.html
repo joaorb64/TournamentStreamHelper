@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="../include/globals.js"></script>
+    <link rel="stylesheet" href="../main.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body class="fullwidth">
+    <div class="base_container_outer">
+      <div class="base_container">
+        <div class="p1 character_container">
+          <div
+            class="tsh_character_container"
+            data-source="score.team.1"
+            data-anim_out='{"autoAlpha": 0, "x": "-20px", "stagger": 0.2, "duration": 0.4}'
+            data-anim_in='{"autoAlpha": 1, "x": "0px", "stagger": 0.2, "duration": 0.4}'
+          ></div>
+        </div>
+
+        <div class="mid_col">
+          <div class="line">
+            <div class="tsh_text phase" data-source="score.phase"></div>
+            <div class="tsh_text match" data-source="score.match"></div>
+            <div
+              class="tsh_text best_of"
+              data-source="score.best_of_text"
+            ></div>
+          </div>
+
+          <div class="players">
+            <div class="p1 player container">
+              <div class="flags_container">
+                <div class="flagcountry"></div>
+                <div class="flagstate"></div>
+              </div>
+              <div class="name_twitter">
+                <div class="name"></div>
+              </div>
+              <div class="sponsor_icon"></div>
+              <div class="score"></div>
+            </div>
+            <div class="divider">-</div>
+            <div class="p2 player container">
+              <div class="flags_container">
+                <div class="flagcountry"></div>
+                <div class="flagstate"></div>
+              </div>
+              <div class="name_twitter">
+                <div class="name"></div>
+              </div>
+              <div class="sponsor_icon"></div>
+              <div class="score"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p2 character_container">
+          <div
+            class="tsh_character_container"
+            data-source="score.team.2"
+            data-anim_out='{"autoAlpha": 0, "x": "20px", "stagger": -0.2, "duration": 0.4}'
+            data-anim_in='{"autoAlpha": 1, "x": "0px", "stagger": -0.2, "duration": 0.4}'
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>

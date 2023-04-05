@@ -613,8 +613,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             assetData["name"] = skin_name
             assetData["en_name"] = skin_name_en
 
-            print("assetdata", assetData)
-
             item.setData(skinIndex, Qt.ItemDataRole.EditRole)
             item.setData(assetData, Qt.ItemDataRole.UserRole)
 

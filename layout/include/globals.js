@@ -1,9 +1,115 @@
+var data = {};
+var oldData = {};
+
+var Start = async () => {
+  console.log("Start(): Implement me");
+};
+
+var Update = async (event) => {
+  console.log("Update(): Implement me");
+};
+
+var tsh_update_lock = false;
+
+async function UpdateWrapper(event) {
+  if (tsh_update_lock) return;
+  tsh_update_lock = true;
+
+  await Update(event);
+
+  window.requestAnimationFrame(() => {
+    if (gsap.globalTimeline.timeScale() == 0) {
+      $(document).waitForImages(function () {
+        $("body").fadeTo(1, 1, () => {
+          Start();
+          gsap.globalTimeline.timeScale(1);
+        });
+      });
+    }
+  });
+
+  tsh_update_lock = false;
+}
+
+async function UpdateData() {
+  oldData = data;
+  data = await getData();
+  let event = new CustomEvent("tsh_update");
+  event.data = data;
+  event.oldData = oldData;
+
+  if (JSON.stringify(data) != JSON.stringify(oldData))
+    document.dispatchEvent(event);
+}
+
+async function LoadEverything() {
+  let libPath = "../include/";
+  let scripts = [
+    "jquery-3.6.0.min.js",
+    "gsap.min.js",
+    "he.js",
+    "lodash.min.js",
+    "kuroshiro.min.js",
+    "kuroshiro-analyzer-kuromoji.min.js",
+    "jquery.waitforimages.min.js",
+    "color-thief.min.js",
+    "assetUtils.js",
+  ];
+
+  for (let i = 0; i < scripts.length; i += 1) {
+    const script = scripts[i];
+    const src = libPath + script;
+    try {
+      await new Promise((resolve, reject) => {
+        const scriptElement = document.createElement("script");
+        scriptElement.src = src;
+        scriptElement.onload = resolve;
+        scriptElement.onerror = reject;
+        document.head.appendChild(scriptElement);
+      });
+      console.log(`Loaded script: ${src}`);
+    } catch (error) {
+      console.error(`Error loading script: ${src}`, error);
+      throw error;
+    }
+  }
+
+  console.log("== Loading complete ==");
+
+  await InitAll();
+}
+
+async function InitAll() {
+  $("head").prepend('<meta charset="utf-8" />');
+
+  await LoadKuroshiro();
+
+  setInterval(async () => {
+    await UpdateData();
+  }, 32);
+
+  console.log("== Init complete ==");
+  document.dispatchEvent(new CustomEvent("tsh_init"));
+
+  document.addEventListener("tsh_update", UpdateWrapper);
+  gsap.globalTimeline.timeScale(0);
+}
+
 function getData() {
   return $.ajax({
     dataType: "json",
     url: "../../out/program_state.json",
     cache: false,
   });
+}
+
+function RegisterFit(element) {
+  if (!$(element).hasClass("tsh-fit-content")) {
+    if ($(element).get(0)) {
+      $(element).addClass("tsh-fit-content");
+      divResizeObserver.observe($(element).get(0));
+    }
+  }
 }
 
 function FitText(target) {
@@ -13,6 +119,7 @@ function FitText(target) {
     if (target.css("width") == null) return;
 
     let textElement = target.find(".text");
+    RegisterFit(target);
 
     if (textElement.text().trim().toLowerCase() == "undefined") {
       textElement.html("");
@@ -21,19 +128,52 @@ function FitText(target) {
     textElement.css("transform", "");
     let scaleX = 1;
 
-    while (textElement[0].scrollWidth * scaleX > target.width() && scaleX > 0) {
-      scaleX -= 0.01;
+    if (textElement[0].scrollWidth * scaleX > target.width()) {
+      scaleX = target.width() / textElement[0].scrollWidth;
       textElement.css("transform", "scaleX(" + scaleX + ")");
     }
   });
 }
 
-function SetInnerHtml(
+async function LoadKuroshiro() {
+  window.kuroshiro = new Kuroshiro.default();
+  await window.kuroshiro.init(
+    new KuromojiAnalyzer({
+      dictPath: "../include/kuromoji",
+    })
+  );
+}
+
+async function Transcript(text) {
+  if (text == null || text.length == 0) return text;
+
+  try {
+    if (window.Kuroshiro.default.Util.hasJapanese(text)) {
+      return window.kuroshiro
+        .convert(text, {
+          mode: "furigana",
+          to: "romaji",
+          romajiSystem: "nippon",
+        })
+        .then((res) => {
+          return res;
+        });
+    } else {
+      return text;
+    }
+  } catch (e) {
+    console.log(e);
+    return text;
+  }
+}
+
+async function SetInnerHtml(
   element,
   html,
   force = undefined,
   fadeTime = 0.5,
-  middleFunction = undefined
+  middleFunction = undefined,
+  options = {}
 ) {
   if (element == null) return;
   if (force == false) return;
@@ -59,21 +199,39 @@ function SetInnerHtml(
       he.decode(String(element.find(".text").html()).replace(/'/g, '"')) !=
         he.decode(String(html).replace(/'/g, '"'))
     ) {
-      gsap.to(element.find(".text"), {
-        autoAlpha: 0,
-        duration: fadeOutTime,
-        onComplete: () => {
-          element.find(".text").html(html);
-          FitText(element);
-          if (middleFunction != undefined) {
-            middleFunction();
-          }
-          gsap.to(element.find(".text"), {
-            autoAlpha: 1,
-            duration: fadeInTime,
-          });
-        },
-      });
+      const callback = () => {
+        element.find(".text").html(html);
+        if (html.length == 0) {
+          element.find(".text").addClass("text_empty");
+        } else {
+          element.find(".text").removeClass("text_empty");
+        }
+        FitText(element);
+        if (middleFunction != undefined) {
+          middleFunction();
+        }
+        $(element).ready((e) => {
+          gsap.fromTo(
+            element.find(".text"),
+            { autoAlpha: 0 },
+            {
+              autoAlpha: 1,
+              duration: fadeInTime,
+            }
+          );
+        });
+      };
+
+      if (fadeOutTime == 0) {
+        $(element).find(".text").css("opacity", "0");
+        callback();
+      } else {
+        gsap.to(element.find(".text"), {
+          autoAlpha: 0,
+          duration: fadeOutTime,
+          onComplete: callback,
+        });
+      }
     }
   });
 }
@@ -127,12 +285,12 @@ function resizeInCanvas(image, width, height) {
   canvas.width = width;
   canvas.height = height;
 
-  ctx.imageSmoothingQuality = "high";
+  ctx.imageSmoothingQuality = "medium";
   ctx.imageSmoothingEnabled = true;
 
   // Draw image and export to a data-uri
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const dataURI = canvas.toDataURL();
+  const dataURI = canvas.toDataURL("image/webp");
 
   canvas.remove();
 
@@ -140,182 +298,248 @@ function resizeInCanvas(image, width, height) {
   return dataURI;
 }
 
-function CenterImage(
-  element,
-  assetData,
-  customZoom = 1,
-  customCenter = null,
-  customElement = null,
-  scale_fill_x = false,
-  scale_fill_y = false
-) {
-  element.css("opacity", "0");
-
-  if (typeof assetData == "string") {
-    assetData = JSON.parse(assetData);
+var imageResizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    console.log("Resized");
+    CenterImageDo(entry.target);
   }
+});
 
-  let image = 'url("../../' + assetData.asset + '")';
+var divResizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    FitText($(entry.target));
+  }
+});
 
-  if (image != undefined && image.includes("url(")) {
-    let img = new Image();
-    img.src = image.split('url("')[1].split('")')[0];
-
-    $(img).on("load", () => {
-      let eyesight = assetData.eyesight;
-
-      if (!eyesight) {
-        eyesight = {
-          x: img.naturalWidth / 2,
-          y: img.naturalHeight / 2,
-        };
-      }
-
-      if (!customElement) customElement = element;
-
-      console.log(assetData);
-
-      let proportional_zoom = 1;
-      if (assetData.average_size) {
-        proportional_zoom = 0;
-        proportional_zoom = Math.max(
-          proportional_zoom,
-          (customElement.innerWidth() / assetData.average_size.x) * 1.2
-        );
-        proportional_zoom = Math.max(
-          proportional_zoom,
-          (customElement.innerHeight() / assetData.average_size.y) * 1.2
-        );
-      }
-      console.log(proportional_zoom);
-
-      // For cropped assets, zoom to fill
-      // Calculate max zoom
-      zoom_x = customElement.innerWidth() / img.naturalWidth;
-      zoom_y = customElement.innerHeight() / img.naturalHeight;
-
-      let minZoom = 1;
-
-      let rescalingFactor = 1;
-
-      if (assetData.rescaling_factor)
-        rescalingFactor = assetData.rescaling_factor;
-
-      let uncropped_edge = assetData.uncropped_edge;
-
-      if (
-        !uncropped_edge ||
-        uncropped_edge == "undefined" ||
-        uncropped_edge.length == 0
-      ) {
-        if (zoom_x > zoom_y) {
-          minZoom = zoom_x;
-        } else {
-          minZoom = zoom_y;
-        }
-      } else {
-        if (
-          uncropped_edge.includes("u") &&
-          uncropped_edge.includes("d") &&
-          uncropped_edge.includes("l") &&
-          uncropped_edge.includes("r")
-        ) {
-          minZoom = customZoom * proportional_zoom * rescalingFactor;
-        } else if (
-          !uncropped_edge.includes("l") &&
-          !uncropped_edge.includes("r")
-        ) {
-          minZoom = zoom_x;
-        } else if (
-          !uncropped_edge.includes("u") &&
-          !uncropped_edge.includes("d")
-        ) {
-          minZoom = zoom_y;
-        } else {
-          minZoom = customZoom * proportional_zoom * rescalingFactor;
-        }
-      }
-
-      if (scale_fill_x && !scale_fill_y) {
-        minZoom = zoom_x;
-      } else if (scale_fill_y && !scale_fill_x) {
-        minZoom = zoom_y;
-      } else if (scale_fill_x && scale_fill_y) {
-        minZoom = Math.max(zoom_x, zoom_y);
-      }
-
-      zoom = Math.max(minZoom, customZoom * minZoom);
-
-      // Cetering
-      let xx = 0;
-      let yy = 0;
-
-      if (!customCenter) {
-        xx = -eyesight.x * zoom + element.innerWidth() / 2;
-      } else {
-        xx = -eyesight.x * zoom + element.innerWidth() * customCenter.x;
-      }
-
-      let maxMoveX = element.innerWidth() - img.naturalWidth * zoom;
-
-      if (!uncropped_edge || !uncropped_edge.includes("l")) {
-        if (xx > 0) xx = 0;
-      }
-      if (!uncropped_edge || !uncropped_edge.includes("r")) {
-        if (xx < maxMoveX) xx = maxMoveX;
-      }
-
-      if (!customCenter) {
-        yy = -eyesight.y * zoom + element.innerHeight() / 2;
-      } else {
-        yy = -eyesight.y * zoom + element.innerHeight() * customCenter.y;
-      }
-
-      let maxMoveY = element.innerHeight() - img.naturalHeight * zoom;
-
-      if (!uncropped_edge || !uncropped_edge.includes("u")) {
-        if (yy > 0) yy = 0;
-      }
-      if (!uncropped_edge || !uncropped_edge.includes("d")) {
-        if (yy < maxMoveY) yy = maxMoveY;
-      }
-
-      console.log("zoom", zoom);
-
-      element.css(
-        "background-position",
-        `
-          ${xx}px
-          ${yy}px
-        `
-      );
-
-      element.css(
-        "background-size",
-        `
-          ${img.naturalWidth * zoom}px
-          ${img.naturalHeight * zoom}px
-        `
-      );
-
-      element.css(
-        "background-image",
-        "url(" +
-          resizeInCanvas(
-            img,
-            img.naturalWidth * zoom,
-            img.naturalHeight * zoom
-          ) +
-          ")"
-      );
-      element.css("background-repeat", "no-repeat");
-      element.css("opacity", "1");
-
-      //element.css("background-position", "initial");
-      //element.css("position", "fixed");
-      //element.css("width", img.naturalWidth * zoom);
-      //element.css("height", img.naturalHeight * zoom);
+async function CenterImage(element, assetData, options = {}) {
+  try {
+    options = _.defaultsDeep(options, {
+      custom_zoom: 1,
+      custom_center: [0.5, 0.5],
+      custom_element: null,
+      scale_fill_x: false,
+      scale_fill_y: false,
     });
+
+    if (!assetData) {
+      reject();
+    }
+
+    options.asset_data = assetData;
+
+    $(element).data(options);
+
+    await CenterImageDo($(element)).then(() => {
+      if (!$(element).hasClass("tsh-center-image")) {
+        $(element).addClass("tsh-center-image");
+        imageResizeObserver.observe($(element).get(0));
+      }
+    });
+    console.log("awaited");
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function CenterImageDo(element) {
+  try {
+    let data = $(element).data();
+
+    let assetData = data.asset_data;
+    let customZoom = data.custom_zoom;
+    let customCenter = data.custom_center;
+    let customElement = data.custom_element;
+    let scale_fill_x = data.scale_fill_x;
+    let scale_fill_y = data.scale_fill_y;
+
+    if (customElement) {
+      let el = element;
+      while (customElement != 0) {
+        if (customElement < 0) {
+          el = el.parent();
+          customElement += 1;
+        }
+      }
+      customElement = el;
+    }
+
+    if (typeof assetData == "string") {
+      assetData = JSON.parse(assetData);
+    }
+    if (!assetData) return;
+
+    let image = 'url("../../' + assetData.asset + '")';
+
+    if (image != undefined && image.includes("url(")) {
+      function loadImage() {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = "../../" + assetData.asset;
+          img.onload = async () => {
+            let eyesight = assetData.eyesight;
+
+            if (!eyesight) {
+              eyesight = {
+                x: img.naturalWidth / 2,
+                y: img.naturalHeight / 2,
+              };
+            }
+
+            if (!customElement) customElement = element;
+
+            let proportional_zoom = 1;
+            if (assetData.average_size) {
+              proportional_zoom = 0;
+              proportional_zoom = Math.max(
+                proportional_zoom,
+                ($(customElement).innerWidth() / assetData.average_size.x) * 1.2
+              );
+              proportional_zoom = Math.max(
+                proportional_zoom,
+                ($(customElement).innerHeight() / assetData.average_size.y) *
+                  1.2
+              );
+            }
+
+            // For cropped assets, zoom to fill
+            // Calculate max zoom
+            zoom_x = $(customElement).innerWidth() / img.naturalWidth;
+            zoom_y = $(customElement).innerHeight() / img.naturalHeight;
+
+            let minZoom = 1;
+
+            let rescalingFactor = 1;
+
+            if (assetData.rescaling_factor)
+              rescalingFactor = assetData.rescaling_factor;
+
+            let uncropped_edge = assetData.uncropped_edge;
+
+            if (
+              !uncropped_edge ||
+              uncropped_edge == "undefined" ||
+              uncropped_edge.length == 0
+            ) {
+              if (zoom_x > zoom_y) {
+                minZoom = zoom_x;
+              } else {
+                minZoom = zoom_y;
+              }
+            } else {
+              if (
+                uncropped_edge.includes("u") &&
+                uncropped_edge.includes("d") &&
+                uncropped_edge.includes("l") &&
+                uncropped_edge.includes("r")
+              ) {
+                minZoom = customZoom * proportional_zoom * rescalingFactor;
+              } else if (
+                !uncropped_edge.includes("l") &&
+                !uncropped_edge.includes("r")
+              ) {
+                minZoom = zoom_x;
+              } else if (
+                !uncropped_edge.includes("u") &&
+                !uncropped_edge.includes("d")
+              ) {
+                minZoom = zoom_y;
+              } else {
+                minZoom = customZoom * proportional_zoom * rescalingFactor;
+              }
+            }
+
+            if (scale_fill_x && !scale_fill_y) {
+              minZoom = zoom_x;
+            } else if (scale_fill_y && !scale_fill_x) {
+              minZoom = zoom_y;
+            } else if (scale_fill_x && scale_fill_y) {
+              minZoom = Math.max(zoom_x, zoom_y);
+            }
+
+            zoom = Math.max(minZoom, customZoom * minZoom);
+
+            // Cetering
+            let xx = 0;
+            let yy = 0;
+
+            if (!customCenter) {
+              xx = -eyesight.x * zoom + $(element).innerWidth() / 2;
+            } else {
+              xx =
+                -eyesight.x * zoom + $(element).innerWidth() * customCenter[0];
+            }
+
+            let maxMoveX = $(element).innerWidth() - img.naturalWidth * zoom;
+
+            if (!uncropped_edge || !uncropped_edge.includes("l")) {
+              if (xx > 0) xx = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("r")) {
+              if (xx < maxMoveX) xx = maxMoveX;
+            }
+
+            if (!customCenter) {
+              yy = -eyesight.y * zoom + $(element).innerHeight() / 2;
+            } else {
+              yy =
+                -eyesight.y * zoom + $(element).innerHeight() * customCenter[1];
+            }
+
+            let maxMoveY = $(element).innerHeight() - img.naturalHeight * zoom;
+
+            if (!uncropped_edge || !uncropped_edge.includes("u")) {
+              if (yy > 0) yy = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("d")) {
+              if (yy < maxMoveY) yy = maxMoveY;
+            }
+
+            if (!data.use_dividers) {
+              $(element).parent().css("position", "absolute");
+            }
+
+            if (data.z_index) {
+              $(element).parent().css("z-index", data.z_index);
+            } else {
+              $(element).parent().css("z-index", 0);
+            }
+
+            $(element)
+              .css({
+                "background-position": `
+              ${xx}px
+              ${yy}px
+            `,
+                "background-size": `
+              ${img.naturalWidth * zoom}px
+              ${img.naturalHeight * zoom}px
+            `,
+                "background-repeat": "no-repeat",
+                "background-image":
+                  "url(" +
+                  resizeInCanvas(
+                    img,
+                    img.naturalWidth * zoom,
+                    img.naturalHeight * zoom
+                  ) +
+                  ")",
+              })
+              .promise();
+
+            //element.css("background-position", "initial");
+            //element.css("position", "fixed");
+            //element.css("width", img.naturalWidth * zoom);
+            //element.css("height", img.naturalHeight * zoom);
+            resolve();
+          };
+        });
+      }
+
+      await loadImage();
+      console.log("Loaded");
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
 

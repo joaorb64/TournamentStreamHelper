@@ -1,5 +1,5 @@
-(($) => {
-  function Start() {}
+LoadEverything().then(() => {
+  Start = async (event) => {};
 
   var data = {};
   var oldData = {};
@@ -8,7 +8,7 @@
     let banList = [];
 
     if (ruleset.useDSR) {
-      banList = state.stagesPicked;
+      banList = state.stagesPicked ? state.stagesPicked : [];
     } else if (ruleset.useMDSR && state.lastWinner !== -1) {
       banList =
         state.stagesWon && state.stagesWon.length > 0
@@ -45,9 +45,9 @@
     return false;
   }
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.score ||
@@ -181,13 +181,5 @@
           FitText($(this));
         });
     }
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1000, 1, async () => {
-      Start();
-      setInterval(Update, 64);
-    });
-  });
-})(jQuery);
+  };
+});

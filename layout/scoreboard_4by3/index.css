@@ -241,11 +241,10 @@ body {
 
 .score {
   top: 14px;
-  width: 92px;
+  width: 100%;
   height: 92px;
   font-size: 64px;
   color: white;
-  border-radius: 100%;
   flex-grow: 0;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))

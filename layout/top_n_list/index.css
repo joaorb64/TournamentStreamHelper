@@ -6,8 +6,10 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12)) drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12)) drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
   letter-spacing: 1;
 }
 
@@ -113,7 +115,7 @@ body {
   transform: translateX(-50%);
   width: 74px;
   height: 74px;
-  background-image: url('../logo.png');
+  background-image: url("../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -162,8 +164,8 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   width: 36px;
-  height: 28px;
-  border-radius: 10px;
+  height: 24px;
+  border-radius: 8px;
 }
 
 .sponsor_icon > div > div {
@@ -183,6 +185,8 @@ body {
   flex-shrink: 0;
   position: absolute;
   right: 0;
+  width: 200px;
+  background-color: #3f3f46;
 }
 
 .character_container > div {

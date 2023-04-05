@@ -7,6 +7,7 @@ import traceback
 from copy import deepcopy
 
 from src.SettingsManager import SettingsManager
+from src.StateManager import StateManager
 
 
 class TSHLocaleHelperSignals(QObject):

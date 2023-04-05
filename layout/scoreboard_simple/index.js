@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -20,16 +20,13 @@
       0.8
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
 
@@ -67,16 +64,19 @@
       }
     }
 
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
       let teamName = "";
 
       if (!team.teamName || team.teamName == "") {
         let names = [];
-        Object.values(team.player).forEach((player, p) => {
+        for (const [p, player] of Object.values(team.player).entries()) {
           if (player) {
-            names.push(player.name);
+            names.push(await Transcript(player.name));
           }
-        });
+        }
         teamName = names.join(" / ");
       } else {
         teamName = team.teamName;
@@ -89,7 +89,7 @@
         `
       );
 
-      Object.values(team.player).forEach((player, p) => {
+      for (const [p, player] of Object.values(team.player).entries()) {
         if (player) {
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .name`),
@@ -98,7 +98,7 @@
                     <span class='sponsor'>
                         ${player.team ? player.team + "" : ""}
                     </span>
-                    ${player.name}
+                    ${await Transcript(player.name)}
 										${team.losers && !isDoubles ? " [L]" : ""}
                 </span>
             `
@@ -143,8 +143,8 @@
             `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
           );
         }
-      });
-    });
+      }
+    }
 
     let phaseTexts = [];
     if (data.score.phase) phaseTexts.push(data.score.phase);
@@ -156,18 +156,5 @@
       data.tournamentInfo.tournamentName
     );
     SetInnerHtml($(".info.material_container .match"), data.score.match);
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    Update();
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+  };
+});
