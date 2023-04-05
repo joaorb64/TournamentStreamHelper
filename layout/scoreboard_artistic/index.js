@@ -27,13 +27,13 @@ LoadEverything().then(() => {
       1
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  async function Update(eventData) {
-    let data = eventData.data;
-    let oldData = eventData.oldData;
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (data.game) {
       if (data.game.codename == "ssbu") {
@@ -56,8 +56,11 @@ LoadEverything().then(() => {
     }
 
     if (Object.keys(data.score.team["1"].player).length == 1) {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-        [team.player["1"]].forEach(async (player, p) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -141,19 +144,22 @@ LoadEverything().then(() => {
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
           }
-        });
-      });
+        }
+      }
     } else {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
+          for (const [p, player] of Object.values(team.player).entries()) {
             if (player) {
-              names.push(player.name);
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
@@ -209,7 +215,7 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.container .sponsor-container`),
           `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
         );
-      });
+      }
     }
 
     SetInnerHtml(
@@ -223,10 +229,5 @@ LoadEverything().then(() => {
       $(".best_of"),
       data.score.best_of_text ? data.score.best_of_text : ""
     );
-  }
-
-  $("body").fadeTo(1, 1, async () => {
-    Start();
-  });
-  document.addEventListener("tsh_update", Update);
+  };
 });
