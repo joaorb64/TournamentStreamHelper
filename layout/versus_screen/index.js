@@ -1,7 +1,7 @@
 LoadEverything().then(() => {
   // Change this to the name of the assets pack you want to use
   // It's basically the folder name: user_data/games/game/ASSETPACK
-  var ASSET_TO_USE = "full";
+  var ASSET_TO_USE = undefined;
 
   // Change this to select wether to flip P2 character asset or not
   // Set it to true or false
@@ -138,6 +138,7 @@ LoadEverything().then(() => {
                 autoAlpha: 1,
                 stagger: 0.1,
               },
+              asset_key: ASSET_TO_USE,
             },
             event
           );

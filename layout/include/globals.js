@@ -9,12 +9,7 @@ var Update = async (event) => {
   console.log("Update(): Implement me");
 };
 
-var tsh_update_lock = false;
-
 async function UpdateWrapper(event) {
-  if (tsh_update_lock) return;
-  tsh_update_lock = true;
-
   await Update(event);
 
   window.requestAnimationFrame(() => {
@@ -27,8 +22,6 @@ async function UpdateWrapper(event) {
       });
     }
   });
-
-  tsh_update_lock = false;
 }
 
 async function UpdateData() {
@@ -229,6 +222,7 @@ async function SetInnerHtml(
         gsap.to(element.find(".text"), {
           autoAlpha: 0,
           duration: fadeOutTime,
+          overwrite: true,
           onComplete: callback,
         });
       }
@@ -335,10 +329,47 @@ async function CenterImage(element, assetData, options = {}) {
         imageResizeObserver.observe($(element).get(0));
       }
     });
-    console.log("awaited");
   } catch (e) {
     console.log(e);
   }
+}
+
+async function CenterVideo(element, assetData, options = {}) {
+  function loadImage() {
+    return new Promise((resolve) => {
+      var video = $("<video />", {
+        src: "../../" + assetData.asset,
+        muted: true,
+        autoplay: true,
+      });
+
+      $(element).css({
+        position: "relative",
+      });
+
+      video.css({
+        height: "100%",
+        "min-width": 0,
+        "min-height": 0,
+        position: "absolute",
+      });
+
+      video.muted = true;
+      video.autoplay = true;
+
+      video.appendTo($(element)).unwrap();
+
+      video.on("loadedmetadata", async () => {
+        $(video)[0].muted = true;
+        await $(video)[0].play();
+        resolve();
+      });
+
+      video[0].load();
+    });
+  }
+
+  await loadImage();
 }
 
 async function CenterImageDo(element) {
@@ -536,7 +567,6 @@ async function CenterImageDo(element) {
       }
 
       await loadImage();
-      console.log("Loaded");
     }
   } catch (e) {
     console.log(e);

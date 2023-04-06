@@ -315,13 +315,6 @@ body {
   left: 0%;
 }
 
-.p2.character video {
-  transform-origin: 50% 50%;
-  transform: scaleX(-1);
-  left: unset;
-  right: 0%;
-}
-
 .p1.character .tsh_character {
   width: 100%;
   transform: rotateY(10deg);

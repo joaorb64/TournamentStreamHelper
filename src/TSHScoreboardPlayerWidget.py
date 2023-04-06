@@ -116,6 +116,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.findChild(QLineEdit, "name").textChanged.connect(
             lambda: self.ExportPlayerId())
+        
+        self.findChild(QLineEdit, "name").textChanged.connect(
+            lambda: self.ExportPlayerSeed())
 
         for c in self.findChildren(QLineEdit):
             c.editingFinished.connect(
@@ -261,6 +264,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.instanceSignals.player1Id_changed.emit()
             else:
                 self.instanceSignals.player2Id_changed.emit()
+    
+    def ExportPlayerSeed(self, seed=None):
+        if StateManager.Get(f"{self.path}.seed") != seed:
+            StateManager.Set(
+                f"{self.path}.seed", seed)
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         tmpData = []
@@ -807,6 +815,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if data.get("id"):
             self.ExportPlayerId(data.get("id"))
+        
+        if data.get("seed"):
+            self.ExportPlayerSeed(data.get("seed"))
 
         if data.get("twitter"):
             self.findChild(QWidget, "twitter").setText(

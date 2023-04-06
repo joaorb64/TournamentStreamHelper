@@ -199,7 +199,15 @@ async function updateCharacterContainer(e, event) {
             if (!settingsClone.custom_zoom)
               settingsClone.custom_zoom = GetRecommendedZoom(asset);
 
-            loads.push(CenterImage($(_div).children(0), asset, settingsClone));
+            if (asset.asset.endsWith(".webm")) {
+              loads.push(
+                CenterVideo($(_div).children(0), asset, settingsClone)
+              );
+            } else {
+              loads.push(
+                CenterImage($(_div).children(0), asset, settingsClone)
+              );
+            }
 
             index += 1;
           }
