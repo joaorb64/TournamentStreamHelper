@@ -1,9 +1,4 @@
 LoadEverything().then(() => {
-  var ASSET_TO_USE = "base_files/icon";
-  var ZOOM = 1;
-
-  if (window.PORTRAITS) ASSET_TO_USE = "portrait";
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -80,7 +75,7 @@ LoadEverything().then(() => {
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
-                ${player.name}
+                ${await Transcript(player.name)}
                 <span class="pronoun">
                   ${player.pronoun ? player.pronoun : ""}
                 </span>
@@ -105,9 +100,8 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.container .character_container`),
               {
-                asset_key: ASSET_TO_USE,
                 source: `score.team.${t + 1}`,
-                custom_element: window.PORTRAITS ? -2 : 0,
+                scale_based_on_parent: window.PORTRAITS ? true : false,
               },
               event
             );
@@ -194,7 +188,6 @@ LoadEverything().then(() => {
         await CharacterDisplay(
           $(`.p${t + 1}.container .character_container`),
           {
-            asset_key: ASSET_TO_USE,
             source: `score.team.${t + 1}`,
             slice_character: [0, 1],
             custom_element: window.PORTRAITS ? -2 : 0,

@@ -8,13 +8,11 @@
   src: url("./include/RobotoCondensed.ttf") format("truetype");
 }
 
-ruby {
-  font-size: 60%;
-}
-
-ruby > rt {
+/* Class used for transcriptions, example: Kana -> Romaji (Japanese to Roman alphabet) */
+.tsh_transcript {
   font-size: 60%;
   text-transform: uppercase;
+  align-self: end;
 }
 
 .tsh_character_container {

@@ -122,7 +122,7 @@ body {
 }
 
 .name_twitter .name {
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .name_twitter .twitter {
@@ -294,6 +294,7 @@ body {
 .portraits .tsh_character {
   width: 92px;
   border-radius: 0;
+  height: 100%;
 }
 
 .p1 .tsh_character {
@@ -317,7 +318,7 @@ body {
 }
 
 .pronoun {
-  font-size: 12px;
+  font-size: 16px;
   text-transform: uppercase;
   margin-top: auto;
   margin-left: 6px;

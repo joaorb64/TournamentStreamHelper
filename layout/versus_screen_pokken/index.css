@@ -35,6 +35,40 @@ body {
   filter: blur(5px) brightness(0.9);
 }
 
+.player_avatar {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.p1 .player_avatar {
+  background: var(--p1-score-bg-color);
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+.p2 .player_avatar {
+  background: var(--p2-score-bg-color);
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+
+.player_avatar div {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
 .container {
   position: absolute;
   color: var(--text-color);
@@ -311,7 +345,7 @@ body {
   -webkit-mask-image: -webkit-linear-gradient(
     left,
     #ffffff 0%,
-    #ffffff 80%,
+    #ffffff 70%,
     #ffffff00 100%
   );
 }

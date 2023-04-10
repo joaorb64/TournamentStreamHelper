@@ -1,0 +1,9 @@
+{
+  "assets": {},
+  "japanese_transcription": {
+    "enabled": true,
+    "to": "romaji",
+    "mode": "normal",
+    "romajiSystem": "nippon"
+  }
+}

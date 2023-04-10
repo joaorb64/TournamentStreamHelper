@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-  let ASSET_TO_USE = "base_files/icon";
-  let ZOOM = 1;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap

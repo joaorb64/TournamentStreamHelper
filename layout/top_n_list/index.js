@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-  var ASSET_TO_USE = "full";
-  var ZOOM = 1;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -102,8 +99,7 @@ LoadEverything().then(() => {
               $(`.slot${t + 1} .p${p + 1}.container .character_container`),
               {
                 source: `player_list.slot.${t}`,
-                custom_center: [0.5, 0.5],
-                custom_element: -2,
+                scale_based_on_parent: true,
               },
               event
             );

@@ -1,18 +1,4 @@
 LoadEverything().then(() => {
-  // Change this to the name of the assets pack you want to use
-  // It's basically the folder name: user_data/games/game/ASSETPACK
-  var ASSET_TO_USE = "full";
-
-  // Change this to select wether to flip P2 character asset or not
-  // Set it to true or false
-  var FLIP_P2_ASSET = true;
-
-  // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
-  var zoom = 1.2;
-
-  // Where to center character eyesights. [ 0.0 - 1.0 ]
-  var EYESIGHT_CENTERING = { x: 0.5, y: 0.4 };
-
   let startingAnimation = gsap
     .timeline({ paused: true })
     .to([".logo"], { duration: 0.8, top: 160 }, 0)
@@ -132,26 +118,77 @@ LoadEverything().then(() => {
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
 
-          await CharacterDisplay(
-            $(`.p${t + 1}.character`),
-            {
-              source: `score.team.${t + 1}`,
-              custom_center: [0.5, 0.4],
-              custom_element: -2,
-              anim_out: {
-                x: -zIndexMultiplyier * 100 + "%",
-                stagger: 0.1,
+          if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
+            await CharacterDisplay(
+              $(`.p${t + 1}.character`),
+              {
+                source: `score.team.${t + 1}`,
+                scale_based_on_parent: true,
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
               },
-              anim_in: {
-                x: 0,
-                duration: 1,
-                ease: "expo.out",
-                autoAlpha: 1,
-                stagger: 0.2,
-              },
-            },
-            event
-          );
+              event
+            );
+          } else if (window.ONLINE_AVATAR) {
+            SetInnerHtml(
+              $(`.p${t + 1}.character`),
+              `
+                <div class="player_avatar">
+                  <div style="background-image: url('${
+                    player.online_avatar ? player.online_avatar : "./person.svg"
+                  }');">
+                  </div>
+                </div>
+              `,
+              {
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
+              }
+            );
+          } else {
+            SetInnerHtml(
+              $(`.p${t + 1}.character`),
+              `
+                <div class="player_avatar">
+                  <div style="background-image: url('${
+                    player.avatar ? player.avatar : "./person.svg"
+                  }');">
+                  </div>
+                </div>
+              `,
+              {
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
+              }
+            );
+          }
         }
       }
     } else {
@@ -196,26 +233,85 @@ LoadEverything().then(() => {
         let zIndexMultiplyier = 1;
         if (t == 1) zIndexMultiplyier = -1;
 
-        await CharacterDisplay(
-          $(`.p${t + 1}.character`),
-          {
-            source: `score.team.${t + 1}`,
-            custom_center: [0.5, 0.4],
-            custom_element: -2,
-            anim_out: {
-              x: -zIndexMultiplyier * 100 + "%",
-              stagger: 0.1,
+        if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
+          await CharacterDisplay(
+            $(`.p${t + 1}.character`),
+            {
+              source: `score.team.${t + 1}`,
+              scale_based_on_parent: true,
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
             },
-            anim_in: {
-              x: 0,
-              duration: 1,
-              ease: "expo.out",
-              autoAlpha: 1,
-              stagger: 0.2,
-            },
-          },
-          event
-        );
+            event
+          );
+        } else if (window.ONLINE_AVATAR) {
+          let avatars_html = "";
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player)
+              avatars_html += `<div style="background-image: url('${
+                player.online_avatar ? player.online_avatar : "./person.svg"
+              }');"></div>`;
+          }
+          SetInnerHtml(
+            $(`.p${t + 1}.character`),
+            `
+              <div class="player_avatar">
+                ${avatars_html}
+              </div>
+            `,
+            {
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
+            }
+          );
+        } else {
+          let avatars_html = "";
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player)
+              avatars_html += `<div style="background-image: url('${
+                player.avatar ? player.avatar : "./person.svg"
+              }');"></div>`;
+          }
+          SetInnerHtml(
+            $(`.p${t + 1}.character`),
+            `
+              <div class="player_avatar">
+                ${avatars_html}
+              </div>
+            `,
+            {
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
+            }
+          );
+        }
       }
     }
 

@@ -1,5 +1,6 @@
 var data = {};
 var oldData = {};
+var tsh_settings = {};
 
 var Start = async () => {
   console.log("Start(): Implement me");
@@ -9,12 +10,7 @@ var Update = async (event) => {
   console.log("Update(): Implement me");
 };
 
-var tsh_update_lock = false;
-
 async function UpdateWrapper(event) {
-  if (tsh_update_lock) return;
-  tsh_update_lock = true;
-
   await Update(event);
 
   window.requestAnimationFrame(() => {
@@ -27,8 +23,6 @@ async function UpdateWrapper(event) {
       });
     }
   });
-
-  tsh_update_lock = false;
 }
 
 async function UpdateData() {
@@ -38,8 +32,9 @@ async function UpdateData() {
   event.data = data;
   event.oldData = oldData;
 
-  if (JSON.stringify(data) != JSON.stringify(oldData))
+  if (JSON.stringify(data) != JSON.stringify(oldData)) {
     document.dispatchEvent(event);
+  }
 }
 
 async function LoadEverything() {
@@ -80,8 +75,7 @@ async function LoadEverything() {
 }
 
 async function InitAll() {
-  $("head").prepend('<meta charset="utf-8" />');
-
+  await LoadSettings();
   await LoadKuroshiro();
 
   setInterval(async () => {
@@ -101,6 +95,25 @@ function getData() {
     url: "../../out/program_state.json",
     cache: false,
   });
+}
+
+async function LoadSettings() {
+  try {
+    let global_settings = await $.ajax({
+      dataType: "json",
+      url: "../settings.json",
+      cache: false,
+    });
+    let file_settings = await $.ajax({
+      dataType: "json",
+      url: "./settings.json",
+      cache: false,
+    });
+    tsh_settings = _.defaultsDeep(file_settings, global_settings);
+  } catch (e) {
+    console.log("Could not load settings.json");
+    console.log(e);
+  }
 }
 
 function RegisterFit(element) {
@@ -145,18 +158,25 @@ async function LoadKuroshiro() {
 }
 
 async function Transcript(text) {
-  if (text == null || text.length == 0) return text;
+  let settings = _.defaultsDeep(tsh_settings.japanese_transcription, {
+    enabled: true,
+    to: "romaji",
+    mode: "normal",
+    romajiSystem: "nippon",
+  });
+
+  if (text == null || text.length == 0 || !settings.enabled) return text;
 
   try {
     if (window.Kuroshiro.default.Util.hasJapanese(text)) {
       return window.kuroshiro
         .convert(text, {
-          mode: "furigana",
-          to: "romaji",
-          romajiSystem: "nippon",
+          mode: settings.mode,
+          to: settings.to,
+          romajiSystem: settings.romajiSystem,
         })
         .then((res) => {
-          return res;
+          return `${text}<span class="tsh_transcript">&nbsp;${res}</span>`;
         });
     } else {
       return text;
@@ -167,29 +187,40 @@ async function Transcript(text) {
   }
 }
 
-async function SetInnerHtml(
-  element,
-  html,
-  force = undefined,
-  fadeTime = 0.5,
-  middleFunction = undefined,
-  options = {}
-) {
+async function SetInnerHtml(element, html, settings = {}) {
+  let force = undefined;
+  let fadeTime = 0.5;
+  let middleFunction = undefined;
+
   if (element == null) return;
   if (force == false) return;
 
-  let fadeOutTime = fadeTime;
-  let fadeInTime = fadeTime;
+  // Fade out/in animations
+  let anim_in = { autoAlpha: 1, duration: fadeTime, stagger: 0.1 };
+
+  if (settings.anim_in) {
+    anim_in = settings.anim_in;
+  }
+
+  let anim_out = { autoAlpha: 0, duration: fadeTime, stagger: 0.1 };
+
+  if (settings.anim_out) {
+    anim_out = settings.anim_out;
+  }
+
+  anim_out.overwrite = true;
 
   if (html == null || html == undefined) html = "";
 
   html = String(html);
 
+  let firstRun = false;
+
   // First run, no need of smooth fade out
   if (element.find(".text").length == 0) {
     // Put any text inside the div just so the font loading is triggered
-    element.html("<div class='text'>&nbsp;</div>");
-    fadeOutTime = 0;
+    element.html("<div class='text' style='opacity: 0;'>&nbsp;</div>");
+    firstRun = true;
   }
 
   // Wait for font to load before calculating sizes
@@ -211,26 +242,14 @@ async function SetInnerHtml(
           middleFunction();
         }
         $(element).ready((e) => {
-          gsap.fromTo(
-            element.find(".text"),
-            { autoAlpha: 0 },
-            {
-              autoAlpha: 1,
-              duration: fadeInTime,
-            }
-          );
+          gsap.fromTo(element.find(".text"), anim_out, anim_in);
         });
       };
 
-      if (fadeOutTime == 0) {
-        $(element).find(".text").css("opacity", "0");
-        callback();
+      if (!firstRun) {
+        gsap.to(element.find(".text"), anim_out).then(() => callback());
       } else {
-        gsap.to(element.find(".text"), {
-          autoAlpha: 0,
-          duration: fadeOutTime,
-          onComplete: callback,
-        });
+        gsap.set(element.find(".text"), anim_out).then(() => callback());
       }
     }
   });
@@ -277,6 +296,10 @@ function GenerateMulticharacterPositions(
 }
 
 function resizeInCanvas(image, width, height) {
+  if (width > image.width || height > image.height) {
+    return image.src;
+  }
+
   // Initialize the canvas and it's size
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -316,7 +339,7 @@ async function CenterImage(element, assetData, options = {}) {
     options = _.defaultsDeep(options, {
       custom_zoom: 1,
       custom_center: [0.5, 0.5],
-      custom_element: null,
+      scale_based_on_parent: false,
       scale_fill_x: false,
       scale_fill_y: false,
     });
@@ -335,10 +358,47 @@ async function CenterImage(element, assetData, options = {}) {
         imageResizeObserver.observe($(element).get(0));
       }
     });
-    console.log("awaited");
   } catch (e) {
     console.log(e);
   }
+}
+
+async function CenterVideo(element, assetData, options = {}) {
+  function loadImage() {
+    return new Promise((resolve) => {
+      var video = $("<video />", {
+        src: "../../" + assetData.asset,
+        muted: true,
+        autoplay: true,
+      });
+
+      $(element).css({
+        position: "relative",
+      });
+
+      video.css({
+        height: "100%",
+        "min-width": 0,
+        "min-height": 0,
+        position: "absolute",
+      });
+
+      video.muted = true;
+      video.autoplay = true;
+
+      video.appendTo($(element)).unwrap();
+
+      video.on("loadedmetadata", async () => {
+        $(video)[0].muted = true;
+        await $(video)[0].play();
+        resolve();
+      });
+
+      video[0].load();
+    });
+  }
+
+  await loadImage();
 }
 
 async function CenterImageDo(element) {
@@ -348,19 +408,14 @@ async function CenterImageDo(element) {
     let assetData = data.asset_data;
     let customZoom = data.custom_zoom;
     let customCenter = data.custom_center;
-    let customElement = data.custom_element;
+    let scale_based_on_parent = data.scale_based_on_parent;
     let scale_fill_x = data.scale_fill_x;
     let scale_fill_y = data.scale_fill_y;
 
-    if (customElement) {
-      let el = element;
-      while (customElement != 0) {
-        if (customElement < 0) {
-          el = el.parent();
-          customElement += 1;
-        }
-      }
-      customElement = el;
+    let customElement = null;
+
+    if (scale_based_on_parent) {
+      customElement = element.parent().parent();
     }
 
     if (typeof assetData == "string") {
@@ -494,7 +549,7 @@ async function CenterImageDo(element) {
               if (yy < maxMoveY) yy = maxMoveY;
             }
 
-            if (!data.use_dividers) {
+            if (data.use_dividers === false) {
               $(element).parent().css("position", "absolute");
             }
 
@@ -536,7 +591,6 @@ async function CenterImageDo(element) {
       }
 
       await loadImage();
-      console.log("Loaded");
     }
   } catch (e) {
     console.log(e);

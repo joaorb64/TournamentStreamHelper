@@ -1,12 +1,8 @@
 LoadEverything().then(() => {
-  var ZOOM = 1.4;
-  var ICON_TO_USE = "base_files/icon";
-  var ICON_ZOOM = 1;
-
   var MIDDLE_SPACE = 100;
-
-  var USE_ONLINE_PICTURE = false;
-
+  if (!window.USE_ONLINE_PICTURE) {
+    window.USE_ONLINE_PICTURE = false;
+  }
   var firstUpdate = true;
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
@@ -16,9 +12,6 @@ LoadEverything().then(() => {
   Start = async (event) => {
     startingAnimation.restart();
   };
-
-  var data = {};
-  var oldData = {};
 
   var entryAnim = gsap.timeline({ paused: true });
   var animations = {};
@@ -1192,7 +1185,6 @@ LoadEverything().then(() => {
               $(element).find(`.character_container`),
               {
                 source: `bracket.players.slot.${pid}`,
-                custom_zoom: ZOOM,
               },
               event
             );
@@ -1256,7 +1248,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(element).find(`.icon_image`),
               {
-                asset_key: ICON_TO_USE,
+                load_settings_path: "icon",
                 slice_character: [0, 1],
                 source: `bracket.players.slot.${teamId}`,
               },
@@ -1502,7 +1494,7 @@ LoadEverything().then(() => {
                   await CharacterDisplay(
                     $(element).find(`.icon_image`),
                     {
-                      asset_key: ICON_TO_USE,
+                      load_settings_path: "icon",
                       slice_character: [0, 1],
                       source: `bracket.players.slot.${teamId}`,
                     },
