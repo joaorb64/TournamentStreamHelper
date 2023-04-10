@@ -57,7 +57,7 @@ LoadEverything().then(() => {
       {
         duration: SLIDE_OUT_TIME,
         x: INNER_CONTAINER_WIDTH,
-        ease: "power2.Out",
+        ease: EASE_ANIMATION,
       },
       "<"
     )
