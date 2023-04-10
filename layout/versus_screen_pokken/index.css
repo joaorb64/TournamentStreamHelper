@@ -350,7 +350,7 @@ body {
   );
 }
 
-.p2.character > .tsh_character {
+.p2.character .tsh_character div {
   transform: scaleX(-1);
 }
 
