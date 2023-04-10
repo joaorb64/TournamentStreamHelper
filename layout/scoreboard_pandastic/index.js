@@ -197,7 +197,7 @@ LoadEverything().then(() => {
         );
 
         await CharacterDisplay(
-          $(`.p${t + 1}.container .character_container`),
+          $(`.p${t + 1}.character_container`),
           {
             source: `score.team.${t + 1}`,
           },

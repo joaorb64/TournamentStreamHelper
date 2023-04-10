@@ -373,6 +373,10 @@ body {
   background: var(--p2-score-bg-color);
 }
 
+.p2 .tsh_character {
+  transform: scaleX(-1);
+}
+
 .character_container > div > div {
   overflow: hidden;
   display: flex;
