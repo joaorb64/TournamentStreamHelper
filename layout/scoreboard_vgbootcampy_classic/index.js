@@ -116,9 +116,9 @@ LoadEverything().then(() => {
         data.score.best_of > 0 &&
         (data.score.match == undefined || String(data.score.match) == "")
       ) {
-        SetInnerHtml($(".match"), "BEST OF " + data.score.best_of);
+        SetInnerHtml($(".match"), data.score.best_of_text);
       } else {
-        SetInnerHtml($(".match"), "BEST OF " + data.score.best_of);
+        SetInnerHtml($(".match"), data.score.best_of_text);
         SetInnerHtml($(".match"), data.score.match.toUpperCase());
       }
     }
