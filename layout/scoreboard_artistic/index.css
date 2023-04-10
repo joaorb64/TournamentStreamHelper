@@ -372,6 +372,8 @@ body {
     transparent 60%,
     var(--bg-color) 100%
   );
+  top: 0;
+  left: 0;
 }
 
 .p1.character_container {
@@ -402,6 +404,10 @@ body {
   width: 100%;
   background: linear-gradient(-90deg, transparent 50%, var(--bg-color));
   pointer-events: none;
+}
+
+.p2 .tsh_character {
+  transform: scaleX(-1);
 }
 
 .p1.character_container .icon {

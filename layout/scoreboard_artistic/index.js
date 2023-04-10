@@ -69,6 +69,28 @@ LoadEverything().then(() => {
               `
             );
 
+            let teamMultiplyier = t == 0 ? 1 : -1;
+
+            await CharacterDisplay(
+              $(`.p${t + 1}.container .character_container`),
+              {
+                source: `score.team.${t + 1}`,
+                anim_out: {
+                  autoAlpha: 0,
+                  x: -20 * teamMultiplyier + "px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+                anim_in: {
+                  autoAlpha: 1,
+                  x: "0px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+              },
+              event
+            );
+
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
               player.country.asset
@@ -140,6 +162,28 @@ LoadEverything().then(() => {
         } else {
           teamName = team.teamName;
         }
+
+        let teamMultiplyier = t == 0 ? 1 : -1;
+
+        await CharacterDisplay(
+          $(`.p${t + 1}.character_container`),
+          {
+            source: `score.team.${t + 1}`,
+            anim_out: {
+              autoAlpha: 0,
+              x: -20 * teamMultiplyier + "px",
+              stagger: teamMultiplyier * 0.2,
+              duration: 0.4,
+            },
+            anim_in: {
+              autoAlpha: 1,
+              x: "0px",
+              stagger: teamMultiplyier * 0.2,
+              duration: 0.4,
+            },
+          },
+          event
+        );
 
         SetInnerHtml(
           $(`.p${t + 1}.container .name`),
