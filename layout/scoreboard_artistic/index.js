@@ -72,7 +72,7 @@ LoadEverything().then(() => {
             let teamMultiplyier = t == 0 ? 1 : -1;
 
             await CharacterDisplay(
-              $(`.p${t + 1}.container .character_container`),
+              $(`.p${t + 1}.character_container`),
               {
                 source: `score.team.${t + 1}`,
                 anim_out: {
