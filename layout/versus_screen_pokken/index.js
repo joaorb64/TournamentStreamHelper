@@ -118,25 +118,77 @@ LoadEverything().then(() => {
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
 
-          await CharacterDisplay(
-            $(`.p${t + 1}.character`),
-            {
-              source: `score.team.${t + 1}`,
-              scale_based_on_parent: true,
-              anim_out: {
-                x: -zIndexMultiplyier * 100 + "%",
-                stagger: 0.1,
+          if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
+            await CharacterDisplay(
+              $(`.p${t + 1}.character`),
+              {
+                source: `score.team.${t + 1}`,
+                scale_based_on_parent: true,
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
               },
-              anim_in: {
-                x: 0,
-                duration: 1,
-                ease: "expo.out",
-                autoAlpha: 1,
-                stagger: 0.2,
-              },
-            },
-            event
-          );
+              event
+            );
+          } else if (window.ONLINE_AVATAR) {
+            SetInnerHtml(
+              $(`.p${t + 1}.character`),
+              `
+                <div class="player_avatar">
+                  <div style="background-image: url('${
+                    player.online_avatar ? player.online_avatar : "./person.svg"
+                  }');">
+                  </div>
+                </div>
+              `,
+              {
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
+              }
+            );
+          } else {
+            SetInnerHtml(
+              $(`.p${t + 1}.character`),
+              `
+                <div class="player_avatar">
+                  <div style="background-image: url('${
+                    player.avatar ? player.avatar : "./person.svg"
+                  }');">
+                  </div>
+                </div>
+              `,
+              {
+                anim_out: {
+                  x: -zIndexMultiplyier * 100 + "%",
+                  stagger: 0.1,
+                },
+                anim_in: {
+                  x: 0,
+                  duration: 1,
+                  ease: "expo.out",
+                  autoAlpha: 1,
+                  stagger: 0.2,
+                },
+              }
+            );
+          }
         }
       }
     } else {
@@ -181,25 +233,85 @@ LoadEverything().then(() => {
         let zIndexMultiplyier = 1;
         if (t == 1) zIndexMultiplyier = -1;
 
-        await CharacterDisplay(
-          $(`.p${t + 1}.character`),
-          {
-            source: `score.team.${t + 1}`,
-            scale_based_on_parent: true,
-            anim_out: {
-              x: -zIndexMultiplyier * 100 + "%",
-              stagger: 0.1,
+        if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
+          await CharacterDisplay(
+            $(`.p${t + 1}.character`),
+            {
+              source: `score.team.${t + 1}`,
+              scale_based_on_parent: true,
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
             },
-            anim_in: {
-              x: 0,
-              duration: 1,
-              ease: "expo.out",
-              autoAlpha: 1,
-              stagger: 0.2,
-            },
-          },
-          event
-        );
+            event
+          );
+        } else if (window.ONLINE_AVATAR) {
+          let avatars_html = "";
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player)
+              avatars_html += `<div style="background-image: url('${
+                player.online_avatar ? player.online_avatar : "./person.svg"
+              }');"></div>`;
+          }
+          SetInnerHtml(
+            $(`.p${t + 1}.character`),
+            `
+              <div class="player_avatar">
+                ${avatars_html}
+              </div>
+            `,
+            {
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
+            }
+          );
+        } else {
+          let avatars_html = "";
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player)
+              avatars_html += `<div style="background-image: url('${
+                player.avatar ? player.avatar : "./person.svg"
+              }');"></div>`;
+          }
+          SetInnerHtml(
+            $(`.p${t + 1}.character`),
+            `
+              <div class="player_avatar">
+                ${avatars_html}
+              </div>
+            `,
+            {
+              anim_out: {
+                x: -zIndexMultiplyier * 100 + "%",
+                stagger: 0.1,
+              },
+              anim_in: {
+                x: 0,
+                duration: 1,
+                ease: "expo.out",
+                autoAlpha: 1,
+                stagger: 0.2,
+              },
+            }
+          );
+        }
       }
     }
 

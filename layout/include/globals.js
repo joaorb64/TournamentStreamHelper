@@ -187,29 +187,40 @@ async function Transcript(text) {
   }
 }
 
-async function SetInnerHtml(
-  element,
-  html,
-  force = undefined,
-  fadeTime = 0.5,
-  middleFunction = undefined,
-  options = {}
-) {
+async function SetInnerHtml(element, html, settings = {}) {
+  let force = undefined;
+  let fadeTime = 0.5;
+  let middleFunction = undefined;
+
   if (element == null) return;
   if (force == false) return;
 
-  let fadeOutTime = fadeTime;
-  let fadeInTime = fadeTime;
+  // Fade out/in animations
+  let anim_in = { autoAlpha: 1, duration: fadeTime, stagger: 0.1 };
+
+  if (settings.anim_in) {
+    anim_in = settings.anim_in;
+  }
+
+  let anim_out = { autoAlpha: 0, duration: fadeTime, stagger: 0.1 };
+
+  if (settings.anim_out) {
+    anim_out = settings.anim_out;
+  }
+
+  anim_out.overwrite = true;
 
   if (html == null || html == undefined) html = "";
 
   html = String(html);
 
+  let firstRun = false;
+
   // First run, no need of smooth fade out
   if (element.find(".text").length == 0) {
     // Put any text inside the div just so the font loading is triggered
     element.html("<div class='text'>&nbsp;</div>");
-    fadeOutTime = 0;
+    firstRun = true;
   }
 
   // Wait for font to load before calculating sizes
@@ -231,27 +242,16 @@ async function SetInnerHtml(
           middleFunction();
         }
         $(element).ready((e) => {
-          gsap.fromTo(
-            element.find(".text"),
-            { autoAlpha: 0 },
-            {
-              autoAlpha: 1,
-              duration: fadeInTime,
-            }
-          );
+          gsap.fromTo(element.find(".text"), anim_out, anim_in);
         });
       };
 
-      if (fadeOutTime == 0) {
-        $(element).find(".text").css("opacity", "0");
-        callback();
+      if (!firstRun) {
+        $(element)
+          .fromTo(element.find(".text"), anim_in, anim_out)
+          .then(() => callback());
       } else {
-        gsap.to(element.find(".text"), {
-          autoAlpha: 0,
-          duration: fadeOutTime,
-          overwrite: true,
-          onComplete: callback,
-        });
+        gsap.set(element.find(".text"), anim_out).then(() => callback());
       }
     }
   });

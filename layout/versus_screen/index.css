@@ -14,6 +14,27 @@ body {
   height: 1080px;
 }
 
+.stage {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -999;
+}
+
+.stage .text div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: -999;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url(./bg.png);
+  filter: blur(5px) brightness(0.9);
+}
+
 .background {
   position: absolute;
   left: 0;
@@ -25,6 +46,32 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-image: url(./bg.png);
+}
+
+.player_avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4));
+  overflow: hidden;
+  display: flex;
+}
+
+.p1 .player_avatar {
+  background: var(--p1-score-bg-color);
+}
+.p2 .player_avatar {
+  background: var(--p2-score-bg-color);
+}
+
+.player_avatar div {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
 }
 
 .container {
@@ -260,7 +307,7 @@ body {
   justify-content: center;
   border: 2px solid white;
   margin-bottom: 16px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .flagname {

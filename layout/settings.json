@@ -1,9 +1,5 @@
 {
-  "assets": {
-    "ssbu": {
-      "asset_key": "mural_art"
-    }
-  },
+  "assets": {},
   "japanese_transcription": {
     "enabled": true,
     "to": "romaji",

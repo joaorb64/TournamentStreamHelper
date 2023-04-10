@@ -1,6 +1,8 @@
 LoadEverything().then(() => {
   var MIDDLE_SPACE = 100;
-  var USE_ONLINE_PICTURE = false;
+  if (!window.USE_ONLINE_PICTURE) {
+    window.USE_ONLINE_PICTURE = false;
+  }
   var firstUpdate = true;
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
