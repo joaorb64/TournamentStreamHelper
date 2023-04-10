@@ -12,12 +12,12 @@ var Update = async (event) => {
 
 async function UpdateWrapper(event) {
   await Update(event);
-  await Start();
 
   window.requestAnimationFrame(() => {
     if (gsap.globalTimeline.timeScale() == 0) {
       $(document).waitForImages(() => {
         $("body").fadeTo(1, 1, () => {
+          Start();
           gsap.globalTimeline.timeScale(1);
         });
       });
