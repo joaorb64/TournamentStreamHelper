@@ -219,7 +219,7 @@ async function SetInnerHtml(element, html, settings = {}) {
   // First run, no need of smooth fade out
   if (element.find(".text").length == 0) {
     // Put any text inside the div just so the font loading is triggered
-    element.html("<div class='text'>&nbsp;</div>");
+    element.html("<div class='text' style='opacity: 0;'>&nbsp;</div>");
     firstRun = true;
   }
 
@@ -247,9 +247,7 @@ async function SetInnerHtml(element, html, settings = {}) {
       };
 
       if (!firstRun) {
-        $(element)
-          .fromTo(element.find(".text"), anim_in, anim_out)
-          .then(() => callback());
+        gsap.to(element.find(".text"), anim_out).then(() => callback());
       } else {
         gsap.set(element.find(".text"), anim_out).then(() => callback());
       }
