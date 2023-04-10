@@ -1,41 +1,53 @@
 LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
+  const SLIDE_DOWN_TIME = 0.5;
+
+  const SLIDE_OUT_TIME = 0.65;
+
+  const DROP_DOWN_TRAVEL = "130px";
+
+  const INNER_CONTAINER_WIDTH = "255px";
+
+  const EASE_ANIMATION = "power2.Out";
+
+  const LOSERS_CONTAINER_TRAVEL = "270px";
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
       [".anim_container_outer"],
       {
-        duration: 0.5,
-        y: "-130px",
-        ease: "power2.Out",
+        duration: SLIDE_DOWN_TIME,
+        y: "-" + DROP_DOWN_TRAVEL,
+        ease: EASE_ANIMATION,
       },
       1
     )
     .from(
       [".p1 .inner_container"],
       {
-        duration: 0.75,
-        x: "255px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<50%"
     )
     .from(
       [".p2 .inner_container"],
       {
-        duration: 0.75,
-        x: "-255px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: "-" + INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p1 .sponsor_container"],
       {
-        duration: 0.75,
-        x: "-255px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: "-" + INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
@@ -43,63 +55,63 @@ LoadEverything().then(() => {
     .from(
       [".p2 .sponsor_container"],
       {
-        duration: 0.75,
-        x: "255px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p1 .name_container"],
       {
-        duration: 0.75,
-        x: "200px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<50%"
     )
     .from(
       [".p2 .name_container"],
       {
-        duration: 0.75,
-        x: "-200px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: "-" + INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p1 .flags_container"],
       {
-        duration: 0.75,
-        x: "200px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p2 .flags_container"],
       {
-        duration: 0.75,
-        x: "-200px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: "-" + INNER_CONTAINER_WIDTH,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p1 .losers_container"],
       {
-        duration: 0.75,
-        x: "270px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: LOSERS_CONTAINER_TRAVEL,
+        ease: EASE_ANIMATION,
       },
       "<"
     )
     .from(
       [".p2 .losers_container"],
       {
-        duration: 0.75,
-        x: "-270px",
-        ease: "power2.Out",
+        duration: SLIDE_OUT_TIME,
+        x: "-" + LOSERS_CONTAINER_TRAVEL,
+        ease: EASE_ANIMATION,
       },
       "<"
     );
