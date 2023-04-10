@@ -72,14 +72,30 @@ document.addEventListener("tsh_update", async (event) => {
   });
 });
 
+// Given the path to a key in the settings which has asset settings,
+// resolve current game and global/local/default settings and return the config.
+function ResolveAssetSetting(key) {
+  let current_game = _.get(data, "game.codename", "default");
+
+  let global_default_settings = _.get(tsh_settings, key + ".default", {});
+  let global_settings = _.get(tsh_settings, key + "." + current_game, {});
+
+  let settings = _.defaultsDeep(global_settings, global_default_settings);
+
+  return settings;
+}
+
 async function updateCharacterContainer(e, event) {
-  let settings = _.defaultsDeep($(e).data(), {
-    custom_center: [0.5, 0.5],
-    custom_element: null,
-    scale_fill_x: false,
-    scale_fill_y: false,
-    use_dividers: true,
-  });
+  // Load json file-based settings. If the key isn't specified, we default to the "assets" key in the json
+  let asset_settings = ResolveAssetSetting(
+    _.get($(e).data(), "load_settings_path", "assets")
+  );
+
+  // Use settings passed via script, default to settings got via json files
+  let settings = _.defaultsDeep(
+    Object.assign({}, $(e).data()),
+    Object.assign({}, asset_settings)
+  );
 
   let path = settings.source;
 
@@ -182,8 +198,7 @@ async function updateCharacterContainer(e, event) {
             settingsClone.z_index = Object.values(player).length - index;
 
             // If not using dividers, calculate proper placement for each character
-            if (!settings.use_dividers) {
-              console.log(Object.values(player));
+            if (settings.use_dividers === false) {
               settingsClone.custom_center = GenerateMulticharacterPositions(
                 Object.values(player).length,
                 settings.custom_center

@@ -1,0 +1,10 @@
+{
+  "assets": {
+    "default": {}
+  },
+  "icon": {
+    "default": {
+      "asset_key": "base_files/icon"
+    }
+  }
+}

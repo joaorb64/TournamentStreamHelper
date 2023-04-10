@@ -1,18 +1,4 @@
 LoadEverything().then(() => {
-  // Change this to the name of the assets pack you want to use
-  // It's basically the folder name: user_data/games/game/ASSETPACK
-  var ASSET_TO_USE = undefined;
-
-  // Change this to select wether to flip P2 character asset or not
-  // Set it to true or false
-  var FLIP_P2_ASSET = true;
-
-  // Amount of zoom to use on the assets. Use 1 for 100%, 1.5 for 150%, etc.
-  var zoom = 1;
-
-  // Where to center character eyesights. [ 0.0 - 1.0 ]
-  var EYESIGHT_CENTERING = { x: 0.5, y: 0.4 };
-
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
@@ -123,8 +109,7 @@ LoadEverything().then(() => {
             $(`.p${t + 1}.character`),
             {
               source: `score.team.${t + 1}`,
-              custom_center: [0.5, 0.4],
-              custom_element: -2,
+              scale_based_on_parent: true,
               anim_out: {
                 x: zIndexMultiplyier * -800 + "px",
                 z: 0,
@@ -138,7 +123,6 @@ LoadEverything().then(() => {
                 autoAlpha: 1,
                 stagger: 0.1,
               },
-              asset_key: ASSET_TO_USE,
             },
             event
           );
@@ -190,8 +174,7 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.character`),
           {
             source: `score.team.${t + 1}`,
-            custom_center: [0.5, 0.4],
-            custom_element: -2,
+            scale_based_on_parent: true,
             anim_out: {
               x: zIndexMultiplyier * -800 + "px",
               z: 0,

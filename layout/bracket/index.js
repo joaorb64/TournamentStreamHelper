@@ -1,17 +1,4 @@
 LoadEverything().then(() => {
-  var ASSET_CONFIG = {
-    default: {
-      asset: undefined,
-      zoom: 1.4,
-    },
-    ssbu: {
-      asset: "full",
-      zoom: 1.4,
-    },
-  };
-
-  var ASSET_TO_USE = {};
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
@@ -127,16 +114,6 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
-
-    if (data.game) {
-      if (data.game.codename) {
-        if (ASSET_CONFIG[data.game.codename]) {
-          ASSET_TO_USE = ASSET_CONFIG[data.game.codename];
-        } else {
-          ASSET_TO_USE = ASSET_CONFIG["default"];
-        }
-      }
-    }
 
     if (
       !oldData.bracket ||
@@ -637,8 +614,6 @@ LoadEverything().then(() => {
               await CharacterDisplay(
                 $(element).find(`.character_container`),
                 {
-                  custom_zoom: ASSET_TO_USE.zoom,
-                  asset_key: ASSET_TO_USE.asset,
                   source: `bracket.players.slot.${pid}`,
                 },
                 event
@@ -711,8 +686,6 @@ LoadEverything().then(() => {
               await CharacterDisplay(
                 $(element).find(`.character_container`),
                 {
-                  custom_zoom: ASSET_TO_USE.zoom,
-                  asset_key: ASSET_TO_USE.asset,
                   slice_character: [0, 1],
                   source: `bracket.players.slot.${pid}`,
                 },

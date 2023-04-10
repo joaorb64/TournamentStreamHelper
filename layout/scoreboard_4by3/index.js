@@ -1,8 +1,4 @@
 LoadEverything().then(() => {
-  let CONFIG = {
-    default: {},
-  };
-
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
@@ -127,7 +123,6 @@ LoadEverything().then(() => {
               $(`.${team_id} .p${p + 1}.container .character_container`),
               {
                 source: `score.team.${t + 1}.player.${p + 1}`,
-                custom_center: [0.5, 0.4],
               },
               event
             );

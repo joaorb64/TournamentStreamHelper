@@ -134,9 +134,9 @@ body {
 .twitter {
   color: var(--text-color);
   position: absolute;
-  bottom: 0;
-  width: 180px;
-  height: 51px;
+  bottom: 16px;
+  width: 150px;
+  height: 24px;
   font-size: 20px;
   padding-left: 16px;
 }

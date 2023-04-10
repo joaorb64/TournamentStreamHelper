@@ -1,5 +1,6 @@
 var data = {};
 var oldData = {};
+var tsh_settings = {};
 
 var Start = async () => {
   console.log("Start(): Implement me");
@@ -31,8 +32,9 @@ async function UpdateData() {
   event.data = data;
   event.oldData = oldData;
 
-  if (JSON.stringify(data) != JSON.stringify(oldData))
+  if (JSON.stringify(data) != JSON.stringify(oldData)) {
     document.dispatchEvent(event);
+  }
 }
 
 async function LoadEverything() {
@@ -73,8 +75,7 @@ async function LoadEverything() {
 }
 
 async function InitAll() {
-  $("head").prepend('<meta charset="utf-8" />');
-
+  await LoadSettings();
   await LoadKuroshiro();
 
   setInterval(async () => {
@@ -94,6 +95,25 @@ function getData() {
     url: "../../out/program_state.json",
     cache: false,
   });
+}
+
+async function LoadSettings() {
+  try {
+    let global_settings = await $.ajax({
+      dataType: "json",
+      url: "../settings.json",
+      cache: false,
+    });
+    let file_settings = await $.ajax({
+      dataType: "json",
+      url: "./settings.json",
+      cache: false,
+    });
+    tsh_settings = _.defaultsDeep(file_settings, global_settings);
+  } catch (e) {
+    console.log("Could not load settings.json");
+    console.log(e);
+  }
 }
 
 function RegisterFit(element) {
@@ -138,18 +158,25 @@ async function LoadKuroshiro() {
 }
 
 async function Transcript(text) {
-  if (text == null || text.length == 0) return text;
+  let settings = _.defaultsDeep(tsh_settings.japanese_transcription, {
+    enabled: true,
+    to: "romaji",
+    mode: "normal",
+    romajiSystem: "nippon",
+  });
+
+  if (text == null || text.length == 0 || !settings.enabled) return text;
 
   try {
     if (window.Kuroshiro.default.Util.hasJapanese(text)) {
       return window.kuroshiro
         .convert(text, {
-          mode: "furigana",
-          to: "romaji",
-          romajiSystem: "nippon",
+          mode: settings.mode,
+          to: settings.to,
+          romajiSystem: settings.romajiSystem,
         })
         .then((res) => {
-          return res;
+          return `${text}<span class="tsh_transcript">&nbsp;${res}</span>`;
         });
     } else {
       return text;
@@ -271,6 +298,10 @@ function GenerateMulticharacterPositions(
 }
 
 function resizeInCanvas(image, width, height) {
+  if (width > image.width || height > image.height) {
+    return image.src;
+  }
+
   // Initialize the canvas and it's size
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -310,7 +341,7 @@ async function CenterImage(element, assetData, options = {}) {
     options = _.defaultsDeep(options, {
       custom_zoom: 1,
       custom_center: [0.5, 0.5],
-      custom_element: null,
+      scale_based_on_parent: false,
       scale_fill_x: false,
       scale_fill_y: false,
     });
@@ -379,19 +410,14 @@ async function CenterImageDo(element) {
     let assetData = data.asset_data;
     let customZoom = data.custom_zoom;
     let customCenter = data.custom_center;
-    let customElement = data.custom_element;
+    let scale_based_on_parent = data.scale_based_on_parent;
     let scale_fill_x = data.scale_fill_x;
     let scale_fill_y = data.scale_fill_y;
 
-    if (customElement) {
-      let el = element;
-      while (customElement != 0) {
-        if (customElement < 0) {
-          el = el.parent();
-          customElement += 1;
-        }
-      }
-      customElement = el;
+    let customElement = null;
+
+    if (scale_based_on_parent) {
+      customElement = element.parent().parent();
     }
 
     if (typeof assetData == "string") {
@@ -525,7 +551,7 @@ async function CenterImageDo(element) {
               if (yy < maxMoveY) yy = maxMoveY;
             }
 
-            if (!data.use_dividers) {
+            if (data.use_dividers === false) {
               $(element).parent().css("position", "absolute");
             }
 

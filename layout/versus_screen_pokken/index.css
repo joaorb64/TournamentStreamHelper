@@ -311,7 +311,7 @@ body {
   -webkit-mask-image: -webkit-linear-gradient(
     left,
     #ffffff 0%,
-    #ffffff 80%,
+    #ffffff 70%,
     #ffffff00 100%
   );
 }

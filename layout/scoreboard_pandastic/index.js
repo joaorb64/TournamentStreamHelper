@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-  var ASSET_TO_USE = "portrait";
-  var ZOOM = 1;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -117,7 +114,6 @@ LoadEverything().then(() => {
               $(`.p${t + 1}.character_container`),
               {
                 source: `score.team.${t + 1}`,
-                asset_key: ASSET_TO_USE,
               },
               event
             );
@@ -204,8 +200,6 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.container .character_container`),
           {
             source: `score.team.${t + 1}`,
-            custom_center: [0.5, 0.4],
-            asset_key: ASSET_TO_USE,
           },
           event
         );

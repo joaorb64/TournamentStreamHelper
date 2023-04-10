@@ -1,8 +1,4 @@
 LoadEverything().then(() => {
-  let ASSET_TO_USE = "full";
-  let ZOOM = 1;
-  let FLIP_P2_ASSET = true;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -34,26 +30,6 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
-
-    if (data.game) {
-      if (data.game.codename == "ssbu") {
-        ASSET_TO_USE = "mural_art";
-        ZOOM = 0.8;
-        FLIP_P2_ASSET = true;
-      } else if (data.game.codename == "ssbm") {
-        ASSET_TO_USE = "full";
-        ZOOM = 1;
-        FLIP_P2_ASSET = true;
-      } else if (data.game.codename == "ssb64") {
-        ASSET_TO_USE = "artwork";
-        ZOOM = 1;
-        FLIP_P2_ASSET = true;
-      } else {
-        ASSET_TO_USE = "full";
-        ZOOM = 1;
-        FLIP_P2_ASSET = true;
-      }
-    }
 
     if (Object.keys(data.score.team["1"].player).length == 1) {
       for (const [t, team] of [
