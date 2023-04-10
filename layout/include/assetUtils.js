@@ -284,8 +284,6 @@ const setContrast = (rgb) =>
     ? [0, 0, 0]
     : [255, 255, 255];
 
-// GetLogoColors();
-
 /* $(`.p${t + 1}.character .tsh-center-image`).each((i, e) => {
   let img = new Image();
 

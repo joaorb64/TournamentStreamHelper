@@ -46,9 +46,6 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   };
 
-  var data = {};
-  var oldData = {};
-
   Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
@@ -106,7 +103,9 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            player.sponsor_logo
+              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              : ""
           );
         }
       }

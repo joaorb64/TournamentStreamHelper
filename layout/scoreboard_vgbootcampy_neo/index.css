@@ -1,6 +1,6 @@
 body {
-  font-family: "Montserrat", "M Plus 1p", sans-serif;
-  font-weight: bold;
+  font-family: "Figtree", "M Plus 1p", sans-serif;
+  font-weight: 900;
   opacity: 0;
   overflow: hidden;
   margin: 0;
@@ -38,19 +38,34 @@ body {
   flex-direction: column;
   align-items: center;
   width: 496px;
-  height: 91px;
+  height: 61px;
   top: 14px;
-  background: var(--text-color);
   border-radius: 12px;
   padding-top: 4px;
 }
 
 .p1.container {
+  background: linear-gradient(
+    270deg,
+    rgba(242, 211, 255, 1) 0%,
+    rgba(253, 193, 220, 1) 25%,
+    rgba(255, 196, 208, 1) 50%,
+    rgba(255, 217, 205, 1) 75%,
+    rgba(255, 244, 214, 1) 100%
+  );
   background-position: 100% 0;
   left: 380px;
 }
 
 .p2.container {
+  background: linear-gradient(
+    90deg,
+    rgba(242, 211, 255, 1) 0%,
+    rgba(217, 241, 255, 1) 25%,
+    rgba(213, 249, 233, 1) 50%,
+    rgba(218, 248, 204, 1) 75%,
+    rgba(248, 255, 229, 1) 100%
+  );
   background-position: 0 0;
   right: 380px;
 }
@@ -58,9 +73,9 @@ body {
 .tournament_container {
   position: absolute;
   border-radius: 8px;
-  left: 67px;
+  left: 66px;
   top: 51px;
-  width: 246px;
+  width: 248px;
   height: 54px;
   padding-top: 0px;
   display: flex;
@@ -69,14 +84,11 @@ body {
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
-  background: var(--bg-color);
-}
-
-.tournament_name {
-  color: white;
-  height: 100%;
-  font-size: 20px;
-  width: 216px;
+  background: linear-gradient(
+    4deg,
+    var(--text-color) -100%,
+    var(--bg-color) 40%
+  );
 }
 
 .inner_container {
@@ -85,35 +97,42 @@ body {
   height: 53px;
   border-radius: 8px;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
   background: var(--bg-color);
-  margin-bottom: 17px;
 }
 
 .p1 .inner_container {
   flex-direction: row;
+  background: linear-gradient(
+    4deg,
+    var(--p1-sponsor-color) 0%,
+    var(--bg-color) 40%
+  );
 }
 
 .p2 .inner_container {
   flex-direction: row-reverse;
+  background: linear-gradient(
+    356deg,
+    var(--p2-sponsor-color) 0%,
+    var(--bg-color) 40%
+  );
 }
 
 .name {
   display: flex;
   width: 100%;
   height: 53px;
-  font-size: 27px;
+  font-size: 28px;
   justify-content: center;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 12px;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--text-color);
 }
 
 .twitter {
@@ -125,7 +144,7 @@ body {
   height: 43px;
   border-radius: 8px;
   color: white;
-  font-size: 20px;
+  font-size: 22px;
   text-align: center;
   justify-content: center;
   box-sizing: border-box;
@@ -136,14 +155,14 @@ body {
 
 .p1.twitter {
   left: 25px;
-  background: var(--p1-score-bg-color);
   color: var(--p1-score-color);
+  background: var(--p1-score-bg-color);
 }
 
 .p2.twitter {
   right: 25px;
-  background: var(--p2-score-bg-color);
   color: var(--p2-score-color);
+  background: var(--p2-score-bg-color);
 }
 
 .twitter_logo {
@@ -151,23 +170,22 @@ body {
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
+
+  /* Color of the bird logo */
+  background: white;
+  /* Twitter Blue */
+  /* background: #1da1f2; */
   width: 25px;
   height: 25px;
   margin-right: 3px;
 }
 
 .p1 .twitter_logo {
-  /* Color of the bird logo */
   background: var(--p1-score-color);
-  /* Twitter Blue */
-  /* background: #1da1f2; */
 }
 
 .p2 .twitter_logo {
-  /* Color of the bird logo */
   background: var(--p2-score-color);
-  /* Twitter Blue */
-  /* background: #1da1f2; */
 }
 
 .logo {
@@ -193,7 +211,7 @@ body {
   transform: translateX(-50%);
   width: 268px;
   height: 162px;
-  background-image: url("./tournament_logo.png");
+  /* background-image: url("./tournament_logo.png"); */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -201,76 +219,13 @@ body {
   z-index: 9;
 }
 
-.phase_container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row-reverse;
-  width: 100%;
-  height: 1%;
-}
-
-.match_container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
-  height: 1%;
-}
-
-.losers_container {
-  position: relative;
-  display: flex;
-  width: 486px;
-  height: 10px;
-}
-
-.match_container .losers_container {
-  flex-direction: row;
-  justify-content: end;
-}
-
-.phase_container .losers_container {
-  flex-direction: row-reverse;
-  justify-content: start;
-}
-
-.phase {
-  position: absolute;
-  width: 75%;
-  height: 1%;
-  color: var(--bg-color);
-  font-size: 20px;
-}
-
 .match {
   position: absolute;
-  width: 75%;
-  height: 1%;
-  color: #18181b;
-  color: var(--bg-color);
-  font-size: 20px;
-}
-
-.losers {
-  display: flex;
-  width: 62px;
-  height: 53px;
-  font-size: 23px;
-  color: var(--bg-color);
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: absolute;
-}
-
-.p1 .losers {
-  right: 0;
-}
-
-.p2 .losers {
-  left: 0;
+  text-align: center;
+  width: 95%;
+  color: var(--text-color);
+  font-size: 22px;
+  padding-left: 3px;
 }
 
 .flags_container {
@@ -286,32 +241,27 @@ body {
   background-position: center;
   width: 44px;
   height: 31px;
-}
-
-.p1 .flag {
-  margin-left: 12px;
-}
-
-.p2 .flag {
-  margin-right: 12px;
+  margin: 0 12px;
 }
 
 .score {
   text-align: center;
   width: 62px;
   height: 53px;
-  font-size: 35px;
+  font-size: 38px;
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
 }
 
 .p1 .score {
+  margin-left: 12px;
   color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
 }
 
 .p2 .score {
+  margin-right: 12px;
   color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
 }
@@ -321,21 +271,25 @@ body {
 }
 
 .p1 .sponsor {
-  color: var(--p1-sponsor-color);
-
   /* For gradient color */
-  /* background: INSERT LINEAR GRADIENT COLOR HERE; */
-  /* -webkit-background-clip: text; */
-  /* -webkit-text-fill-color: transparent; */
+  background: linear-gradient(
+    90deg,
+    var(--p1-sponsor-color) 0%,
+    var(--text-color) 200%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .p2 .sponsor {
-  color: var(--p2-sponsor-color);
-
   /* For gradient color */
-  /* background: INSERT LINEAR GRADIENT COLOR HERE; */
-  /* -webkit-background-clip: text; */
-  /* -webkit-text-fill-color: transparent; */
+  background: linear-gradient(
+    90deg,
+    var(--p2-sponsor-color) 0%,
+    var(--text-color) 200%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hidden {
@@ -346,21 +300,4 @@ body {
 .unhidden {
   opacity: 100%;
   transition: opacity 0.5s;
-}
-
-.sponsor-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.sponsor-logo {
-  display: inline-block;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 48px;
-  height: 48px;
-  margin-right: 4px;
-  margin-left: 4px;
 }

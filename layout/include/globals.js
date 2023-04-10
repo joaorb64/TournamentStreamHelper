@@ -12,12 +12,12 @@ var Update = async (event) => {
 
 async function UpdateWrapper(event) {
   await Update(event);
+  await Start();
 
   window.requestAnimationFrame(() => {
     if (gsap.globalTimeline.timeScale() == 0) {
-      $(document).waitForImages(function () {
+      $(document).waitForImages(() => {
         $("body").fadeTo(1, 1, () => {
-          Start();
           gsap.globalTimeline.timeScale(1);
         });
       });
@@ -76,6 +76,11 @@ async function LoadEverything() {
 
 async function InitAll() {
   await LoadSettings();
+
+  if (tsh_settings.automatic_theme) {
+    GetLogoColors();
+  }
+
   await LoadKuroshiro();
 
   setInterval(async () => {
@@ -98,22 +103,32 @@ function getData() {
 }
 
 async function LoadSettings() {
+  let global_settings = {};
   try {
-    let global_settings = await $.ajax({
+    global_settings = await $.ajax({
       dataType: "json",
       url: "../settings.json",
       cache: false,
     });
-    let file_settings = await $.ajax({
+  } catch (e) {
+    console.log("Could not load global settings.json");
+    console.log(e);
+  }
+
+  let file_settings = {};
+  try {
+    file_settings = await $.ajax({
       dataType: "json",
       url: "./settings.json",
       cache: false,
     });
-    tsh_settings = _.defaultsDeep(file_settings, global_settings);
   } catch (e) {
-    console.log("Could not load settings.json");
+    console.log("Could not load local settings.json");
     console.log(e);
   }
+
+  tsh_settings = _.defaultsDeep(file_settings, global_settings);
+  console.log(tsh_settings);
 }
 
 function RegisterFit(element) {
