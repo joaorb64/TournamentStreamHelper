@@ -13,50 +13,6 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    if (data.game) {
-      var DIVIDERS = false;
-
-      if (data.game.codename == "ssbu") {
-        var ASSET_TO_USE_1ST = "vs_renders";
-        var ZOOM_1ST = 1;
-
-        var ASSET_TO_USE_2_to_4 = "vs_renders";
-        var ZOOM_2_to_4 = 1;
-
-        var ASSET_TO_USE_5_to_7 = "vs_renders";
-        var ZOOM_5_to_7 = 1;
-
-        DIVIDERS = false;
-      } else if (data.game.codename == "ssbm") {
-        var ASSET_TO_USE_1ST = "portrait_hd";
-        var ZOOM_1ST = 1.2;
-
-        var ASSET_TO_USE_2_to_4 = "portrait_hd";
-        var ZOOM_2_to_4 = 1.2;
-
-        var ASSET_TO_USE_5_to_7 = "portrait_hd";
-        var ZOOM_5_to_7 = 1.2;
-      } else if (data.game.codename == "ssb64") {
-        var ASSET_TO_USE_1ST = "artwork";
-        var ZOOM_1ST = 1.2;
-
-        var ASSET_TO_USE_2_to_4 = "artwork";
-        var ZOOM_2_to_4 = 1.2;
-
-        var ASSET_TO_USE_5_to_7 = "artwork";
-        var ZOOM_5_to_7 = 1.2;
-      } else {
-        var ASSET_TO_USE_1ST = "full";
-        var ZOOM_1ST = 1.2;
-
-        var ASSET_TO_USE_2_to_4 = "full";
-        var ZOOM_2_to_4 = 1.2;
-
-        var ASSET_TO_USE_5_to_7 = "full";
-        var ZOOM_5_to_7 = 1.2;
-      }
-    }
-
     if (
       !oldData.player_list ||
       JSON.stringify(data.player_list) != JSON.stringify(oldData.player_list)
@@ -151,16 +107,13 @@ LoadEverything().then(() => {
               0
             );
 
-            if (t == 0) {
-              ASSET_TO_USE = ASSET_TO_USE_1ST;
-              ZOOM = ZOOM_1ST;
-            } else if (t < 4) {
-              ASSET_TO_USE = ASSET_TO_USE_2_to_4;
-              ZOOM = ZOOM_2_to_4;
-            } else {
-              ASSET_TO_USE = ASSET_TO_USE_5_to_7;
-              ZOOM = ZOOM_5_to_7;
-            }
+            let load_settings_path = "top_1";
+
+            if (t == 1) load_settings_path = "top_1";
+            else if (t <= 4) load_settings_path = "top_4";
+            else if (t <= 8) load_settings_path = "top_8";
+
+            if (window.SAME_SIZE) load_settings_path = "same_size";
 
             await CharacterDisplay(
               $(
@@ -169,11 +122,8 @@ LoadEverything().then(() => {
                 )}.container .character_container`
               ),
               {
-                custom_zoom: ZOOM,
-                asset_key: ASSET_TO_USE,
                 source: `player_list.slot.${parseInt(t)}`,
-                use_dividers: false,
-                custom_center: [0.5, 0.4],
+                load_settings_path: load_settings_path,
               },
               event
             );
