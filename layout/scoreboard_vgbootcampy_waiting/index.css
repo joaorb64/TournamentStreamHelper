@@ -110,7 +110,7 @@ body {
   box-sizing: border-box;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--font-color);
 }
 
 .score {

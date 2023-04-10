@@ -73,7 +73,7 @@ body {
 }
 
 .tournament_name {
-  color: white;
+  color: var(--text-color);
   height: 100%;
   font-size: 20px;
   width: 216px;
@@ -113,7 +113,7 @@ body {
   margin: 0 12px;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--text-color);
 }
 
 .twitter {
