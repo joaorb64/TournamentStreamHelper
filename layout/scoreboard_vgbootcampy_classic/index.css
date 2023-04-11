@@ -237,7 +237,7 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   width: 44px;
