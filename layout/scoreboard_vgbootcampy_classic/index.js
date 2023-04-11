@@ -182,7 +182,9 @@ LoadEverything().then(() => {
                 $(`.p${t + 1}.twitter`),
                 player.pronoun.toUpperCase()
               );
-            } else if (player.twitter && !player.pronoun) {
+            }
+
+            if (player.twitter && !player.pronoun) {
               SetInnerHtml(
                 $(`.p${t + 1}.twitter`),
                 player.twitter
@@ -192,29 +194,35 @@ LoadEverything().then(() => {
                   : ""
               );
             }
-            if (changeInP1 || changeInP2) {
-              SetInnerHtml(
-                $(`.p${t + 1}.twitter`),
-                player.twitter
-                  ? `<span class="twitter_logo"></span>${
-                      "@" + String(player.twitter).toUpperCase()
-                    }`
-                  : ""
-              );
-            } else {
-              SetInnerHtml(
-                $(`.p${t + 1}.twitter`),
-                player.pronoun.toUpperCase()
-              );
 
-              SetInnerHtml(
-                $(`.p${t + 1}.twitter`),
-                player.twitter
-                  ? `<span class="twitter_logo"></span>${
-                      "@" + String(player.twitter).toUpperCase()
-                    }`
-                  : ""
-              );
+            if (changeInP1 || changeInP2) {
+              if (player.twitter) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.twitter
+                    ? `<span class="twitter_logo"></span>${
+                        "@" + String(player.twitter).toUpperCase()
+                      }`
+                    : ""
+                );
+              }
+            } else {
+              if (player.pronoun) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.pronoun.toUpperCase()
+                );
+              }
+              if (player.twitter) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.twitter
+                    ? `<span class="twitter_logo"></span>${
+                        "@" + String(player.twitter).toUpperCase()
+                      }`
+                    : ""
+                );
+              }
             }
           }
           if (t == 0) {
