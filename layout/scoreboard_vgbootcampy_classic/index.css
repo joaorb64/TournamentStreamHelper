@@ -46,27 +46,13 @@ body {
 }
 
 .p1.container {
-  background: linear-gradient(
-    270deg,
-    rgba(242, 211, 255, 1) 0%,
-    rgba(253, 193, 220, 1) 25%,
-    rgba(255, 196, 208, 1) 50%,
-    rgba(255, 217, 205, 1) 75%,
-    rgba(255, 244, 214, 1) 100%
-  );
+  background: var(--text-color);
   background-position: 100% 0;
   left: 310px;
 }
 
 .p2.container {
-  background: linear-gradient(
-    90deg,
-    rgba(242, 211, 255, 1) 0%,
-    rgba(217, 241, 255, 1) 25%,
-    rgba(213, 249, 233, 1) 50%,
-    rgba(218, 248, 204, 1) 75%,
-    rgba(248, 255, 229, 1) 100%
-  );
+  background: var(--text-color);
   background-position: 0 0;
   right: 310px;
 }
