@@ -106,11 +106,6 @@ p, li { white-space: pre-wrap; }
         <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
-        <source>Download tournament icon</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Form</name>
