@@ -11,7 +11,7 @@ LoadEverything().then(() => {
 
   const EASE_ANIMATION = "power2.Out";
 
-  const LOSERS_CONTAINER_TRAVEL = "270px";
+  const LOSERS_CONTAINER_TRAVEL = "295px";
 
   let startingAnimation = gsap
     .timeline({ paused: true })
