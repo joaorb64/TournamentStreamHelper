@@ -139,8 +139,6 @@ LoadEverything().then(() => {
               player.seed ? `Seed ${player.seed}` : ""
             );
 
-            let score = [data.score.score_left, data.score.score_right];
-
             SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
             SetInnerHtml(
@@ -198,8 +196,6 @@ LoadEverything().then(() => {
         SetInnerHtml($(`.p${t + 1}.container .online_avatar`), "");
 
         SetInnerHtml($(`.p${t + 1} .twitter`), "");
-
-        let score = [data.score.score_left, data.score.score_right];
 
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 

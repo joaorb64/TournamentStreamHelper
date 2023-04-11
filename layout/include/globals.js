@@ -26,14 +26,18 @@ async function UpdateWrapper(event) {
 }
 
 async function UpdateData() {
-  oldData = data;
-  data = await getData();
-  let event = new CustomEvent("tsh_update");
-  event.data = data;
-  event.oldData = oldData;
+  try {
+    oldData = data;
+    data = await getData();
+    let event = new CustomEvent("tsh_update");
+    event.data = data;
+    event.oldData = oldData;
 
-  if (JSON.stringify(data) != JSON.stringify(oldData)) {
-    document.dispatchEvent(event);
+    if (JSON.stringify(data) != JSON.stringify(oldData)) {
+      document.dispatchEvent(event);
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
 
@@ -85,7 +89,7 @@ async function InitAll() {
 
   setInterval(async () => {
     await UpdateData();
-  }, 32);
+  }, 64);
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));

@@ -732,6 +732,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
     def UpdateSetData(self, data):
+        StateManager.BlockSaving()
+
         if data.get("round_name"):
             self.scoreColumn.findChild(
                 QComboBox, "match").setCurrentText(data.get("round_name"))
@@ -809,3 +811,5 @@ class TSHScoreboardWidget(QDockWidget):
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))
             StateManager.Set(f"score.ruleset", data.get("ruleset"))
+        
+        StateManager.ReleaseSaving()
