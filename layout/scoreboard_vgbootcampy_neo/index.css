@@ -45,27 +45,13 @@ body {
 }
 
 .p1.container {
-  background: linear-gradient(
-    270deg,
-    rgba(242, 211, 255, 1) 0%,
-    rgba(253, 193, 220, 1) 25%,
-    rgba(255, 196, 208, 1) 50%,
-    rgba(255, 217, 205, 1) 75%,
-    rgba(255, 244, 214, 1) 100%
-  );
+  background: white;
   background-position: 100% 0;
   left: 380px;
 }
 
 .p2.container {
-  background: linear-gradient(
-    90deg,
-    rgba(242, 211, 255, 1) 0%,
-    rgba(217, 241, 255, 1) 25%,
-    rgba(213, 249, 233, 1) 50%,
-    rgba(218, 248, 204, 1) 75%,
-    rgba(248, 255, 229, 1) 100%
-  );
+  background: white;
   background-position: 0 0;
   right: 380px;
 }
@@ -126,7 +112,7 @@ body {
   display: flex;
   width: 100%;
   height: 53px;
-  font-size: 28px;
+  font-size: 26px;
   justify-content: center;
   box-sizing: border-box;
   width: 100%;
@@ -190,11 +176,11 @@ body {
 
 .logo {
   position: absolute;
-  top: 13px;
+  top: 7px;
   left: 50%;
   transform: translateX(-50%);
-  width: 91px;
-  height: 91px;
+  width: 75px;
+  height: 75px;
   background-image: url("../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -224,7 +210,7 @@ body {
   text-align: center;
   width: 95%;
   color: var(--text-color);
-  font-size: 22px;
+  font-size: 20px;
   padding-left: 3px;
 }
 
@@ -236,7 +222,7 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   width: 44px;

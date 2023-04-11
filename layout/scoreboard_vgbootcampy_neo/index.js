@@ -1,6 +1,17 @@
 LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
+  let p1Twitter = "";
+  let p2Twitter = "";
+  let p1Pronoun = "";
+  let p2Pronoun = "";
+  let newP1Twitter = "";
+  let newP2Twitter = "";
+  let newP1Pronoun = "";
+  let newP2Pronoun = "";
+  let savedBestOf = 0;
+  let savedMatch = "";
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
@@ -48,8 +59,10 @@ LoadEverything().then(() => {
 
   Start = async () => {
     startingAnimation.restart();
-    setInterval(UpdateMatch, 9000);
-    setInterval(UpdateTwitter, 9000);
+    matchIntervalID = setInterval(UpdateMatch, 9000);
+    twitterIntervalID = setInterval(UpdateTwitter, 9000);
+    setInterval(TwitterPronounChecker, 100);
+    setInterval(matchChecker, 100);
   };
 
   Update = async (event) => {
@@ -82,7 +95,11 @@ LoadEverything().then(() => {
 
           let score = [data.score.score_left, data.score.score_right];
 
-          SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
+          SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
+
+          if (!TwitterPronounChecker()) {
+            SetInnerHtml($(`.p${t + 1}.twitter`), player.pronoun.toUpperCase());
+          }
         }
       }
     }
@@ -94,84 +111,80 @@ LoadEverything().then(() => {
     }
   };
 
-  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-
   async function UpdateMatch() {
-    oldData = data;
-    data = await getData();
-
     const tournamentContainer = document.querySelector(".tournament_container");
 
-    if (
-      data.score.best_of == 0 &&
-      (data.score.match == undefined || String(data.score.match) == "")
-    ) {
+    if (!(data.score.best_of || data.score.match)) {
       tournamentContainer.classList.add("hidden");
       tournamentContainer.classList.remove("unhidden");
     } else {
       tournamentContainer.classList.add("unhidden");
       tournamentContainer.classList.remove("hidden");
 
-      if (
-        data.score.best_of == 0 &&
-        !(data.score.match == undefined || String(data.score.match) == "")
-      ) {
+      if (!data.score.best_of && data.score.match) {
         SetInnerHtml($(".match"), data.score.match.toUpperCase());
-      } else if (
-        data.score.best_of > 0 &&
-        (data.score.match == undefined || String(data.score.match) == "")
-      ) {
-        SetInnerHtml($(".match"), data.score.best_of_text);
+      } else if (data.score.best_of && !data.score.match) {
+        SetInnerHtml($(".match"), data.score.best_of_text.toUpperCase());
+      } else if (savedMatch != data.score.match) {
+        SetInnerHtml($(".match"), data.score.match.toUpperCase());
+      } else if (savedBestOf != data.score.best_of) {
+        SetInnerHtml($(".match"), data.score.match.toUpperCase());
       } else {
-        SetInnerHtml($(".match"), data.score.best_of_text);
+        SetInnerHtml($(".match"), data.score.best_of_text.toUpperCase());
         SetInnerHtml($(".match"), data.score.match.toUpperCase());
       }
     }
+    savedBestOf = data.score.best_of;
+    savedMatch = data.score.match;
   }
 
   async function UpdateTwitter() {
-    oldData = data;
-    data = await getData();
+    changeInP1 = false;
+    changeInP2 = false;
+
+    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      [team.player["1"]].forEach((player, p) => {
+        if (player) {
+          if (t == 0) {
+            newP1Twitter = player.twitter;
+            newP1Pronoun = player.pronoun;
+          }
+
+          if (t == 1) {
+            newP2Twitter = player.twitter;
+            newP2Pronoun = player.pronoun;
+          }
+        }
+      });
+      if (newP1Twitter != p1Twitter || newP1Pronoun != p1Pronoun) {
+        changeInP1 = true;
+      }
+
+      if (newP2Twitter != p2Twitter || newP2Pronoun != p2Pronoun) {
+        changeInP2 = true;
+      }
+    });
 
     [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
-          if (
-            (player.twitter == undefined || String(player.twitter) == "") &&
-            (player.pronoun == undefined || String(player.pronoun) == "")
-          ) {
+
+          if (!(player.twitter || player.pronoun)) {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
           } else {
             playerTwitter.classList.add("unhidden");
             playerTwitter.classList.remove("hidden");
 
-            if (
-              (player.twitter == undefined || String(player.twitter) == "") &&
-              !(player.pronoun == undefined || String(player.pronoun) == "")
-            ) {
+            if (!player.twitter && player.pronoun) {
               SetInnerHtml(
                 $(`.p${t + 1}.twitter`),
                 player.pronoun.toUpperCase()
               );
-            } else if (
-              !(player.twitter == undefined || String(player.twitter) == "") &&
-              (player.pronoun == undefined || String(player.pronoun) == "")
-            ) {
-              SetInnerHtml(
-                $(`.p${t + 1}.twitter`),
-                player.twitter
-                  ? `<span class="twitter_logo"></span>${
-                      "@" + String(player.twitter).toUpperCase()
-                    }`
-                  : ""
-              );
-            } else {
-              SetInnerHtml(
-                $(`.p${t + 1}.twitter`),
-                player.pronoun.toUpperCase()
-              );
+            }
+
+            if (player.twitter && !player.pronoun) {
               SetInnerHtml(
                 $(`.p${t + 1}.twitter`),
                 player.twitter
@@ -181,9 +194,102 @@ LoadEverything().then(() => {
                   : ""
               );
             }
+
+            if (changeInP1 || changeInP2) {
+              if (player.twitter) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.twitter
+                    ? `<span class="twitter_logo"></span>${
+                        "@" + String(player.twitter).toUpperCase()
+                      }`
+                    : ""
+                );
+              }
+            } else {
+              if (player.pronoun) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.pronoun.toUpperCase()
+                );
+              }
+              if (player.twitter) {
+                SetInnerHtml(
+                  $(`.p${t + 1}.twitter`),
+                  player.twitter
+                    ? `<span class="twitter_logo"></span>${
+                        "@" + String(player.twitter).toUpperCase()
+                      }`
+                    : ""
+                );
+              }
+            }
+          }
+          if (t == 0) {
+            p1Twitter = player.twitter;
+            p1Pronoun = player.pronoun;
+          }
+
+          if (t == 1) {
+            p2Twitter = player.twitter;
+            p2Pronoun = player.pronoun;
           }
         }
       });
     });
+  }
+
+  async function TwitterPronounChecker() {
+    let refreshNeeded = false;
+    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      [team.player["1"]].forEach((player, p) => {
+        if (
+          t == 0 &&
+          !(p1Twitter == player.twitter && p1Pronoun == player.pronoun)
+        ) {
+          clearIntervals();
+          refreshNeeded = true;
+        } else if (
+          t == 1 &&
+          !(p2Twitter == player.twitter && p2Pronoun == player.pronoun)
+        ) {
+          clearIntervals();
+          refreshNeeded = true;
+        }
+      });
+    });
+    if (refreshNeeded) {
+      UpdateTwitter();
+      twitterIntervalID = setInterval(UpdateTwitter, 9000);
+      matchIntervalID = setInterval(UpdateMatch, 9000);
+    }
+    refreshNeeded = false;
+
+    function clearIntervals() {
+      clearInterval(twitterIntervalID);
+      clearInterval(matchIntervalID);
+    }
+  }
+
+  async function matchChecker() {
+    let refreshNeeded = false;
+
+    if (
+      !(savedBestOf == data.score.best_of && savedMatch == data.score.match)
+    ) {
+      clearIntervals();
+      refreshNeeded = true;
+    }
+
+    if (refreshNeeded) {
+      UpdateMatch();
+      twitterIntervalID = setInterval(UpdateTwitter, 9000);
+      matchIntervalID = setInterval(UpdateMatch, 9000);
+    }
+    refreshNeeded = false;
+  }
+  function clearIntervals() {
+    clearInterval(twitterIntervalID);
+    clearInterval(matchIntervalID);
   }
 });
