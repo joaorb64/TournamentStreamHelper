@@ -1292,21 +1292,22 @@ LoadEverything().then(() => {
               Object.values(round.sets).forEach(function (set, setIndex) {
                 if (
                   parseInt(roundKey) > parseInt(lastFoundRound) &&
-                  (set.playerId[0] == teamId || set.playerId[1] == teamId)
+                  (set.playerId[0] == parseInt(teamId) ||
+                    set.playerId[1] == parseInt(teamId))
                 ) {
                   lastFoundRound = roundKey;
                   foundInRound = true;
 
                   if (set.completed) {
                     if (
-                      set.playerId[0] == teamId &&
-                      set.score[0] <= set.score[1]
+                      set.playerId[0] == parseInt(teamId) &&
+                      set.score[0] < set.score[1]
                     ) {
                       lost = true;
                     }
                     if (
-                      set.playerId[1] == teamId &&
-                      set.score[1] <= set.score[0]
+                      set.playerId[1] == parseInt(teamId) &&
+                      set.score[1] < set.score[0]
                     ) {
                       lost = true;
                     }

@@ -287,6 +287,9 @@ class ChallongeDataProvider(TournamentDataProvider):
             # Force progressions
             isSplit = deep_get(data, "tournament.split_participants", False)
 
+            if isSplit == False:
+                finalData["winnersOnlyProgressions"] = True
+
             if not isPoolsPhase and isSplit and len(finalData.get("progressionsIn", [])) == 0:
                 finalData["progressionsIn"] = [{}] * len(entrants)
 
