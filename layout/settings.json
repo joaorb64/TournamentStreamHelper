@@ -1,6 +1,8 @@
 {
   "assets": {
-    "default": {},
+    "default": {
+      "asset_key": "website"
+    },
     "game_codename_example": {
       "asset_key": "full",
       "custom_zoom": 2,

@@ -350,6 +350,15 @@ body {
   );
 }
 
+.p2.character .tsh_character {
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+
 .p2.character .tsh_character div {
   transform: scaleX(-1);
 }

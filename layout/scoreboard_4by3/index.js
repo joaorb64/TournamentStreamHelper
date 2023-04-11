@@ -37,21 +37,9 @@ LoadEverything().then(() => {
     startingAnimation.restart();
   };
 
-  var GAME_CONFIG = CONFIG["default"];
-
   Update = async (event) => {
     let data = event.data;
     let oldData = event.oldData;
-
-    if (data.game) {
-      if (data.game.codename) {
-        if (CONFIG[data.game.codename]) {
-          GAME_CONFIG = CONFIG[data.game.codename];
-        } else {
-          GAME_CONFIG = CONFIG["default"];
-        }
-      }
-    }
 
     for (const [t, team] of [
       data.score.team["1"],
@@ -154,17 +142,5 @@ LoadEverything().then(() => {
     if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
   };
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
 });
