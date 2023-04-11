@@ -1,6 +1,6 @@
 body {
-  font-family: "Montserrat", "M Plus 1p", sans-serif;
-  font-weight: bold;
+  font-family: "Figtree", "M Plus 1p", sans-serif;
+  font-weight: 900;
   opacity: 0;
   overflow: hidden;
   margin: 0;
@@ -125,7 +125,7 @@ body {
   height: 43px;
   border-radius: 8px;
   color: white;
-  font-size: 20px;
+  font-size: 21px;
   text-align: center;
   justify-content: center;
   box-sizing: border-box;
@@ -241,7 +241,8 @@ body {
   width: 75%;
   height: 1%;
   color: var(--bg-color);
-  font-size: 20px;
+  font-size: 21px;
+  font-weight: 800;
 }
 
 .match {
@@ -250,7 +251,8 @@ body {
   height: 1%;
   color: #18181b;
   color: var(--bg-color);
-  font-size: 20px;
+  font-size: 21px;
+  font-weight: 800;
 }
 
 .losers {
@@ -281,7 +283,7 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   width: 44px;
