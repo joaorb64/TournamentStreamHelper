@@ -1,30 +1,46 @@
+// Global variable containing current data red from out/program_state.json
 var data = {};
+
+// Global variable containing previous data red from out/program_state.json
+// Used for comparing what changed since last update
 var oldData = {};
+
+// Global variable containing settings red from settings.json
+// The settings under /layout/settings.json (global) are merged with /layout/<directory>/settings.json (local),
+// where the local settings have priority over global ones
 var tsh_settings = {};
 
+// This is called once after initialization. Layouts should reimplement this function.
 var Start = async () => {
   console.log("Start(): Implement me");
 };
 
+// This is called each time data changes. Layouts should reimplement this function.
 var Update = async (event) => {
   console.log("Update(): Implement me");
 };
 
+// Wrapper for the update call
 async function UpdateWrapper(event) {
   await Update(event);
 
-  window.requestAnimationFrame(() => {
-    if (gsap.globalTimeline.timeScale() == 0) {
+  // If initialization wasn't done yet, call Start()
+  // We use gsap.globalTimeline.timeScale as 0 for animation to not play before this
+  if (gsap.globalTimeline.timeScale() == 0) {
+    window.requestAnimationFrame(() => {
       $(document).waitForImages(() => {
         $("body").fadeTo(1, 1, () => {
           Start();
           gsap.globalTimeline.timeScale(1);
         });
       });
-    }
-  });
+    });
+  }
 }
 
+// Gets current program state,
+// Dispatch "tsh_update" event if data has changed
+// This function is called in a high frequency
 async function UpdateData() {
   try {
     oldData = data;
@@ -34,6 +50,7 @@ async function UpdateData() {
     event.oldData = oldData;
 
     if (JSON.stringify(data) != JSON.stringify(oldData)) {
+      console.log(data);
       document.dispatchEvent(event);
     }
   } catch (e) {
@@ -41,6 +58,8 @@ async function UpdateData() {
   }
 }
 
+// Load libraries sequentially (to respect dependencies)
+// Then call InitAll
 async function LoadEverything() {
   let libPath = "../include/";
   let scripts = [
@@ -78,6 +97,7 @@ async function LoadEverything() {
   await InitAll();
 }
 
+// Initialize libraries
 async function InitAll() {
   await LoadSettings();
 
@@ -98,6 +118,7 @@ async function InitAll() {
   gsap.globalTimeline.timeScale(0);
 }
 
+// Read program_state.json
 function getData() {
   return $.ajax({
     dataType: "json",
@@ -106,6 +127,8 @@ function getData() {
   });
 }
 
+// Loads settings.json from /layout/ and /layout/<folder>/
+// /layout/<folder>/settings.json (local) has priority over /layout/settings.json (global)
 async function LoadSettings() {
   let global_settings = {};
   try {
@@ -135,6 +158,7 @@ async function LoadSettings() {
   console.log(tsh_settings);
 }
 
+// Registers element for content fitting inside div if the div is resized
 function RegisterFit(element) {
   if (!$(element).hasClass("tsh-fit-content")) {
     if ($(element).get(0)) {
@@ -144,6 +168,7 @@ function RegisterFit(element) {
   }
 }
 
+// Scale content to fit div
 function FitText(target) {
   document.fonts.ready.then(() => {
     if (target == null) return;
@@ -167,6 +192,7 @@ function FitText(target) {
   });
 }
 
+// Load Kuroshiro, the Japanese transcription library
 async function LoadKuroshiro() {
   window.kuroshiro = new Kuroshiro.default();
   await window.kuroshiro.init(
@@ -176,6 +202,7 @@ async function LoadKuroshiro() {
   );
 }
 
+// Transcribes Japanese text to Roman characters using Kuroshiro
 async function Transcript(text) {
   let settings = _.defaultsDeep(tsh_settings.japanese_transcription, {
     enabled: true,
@@ -206,6 +233,9 @@ async function Transcript(text) {
   }
 }
 
+// Sets an element's inner HTML
+// Sequence: runs anim_out > changes content > runs anim_in
+// Uses FitText to scale div contents to fit
 async function SetInnerHtml(element, html, settings = {}) {
   let force = undefined;
   let fadeTime = 0.5;
@@ -276,6 +306,8 @@ async function SetInnerHtml(element, html, settings = {}) {
 
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
+// Given a number of characters, returns an array os positions (0-1) for their eyesights
+// Used for "smart" positioning of multiple characters in a container without dividers
 function GenerateMulticharacterPositions(
   character_number,
   center = [0.5, 0.5],
@@ -314,8 +346,11 @@ function GenerateMulticharacterPositions(
   return positions;
 }
 
+// Use a HTML canvas to resize an image
+// Only needed when downscaling images, to avoid bad image quality
 function resizeInCanvas(image, width, height) {
-  if (width > image.width || height > image.height) {
+  // Only resize if image is being downscaled
+  if (width >= image.width || height >= image.height) {
     return image.src;
   }
 
@@ -340,6 +375,7 @@ function resizeInCanvas(image, width, height) {
   return dataURI;
 }
 
+// Detect div size changes for character images
 var imageResizeObserver = new ResizeObserver((entries) => {
   for (const entry of entries) {
     console.log("Resized");
@@ -347,12 +383,15 @@ var imageResizeObserver = new ResizeObserver((entries) => {
   }
 });
 
+// Detect div size changes for text elements
 var divResizeObserver = new ResizeObserver((entries) => {
   for (const entry of entries) {
     FitText($(entry.target));
   }
 });
 
+// Prepare element for character image display
+// Call function to center image
 async function CenterImage(element, assetData, options = {}) {
   try {
     options = _.defaultsDeep(options, {
@@ -382,6 +421,7 @@ async function CenterImage(element, assetData, options = {}) {
   }
 }
 
+// If the character asset is a video, this is called for setting its content
 async function CenterVideo(element, assetData, options = {}) {
   function loadImage() {
     return new Promise((resolve) => {
@@ -420,6 +460,7 @@ async function CenterVideo(element, assetData, options = {}) {
   await loadImage();
 }
 
+// Center character images based on settings (div data)
 async function CenterImageDo(element) {
   try {
     let data = $(element).data();

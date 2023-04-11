@@ -1,3 +1,4 @@
+// Gets biggest character asset available
 function GetBiggestAsset(character) {
   let biggest = null;
   if (Object.entries(character.assets).length > 0) {
@@ -23,12 +24,16 @@ function GetBiggestAsset(character) {
   else return null;
 }
 
+// Gets character asset using key "asset". If not found, return biggest asset
 function GetCharacterAsset(asset, character) {
   if (character.assets.hasOwnProperty(asset)) {
     return character.assets[asset];
   } else return GetBiggestAsset(character);
 }
 
+// Gets recommended zoom
+// For uncropped assets, we add some zoom since they're usually full body arts
+// and most times we want some focus on the characters' faces
 function GetRecommendedZoom(asset) {
   if (asset.uncropped_edge) {
     if (
@@ -55,6 +60,7 @@ document.addEventListener("tsh_update", (event) => {
   });
 });
 
+// Set up character display for a div
 async function CharacterDisplay(element, settings, event) {
   $(element).data(settings);
 
@@ -66,6 +72,7 @@ async function CharacterDisplay(element, settings, event) {
   }
 }
 
+// When a tsh_update event is fired, we update the containers with tsh_character_container class
 document.addEventListener("tsh_update", async (event) => {
   $(".tsh_character_container").each(async (i, e) => {
     updateCharacterContainer(e, event);
@@ -85,6 +92,8 @@ function ResolveAssetSetting(key) {
   return settings;
 }
 
+// Handle data for each character container
+// Here we confirm some of the settings, check for data changes, etc
 async function updateCharacterContainer(e, event) {
   // Load json file-based settings. If the key isn't specified, we default to the "assets" key in the json
   let asset_settings = ResolveAssetSetting(
@@ -162,6 +171,7 @@ async function updateCharacterContainer(e, event) {
     anim_out = settings.anim_out;
   }
 
+  // Forces latest call to overwrite any ongoing animation
   anim_out.overwrite = true;
 
   let changed = JSON.stringify(characters) != JSON.stringify(oldCharacters);
@@ -173,6 +183,7 @@ async function updateCharacterContainer(e, event) {
   }
 
   if (changed || firstRun) {
+    // Class used to detct if it's the first run
     $(e).addClass("tsh_character_container_active");
 
     const callback = async () => {
@@ -234,8 +245,10 @@ async function updateCharacterContainer(e, event) {
     };
 
     if (firstRun) {
+      // No need to fade out
       await callback();
     } else {
+      // Fade out, then change data and fade in
       gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
     }
   }
@@ -255,6 +268,7 @@ document.addEventListener("tsh_update", (event) => {
   });
 });
 
+// Sets colors for the css variables based on the tournament logo
 function GetLogoColors() {
   let img = new Image();
   img.src = "../logo.png";
@@ -279,6 +293,7 @@ function GetLogoColors() {
   };
 }
 
+// Gets contrasting color between black and white for a [r, g, b] background
 const setContrast = (rgb) =>
   (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 > 125
     ? [0, 0, 0]
