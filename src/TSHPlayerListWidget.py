@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
 import json
+import traceback
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
@@ -116,5 +117,9 @@ class TSHPlayerListWidget(QDockWidget):
             self.playerList.SetPlayersPerTeam(playerNumber)
             
             for i, slot in enumerate(self.playerList.slotWidgets):
-                slot.SetTeamData(data[i])
+                slot.Clear()
+                try:
+                    slot.SetTeamData(data[i])
+                except:
+                    print(traceback.format_exc())
         StateManager.ReleaseSaving()

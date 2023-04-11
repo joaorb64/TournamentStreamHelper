@@ -104,3 +104,10 @@ class TSHPlayerListSlotWidget(QGroupBox):
                 pw.Clear()
         StateManager.ReleaseSaving()
         self.signals.dataChanged.emit()
+    
+    def Clear(self):
+        StateManager.BlockSaving()
+        for i, pw in enumerate(self.playerWidgets):
+            pw.Clear()
+        StateManager.ReleaseSaving()
+        self.signals.dataChanged.emit()

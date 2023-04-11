@@ -716,6 +716,17 @@ class ChallongeDataProvider(TournamentDataProvider):
                 if not winner.get("id") in added_list:
                     final_data.append(self.ParseEntrant(winner))
                     added_list.append(winner.get("id"))
+            
+            # Get players that didn't win any matches
+            for m in all_matches:
+                loser = m.get("player2")
+
+                if m.get("winner_id") == m.get("player2").get("id"):
+                    loser = m.get("player1")
+                
+                if not loser.get("id") in added_list:
+                    final_data.append(self.ParseEntrant(loser))
+                    added_list.append(loser.get("id"))
 
             return final_data
         except Exception as e:
