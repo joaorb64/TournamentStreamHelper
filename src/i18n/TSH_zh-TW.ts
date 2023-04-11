@@ -705,7 +705,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="28"/>
+        <location filename="../TSHPlayerListWidget.py" line="29"/>
         <location filename="../TournamentStreamHelper.py" line="205"/>
         <source>Player List</source>
         <translation type="unfinished"></translation>
@@ -967,20 +967,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="71"/>
-        <location filename="../TSHPlayerListWidget.py" line="61"/>
+        <location filename="../TSHPlayerListWidget.py" line="62"/>
         <source>Number of slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="84"/>
-        <location filename="../TSHPlayerListWidget.py" line="71"/>
+        <location filename="../TSHPlayerListWidget.py" line="72"/>
         <source>Players per slot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="92"/>
         <location filename="../TSHBracketWidget.py" line="94"/>
-        <location filename="../TSHPlayerListWidget.py" line="81"/>
+        <location filename="../TSHPlayerListWidget.py" line="82"/>
         <source>Characters per player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -995,7 +995,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="92"/>
+        <location filename="../TSHPlayerListWidget.py" line="93"/>
         <source>Load tournament standings</source>
         <translation type="unfinished"></translation>
     </message>
