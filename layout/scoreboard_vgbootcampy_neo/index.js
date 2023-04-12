@@ -78,11 +78,13 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),
             `
+            <span>
               <span class="sponsor">
                 ${player.team ? player.team.toUpperCase() : ""}
               </span>
               ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
               ${team.losers ? "(L)" : ""}
+            </span>
             `
           );
 
