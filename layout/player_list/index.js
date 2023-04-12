@@ -85,7 +85,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.slot${t + 1} .p${p + 1}.container .character_container`),
               {
-                source: `player_list.slot.${t + 1}`,
+                source: `player_list.slot.${t + 1}.player.${p+1}`,
                 custom_center: [0.5, 0.5],
                 scale_based_on_parent: true,
               },
