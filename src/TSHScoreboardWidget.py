@@ -734,7 +734,7 @@ class TSHScoreboardWidget(QDockWidget):
     def UpdateSetData(self, data):
         # If you switched sets and it was still finishing an async update call
         # Avoid loading data from the previous set
-        if data.get("id") != self.lastSetSelected:
+        if data.get("id") != None and data.get("id") != self.lastSetSelected:
             return
         
         StateManager.BlockSaving()
