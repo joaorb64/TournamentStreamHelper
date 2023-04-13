@@ -732,6 +732,11 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
     def UpdateSetData(self, data):
+        # If you switched sets and it was still finishing an async update call
+        # Avoid loading data from the previous set
+        if data.get("id") != self.lastSetSelected:
+            return
+        
         StateManager.BlockSaving()
 
         if data.get("round_name"):

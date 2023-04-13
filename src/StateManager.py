@@ -33,7 +33,7 @@ class StateManager:
                 StateManager.threads = []
 
                 def ExportAll():
-                    with open("./out/program_state.json", 'w', encoding='utf-8') as file:
+                    with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
                         # print("SaveState")
                         json.dump(StateManager.state, file, indent=4, sort_keys=False)
 
