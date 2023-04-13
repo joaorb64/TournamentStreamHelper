@@ -276,6 +276,9 @@ class TSHBracketWidget(QDockWidget):
 
             self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
 
+            # Wait for the player list to update
+            QGuiApplication.processEvents()
+
             self.slotNumber.blockSignals(True)
             self.slotNumber.setValue(len(self.playerList.slotWidgets))
             self.slotNumber.blockSignals(False)

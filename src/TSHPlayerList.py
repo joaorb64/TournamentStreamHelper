@@ -32,6 +32,8 @@ class TSHPlayerList(QWidget):
 
         self.setLayout(QVBoxLayout())
 
+        self.childDataChangedLock = False
+
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
         scrollArea.setFrameShape(QFrame.Shape.NoFrame)
@@ -47,6 +49,10 @@ class TSHPlayerList(QWidget):
 
         StateManager.Set(base, {})
         StateManager.ReleaseSaving()
+
+    def ChildDataChangedEmit(self):
+        if not self.childDataChangedLock:
+            self.signals.DataChanged.emit()
     
     def LoadFromStandingsClicked(self):
         TSHTournamentDataProvider.instance.GetStandings(self.slotNumber.value(), self.signals.UpdateData)
@@ -58,8 +64,10 @@ class TSHPlayerList(QWidget):
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
             
+            self.childDataChangedLock = True
             for i, slot in enumerate(self.slotWidgets):
                 slot.SetTeamData(data[i])
+            self.childDataChangedLock = False
         StateManager.ReleaseSaving()
 
     def SetSlotNumber(self, number):
@@ -70,7 +78,7 @@ class TSHPlayerList(QWidget):
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playersPerTeam)
             s.SetCharacterNumber(self.charactersPerPlayer)
-            s.signals.dataChanged.connect(self.signals.DataChanged.emit)
+            s.signals.dataChanged.connect(self.ChildDataChangedEmit)
 
             # s.SetCharactersPerPlayer(self.charNumber.value())
 
@@ -94,15 +102,19 @@ class TSHPlayerList(QWidget):
     def SetCharactersPerPlayer(self, value):
         self.charactersPerPlayer = value
         StateManager.BlockSaving()
+        self.childDataChangedLock = True
         for s in self.slotWidgets:
             s.SetCharacterNumber(value)
+        self.childDataChangedLock = False
         self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()
 
     def SetPlayersPerTeam(self, number):
         self.playersPerTeam = number
         StateManager.BlockSaving()
+        self.childDataChangedLock = True
         for s in self.slotWidgets:
             s.SetPlayersPerTeam(number)
+        self.childDataChangedLock = False
         self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()

@@ -131,10 +131,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
                 lambda text, element=c: [
-                    StateManager.Set(
-                        f"{self.path}.{element.objectName()}", element.currentData()
-                    ),
-                    self.instanceSignals.dataChanged.emit()
+                    self.ComboBoxIndexChanged(element)
                 ]
             )
             c.currentIndexChanged.emit(0)
@@ -165,6 +162,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_model = QStringListModel()
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
+    
+    def ComboBoxIndexChanged(self, element: QComboBox):
+        dataChanged = StateManager.Set(
+            f"{self.path}.{element.objectName()}", element.currentData()
+        )
+        if dataChanged:
+            self.instanceSignals.dataChanged.emit()
 
     def CharactersChanged(self):
         characters = {}
@@ -796,19 +800,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
 
                 if tag == dbTag:
-                    self.SetData(item, dontLoadFromDB=True)
+                    self.SetData(item, dontLoadFromDB=True, clear=False)
+                    break
 
-        if data.get("gamerTag"):
-            self.findChild(QWidget, "name").setText(f'{data.get("gamerTag")}')
-            self.findChild(QWidget, "name").editingFinished.emit()
+        name = self.findChild(QWidget, "name")
+        if data.get("gamerTag") and data.get("gamerTag") != name.text():
+            name.setText(f'{data.get("gamerTag")}')
+            name.editingFinished.emit()
 
-        if data.get("prefix"):
-            self.findChild(QWidget, "team").setText(f'{data.get("prefix")}')
-            self.findChild(QWidget, "team").editingFinished.emit()
+        team = self.findChild(QWidget, "team")
+        if data.get("prefix") and data.get("prefix") != team.text():
+            team.setText(f'{data.get("prefix")}')
+            team.editingFinished.emit()
 
-        if data.get("name"):
-            self.findChild(QWidget, "real_name").setText(f'{data.get("name")}')
-            self.findChild(QWidget, "real_name").editingFinished.emit()
+        real_name = self.findChild(QWidget, "real_name")
+        if data.get("name") and data.get("name") != real_name.text():
+            real_name.setText(f'{data.get("name")}')
+            real_name.editingFinished.emit()
 
         if data.get("avatar"):
             self.ExportPlayerImages(data.get("avatar"))
@@ -819,15 +827,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         if data.get("seed"):
             self.ExportPlayerSeed(data.get("seed"))
 
-        if data.get("twitter"):
-            self.findChild(QWidget, "twitter").setText(
+        twitter = self.findChild(QWidget, "twitter")
+        if data.get("twitter") and data.get("twitter") != twitter.text():
+            twitter.setText(
                 f'{data.get("twitter")}')
-            self.findChild(QWidget, "twitter").editingFinished.emit()
+            twitter.editingFinished.emit()
 
-        if data.get("pronoun"):
-            self.findChild(QWidget, "pronoun").setText(
+        pronoun = self.findChild(QWidget, "pronoun")
+        if data.get("pronoun") and data.get("pronoun") != pronoun.text():
+            pronoun.setText(
                 f'{data.get("pronoun")}')
-            self.findChild(QWidget, "pronoun").editingFinished.emit()
+            pronoun.editingFinished.emit()
 
         if data.get("country_code"):
             countryElement: QComboBox = self.findChild(
@@ -972,8 +982,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def Clear(self):
         for c in self.findChildren(QLineEdit):
-            c.setText("")
-            c.editingFinished.emit()
+            if c.text() != "":
+                c.setText("")
+                c.editingFinished.emit()
 
         for c in self.findChildren(QComboBox):
             c.setCurrentIndex(0)
