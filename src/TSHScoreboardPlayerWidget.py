@@ -104,21 +104,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.SetIndex(index, teamNumber)
 
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            self.ExportMergedName)
-        self.findChild(QLineEdit, "team").textChanged.connect(
-            self.ExportMergedName)
+        self.lastExportedName = ""
 
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            lambda: self.ExportPlayerImages())
-        self.findChild(QLineEdit, "team").textChanged.connect(
-            lambda: self.ExportPlayerImages())
-
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            lambda: self.ExportPlayerId())
-        
-        self.findChild(QLineEdit, "name").textChanged.connect(
-            lambda: self.ExportPlayerSeed())
+        self.findChild(QLineEdit, "name").editingFinished.connect(
+            self.NameChanged)
+        self.findChild(QLineEdit, "team").editingFinished.connect(
+            self.NameChanged)
 
         for c in self.findChildren(QLineEdit):
             c.editingFinished.connect(
@@ -164,11 +155,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_model.setStringList(self.pronoun_list)
     
     def ComboBoxIndexChanged(self, element: QComboBox):
-        dataChanged = StateManager.Set(
-            f"{self.path}.{element.objectName()}", element.currentData()
-        )
-        if dataChanged:
-            self.instanceSignals.dataChanged.emit()
+        self.instanceSignals.dataChanged.emit()
 
     def CharactersChanged(self):
         characters = {}
@@ -204,6 +191,19 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     def SetLosers(self, value):
         self.losers = value
         self.ExportMergedName()
+    
+    def NameChanged(self):
+        team = self.findChild(QLineEdit, "team").text()
+        name = self.findChild(QLineEdit, "name").text()
+        merged = team + " " + name
+
+        if merged != self.lastExportedName:
+            self.ExportMergedName()
+            self.ExportPlayerImages()
+            self.ExportPlayerId()
+            self.ExportPlayerSeed()
+
+        self.lastExportedName = merged
 
     def ExportMergedName(self):
         team = self.findChild(QLineEdit, "team").text()
