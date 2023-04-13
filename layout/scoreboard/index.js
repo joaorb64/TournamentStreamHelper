@@ -58,9 +58,9 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
+    let isTeams = Object.keys(data.score.team["1"].player).length > 1;
 
-    if (!isDoubles) {
+    if (!isTeams) {
       for (const [t, team] of [
         data.score.team["1"],
         data.score.team["2"],
@@ -158,7 +158,7 @@ LoadEverything().then(() => {
         if (!team.teamName || team.teamName == "") {
           let names = [];
           for (const [p, player] of Object.values(team.player).entries()) {
-            if (player) {
+            if (player && player.name) {
               names.push(await Transcript(player.name));
             }
           }
