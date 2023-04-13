@@ -1,4 +1,6 @@
 import os
+import json
+import collections
 
 file_list = []
 
@@ -17,7 +19,10 @@ languages = [
     "fr",
     "ja",
     "es",
-    "de"
+    "de",
+    "it",
+    "zh-CN",
+    "zh-TW"
 ]
 
 output = [f'src/i18n/TSH_{lang}.ts' for lang in languages]
@@ -31,3 +36,13 @@ for out_path in output:
         out = out_file.read()
     with open(out_path, "wt", encoding='utf-8') as out_file:
         out_file.write(out.replace(' type="vanished"', ""))
+
+with open("src/i18n/mapping.json", 'rt', encoding='utf-8') as mapping_file:
+    mapping_data = json.loads(mapping_file.read())
+
+supported_languages = mapping_data["languages"]
+ordered_languages = collections.OrderedDict(sorted(supported_languages.items()))
+mapping_data["languages"] = ordered_languages
+
+with open("src/i18n/mapping.json", 'wt', encoding='utf-8') as mapping_file:
+    mapping_file.write(json.dumps(mapping_data, indent=2))

@@ -1,20 +1,5 @@
-@font-face {
-  font-family: "NotoSans";
-  src: url("../include/NotoSans-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "RobotoCondensed";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Roboto";
-  src: url("../include/Roboto-Regular.ttf") format("truetype");
-}
-
 body {
-  font-family: NotoSans;
+  font-family: var(--font);
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -134,10 +119,16 @@ body {
 .tournament_logo {
   display: flex;
   justify-content: center;
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0%,
+    #ffffff 80%,
+    #ffffff00 100%
+  );
 }
 
 .logo {
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   background-size: contain;
 }

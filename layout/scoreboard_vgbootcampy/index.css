@@ -1,6 +1,6 @@
 body {
-  font-family: "Montserrat", "M Plus 1p", sans-serif;
-  font-weight: bold;
+  font-family: "Figtree", "M Plus 1p", sans-serif;
+  font-weight: 900;
   opacity: 0;
   overflow: hidden;
   margin: 0;
@@ -40,7 +40,7 @@ body {
   width: 496px;
   height: 91px;
   top: 14px;
-  background: #ffefdb;
+  background: var(--text-color);
   border-radius: 12px;
   padding-top: 4px;
 }
@@ -73,7 +73,7 @@ body {
 }
 
 .tournament_name {
-  color: white;
+  color: var(--text-color);
   height: 100%;
   font-size: 20px;
   width: 216px;
@@ -113,7 +113,7 @@ body {
   margin: 0 12px;
   flex-direction: column;
   overflow: hidden;
-  color: white;
+  color: var(--text-color);
 }
 
 .twitter {
@@ -125,7 +125,7 @@ body {
   height: 43px;
   border-radius: 8px;
   color: white;
-  font-size: 20px;
+  font-size: 21px;
   text-align: center;
   justify-content: center;
   box-sizing: border-box;
@@ -137,11 +137,13 @@ body {
 .p1.twitter {
   left: 25px;
   background: var(--p1-score-bg-color);
+  color: var(--p1-score-color);
 }
 
 .p2.twitter {
   right: 25px;
   background: var(--p2-score-bg-color);
+  color: var(--p2-score-color);
 }
 
 .twitter_logo {
@@ -149,14 +151,23 @@ body {
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
-
-  /* Color of the bird logo */
-  background: white;
-  /* Twitter Blue */
-  /* background: #1da1f2; */
   width: 25px;
   height: 25px;
   margin-right: 3px;
+}
+
+.p1 .twitter_logo {
+  /* Color of the bird logo */
+  background: var(--p1-score-color);
+  /* Twitter Blue */
+  /* background: #1da1f2; */
+}
+
+.p2 .twitter_logo {
+  /* Color of the bird logo */
+  background: var(--p2-score-color);
+  /* Twitter Blue */
+  /* background: #1da1f2; */
 }
 
 .logo {
@@ -230,7 +241,8 @@ body {
   width: 75%;
   height: 1%;
   color: var(--bg-color);
-  font-size: 20px;
+  font-size: 21px;
+  font-weight: 800;
 }
 
 .match {
@@ -239,7 +251,8 @@ body {
   height: 1%;
   color: #18181b;
   color: var(--bg-color);
-  font-size: 20px;
+  font-size: 21px;
+  font-weight: 800;
 }
 
 .losers {
@@ -270,7 +283,7 @@ body {
 
 .flag {
   display: inline-block;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   width: 44px;
@@ -296,12 +309,12 @@ body {
 }
 
 .p1 .score {
-  color: white;
+  color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
 }
 
 .p2 .score {
-  color: white;
+  color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
 }
 
@@ -310,7 +323,7 @@ body {
 }
 
 .p1 .sponsor {
-  color: #ffb403;
+  color: var(--p1-sponsor-color);
 
   /* For gradient color */
   /* background: INSERT LINEAR GRADIENT COLOR HERE; */
@@ -319,7 +332,7 @@ body {
 }
 
 .p2 .sponsor {
-  color: #ffb403;
+  color: var(--p2-sponsor-color);
 
   /* For gradient color */
   /* background: INSERT LINEAR GRADIENT COLOR HERE; */

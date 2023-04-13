@@ -6,7 +6,7 @@ import re
 from copy import deepcopy
 
 tested_assets = {
-    "ssbu": ["mural_art"]
+    "sdb": ["full"]
 }
 
 main_out_path = "../out/test"

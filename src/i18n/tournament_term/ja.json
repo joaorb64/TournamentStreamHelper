@@ -11,7 +11,7 @@
     "winners_round": "勝者側{0}回戦",
     "losers_round": "敗者側{0}回戦",
     "round": "{0}回戦",
-    "best_of": "Best of {0}"
+    "best_of": "{0}本先取"
   },
   "phase": {
     "group_stage": "予選プール",

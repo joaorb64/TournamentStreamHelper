@@ -87,7 +87,7 @@ class Bracket():
         self.rounds["-2"] = []
         for i in range(int(self.playerNumber/2)):
             self.rounds["-1"].append(BracketSet(self, [-1, int(len(self.rounds["-1"])/2)]))
-            self.rounds["-2"].append(BracketSet(self, [-2, int(len(self.rounds["-2"])/2)]))
+            self.rounds["-2"].append(BracketSet(self, [-1, int(len(self.rounds["-2"])/2)]))
         
         # Fill with -1
         for round in ["-1", "-2"]:
@@ -116,7 +116,7 @@ class Bracket():
         while i > 1:
             i = math.floor(i/2)
             for j in range(2):
-                round = [BracketSet(self, [-3-len(subBracket), i]) for i in range(math.floor(i))]
+                round = [BracketSet(self, [-1-len(subBracket), i]) for i in range(math.floor(i))]
                 subBracket.append(round)
 
         for r, round in enumerate(subBracket):
@@ -136,8 +136,6 @@ class Bracket():
                     except Exception as e:
                         print(e)
                     try:
-                        if roundNum == 1:
-                            _set.loseNext = self.rounds["-1"][math.floor(j/2)]
                         if abs(roundNum)%4 == 0:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)+j)%len(round)]
                         elif abs(roundNum)%4 == 1:

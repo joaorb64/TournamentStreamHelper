@@ -359,32 +359,26 @@ body {
   width: 92px;
 }
 
-.p1.character_container .icon {
+.tsh_character_container {
+  flex-direction: column;
+  width: 92px;
+  height: 92px;
+}
+
+.p1 .tsh_character {
   background: var(--p1-score-bg-color);
 }
 
-.p2.character_container .icon {
+.p2 .tsh_character {
   background: var(--p2-score-bg-color);
 }
 
-.character_container > div {
-  overflow: hidden;
-}
-
-.character_container > div {
-  height: 100%;
-  flex-direction: column;
-  height: 92px;
-}
-
-.character_container > div > div {
-  height: 100%;
+.p2 .tsh_character {
+  transform: scaleX(-1);
 }
 
 .character_container > div > div {
   overflow: hidden;
-  width: 92px;
-  height: 92px;
   display: flex;
   align-items: center;
   flex-shrink: 1;

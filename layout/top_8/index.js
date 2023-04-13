@@ -1,73 +1,26 @@
-;(($) => {
-  gsap.config({ nullTargetWarn: false, trialWarn: false })
+LoadEverything().then(() => {
+  gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .from(['.container'], { duration: 1, width: '0', ease: 'power2.inOut' }, 0)
+    .from([".container"], { duration: 1, width: "0", ease: "power2.inOut" }, 0);
 
-  function Start() {
-    startingAnimation.restart()
-  }
+  Start = async (event) => {
+    startingAnimation.restart();
+  };
 
-  var data = {}
-  var oldData = {}
-
-  async function Update() {
-    oldData = data
-    data = await getData()
-
-    if(data.game){
-      var DIVIDERS = true
-
-      if (data.game.codename == "ssbu") {
-        var ASSET_TO_USE_1ST = 'vs_renders'
-        var ZOOM_1ST = 1
-
-        var ASSET_TO_USE_2_to_4 = 'vs_renders'
-        var ZOOM_2_to_4 = 1
-
-        var ASSET_TO_USE_5_to_7 = 'vs_renders'
-        var ZOOM_5_to_7 = 1
-
-        DIVIDERS = false
-      } else if (data.game.codename == "ssbm") {
-        var ASSET_TO_USE_1ST = 'portrait_hd'
-        var ZOOM_1ST = 1.2
-
-        var ASSET_TO_USE_2_to_4 = 'portrait_hd'
-        var ZOOM_2_to_4 = 1.2
-
-        var ASSET_TO_USE_5_to_7 = 'portrait_hd'
-        var ZOOM_5_to_7 = 1.2
-      } else if (data.game.codename == "ssb64") {
-        var ASSET_TO_USE_1ST = 'artwork'
-        var ZOOM_1ST = 1.2
-
-        var ASSET_TO_USE_2_to_4 = 'artwork'
-        var ZOOM_2_to_4 = 1.2
-
-        var ASSET_TO_USE_5_to_7 = 'artwork'
-        var ZOOM_5_to_7 = 1.2
-      } else {
-        var ASSET_TO_USE_1ST = 'full'
-        var ZOOM_1ST = 1.2
-
-        var ASSET_TO_USE_2_to_4 = 'full'
-        var ZOOM_2_to_4 = 1.2
-
-        var ASSET_TO_USE_5_to_7 = 'full'
-        var ZOOM_5_to_7 = 1.2
-      }
-    }
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.player_list ||
       JSON.stringify(data.player_list) != JSON.stringify(oldData.player_list)
     ) {
-      let htmls = []
+      let htmls = [];
 
       Object.values(data.player_list.slot).forEach((slot, i) => {
-        let html = `<div class="slot slot${i + 1}">`
+        let html = `<div class="slot slot${i + 1}">`;
 
         Object.values(slot.player).forEach((player, p) => {
           html += `
@@ -87,193 +40,145 @@
               </div>
               <div class="flags">
                 <div class="flagcountry"></div>
-                ${player.state.asset ? `<div class="flagstate"></div>` : ''}
+                ${player.state.asset ? `<div class="flagstate"></div>` : ""}
               </div>
               <div class="character_container"></div>
             </div>
-          `
-        })
+          `;
+        });
 
-        html += '</div>'
+        html += "</div>";
 
-        htmls.push(html)
-      })
+        htmls.push(html);
+      });
 
-      $('.top1_container').html('')
-      $('.top4_container').html('')
-      $('.top8_container').html('')
+      $(".top1_container").html("");
+      $(".top4_container").html("");
+      $(".top8_container").html("");
 
       for (let i = 0; i < htmls.length; i++) {
-        let html = htmls[i]
+        let html = htmls[i];
 
-        if (i == 0) {
-          $('.top1_container').html($('.top1_container').html() + html)
-        } else if (i < 4) {
-          $('.top4_container').html($('.top4_container').html() + html)
+        if (window.SAME_SIZE) {
+          $(".top8_container").html($(".top8_container").html() + html);
         } else {
-          $('.top8_container').html($('.top8_container').html() + html)
+          if (i == 0) {
+            $(".top1_container").html($(".top1_container").html() + html);
+          } else if (i < 4) {
+            $(".top4_container").html($(".top4_container").html() + html);
+          } else {
+            $(".top8_container").html($(".top8_container").html() + html);
+          }
         }
       }
 
-      Object.values(data.player_list.slot).forEach((slot, t) => {
-        SetInnerHtml($(`.slot${t + 1} .title`), slot.name)
-        Object.values(slot.player).forEach((player, p) => {
+      for (const [t, slot] of Object.entries(data.player_list.slot)) {
+        for (const [p, player] of Object.entries(slot.player)) {
           if (player) {
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .name`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .name`),
               `
             <span>
               <span class="sponsor">
-                ${player.team ? player.team : ''}
+                ${player.team ? player.team : ""}
               </span>
-              ${player.name}
+              ${await Transcript(player.name)}
             </span>
             `,
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .flagcountry`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagcountry`),
               player.country.asset
                 ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-                : '',
+                : "",
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .flagstate`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagstate`),
               player.state.asset
                 ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
-                : '',
+                : "",
               undefined,
               0
-            )
+            );
 
-            let charactersHtml = ''
+            let load_settings_path = "top_1";
 
-            if (t == 0) {
-              ASSET_TO_USE = ASSET_TO_USE_1ST
-              ZOOM = ZOOM_1ST
-            } else if (t < 4) {
-              ASSET_TO_USE = ASSET_TO_USE_2_to_4
-              ZOOM = ZOOM_2_to_4
-            } else {
-              ASSET_TO_USE = ASSET_TO_USE_5_to_7
-              ZOOM = ZOOM_5_to_7
-            }
+            if (t == 1) load_settings_path = "top_1";
+            else if (t <= 4) load_settings_path = "top_4";
+            else if (t <= 8) load_settings_path = "top_8";
 
-            let validCharacters = Object.values(player.character).filter(
-              (character) => character.assets[ASSET_TO_USE] != null
-            )
+            if (window.SAME_SIZE) load_settings_path = "same_size";
 
-            Object.values(validCharacters).forEach((character, index) => {
-              if (character.assets[ASSET_TO_USE]) {
-                let centering = [0.5, 0.4]
-
-                // If not using dividers, calculate proper placement for each character
-                if(!DIVIDERS) centering = GenerateMulticharacterPositions(validCharacters.length)[index]
-
-                charactersHtml += `
-                  <div class="icon stockicon ${DIVIDERS ? "divided" : ""}">
-                      <div
-                        style='
-                          background-image: url(../../${character.assets[ASSET_TO_USE].asset});
-                          z-index: ${validCharacters.length - index}
-                        '
-                        data-asset='${JSON.stringify(character.assets[ASSET_TO_USE])}'
-                        data-centering-x='${centering[0]}'
-                        data-centering-y='${centering[1]}'
-                        data-zoom='${ZOOM}'
-                      >
-                      </div>
-                  </div>
-                  `
-              }
-            })
-            SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .character_container`),
-              charactersHtml,
-              undefined,
-              0,
-              () => {
-                $(
-                  `.slot${t + 1} .p${p + 1}.container .character_container .icon.stockicon div`
-                ).each((e, i) => {
-                  if (player.character[e + 1].assets[ASSET_TO_USE] != null) {
-                    CenterImage(
-                      $(i),
-                      $(i).attr('data-asset'),
-                      $(i).attr('data-zoom'),
-                      { x: $(i).attr('data-centering-x'), y: $(i).attr('data-centering-y') },
-                      $(i).parent().parent()
-                    )
-                  }
-                })
-              }
-            )
+            await CharacterDisplay(
+              $(
+                `.slot${parseInt(t)} .p${parseInt(
+                  p
+                )}.container .character_container`
+              ),
+              {
+                source: `player_list.slot.${parseInt(t)}`,
+                load_settings_path: load_settings_path,
+              },
+              event
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .sponsor_icon`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .sponsor_icon`),
               player.sponsor_logo
                 ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                : '<div></div>',
+                : "<div></div>",
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .avatar`),
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .avatar`),
               player.avatar
                 ? `<div style="background-image: url('../../${player.avatar}')"></div>`
-                : '',
+                : "",
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .online_avatar`),
+              $(
+                `.slot${parseInt(t)} .p${parseInt(p)}.container .online_avatar`
+              ),
               player.online_avatar
                 ? `<div style="background-image: url('${player.online_avatar}')"></div>`
-                : '',
+                : "",
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .twitter`),
-              player.twitter ? `<span class="twitter_logo"></span>${String(player.twitter)}` : '',
+              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .twitter`),
+              player.twitter
+                ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+                : "",
               undefined,
               0
-            )
+            );
 
             SetInnerHtml(
-              $(`.slot${t + 1} .p${p + 1}.container .sponsor-container`),
+              $(
+                `.slot${parseInt(t)} .p${parseInt(
+                  p
+                )}.container .sponsor-container`
+              ),
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
               undefined,
               0
-            )
+            );
           }
-        })
-      })
+        }
+      }
     }
-
-    $('.text').each(function (e) {
-      FitText($($(this)[0].parentNode))
-    })
-
-    $('.container div:has(>.text:empty)').css('margin-right', '0')
-    $('.container div:not(:has(>.text:empty))').css('margin-right', '')
-    $('.container div:has(>.text:empty)').css('margin-left', '0')
-    $('.container div:not(:has(>.text:empty))').css('margin-left', '')
-  }
-
-  Update()
-  $(window).on('load', () => {
-    $('body').fadeTo(1, 1, async () => {
-      Start()
-      setInterval(Update, 16)
-    })
-  })
-})(jQuery)
+  };
+});

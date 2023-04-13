@@ -88,7 +88,7 @@ body {
   padding-left: 64px;
   padding-right: 128px;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: 16px;
   justify-content: flex-end;
 }
 
@@ -103,7 +103,7 @@ body {
   position: absolute;
   top: 0%;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: 16px;
   justify-content: flex-end;
   left: 50%;
   transform: translateX(-50%);
@@ -124,7 +124,7 @@ body {
   padding-left: 128px;
   padding-right: 64px;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: 16px;
   justify-content: flex-end;
   left: 50%;
 }

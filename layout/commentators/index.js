@@ -1,20 +1,15 @@
-(($) => {
+LoadEverything().then(() => {
   if (!window.config) {
     window.config = {
       size: "normal",
     };
   }
 
-  function Start() {}
+  Start = async (event) => {};
 
-  var data = {};
-  var oldData = {};
-
-  let oldCharacters = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       Object.keys(oldData).length == 0 ||
@@ -44,7 +39,9 @@
       $(".container").html(html);
     }
 
-    Object.values(data.commentary).forEach((commentator, index) => {
+    for (const [index, commentator] of Object.values(
+      data.commentary
+    ).entries()) {
       if (commentator.name) {
         $(`.commentator${index}`).css("display", "");
         SetInnerHtml(
@@ -54,13 +51,10 @@
             <span class="team">
               ${commentator.team ? commentator.team + "&nbsp;" : ""}
             </span>
-            ${commentator.name}
+            ${await Transcript(commentator.name)}
           `
         );
-        SetInnerHtml(
-          $(`.commentator${index} .pronoun`),
-          commentator.pronoun
-        );
+        SetInnerHtml($(`.commentator${index} .pronoun`), commentator.pronoun);
         SetInnerHtml(
           $(`.commentator${index} .real_name`),
           commentator.real_name
@@ -72,14 +66,6 @@
       } else {
         $(`.commentator${index}`).css("display", "none");
       }
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(800, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
-  });
-})(jQuery);
+    }
+  };
+});

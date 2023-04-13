@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -42,19 +42,19 @@
       "<"
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
-
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.player["1"]].forEach((player, p) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
+      for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
           SetInnerHtml(
             $(`.p${t + 1}.container .name`),
@@ -62,7 +62,7 @@
               <span class="sponsor">
                 ${player.team ? player.team.toUpperCase() : ""}
               </span>
-              ${player.name ? player.name.toUpperCase() : ""}
+              ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
             `
           );
 
@@ -103,11 +103,13 @@
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            player.sponsor_logo
+              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              : ""
           );
         }
-      });
-    });
+      }
+    }
 
     SetInnerHtml(
       $(".tournament_name"),
@@ -122,22 +124,5 @@
       phaseTexts.push(`${data.score.best_of_text}`.toUpperCase());
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-
-    $(".container div:has(>.text:empty)").css("margin-right", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
-    $(".container div:has(>.text:empty)").css("margin-left", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+  };
+});

@@ -1,27 +1,11 @@
-(($) => {
-  var ASSET_CONFIG = {
-    default: {
-      asset: "full",
-      zoom: 2,
-    },
-    ssbu: {
-      asset: "full",
-      zoom: 2,
-    },
-  };
-
-  var ASSET_TO_USE = {};
-
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
-
-  var data = {};
-  var oldData = {};
+  };
 
   var entryAnim = gsap.timeline();
   var animations = {};
@@ -75,38 +59,61 @@
     }
 
     if (animations[roundKey][setIndex]) {
-      if (
-        (set.playerId[0] == -2 && set.playerId[1] == -2) ||
-        (set.playerId[0] == -1 && set.playerId[1] != -1) ||
-        (set.playerId[0] != -1 && set.playerId[1] == -1) ||
-        (progressionsOut == 0 &&
+      if (window.ALWAYS_EXPAND) {
+        // Hide incomplete sets (-1), but not pending (-2)
+        if (
+          (set.playerId[0] == -1 && set.playerId[1] != -1) ||
+          (set.playerId[0] != -1 && set.playerId[1] == -1)
+        ) {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        }
+
+        if (!isGf && !isGfR)
+          return animations[roundKey][setIndex].tweenTo("done");
+
+        if (isGf) {
+          if (set.score[0] >= set.score[1] || !set.completed) {
+            return animations[roundKey][setIndex].tweenTo("displayed");
+          } else {
+            return animations[roundKey][setIndex].tweenTo("done");
+          }
+        }
+
+        if (
+          progressionsOut == 0 &&
           isGfR &&
-          bracket[GfResetRoundNum - 1].sets[0].score[0] >
-            bracket[GfResetRoundNum - 1].sets[0].score[1])
-      ) {
-        return animations[roundKey][setIndex].tweenTo("hidden");
-      } else if (!set.completed || (isGf && set.score[0] >= set.score[1])) {
-        return animations[roundKey][setIndex].tweenTo("displayed");
+          bracket[GfResetRoundNum - 1].sets[0].score[0] <
+            bracket[GfResetRoundNum - 1].sets[0].score[1] &&
+          bracket[GfResetRoundNum - 1].sets[0].completed
+        ) {
+          return animations[roundKey][setIndex].tweenTo("displayed");
+        } else {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        }
       } else {
-        return animations[roundKey][setIndex].tweenTo("done");
+        if (
+          (set.playerId[0] == -2 && set.playerId[1] == -2) ||
+          (set.playerId[0] == -1 && set.playerId[1] != -1) ||
+          (set.playerId[0] != -1 && set.playerId[1] == -1) ||
+          (progressionsOut == 0 &&
+            isGfR &&
+            bracket[GfResetRoundNum - 1].sets[0].score[0] >
+              bracket[GfResetRoundNum - 1].sets[0].score[1])
+        ) {
+          return animations[roundKey][setIndex].tweenTo("hidden");
+        } else if (!set.completed || (isGf && set.score[0] >= set.score[1])) {
+          return animations[roundKey][setIndex].tweenTo("displayed");
+        } else {
+          return animations[roundKey][setIndex].tweenTo("done");
+        }
       }
     }
     return null;
   }
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
-
-    if (data.game) {
-      if (data.game.codename) {
-        if (ASSET_CONFIG[data.game.codename]) {
-          ASSET_TO_USE = ASSET_CONFIG[data.game.codename];
-        } else {
-          ASSET_TO_USE = ASSET_CONFIG["default"];
-        }
-      }
-    }
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.bracket ||
@@ -123,7 +130,14 @@
 
       let biggestRound = Math.max.apply(
         null,
-        Object.values(bracket).map((r) => Object.keys(r.sets).length)
+        Object.values(bracket).map((r) => {
+          const setMap = Object.values(r.sets).map((s) => {
+            return s.playerId[0] == -1 || s.playerId[1] == -1 ? 0 : 1;
+          });
+          return setMap.reduce(function (result, item) {
+            return result + item;
+          }, 0);
+        })
       );
 
       let size = 32;
@@ -139,7 +153,7 @@
         size -= 1;
         $(":root").css("--player-height", size);
       }
-      $(":root").css("--name-size", Math.min(size - size * 0.3, 16));
+      $(":root").css("--name-size", Math.min(size - size * 0.4, 16));
       $(":root").css("--score-size", size - size * 0.3);
       $(":root").css("--flag-height", size - size * 0.4);
 
@@ -302,7 +316,7 @@
                           (slotElement.offset().left +
                             slotElement.outerWidth())) /
                           2,
-                      winElement.offset().top + slotElement.outerHeight() / 2,
+                      winElement.offset().top + winElement.outerHeight() / 2,
                     ],
                     [
                       winElement.offset().left,
@@ -494,7 +508,7 @@
                   } .slot_p_${p}.container .score`
                 ),
                 `
-                  ${score == -1 ? "DQ" : score}
+                  ${slot.completed ? (score == -1 ? "DQ" : score) : ""}
                 `
               );
             },
@@ -538,14 +552,16 @@
       });
 
       // UPDATE PLAYER DATA
-      Object.entries(bracket).forEach(function ([roundKey, round], r) {
-        Object.values(round.sets).forEach((set, setIndex) => {
-          set.playerId.forEach((pid, index) => {
+      for (const [roundKey, round] of Object.entries(bracket)) {
+        for (const [setIndex, set] of Object.entries(round.sets)) {
+          for (const [index, pid] of set.playerId.entries()) {
             let element = $(
-              `.round_${roundKey} .slot_${setIndex + 1} .slot_p_${index}`
+              `.round_${roundKey} .slot_${
+                parseInt(setIndex) + 1
+              } .slot_p_${index}`
             ).get(0);
 
-            if (!element) return;
+            if (!element) continue;
 
             let team = players[pid];
 
@@ -560,7 +576,7 @@
               SetInnerHtml($(element).find(`.twitter`), "");
               SetInnerHtml($(element).find(`.sponsor-container`), "");
 
-              return;
+              continue;
             }
 
             if (Object.values(team.player).length == 1) {
@@ -576,7 +592,7 @@
                     <span class="sponsor">
                       ${player && player.team ? player.team : ""}
                     </span>
-                    ${player ? player.name : ""}
+                    ${player ? await Transcript(player.name) : ""}
                   </span>
                 `
               );
@@ -595,68 +611,13 @@
                   : ""
               );
 
-              let charactersHtml = "";
-
-              let playerChanged =
-                _.get(
-                  oldData,
-                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-                ) != pid;
-
-              let charactersChanged =
-                JSON.stringify(
-                  _.get(
-                    oldData,
-                    `bracket.players.slot.${pid}.player.${1}.character`
-                  )
-                ) != JSON.stringify(player.character);
-
-              if (playerChanged || charactersChanged) {
-                Object.values(player.character).forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE.asset]) {
-                    charactersHtml += `
-                      <div class="icon stockicon">
-                          <div
-                            style='background-image: url(../../${
-                              character.assets[ASSET_TO_USE.asset].asset
-                            })'
-                            data-asset='${JSON.stringify(
-                              character.assets[ASSET_TO_USE.asset]
-                            )}'
-                            data-zoom='${ASSET_TO_USE.zoom}'
-                          >
-                          </div>
-                      </div>
-                      `;
-                  }
-                });
-
-                SetInnerHtml(
-                  $(element).find(`.character_container`),
-                  charactersHtml,
-                  undefined,
-                  0.5,
-                  () => {
-                    $(element)
-                      .find(`.character_container .icon.stockicon div`)
-                      .each((e, i) => {
-                        if (
-                          player &&
-                          player.character[1] &&
-                          player.character[1].assets[ASSET_TO_USE.asset] != null
-                        ) {
-                          CenterImage(
-                            $(i),
-                            $(i).attr("data-asset"),
-                            $(i).attr("data-zoom"),
-                            { x: 0.5, y: 0.5 },
-                            $(i).parent().parent()
-                          );
-                        }
-                      });
-                  }
-                );
-              }
+              await CharacterDisplay(
+                $(element).find(`.character_container`),
+                {
+                  source: `bracket.players.slot.${pid}`,
+                },
+                event
+              );
 
               SetInnerHtml(
                 $(element).find(`.sponsor_icon`),
@@ -700,11 +661,13 @@
 
               if (!teamName || teamName == "") {
                 let names = [];
-                Object.values(team.player).forEach((player, p) => {
+                for (const [p, player] of Object.values(
+                  team.player
+                ).entries()) {
                   if (player) {
-                    names.push(player.name);
+                    names.push(await Transcript(player.name));
                   }
-                });
+                }
                 teamName = names.join(" / ");
               }
 
@@ -720,78 +683,14 @@
               SetInnerHtml($(element).find(`.flagcountry`), "");
               SetInnerHtml($(element).find(`.flagstate`), "");
 
-              let currCharacters = [];
-
-              Object.values(team.player).forEach((player, p) => {
-                if (_.get(player, "character.1")) {
-                  currCharacters.push(_.get(player, "character.1"));
-                }
-              });
-
-              let oldCharacters = [];
-
-              Object.values(team.player).forEach((player, p) => {
-                if (
-                  _.get(
-                    oldData,
-                    `bracket.players.slot.${pid}.player.${p + 1}.character.1`
-                  )
-                ) {
-                  oldCharacters.push(_.get(player, "character.1"));
-                }
-              });
-
-              let charactersHtml = "";
-
-              let playerChanged =
-                _.get(
-                  oldData,
-                  `bracket.bracket.rounds.${roundKey}.sets.${setIndex}.playerId.${index}`
-                ) != pid;
-
-              let charactersChanged =
-                JSON.stringify(oldCharacters) != JSON.stringify(currCharacters);
-
-              if (playerChanged || charactersChanged) {
-                currCharacters.forEach((character, index) => {
-                  if (character.assets[ASSET_TO_USE.asset]) {
-                    charactersHtml += `
-                        <div class="icon stockicon">
-                            <div
-                              style='background-image: url(../../${
-                                character.assets[ASSET_TO_USE.asset].asset
-                              })'
-                              data-asset='${JSON.stringify(
-                                character.assets[ASSET_TO_USE.asset]
-                              )}'
-                              data-zoom='${ASSET_TO_USE.zoom}'
-                            >
-                            </div>
-                        </div>
-                        `;
-                  }
-                });
-
-                SetInnerHtml(
-                  $(element).find(`.character_container`),
-                  charactersHtml,
-                  undefined,
-                  0.5,
-                  () => {
-                    $(element)
-                      .find(`.character_container .icon.stockicon div`)
-                      .each((e, i) => {
-                        CenterImage(
-                          $(i),
-                          $(i).attr("data-asset"),
-                          $(i).attr("data-zoom"),
-                          { x: 0.5, y: 0.4 },
-                          $(i).parent().parent()
-                        );
-                      });
-                  }
-                );
-              }
+              await CharacterDisplay(
+                $(element).find(`.character_container`),
+                {
+                  slice_character: [0, 1],
+                  source: `bracket.players.slot.${pid}`,
+                },
+                event
+              );
 
               SetInnerHtml($(element).find(`.sponsor_icon`), "");
               SetInnerHtml($(element).find(`.avatar`), "");
@@ -799,26 +698,14 @@
               SetInnerHtml($(element).find(`.twitter`), "");
               SetInnerHtml($(element).find(`.sponsor-container`), "");
             }
-          });
-        });
-      });
+          }
+        }
+      }
 
       SetInnerHtml($(`.tournament_name`), data.tournamentInfo.tournamentName);
       SetInnerHtml($(`.event_name`), data.tournamentInfo.eventName);
       SetInnerHtml($(`.bracket_name`), data.bracket.phase);
       SetInnerHtml($(`.pool_name`), data.bracket.phaseGroup);
     }
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1000, 1000, async () => {
-      Start();
-      setInterval(Update, 16);
-    });
-  });
-})(jQuery);
+  };
+});

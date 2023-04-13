@@ -30,6 +30,10 @@ body {
   height: 100%;
 }
 
+.container.vertical {
+  flex-direction: column;
+}
+
 .icon {
   background-size: cover;
   background-position: center;

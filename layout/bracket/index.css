@@ -76,11 +76,11 @@ body {
   justify-content: center;
   align-content: center;
   width: 100vw;
-  height: calc(50vh - var(--title-size));
+  height: calc(60vh - var(--title-size));
   position: absolute;
   top: calc(0% + var(--title-size));
-  padding-left: 150px;
-  padding-right: 150px;
+  padding-left: 80px;
+  padding-right: 80px;
   box-sizing: border-box;
   padding-top: 30px;
   justify-content: center;
@@ -103,11 +103,11 @@ body {
   justify-content: center;
   align-content: center;
   width: 100vw;
-  height: 50vh;
+  height: 40vh;
   position: absolute;
-  top: 50%;
-  padding-left: 150px;
-  padding-right: 150px;
+  top: 60vh;
+  padding-left: 80px;
+  padding-right: 80px;
   box-sizing: border-box;
   padding-top: 30px;
   justify-content: center;
@@ -267,7 +267,7 @@ body {
   background-position: center;
   width: var(--flag-height);
   height: calc(var(--flag-height) * 0.7px);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .sponsor_icon > div > div {

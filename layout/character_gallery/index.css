@@ -11,6 +11,10 @@ body {
   margin: 0;
 }
 
+.tsh_character {
+  position: absolute;
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;

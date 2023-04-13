@@ -36,7 +36,7 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
     def save(self, finished):
         if finished:
             self.timer = QtCore.QTimer()
-            self.timer.singleShot(5000, self.saveScreenshot)
+            self.timer.singleShot(8000, self.saveScreenshot)
         else:
             print("Error")
     

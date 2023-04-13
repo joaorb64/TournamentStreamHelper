@@ -1,15 +1,11 @@
-(($) => {
-  let ASSET_TO_USE = "full";
-  let ZOOM = 1;
-  let FLIP_P2_ASSET = true;
-
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
     .from(
-      [".anim_container_outer"],
+      [".floating .anim_container_outer"],
       {
         duration: 1,
         width: "0",
@@ -18,76 +14,29 @@
       1
     )
     .from(
-      [".base_container_outer"],
+      [".floating .base_container_outer"],
       {
         duration: 1,
         width: 0,
         ease: "power2.inOut",
       },
       1
-    )
-    .from(
-      [".fgc .top", ".fgc .player"],
-      {
-        duration: 1,
-        y: "-100px",
-        ease: "power2.inOut",
-      },
-      0
-    )
-    .from(
-      [".fgc:not(.bblue) .bottom"],
-      {
-        duration: 1,
-        y: "+100px",
-        ease: "power2.inOut",
-      },
-      0
-    )
-    .from(
-      [".fgc.bblue .bottom"],
-      {
-        duration: 1,
-        autoAlpha: 0,
-        ease: "power2.inOut",
-      },
-      0.2
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
-
-    if (data.game) {
-      if (data.game.codename == "ssbu") {
-        ASSET_TO_USE = "mural_art";
-        ZOOM = 0.8;
-        FLIP_P2_ASSET = true;
-      } else if (data.game.codename == "ssbm") {
-        ASSET_TO_USE = "full";
-        ZOOM = 2.4;
-        FLIP_P2_ASSET = true;
-      } else if (data.game.codename == "ssb64") {
-        ASSET_TO_USE = "artwork";
-        ZOOM = 1.6;
-        FLIP_P2_ASSET = true;
-      } else {
-        ASSET_TO_USE = "full";
-        ZOOM = 1.5;
-        FLIP_P2_ASSET = true;
-      }
-    }
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (Object.keys(data.score.team["1"].player).length == 1) {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-        [team.player["1"]].forEach((player, p) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -106,7 +55,7 @@
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
-                ${player.name}
+                ${await Transcript(player.name)}
                 ${
                   t == 0
                     ? `
@@ -118,6 +67,28 @@
                 }
                 ${team.losers ? "<span class='losers'>L</span>" : ""}
               `
+            );
+
+            let teamMultiplyier = t == 0 ? 1 : -1;
+
+            await CharacterDisplay(
+              $(`.p${t + 1}.character_container`),
+              {
+                source: `score.team.${t + 1}`,
+                anim_out: {
+                  autoAlpha: 0,
+                  x: -20 * teamMultiplyier + "px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+                anim_in: {
+                  autoAlpha: 1,
+                  x: "0px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+              },
+              event
             );
 
             SetInnerHtml(
@@ -133,51 +104,6 @@
                 ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
                 : ""
             );
-
-            if (
-              !oldData.score ||
-              JSON.stringify(player.character) !=
-                JSON.stringify(
-                  oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                )
-            ) {
-              let charactersHtml = "";
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets[ASSET_TO_USE]) {
-                  charactersHtml += `
-                    <div class="icon stockicon">
-                        <div style='
-                          ${
-                            t == 1 && FLIP_P2_ASSET
-                              ? "transform: scaleX(-1);"
-                              : ""
-                          }
-                          background-image: url(../../${
-                            character.assets[ASSET_TO_USE].asset
-                          })'></div>
-                    </div>
-                    `;
-                }
-              });
-              SetInnerHtml(
-                $(`.p${t + 1}.character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(`.p${t + 1}.character_container .stockicon div`).each(
-                    (i, e) => {
-                      CenterImage(
-                        $(e),
-                        Object.values(player.character)[i].assets[ASSET_TO_USE],
-                        ZOOM,
-                        { x: 0.5, y: 0.4 }
-                      );
-                    }
-                  );
-                }
-              );
-            }
 
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
@@ -216,23 +142,48 @@
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
           }
-        });
-      });
+        }
+      }
     } else {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
-            if (player) {
-              names.push(player.name);
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player && player.name) {
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
         }
+
+        let teamMultiplyier = t == 0 ? 1 : -1;
+
+        await CharacterDisplay(
+          $(`.p${t + 1}.character_container`),
+          {
+            source: `score.team.${t + 1}`,
+            anim_out: {
+              autoAlpha: 0,
+              x: -20 * teamMultiplyier + "px",
+              stagger: teamMultiplyier * 0.2,
+              duration: 0.4,
+            },
+            anim_in: {
+              autoAlpha: 1,
+              x: "0px",
+              stagger: teamMultiplyier * 0.2,
+              duration: 0.4,
+            },
+          },
+          event
+        );
 
         SetInnerHtml(
           $(`.p${t + 1}.container .name`),
@@ -253,49 +204,6 @@
           $(`.p${t + 1}.container .flagstate`),
           player.state.asset ? `` : ""
         );
-
-        let oldCharacters = oldData.score
-          ? Object.values(oldData.score.team[`${t + 1}`].player)
-              .map((p) => Object.values(p.character))
-              .map((p) => p[0])
-          : null;
-
-        let characters = Object.values(team.player)
-          .map((p) => Object.values(p.character))
-          .map((p) => p[0]);
-
-        if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
-          let charactersHtml = "";
-          characters.forEach((character, index) => {
-            if (character.assets[ASSET_TO_USE]) {
-              charactersHtml += `
-                <div class="icon stockicon">
-                    <div style='
-                      ${t == 1 && FLIP_P2_ASSET ? "transform: scaleX(-1);" : ""}
-                      background-image: url(../../${
-                        character.assets[ASSET_TO_USE].asset
-                      })'></div>
-                </div>
-                `;
-            }
-          });
-          SetInnerHtml(
-            $(`.p${t + 1}.character_container`),
-            charactersHtml,
-            undefined,
-            0.5,
-            () => {
-              $(`.p${t + 1}.character_container .stockicon div`).each(
-                (i, e) => {
-                  CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM, {
-                    x: 0.5,
-                    y: 0.4,
-                  });
-                }
-              );
-            }
-          );
-        }
 
         SetInnerHtml(
           $(`.p${t + 1}.container .sponsor_icon`),
@@ -327,7 +235,7 @@
           $(`.p${t + 1}.container .sponsor-container`),
           `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
         );
-      });
+      }
     }
 
     SetInnerHtml(
@@ -335,26 +243,11 @@
       data.tournamentInfo.tournamentName + " - " + data.tournamentInfo.eventName
     );
 
-    let phaseTexts = [];
-
     SetInnerHtml($(".phase"), data.score.phase);
     SetInnerHtml($(".match"), data.score.match);
     SetInnerHtml(
       $(".best_of"),
       data.score.best_of_text ? data.score.best_of_text : ""
     );
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Update();
-      Start();
-      setInterval(Update, 100);
-    });
-  });
-})(jQuery);
+  };
+});

@@ -57,27 +57,16 @@ body {
   align-items: center;
 }
 
-.p1.container > div:not(:last-child) {
-  margin-right: 8px;
-}
-
-.p1.container > div:first-child {
-  margin-left: 8px;
-}
-
-.p2.container > div:not(:last-child) {
-  margin-left: 8px;
-}
-
-.p2.container > div:first-child {
-  margin-right: 8px;
-}
-
 .player.container {
   width: 500px;
   height: 64px;
   top: 42px;
-  padding: 8px 8px;
+  padding: 0px 6px;
+}
+
+.player.container > div:not(.score) > .text:not(.text_empty) {
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .fgc .player.container {
@@ -136,6 +125,11 @@ body {
   right: 164px;
 }
 
+.thin .player.container {
+  padding: 0 2px;
+}
+
+.name,
 .name_twitter {
   display: flex;
   width: 100%;
@@ -146,6 +140,46 @@ body {
   padding-right: 8px;
   box-sizing: border-box;
   max-width: 100%;
+  font-size: 30px;
+}
+
+.chips {
+  display: flex;
+  position: absolute;
+  top: 112px;
+  width: 500px;
+  height: 24px;
+  justify-content: right;
+  align-content: center;
+  overflow: hidden;
+}
+
+.chip {
+  overflow: hidden;
+  border-radius: calc(var(--border-radius) / 2);
+}
+
+.p1.chips {
+  left: 380px;
+}
+
+.p2.chips {
+  flex-direction: row-reverse;
+  left: 1040px;
+  justify-content: left;
+}
+
+.chip .text:not(.text_empty) {
+  margin-left: 4px;
+  margin-right: 4px;
+  height: 24px;
+  font-size: 18px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 2);
+  min-width: unset;
 }
 
 .fgc .name_twitter {
@@ -174,17 +208,15 @@ body {
 }
 
 .name_twitter {
-  overflow: hidden;
   max-width: 100%;
 }
 
 .name_twitter .extra {
   display: flex;
-  overflow: hidden;
-  gap: 2px;
   justify-content: center;
+  width: 40%;
+  font-size: 18px;
   overflow: hidden;
-  max-width: 100%;
 }
 
 .p2 .extra {
@@ -192,14 +224,16 @@ body {
 }
 
 .fgc .name_twitter .extra {
-  width: 38%;
   flex-direction: column;
 }
 
 .name_twitter .twitter {
   font-size: 18px;
   max-width: 100%;
-  overflow: hidden;
+}
+
+.extra .pronoun {
+  width: 100%;
 }
 
 .fgc .p1 .name_twitter .twitter .text {
@@ -224,9 +258,13 @@ body {
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   background: var(--text-color);
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.chips .twitter_logo {
+  margin-left: -4px;
 }
 
 .light .twitter_logo {
@@ -306,7 +344,6 @@ body {
   font-size: 22px;
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 .fgc .info.container.top {
@@ -364,14 +401,18 @@ body {
   bottom: unset;
 }
 
-.icon {
+.icon,
+.flagcountry,
+.flagstate {
+  display: flex;
+  justify-content: center;
+}
+
+.icon .text:not(.text_empty) {
   flex-shrink: 0;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  background-color: #3f3f46;
 }
 
 .thin .icon {
@@ -385,6 +426,17 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-color: #3f3f46;
+  border-radius: var(--border-radius);
+}
+
+.tsh_character {
+  background-color: #3f3f46;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.icon div:not(.text) {
+  border-radius: calc(var(--border-radius) * 2 / 3);
 }
 
 .fgc.thin .icon div:not(.text) {
@@ -403,13 +455,14 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 32px;
-  height: 22px;
-  border-radius: 6px;
+  width: 36px;
+  height: 24px;
+  border-radius: 4px;
 }
 
-.ssbu .flagstate .text div {
-  margin-top: 4px;
+.chips .flag {
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .sponsor_icon > div > div {
@@ -432,11 +485,15 @@ body {
   overflow: hidden;
   height: 100%;
   flex-shrink: 0;
+  width: auto;
+  align-items: center;
+  gap: 4px;
 }
 
 .character_container > div {
   overflow: hidden;
   height: 48px;
+  width: 48px;
 }
 
 .fgc.thin .character_container > div {
@@ -454,10 +511,6 @@ body {
   align-items: center;
 }
 
-.character_container > div > div:not(:last-child) {
-  margin-right: 4px;
-}
-
 .score {
   width: 64px;
   height: 64px;
@@ -466,7 +519,6 @@ body {
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
-  margin-right: -8px;
 }
 
 .fgc.thin .score {
@@ -474,23 +526,16 @@ body {
   width: 48px;
 }
 
-.pronoun {
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: normal;
-  padding-left: 6px;
-  padding-right: 6px;
-  border-radius: 6px;
-  color: var(--bg-color);
-  align-self: center;
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
 .p1 .score {
   color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
+  margin-right: -6px;
+  margin-left: 6px;
+}
+
+.thin .p1 .score {
+  margin-right: -2px;
+  margin-left: 2px;
 }
 
 .sponsor {
@@ -501,23 +546,20 @@ body {
   color: var(--p1-sponsor-color);
 }
 
-.p1 .pronoun {
-  background-color: var(--p1-sponsor-color);
-}
-
 .p2 .score {
   color: var(--p2-score-color);
-  margin-left: -8px;
-  margin-right: 0;
   background: var(--p2-score-bg-color);
+  margin-left: -6px;
+  margin-right: 6px;
+}
+
+.thin .p2 .score {
+  margin-left: -2px;
+  margin-right: 2px;
 }
 
 .p2 .sponsor {
   color: var(--p2-sponsor-color);
-}
-
-.p2 .pronoun {
-  background-color: var(--p2-sponsor-color);
 }
 
 .losers {

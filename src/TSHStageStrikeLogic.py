@@ -1,12 +1,12 @@
 from .StateManager import StateManager
+from copy import deepcopy
 
-class TSHStageStrikeLogic():
+class TSHStageStrikeState:
     def __init__(self) -> None:
-        self.ruleset: "Ruleset" = None
         self.currGame = 0
         self.currPlayer = -1
         self.currStep = 0
-        self.strikedStages = []
+        self.strikedStages = [[]]
         self.strikedBy = [[], []]
         self.stagesWon = [[], []]
         self.stagesPicked = []
@@ -18,18 +18,60 @@ class TSHStageStrikeLogic():
         self.bestOf = None
         self.timestamp = 0
         self.serverTimestamp = 0
+        self.gentlemans = False
+    
+    def Clone(self):
+        clone = TSHStageStrikeState()
+        clone.__dict__ = deepcopy(self.__dict__)
+        return clone
+
+class TSHStageStrikeLogic():
+    def __init__(self) -> None:
+        self.ruleset: "Ruleset" = None
+        self.history: list(TSHStageStrikeState) = [TSHStageStrikeState()]
+        self.historyIndex = 0
+    
+    def AddHistory(self, state, justOverwrite=False):
+        self.history = self.history[:self.historyIndex+1]
+
+        if justOverwrite:
+            self.history[self.historyIndex] = state
+        else:
+            self.history.append(state)
+            self.historyIndex += 1
+
+        if len(self.history) > 10:
+            self.history.pop(0)
+            self.historyIndex -= 1
+        
+        self.ExportState()
+    
+    def Undo(self):
+        self.historyIndex -= 1
+        if self.historyIndex < 0:
+            self.historyIndex = 0
+        self.ExportState()
+    
+    def Redo(self):
+        self.historyIndex += 1
+        if self.historyIndex > len(self.history) - 1:
+            self.historyIndex = len(self.history) - 1
+        self.ExportState()
     
     def ExportState(self):
         StateManager.Set("score.stage_strike", {
-            "currGame": self.currGame,
-            "currPlayer": self.currPlayer,
-            "currStep": self.currStep,
-            "strikedStages": self.strikedStages,
-            "strikedBy": self.strikedBy,
-            "stagesWon": self.stagesWon,
-            "stagesPicked": self.stagesPicked,
-            "selectedStage": self.selectedStage,
-            "lastWinner": self.lastWinner
+            "currGame": self.CurrentState().currGame,
+            "currPlayer": self.CurrentState().currPlayer,
+            "currStep": self.CurrentState().currStep,
+            "strikedStages": self.CurrentState().strikedStages,
+            "strikedBy": self.CurrentState().strikedBy,
+            "stagesWon": self.CurrentState().stagesWon,
+            "stagesPicked": self.CurrentState().stagesPicked,
+            "selectedStage": self.CurrentState().selectedStage,
+            "lastWinner": self.CurrentState().lastWinner,
+            "gentlemans": self.CurrentState().gentlemans,
+            "canUndo": self.historyIndex > 0,
+            "canRedo": self.historyIndex < len(self.history) - 1
         })
 
     def SetRuleset(self, ruleset):
@@ -38,31 +80,24 @@ class TSHStageStrikeLogic():
     
     def Initialize(self, resetStreamScore = False):
         print("Initialize")
-        self.currGame = 0
-        self.currPlayer = -1
-        self.currStep = 0
-        self.strikedStages = [[]]
-        self.strikedBy = [[], []]
-        self.stagesWon = [[], []]
-        self.stagesPicked = []
-        self.selectedStage = None
-        self.lastWinner = -1
-        self.serverTimestamp = 0
-
+        self.AddHistory(TSHStageStrikeState())
         self.ExportState()
-
-        # if (resetStreamScore) this.ResetStreamScore();
+    
+    def CurrentState(self) -> TSHStageStrikeState:
+        return self.history[self.historyIndex]
     
     def RpsResult(self, player):
         print("RPS won by", player)
-        self.currPlayer = player
-        self.ExportState()
+        newState = self.CurrentState().Clone()
+        newState.lastWinner = player
+        newState.currPlayer = player
+        self.AddHistory(newState)
     
     def IsStageStriked(self, stage, previously = False):
-        for i in range(len(self.strikedStages)):
-            if i == len(self.strikedStages) - 1 and previously:
+        for i in range(len(self.CurrentState().strikedStages)):
+            if i == len(self.CurrentState().strikedStages) - 1 and previously:
                 continue
-            round = self.strikedStages[i]
+            round = self.CurrentState().strikedStages[i]
             if stage in round:
                 return True
         return False
@@ -71,9 +106,9 @@ class TSHStageStrikeLogic():
         banList = [];
 
         if self.ruleset.useDSR:
-            banList = self.stagesPicked
-        elif self.ruleset.useMDSR and self.lastWinner != -1:
-            banList = self.stagesWon[(self.lastWinner + 1) % 2]
+            banList = self.CurrentState().stagesPicked
+        elif self.ruleset.useMDSR and self.CurrentState().lastWinner != -1:
+            banList = self.CurrentState().stagesWon[(self.CurrentState().lastWinner + 1) % 2]
 
         return banList
     
@@ -87,87 +122,110 @@ class TSHStageStrikeLogic():
     
     def GetStrikeNumber(self):
         # For game 1, follow strike order (1, 2, 1...)
-        if self.currGame == 0:
-            return self.ruleset.strikeOrder[self.currStep]
+        if self.CurrentState().currGame == 0:
+            return self.ruleset.strikeOrder[self.CurrentState().currStep]
         # For other games
         else:
             # Fixed ban count
             if self.ruleset.banCount != 0:
                 return self.ruleset.banCount
             # Ban by max games
-            elif self.ruleset.banByMaxGames and str(self.bestOf) in self.ruleset.banByMaxGames:
-                return self.ruleset.banByMaxGames[str(self.bestOf)]
+            elif self.ruleset.banByMaxGames and str(self.CurrentState().bestOf) in self.ruleset.banByMaxGames:
+                return self.ruleset.banByMaxGames[str(self.CurrentState().bestOf)]
             else:
                 return 0
 
     def StageClicked(self, stage):
         print("Clicked on stage", stage.get("codename"))
 
-        if self.currGame > 0 and self.currStep > 0:
+        if (self.CurrentState().currGame > 0 and self.CurrentState().currStep > 0) or self.CurrentState().gentlemans:
             # we're picking
-            if not self.IsStageBanned(stage.get("codename")) and not self.IsStageStriked(stage.get("codename")):
-                self.selectedStage = stage.get("codename")
+            if (not self.IsStageBanned(stage.get("codename")) and not self.IsStageStriked(stage.get("codename"))) or self.CurrentState().gentlemans:
+                newState = self.CurrentState().Clone()
+                newState.selectedStage = stage.get("codename")
                 print("Stage picked")
-                self.ExportState()
+                self.AddHistory(newState)
         elif not self.IsStageStriked(stage.get("codename"), True) and not self.IsStageBanned(stage.get("codename")):
             # we're banning
-            foundIndex = next((i for i, e in enumerate(self.strikedStages[self.currStep]) if e == stage.get("codename")), None)
+            foundIndex = next((i for i, e in enumerate(self.CurrentState().strikedStages[self.CurrentState().currStep]) if e == stage.get("codename")), None)
             
             if foundIndex == None:
-                if len(self.strikedStages[self.currStep]) < self.GetStrikeNumber():
-                    self.strikedStages[self.currStep].append(stage.get("codename"));
-                    self.strikedBy[self.currPlayer].append(stage.get("codename"));
+                if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) < self.GetStrikeNumber():
                     print("Stage banned")
-                    self.ExportState()
+                    newState = self.CurrentState().Clone()
+                    newState.strikedStages[newState.currStep].append(stage.get("codename"));
+                    newState.strikedBy[newState.currPlayer].append(stage.get("codename"));
+                    self.AddHistory(newState)
             else:
-                self.strikedStages[self.currStep].pop(foundIndex)
+                print("Stage unbanned")
 
-                foundIndex = next((i for i, e in enumerate(self.strikedBy[self.currPlayer]) if e == stage.get("codename")), None)
+                newState = self.CurrentState().Clone()
+                newState.strikedStages[newState.currStep].pop(foundIndex)
+
+                foundIndex = next((i for i, e in enumerate(newState.strikedBy[newState.currPlayer]) if e == stage.get("codename")), None)
 
                 if foundIndex != None:
-                    self.strikedBy[self.currPlayer].pop(foundIndex)
-                    print("Stage unbanned")
-                    self.ExportState()
+                    newState.strikedBy[newState.currPlayer].pop(foundIndex)
+                    self.AddHistory(newState)
     
-    def ConfirmClicked(self):
+    def ConfirmClicked(self, justOverwrite=False):
         # For first game, user should have banned the correct number of stages before confirming
-        if self.currGame == 0:
-            if len(self.strikedStages[self.currStep]) == self.ruleset.strikeOrder[self.currStep]:
-                self.currStep += 1
-                self.currPlayer = (self.currPlayer + 1) % 2
-                self.strikedStages.append([])
+        if self.CurrentState().currGame == 0:
+            if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) == self.ruleset.strikeOrder[self.CurrentState().currStep]:
+                newState = self.CurrentState().Clone()
+                newState.currStep += 1
+                newState.currPlayer = (newState.currPlayer + 1) % 2
+                newState.strikedStages.append([])
+                self.AddHistory(newState, justOverwrite=justOverwrite)
         # For other games, user should have banned the correct bancount
         else:
-            if len(self.strikedStages[self.currStep]) == self.ruleset.banCount:
-                self.currStep += 1;
-                self.currPlayer = (self.currPlayer + 1) % 2;
-                self.strikedStages.append([])
+            if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) == self.ruleset.banCount:
+                newState = self.CurrentState().Clone()
+                newState.currStep += 1
+                newState.currPlayer = (newState.currPlayer + 1) % 2
+                newState.strikedStages.append([])
+                self.AddHistory(newState, justOverwrite=justOverwrite)
         
         # For first game, when no more stages are available we know the remaining one is the picked stage
-        if self.currGame == 0 and self.currStep >= len(self.ruleset.strikeOrder):
+        if self.CurrentState().currGame == 0 and self.CurrentState().currStep >= len(self.ruleset.strikeOrder):
+            newState = self.CurrentState().Clone()
             selectedStage = next((stage for stage in self.ruleset.neutralStages if not self.IsStageStriked(stage.get("codename"))), None)
-            self.selectedStage = selectedStage.get("codename")
-            self.stagesPicked.append(selectedStage.get("codename"))
-
-        self.ExportState()
+            newState.selectedStage = selectedStage.get("codename")
+            newState.stagesPicked.append(selectedStage.get("codename"))
+            self.AddHistory(newState, justOverwrite=True)
     
     def MatchWinner(self, id):
-        self.currGame += 1
-        self.currStep = 0
+        newState = self.CurrentState().Clone()
+        newState.currGame += 1
+        newState.currStep = 0
 
-        self.stagesWon[id].append(self.selectedStage)
-        self.stagesPicked.append(self.selectedStage)
+        newState.stagesWon[id].append(newState.selectedStage)
+        newState.stagesPicked.append(newState.selectedStage)
 
-        self.currPlayer = id
-        self.strikedStages = [[]]
-        self.selectedStage = None
-        self.strikedBy = [[], []]
+        newState.currPlayer = id
+        newState.strikedStages = [[]]
+        newState.selectedStage = None
+        newState.strikedBy = [[], []]
+        newState.gentlemans = False
 
-        self.lastWinner = id
+        newState.lastWinner = id
+
+        self.AddHistory(newState)
 
         # If next step has no bans, skip it
         if self.GetStrikeNumber() == 0:
-            self.ConfirmClicked()
+            self.ConfirmClicked(justOverwrite=True)
+    
+    def SetGentlemans(self, value):
+        print(f"Setting gentlemans to {value}")
+        newState = self.CurrentState().Clone()
 
-        self.ExportState()
-        #self.UpdateStreamScore();
+        newState.gentlemans = value
+
+        newState.currPlayer = newState.lastWinner
+        newState.currStep = 0
+        newState.strikedStages = [[]]
+        newState.strikedBy = [[], []]
+        newState.selectedStage = None
+
+        self.AddHistory(newState)
