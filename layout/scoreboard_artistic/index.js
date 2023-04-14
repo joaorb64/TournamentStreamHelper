@@ -154,7 +154,7 @@ LoadEverything().then(() => {
         if (!team.teamName || team.teamName == "") {
           let names = [];
           for (const [p, player] of Object.values(team.player).entries()) {
-            if (player) {
+            if (player && player.name) {
               names.push(await Transcript(player.name));
             }
           }

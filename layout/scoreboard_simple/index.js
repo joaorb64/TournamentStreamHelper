@@ -28,7 +28,7 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    let isDoubles = Object.keys(data.score.team["1"].player).length == 2;
+    let isTeams = Object.keys(data.score.team["1"].player).length > 1;
 
     if (
       oldData.score == null ||
@@ -99,7 +99,7 @@ LoadEverything().then(() => {
                         ${player.team ? player.team + "" : ""}
                     </span>
                     ${await Transcript(player.name)}
-										${team.losers && !isDoubles ? " [L]" : ""}
+										${team.losers && !isTeams ? " [L]" : ""}
                 </span>
             `
           );
@@ -133,7 +133,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .score`),
-            !isDoubles ? String(team.score) : ""
+            !isTeams ? String(team.score) : ""
           );
 
           SetInnerHtml($(`.t${t + 1} .doubles_score`), String(team.score));

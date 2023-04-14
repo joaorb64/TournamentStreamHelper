@@ -1,6 +1,7 @@
 {
   "assets": {
-    "default": {
+    "default": {},
+    "ssbu": {
       "asset_key": "website"
     },
     "game_codename_example": {
