@@ -11,6 +11,9 @@ LoadEverything().then(() => {
   let newP2Pronoun = "";
   let savedBestOf = 0;
   let savedMatch = "";
+  let firstTime = true;
+
+  let intervalID = "";
 
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -59,8 +62,7 @@ LoadEverything().then(() => {
 
   Start = async () => {
     startingAnimation.restart();
-    matchIntervalID = setInterval(UpdateMatch, 9000);
-    twitterIntervalID = setInterval(UpdateTwitter, 9000);
+    intervalID = setInterval(UpdateTwitterMatch, 9000);
     setInterval(TwitterPronounChecker, 100);
     setInterval(matchChecker, 100);
   };
@@ -110,8 +112,14 @@ LoadEverything().then(() => {
     if (Object.keys(oldData).length == 0) {
       UpdateMatch();
       UpdateTwitter();
+      firstTime = false;
     }
   };
+
+  async function UpdateTwitterMatch() {
+    UpdateTwitter();
+    UpdateMatch();
+  }
 
   async function UpdateMatch() {
     const tournamentContainer = document.querySelector(".tournament_container");
@@ -249,28 +257,25 @@ LoadEverything().then(() => {
           t == 0 &&
           !(p1Twitter == player.twitter && p1Pronoun == player.pronoun)
         ) {
-          clearIntervals();
           refreshNeeded = true;
         } else if (
           t == 1 &&
           !(p2Twitter == player.twitter && p2Pronoun == player.pronoun)
         ) {
-          clearIntervals();
           refreshNeeded = true;
         }
       });
     });
-    if (refreshNeeded) {
+    if (refreshNeeded && !firstTime) {
       UpdateTwitter();
-      twitterIntervalID = setInterval(UpdateTwitter, 9000);
-      matchIntervalID = setInterval(UpdateMatch, 9000);
+      resetIntervals();
     }
     refreshNeeded = false;
+  }
 
-    function clearIntervals() {
-      clearInterval(twitterIntervalID);
-      clearInterval(matchIntervalID);
-    }
+  function resetIntervals() {
+    clearInterval(intervalID);
+    intervalID = setInterval(UpdateTwitterMatch, 9000);
   }
 
   async function matchChecker() {
@@ -279,19 +284,13 @@ LoadEverything().then(() => {
     if (
       !(savedBestOf == data.score.best_of && savedMatch == data.score.match)
     ) {
-      clearIntervals();
       refreshNeeded = true;
     }
 
-    if (refreshNeeded) {
+    if (refreshNeeded && !firstTime) {
       UpdateMatch();
-      twitterIntervalID = setInterval(UpdateTwitter, 9000);
-      matchIntervalID = setInterval(UpdateMatch, 9000);
+      resetIntervals();
     }
     refreshNeeded = false;
-  }
-  function clearIntervals() {
-    clearInterval(twitterIntervalID);
-    clearInterval(matchIntervalID);
   }
 });
