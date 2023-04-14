@@ -1000,31 +1000,31 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="59"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="969"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="794"/>
         <source>Save new player</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="72"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="75"/>
         <source>Delete player entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="85"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="88"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="81"/>
         <location filename="../TSHSelectSetWindow.py" line="83"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="313"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="317"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1111"/>
         <source>Player {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="966"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="791"/>
         <source>Update player</source>
         <translation type="unfinished"></translation>
     </message>
