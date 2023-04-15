@@ -21,7 +21,7 @@ class TSHHotkeys(QObject):
     instance: "TSHHotkeys" = None
     signals = TSHHotkeysSignals()
     parent: QWidget = None
-    shortcuts: list[QShortcut] = []
+    shortcuts = []
 
     keys = {
         "load_set": "Ctrl+O",
