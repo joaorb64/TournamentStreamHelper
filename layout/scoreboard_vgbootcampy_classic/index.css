@@ -95,7 +95,6 @@ body {
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
-  padding: 0 12px;
 }
 
 .p1 .inner_container {
@@ -105,6 +104,7 @@ body {
     var(--p1-sponsor-color) 0%,
     var(--bg-color) 40%
   );
+  padding-right: 12px;
 }
 
 .p2 .inner_container {
@@ -114,6 +114,7 @@ body {
     var(--p2-sponsor-color) 0%,
     var(--bg-color) 40%
   );
+  padding-left: 12px;
 }
 
 .name {
@@ -127,6 +128,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   color: var(--text-color);
+  word-spacing: 2px;
 }
 
 .p1 .name {
@@ -244,6 +246,14 @@ body {
   height: 31px;
 }
 
+.p1 .flag {
+  margin-left: 12px;
+}
+
+.p2 .flag {
+  margin-right: 12px;
+}
+
 .score {
   position: absolute;
   display: flex;
@@ -270,10 +280,6 @@ body {
   right: 827px;
   color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
-}
-
-.sponsor {
-  margin-right: 10px;
 }
 
 .p1 .sponsor {
