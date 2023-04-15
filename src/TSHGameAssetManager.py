@@ -29,7 +29,10 @@ class TSHGameAssetManager(QObject):
         self.characters = {}
         self.selectedGame = {}
         self.stockIcons = {}
+
+        self.characterModel = QStandardItemModel()
         self.skinModels = {}
+
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
         self.assetsLoaderThread = None
@@ -43,7 +46,6 @@ class TSHGameAssetManager(QObject):
         t.start()
         for w in self.workers:
             self.threadpool.start(w)
-            print("count", self.threadpool.activeThreadCount())
 
     def UiMounted(self):
         self.DownloadStartGGCharacters()
@@ -340,13 +342,50 @@ class TSHGameAssetManager(QObject):
                         for s in self.parent().stages.keys():
                             self.parent().stages[s]["name"] = s
 
+                        # Load translations
+                        try:
+                            for c in self.parent().characters.keys():
+                                display_name = c
+                                export_name = c
+                                en_name = c
+
+                                if self.parent().characters[c].get("locale"):
+                                    locale = TSHLocaleHelper.programLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.programLocale)]
+
+                                    locale = TSHLocaleHelper.exportLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.exportLocale)]
+                                    
+                                self.parent().characters[c]["display_name"] = display_name
+                                self.parent().characters[c]["export_name"] = export_name
+                                self.parent().characters[c]["en_name"] = en_name
+                        except:
+                            print(traceback.format_exc())
+
                     StateManager.Set(f"game", {
                         "name": self.parent().selectedGame.get("name"),
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                     })
 
-                    self.parent().LoadSkinOptions()
+                    self.parent().UpdateCharacterModel()
+                    self.parent().UpdateSkinModel()
                     self.parent().signals.onLoad.emit()
                 except:
                     print(traceback.format_exc())
@@ -374,16 +413,47 @@ class TSHGameAssetManager(QObject):
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
     
-    def LoadSkinOptions(self):
-        print([c.get("codename") for c in self.characters.values() if c.get("codename") != None])
+    def UpdateCharacterModel(self):
+        try:
+            self.characterModel = QStandardItemModel()
 
+            # Add one empty
+            item = QStandardItem("")
+            self.characterModel.appendRow(item)
+
+            for c in self.characters.keys():
+                item = QStandardItem()
+                item.setData(c, Qt.ItemDataRole.EditRole)
+                item.setIcon(
+                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]).scaledToWidth(
+                        32,
+                        Qt.TransformationMode.SmoothTransformation
+                    ))
+                )
+
+                data = {
+                    "name": self.characters[c].get("export_name"),
+                    "en_name": c,
+                    "display_name": self.characters[c].get("display_name"),
+                    "codename": self.characters[c].get("codename")
+                }
+
+                if self.characters[c].get("display_name") != c:
+                    item.setData(f'{self.characters[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
+
+                item.setData(data, Qt.ItemDataRole.UserRole)
+                self.characterModel.appendRow(item)
+
+            self.characterModel.sort(0)
+        except:
+            print(traceback.format_exc())
+    
+    def UpdateSkinModel(self):
         self.skinModels = {}
 
         self.workers = []
         
         for key, character in self.characters.items():
-            print(f"Processing {key}")
-
             characterData = character
 
             if characterData:
@@ -417,6 +487,7 @@ class TSHGameAssetManager(QObject):
 
                 try:
                     locale = TSHLocaleHelper.programLocale
+
                     if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
                         skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
                     elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
@@ -435,7 +506,7 @@ class TSHGameAssetManager(QObject):
                 assetData["name"] = skin_name
                 assetData["en_name"] = skin_name_en
 
-                item.setData(skinIndex, Qt.ItemDataRole.EditRole)
+                item.setData(skin_name if skin_name else skinIndex, Qt.ItemDataRole.EditRole)
                 item.setData(assetData, Qt.ItemDataRole.UserRole)
 
                 allItem.append(item)
@@ -446,14 +517,10 @@ class TSHGameAssetManager(QObject):
             self.workers.append(worker)
 
             self.skinModels[key] = skinModel
-        
-        print(self.skinModels)
     
     def DownloadGameIcon(self, allAssetData, allItem, progress_callback):
         try:
             icons = []
-
-            print(len(allAssetData), len(allItem))
 
             for i in range(len(allAssetData)):
                 assetData = allAssetData[i]
@@ -577,8 +644,8 @@ class TSHGameAssetManager(QObject):
 
                 img = img.convert("RGBA")
                 data = img.tobytes("raw","RGBA")
-                iii = QImage(data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
-                pix = QPixmap.fromImage(iii)
+                qimg = QImage(data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+                pix = QPixmap.fromImage(qimg)
                 icon = QIcon(pix)
 
                 icons.append(icon)
@@ -590,13 +657,10 @@ class TSHGameAssetManager(QObject):
 
     def DownloadGameIconComplete(self, results):
         try:
-            QApplication.processEvents()
-            print(results)
             for result in results:
                 if result is not None:
                     if result[0] and result[1]:
                         result[0].setIcon(result[1])
-                        QApplication.processEvents()
         except Exception as e:
             print(traceback.format_exc())
             return(None)
