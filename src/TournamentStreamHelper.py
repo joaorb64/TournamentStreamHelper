@@ -15,6 +15,7 @@ import os
 import unicodedata
 import sys
 import atexit
+import time
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -504,7 +505,8 @@ class Window(QMainWindow):
         StateManager.ReleaseSaving()
 
         if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            self.close()
+            time.sleep(10)
+            exit()
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
