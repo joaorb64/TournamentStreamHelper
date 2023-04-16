@@ -504,10 +504,6 @@ class Window(QMainWindow):
 
         StateManager.ReleaseSaving()
 
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            time.sleep(10)
-            exit()
-
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
@@ -746,8 +742,3 @@ class Window(QMainWindow):
         else:
             App.setStyleSheet(qdarkstyle.load_stylesheet(
                 palette=qdarkstyle.DarkPalette))
-
-
-
-window = Window()
-sys.exit(App.exec_())
