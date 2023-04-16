@@ -49,5 +49,6 @@ tmp/*
 layout_*/
 src/layout/ui_*.py
 layout_*/*
-
+build/main/*
 TSH_old.exe
+main.spec
