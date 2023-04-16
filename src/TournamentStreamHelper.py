@@ -15,6 +15,7 @@ import os
 import unicodedata
 import sys
 import atexit
+import time
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -35,6 +36,7 @@ from .TSHBracketWidget import TSHBracketWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
+from .TSHHotkeys import TSHHotkeys
 from qdarkstyle import palette
 
 
@@ -499,6 +501,7 @@ class Window(QMainWindow):
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
         TSHAssetDownloader.instance.UiMounted()
+        TSHHotkeys.instance.UiMounted(self)
         TSHPlayerDB.LoadDB()
 
         StateManager.ReleaseSaving()
@@ -741,8 +744,3 @@ class Window(QMainWindow):
         else:
             App.setStyleSheet(qdarkstyle.load_stylesheet(
                 palette=qdarkstyle.DarkPalette))
-
-
-
-window = Window()
-sys.exit(App.exec_())

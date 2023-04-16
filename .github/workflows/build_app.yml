@@ -76,13 +76,13 @@ jobs:
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
+      - run: pip install -r dependencies/requirements.txt pyinstaller
       - run: |
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
           python scripts/gen_contributors.py
-          pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+          pyinstaller --hidden-import PyQt5.QtCore --hidden-import PyQt5.QtGui --hidden-import PyQt5.QtWidgets main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
       - run: git pull

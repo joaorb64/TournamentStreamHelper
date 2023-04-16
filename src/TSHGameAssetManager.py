@@ -8,6 +8,8 @@ import re
 import traceback
 import threading
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Workers import Worker
+from PIL import Image
 
 import requests
 
@@ -27,10 +29,23 @@ class TSHGameAssetManager(QObject):
         self.characters = {}
         self.selectedGame = {}
         self.stockIcons = {}
+
+        self.characterModel = QStandardItemModel()
+        self.skinModels = {}
+
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
         self.assetsLoaderThread = None
         self.thumbnailSettingsLoaded = False
+        self.threadpool = QThreadPool()
+        self.workers = []
+        self.signals.onLoad.connect(self.LoadSkinsDo)
+
+    def LoadSkinsDo(self):
+        t = QThread(self)
+        t.start()
+        for w in self.workers:
+            self.threadpool.start(w)
 
     def UiMounted(self):
         self.DownloadStartGGCharacters()
@@ -327,12 +342,50 @@ class TSHGameAssetManager(QObject):
                         for s in self.parent().stages.keys():
                             self.parent().stages[s]["name"] = s
 
+                        # Load translations
+                        try:
+                            for c in self.parent().characters.keys():
+                                display_name = c
+                                export_name = c
+                                en_name = c
+
+                                if self.parent().characters[c].get("locale"):
+                                    locale = TSHLocaleHelper.programLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.programLocale)]
+
+                                    locale = TSHLocaleHelper.exportLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.exportLocale)]
+                                    
+                                self.parent().characters[c]["display_name"] = display_name
+                                self.parent().characters[c]["export_name"] = export_name
+                                self.parent().characters[c]["en_name"] = en_name
+                        except:
+                            print(traceback.format_exc())
+
                     StateManager.Set(f"game", {
                         "name": self.parent().selectedGame.get("name"),
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                     })
 
+                    self.parent().UpdateCharacterModel()
+                    self.parent().UpdateSkinModel()
                     self.parent().signals.onLoad.emit()
                 except:
                     print(traceback.format_exc())
@@ -343,7 +396,7 @@ class TSHGameAssetManager(QObject):
         self.assetsLoaderThread = AssetsLoaderThread(TSHGameAssetManager.instance)
         self.assetsLoaderThread.game = game
         self.assetsLoaderThread.lock = self.assetsLoaderLock
-        self.assetsLoaderThread.start()
+        self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
 
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
@@ -359,6 +412,258 @@ class TSHGameAssetManager(QObject):
 
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
+    
+    def UpdateCharacterModel(self):
+        try:
+            self.characterModel = QStandardItemModel()
+
+            # Add one empty
+            item = QStandardItem("")
+            self.characterModel.appendRow(item)
+
+            for c in self.characters.keys():
+                item = QStandardItem()
+                item.setData(c, Qt.ItemDataRole.EditRole)
+                item.setIcon(
+                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]).scaledToWidth(
+                        32,
+                        Qt.TransformationMode.SmoothTransformation
+                    ))
+                )
+
+                data = {
+                    "name": self.characters[c].get("export_name"),
+                    "en_name": c,
+                    "display_name": self.characters[c].get("display_name"),
+                    "codename": self.characters[c].get("codename")
+                }
+
+                if self.characters[c].get("display_name") != c:
+                    item.setData(f'{self.characters[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
+
+                item.setData(data, Qt.ItemDataRole.UserRole)
+                self.characterModel.appendRow(item)
+
+            self.characterModel.sort(0)
+        except:
+            print(traceback.format_exc())
+    
+    def UpdateSkinModel(self):
+        self.skinModels = {}
+
+        self.workers = []
+        
+        for key, character in self.characters.items():
+            characterData = character
+
+            if characterData:
+                skins = TSHGameAssetManager.instance.skins.get(key, {})
+
+            sortedSkins = [int(k) for k in skins.keys()]
+            sortedSkins.sort()
+
+            skinModel = QStandardItemModel()
+
+            allAssetData = []
+            allItem = []
+
+            for skin in sortedSkins:
+                item = QStandardItem()
+
+                skinModel.appendRow(item)
+
+                assetData = {}
+                assetData["assets"] = TSHGameAssetManager.instance.GetCharacterAssets(character.get("codename"), skin)
+                if assetData["assets"] == None:
+                    assetData["assets"] = {}
+
+                skinIndex = str(skin)
+
+                # Get skin name
+                skinNameData = TSHGameAssetManager.instance.characters.get(character.get("en_name"), {}).get("skin_name", {})
+
+                skin_name = character.get("name")
+                skin_name_en = character.get("en_name")
+
+                try:
+                    locale = TSHLocaleHelper.programLocale
+
+                    if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[locale.replace("-", "_")]
+                    elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[re.split("-|_", locale)[0]]
+                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
+                            TSHLocaleHelper.exportLocale)]
+                    elif skinNameData.get(skinIndex, {}).get("name"):
+                        skin_name = skinNameData.get(skinIndex, {}).get("name")
+                    
+                    if skinNameData.get(skinIndex, {}).get("name"):
+                        skin_name_en = skinNameData.get(skinIndex, {}).get("name")
+                except:
+                    print(traceback.format_exc())
+                
+                assetData["name"] = skin_name
+                assetData["en_name"] = skin_name_en
+
+                item.setData(skin_name if skin_name else skinIndex, Qt.ItemDataRole.EditRole)
+                item.setData(assetData, Qt.ItemDataRole.UserRole)
+
+                allItem.append(item)
+                allAssetData.append(assetData)
+
+            worker = Worker(self.DownloadGameIcon, *[allAssetData, allItem])
+            worker.signals.result.connect(self.DownloadGameIconComplete)
+            self.workers.append(worker)
+
+            self.skinModels[key] = skinModel
+    
+    def DownloadGameIcon(self, allAssetData, allItem, progress_callback):
+        try:
+            icons = []
+
+            for i in range(len(allAssetData)):
+                assetData = allAssetData[i]
+
+                # Set to use first asset as a fallback
+                key = TSHGameAssetManager.instance.biggestCompletePack
+                asset = None
+                
+                if assetData["assets"].get(key): asset = assetData["assets"][key]
+                elif assetData["assets"].get("full"): asset = assetData["assets"]["full"]
+                elif assetData["assets"].get("base_files/icon"): asset = assetData["assets"]["base_files/icon"]
+
+                if asset:
+                    # pix = QPixmap(asset["asset"])
+                    img = Image.open(asset["asset"])
+                else:
+                    # pix = QPixmap("./assets/icons/cancel.svg").scaled(16,16)
+                    img = Image.open("./assets/icons/cancel.svg")
+
+                targetW = 128
+                targetH = 96
+
+                originalW = img.width
+                originalH = img.height
+
+                proportional_zoom = 1
+                
+                if asset.get("average_size"):
+                    proportional_zoom = 0
+                    proportional_zoom = max(
+                        proportional_zoom,
+                        (targetW / asset.get("average_size", {}).get("x", 0)) * 1.2
+                    )
+                    proportional_zoom = max(
+                        proportional_zoom,
+                        (targetH / asset.get("average_size", {}).get("y", 0)) * 1.2
+                    )
+                
+                # For cropped assets, zoom to fill
+                # Calculate max zoom
+                zoom_x = targetW / originalW
+                zoom_y = targetH / originalH
+
+                minZoom = 1
+                rescalingFactor = 1
+                customZoom = 1
+
+                if asset.get("rescaling_factor"):
+                    rescalingFactor = asset.get("rescaling_factor")
+
+                uncropped_edge = asset.get("uncropped_edge", [])
+
+                if not uncropped_edge or len(uncropped_edge) == 0:
+                    if zoom_x > zoom_y:
+                        minZoom = zoom_x
+                    else:
+                        minZoom = zoom_y
+                else:
+                    if (
+                        "u" in uncropped_edge and
+                        "d" in uncropped_edge and
+                        "l" in uncropped_edge and
+                        "r" in uncropped_edge
+                        ):
+                        customZoom = 1.2 # Add zoom in for uncropped assets
+                        minZoom = customZoom * proportional_zoom * rescalingFactor
+                    elif (
+                        not "l" in uncropped_edge and
+                        not "r" in uncropped_edge
+                        ):
+                        minZoom = zoom_x
+                    elif (
+                        not "u" in uncropped_edge and
+                        not "d" in uncropped_edge
+                        ):
+                        minZoom = zoom_y;
+                    else:
+                        minZoom = customZoom * proportional_zoom * rescalingFactor
+
+                zoom = max(minZoom, customZoom * minZoom);
+
+                # Centering
+                xx = 0
+                yy = 0
+
+                eyesight = asset.get("eyesight")
+
+                if not eyesight:
+                    eyesight = {
+                        "x": originalW / 2,
+                        "y": originalH / 2
+                    }
+
+                xx = -eyesight["x"] * zoom + targetW / 2
+
+                maxMoveX = targetW - originalW * zoom;
+
+                if not uncropped_edge or not "l" in uncropped_edge:
+                    if (xx > 0): xx = 0
+                
+                if not uncropped_edge or not "r" in uncropped_edge:
+                    if (xx < maxMoveX): xx = maxMoveX
+
+                yy = -eyesight["y"] * zoom + targetH / 2
+
+                maxMoveY = targetH - originalH * zoom;
+
+                if not uncropped_edge or not "u" in uncropped_edge:
+                    if (yy > 0): yy = 0
+                
+                if not uncropped_edge or not "d" in uncropped_edge:
+                    if (yy < maxMoveY): yy = maxMoveY
+
+                img = img.resize((int(originalW*zoom),int(originalH*zoom)), Image.BILINEAR)
+                img = img.crop((
+                    int(-xx),
+                    int(-yy),
+                    int(-xx+128),
+                    int(-yy+96)
+                ))
+
+                img = img.convert("RGBA")
+                data = img.tobytes("raw","RGBA")
+                qimg = QImage(data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+                pix = QPixmap.fromImage(qimg)
+                icon = QIcon(pix)
+
+                icons.append(icon)
+
+            return([(allItem[i], icons[i]) for i in range(len(allItem))])
+        except Exception as e:
+            print(traceback.format_exc())
+            return(None)
+
+    def DownloadGameIconComplete(self, results):
+        try:
+            for result in results:
+                if result is not None:
+                    if result[0] and result[1]:
+                        result[0].setIcon(result[1])
+        except Exception as e:
+            print(traceback.format_exc())
+            return(None)
 
     def GetCharacterAssets(self, characterCodename: str, skin: int, assetpack: str = None):
         charFiles = {}

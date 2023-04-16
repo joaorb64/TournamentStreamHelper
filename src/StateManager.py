@@ -57,7 +57,9 @@ class StateManager:
 
     def Set(key: str, value):
         oldState = copy.deepcopy(StateManager.state)
+
         deep_set(StateManager.state, key, value)
+
         if StateManager.saveBlocked == 0:
             StateManager.SaveState()
             # StateManager.ExportText(oldState)
