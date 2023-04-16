@@ -107,10 +107,17 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection: QComboBox = self.findChild(QComboBox, "phaseGroupSelection")
         self.phaseGroupSelection.currentIndexChanged.connect(self.PhaseGroupChanged)
 
-        self.btRefresh: QPushButton = self.findChild(QPushButton, "btRefresh")
+        self.btRefreshPhase: QPushButton = self.findChild(QPushButton, "btRefreshPhase")
         updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
-        self.btRefresh.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
-        self.btRefresh.clicked.connect(self.PhaseGroupChanged)
+        self.btRefreshPhase.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
+        self.btRefreshPhase.clicked.connect(lambda: [
+            TSHTournamentDataProvider.instance.GetTournamentPhases()
+        ])
+
+        self.btRefreshPhaseGroup: QPushButton = self.findChild(QPushButton, "btRefreshPhaseGroup")
+        updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
+        self.btRefreshPhaseGroup.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
+        self.btRefreshPhaseGroup.clicked.connect(self.PhaseGroupChanged)
 
         self.progressionsIn: QSpinBox = self.findChild(QSpinBox, "progressionsIn")
         self.progressionsIn.valueChanged.connect(lambda val: [
