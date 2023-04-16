@@ -65,11 +65,21 @@ class TSHHotkeys(QObject):
         try:
             user_keys = {}
 
-            if os.path.exists("user_data/hotkeys.json"):
-                with open("./user_data/hotkeys.json", 'r') as file:
-                    user_keys = json.load(file)
+            with open("./user_data/hotkeys.json", 'r') as file:
+                user_keys = json.load(file)
 
-            self.keys.update(user_keys)
+            # Add all commands to the user settings file,
+            # Defaulting to an empty string
+            for k in self.keys:
+                if k not in user_keys:
+                    user_keys[k] = ""
+        
+            # Save back user settings with added missing commands
+            with open("./user_data/hotkeys.json", 'w') as file:
+                json.dump(user_keys, file, indent=4)
+
+            # Update keys only where not empty
+            self.keys.update((k,v) for k,v in user_keys.items() if v is not None and v != "")
 
             print("User hotkeys loaded")
         except:
