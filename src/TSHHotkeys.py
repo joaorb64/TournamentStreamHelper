@@ -50,6 +50,33 @@ class TSHHotkeys(QObject):
                     print(traceback.format_exc())
             else:
                 print(f"TSHHotkeys: Command {k} not found")
+    
+    def LoadUserHotkeys(self):
+        # If there's no hotkeys file, create one
+        try:
+            if not os.path.exists("user_data/hotkeys.json"):
+                with open("./user_data/hotkeys.json", 'w') as file:
+                    json.dump(self.keys, file, indent=4)
+        except:
+            print("Could not create default hotkeys file in user_data")
+            print(traceback.format_exc())
+        
+        # Load hotkeys from file
+        try:
+            user_keys = {}
+
+            if os.path.exists("user_data/hotkeys.json"):
+                with open("./user_data/hotkeys.json", 'r') as file:
+                    user_keys = json.load(file)
+
+            self.keys.update(user_keys)
+
+            print("User hotkeys loaded")
+        except:
+            print("Could load user hotkeys")
+            print(traceback.format_exc())
+
 
 
 TSHHotkeys.instance = TSHHotkeys()
+TSHHotkeys.instance.LoadUserHotkeys()
