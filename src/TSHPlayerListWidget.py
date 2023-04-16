@@ -117,9 +117,9 @@ class TSHPlayerListWidget(QDockWidget):
             self.playerList.SetPlayersPerTeam(playerNumber)
             
             for i, slot in enumerate(self.playerList.slotWidgets):
-                slot.Clear()
                 try:
                     slot.SetTeamData(data[i])
                 except:
+                    slot.Clear()
                     print(traceback.format_exc())
         StateManager.ReleaseSaving()

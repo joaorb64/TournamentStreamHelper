@@ -188,7 +188,7 @@ class StartGGDataProvider(TournamentDataProvider):
             # Preview IDs cannot be sorted normally
             # They follow the format: preview_2004442_1_5
             # Where ( preview_2004442_1_1 < preview_2004442_1_11 < preview_2004442_1_2 )
-            isPreview = any("preview" in s.get("id") for s in sets)
+            isPreview = any("preview" in str(s.get("id")) for s in sets)
 
             if not isPreview:
                 sets.sort(key=lambda s: (abs(int(s.get("round"))), s.get("id")))
