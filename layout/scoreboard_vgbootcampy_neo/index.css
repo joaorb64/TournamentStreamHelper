@@ -119,6 +119,15 @@ body {
   flex-direction: column;
   overflow: hidden;
   color: var(--text-color);
+  word-spacing: 2px;
+}
+
+.p1 .name {
+  margin-left: 12px;
+}
+
+.p2 .name {
+  margin-right: 12px;
 }
 
 .twitter {
@@ -227,7 +236,14 @@ body {
   background-position: center;
   width: 44px;
   height: 31px;
-  margin: 0 12px;
+}
+
+.p1 .flag {
+  margin-left: 12px;
+}
+
+.p2 .flag {
+  margin-right: 12px;
 }
 
 .score {
@@ -250,10 +266,6 @@ body {
   margin-right: 12px;
   color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
-}
-
-.sponsor {
-  margin-right: 10px;
 }
 
 .p1 .sponsor {
