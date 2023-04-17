@@ -34,12 +34,13 @@ class TSHSettingsWindow(QDialog):
 
         # Add hotkey settings
         hotkeySettings = []
+        QApplication.translate("settings.hotkeys", "hotkeys_enabled") # Force translation
         hotkeySettings.append(("hotkeys_enabled", "checkbox", True))
 
         for i, (setting, value) in enumerate(TSHHotkeys.instance.keys.items()):
             hotkeySettings.append((setting, "hotkey", value, TSHHotkeys.instance.ReloadHotkeys))
 
-        self.add_setting_widget("Hotkeys", SettingsWidget("hotkeys", hotkeySettings))
+        self.add_setting_widget(QApplication.translate("settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
 
         self.resize(1000, 500)
         QApplication.processEvents()

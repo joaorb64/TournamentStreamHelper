@@ -291,9 +291,6 @@ class Window(QMainWindow):
         action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
         self.downloadAssetsAction = action
 
-        settingsWindow = TSHSettingsWindow(self)
-        settingsWindow.show()
-
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Light mode"))
         action.setCheckable(True)
@@ -451,6 +448,13 @@ class Window(QMainWindow):
             QDesktopServices.openUrl(QUrl(asset_url)),
             help_messagebox.exec()
         ])
+
+        self.settingsWindow = TSHSettingsWindow(self)
+
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("Settings", "Settings"))
+        action.setIcon(QIcon('assets/icons/settings.svg'))
+        action.triggered.connect(lambda: self.settingsWindow.show())
 
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(

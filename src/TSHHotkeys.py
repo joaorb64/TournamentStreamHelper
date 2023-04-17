@@ -34,6 +34,13 @@ class TSHHotkeys(QObject):
         "reset_scores": "Ctrl+R",
         "swap_teams": "Ctrl+S"
     }
+    QApplication.translate("settings.hotkeys", "load_set")
+    QApplication.translate("settings.hotkeys", "team1_score_up")
+    QApplication.translate("settings.hotkeys", "team1_score_down")
+    QApplication.translate("settings.hotkeys", "team2_score_up")
+    QApplication.translate("settings.hotkeys", "team2_score_down")
+    QApplication.translate("settings.hotkeys", "reset_scores")
+    QApplication.translate("settings.hotkeys", "swap_teams")
 
     loaded_keys = {}
 
