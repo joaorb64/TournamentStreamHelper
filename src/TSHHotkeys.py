@@ -53,6 +53,7 @@ class TSHHotkeys(QObject):
 
     def UiMounted(self, parent):
         self.parent = parent
+        self.SetupHotkeys()
 
     def ReloadHotkeys(self):
         self.LoadUserHotkeys()
