@@ -1411,37 +1411,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.hotkeys</name>
     <message>
-        <location filename="../TSHHotkeys.py" line="37"/>
+        <location filename="../TSHHotkeys.py" line="38"/>
         <source>load_set</source>
         <translation>Carregar set</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="38"/>
+        <location filename="../TSHHotkeys.py" line="39"/>
         <source>team1_score_up</source>
         <translation>Aumentar pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="39"/>
+        <location filename="../TSHHotkeys.py" line="40"/>
         <source>team1_score_down</source>
         <translation>Diminuir pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="40"/>
+        <location filename="../TSHHotkeys.py" line="41"/>
         <source>team2_score_up</source>
         <translation>Aumentar pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="41"/>
+        <location filename="../TSHHotkeys.py" line="42"/>
         <source>team2_score_down</source>
         <translation>Diminuir pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="42"/>
+        <location filename="../TSHHotkeys.py" line="43"/>
         <source>reset_scores</source>
         <translation>Zerar placar</translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="43"/>
+        <location filename="../TSHHotkeys.py" line="44"/>
         <source>swap_teams</source>
         <translation>Inverter times</translation>
     </message>

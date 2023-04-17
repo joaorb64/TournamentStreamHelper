@@ -1344,37 +1344,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.hotkeys</name>
     <message>
-        <location filename="../TSHHotkeys.py" line="37"/>
+        <location filename="../TSHHotkeys.py" line="38"/>
         <source>load_set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="38"/>
+        <location filename="../TSHHotkeys.py" line="39"/>
         <source>team1_score_up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="39"/>
+        <location filename="../TSHHotkeys.py" line="40"/>
         <source>team1_score_down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="40"/>
+        <location filename="../TSHHotkeys.py" line="41"/>
         <source>team2_score_up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="41"/>
+        <location filename="../TSHHotkeys.py" line="42"/>
         <source>team2_score_down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="42"/>
+        <location filename="../TSHHotkeys.py" line="43"/>
         <source>reset_scores</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHHotkeys.py" line="43"/>
+        <location filename="../TSHHotkeys.py" line="44"/>
         <source>swap_teams</source>
         <translation type="unfinished"></translation>
     </message>
