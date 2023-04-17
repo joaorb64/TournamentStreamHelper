@@ -8,7 +8,7 @@ class SettingsManager:
 
     def SaveSettings():
         with open("./user_data/settings.json", 'w') as file:
-            json.dump(SettingsManager.settings, file, indent=4)
+            json.dump(SettingsManager.settings, file, indent=4, sort_keys=True)
 
     def LoadSettings():
         with open("./user_data/settings.json", 'r') as file:

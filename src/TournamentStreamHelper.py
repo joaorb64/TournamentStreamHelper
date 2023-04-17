@@ -38,6 +38,7 @@ from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHHotkeys import TSHHotkeys
 from qdarkstyle import palette
+from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -289,6 +290,9 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
         self.downloadAssetsAction = action
+
+        settingsWindow = TSHSettingsWindow(self)
+        settingsWindow.show()
 
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Light mode"))

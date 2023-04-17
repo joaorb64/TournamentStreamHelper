@@ -7,6 +7,8 @@ import requests
 import os
 import traceback
 import json
+import copy
+from .SettingsManager import SettingsManager
 
 class TSHHotkeysSignals(QObject):
     team1_score_up = pyqtSignal()
@@ -21,7 +23,7 @@ class TSHHotkeys(QObject):
     instance: "TSHHotkeys" = None
     signals = TSHHotkeysSignals()
     parent: QWidget = None
-    shortcuts = []
+    shortcuts = {}
 
     keys = {
         "load_set": "Ctrl+O",
@@ -33,60 +35,48 @@ class TSHHotkeys(QObject):
         "swap_teams": "Ctrl+S"
     }
 
+    loaded_keys = {}
+
     def __init__(self) -> None:
         super().__init__()
+        self.LoadUserHotkeys()
 
     def UiMounted(self, parent):
         self.parent = parent
+        self.SetupHotkeys()
 
-        for k, v in self.keys.items():
+    def ReloadHotkeys(self):
+        self.LoadUserHotkeys()
+        self.SetupHotkeys()
+    
+    def SetupHotkeys(self):
+        for k, v in self.loaded_keys.items():
             if getattr(self.signals, k):
                 try:
-                    self.shortcuts.append(QShortcut(v, self.parent).activated.connect(lambda k=k,v=v: [
-                        print(f"Activated {k} by pressing {v}"),
-                        getattr(self.signals, k).emit()
-                    ]))
+                    if k not in self.shortcuts:
+                        shortcut = QShortcut(QKeySequence(v), self.parent)
+                        shortcut.setContext(Qt.ApplicationShortcut)
+                        self.shortcuts[k] = shortcut
+                        shortcut.activated.connect(lambda k=k,v=v: self.HotkeyTriggered(k, v))
+                    else:
+                        self.shortcuts[k].setKey(v)
                 except:
                     print(traceback.format_exc())
             else:
                 print(f"TSHHotkeys: Command {k} not found")
     
+    def HotkeyTriggered(self, k, v):
+        if not SettingsManager.Get("hotkeys.hotkeys_enabled", True) == False:
+            print(f"Activated {k} by pressing {v}")
+            getattr(self.signals, k).emit()
+    
     def LoadUserHotkeys(self):
-        # If there's no hotkeys file, create one
-        try:
-            if not os.path.exists("user_data/hotkeys.json"):
-                with open("./user_data/hotkeys.json", 'w') as file:
-                    json.dump(self.keys, file, indent=4)
-        except:
-            print("Could not create default hotkeys file in user_data")
-            print(traceback.format_exc())
-        
-        # Load hotkeys from file
-        try:
-            user_keys = {}
+        user_keys = SettingsManager.Get("hotkeys")
+        self.loaded_keys = copy.copy(self.keys)
 
-            with open("./user_data/hotkeys.json", 'r') as file:
-                user_keys = json.load(file)
+        # Update keys
+        self.loaded_keys.update((k,v) for k,v in user_keys.items() if k in self.keys)
 
-            # Add all commands to the user settings file,
-            # Defaulting to an empty string
-            for k in self.keys:
-                if k not in user_keys:
-                    user_keys[k] = ""
-        
-            # Save back user settings with added missing commands
-            with open("./user_data/hotkeys.json", 'w') as file:
-                json.dump(user_keys, file, indent=4)
-
-            # Update keys only where not empty
-            self.keys.update((k,v) for k,v in user_keys.items() if v is not None and v != "")
-
-            print("User hotkeys loaded")
-        except:
-            print("Could load user hotkeys")
-            print(traceback.format_exc())
-
-
+        print("User hotkeys loaded")
 
 TSHHotkeys.instance = TSHHotkeys()
-TSHHotkeys.instance.LoadUserHotkeys()
