@@ -38,6 +38,7 @@ from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHHotkeys import TSHHotkeys
 from qdarkstyle import palette
+from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -447,6 +448,13 @@ class Window(QMainWindow):
             QDesktopServices.openUrl(QUrl(asset_url)),
             help_messagebox.exec()
         ])
+
+        self.settingsWindow = TSHSettingsWindow(self)
+
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("Settings", "Settings"))
+        action.setIcon(QIcon('assets/icons/settings.svg'))
+        action.triggered.connect(lambda: self.settingsWindow.show())
 
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(

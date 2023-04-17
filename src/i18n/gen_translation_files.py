@@ -15,6 +15,7 @@ for root, dirs, files in os.walk("src"):
 print(file_list)
 
 languages = [
+    "en",
     "pt-BR",
     "fr",
     "ja",
