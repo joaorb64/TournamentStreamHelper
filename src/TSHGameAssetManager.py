@@ -764,16 +764,26 @@ class TSHGameAssetManager(QObject):
                     if asset.get("metadata"):
                         metadata = {}
                         charFiles[assetKey]['metadata'] = {}
-                        for key in asset.get("metadata").keys():
+                        for key in range(len(asset.get("metadata"))):
                             metadata[key] = asset.get("metadata", {})[key]["values"].get(
                                 characterCodename, {}).get("value", "")
-                            charFiles[assetKey]['metadata'][f"{key}_en"] = metadata[key]
+                            charFiles[assetKey]['metadata'][f"{key}"] = {}
+                            charFiles[assetKey]['metadata'][f"{key}"]["title_en"] = asset.get("metadata", {})[key].get("title", '')
+                            if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key].get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key].get("locale", {}).keys():
+                                try:
+                                    metadata_title_locale = asset.get("metadata", {})[key].get("locale", {})[TSHLocaleHelper.exportLocale]
+                                except KeyError:
+                                    metadata_title_locale = asset.get("metadata", {})[key].get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
+                            else:
+                                metadata_title_locale = asset.get("metadata", {})[key].get("title", '')
+                            charFiles[assetKey]['metadata'][f"{key}"]["title"] = metadata_title_locale
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value_en"] = metadata[key]
                             if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys():
                                 try:
                                     metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale]
                                 except KeyError:
                                     metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
-                            charFiles[assetKey]['metadata'][key] = metadata[key]
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value"] = metadata[key]
 
                         # if len(metadata.keys()) > 0:
                         #     if str(skin) in metadata:
