@@ -81,7 +81,7 @@ class TSHHotkeys(QObject):
             getattr(self.signals, k).emit()
     
     def LoadUserHotkeys(self):
-        user_keys = SettingsManager.Get("hotkeys")
+        user_keys = SettingsManager.Get("hotkeys", {})
         self.loaded_keys = copy.copy(self.keys)
 
         # Update keys
