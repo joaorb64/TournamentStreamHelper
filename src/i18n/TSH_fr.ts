@@ -570,7 +570,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="213"/>
         <source>RESET SCORE</source>
-        <translation>RÉINITIALISER LE SCORE</translation>
+        <translation>RÉINITIALISER LES SCORES</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardScore.ui" line="220"/>
@@ -665,7 +665,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="455"/>
         <location filename="../Settings/TSHSettingsWindow.py" line="12"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages</translation>
     </message>
 </context>
 <context>
@@ -1374,12 +1374,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="65"/>
         <source>Hotkeys</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourcis clavier</translation>
     </message>
     <message>
         <location filename="../Settings/SettingsWidget.py" line="26"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Défaut</translation>
     </message>
 </context>
 <context>
@@ -1387,42 +1387,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="47"/>
         <source>Load set</source>
-        <translation type="unfinished">Charger un set</translation>
+        <translation>Charger un set</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="48"/>
         <source>Team 1 score up</source>
-        <translation type="unfinished"></translation>
+        <translation>Incrémenter le score - Équipe 1</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="49"/>
         <source>Team 1 score down</source>
-        <translation type="unfinished"></translation>
+        <translation>Décrémenter le score - Équipe 1</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="50"/>
         <source>Team 2 score up</source>
-        <translation type="unfinished"></translation>
+        <translation>Incrémenter le score - Équipe 2</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="51"/>
         <source>Team 2 score down</source>
-        <translation type="unfinished"></translation>
+        <translation>Décrémenter le score - Équipe 2</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="52"/>
         <source>Reset scores</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser les scores</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="53"/>
         <source>Swap teams</source>
-        <translation type="unfinished"></translation>
+        <translation>Échanger les équipes</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="40"/>
         <source>Enable hotkeys</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer les raccourcis clavier</translation>
     </message>
 </context>
 <context>
