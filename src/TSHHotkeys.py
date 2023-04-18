@@ -10,6 +10,7 @@ import json
 import copy
 import pynput
 from .SettingsManager import SettingsManager
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 class TSHHotkeysSignals(QObject):
     team1_score_up = pyqtSignal()
@@ -35,13 +36,6 @@ class TSHHotkeys(QObject):
         "reset_scores": "Ctrl+R",
         "swap_teams": "Ctrl+S"
     }
-    QApplication.translate("settings.hotkeys", "load_set")
-    QApplication.translate("settings.hotkeys", "team1_score_up")
-    QApplication.translate("settings.hotkeys", "team1_score_down")
-    QApplication.translate("settings.hotkeys", "team2_score_up")
-    QApplication.translate("settings.hotkeys", "team2_score_down")
-    QApplication.translate("settings.hotkeys", "reset_scores")
-    QApplication.translate("settings.hotkeys", "swap_teams")
 
     loaded_keys = {}
 
@@ -68,7 +62,7 @@ class TSHHotkeys(QObject):
         for (key, value) in self.loaded_keys.items():
             pynputShortcut = TSHHotkeys.qshortcut_to_pynput(value)
 
-            if pynputShortcut != None:
+            if pynputShortcut != None and pynputShortcut != "":
                 shortcuts[pynputShortcut] = lambda key=key, value=value: self.HotkeyTriggered(key, value)
         
         self.pynputListener = pynput.keyboard.GlobalHotKeys(shortcuts)

@@ -8,7 +8,8 @@ class TSHSettingsWindow(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.setWindowTitle("Settings")
+    def UiMounted(self):
+        self.setWindowTitle(QApplication.translate("Settings", "Settings"))
 
         # Create a list widget for the selection
         self.selection_list = QListWidget()
@@ -34,11 +35,32 @@ class TSHSettingsWindow(QDialog):
 
         # Add hotkey settings
         hotkeySettings = []
-        QApplication.translate("settings.hotkeys", "hotkeys_enabled") # Force translation
-        hotkeySettings.append(("hotkeys_enabled", "checkbox", True))
+        
+        hotkeySettings.append((
+            QApplication.translate("settings.hotkeys", "Enable hotkeys"),
+            "hotkeys_enabled",
+            "checkbox",
+            True
+        ))
+
+        key_names = {
+            "load_set": QApplication.translate("settings.hotkeys", "Load set"),
+            "team1_score_up": QApplication.translate("settings.hotkeys", "Team 1 score up"),
+            "team1_score_down": QApplication.translate("settings.hotkeys", "Team 1 score down"),
+            "team2_score_up": QApplication.translate("settings.hotkeys", "Team 2 score up"),
+            "team2_score_down": QApplication.translate("settings.hotkeys", "Team 2 score down"),
+            "reset_scores": QApplication.translate("settings.hotkeys", "Reset scores"),
+            "swap_teams": QApplication.translate("settings.hotkeys", "Swap teams"),
+        }
 
         for i, (setting, value) in enumerate(TSHHotkeys.instance.keys.items()):
-            hotkeySettings.append((setting, "hotkey", value, TSHHotkeys.instance.ReloadHotkeys))
+            hotkeySettings.append((
+                key_names[setting],
+                setting,
+                "hotkey",
+                value,
+                TSHHotkeys.instance.ReloadHotkeys
+            ))
 
         self.add_setting_widget(QApplication.translate("settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
 

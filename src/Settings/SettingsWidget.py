@@ -18,10 +18,10 @@ class SettingsWidget(QWidget):
         for setting in settings:
             self.AddSetting(*setting)
 
-    def AddSetting(self, setting: str, type: str, defaultValue, callback=lambda: None):
+    def AddSetting(self, name: str, setting: str, type: str, defaultValue, callback=lambda: None):
         lastRow = self.layout().rowCount()
 
-        self.layout().addWidget(QLabel(QApplication.translate("settings."+self.settingsBase, setting)), lastRow, 0)
+        self.layout().addWidget(QLabel(name), lastRow, 0)
 
         resetButton = QPushButton(QApplication.translate("settings", "Default"))
         
@@ -53,8 +53,3 @@ class SettingsWidget(QWidget):
         
         self.layout().addWidget(settingWidget, lastRow, 1)
         self.layout().addWidget(resetButton, lastRow, 2)
-    
-    def UpdateHotkeySettings(self, setting: str, sequence: str):
-        TSHHotkeys.instance.loaded_keys[setting] = sequence
-        TSHHotkeys.instance.SaveHotkeys()
-        TSHHotkeys.instance.SetupHotkeys()

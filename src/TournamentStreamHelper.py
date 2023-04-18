@@ -505,6 +505,7 @@ class Window(QMainWindow):
         self.show()
 
         TSHCountryHelper.LoadCountries()
+        self.settingsWindow.UiMounted()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
