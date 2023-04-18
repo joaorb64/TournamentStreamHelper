@@ -62,10 +62,16 @@ class TSHHotkeys(QObject):
     def SetupHotkeys(self):
         if self.pynputListener:
             self.pynputListener.stop()
+
+        shortcuts = {}
+
+        for (key, value) in self.loaded_keys.items():
+            pynputShortcut = TSHHotkeys.qshortcut_to_pynput(value)
+
+            if pynputShortcut != None:
+                shortcuts[pynputShortcut] = lambda key=key, value=value: self.HotkeyTriggered(key, value)
         
-        self.pynputListener = pynput.keyboard.GlobalHotKeys({
-            TSHHotkeys.qshortcut_to_pynput(value): lambda key=key, value=value: self.HotkeyTriggered(key, value) for (key, value) in self.loaded_keys.items()
-        })
+        self.pynputListener = pynput.keyboard.GlobalHotKeys(shortcuts)
 
         self.pynputListener.start()
     
@@ -84,18 +90,23 @@ class TSHHotkeys(QObject):
         print("User hotkeys loaded")
     
     def qshortcut_to_pynput(qshortcut_str):
-        qshortcut_str = qshortcut_str.lower()
+        try:
+            qshortcut_str = qshortcut_str.lower()
 
-        parts = qshortcut_str.split("+")
+            parts = qshortcut_str.split("+")
 
-        for i, part in enumerate(parts):
-            if len(parts[i]) > 1:
-                if parts[i] not in ("ctrl", "shift", "alt"):
-                    key = getattr(pynput.keyboard.Key, parts[i])
-                    parts[i] = f'{key.value.vk}'
-                
-                parts[i] = f'<{parts[i]}>'
+            for i, part in enumerate(parts):
+                if len(parts[i]) > 1:
+                    if parts[i] not in ("ctrl", "shift", "alt"):
+                        key = getattr(pynput.keyboard.Key, parts[i])
+                        parts[i] = f'{key.value.vk}'
+                    
+                    parts[i] = f'<{parts[i]}>'
 
-        return "+".join(parts)
+            return "+".join(parts)
+        except:
+            print(f"Could not convert qshortcut {qshortcut_str} to pynput")
+            print(traceback.format_exc())
+            return None
 
 TSHHotkeys.instance = TSHHotkeys()

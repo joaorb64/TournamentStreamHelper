@@ -34,6 +34,9 @@ class SettingsWidget(QWidget):
             )
         elif type == "hotkey":
             settingWidget = QKeySequenceEdit()
+            settingWidget.keySequenceChanged.connect(lambda keySequence, settingWidget=settingWidget:
+                settingWidget.setKeySequence(keySequence.toString().split(",")[0]) if keySequence.count() > 0 else None
+            )
             settingWidget.setKeySequence(SettingsManager.Get(self.settingsBase+"."+setting, defaultValue))
             settingWidget.keySequenceChanged.connect(
                 lambda sequence, setting=setting: [
