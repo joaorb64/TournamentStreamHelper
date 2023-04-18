@@ -42,7 +42,9 @@ class TSHLocaleHelper(QObject):
             QGuiApplication.instance().removeTranslator(oldTranslator)
 
         TSHLocaleHelper.translator = QTranslator()
+        localeFound = False
         for locale in current_locale:
+            if localeFound: break
             for f in os.listdir("./src/i18n/"):
                 if f.endswith(".qm"):
                     lang = f.split("_", 1)[1].split(".")[0]
@@ -50,11 +52,13 @@ class TSHLocaleHelper(QObject):
                         TSHLocaleHelper.translator.load(
                             QLocale(lang), "./src/i18n/"+f)
                         TSHLocaleHelper.programLocale = locale
+                        localeFound = True
                         break
                     elif lang == locale.split("-")[0]:
                         TSHLocaleHelper.translator.load(
                             QLocale(lang), "./src/i18n/"+f)
                         TSHLocaleHelper.programLocale = locale
+                        localeFound = True
                         break
 
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)

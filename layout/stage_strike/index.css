@@ -65,6 +65,19 @@ body {
   border-radius: var(--border-radius);
   background: var(--bg-color);
   overflow: hidden;
+  border-style: solid;
+  border-width: 3px;
+  border-color: lightgray;
+}
+
+.stage-container.striked {
+  border-color: #f44336ff;
+  box-shadow: 0 0 10px #f44336ff;
+}
+
+.stage-container.selected {
+  border-color: #4caf50ff;
+  box-shadow: 0 0 10px #4caf50ff;
 }
 
 .stamp {
@@ -87,3 +100,27 @@ body {
 .stamp.stage-selected-gentlemans {
   background-image: url(./stage_gentlemans.svg);
 }
+
+/* <Card
+  style={{
+    borderStyle: "solid",
+    borderWidth: 3,
+    borderRadius: 8,
+    borderColor:
+    this.state.selectedStage === stage.codename
+    ? "#4caf50ff"
+    : (this.IsStageStriked(stage.codename) ||
+      this.IsStageBanned(stage.codename))
+        ? "#f44336ff"
+        : "lightgray",
+    boxShadow:
+    this.state.selectedStage === stage.codename
+    ? "0 0 10px #4caf50ff"
+    : (this.IsStageStriked(stage.codename) ||
+      this.IsStageBanned(stage.codename))
+        ? "0 0 10px #f44336ff"
+        : "0 0 0px #ffffff00",
+    transitionProperty: "border-color box-shadow",
+    transitionDuration: "500ms",
+  }}
+> */
