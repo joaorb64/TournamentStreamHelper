@@ -50,6 +50,7 @@ class TSHScoreboardWidget(QDockWidget):
 
         TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
         TSHHotkeys.signals.swap_teams.connect(self.SwapTeams)
+        TSHHotkeys.signals.reset_scores.connect(self.ResetScore)
 
         TSHHotkeys.signals.team1_score_up.connect(lambda: [
             self.CommandScoreChange(0, 1)

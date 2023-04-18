@@ -8,6 +8,7 @@ import os
 import traceback
 import json
 import copy
+import pynput
 from .SettingsManager import SettingsManager
 
 class TSHHotkeysSignals(QObject):
@@ -27,10 +28,10 @@ class TSHHotkeys(QObject):
 
     keys = {
         "load_set": "Ctrl+O",
-        "team1_score_up": "F1",
-        "team1_score_down": "F2",
-        "team2_score_up": "F3",
-        "team2_score_down": "F4",
+        "team1_score_up": "Ctrl+F1",
+        "team1_score_down": "Ctrl+F2",
+        "team2_score_up": "Ctrl+F3",
+        "team2_score_down": "Ctrl+F4",
         "reset_scores": "Ctrl+R",
         "swap_teams": "Ctrl+S"
     }
@@ -43,6 +44,8 @@ class TSHHotkeys(QObject):
     QApplication.translate("settings.hotkeys", "swap_teams")
 
     loaded_keys = {}
+
+    pynputListener = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -57,20 +60,20 @@ class TSHHotkeys(QObject):
         self.SetupHotkeys()
     
     def SetupHotkeys(self):
-        for k, v in self.loaded_keys.items():
-            if getattr(self.signals, k):
-                try:
-                    if k not in self.shortcuts:
-                        shortcut = QShortcut(QKeySequence(v), self.parent)
-                        shortcut.setContext(Qt.ApplicationShortcut)
-                        self.shortcuts[k] = shortcut
-                        shortcut.activated.connect(lambda k=k,v=v: self.HotkeyTriggered(k, v))
-                    else:
-                        self.shortcuts[k].setKey(v)
-                except:
-                    print(traceback.format_exc())
-            else:
-                print(f"TSHHotkeys: Command {k} not found")
+        if self.pynputListener:
+            self.pynputListener.stop()
+
+        shortcuts = {}
+
+        for (key, value) in self.loaded_keys.items():
+            pynputShortcut = TSHHotkeys.qshortcut_to_pynput(value)
+
+            if pynputShortcut != None:
+                shortcuts[pynputShortcut] = lambda key=key, value=value: self.HotkeyTriggered(key, value)
+        
+        self.pynputListener = pynput.keyboard.GlobalHotKeys(shortcuts)
+
+        self.pynputListener.start()
     
     def HotkeyTriggered(self, k, v):
         if not SettingsManager.Get("hotkeys.hotkeys_enabled", True) == False:
@@ -78,12 +81,32 @@ class TSHHotkeys(QObject):
             getattr(self.signals, k).emit()
     
     def LoadUserHotkeys(self):
-        user_keys = SettingsManager.Get("hotkeys", {})
+        user_keys = SettingsManager.Get("hotkeys")
         self.loaded_keys = copy.copy(self.keys)
 
         # Update keys
         self.loaded_keys.update((k,v) for k,v in user_keys.items() if k in self.keys)
 
         print("User hotkeys loaded")
+    
+    def qshortcut_to_pynput(qshortcut_str):
+        try:
+            qshortcut_str = qshortcut_str.lower()
+
+            parts = qshortcut_str.split("+")
+
+            for i, part in enumerate(parts):
+                if len(parts[i]) > 1:
+                    if parts[i] not in ("ctrl", "shift", "alt"):
+                        key = getattr(pynput.keyboard.Key, parts[i])
+                        parts[i] = f'{key.value.vk}'
+                    
+                    parts[i] = f'<{parts[i]}>'
+
+            return "+".join(parts)
+        except:
+            print(f"Could not convert qshortcut {qshortcut_str} to pynput")
+            print(traceback.format_exc())
+            return None
 
 TSHHotkeys.instance = TSHHotkeys()
