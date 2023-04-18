@@ -333,7 +333,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="45"/>
         <source>General Settings</source>
-        <translation>Réglages principaux</translation>
+        <translation>Paramètres principaux</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="346"/>
@@ -373,7 +373,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="834"/>
         <source>Game Settings</source>
-        <translation>Réglages par jeu</translation>
+        <translation>Paramètres par jeu</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
@@ -514,7 +514,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1118"/>
         <source>Reset to Defaults</source>
-        <translation>Réinitialiser les réglages</translation>
+        <translation>Réinitialiser</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
@@ -665,7 +665,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="455"/>
         <location filename="../Settings/TSHSettingsWindow.py" line="12"/>
         <source>Settings</source>
-        <translation>Réglages</translation>
+        <translation>Paramètres</translation>
     </message>
 </context>
 <context>
@@ -674,7 +674,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHThumbnailSettingsWidget.py" line="72"/>
         <location filename="../TournamentStreamHelper.py" line="161"/>
         <source>Thumbnail Settings</source>
-        <translation>Réglages de la miniature</translation>
+        <translation>Paramètres de la miniature</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="169"/>
