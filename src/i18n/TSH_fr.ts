@@ -1054,7 +1054,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="61"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="720"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="722"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1077,7 +1077,7 @@ p, li { white-space: pre-wrap; }
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="717"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="719"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
@@ -1097,17 +1097,17 @@ p, li { white-space: pre-wrap; }
         <translation>Sauvegarder le règlement</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="451"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="468"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation>Le nombre total de bans ne correspond pas au nombre de stages neutres. Veuillez bannir {0} stages supplémentaires.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="458"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="475"/>
         <source>The current ruleset is valid!</source>
         <translation>Le règlement actuel est valide !</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="508"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="525"/>
         <source>The text for banByMaxGames is invalid.</source>
         <translation>La valeur pour les bans maximums par match est invalide.</translation>
     </message>

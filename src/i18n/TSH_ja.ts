@@ -1026,7 +1026,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="61"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="720"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="722"/>
         <source>Save new player</source>
         <translation>プレイヤーエントリーを保存</translation>
     </message>
@@ -1049,7 +1049,7 @@ p, li { white-space: pre-wrap; }
         <translation>プレイヤー{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="717"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="719"/>
         <source>Update player</source>
         <translation>プレイヤーエントリーを更新</translation>
     </message>
@@ -1069,17 +1069,17 @@ p, li { white-space: pre-wrap; }
         <translation>新しく保存</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="451"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="468"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation>拒否ステージの数とニュートラルのステージの数が合いません。もう{0}つステージを拒否して下さい。</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="458"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="475"/>
         <source>The current ruleset is valid!</source>
         <translation>このルールセットは有効です!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="508"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="525"/>
         <source>The text for banByMaxGames is invalid.</source>
         <translation>banByMaxGamesのテキストが無効です。</translation>
     </message>
