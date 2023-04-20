@@ -85,6 +85,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({})
             TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit([])
             TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+            TSHGameAssetManager.instance.LoadGameAssets(0)
 
     def SetStartggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)
