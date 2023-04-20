@@ -20,6 +20,8 @@ import time
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+QImageReader.setAllocationLimit(0)
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
