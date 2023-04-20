@@ -81,6 +81,7 @@ class TSHAssetDownloader(QObject):
 
         self.select = QComboBox()
         selectProxy = QSortFilterProxyModel()
+        selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         selectProxy.setSourceModel(self.select.model())
         self.select.model().setParent(selectProxy)
         selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -88,6 +89,9 @@ class TSHAssetDownloader(QObject):
         self.select.setEditable(True)
         self.select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.select.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.font_small = QFont("./assets/font/RobotoCondensed.ttf", pointSize=8)
+        self.select.setFont(self.font_small)
+        self.select.setModel(QStandardItemModel())
         self.preDownloadDialogue.layout().addWidget(self.select)
 
         self.select.setIconSize(QSize(64, 64))
