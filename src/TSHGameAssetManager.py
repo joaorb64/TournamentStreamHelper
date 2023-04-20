@@ -79,7 +79,15 @@ class TSHGameAssetManager(QObject):
 
                         if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
                             self.parent().games[game]["logo"] = QIcon(
-                                "./user_data/games/"+game+"/base_files/logo.png")
+                                QPixmap(
+                                    QImage("./user_data/games/"+game+"/base_files/logo.png").scaled(
+                                        64,
+                                        64,
+                                        Qt.AspectRatioMode.KeepAspectRatio,
+                                        Qt.TransformationMode.SmoothTransformation
+                                    )
+                                )
+                            )
 
                         self.parent().games[game]["assets"] = {}
                         self.parent(
@@ -214,7 +222,10 @@ class TSHGameAssetManager(QObject):
                                     print(f)
                                     pass
                                 self.parent().stockIcons[c][number] = QImage(
-                                    './user_data/games/'+game+'/'+assetsKey+'/'+f)
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
+                                        32,
+                                        Qt.TransformationMode.SmoothTransformation
+                                    )
 
                         print("Loaded stock icons")
 
@@ -425,10 +436,7 @@ class TSHGameAssetManager(QObject):
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
                 item.setIcon(
-                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]).scaledToWidth(
-                        32,
-                        Qt.TransformationMode.SmoothTransformation
-                    ))
+                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
                 )
 
                 data = {
@@ -512,13 +520,13 @@ class TSHGameAssetManager(QObject):
                 allItem.append(item)
                 allAssetData.append(assetData)
 
-            worker = Worker(self.DownloadGameIcon, *[allAssetData, allItem])
-            worker.signals.result.connect(self.DownloadGameIconComplete)
+            worker = Worker(self.LoadSkinImages, *[allAssetData, allItem])
+            worker.signals.result.connect(self.LoadSkinImagesComplete)
             self.workers.append(worker)
 
             self.skinModels[key] = skinModel
     
-    def DownloadGameIcon(self, allAssetData, allItem, progress_callback):
+    def LoadSkinImages(self, allAssetData, allItem, progress_callback):
         try:
             icons = []
 
@@ -655,7 +663,7 @@ class TSHGameAssetManager(QObject):
             print(traceback.format_exc())
             return(None)
 
-    def DownloadGameIconComplete(self, results):
+    def LoadSkinImagesComplete(self, results):
         try:
             for result in results:
                 if result is not None:

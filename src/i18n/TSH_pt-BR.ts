@@ -1116,17 +1116,17 @@ p, li { white-space: pre-wrap; }
         <translation>Salvar como novo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="451"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="468"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation>Número de stages banidos não bate com o número de stages neutros. Devem ser banidos mais {0} stage(s).</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="458"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="475"/>
         <source>The current ruleset is valid!</source>
         <translation>As regras atuais são válidas!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="508"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="525"/>
         <source>The text for banByMaxGames is invalid.</source>
         <translation>O texto para bans por número de partidas é inválido.</translation>
     </message>
