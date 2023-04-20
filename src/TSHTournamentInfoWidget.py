@@ -40,16 +40,12 @@ class TSHTournamentInfoWidget(QDockWidget):
                             f"tournamentInfo.{element.objectName()}", element.text())
                     ])
                 widget.editingFinished.emit()
-                widget.setText(StateManager.Get(
-                    f"tournamentInfo.{widget.objectName()}", ""))
 
         for widget in self.findChildren(QSpinBox):
             widget.valueChanged.connect(lambda value, element=widget: [
                 StateManager.Set(
                     f"tournamentInfo.{element.objectName()}", value)
             ])
-            widget.setValue(StateManager.Get(
-                f"tournamentInfo.{widget.objectName()}", 0))
 
     def DisplayErrorMessage(self, message):
         msgBox = QMessageBox()

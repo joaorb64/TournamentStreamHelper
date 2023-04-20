@@ -394,14 +394,14 @@ class TSHGameAssetManager(QObject):
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                     })
-
-                    self.parent().UpdateCharacterModel()
-                    self.parent().UpdateSkinModel()
-                    self.parent().signals.onLoad.emit()
                 except:
                     print(traceback.format_exc())
                 finally:
                     self.lock.unlock()
+                    
+                    self.parent().UpdateCharacterModel()
+                    self.parent().UpdateSkinModel()
+                    self.parent().signals.onLoad.emit()
 
         self.thumbnailSettingsLoaded = False
         self.assetsLoaderThread = AssetsLoaderThread(TSHGameAssetManager.instance)
