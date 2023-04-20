@@ -89,21 +89,21 @@ class TSHTournamentInfoWidget(QDockWidget):
         self.iconView.setPixmap(icon)
     
     def LoadIcon(self):
-        fileName = QFileDialog.getOpenFileName(
-            self,
-            QApplication.translate("app", "Open Image"),
-            ".",
-            QApplication.translate("app", "Image Files")+" (*.png *.jpg *.bmp)"
-        )
-    
-        if fileName != None:
-            try:
+        try:
+            fileName = QFileDialog.getOpenFileName(
+                self,
+                QApplication.translate("app", "Open Image"),
+                ".",
+                QApplication.translate("app", "Image Files")+" (*.png *.jpg *.bmp)"
+            )[0]
+        
+            if fileName != None:
                 pix = QPixmap(fileName)
                 pix.save("./layout/logo.png")
-            except Exception as e:
-                print(traceback.format_exc())
+        except Exception as e:
+            print(traceback.format_exc())
             
-            self.UpdateIcon()
+        self.UpdateIcon()
 
     def DownloadIcon(self):
         try:
