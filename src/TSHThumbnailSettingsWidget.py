@@ -809,7 +809,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         unloadable = []
         family_to_path = {}
 
-        db = QFontDatabase()
+        db = QFontDatabase
         for fpath in font_paths:  # go through all font paths
             if os.path.exists(fpath):
                 # go through all files at each path

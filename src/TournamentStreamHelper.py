@@ -6,6 +6,7 @@ from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
 import qdarkstyle
+import qdarktheme
 import requests
 import urllib
 import json
@@ -738,18 +739,14 @@ class Window(QMainWindow):
 
     def ToggleLightMode(self, checked):
         if checked:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
+            qdarktheme.setup_theme()
 
         SettingsManager.Set("light_mode", checked)
 
     def LoadTheme(self):
         if SettingsManager.Get("light_mode", False):
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
+            qdarktheme.setup_theme()
