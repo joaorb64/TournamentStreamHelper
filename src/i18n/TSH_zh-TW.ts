@@ -699,8 +699,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="448"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
-        <location filename="../TSHAssetDownloader.py" line="321"/>
-        <location filename="../TournamentStreamHelper.py" line="51"/>
+        <location filename="../TSHAssetDownloader.py" line="325"/>
+        <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="423"/>
         <location filename="../TournamentStreamHelper.py" line="609"/>
         <source>Warning</source>
@@ -751,12 +751,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="237"/>
+        <location filename="../TournamentStreamHelper.py" line="236"/>
         <source>Set tournament</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="255"/>
+        <location filename="../TournamentStreamHelper.py" line="254"/>
         <location filename="../TournamentStreamHelper.py" line="538"/>
         <location filename="../TournamentStreamHelper.py" line="542"/>
         <source>Load tournament and sets from StartGG user</source>
@@ -892,8 +892,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="298"/>
-        <location filename="../TSHAssetDownloader.py" line="447"/>
+        <location filename="../TSHAssetDownloader.py" line="302"/>
+        <location filename="../TSHAssetDownloader.py" line="451"/>
         <location filename="../TournamentStreamHelper.py" line="646"/>
         <location filename="../TournamentStreamHelper.py" line="656"/>
         <source>Cancel</source>
