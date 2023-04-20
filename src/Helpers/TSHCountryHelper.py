@@ -1,7 +1,7 @@
 import re
 import unicodedata
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
 import requests
 import os
 import traceback
@@ -12,7 +12,7 @@ import json
 
 
 class TSHCountryHelperSignals(QObject):
-    countriesUpdated = pyqtSignal()
+    countriesUpdated = Signal()
 
 
 class TSHCountryHelper(QObject):

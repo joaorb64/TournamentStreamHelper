@@ -1,7 +1,7 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 import json
 import traceback
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
@@ -15,7 +15,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHPlayerList import TSHPlayerList
 
 class TSHPlayerListWidgetSignals(QObject):
-    UpdateData = pyqtSignal(object)
+    UpdateData = Signal(object)
 
 class TSHPlayerListWidget(QDockWidget):
     def __init__(self, *args, base="player_list"):

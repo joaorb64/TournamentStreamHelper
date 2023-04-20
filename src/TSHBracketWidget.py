@@ -1,7 +1,7 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 import json
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
@@ -19,7 +19,7 @@ def is_power_of_two(n):
     return (n != 0) and (n & (n-1) == 0)
 
 class TSHBracketWidgetSignals(QObject):
-    UpdateData = pyqtSignal(object)
+    UpdateData = Signal(object)
 
 class TSHBracketWidget(QDockWidget):
     def __init__(self, *args):

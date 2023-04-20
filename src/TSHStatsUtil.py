@@ -1,4 +1,4 @@
-from PyQt5.QtCore import *
+from qtpy.QtCore import *
 
 from datetime import datetime
 import math
@@ -7,11 +7,11 @@ from .StateManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHStatsSignals(QObject):
-    RecentSetsSignal = pyqtSignal()
-    LastSetsP1Signal = pyqtSignal()
-    LastSetsP2Signal = pyqtSignal()
-    PlayerHistoryStandingsP1Signal = pyqtSignal()
-    PlayerHistoryStandingsP2Signal = pyqtSignal()
+    RecentSetsSignal = Signal()
+    LastSetsP1Signal = Signal()
+    LastSetsP2Signal = Signal()
+    PlayerHistoryStandingsP1Signal = Signal()
+    PlayerHistoryStandingsP2Signal = Signal()
 
 class TSHStatsUtil:
     instance: "TSHStatsUtil" = None

@@ -1,7 +1,7 @@
 import json
-from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from qtpy import QtGui, QtWidgets, QtCore
+from qtpy.QtCore import *
+from qtpy.QtGui import *
 import os
 import traceback
 from copy import deepcopy
@@ -11,7 +11,7 @@ from src.StateManager import StateManager
 
 
 class TSHLocaleHelperSignals(QObject):
-    localeChanged = pyqtSignal()
+    localeChanged = Signal()
 
 
 class TSHLocaleHelper(QObject):

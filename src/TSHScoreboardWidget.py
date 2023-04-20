@@ -1,10 +1,10 @@
 import platform
 import subprocess
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 
@@ -21,13 +21,13 @@ from .TSHThumbnailSettingsWidget import *
 
 
 class TSHScoreboardWidgetSignals(QObject):
-    UpdateSetData = pyqtSignal(object)
-    NewSetSelected = pyqtSignal(object)
-    SetSelection = pyqtSignal()
-    StreamSetSelection = pyqtSignal()
-    UserSetSelection = pyqtSignal()
-    CommandScoreChange = pyqtSignal(int, int)
-    SwapTeams = pyqtSignal()
+    UpdateSetData = Signal(object)
+    NewSetSelected = Signal(object)
+    SetSelection = Signal()
+    StreamSetSelection = Signal()
+    UserSetSelection = Signal()
+    CommandScoreChange = Signal(int, int)
+    SwapTeams = Signal()
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -163,9 +163,10 @@ class TSHScoreboardWidget(QDockWidget):
             QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.eyeBt, Qt.AlignmentFlag.AlignRight)
         self.eyeBt.setPopupMode(QToolButton.InstantPopup)
-        self.eyeBt.setMenu(QMenu())
+        menu = QMenu()
+        self.eyeBt.setMenu(menu)
 
-        self.eyeBt.menu().addSection("Players")
+        menu.addSection("Players")
 
         self.elements = [
             ["Real Name", ["real_name", "real_nameLabel"]],

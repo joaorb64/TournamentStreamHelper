@@ -1,7 +1,7 @@
 import os
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS, cross_origin
 import json

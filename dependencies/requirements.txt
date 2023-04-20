@@ -1,6 +1,6 @@
 chardet
 charset-normalizer
-pyqt5
+qtpy
 requests
 py7zr
 deepdiff

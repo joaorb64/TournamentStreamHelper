@@ -1,8 +1,8 @@
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from .StateManager import StateManager
 import re
 import traceback
@@ -15,8 +15,8 @@ import requests
 
 
 class TSHGameAssetManagerSignals(QObject):
-    onLoad = pyqtSignal()
-    onLoadAssets = pyqtSignal()
+    onLoad = Signal()
+    onLoadAssets = Signal()
 
 
 class TSHGameAssetManager(QObject):

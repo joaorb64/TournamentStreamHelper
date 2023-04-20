@@ -2,9 +2,9 @@ import copy
 from multiprocessing import Lock
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 import re
 import csv
 import traceback
@@ -13,7 +13,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHPlayerDBSignals(QObject):
-    db_updated = pyqtSignal()
+    db_updated = Signal()
 
 
 class TSHPlayerDB:

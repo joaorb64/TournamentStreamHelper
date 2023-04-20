@@ -1,10 +1,10 @@
 import os
 import re
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
@@ -18,10 +18,10 @@ import math
 import random
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
-    playerId_changed = pyqtSignal()
-    player1Id_changed = pyqtSignal()
-    player2Id_changed = pyqtSignal()
-    dataChanged = pyqtSignal()
+    playerId_changed = Signal()
+    player1Id_changed = Signal()
+    player2Id_changed = Signal()
+    dataChanged = Signal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):

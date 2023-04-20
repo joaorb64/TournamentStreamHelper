@@ -1,7 +1,7 @@
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Workers import Worker
@@ -21,7 +21,7 @@ class IconDelegate(QStyledItemDelegate):
 
 
 class TSHAssetDownloaderSignals(QObject):
-    AssetUpdates = pyqtSignal(dict)
+    AssetUpdates = Signal(dict)
 
 
 class TSHAssetDownloader(QObject):

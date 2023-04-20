@@ -1,7 +1,7 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 import json
 import traceback
 
@@ -13,7 +13,7 @@ from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHPlayerListSlotWidgetSignals(QObject):
-    dataChanged = pyqtSignal()
+    dataChanged = Signal()
 
 class TSHPlayerListSlotWidget(QGroupBox):
     def __init__(self, index, playerList, base="player_list", *args):

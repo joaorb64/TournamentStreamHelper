@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
+from qtpy import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
 
 os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
 
@@ -32,7 +32,7 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
         #self.setUrl(QtCore.QUrl(self.current[0]))
         self.load(QtCore.QUrl(self.current[0]))
 
-    @QtCore.pyqtSlot(bool)
+    @QtCore.Slot(bool)
     def save(self, finished):
         if finished:
             self.timer = QtCore.QTimer()

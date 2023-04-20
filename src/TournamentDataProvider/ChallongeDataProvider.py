@@ -3,17 +3,17 @@ import os
 import traceback
 import re
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from datetime import datetime
 from dateutil.parser import parse
 from ..Helpers.TSHDictHelper import deep_get
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from qtpy.QtCore import *
+from qtpy.QtGui import QStandardItem, QStandardItemModel
 from ..Workers import Worker
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import next_power_of_2

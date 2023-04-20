@@ -16,9 +16,9 @@ import unicodedata
 import sys
 import atexit
 import time
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
@@ -78,11 +78,11 @@ def remove_accents_lower(input_str):
 
 
 class WindowSignals(QObject):
-    StopTimer = pyqtSignal()
-    ExportStageStrike = pyqtSignal(object)
-    DetectGame = pyqtSignal(int)
-    SetupAutocomplete = pyqtSignal()
-    UiMounted = pyqtSignal()
+    StopTimer = Signal()
+    ExportStageStrike = Signal(object)
+    DetectGame = Signal(int)
+    SetupAutocomplete = Signal()
+    UiMounted = Signal()
 
 
 class Window(QMainWindow):
@@ -98,8 +98,7 @@ class Window(QMainWindow):
 
         self.signals = WindowSignals()
 
-        splash = QSplashScreen(self, QPixmap(
-            'assets/icons/icon.png').scaled(128, 128))
+        splash = QSplashScreen(QPixmap('assets/icons/icon.png').scaled(128, 128))
         splash.show()
 
         time.sleep(0.1)
@@ -275,8 +274,9 @@ class Window(QMainWindow):
             QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.optionsBt.setFixedSize(QSize(32, 32))
         self.optionsBt.setIconSize(QSize(32, 32))
-        self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction(
+        menu = QMenu()
+        self.optionsBt.setMenu(menu)
+        action = menu.addAction(
             QApplication.translate("app", "Always on top"))
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
