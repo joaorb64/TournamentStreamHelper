@@ -1085,47 +1085,47 @@ p, li { white-space: pre-wrap; }
         <translation>banByMaxGamesのテキストが無効です。</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="96"/>
+        <location filename="../TSHTournamentDataProvider.py" line="97"/>
         <source>Paste the tournament URL.</source>
         <translation>大会のURLをここに貼って下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="96"/>
+        <location filename="../TSHTournamentDataProvider.py" line="97"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation>StartGGのリンクには/event/partを含めて下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="123"/>
+        <location filename="../TSHTournamentDataProvider.py" line="124"/>
         <source>Set tournament URL</source>
         <translation>大会のURLを貼る</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="148"/>
+        <location filename="../TSHTournamentDataProvider.py" line="149"/>
         <source>Set Twitch username</source>
         <translation>Twitchでのユーザー名を入力</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="148"/>
+        <location filename="../TSHTournamentDataProvider.py" line="149"/>
         <source>Twitch Username:</source>
         <translation>Twitchでのユーザー名:</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="158"/>
+        <location filename="../TSHTournamentDataProvider.py" line="159"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation>プレイヤーのStartGGのプロフィールへのURLをここに貼ってください</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="161"/>
+        <location filename="../TSHTournamentDataProvider.py" line="162"/>
         <source>Insert the player&apos;s name in bracket</source>
         <translation>ブラケット表にプレイヤー名を記入して下さい</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="165"/>
+        <location filename="../TSHTournamentDataProvider.py" line="166"/>
         <source>Invalid tournament data provider</source>
         <translation>無効な大会データプロバイダです</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="170"/>
+        <location filename="../TSHTournamentDataProvider.py" line="171"/>
         <source>Set player</source>
         <translation>プレイヤーを選ぶ</translation>
     </message>
