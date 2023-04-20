@@ -810,7 +810,7 @@ p, li { white-space: pre-wrap; }
         <translation>このプログラムについて</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="163"/>
+        <location filename="../TSHAssetDownloader.py" line="167"/>
         <source>Asset pack name</source>
         <translation>アセットパック名</translation>
     </message>
@@ -850,8 +850,8 @@ p, li { white-space: pre-wrap; }
         <translation>アップデート</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="298"/>
-        <location filename="../TSHAssetDownloader.py" line="447"/>
+        <location filename="../TSHAssetDownloader.py" line="302"/>
+        <location filename="../TSHAssetDownloader.py" line="451"/>
         <location filename="../TournamentStreamHelper.py" line="635"/>
         <location filename="../TournamentStreamHelper.py" line="645"/>
         <source>Cancel</source>
@@ -921,68 +921,68 @@ p, li { white-space: pre-wrap; }
         <translation>ゲームのタイトル</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="171"/>
+        <location filename="../TSHAssetDownloader.py" line="175"/>
         <source>Description</source>
         <translation>概要</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="172"/>
+        <location filename="../TSHAssetDownloader.py" line="176"/>
         <source>Credits</source>
         <translation>製作者</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="165"/>
+        <location filename="../TSHAssetDownloader.py" line="169"/>
         <source>Installed version</source>
         <translation>インストールされているバージョン</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="162"/>
+        <location filename="../TSHAssetDownloader.py" line="166"/>
         <source>State</source>
         <translation>状態</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="167"/>
+        <location filename="../TSHAssetDownloader.py" line="171"/>
         <source>Latest version</source>
         <translation>最新バージョン</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="168"/>
+        <location filename="../TSHAssetDownloader.py" line="172"/>
         <source>Size</source>
         <translation>容量</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="169"/>
+        <location filename="../TSHAssetDownloader.py" line="173"/>
         <source>Stage data</source>
         <translation>ステージデータ</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="170"/>
+        <location filename="../TSHAssetDownloader.py" line="174"/>
         <source>Eyesight data</source>
         <translation>アイサイトデータ</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="271"/>
+        <location filename="../TSHAssetDownloader.py" line="275"/>
         <source>Download</source>
         <translation>ダウンロード</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="274"/>
+        <location filename="../TSHAssetDownloader.py" line="278"/>
         <source>Update all</source>
         <translation>全てを更新する</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="297"/>
-        <location filename="../TSHAssetDownloader.py" line="446"/>
+        <location filename="../TSHAssetDownloader.py" line="301"/>
+        <location filename="../TSHAssetDownloader.py" line="450"/>
         <source>Downloading assets</source>
         <translation>アセットをダウンロードしています</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="322"/>
+        <location filename="../TSHAssetDownloader.py" line="326"/>
         <source>Failed to fetch assets from github:</source>
         <translation>アセットをGitHubから取得するのに失敗しました:</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="360"/>
+        <location filename="../TSHAssetDownloader.py" line="364"/>
         <source>Downloading {0}... ({1}/{2})</source>
         <translation>{0}... ({1}/{2})をダウンロード中…</translation>
     </message>
@@ -1217,7 +1217,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="448"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
-        <location filename="../TSHAssetDownloader.py" line="321"/>
+        <location filename="../TSHAssetDownloader.py" line="325"/>
         <location filename="../TournamentStreamHelper.py" line="54"/>
         <location filename="../TournamentStreamHelper.py" line="412"/>
         <location filename="../TournamentStreamHelper.py" line="598"/>
