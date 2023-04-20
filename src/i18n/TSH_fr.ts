@@ -28,36 +28,67 @@ p, li { white-space: pre-wrap; }
     <name>DockWidget</name>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="17"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="30"/>
         <source>Tournament Info</source>
         <translation>Info Tournoi</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="54"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="60"/>
         <source>Address</source>
         <translation>Adresse</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="67"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="73"/>
         <source>Event Name</source>
         <translation>Nom de l&apos;Événement</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="94"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="100"/>
         <source>Short Link</source>
         <translation>Raccourci</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="118"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="124"/>
         <source>Date</source>
         <translation>Date</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="47"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="133"/>
+        <source>Load from tournament</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
+        <source>Clear</source>
+        <translation type="unfinished">Effacer</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="150"/>
+        <source>Tournament Icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="183"/>
+        <source>Load local file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="190"/>
+        <source>Download tournament icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="197"/>
+        <source>Default</source>
+        <translation type="unfinished">Défaut</translation>
+    </message>
+    <message>
+        <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
         <source>Tournament Name</source>
         <translation>Nom du Tournoi</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTournamentInfo.ui" line="74"/>
+        <location filename="../layout/TSHTournamentInfo.ui" line="80"/>
         <source>Entrant Number</source>
         <translation>Nombre de Participants</translation>
     </message>
@@ -1336,18 +1367,28 @@ p, li { white-space: pre-wrap; }
         <translation>Phase finale</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="53"/>
-        <location filename="../TSHTournamentInfoWidget.py" line="54"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="95"/>
+        <source>Open Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="97"/>
+        <source>Image Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHTournamentInfoWidget.py" line="135"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="136"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="97"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="179"/>
         <source>The tournament URL could not be loaded.</source>
         <translation>L&apos;URL du tournoi n&apos;a pas pu être chargée.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="97"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="179"/>
         <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
