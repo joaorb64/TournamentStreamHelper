@@ -61,25 +61,31 @@ class TSHTournamentDataProvider:
         if self.provider and self.provider.url == url:
             return
 
-        if "start.gg" in url:
+        if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-        elif "challonge.com" in url:
+        elif url is not None and "challonge.com" in url:
             TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
                 url, self.threadPool, self)
         else:
             print("Unsupported provider...")
-            return
-
-        self.GetTournamentData(initialLoading=initialLoading)
-        self.GetTournamentPhases()
-
-        TSHTournamentDataProvider.instance.provider.GetEntrants()
-        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
-
-        TSHTournamentDataProvider.instance.SetGameFromProvider()
-
+            TSHTournamentDataProvider.instance.provider = None
+        
         SettingsManager.Set("TOURNAMENT_URL", url)
+
+        if self.provider is not None:
+            self.GetTournamentData(initialLoading=initialLoading)
+            self.GetTournamentPhases()
+
+            TSHTournamentDataProvider.instance.provider.GetEntrants()
+            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+            TSHTournamentDataProvider.instance.SetGameFromProvider()
+        else:
+            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({})
+            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit([])
+            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+            TSHGameAssetManager.instance.LoadGameAssets(0)
 
     def SetStartggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)

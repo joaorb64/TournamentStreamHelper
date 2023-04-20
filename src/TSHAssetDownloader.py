@@ -72,7 +72,7 @@ class TSHAssetDownloader(QObject):
             return
 
         self.preDownloadDialogue = QDialog()
-        self.preDownloadDialogue.setWindowTitle("Download assets")
+        self.preDownloadDialogue.setWindowTitle(QApplication.translate("app", "Download assets"))
         self.preDownloadDialogue.setWindowModality(
             Qt.WindowModality.ApplicationModal)
         self.preDownloadDialogue.setLayout(QVBoxLayout())
