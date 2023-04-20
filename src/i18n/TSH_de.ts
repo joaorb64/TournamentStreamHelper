@@ -1311,12 +1311,12 @@ p, li { white-space: pre-wrap; }
         <translation>kursiv</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="94"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="95"/>
         <source>Open Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="96"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="97"/>
         <source>Image Files</source>
         <translation type="unfinished"></translation>
     </message>
