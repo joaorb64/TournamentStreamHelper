@@ -217,9 +217,6 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
 
-        # pre_base_layout.setSpacing(0)
-        # pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
-
         # Game
         base_layout = QHBoxLayout()
 
@@ -233,7 +230,7 @@ class Window(QMainWindow):
             QApplication.translate("app", "Set tournament"))
         group_box.layout().addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
-            lambda bt, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
+            lambda bt=None, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
 
         # Follow startgg user
         hbox = QHBoxLayout()

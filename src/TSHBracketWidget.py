@@ -46,10 +46,6 @@ class TSHBracketWidget(QDockWidget):
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.mainLayout.setContentsMargins(0, 0, 0, 0)
-
         outerLayout: QWidget = self.findChild(QWidget, "bracket")
         self.playerList = TSHPlayerList(base="bracket.players")
         
@@ -58,14 +54,11 @@ class TSHBracketWidget(QDockWidget):
         # Add player list settings on the top
         row = QWidget()
         row.setLayout(QHBoxLayout())
-        row.setContentsMargins(0, 0, 0, 0)
-        row.layout().setSpacing(0)
         list.layout().addWidget(row)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
+
         self.slotNumber = QSpinBox()
         self.slotNumber.setMinimum(2)
         col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
@@ -78,8 +71,6 @@ class TSHBracketWidget(QDockWidget):
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.playerPerTeam = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Players per slot")))
         col.layout().addWidget(self.playerPerTeam)
@@ -88,8 +79,6 @@ class TSHBracketWidget(QDockWidget):
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Characters per player")))
         col.layout().addWidget(self.charNumber)

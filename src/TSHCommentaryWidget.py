@@ -20,14 +20,8 @@ class TSHCommentaryWidget(QDockWidget):
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.widget.setContentsMargins(0, 0, 0, 0)
-
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
-        topOptions.layout().setSpacing(0)
-        topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.widget.layout().addWidget(topOptions)
@@ -35,8 +29,6 @@ class TSHCommentaryWidget(QDockWidget):
         col = QWidget()
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.commentatorNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Number of commentators")))
         col.layout().addWidget(self.commentatorNumber)

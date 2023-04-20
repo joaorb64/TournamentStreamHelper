@@ -104,8 +104,6 @@ class TSHScoreboardWidget(QDockWidget):
 
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
-        topOptions.layout().setSpacing(0)
-        topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.innerWidget.layout().addWidget(topOptions)
@@ -113,8 +111,6 @@ class TSHScoreboardWidget(QDockWidget):
         col = QWidget()
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Characters per player")))
         col.layout().addWidget(self.charNumber)
@@ -124,8 +120,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
         topOptions.layout().addStretch()
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.playerNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Players per team")))
         col.layout().addWidget(self.playerNumber)
@@ -137,8 +131,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
 
         self.thumbnailBtn = QPushButton(
             QApplication.translate("app", "Generate Thumbnail") + " ")
@@ -154,8 +146,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
 
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))

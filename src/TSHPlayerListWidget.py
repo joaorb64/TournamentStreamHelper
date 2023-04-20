@@ -36,28 +36,18 @@ class TSHPlayerListWidget(QDockWidget):
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.widget.setContentsMargins(0, 0, 0, 0)
-
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
-        topOptions.layout().setSpacing(0)
-        topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.widget.layout().addWidget(topOptions)
 
         row = QWidget()
         row.setLayout(QHBoxLayout())
-        row.setContentsMargins(0, 0, 0, 0)
-        row.layout().setSpacing(0)
         topOptions.layout().addWidget(row)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.slotNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
         col.layout().addWidget(self.slotNumber)
@@ -66,8 +56,6 @@ class TSHPlayerListWidget(QDockWidget):
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.playerPerTeam = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Players per slot")))
         col.layout().addWidget(self.playerPerTeam)
@@ -76,8 +64,6 @@ class TSHPlayerListWidget(QDockWidget):
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app","Characters per player")))
         col.layout().addWidget(self.charNumber)
@@ -86,8 +72,6 @@ class TSHPlayerListWidget(QDockWidget):
 
         row = QWidget()
         row.setLayout(QHBoxLayout())
-        row.setContentsMargins(0, 0, 0, 0)
-        row.layout().setSpacing(0)
         topOptions.layout().addWidget(row)
 
         self.loadFromStandingsBt = QPushButton(QApplication.translate("app", "Load tournament standings"))
