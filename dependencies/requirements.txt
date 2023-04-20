@@ -12,3 +12,4 @@ flask-cors
 asyncio
 python-dateutil
 pynput
+pyside6 
