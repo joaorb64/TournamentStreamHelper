@@ -803,6 +803,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../TSHAssetDownloader.py" line="75"/>
         <location filename="../TournamentStreamHelper.py" line="289"/>
         <source>Download assets</source>
         <translation type="unfinished"></translation>

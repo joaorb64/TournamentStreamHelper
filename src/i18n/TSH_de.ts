@@ -793,6 +793,7 @@ p, li { white-space: pre-wrap; }
         <translation>Auf Updates prüfen</translation>
     </message>
     <message>
+        <location filename="../TSHAssetDownloader.py" line="75"/>
         <location filename="../TournamentStreamHelper.py" line="289"/>
         <source>Download assets</source>
         <translation>Assets herunterladen</translation>
