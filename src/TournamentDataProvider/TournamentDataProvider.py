@@ -8,6 +8,9 @@ class TournamentDataProvider:
         self.videogame = None
         self.parent = parent
 
+    def GetIconURL(self):
+        pass
+
     def GetEntrants(self):
         pass
 

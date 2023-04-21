@@ -1221,8 +1221,6 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     foreground_path = settings.get("foreground_path")
     if not foreground_path:
         foreground_path = template_data["default_foreground"]
-    if not os.path.isfile(foreground_path):
-        raise Exception(f"Foreground {foreground_path} doesn't exist !")
     background_path = settings.get("background_path")
     if not background_path:
         background_path = template_data["default_background"]

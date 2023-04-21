@@ -229,11 +229,23 @@ class Window(QMainWindow):
             QSizePolicy.Minimum, QSizePolicy.Maximum)
         base_layout.layout().addWidget(group_box)
 
+        # Set tournament
+        hbox = QHBoxLayout()
+        group_box.layout().addLayout(hbox)
+
         self.setTournamentBt = QPushButton(
             QApplication.translate("app", "Set tournament"))
-        group_box.layout().addWidget(self.setTournamentBt)
+        hbox.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
             lambda bt, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
+
+        self.unsetTournamentBt = QPushButton()
+        self.unsetTournamentBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.unsetTournamentBt.setIcon(QIcon("./assets/icons/cancel.svg"))
+        self.unsetTournamentBt.clicked.connect(lambda: [
+            TSHTournamentDataProvider.instance.SetTournament(None)
+        ])
+        hbox.addWidget(self.unsetTournamentBt)
 
         # Follow startgg user
         hbox = QHBoxLayout()
@@ -242,15 +254,12 @@ class Window(QMainWindow):
         self.btLoadPlayerSet = QPushButton(
             QApplication.translate("app", "Load tournament and sets from StartGG user"))
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
         hbox.addWidget(self.btLoadPlayerSet)
+
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)
-        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-            self.UpdateUserSetButton)
-
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateUserSetButton)
 
@@ -262,6 +271,8 @@ class Window(QMainWindow):
         self.btLoadPlayerSetOptions.clicked.connect(
             self.LoadUserSetOptionsClicked)
         hbox.addWidget(self.btLoadPlayerSetOptions)
+
+        self.UpdateUserSetButton()
 
         # Settings
         menu_margin = " "*6

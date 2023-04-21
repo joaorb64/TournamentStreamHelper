@@ -39,13 +39,8 @@ class TSHGameAssetManager(QObject):
         self.thumbnailSettingsLoaded = False
         self.threadpool = QThreadPool()
         self.workers = []
-        self.signals.onLoad.connect(self.LoadSkinsDo)
 
-    def LoadSkinsDo(self):
-        t = QThread(self)
-        t.start()
-        for w in self.workers:
-            self.threadpool.start(w)
+        self.skinLoaderLock = QMutex()
 
     def UiMounted(self):
         self.DownloadStartGGCharacters()
@@ -79,7 +74,15 @@ class TSHGameAssetManager(QObject):
 
                         if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
                             self.parent().games[game]["logo"] = QIcon(
-                                "./user_data/games/"+game+"/base_files/logo.png")
+                                QPixmap(
+                                    QImage("./user_data/games/"+game+"/base_files/logo.png").scaled(
+                                        64,
+                                        64,
+                                        Qt.AspectRatioMode.KeepAspectRatio,
+                                        Qt.TransformationMode.SmoothTransformation
+                                    )
+                                )
+                            )
 
                         self.parent().games[game]["assets"] = {}
                         self.parent(
@@ -214,7 +217,10 @@ class TSHGameAssetManager(QObject):
                                     print(f)
                                     pass
                                 self.parent().stockIcons[c][number] = QImage(
-                                    './user_data/games/'+game+'/'+assetsKey+'/'+f)
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
+                                        32,
+                                        Qt.TransformationMode.SmoothTransformation
+                                    )
 
                         print("Loaded stock icons")
 
@@ -383,13 +389,13 @@ class TSHGameAssetManager(QObject):
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                     })
-
-                    self.parent().UpdateCharacterModel()
-                    self.parent().UpdateSkinModel()
-                    self.parent().signals.onLoad.emit()
                 except:
                     print(traceback.format_exc())
                 finally:
+                    self.parent().UpdateCharacterModel()
+                    self.parent().UpdateSkinModel()
+                    self.parent().signals.onLoad.emit()
+                    
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
@@ -425,10 +431,7 @@ class TSHGameAssetManager(QObject):
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
                 item.setIcon(
-                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]).scaledToWidth(
-                        32,
-                        Qt.TransformationMode.SmoothTransformation
-                    ))
+                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
                 )
 
                 data = {
@@ -512,13 +515,18 @@ class TSHGameAssetManager(QObject):
                 allItem.append(item)
                 allAssetData.append(assetData)
 
-            worker = Worker(self.DownloadGameIcon, *[allAssetData, allItem])
-            worker.signals.result.connect(self.DownloadGameIconComplete)
+            worker = Worker(self.LoadSkinImages, *[allAssetData, allItem, skinModel])
+            worker.signals.result.connect(self.LoadSkinImagesComplete)
             self.workers.append(worker)
 
             self.skinModels[key] = skinModel
+        
+        for w in self.workers:
+            self.threadpool.start(w)
+        
+        self.threadpool.waitForDone()
     
-    def DownloadGameIcon(self, allAssetData, allItem, progress_callback):
+    def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback):
         try:
             icons = []
 
@@ -655,7 +663,7 @@ class TSHGameAssetManager(QObject):
             print(traceback.format_exc())
             return(None)
 
-    def DownloadGameIconComplete(self, results):
+    def LoadSkinImagesComplete(self, results):
         try:
             for result in results:
                 if result is not None:

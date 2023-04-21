@@ -511,6 +511,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         if characterData:
             target.setModel(TSHGameAssetManager.instance.skinModels.get(characterData.get("en_name")))
+        else:
+            target.setModel(QStandardItemModel())
 
     def ReloadCharacters(self):
         for c in self.character_elements:

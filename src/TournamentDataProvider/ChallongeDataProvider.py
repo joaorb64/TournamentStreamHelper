@@ -114,6 +114,31 @@ class ChallongeDataProvider(TournamentDataProvider):
             traceback.print_exc()
 
         return finalData
+    
+    def GetIconURL(self):
+        url = None
+
+        try:
+            slug = self.GetSlug()
+
+            data = requests.get(
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                headers={
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    "Accept-Encoding": "gzip, deflate, br"
+                }
+            )
+
+            data = json.loads(data.text)
+            collection = deep_get(data, "collection", [{}])[0]
+            
+            url = collection.get("organizer")
+        except:
+            traceback.print_exc()
+
+        return url
 
     def GetMatch(self, setId, progress_callback):
         finalData = {}
