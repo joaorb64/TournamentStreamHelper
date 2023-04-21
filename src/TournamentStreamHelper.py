@@ -17,11 +17,17 @@ import unicodedata
 import sys
 import atexit
 import time
+import qtpy
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+from packaging.version import parse
+
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-QImageReader.setAllocationLimit(0)
+
+if parse(qtpy.QT_VERSION).major == 6:
+    QImageReader.setAllocationLimit(0)
+
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
