@@ -39,13 +39,8 @@ class TSHGameAssetManager(QObject):
         self.thumbnailSettingsLoaded = False
         self.threadpool = QThreadPool()
         self.workers = []
-        self.signals.onLoad.connect(self.LoadSkinsDo)
 
-    def LoadSkinsDo(self):
-        t = QThread(self)
-        t.start()
-        for w in self.workers:
-            self.threadpool.start(w)
+        self.skinLoaderLock = QMutex()
 
     def UiMounted(self):
         self.DownloadStartGGCharacters()
@@ -397,11 +392,11 @@ class TSHGameAssetManager(QObject):
                 except:
                     print(traceback.format_exc())
                 finally:
-                    self.lock.unlock()
-                    
                     self.parent().UpdateCharacterModel()
                     self.parent().UpdateSkinModel()
                     self.parent().signals.onLoad.emit()
+                    
+                    self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
         self.assetsLoaderThread = AssetsLoaderThread(TSHGameAssetManager.instance)
@@ -520,13 +515,18 @@ class TSHGameAssetManager(QObject):
                 allItem.append(item)
                 allAssetData.append(assetData)
 
-            worker = Worker(self.LoadSkinImages, *[allAssetData, allItem])
+            worker = Worker(self.LoadSkinImages, *[allAssetData, allItem, skinModel])
             worker.signals.result.connect(self.LoadSkinImagesComplete)
             self.workers.append(worker)
 
             self.skinModels[key] = skinModel
+        
+        for w in self.workers:
+            self.threadpool.start(w)
+        
+        self.threadpool.waitForDone()
     
-    def LoadSkinImages(self, allAssetData, allItem, progress_callback):
+    def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback):
         try:
             icons = []
 
