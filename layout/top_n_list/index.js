@@ -20,7 +20,7 @@ LoadEverything().then(() => {
       let htmls = [];
       let firstpass = new Array();
 	    let nbtimes = 2;
-	    for(let e=0;e<data.tournamentInfo.numEntrants;e++){
+	    for(let e=0;e<data.tournamentInfo.numEntrants/2;e++){
 		    for(let j=0;j<nbtimes;j++){
 			    firstpass.push(e)
 		    }
