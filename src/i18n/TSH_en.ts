@@ -732,33 +732,33 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="126"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="129"/>
         <source>Open {0} in a browser to stage strike.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="201"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="239"/>
         <location filename="../TournamentStreamHelper.py" line="643"/>
         <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="204"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="242"/>
         <source>Save new</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="468"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="443"/>
         <source>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="475"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="450"/>
         <source>The current ruleset is valid!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="525"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="500"/>
         <source>The text for banByMaxGames is invalid.</source>
         <translation type="unfinished"></translation>
     </message>
