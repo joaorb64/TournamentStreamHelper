@@ -293,9 +293,8 @@ class WebServer(QThread):
     @cross_origin()
     def test(filename):
         filename = filename or 'stage_strike_app/build/index.html'
-        print(os.path.abspath("."), filename)
-        return send_from_directory(os.path.abspath("."), filename)
+        return send_from_directory(os.path.abspath("."), filename, as_attachment=filename.endswith(".gz"))
 
     def run(self):
         self.app.run(host=self.host_name, port=self.port,
-                     debug=True, use_reloader=False)
+                     debug=False, use_reloader=False)
