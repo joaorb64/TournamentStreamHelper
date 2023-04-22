@@ -17,16 +17,29 @@ LoadEverything().then(() => {
       !oldData.player_list ||
       JSON.stringify(data.player_list) != JSON.stringify(oldData.player_list)
     ) {
-      let htmls = [];
-
-      for (const [i, slot] of Object.entries(data.player_list.slot)) {
+	let htmls = [];
+	let firstpass = new Array();
+	let nbtimes = 2;
+	for(let e=0;e<data.tournamentInfo.numEntrants/2;e++){
+		for(let j=0;j<nbtimes;j++){
+			firstpass.push(e)
+		}
+		e += nbtimes;
+		for(let j=0;j<nbtimes;j++){
+			firstpass.push(e)
+		}
+		e += nbtimes-1;
+		nbtimes *=2
+	}
+	let standing = new Array(1,2,3,4)
+	standing = standing.concat(firstpass.map((e)=>e+5));
+	for (const [i, slot] of Object.entries(data.player_list.slot)) {
         let html = `<div class="slot slot${i + 1}">`;
         for (const [p, player] of Object.entries(slot.player)) {
           html += `
             <div class="p${p + 1} player container">
               <div class="score">${
-                // TODO: Standings formula
-                Array(1, 2, 3, 4, 5, 5, 7, 7, 17, 17, 17, 17, 21, 21, 21, 21)[
+                standing[
                   i - 1
                 ]
               }</div>
