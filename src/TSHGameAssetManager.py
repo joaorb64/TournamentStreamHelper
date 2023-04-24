@@ -32,6 +32,7 @@ class TSHGameAssetManager(QObject):
 
         self.characterModel = QStandardItemModel()
         self.skinModels = {}
+        self.stageModel = QStandardItemModel()
 
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
@@ -394,8 +395,10 @@ class TSHGameAssetManager(QObject):
                 finally:
                     self.parent().UpdateCharacterModel()
                     self.parent().UpdateSkinModel()
+                    self.parent().UpdateStageModel()
                     self.parent().signals.onLoad.emit()
-                    
+
+                    self.parent().threadpool.waitForDone()
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
@@ -418,6 +421,95 @@ class TSHGameAssetManager(QObject):
 
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
+    
+    def UpdateStageModel(self):
+        try:
+            self.stageModel = QStandardItemModel()
+
+            for stage in self.selectedGame.get("stage_to_codename", {}).items():
+                # Load stage name translations
+                stage[1]["en_name"] = stage[1].get("name")
+
+                # Display name
+                display_name = stage[1].get("name")
+
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace('-', '_') in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        locale.replace('-', '_')]
+                elif locale.split('-')[0] in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        locale.split('-')[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale)]
+
+                stage[1]["display_name"] = display_name
+
+                # Export name
+                export_name = stage[1].get("name")
+
+                locale = TSHLocaleHelper.exportLocale
+                if locale.replace('-', '_') in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        locale.replace('-', '_')]
+                elif locale.split('-')[0] in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        locale.split('-')[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale)]
+
+                stage[1]["name"] = export_name
+
+                item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
+                    "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
+                item.setData(stage[1], Qt.ItemDataRole.UserRole)
+                self.stageModel.appendRow(item)
+
+                worker = Worker(self.LoadStageImage, *[stage[1], item])
+                worker.signals.result.connect(self.LoadStageImageComplete)
+                self.threadpool.start(worker)
+        except:
+            print(traceback.format_exc())
+    
+    def LoadStageImage(self, stage, item, progress_callback):
+        try:
+            if stage.get("path"):
+                img = Image.open(stage.get("path"))
+                
+                resizeMultiplier = 1
+
+                if img.width > img.height:
+                    resizeMultiplier = 64/img.width
+                else:
+                    resizeMultiplier = 64/img.height
+
+                img = img.resize((int(img.width*resizeMultiplier), int(img.height*resizeMultiplier)), Image.BILINEAR)
+
+                img = img.convert("RGBA")
+                data = img.tobytes("raw","RGBA")
+                qimg = QImage(data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+                pix = QPixmap.fromImage(qimg)
+                icon = QIcon(pix)
+                    
+                return([item, icon])
+            else:
+                raise
+        except Exception as e:
+            img = QPixmap("./assets/icons/cancel.svg").scaled(32, 32)
+            icon = QIcon(img)
+            print(traceback.format_exc())
+            return([item, icon])
+
+    def LoadStageImageComplete(self, result):
+        try:
+            if result is not None:
+                if result[0] and result[1]:
+                    result[0].setIcon(result[1])
+        except Exception as e:
+            print(traceback.format_exc())
+            return(None)
     
     def UpdateCharacterModel(self):
         try:
@@ -523,8 +615,6 @@ class TSHGameAssetManager(QObject):
         
         for w in self.workers:
             self.threadpool.start(w)
-        
-        self.threadpool.waitForDone()
     
     def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback):
         try:
