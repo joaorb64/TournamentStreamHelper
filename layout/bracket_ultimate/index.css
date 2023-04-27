@@ -32,18 +32,63 @@ body {
   align-items: center;
 }
 
+.header_middle {
+  position: relative;
+  width: calc(100vw - 104px);
+  height: 100%;
+  background: var(--p1-score-bg-color);
+  clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .header .bg {
   position: absolute;
-  left: 64px;
-  right: 64px;
+  width: calc(100% - 64px);
   height: 100%;
   background: var(--p1-score-bg-color);
   clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
 }
 
+.header .bg2 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--p1-score-bg-color);
+  clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
+  filter: brightness(0.8);
+}
+
+.header .info {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 24px;
+  width: 400px;
+  height: 32px;
+  color: var(--text-color);
+  z-index: 1;
+}
+
+.info_bg {
+  width: 100%;
+  height: 100%;
+  background: var(--p1-score-bg-color);
+  clip-path: polygon(32px 0, 100% 0, calc(100% - 32px) 100%, 0 100%);
+  filter: brightness(0.8);
+}
+
+.info_content {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 64px;
+}
+
 .header .title {
-  font-size: 42px;
-  width: 800px;
+  font-size: 36px;
+  width: 1000px;
   color: var(--text-color);
   z-index: 1;
 }
