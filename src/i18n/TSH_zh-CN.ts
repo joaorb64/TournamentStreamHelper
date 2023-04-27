@@ -689,7 +689,7 @@ p, li { white-space: pre-wrap; }
     <name>Settings</name>
     <message>
         <location filename="../TournamentStreamHelper.py" line="466"/>
-        <location filename="../Settings/TSHSettingsWindow.py" line="12"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="28"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1326,55 +1326,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="65"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="81"/>
         <source>Hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/SettingsWidget.py" line="26"/>
-        <source>Default</source>
+        <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
+        <source>Layout</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>settings.hotkeys</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="47"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="63"/>
         <source>Load set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="48"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="64"/>
         <source>Team 1 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="49"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="65"/>
         <source>Team 1 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="50"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
         <source>Team 2 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="51"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="67"/>
         <source>Team 2 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="52"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="68"/>
         <source>Reset scores</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="53"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="69"/>
         <source>Swap teams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="40"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="56"/>
         <source>Enable hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
