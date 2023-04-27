@@ -1,9 +1,24 @@
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from ..TSHHotkeys import TSHHotkeys
 from ..SettingsManager import SettingsManager
+from dataclasses import dataclass
+from ..TSHGameAssetManager import TSHGameAssetManager
+
+
+@dataclass
+class SETTINGS:
+    name: str = None
+    path: str = None
+    type: str = None
+    default: any = None
+    callback: callable = lambda: None
+    options: list = None
+
 
 class SettingsWidget(QWidget):
-    def __init__(self, settingsBase = "", settings = []):
+    def __init__(self, settingsBase="", settings=[]):
         super().__init__()
 
         self.settingsBase = settingsBase
@@ -15,41 +30,103 @@ class SettingsWidget(QWidget):
         # Set the layout for the widget
         self.setLayout(layout)
 
-        for setting in settings:
-            self.AddSetting(*setting)
+        # Keep reference of all settings related to assets
+        self.assetsSettings = []
 
-    def AddSetting(self, name: str, setting: str, type: str, defaultValue, callback=lambda: None):
+        for setting in settings:
+            self.AddSetting(setting)
+
+        TSHGameAssetManager.instance.signals.onLoad.connect(self.GamesReloaded)
+
+    def GamesReloaded(self):
+        for (gameCombo, assetCombo) in self.assetsSettings:
+            gameCombo.clear()
+
+            for (key, val) in TSHGameAssetManager.instance.games.items():
+                item = QStandardItem()
+                item.setText(f'{val.get("name")} ({key})')
+                item.setData(val)
+                gameCombo.model().appendRow(item)
+
+    def AddSetting(self, settings: SETTINGS = SETTINGS()):
         lastRow = self.layout().rowCount()
 
-        self.layout().addWidget(QLabel(name), lastRow, 0)
+        self.layout().addWidget(QLabel(settings.name), lastRow, 0)
 
-        resetButton = QPushButton(QApplication.translate("settings", "Default"))
-        
-        if type == "checkbox":
+        resetButton = QPushButton(
+            QApplication.translate("settings", "Default"))
+
+        settingWidget = None
+
+        if settings.type == "bool":
             settingWidget = QCheckBox()
-            settingWidget.setChecked(SettingsManager.Get(self.settingsBase+"."+setting, defaultValue))
-            settingWidget.stateChanged.connect(lambda val: SettingsManager.Set(self.settingsBase+"."+setting, settingWidget.isChecked()))
+            settingWidget.setChecked(SettingsManager.Get(
+                self.settingsBase+"."+settings.path, settings.default))
+            settingWidget.stateChanged.connect(lambda val: SettingsManager.Set(
+                self.settingsBase+"."+settings.path, settingWidget.isChecked()))
             resetButton.clicked.connect(lambda bt, settingWidget=settingWidget:
-                settingWidget.setChecked(defaultValue)
-            )
-        elif type == "hotkey":
+                                        settingWidget.setChecked(
+                                            settings.default)
+                                        )
+        elif settings.type == "hotkey":
             settingWidget = QKeySequenceEdit()
             settingWidget.keySequenceChanged.connect(lambda keySequence, settingWidget=settingWidget:
-                settingWidget.setKeySequence(keySequence.toString().split(",")[0]) if keySequence.count() > 0 else None
-            )
-            settingWidget.setKeySequence(SettingsManager.Get(self.settingsBase+"."+setting, defaultValue))
+                                                     settingWidget.setKeySequence(keySequence.toString().split(",")[
+                                                                                  0]) if keySequence.count() > 0 else None
+                                                     )
+            settingWidget.setKeySequence(SettingsManager.Get(
+                self.settingsBase+"."+settings.path, settings.default))
             settingWidget.keySequenceChanged.connect(
-                lambda sequence, setting=setting: [
-                    SettingsManager.Set(self.settingsBase+"."+setting, sequence.toString()),
-                    callback()
+                lambda sequence, setting=settings.path: [
+                    SettingsManager.Set(
+                        self.settingsBase+"."+setting, sequence.toString()),
+                    settings.callback()
                 ]
             )
             resetButton.clicked.connect(
-                lambda bt, setting=setting, settingWidget=settingWidget:[
-                    settingWidget.setKeySequence(defaultValue),
-                    callback()
+                lambda bt, setting=settings.path, settingWidget=settingWidget: [
+                    settingWidget.setKeySequence(settings.default),
+                    settings.callback()
                 ]
             )
-        
-        self.layout().addWidget(settingWidget, lastRow, 1)
-        self.layout().addWidget(resetButton, lastRow, 2)
+        elif settings.type == "combobox":
+            settingWidget = QComboBox()
+
+            if settings.options:
+                for option in settings.options:
+                    settingWidget.addItem(option)
+
+                defaultIndex = settings.options.index(settings.default)
+                settingWidget.setCurrentIndex(defaultIndex)
+
+                settingWidget.currentIndexChanged.connect(
+                    lambda sequence, setting=settings.path: [
+                        SettingsManager.Set(
+                            self.settingsBase+"."+setting, settingWidget.currentText()),
+                        settings.callback()
+                    ]
+                )
+
+                resetButton.clicked.connect(
+                    lambda bt, setting=settings.path, settingWidget=settingWidget: [
+                        settingWidget.setCurrentIndex(defaultIndex),
+                        settings.callback()
+                    ]
+                )
+        elif settings.type == "asset":
+            settingWidget = QWidget()
+            settingWidget.setLayout(QHBoxLayout())
+            settingWidget.setContentsMargins(0, 0, 0, 0)
+            settingWidget.layout().setContentsMargins(0, 0, 0, 0)
+            gameCombo = QComboBox()
+            assetCombo = QComboBox()
+            settingWidget.layout().addWidget(gameCombo)
+            settingWidget.layout().addWidget(assetCombo)
+            self.assetsSettings.append((gameCombo, assetCombo))
+        else:
+            settingWidget = QLabel(
+                f'Could not identify "{settings.type}" type for {settings.name}')
+
+        if settingWidget:
+            self.layout().addWidget(settingWidget, lastRow, 1)
+            self.layout().addWidget(resetButton, lastRow, 2)
