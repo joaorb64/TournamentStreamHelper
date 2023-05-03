@@ -55,32 +55,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="133"/>
         <source>Load from tournament</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger depuis Challonge / StartGG</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
         <source>Clear</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="150"/>
         <source>Tournament Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Icône du tournoi</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="183"/>
         <source>Load local file</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger un fichier local</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="190"/>
         <source>Download tournament icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger l&apos;icône</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="197"/>
         <source>Default</source>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Icône par défaut</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
@@ -1369,12 +1369,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="95"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir une image</translation>
     </message>
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="97"/>
         <source>Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers Image</translation>
     </message>
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="135"/>
@@ -1430,7 +1430,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/SettingsWidget.py" line="26"/>
         <source>Default</source>
-        <translation>Défaut</translation>
+        <translation>Paramètres par défaut</translation>
     </message>
 </context>
 <context>
