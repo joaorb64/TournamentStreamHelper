@@ -1,5 +1,5 @@
 # Jin's Game Result Tracker Overlay:
-- Disclaimer: The boxes do not work when both players have the exact same information!
+- Disclaimer: The boxes do not work when both players have the exact same information (name, sponsor, Twitter handle, pronouns, seeding, etc.)!
   - This is because player info is used to detect a swap. When both players' info are the same, the program thinks a swap has occurred whenever there is an update. 
   - Therefore, it is best to set the players' info before changing the score, match, or phase.
   - Hopefully, this is not an issue since players have different sponsors, Twitter handles, etc. even if they have the same name. Also identical player info should not be a problem in a tournament setting due to different seedings.
