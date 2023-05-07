@@ -6,7 +6,12 @@
     },
     "2": {
         "dateStart": null,
-        "dateEnd": null,
+        "dateEnd": 1683460289,
         "alert": "WARNING FOR 5.2 and 5.21 USERS:\n\nThe updater on Tournament Stream Helper 5.2 and 5.21 is broken, if you want to update the software to 5.22 and above please download the latest Github release and extract all files except the layout and user_data folders to your TSH install folder."
+    },
+    "3": {
+        "dateStart": null,
+        "dateEnd": null,
+        "alert": "WARNING:\n\nSTARTGG SUPPORT IS CURRENTLY BROKEN ON TSH DUE TO MAJOR CHANGES ON THE PLAYER DATA API.\nAll imports and data (Bracket, player data, set selector, top 8, etc.) are affected\n\nWe are currently investigating the situation and will push a fix as soon as possible. Thank you for your patience.\nIn the meantime, remember that data can still be manually inputted in the software."
     }
 }
