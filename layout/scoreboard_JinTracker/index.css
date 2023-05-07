@@ -1,0 +1,321 @@
+body {
+  font-family: "Figtree", "M Plus 1p", sans-serif;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1;
+}
+
+.container {
+  position: absolute;
+  top: 38px;
+  width: 488px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--bg-color);
+}
+
+.p1.container {
+  left: 410px;
+  flex-direction: row;
+}
+
+.p2.container {
+  right: 410px;
+  flex-direction: row-reverse;
+}
+
+.name {
+  display: flex;
+  width: 100%;
+  height: 53px;
+  font-size: 26px;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-color);
+  word-spacing: 2px;
+}
+
+.p1 .name {
+  margin-left: 12px;
+}
+
+.p2 .name {
+  margin-right: 12px;
+}
+
+.symbol {
+  /* Color of the symbol */
+  background: white;
+  width: 25px;
+  height: 25px;
+  margin-right: 3px;
+}
+
+.twitter_logo {
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+
+  /* Color of the bird */
+  /* Twitter Blue */
+  /* background: #1da1f2; */
+}
+
+.location_logo {
+  -webkit-mask-image: url(./location-sign-svgrepo-com.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+.logo {
+  position: absolute;
+  top: 19px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 91px;
+  height: 91px;
+  background-image: url("../logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--border-radius);
+  z-index: 9;
+}
+
+/* Name a PNG image tournament_logo.png to have it be displayed at the bottom center */
+.tournament_logo {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 268px;
+  height: 162px;
+  background-image: url("./tournament_logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 9;
+}
+
+.flags_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flag {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 44px;
+  height: 31px;
+}
+
+.p1 .flag {
+  margin-left: 12px;
+}
+
+.p2 .flag {
+  margin-right: 12px;
+}
+
+.score {
+  text-align: center;
+  width: 62px;
+  height: 53px;
+  font-size: 38px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.p1 .score {
+  margin-left: 12px;
+  color: var(--p1-score-color);
+  background: var(--p1-score-bg-color);
+}
+
+.p2 .score {
+  margin-right: 12px;
+  color: var(--p2-score-color);
+  background: var(--p2-score-bg-color);
+}
+
+.p1 .sponsor {
+  /* For gradient color */
+  background: linear-gradient(
+    90deg,
+    var(--p1-sponsor-color) 0%,
+    var(--text-color) 200%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.p2 .sponsor {
+  /* For gradient color */
+  background: linear-gradient(
+    90deg,
+    var(--p2-sponsor-color) 0%,
+    var(--text-color) 200%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hidden {
+  opacity: 0%;
+  transition: opacity 0.5s;
+}
+
+.unhidden {
+  opacity: 100%;
+  transition: opacity 0.5s;
+}
+
+.chips {
+  display: flex;
+  position: absolute;
+  top: 4px;
+  width: 898px;
+  height: 30px;
+  align-content: center;
+  justify-content: left;
+  overflow: hidden;
+}
+
+.p1.chips {
+  flex-direction: row-reverse;
+  justify-content: right;
+  left: 0px;
+}
+
+.p2.chips {
+  right: 0px;
+}
+
+.chip {
+  overflow: hidden;
+}
+
+.chip .text:not(.text_empty) {
+  height: 30px;
+  font-size: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
+  color: var(--text-color);
+  min-width: unset;
+}
+
+.p1 .chip .text:not(.text_empty) {
+  margin-left: 4px;
+  background: var(--p1-score-bg-color);
+}
+
+.p2 .chip .text:not(.text_empty) {
+  margin-right: 4px;
+  background: var(--p2-score-bg-color);
+}
+
+.topleft.container {
+  left: 0px;
+  justify-content: center;
+  width: 350px;
+  padding: 4px 16px;
+}
+
+.match {
+  width: 100%;
+  font-size: 26px;
+  color: var(--text-color);
+}
+
+.info.chips {
+  top: 95px;
+  width: 350px;
+  left: 0px;
+}
+
+.info .chip .text:not(.text_empty) {
+  color: var(--bg-color);
+  background: var(--text-color);
+}
+
+.score_boxes {
+  top: 114px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  height: 40px;
+  width: 920px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.box {
+  height: 30px;
+  width: 100px;
+  margin-left: 10px;
+  margin-right: 10px;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 20px;
+
+  border-width: 4px;
+  border-color: white;
+  border-style: solid;
+
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.p1_won {
+  background: var(--p1-score-bg-color);
+}
+
+.p2_won {
+  background: var(--p2-score-bg-color);
+}
+
+.bg {
+  position: absolute;
+  width: 960px;
+  height: 1080px;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+.p1.bg {
+  left: 0;
+  -webkit-mask-image: url("./P1CameraBorder.png");
+  background: var(--p1-score-bg-color);
+}
+
+.p2.bg {
+  right: 0;
+  -webkit-mask-image: url("./P2CameraBorder.png");
+  background: var(--p2-score-bg-color);
+}
