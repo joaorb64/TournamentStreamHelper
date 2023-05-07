@@ -22,6 +22,8 @@ class TSHGameAssetManagerSignals(QObject):
 class TSHGameAssetManager(QObject):
     instance: "TSHGameAssetManager" = None
 
+    gameLoaderThread = None
+
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.signals = TSHGameAssetManagerSignals()
@@ -125,25 +127,29 @@ class TSHGameAssetManager(QObject):
                 # print(self.parent().games)
                 self.parent().signals.onLoadAssets.emit()
 
-        gameLoaderThread = GameLoaderThread(self)
-        gameLoaderThread.start()
+        self.gameLoaderThread = GameLoaderThread(self)
+        self.gameLoaderThread.start()
 
     def SetGameFromStartGGId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-
-        for i, game in enumerate(self.games.values()):
-            if str(game.get("smashgg_game_id")) == str(gameid):
-                self.LoadGameAssets(i+1)
+        while(True):
+            if self.gameLoaderThread.isFinished():
+                for i, game in enumerate(self.games.values()):
+                    if str(game.get("smashgg_game_id")) == str(gameid):
+                        self.LoadGameAssets(i+1)
+                        break
                 break
 
     def SetGameFromChallongeId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-
-        for i, game in enumerate(self.games.values()):
-            if str(game.get("challonge_game_id")) == str(gameid):
-                self.LoadGameAssets(i+1)
+        while(True):
+            if self.gameLoaderThread.isFinished():
+                for i, game in enumerate(self.games.values()):
+                    if str(game.get("challonge_game_id")) == str(gameid):
+                        self.LoadGameAssets(i+1)
+                        break
                 break
 
     def LoadGameAssets(self, game: int = 0):
