@@ -1,11 +1,6 @@
 @font-face {
-  font-family: "Roboto Condensed";
-  src: url("../include/RobotoCondensed.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Otsutome";
-  src: url("../include/OtsutomeFont_Ver3.ttf") format("truetype");
+  font-family: "Samurai";
+  src: url("../include/Samurai.ttf") format("truetype");
 }
 
 body {
@@ -94,11 +89,15 @@ body {
 .player.container .column {
   display: flex;
   flex-direction: column;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
   max-width: 430px;
   overflow: hidden;
   align-items: flex-start;
+}
+
+.name_col.column {
+  width: 480px;
 }
 
 .column > div {
@@ -147,6 +146,8 @@ body {
 .container .name .text > span {
   display: flex;
   align-items: center;
+  padding-right: 20px;
+  font-style: italic;
 }
 
 .p2.container .name .text > span {
@@ -170,6 +171,7 @@ body {
 
 .twitter {
   font-size: 26px;
+  height: 32px;
 }
 
 .logo {
@@ -197,31 +199,35 @@ body {
 }
 
 .p1 .sponsor {
-  color: var(--p1-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p1-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .p2 .sponsor {
-  color: var(--p2-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p2-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .losers {
+  text-transform: uppercase;
+  -webkit-background-clip: text;
+  color: transparent;
   display: inline-flex;
-  width: 36px;
-  height: 36px;
-  font-size: 26px;
-  border-radius: 100%;
+  font-size: 48px;
   text-align: center;
   align-items: center;
   justify-content: center;
-  margin: 0 10px;
+  margin: 0 14px;
 }
 
 .p1 .losers {
-  background-color: var(--p1-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p1-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .p2 .losers {
-  background-color: var(--p2-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p2-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .info {
@@ -230,18 +236,16 @@ body {
   top: 32px;
   left: 50%;
   transform: translateX(-50%);
-  width: 1200px;
+  width: 1000px;
   display: flex;
   flex-direction: column;
   padding: 20px 40px;
   z-index: 9;
-  gap: 8px;
   overflow-y: hidden;
 }
 
 .tournament {
   top: 20px;
-  width: 800px;
   font-size: 64px;
   place-content: center;
   max-width: 100%;
@@ -267,49 +271,47 @@ body {
 }
 
 .flagscontainer {
+  height: 80px;
   display: flex;
-  gap: 8px;
+  flex-direction: row !important;
+  gap: 16px;
 }
 
 .flag {
-  position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.flagimage {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 56px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  border: 2px solid white;
-  margin-bottom: 16px;
-  border-radius: 10px;
+  width: 68px;
+  height: 40px;
 }
 
 .flagname {
-  position: absolute;
   text-align: center;
-  font-size: 16px;
-  padding: 1px 8px;
-  border-radius: 2px;
+  font-size: 20px;
+  line-height: 20px;
   background-color: #000000ff;
-  top: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 2px white solid;
-  border-radius: 10px;
   color: white;
+  text-transform: uppercase;
 }
 
 .score {
   top: 0;
-  width: 60px;
+  width: 200px;
   right: 42px;
   height: 100%;
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 120px;
+  font-size: 200px;
+  align-items: center;
 }
 
 .p2 .score {
@@ -317,11 +319,15 @@ body {
   left: 42px;
 }
 
+.p2 .score > div {
+  justify-content: center !important;
+}
+
 .p1.character {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 50vw;
+  width: 45vw;
   top: 0;
   height: 100vh;
   perspective: 1000px;
@@ -334,7 +340,7 @@ body {
 }
 
 .tsh_character {
-  filter: contrast(1.5) saturate(0.6);
+  filter: contrast(2) saturate(0.4);
 }
 
 .character .tsh_character {
@@ -392,7 +398,7 @@ body {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 50vw;
+  width: 45vw;
   top: 0;
   height: 100vh;
   perspective: 1000px;
@@ -438,6 +444,11 @@ body {
   font-weight: bold;
   z-index: 999;
   padding: 50px;
+  font-style: italic;
+}
+
+.vs2 {
+  filter: brightness(2);
 }
 
 .sponsor_logo {
@@ -460,42 +471,52 @@ body {
 }
 
 .pronoun {
-  font-size: 20px;
+  height: 32px;
+  font-size: 28px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 6px;
-  color: var(--bg-color);
+  color: transparent;
+  width: 100%;
+}
+
+.p1 .pronoun .text {
+  justify-content: left;
+}
+
+.p2 .pronoun .text {
+  justify-content: right;
 }
 
 .p1 .pronoun {
-  background: var(--p1-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p1-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .p2 .pronoun {
-  background: var(--p2-sponsor-color);
+  background: linear-gradient(#ae92cd, var(--p2-sponsor-color), #9d9d9d);
+  -webkit-background-clip: text;
 }
 
 .character_name {
   position: absolute;
-  font-family: "Otsutome";
-  font-size: 600px;
-  max-width: 60%;
+  font-family: "Samurai";
+  font-size: 500px;
+  width: 80%;
   padding: 20px;
   z-index: -999;
-  color: #ff000088;
+  color: #c8006088;
   transform: rotate(-5deg);
+  text-transform: uppercase;
 }
 
 .p1.character_name {
-  left: 0;
-  top: 0;
+  left: -10%;
+  top: 50px;
 }
 
 .p2.character_name {
-  bottom: 0;
-  right: 0;
+  bottom: 50px;
+  right: -10%;
 }
 
 .metallic .text,
@@ -507,7 +528,9 @@ body {
 }
 
 .shadow {
-  filter: drop-shadow(-16px 0px 16px black) drop-shadow(16px 0px 16px black)
-    drop-shadow(-8px 0px 16px black) drop-shadow(8px 0px 16px black);
+  filter: drop-shadow(-2px 0px 2px rgba(0, 0, 0, 0.8))
+    drop-shadow(2px 0px 2px rgba(0, 0, 0, 0.8))
+    drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.8))
+    drop-shadow(0px -2px 2px rgba(0, 0, 0, 0.8));
   overflow-y: hidden;
 }

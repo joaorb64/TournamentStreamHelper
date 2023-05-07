@@ -4,6 +4,44 @@ LoadEverything().then(() => {
     .to([".logo"], { duration: 0.8, top: 160 }, 0)
     .to([".logo"], { duration: 0.8, scale: 0.4 }, 0)
     .from(
+      ".p1.character_name",
+      {
+        duration: 2.3,
+        x: "-100px",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      ".p2.character_name",
+      {
+        duration: 2.3,
+        x: "+100px",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      ".p1.character",
+      {
+        duration: 0.13,
+        x: "-800px",
+        autoAlpha: 0,
+        ease: "power2.out",
+      },
+      2
+    )
+    .from(
+      ".p2.character",
+      {
+        duration: 0.13,
+        x: "+800px",
+        autoAlpha: 0,
+        ease: "power2.out",
+      },
+      2
+    )
+    .from(
       [".tournament"],
       { duration: 0.6, opacity: "0", ease: "power2.inOut" },
       0.2
@@ -28,11 +66,27 @@ LoadEverything().then(() => {
       { duration: 0.8, opacity: "0", ease: "power2.inOut" },
       0
     )
-    .from([".vs1"], { duration: 0.1, opacity: "0", scale: 10, ease: "in" }, 1.2)
-    .from([".vs2"], { duration: 0.01, opacity: "0" }, 1.3)
-    .to([".vs2"], { opacity: 0, scale: 2, ease: "power2.out" }, 1.31)
-    .from([".p1.container"], { duration: 1, x: "-200px", ease: "out" }, 0)
-    .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0);
+    .fromTo(
+      [".vs1"],
+      { opacity: 0, scale: 1.2 },
+      { opacity: 0.8, ease: "in", duration: 2.1 },
+      0
+    )
+    .to([".vs1"], { duration: 0.03, opacity: "1", scale: 1 }, 2.1)
+    .from([".vs2"], { duration: 0.01, opacity: "0" }, 2.13)
+    .to(
+      [".vs2"],
+      {
+        opacity: 0,
+        scale: 1.2,
+        ease: "power2.out",
+        duration: 1,
+      },
+      2.4
+    )
+    .to("body", { x: "+20", y: "-10", duration: 0.1 }, 2.2)
+    .to("body", { x: "-5", y: "+2", duration: 0.1 }, 2.3)
+    .to("body", { x: 0, y: 0, duration: 0.1 }, 2.4);
 
   Start = async (event) => {
     startingAnimation.restart();
@@ -96,9 +150,10 @@ LoadEverything().then(() => {
             player.country.asset
               ? `
               <div>
-                  <div class='flag' style='background-image: url(../../${player.country.asset});'>
-                      <div class="flagname">${player.country.code}</div>
-                  </div>
+                <div class='flag'>
+                  <div class='flagimage' style='background-image: url(../../${player.country.asset});'></div>
+                  <div class="flagname">${player.country.code}</div>
+                </div>
               </div>`
               : ""
           );
@@ -108,17 +163,25 @@ LoadEverything().then(() => {
             player.state.asset
               ? `
               <div>
-                  <div class='flag' style='background-image: url(../../${player.state.asset});'>
-                      <div class="flagname">${player.state.code}</div>
-                  </div>
+                <div class='flag'>
+                  <div class='flagimage' style='background-image: url(../../${player.state.asset});'></div>
+                  <div class="flagname">${player.state.code}</div>
+                </div>
               </div>`
               : ""
           );
 
+          let characterNames = [];
+
+          let characters = _.get(player, "character");
+          for (const c of Object.values(characters)) {
+            if (c.name) characterNames.push(c.name);
+          }
+
           SetInnerHtml(
             $(`.p${t + 1}.character_name`),
             `
-              ${_.get(player, "character.1.name")}
+              ${characterNames.join(" / ")}
           `
           );
 
@@ -127,7 +190,7 @@ LoadEverything().then(() => {
 
           if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
             await CharacterDisplay(
-              $(`.p${t + 1}.character`),
+              $(`.p${t + 1}.character > div`),
               {
                 source: `score.team.${t + 1}`,
                 scale_based_on_parent: true,
@@ -148,7 +211,7 @@ LoadEverything().then(() => {
             );
           } else if (window.ONLINE_AVATAR) {
             SetInnerHtml(
-              $(`.p${t + 1}.character`),
+              $(`.p${t + 1}.character > div`),
               `
                 <div class="player_avatar">
                   <div style="background-image: url('${
@@ -173,7 +236,7 @@ LoadEverything().then(() => {
             );
           } else {
             SetInnerHtml(
-              $(`.p${t + 1}.character`),
+              $(`.p${t + 1}.character > div`),
               `
                 <div class="player_avatar">
                   <div style="background-image: url('${
@@ -238,12 +301,28 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
 
+        let characterNames = [];
+
+        for (const [p, player] of Object.values(team.player).entries()) {
+          let characters = _.get(player, "character");
+          for (const c of Object.values(characters)) {
+            if (c.name) characterNames.push(c.name);
+          }
+        }
+
+        SetInnerHtml(
+          $(`.p${t + 1}.character_name`),
+          `
+              ${characterNames.join(" / ")}
+          `
+        );
+
         let zIndexMultiplyier = 1;
         if (t == 1) zIndexMultiplyier = -1;
 
         if (!window.ONLINE_AVATAR && !window.PLAYER_AVATAR) {
           await CharacterDisplay(
-            $(`.p${t + 1}.character`),
+            $(`.p${t + 1}.character > div`),
             {
               source: `score.team.${t + 1}`,
               scale_based_on_parent: true,
@@ -270,7 +349,7 @@ LoadEverything().then(() => {
               }');"></div>`;
           }
           SetInnerHtml(
-            $(`.p${t + 1}.character`),
+            $(`.p${t + 1}.character > div`),
             `
               <div class="player_avatar">
                 ${avatars_html}
@@ -299,7 +378,7 @@ LoadEverything().then(() => {
               }');"></div>`;
           }
           SetInnerHtml(
-            $(`.p${t + 1}.character`),
+            $(`.p${t + 1}.character > div`),
             `
               <div class="player_avatar">
                 ${avatars_html}
