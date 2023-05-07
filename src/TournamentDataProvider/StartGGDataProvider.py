@@ -550,9 +550,10 @@ class StartGGDataProvider(TournamentDataProvider):
                         playerData["startggMain"] = main[0][0]
 
                 if user:
-                    if len(user.get("authorizations", [])) > 0:
-                        playerData["twitter"] = user.get("authorizations", [])[
-                            0].get("externalUsername")
+                    if user.get("authorizations"):
+                        if len(user.get("authorizations", [])) > 0:
+                            playerData["twitter"] = user.get("authorizations", [])[
+                                0].get("externalUsername")
 
                     if user.get("genderPronoun"):
                         playerData["pronoun"] = user.get(
@@ -1356,9 +1357,10 @@ class StartGGDataProvider(TournamentDataProvider):
                 user.get("id")
             ]
 
-            if len(user.get("authorizations", [])) > 0:
-                playerData["twitter"] = user.get("authorizations", [])[
-                    0].get("externalUsername")
+            if user.get("authorizations"):
+                if len(user.get("authorizations", [])) > 0:
+                    playerData["twitter"] = user.get("authorizations", [])[
+                        0].get("externalUsername")
 
             if user.get("genderPronoun"):
                 playerData["pronoun"] = user.get(
