@@ -1248,7 +1248,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="36"/>
         <source>Show complete pairs</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher uniquement les paires complètes</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="85"/>
