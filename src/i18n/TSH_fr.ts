@@ -55,32 +55,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="133"/>
         <source>Load from tournament</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger depuis Challonge / StartGG</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
         <source>Clear</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="150"/>
         <source>Tournament Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Icône du tournoi</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="183"/>
         <source>Load local file</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger un fichier local</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="190"/>
         <source>Download tournament icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger l&apos;icône</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="197"/>
         <source>Default</source>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Icône par défaut</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
@@ -1101,8 +1101,8 @@ p, li { white-space: pre-wrap; }
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="81"/>
-        <location filename="../TSHSelectSetWindow.py" line="83"/>
+        <location filename="../TSHSelectSetWindow.py" line="88"/>
+        <location filename="../TSHSelectSetWindow.py" line="90"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="315"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1112"/>
         <source>Player {0}</source>
@@ -1241,22 +1241,27 @@ p, li { white-space: pre-wrap; }
         <translation>Entrez l&apos;URL du profil joueur StartGG</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="31"/>
+        <location filename="../TSHSelectSetWindow.py" line="33"/>
         <source>Show completed sets</source>
         <translation>Afficher les matchs terminés</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="78"/>
+        <location filename="../TSHSelectSetWindow.py" line="36"/>
+        <source>Show complete pairs</source>
+        <translation>Afficher uniquement les paires complètes</translation>
+    </message>
+    <message>
+        <location filename="../TSHSelectSetWindow.py" line="85"/>
         <source>Stream</source>
         <translation>Stream</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="79"/>
+        <location filename="../TSHSelectSetWindow.py" line="86"/>
         <source>Phase</source>
         <translation>Phase</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="80"/>
+        <location filename="../TSHSelectSetWindow.py" line="87"/>
         <source>Match</source>
         <translation>Match</translation>
     </message>
@@ -1369,12 +1374,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="95"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir une image</translation>
     </message>
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="97"/>
         <source>Image Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers Image</translation>
     </message>
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="135"/>
@@ -1408,14 +1413,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="718"/>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHSelectSetWindow.py" line="101"/>
+        <location filename="../TSHSelectSetWindow.py" line="111"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="718"/>
         <location filename="../TournamentStreamHelper.py" line="538"/>
-        <location filename="../TSHSelectSetWindow.py" line="102"/>
+        <location filename="../TSHSelectSetWindow.py" line="112"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -1430,7 +1435,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/SettingsWidget.py" line="26"/>
         <source>Default</source>
-        <translation>Défaut</translation>
+        <translation>Paramètres par défaut</translation>
     </message>
 </context>
 <context>
