@@ -11,7 +11,7 @@
     },
     "3": {
         "dateStart": null,
-        "dateEnd": null,
+        "dateEnd": 1683583537,
         "alert": "WARNING:\n\nSTARTGG SUPPORT IS CURRENTLY BROKEN ON TSH DUE TO MAJOR CHANGES ON THE PLAYER DATA API.\nAll imports and data (Bracket, player data, set selector, top 8, etc.) are affected\n\nWe are currently investigating the situation and will push a fix as soon as possible. Thank you for your patience.\nIn the meantime, remember that data can still be manually inputted in the software."
     }
 }
