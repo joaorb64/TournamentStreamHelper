@@ -131,7 +131,7 @@ class TSHGameAssetManager(QObject):
     def SetGameFromStartGGId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-        
+
         for i, game in enumerate(self.games.values()):
             if str(game.get("smashgg_game_id")) == str(gameid):
                 self.LoadGameAssets(i+1)
@@ -140,7 +140,7 @@ class TSHGameAssetManager(QObject):
     def SetGameFromChallongeId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-        
+
         for i, game in enumerate(self.games.values()):
             if str(game.get("challonge_game_id")) == str(gameid):
                 self.LoadGameAssets(i+1)
@@ -154,7 +154,9 @@ class TSHGameAssetManager(QObject):
                 self.lock = None
 
             def run(self):
+                print("DEBUG TRY LOCK")
                 self.lock.lock()
+                print("DEBUG LOCKED")
                 try:
                     game = self.game
 
@@ -169,7 +171,7 @@ class TSHGameAssetManager(QObject):
                     # Game is already loaded
                     if game == self.parent().selectedGame.get("codename"):
                         self.parent().threadpool.waitForDone()
-                        self.lock.unlock()
+                        print("DEBUG UNLOCK 1")
                         return
 
                     print("Changed to game: "+game)
@@ -407,6 +409,7 @@ class TSHGameAssetManager(QObject):
                     print(traceback.format_exc())
                 finally:
                     self.parent().threadpool.waitForDone()
+                    print("DEBUG UNLOCK 2")
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
