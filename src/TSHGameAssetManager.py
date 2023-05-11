@@ -131,7 +131,7 @@ class TSHGameAssetManager(QObject):
     def SetGameFromStartGGId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-        
+
         for i, game in enumerate(self.games.values()):
             if str(game.get("smashgg_game_id")) == str(gameid):
                 self.LoadGameAssets(i+1)
@@ -140,7 +140,7 @@ class TSHGameAssetManager(QObject):
     def SetGameFromChallongeId(self, gameid):
         if len(self.games.keys()) == 0:
             return
-        
+
         for i, game in enumerate(self.games.values()):
             if str(game.get("challonge_game_id")) == str(gameid):
                 self.LoadGameAssets(i+1)
@@ -169,7 +169,6 @@ class TSHGameAssetManager(QObject):
                     # Game is already loaded
                     if game == self.parent().selectedGame.get("codename"):
                         self.parent().threadpool.waitForDone()
-                        self.lock.unlock()
                         return
 
                     print("Changed to game: "+game)
