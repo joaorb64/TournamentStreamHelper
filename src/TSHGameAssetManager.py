@@ -154,9 +154,7 @@ class TSHGameAssetManager(QObject):
                 self.lock = None
 
             def run(self):
-                print("DEBUG TRY LOCK")
                 self.lock.lock()
-                print("DEBUG LOCKED")
                 try:
                     game = self.game
 
@@ -171,7 +169,6 @@ class TSHGameAssetManager(QObject):
                     # Game is already loaded
                     if game == self.parent().selectedGame.get("codename"):
                         self.parent().threadpool.waitForDone()
-                        print("DEBUG UNLOCK 1")
                         return
 
                     print("Changed to game: "+game)
@@ -409,7 +406,6 @@ class TSHGameAssetManager(QObject):
                     print(traceback.format_exc())
                 finally:
                     self.parent().threadpool.waitForDone()
-                    print("DEBUG UNLOCK 2")
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
