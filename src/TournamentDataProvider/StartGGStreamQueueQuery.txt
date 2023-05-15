@@ -6,7 +6,30 @@ query StreamQueueQuery($slug: String) {
                     fullRoundText
                     slots {
                         entrant {
+                            id
                             name
+                            seeds {
+                                seedNum
+                            }
+                            participants {
+                                id
+                                user {
+                                    id
+                                    slug
+                                    name
+                                    genderPronoun
+                                    location {
+                                        city
+                                        country
+                                        state
+                                    }
+                                }
+                                player {
+                                    id
+                                    gamerTag
+                                    prefix
+                                }
+                            }
                         }
                     }
                 }
