@@ -1,0 +1,20 @@
+query StreamQueueQuery($slug: String) {
+    event(slug: $slug){
+        tournament {
+            streamQueue {
+                sets {
+                    fullRoundText
+                    slots {
+                        entrant {
+                            name
+                        }
+                    }
+                }
+                stream {
+                    streamName
+                    streamSource
+                }
+            }
+        }
+    }
+}

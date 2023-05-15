@@ -31,6 +31,7 @@ class StartGGDataProvider(TournamentDataProvider):
     TournamentStandingsQuery = None
     TournamentPhasesQuery = None
     TournamentPhaseGroupQuery = None
+    StreamQueueQuery = None
 
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
@@ -849,6 +850,45 @@ class StartGGDataProvider(TournamentDataProvider):
             "currPlayer": currPlayer
         })
 
+    def GetStreamQueue(self, streamName, progress_callback=None):
+        print("==================================GetStreamQueue=====================================")
+
+        if (not streamName) or streamName == "":
+            return {}
+
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "StreamQueueQuery",
+                    "variables": {
+                        "slug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.StreamQueueQuery
+                }
+            )
+            data = json.loads(data.text)
+
+            queues = deep_get(data, "data.event.tournament.streamQueue", [])
+
+            if queues:
+                lStreamName = streamName.lower() #"""performance"""
+                queue = next(
+                    (q for q in queues if q and q.get("stream", {}).get("streamName", "").lower() == lStreamName),
+                    {}
+                )
+
+                return queue
+        except Exception as e:
+            traceback.print_exc()
+        
+        return {}
+
+
     def GetStreamMatchId(self, streamName):
         streamSet = None
 
@@ -874,9 +914,9 @@ class StartGGDataProvider(TournamentDataProvider):
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
             if queues:
+                lStreamName = streamName.lower() #"""performance"""
                 queue = next(
-                    (q for q in queues if q and q.get(
-                        "stream", {}).get("streamName", "").lower() == streamName.lower()),
+                    (q for q in queues if q and q.get("stream", {}).get("streamName", "").lower() == lStreamName),
                     None
                 )
 
@@ -1498,3 +1538,6 @@ StartGGDataProvider.TournamentPhasesQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
 StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGStreamQueueQuery.txt", 'r')
+StartGGDataProvider.StreamQueueQuery = f.read()

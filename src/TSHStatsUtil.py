@@ -31,7 +31,9 @@ class TSHStatsUtil:
             self.UpdateLastSets)
         TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
             self.UpdateRecentSets)
-    
+        TSHTournamentDataProvider.instance.signals.stream_queue_loaded.connect(
+            self.UpdateStreamQueue)
+
     def GetRecentSets(self):
         updated = False
         # Only if 1 player on each side
@@ -133,6 +135,15 @@ class TSHStatsUtil:
             i+=1
         StateManager.ReleaseSaving()
     
+    def UpdateStreamQueue(self, data):
+        print("=======================================UpdateStreamQueue==================================")
+        print(data)
+        StateManager.BlockSaving()
+
+        StateManager.Set(f"streamQueue", data)
+
+        StateManager.ReleaseSaving()
+
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating
     #
