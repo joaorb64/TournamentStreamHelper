@@ -8,6 +8,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHStatsSignals(QObject):
     RecentSetsSignal = pyqtSignal()
+    HeadToHeadSignal = pyqtSignal()
     LastSetsP1Signal = pyqtSignal()
     LastSetsP2Signal = pyqtSignal()
     PlayerHistoryStandingsP1Signal = pyqtSignal()
@@ -24,6 +25,7 @@ class TSHStatsUtil:
         self.signals.LastSetsP1Signal.connect(self.GetLastSetsP1)
         self.signals.LastSetsP2Signal.connect(self.GetLastSetsP2)
         self.signals.RecentSetsSignal.connect(self.GetRecentSets)
+        self.signals.HeadToHeadSignal.connect(self.GetHeadToHead)
 
         TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
             self.UpdateHistorySets)
@@ -31,6 +33,8 @@ class TSHStatsUtil:
             self.UpdateLastSets)
         TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
             self.UpdateRecentSets)
+        TSHTournamentDataProvider.instance.signals.h2h_updated.connect(
+            self.UpdateHeadToHead)
     
     def GetRecentSets(self):
         updated = False
@@ -103,7 +107,7 @@ class TSHStatsUtil:
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.team.1.player.1.id")
             if p1id:
-                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p1id, "1", StateManager.Get(f"game.smashgg_id"))
+                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p1id, "1")
             else:
                 StateManager.Set(f"score.history_sets.1", {})
     
@@ -112,7 +116,7 @@ class TSHStatsUtil:
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p2id = StateManager.Get(f"score.team.2.player.1.id")
             if p2id:
-                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p2id, "2", StateManager.Get(f"game.smashgg_id"))
+                TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(p2id, "2")
             else:
                 StateManager.Set(f"score.history_sets.2", {})
 
@@ -132,6 +136,23 @@ class TSHStatsUtil:
             })
             i+=1
         StateManager.ReleaseSaving()
+        
+    def GetHeadToHead(self):
+        # Only if 1 player on each side
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id) and str(p1id[1]) != 0 and str(p2id[1]) != 0:
+                TSHTournamentDataProvider.instance.GetHeadToHeadStandings(p1id, p2id)
+
+    def UpdateHeadToHead(self, data):
+        StateManager.Set(f"stats.h2h", {
+            "p1-total_points": data.get("total_points")[0],
+            "p2-total_points": data.get("total_points")[1],
+            "p1-score": data.get("scores")[0],
+            "p2-score": data.get("scores")[1]
+        
+        })
     
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating

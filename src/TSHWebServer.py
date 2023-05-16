@@ -233,6 +233,12 @@ class WebServer(QThread):
         TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
         return "OK"
 
+    # Resubmits Call for Head-to-Head
+    @app.route('/stats-headtohead')
+    def stats_headtohead():
+        TSHStatsUtil.instance.signals.HeadToHeadSignal.emit()
+        return "OK"
+
     # Resubmits Call for Last Sets
     @app.route('/stats-last-sets-<player>')
     def stats_last_sets(player):
