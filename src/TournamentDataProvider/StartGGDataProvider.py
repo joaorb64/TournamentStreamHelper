@@ -16,7 +16,7 @@ from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import is_power_of_two
 
 from ..Workers import Worker
-
+import sys
 
 class StartGGDataProvider(TournamentDataProvider):
     SetsQuery = None
@@ -560,7 +560,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         playerData["pronoun"] = user.get(
                             "genderPronoun")
 
-                    if len(user.get("images")) > 0:
+                    if user.get("images") and len(user.get("images")) > 0:
                         playerData["avatar"] = user.get("images")[
                             0].get("url")
 
@@ -850,11 +850,8 @@ class StartGGDataProvider(TournamentDataProvider):
             "currPlayer": currPlayer
         })
 
-    def GetStreamQueue(self, streamName, progress_callback=None):
-        print("==================================GetStreamQueue=====================================")
-
-        if (not streamName) or streamName == "":
-            return {}
+    def GetStreamQueue(self, progress_callback=None):
+        print("========================================")
 
         try:
             data = requests.post(
@@ -875,14 +872,86 @@ class StartGGDataProvider(TournamentDataProvider):
 
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
+            print(queues)
+
+            print("--------------------------------------")
+
+            finalData = {}
+            for q in queues:
+                streamName = q.get("stream", {}).get("streamName", "")
+                queueData = {}
+                for setIndex, set in enumerate(q.get("sets", [])):
+                    phase_name = deep_get(set, "phaseGroup.phase.name")
+                    if deep_get(set, "phaseGroup.phase.groupCount") > 1:
+                        phase_name += " - " + TSHLocaleHelper.phaseNames.get("group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
+
+                    frt = set.get("fullRoundText", "")
+
+                    setData = {
+                        "id": set.get("id"),
+                        "match": StartGGDataProvider.TranslateRoundName(frt),
+                        "phase": phase_name,
+                        "state": set.get("state"),
+                        "team" : {}
+                    }
+
+                    for teamIndex, slot in enumerate(set.get("slots", [])):
+                        entrant = slot.get("entrant", None)
+                        if entrant:
+
+                            losers = False
+                            if "Gran" in frt:
+                                if teamIndex == 1 or "Reset" in frt :
+                                    losers = True
+
+                            teamData = {
+                                "teamName": entrant.get("name", ""),
+                                "losers": losers,
+                                "seed": entrant.get("seeds", [])[0].get("seedNum", 889977666),
+                                "player" : {}
+                            }
+
+                            #TODO : pull the state data
+
+                            for playerIndex, participant in enumerate(entrant.get("participants", [])):
+                                playerData = StartGGDataProvider.ProcessEntrantData(participant)
+                                playerName = playerData.get("gamerTag", "")
+                                team = playerData.get("prefix", "")
+                                playerData = {
+                                    "country": TSHCountryHelper.GetBasicCountryInfo(playerData.get("country_code", "")),
+                                    "state" : {},
+                                    "name" : playerName,
+                                    "team" : team,
+                                    "mergedName" : team + "|" + playerName if not team == "" else playerName,
+                                    "pronoun" : playerData.get("pronoun", ""),
+                                    "real_name" : playerData.get("name", ""),
+                                    "online_avatar" : playerData.get("avatar", "")
+                                }
+                                
+
+                                teamData["player"][str(playerIndex + 1)] = playerData
+
+                            setData["team"][str(teamIndex + 1)] = teamData
+
+                    queueData[str(setIndex + 1)] = setData
+
+                finalData[streamName] = queueData
+
+            print(finalData)
+
+            return finalData
+
+            """
             if queues:
-                lStreamName = streamName.lower() #"""performance"""
+                lStreamName = streamName.lower()
                 queue = next(
                     (q for q in queues if q and q.get("stream", {}).get("streamName", "").lower() == lStreamName),
                     {}
                 )
 
                 return queue
+            """
+
         except Exception as e:
             traceback.print_exc()
         
@@ -1406,7 +1475,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 playerData["pronoun"] = user.get(
                     "genderPronoun")
 
-            if len(user.get("images")) > 0:
+            if len(user.get("images", [])) > 0:
                 playerData["avatar"] = user.get("images")[
                     0].get("url")
 

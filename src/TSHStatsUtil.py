@@ -4,6 +4,7 @@ from datetime import datetime
 import math
 
 from .StateManager import *
+from .SettingsManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHStatsSignals(QObject):
@@ -135,12 +136,21 @@ class TSHStatsUtil:
             i+=1
         StateManager.ReleaseSaving()
     
+    def _setWithDifferentKey(source, sKey, target, tKey):
+        value = source.deep_get(sKey)
+        if value:
+            target.deep_set(tKey, value)
+
+    def formatStreamQueueData(self, data):
+        pass
+
     def UpdateStreamQueue(self, data):
         print("=======================================UpdateStreamQueue==================================")
         print(data)
         StateManager.BlockSaving()
 
         StateManager.Set(f"streamQueue", data)
+        StateManager.Set(f"currentStream", SettingsManager.Get("twitch_username"))
 
         StateManager.ReleaseSaving()
 

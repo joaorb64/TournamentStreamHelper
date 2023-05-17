@@ -265,11 +265,9 @@ class TSHTournamentDataProvider:
         })
         self.threadPool.start(worker) 
 
-    def GetStreamQueue(self, streamName):
+    def GetStreamQueue(self):
 
-        worker = Worker(self.provider.GetStreamQueue, **{
-            "streamName": streamName,
-        })
+        worker = Worker(self.provider.GetStreamQueue)
         worker.signals.result.connect(lambda streamQueue: [
             TSHTournamentDataProvider.instance.signals.stream_queue_loaded.emit(streamQueue)
         ])

@@ -667,9 +667,7 @@ class TSHScoreboardWidget(QDockWidget):
 
             TSHTournamentDataProvider.instance.GetMatch(
                 self, data["id"], overwrite=True)
-            TSHTournamentDataProvider.instance.GetStreamQueue(
-                SettingsManager.Get("twitch_username")
-            )
+            TSHTournamentDataProvider.instance.GetStreamQueue()
 
         self.autoUpdateTimer.timeout.connect(
             lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))

@@ -3,7 +3,10 @@ query StreamQueueQuery($slug: String) {
         tournament {
             streamQueue {
                 sets {
+                    id
+                    identifier
                     fullRoundText
+                    state
                     slots {
                         entrant {
                             id
@@ -23,6 +26,9 @@ query StreamQueueQuery($slug: String) {
                                         country
                                         state
                                     }
+                                    images(type: "profile") {
+                                        url
+                                    }
                                 }
                                 player {
                                     id
@@ -30,6 +36,13 @@ query StreamQueueQuery($slug: String) {
                                     prefix
                                 }
                             }
+                        }
+                    }
+                    phaseGroup {
+                        displayIdentifier
+                        phase {
+                            name
+                            groupCount
                         }
                     }
                 }
