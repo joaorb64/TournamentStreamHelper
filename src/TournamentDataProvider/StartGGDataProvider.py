@@ -872,30 +872,26 @@ class StartGGDataProvider(TournamentDataProvider):
 
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
-            print(queues)
-
-            print("--------------------------------------")
-
             finalData = {}
             for q in queues:
                 streamName = q.get("stream", {}).get("streamName", "")
                 queueData = {}
-                for setIndex, set in enumerate(q.get("sets", [])):
-                    phase_name = deep_get(set, "phaseGroup.phase.name")
-                    if deep_get(set, "phaseGroup.phase.groupCount") > 1:
+                for setIndex, _set in enumerate(q.get("sets", [])):
+                    phase_name = deep_get(_set, "phaseGroup.phase.name")
+                    if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
                         phase_name += " - " + TSHLocaleHelper.phaseNames.get("group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
-                    frt = set.get("fullRoundText", "")
+                    frt = _set.get("fullRoundText", "")
 
                     setData = {
-                        "id": set.get("id"),
+                        "id": _set.get("id"),
                         "match": StartGGDataProvider.TranslateRoundName(frt),
                         "phase": phase_name,
-                        "state": set.get("state"),
+                        "state": _set.get("state"),
                         "team" : {}
                     }
 
-                    for teamIndex, slot in enumerate(set.get("slots", [])):
+                    for teamIndex, slot in enumerate(_set.get("slots", [])):
                         entrant = slot.get("entrant", None)
                         if entrant:
 
