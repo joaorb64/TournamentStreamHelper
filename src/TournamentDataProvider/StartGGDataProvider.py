@@ -810,7 +810,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 "useMDSR": mdsr,
             }
         except:
-            print(traceback.format_exc())
+            print("No Stage Strike Info Found")
             allStages = None
             strikedStages = None
             strikedBy = [[], []]

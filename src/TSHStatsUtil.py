@@ -138,13 +138,22 @@ class TSHStatsUtil:
     def GetSetUpsetFactor(self):
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             bracket_type = StateManager.Get(f"score.bracket_type", "")
-            p1 = StateManager.Get(f"score.team.1.player.1")
-            p1_upset = self.CalculatePlacementMath(bracket_type, p1.get("seed"))
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
 
-            p2 = StateManager.Get(f"score.team.2.player.1")
-            p2_upset = self.CalculatePlacementMath(bracket_type, p2.get("seed"))
+            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+                p1 = StateManager.Get(f"score.team.1.player.1.seed")
+                p2 = StateManager.Get(f"score.team.2.player.1.seed")
+                if p1 and p2:
+                    print("P1 Seed: " + str(p1))
+                    p1_upset = self.CalculatePlacementMath(bracket_type, p1)
 
-            StateManager.Set(f"score.upset_factor", abs(p1_upset - p2_upset))
+                    print("P2 Seed: " + str(p2))
+                    p2_upset = self.CalculatePlacementMath(bracket_type, p2)
+
+                    StateManager.Set(f"score.upset_factor", abs(p1_upset - p2_upset))
+        else:
+            StateManager.Set(f"score.upset_factor", 0)
     
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating
@@ -156,7 +165,7 @@ class TSHStatsUtil:
     def CalculatePlacementMath(self, bracket_type, x):
         # Due to how the logs works, if the player is first seed,
         # the value will always be 0 and no math needs to be done.
-        if x == 1:
+        if x <= 1:
             return 0
         
         single_elim_calc = math.floor(math.log2(x - 1))
@@ -169,6 +178,6 @@ class TSHStatsUtil:
         elif bracket_type == "SINGLE_ELIMINATION":
             return single_elim_calc
         else:
-            return "N/A"
+            return 0
     
 TSHStatsUtil.instance = TSHStatsUtil()
