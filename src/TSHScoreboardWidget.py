@@ -718,6 +718,7 @@ class TSHScoreboardWidget(QDockWidget):
             self.btLoadStreamSet.setText(
                 QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
             self.btLoadStreamSet.setEnabled(True)
+            StateManager.Set(f"currentStream", SettingsManager.Get("twitch_username"))
         else:
             self.btLoadStreamSet.setText(
                 QApplication.translate("app", "Load current stream set"))
