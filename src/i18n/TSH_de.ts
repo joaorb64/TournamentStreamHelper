@@ -1229,7 +1229,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="218"/>
         <location filename="../TSHScoreboardWidget.py" line="719"/>
-        <location filename="../TSHScoreboardWidget.py" line="723"/>
+        <location filename="../TSHScoreboardWidget.py" line="724"/>
         <source>Load current stream set</source>
         <translation>aktuelles Stream-Set laden</translation>
     </message>
@@ -1254,12 +1254,12 @@ p, li { white-space: pre-wrap; }
         <translation>Set von {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="732"/>
+        <location filename="../TSHScoreboardWidget.py" line="733"/>
         <source>Load user set ({0})</source>
         <translation>User-Set {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="736"/>
+        <location filename="../TSHScoreboardWidget.py" line="737"/>
         <source>Load user set</source>
         <translation>User-Set laden</translation>
     </message>

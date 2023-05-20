@@ -1277,7 +1277,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="218"/>
         <location filename="../TSHScoreboardWidget.py" line="719"/>
-        <location filename="../TSHScoreboardWidget.py" line="723"/>
+        <location filename="../TSHScoreboardWidget.py" line="724"/>
         <source>Load current stream set</source>
         <translation>配信中の対戦データをロードする</translation>
     </message>
@@ -1287,12 +1287,12 @@ p, li { white-space: pre-wrap; }
         <translation>サムネイルを作成する</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="732"/>
+        <location filename="../TSHScoreboardWidget.py" line="733"/>
         <source>Load user set ({0})</source>
         <translation>ユーザーの対戦データ({0})をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="736"/>
+        <location filename="../TSHScoreboardWidget.py" line="737"/>
         <source>Load user set</source>
         <translation>ユーザーの対戦データをロードする</translation>
     </message>
