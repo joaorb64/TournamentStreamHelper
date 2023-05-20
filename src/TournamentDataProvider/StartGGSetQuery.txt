@@ -80,6 +80,7 @@ query SetQuery($id: ID!) {
             phase {
                 name
                 groupCount
+                bracketType
             }
             displayIdentifier
         }

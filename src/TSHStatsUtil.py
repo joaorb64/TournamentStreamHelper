@@ -12,6 +12,7 @@ class TSHStatsSignals(QObject):
     LastSetsP2Signal = pyqtSignal()
     PlayerHistoryStandingsP1Signal = pyqtSignal()
     PlayerHistoryStandingsP2Signal = pyqtSignal()
+    UpsetFactorCalculation = pyqtSignal()
 
 class TSHStatsUtil:
     instance: "TSHStatsUtil" = None
@@ -24,6 +25,7 @@ class TSHStatsUtil:
         self.signals.LastSetsP1Signal.connect(self.GetLastSetsP1)
         self.signals.LastSetsP2Signal.connect(self.GetLastSetsP2)
         self.signals.RecentSetsSignal.connect(self.GetRecentSets)
+        self.signals.UpsetFactorCalculation.connect(self.GetSetUpsetFactor)
 
         TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
             self.UpdateHistorySets)
@@ -132,13 +134,22 @@ class TSHStatsUtil:
             })
             i+=1
         StateManager.ReleaseSaving()
+
+    def GetSetUpsetFactor(self):
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            bracket_type = StateManager.Get(f"score.bracket_type", "")
+            p1 = StateManager.Get(f"score.team.1.player.1")
+            p1_upset = self.CalculatePlacementMath(bracket_type, p1.get("seed"))
+
+            p2 = StateManager.Get(f"score.team.2.player.1")
+            p2_upset = self.CalculatePlacementMath(bracket_type, p2.get("seed"))
+
+            StateManager.Set(f"score.upset_factor", abs(p1_upset - p2_upset))
     
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating
     #
-    # bracket_type [INTEGER] = The bracket type returned from Start.GG
-    # or from Challonge
-    # Double Elim = 1, Single Elim = 2 (Could be wrong, will need to test)
+    # bracket_type [STRING] = The bracket type returned from Start.GG
     #
     # x [INTEGER] = The seeding/placement value being used to determine
     # the end product (Ex. Seeding for UF or Seeding/Placement for SPR)
@@ -152,10 +163,12 @@ class TSHStatsUtil:
         double_elim_calc = math.ceil(math.log2((2 * x) / 3))
 
         # Double Elimination Sum of Values
-        if bracket_type == 1:
+        if bracket_type == "DOUBLE_ELIMINATION":
             return single_elim_calc + double_elim_calc
         # Single Elimination Sum of Values
-        elif bracket_type == 2:
+        elif bracket_type == "SINGLE_ELIMINATION":
             return single_elim_calc
+        else:
+            return "N/A"
     
 TSHStatsUtil.instance = TSHStatsUtil()
