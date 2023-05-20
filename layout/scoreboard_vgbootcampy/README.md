@@ -1,5 +1,5 @@
 # VGBC Style Overlay Properties:
-- Top left container displays the name of the tournament and the bottom containers display the players' Twitter handle.
+- The top left container displays the name of the tournament and the bottom containers display the players' Twitter handle.
 - The match is shown at the bottom of the left player container.
 - The phase and best of x is shown at the bottom of the right player container in "phase - best of x" format.
   - If only best of x is available, then only best of x is shown.
