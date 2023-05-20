@@ -1,10 +1,9 @@
-# Neo VGBC Style Overlay:
-- Download the zip file and open it.
-- Move the scoreboard_vgbootcampy_neo file into the /layout folder of TSH where all the other scoreboard files are located.
-- Go to OBS and add a new Browser.
-- Select the /layout/scoreboard_vgbootcampy_neo/index.html as the local file and set its width and height to 1920 and 1080 respectively.
-- Run TSH and enter the players' information.
-  - Select "Shutdown source when not visible" in the Browser's properties so that it plays the overlay animation everytime it becomes visible.
+# Neo VGBC Style Overlay Properties:
+- The top left container alternates between match and best of x every 9 seconds. 
+- The bottom containers alternate between Twitter handle and pronouns every 9 seconds.
+- When one of the above information (match, best of x, Twitter handle, or pronouns) is edited, then the 9-second cycle is refreshed starting with match for the top left container and Twitter handle for the bottom containers.
+- For a container, if one of the information is missing, then the alternation does not happen. If both are missing, then the container disappears.
+- Select "Shutdown source when not visible" in the Browser's properties so the overlay animation is played everytime it becomes visible.
   
 # Player Cams:
 - Included in the scoreboard_vgbootcampy_neo file are the CameraWhiteBorders.png and CameraMask.png.
