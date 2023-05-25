@@ -23,6 +23,9 @@ class TournamentDataProvider:
     def GetMatches(self, getFinished=False, progress_callback=None):
         pass
 
+    def GetStreamQueue(self, streamName, progress_callback=None):
+        pass
+
     def GetStreamMatchId(self, streamName):
         pass
 

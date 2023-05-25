@@ -29,6 +29,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_phases_updated = pyqtSignal(list)
     tournament_phasegroup_updated = pyqtSignal(dict)
     game_changed = pyqtSignal(int)
+    stream_queue_loaded = pyqtSignal(dict)
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -262,7 +263,16 @@ class TSHTournamentDataProvider:
             "gameType": gameType,
             "callback": self.signals.history_sets_updated
         })
+        self.threadPool.start(worker) 
+
+    def GetStreamQueue(self):
+
+        worker = Worker(self.provider.GetStreamQueue)
+        worker.signals.result.connect(lambda streamQueue: [
+            TSHTournamentDataProvider.instance.signals.stream_queue_loaded.emit(streamQueue)
+        ])
         self.threadPool.start(worker)
+        
 
     def UiMounted(self):
         if SettingsManager.Get("TOURNAMENT_URL"):

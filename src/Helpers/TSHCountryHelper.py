@@ -48,6 +48,20 @@ class TSHCountryHelper(QObject):
         nfkd_form = unicodedata.normalize('NFKD', input_str)
         return u"".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
+    def GetBasicCountryInfo(country_code):
+        if not country_code in TSHCountryHelper.countries:
+            return {}
+
+        return {
+            "name": TSHCountryHelper.countries[country_code]["name"],
+            "display_name": TSHCountryHelper.countries[country_code]["display_name"],
+            "en_name": TSHCountryHelper.countries[country_code]["en_name"],
+            "code": TSHCountryHelper.countries[country_code]["code"],
+            "latitude": TSHCountryHelper.countries[country_code]["latitude"],
+            "longitude": TSHCountryHelper.countries[country_code]["longitude"],
+            "asset": f'./assets/country_flag/{country_code.lower()}.png'
+        }
+
     def LoadCountries():
         try:
             f = open("./assets/countries+states+cities.json",
@@ -108,15 +122,8 @@ class TSHCountryHelper(QObject):
                 item = QStandardItem()
                 item.setIcon(
                     QIcon(f'./assets/country_flag/{country_code.lower()}.png'))
-                countryData = {
-                    "name": TSHCountryHelper.countries[country_code]["name"],
-                    "display_name": TSHCountryHelper.countries[country_code]["display_name"],
-                    "en_name": TSHCountryHelper.countries[country_code]["en_name"],
-                    "code": TSHCountryHelper.countries[country_code]["code"],
-                    "latitude": TSHCountryHelper.countries[country_code]["latitude"],
-                    "longitude": TSHCountryHelper.countries[country_code]["longitude"],
-                    "asset": f'./assets/country_flag/{country_code.lower()}.png'
-                }
+                countryData = TSHCountryHelper.GetBasicCountryInfo(
+                    country_code)
                 item.setData(countryData, Qt.ItemDataRole.UserRole)
                 item.setData(
                     f'{TSHCountryHelper.countries[country_code]["display_name"]} / {TSHCountryHelper.countries[country_code]["en_name"]} ({country_code})', Qt.ItemDataRole.EditRole)

@@ -4,6 +4,7 @@ from datetime import datetime
 import math
 
 from .StateManager import *
+from .SettingsManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 class TSHStatsSignals(QObject):
@@ -33,7 +34,9 @@ class TSHStatsUtil:
             self.UpdateLastSets)
         TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
             self.UpdateRecentSets)
-    
+        TSHTournamentDataProvider.instance.signals.stream_queue_loaded.connect(
+            self.UpdateStreamQueue)
+
     def GetRecentSets(self):
         updated = False
         # Only if 1 player on each side
@@ -155,6 +158,24 @@ class TSHStatsUtil:
         else:
             StateManager.Set(f"score.upset_factor", 0)
     
+    def _setWithDifferentKey(source, sKey, target, tKey):
+        value = source.deep_get(sKey)
+        if value:
+            target.deep_set(tKey, value)
+
+    def formatStreamQueueData(self, data):
+        pass
+
+    def UpdateStreamQueue(self, data):
+        print("=======================================UpdateStreamQueue==================================")
+        print(data)
+        StateManager.BlockSaving()
+
+        StateManager.Set(f"streamQueue", data)
+        StateManager.Set(f"currentStream", SettingsManager.Get("twitch_username"))
+
+        StateManager.ReleaseSaving()
+
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating
     #

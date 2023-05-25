@@ -1,9 +1,11 @@
-# VGBC Style Overlay:
-
-- Go to OBS and add a new Browser.
-- Select the /layout/scoreboard_vgbootcampy/index.html as the local file and set its width and height to 1920 and 1080 respectively.
-- Run TSH and enter the players' information.
-  - Select "Shutdown source when not visible" in the Browser's properties so that it plays the overlay animation every time it becomes visible.
+# VGBC Style Overlay Properties:
+- The top left container displays the name of the tournament and the bottom containers each display the player's Twitter handle.
+- The match is shown at the bottom of the left player container.
+- The phase and best of x is shown at the bottom of the right player container in "phase - best of x" format.
+  - If only best of x is available, then only best of x is shown.
+  - If it is best of 0 and the phase is available, then only the phase is shown.
+- No information alternation takes place in this overlay. 
+- Select "Shutdown source when not visible" in the Browser's properties so that it plays the overlay animation every time it becomes visible.
 
 # Player Cams:
 
