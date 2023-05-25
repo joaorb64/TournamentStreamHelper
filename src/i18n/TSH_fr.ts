@@ -731,7 +731,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="208"/>
-        <location filename="../TSHPlayerListWidget.py" line="29"/>
+        <location filename="../TSHPlayerListWidget.py" line="31"/>
         <source>Player List</source>
         <translation>Liste de joueurs</translation>
     </message>
@@ -1061,26 +1061,26 @@ p, li { white-space: pre-wrap; }
         <translation>Commentateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="62"/>
+        <location filename="../TSHPlayerListWidget.py" line="64"/>
         <location filename="../TSHBracketWidget.py" line="71"/>
         <source>Number of slots</source>
         <translation>Nombre d&apos;emplacements</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="74"/>
         <location filename="../TSHBracketWidget.py" line="84"/>
         <source>Players per slot</source>
         <translation>Nombre de joueurs par emplacement</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="82"/>
+        <location filename="../TSHPlayerListWidget.py" line="85"/>
         <location filename="../TSHScoreboardWidget.py" line="119"/>
         <location filename="../TSHBracketWidget.py" line="94"/>
         <source>Characters per player</source>
         <translation>Nombre de personnages par joueur</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="93"/>
+        <location filename="../TSHPlayerListWidget.py" line="98"/>
         <source>Load tournament standings</source>
         <translation>Charger les résultats du tournoi</translation>
     </message>
@@ -1371,28 +1371,28 @@ p, li { white-space: pre-wrap; }
         <translation>Phase finale</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="95"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="101"/>
         <source>Open Image</source>
         <translation>Ouvrir une image</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="97"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="103"/>
         <source>Image Files</source>
         <translation>Fichiers Image</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="135"/>
-        <location filename="../TSHTournamentInfoWidget.py" line="136"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="142"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="143"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="179"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="186"/>
         <source>The tournament URL could not be loaded.</source>
         <translation>L&apos;URL du tournoi n&apos;a pas pu être chargée.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="179"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="186"/>
         <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
