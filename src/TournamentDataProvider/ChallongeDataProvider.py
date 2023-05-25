@@ -18,6 +18,15 @@ from ..Workers import Worker
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import next_power_of_2
 import math
+import random
+import cloudscraper
+
+HEADERS = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+    "Accept-Encoding": "gzip, deflate, br"
+}
 
 
 def CHALLONGE_BRACKET_TYPE(bracketType: str):
@@ -36,6 +45,7 @@ class ChallongeDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
+        self.scraper = cloudscraper.create_scraper()
 
     def GetSlug(self):
         # URL with language
@@ -68,14 +78,9 @@ class ChallongeDataProvider(TournamentDataProvider):
         try:
             slug = self.GetSlug()
 
-            data = requests.get(
+            data = self.scraper.get(
                 f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+
             )
 
             data = json.loads(data.text)
@@ -123,14 +128,9 @@ class ChallongeDataProvider(TournamentDataProvider):
         try:
             slug = self.GetSlug()
 
-            data = requests.get(
+            data = self.scraper.get(
                 f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
 
             data = json.loads(data.text)
@@ -149,14 +149,9 @@ class ChallongeDataProvider(TournamentDataProvider):
         finalData = {}
 
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
             data = json.loads(data.text)
 
@@ -176,16 +171,13 @@ class ChallongeDataProvider(TournamentDataProvider):
         final_data = []
 
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS,
+                allow_redirects=True
             )
-
+            print(self.GetEnglishUrl()+".json")
+            print(data.text)
             data = json.loads(data.text)
 
             all_matches = self.GetAllMatchesFromData(data)
@@ -211,14 +203,9 @@ class ChallongeDataProvider(TournamentDataProvider):
         phases = []
 
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
             data = json.loads(data.text)
 
@@ -257,14 +244,9 @@ class ChallongeDataProvider(TournamentDataProvider):
     def GetTournamentPhaseGroup(self, id, progress_callback=None):
         finalData = {}
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
             data = json.loads(data.text)
 
@@ -658,14 +640,9 @@ class ChallongeDataProvider(TournamentDataProvider):
 
     def GetEntrantsWorker(self, progress_callback):
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
             data = json.loads(data.text)
 
@@ -729,14 +706,9 @@ class ChallongeDataProvider(TournamentDataProvider):
         final_data = []
 
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
 
             data = json.loads(data.text)
@@ -778,14 +750,9 @@ class ChallongeDataProvider(TournamentDataProvider):
 
     def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
         try:
-            data = requests.get(
+            data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-                    "sec-ch-ua": 'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-                    "Accept-Encoding": "gzip, deflate, br"
-                }
+                headers=HEADERS
             )
 
             data = json.loads(data.text)
