@@ -856,4 +856,8 @@ class TSHScoreboardWidget(QDockWidget):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))
             StateManager.Set(f"score.ruleset", data.get("ruleset"))
         
+        if data.get("bracket_type"):
+            StateManager.Set(f"score.bracket_type", data.get("bracket_type"))
+            TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+        
         StateManager.ReleaseSaving()

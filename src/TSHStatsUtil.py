@@ -13,6 +13,7 @@ class TSHStatsSignals(QObject):
     LastSetsP2Signal = pyqtSignal()
     PlayerHistoryStandingsP1Signal = pyqtSignal()
     PlayerHistoryStandingsP2Signal = pyqtSignal()
+    UpsetFactorCalculation = pyqtSignal()
 
 class TSHStatsUtil:
     instance: "TSHStatsUtil" = None
@@ -25,6 +26,7 @@ class TSHStatsUtil:
         self.signals.LastSetsP1Signal.connect(self.GetLastSetsP1)
         self.signals.LastSetsP2Signal.connect(self.GetLastSetsP2)
         self.signals.RecentSetsSignal.connect(self.GetRecentSets)
+        self.signals.UpsetFactorCalculation.connect(self.GetSetUpsetFactor)
 
         TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
             self.UpdateHistorySets)
@@ -135,6 +137,26 @@ class TSHStatsUtil:
             })
             i+=1
         StateManager.ReleaseSaving()
+
+    def GetSetUpsetFactor(self):
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            bracket_type = StateManager.Get(f"score.bracket_type", "")
+            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.team.2.player.1.id")
+
+            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+                p1 = StateManager.Get(f"score.team.1.player.1.seed")
+                p2 = StateManager.Get(f"score.team.2.player.1.seed")
+                if p1 and p2:
+                    print("P1 Seed: " + str(p1))
+                    p1_upset = self.CalculatePlacementMath(bracket_type, p1)
+
+                    print("P2 Seed: " + str(p2))
+                    p2_upset = self.CalculatePlacementMath(bracket_type, p2)
+
+                    StateManager.Set(f"score.upset_factor", abs(p1_upset - p2_upset))
+        else:
+            StateManager.Set(f"score.upset_factor", 0)
     
     def _setWithDifferentKey(source, sKey, target, tKey):
         value = source.deep_get(sKey)
@@ -157,26 +179,26 @@ class TSHStatsUtil:
     # Calculation of Seeding/Placement to determine
     # Upset Factor or Seeding Performance Rating
     #
-    # bracket_type [INTEGER] = The bracket type returned from Start.GG
-    # or from Challonge
-    # Double Elim = 1, Single Elim = 2 (Could be wrong, will need to test)
+    # bracket_type [STRING] = The bracket type returned from Start.GG
     #
     # x [INTEGER] = The seeding/placement value being used to determine
     # the end product (Ex. Seeding for UF or Seeding/Placement for SPR)
     def CalculatePlacementMath(self, bracket_type, x):
         # Due to how the logs works, if the player is first seed,
         # the value will always be 0 and no math needs to be done.
-        if x == 1:
+        if x <= 1:
             return 0
         
         single_elim_calc = math.floor(math.log2(x - 1))
         double_elim_calc = math.ceil(math.log2((2 * x) / 3))
 
         # Double Elimination Sum of Values
-        if bracket_type == 1:
+        if bracket_type == "DOUBLE_ELIMINATION":
             return single_elim_calc + double_elim_calc
         # Single Elimination Sum of Values
-        elif bracket_type == 2:
+        elif bracket_type == "SINGLE_ELIMINATION":
             return single_elim_calc
+        else:
+            return 0
     
 TSHStatsUtil.instance = TSHStatsUtil()

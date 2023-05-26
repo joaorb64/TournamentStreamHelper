@@ -232,6 +232,12 @@ class WebServer(QThread):
     def stats_recent_sets():
         TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
         return "OK"
+    
+    # Resubmits Call for Upset Factor
+    @app.route('/stats-upset-factor')
+    def stats_upset_factor():
+        TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+        return "OK"
 
     # Resubmits Call for Last Sets
     @app.route('/stats-last-sets-<player>')
