@@ -45,7 +45,24 @@ class ChallongeDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
-        self.scraper = cloudscraper.create_scraper()
+        max_iter = 10
+        i, initialized = 0, False
+        while not initialized and i < max_iter:
+            if i > 0:
+                print(f"Retrying Cloudfare initialization (Attempt #{i+1})")
+            try:
+                self.scraper = cloudscraper.create_scraper(browser={
+                    'browser': 'firefox',
+                    'platform': 'windows',
+                    'mobile': False
+                })
+                self.scraper.get(f"https://challonge.com/")
+                initialized = True
+            except cloudscraper.exceptions.CloudflareException as e:
+                i += 1
+                if i >= max_iter:
+                    raise e
+                    #TODO: Find a way to open a warning box and unload tournament if failed
 
     def GetSlug(self):
         # URL with language
