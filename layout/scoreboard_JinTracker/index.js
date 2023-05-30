@@ -27,9 +27,10 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
-            `
+          if (team.player.length == 1) {
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
             <span>
               <span class="sponsor">
                 ${player.team ? player.team.toUpperCase() : ""}
@@ -38,13 +39,45 @@ LoadEverything().then(() => {
               ${team.losers ? "(L)" : ""}
             </span>
             `
-          );
+            );
+          } else {
+            let teamName = "";
+
+            if (!team.teamName || team.teamName == "") {
+              let names = [];
+              for (const [p, player] of Object.values(team.player).entries()) {
+                if (player && player.name) {
+                  names.push(await Transcript(player.name));
+                }
+              }
+              teamName = names.join(" / ");
+            } else {
+              teamName = team.teamName;
+            }
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+              <span>
+                ${teamName.toUpperCase()}
+                ${team.losers ? "(L)" : ""}
+              </span>
+              `
+            );
+          }
 
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset
+            player.country.asset && team.player.length == 1
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
               : ""
+          );
+
+          SetInnerHtml(
+            $(`.p${t + 1} .sponsor-container`),
+            player.sponsor_logo && team.player.length == 1
+              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              : ``
           );
 
           let score = [data.score.score_left, data.score.score_right];
@@ -53,18 +86,20 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .seed`),
-            player.seed ? `SEED ${player.seed}` : ""
+            player.seed && team.player.length == 1 ? `SEED ${player.seed}` : ""
           );
 
           SetInnerHtml(
             $(`.p${t + 1} .pronoun`),
-            player.pronoun ? player.pronoun.toUpperCase() : ""
+            player.pronoun && team.player.length == 1
+              ? player.pronoun.toUpperCase()
+              : ""
           );
 
           // Gets the name of the state instead of the flag and put it next to the location pin logo.
           SetInnerHtml(
             $(`.p${t + 1} .flagstate`),
-            player.state.name
+            player.state.name && team.player.length == 1
               ? `<span class="location_logo symbol"></span>${String(
                   player.state.name
                 ).toUpperCase()}`
@@ -73,7 +108,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .twitter`),
-            player.twitter
+            player.twitter && team.player.length == 1
               ? `<span class="twitter_logo symbol"></span>${String(
                   player.twitter
                 ).toUpperCase()}`

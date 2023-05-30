@@ -290,6 +290,23 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.sponsor-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sponsor-logo {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 48px;
+  height: 48px;
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
 .hidden {
   opacity: 0%;
   transition: opacity 0.5s;

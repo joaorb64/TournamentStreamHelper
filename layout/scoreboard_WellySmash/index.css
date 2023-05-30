@@ -116,7 +116,7 @@ body {
 .container .name {
   color: var(--text-color);
   position: absolute;
-  bottom: 2px;
+  bottom: 0px;
   width: 270px;
   height: 100%;
   font-size: 38px;
@@ -220,7 +220,7 @@ body {
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 40px;
   color: white;
   width: 52px;
   height: 52px;
@@ -395,10 +395,14 @@ body {
   width: 250px;
   bottom: 2px;
   display: flex;
-  gap: 16px;
   text-transform: uppercase;
   box-sizing: border-box;
   justify-content: center;
+}
+
+.below_name .text:not(.text_empty) {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .t1 .below_name {
