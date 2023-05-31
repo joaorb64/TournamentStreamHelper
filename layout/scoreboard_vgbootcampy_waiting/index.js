@@ -65,7 +65,7 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          if (team.player.length == 1) {
+          if (Object.keys(team.player).length == 1) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `

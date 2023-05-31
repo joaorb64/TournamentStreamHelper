@@ -27,7 +27,7 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          if (team.player.length == 1) {
+          if (Object.keys(team.player).length == 1) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
@@ -68,14 +68,14 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset && team.player.length == 1
+            player.country.asset && Object.keys(team.player).length == 1
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
               : ""
           );
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            player.sponsor_logo && team.player.length == 1
+            player.sponsor_logo && Object.keys(team.player).length == 1
               ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
               : ``
           );
@@ -86,12 +86,14 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .seed`),
-            player.seed && team.player.length == 1 ? `SEED ${player.seed}` : ""
+            player.seed && Object.keys(team.player).length == 1
+              ? `SEED ${player.seed}`
+              : ""
           );
 
           SetInnerHtml(
             $(`.p${t + 1} .pronoun`),
-            player.pronoun && team.player.length == 1
+            player.pronoun && Object.keys(team.player).length == 1
               ? player.pronoun.toUpperCase()
               : ""
           );
@@ -99,7 +101,7 @@ LoadEverything().then(() => {
           // Gets the name of the state instead of the flag and put it next to the location pin logo.
           SetInnerHtml(
             $(`.p${t + 1} .flagstate`),
-            player.state.name && team.player.length == 1
+            player.state.name && Object.keys(team.player).length == 1
               ? `<span class="location_logo symbol"></span>${String(
                   player.state.name
                 ).toUpperCase()}`
@@ -108,7 +110,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .twitter`),
-            player.twitter && team.player.length == 1
+            player.twitter && Object.keys(team.player).length == 1
               ? `<span class="twitter_logo symbol"></span>${String(
                   player.twitter
                 ).toUpperCase()}`

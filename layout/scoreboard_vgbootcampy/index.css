@@ -116,10 +116,11 @@ body {
   color: var(--text-color);
 }
 
-// Compensate for sponsor logo
+/* Compensate for sponsor logo */
 .p1 .name {
   margin-left: 56px;
 }
+
 .p2 .name {
   margin-right: 56px;
 }

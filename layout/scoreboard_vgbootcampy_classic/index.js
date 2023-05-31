@@ -77,7 +77,7 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          if (team.player.length == 1) {
+          if (Object.keys(team.player).length == 1) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
@@ -120,14 +120,14 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset && team.player.length == 1
+            player.country.asset && Object.keys(team.player).length == 1
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
               : ""
           );
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            player.sponsor_logo && team.player.length == 1
+            player.sponsor_logo && Object.keys(team.player).length == 1
               ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
               : ``
           );

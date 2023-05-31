@@ -26,6 +26,7 @@ body {
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
   letter-spacing: 1;
+  background-size: cover;
 }
 
 .anim_container_outer {
@@ -89,6 +90,12 @@ body {
   top: 60px;
 }
 
+.sf6 .player.container {
+  top: 16px;
+  height: 42px;
+  width: 480px;
+}
+
 .p1.container {
   background-position: 100% 0;
   left: 380px;
@@ -107,6 +114,10 @@ body {
   left: 164px;
 }
 
+.sf6 .p1.container {
+  left: 248px;
+}
+
 .p2.container {
   background-position: 0 0;
   right: 380px;
@@ -123,6 +134,10 @@ body {
 
 .fgc.thin .p2.container {
   right: 164px;
+}
+
+.sf6 .p2.container {
+  right: 248px;
 }
 
 .thin .player.container {
@@ -154,6 +169,14 @@ body {
   overflow: hidden;
 }
 
+.sf6 .chips {
+  top: 105px;
+  width: 350px;
+  height: 30px;
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+}
+
 .chip {
   overflow: hidden;
   border-radius: calc(var(--border-radius) / 2);
@@ -163,10 +186,21 @@ body {
   left: 380px;
 }
 
+.sf6 .p1.chips {
+  left: 196px;
+  justify-content: left;
+}
+
 .p2.chips {
   flex-direction: row-reverse;
   left: 1040px;
   justify-content: left;
+}
+
+.sf6 .p2.chips {
+  left: unset;
+  right: 196px;
+  justify-content: right;
 }
 
 .chip .text:not(.text_empty) {
@@ -180,6 +214,11 @@ body {
   color: var(--text-color);
   border-radius: calc(var(--border-radius) / 2);
   min-width: unset;
+}
+
+.sf6 .chip .text:not(.text_empty) {
+  font-size: 22px;
+  height: 100%;
 }
 
 .fgc .name_twitter {
@@ -197,6 +236,10 @@ body {
 
 .fgc .name_twitter .name {
   width: 60%;
+}
+
+.sf6 .name_twitter .name {
+  width: 100%;
 }
 
 .fgc .p1 .name_twitter .name .text {
@@ -244,12 +287,12 @@ body {
   justify-content: flex-start;
 }
 
-.fgc .p1 .name_twitter .pronoun {
-  align-self: flex-end;
+.fgc .p1 .name_twitter .pronoun .text {
+  justify-content: flex-end;
 }
 
-.fgc .p2 .name_twitter .pronoun {
-  align-self: flex-start;
+.fgc .p2 .name_twitter .pronoun .text {
+  justify-content: flex-start;
 }
 
 .twitter_logo {
@@ -304,6 +347,12 @@ body {
 
 .fgc.thin.bblue .logo {
   top: 970px;
+}
+
+.sf6 .logo {
+  width: 80px;
+  height: 80px;
+  top: 924px;
 }
 
 .info.container {
@@ -363,6 +412,14 @@ body {
   height: 48px;
 }
 
+.sf6 .info.container.top {
+  width: 440px;
+  top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  height: 26px;
+}
+
 .info.container.bottom {
   top: 42px;
   left: 42px;
@@ -382,10 +439,20 @@ body {
   width: 100%;
 }
 
+.sf6 .phase {
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
 .match {
   font-size: 24px;
   letter-spacing: 2px;
   width: 100%;
+}
+
+.sf6 .match {
+  font-size: 28px;
+  letter-spacing: 2px;
 }
 
 .fgc .info.container.bottom {
@@ -394,6 +461,16 @@ body {
   padding: 16px 24px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.sf6 .info.container.bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  top: unset;
+  bottom: 0;
+  width: 400px;
+  height: 64px;
+  padding: 0px 20px;
 }
 
 .bblue .info.container.bottom {
@@ -524,6 +601,10 @@ body {
 .fgc.thin .score {
   font-size: 32px;
   width: 48px;
+}
+
+.sf6 .score {
+  font-size: 38px;
 }
 
 .p1 .score {

@@ -24,7 +24,7 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          if (team.player.length == 1) {
+          if (Object.keys(team.player).length == 1) {
             SetInnerHtml(
               $(`.t${t + 1}.container .name`),
               `
@@ -65,12 +65,12 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .pronoun`),
-            team.player.length == 1 ? player.pronoun : ""
+            Object.keys(team.player).length == 1 ? player.pronoun : ""
           );
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .flagcountry`),
-            player.country.asset && team.player.length == 1
+            player.country.asset && Object.keys(team.player).length == 1
               ? `
                 <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
               `
@@ -79,7 +79,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .flagstate`),
-            player.state.asset && team.player.length == 1
+            player.state.asset && Object.keys(team.player).length == 1
               ? `
                 <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
               `
@@ -88,7 +88,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .twitter`),
-            player.twitter && team.player.length == 1
+            player.twitter && Object.keys(team.player).length == 1
               ? `<span class="twitter_logo"></span>${String(player.twitter)}`
               : ""
           );
@@ -104,7 +104,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .sponsor-container`),
-            player.sponsor_logo && team.player.length == 1
+            player.sponsor_logo && Object.keys(team.player).length == 1
               ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
               : ""
           );

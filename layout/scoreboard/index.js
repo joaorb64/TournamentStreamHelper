@@ -14,7 +14,7 @@ LoadEverything().then(() => {
       1
     )
     .from(
-      [".bottom"],
+      [".info.bottom"],
       {
         duration: 1,
         autoAlpha: 0,
