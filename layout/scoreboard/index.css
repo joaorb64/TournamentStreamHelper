@@ -240,6 +240,7 @@ body {
 
 .sf6 .name_twitter .name {
   width: 100%;
+  font-size: 30px;
 }
 
 .fgc .p1 .name_twitter .name .text {
@@ -440,7 +441,7 @@ body {
 }
 
 .sf6 .phase {
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: 2px;
 }
 
@@ -451,7 +452,7 @@ body {
 }
 
 .sf6 .match {
-  font-size: 28px;
+  font-size: 30px;
   letter-spacing: 2px;
 }
 
@@ -520,6 +521,11 @@ body {
   height: 38px;
   width: 38px;
   background-size: cover;
+}
+
+.sf6 .icon div:not(.text) {
+  height: 34px;
+  width: 34px;
 }
 
 .flags_container {
@@ -604,7 +610,7 @@ body {
 }
 
 .sf6 .score {
-  font-size: 38px;
+  font-size: 34px;
 }
 
 .p1 .score {
