@@ -91,8 +91,8 @@ body {
 }
 
 .sf6 .player.container {
-  top: 16px;
-  height: 42px;
+  top: 10px;
+  height: 48px;
   width: 480px;
 }
 
@@ -170,9 +170,9 @@ body {
 }
 
 .sf6 .chips {
-  top: 105px;
-  width: 350px;
-  height: 30px;
+  top: 108px;
+  width: 270px;
+  height: 32px;
   background: var(--bg-color);
   border-radius: calc(var(--border-radius) / 2);
 }
@@ -187,7 +187,7 @@ body {
 }
 
 .sf6 .p1.chips {
-  left: 196px;
+  left: 200px;
   justify-content: left;
 }
 
@@ -199,7 +199,7 @@ body {
 
 .sf6 .p2.chips {
   left: unset;
-  right: 196px;
+  right: 200px;
   justify-content: right;
 }
 
@@ -217,7 +217,7 @@ body {
 }
 
 .sf6 .chip .text:not(.text_empty) {
-  font-size: 22px;
+  font-size: 20px;
   height: 100%;
 }
 
@@ -418,7 +418,7 @@ body {
   top: 0;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  height: 26px;
+  height: 30px;
 }
 
 .info.container.bottom {
