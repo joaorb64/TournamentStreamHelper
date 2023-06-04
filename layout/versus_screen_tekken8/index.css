@@ -277,6 +277,10 @@ body {
   gap: 16px;
 }
 
+.p2 .flagscontainer {
+  flex-direction: row-reverse !important;
+}
+
 .flag {
   display: flex;
   flex-direction: column;
@@ -451,15 +455,12 @@ body {
   filter: brightness(2);
 }
 
-.sponsor_logo {
-  overflow: visible;
-  position: fixed;
-  width: 160px;
-  height: 160px;
-  top: -170px;
+.sponsor-logo {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+  width: 80px;
+  height: 80px;
 }
 
 .p1 .sponsor_logo {

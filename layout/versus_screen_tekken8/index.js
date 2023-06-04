@@ -121,10 +121,10 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun);
 
           SetInnerHtml(
-            $(`.p${t + 1} > .sponsor_logo`),
+            $(`.p${t + 1} .sponsor_logo`),
             player.sponsor_logo
               ? `
-                <div class='sponsor_logo' style='background-image: url(../../${player.sponsor_logo})'></div>
+                <div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>
                 `
               : ""
           );
