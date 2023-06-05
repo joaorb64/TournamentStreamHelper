@@ -609,8 +609,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         player.get("id"),
                         0
                     ]
-                if deep_get(_set, "slots", [])[i].get("entrant", {}).get("seeds", []) != []:
-                    playerData["seed"] = self.player_seeds[playerData["id"][0]]
+                playerData["seed"] = self.player_seeds[playerData["id"][0]]
+                
                 players[i].append(playerData)
 
         setData["entrants"] = players
