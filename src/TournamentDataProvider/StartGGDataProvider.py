@@ -609,7 +609,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         player.get("id"),
                         0
                     ]
-                playerData["seed"] = self.player_seeds[playerData["id"][0]]
+                if playerData["id"][0] is not None:
+                    playerData["seed"] = self.player_seeds[playerData["id"][0]]
                 
                 players[i].append(playerData)
 
