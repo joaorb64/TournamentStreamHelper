@@ -167,8 +167,6 @@ class TSHStatsUtil:
         pass
 
     def UpdateStreamQueue(self, data):
-        print("=======================================UpdateStreamQueue==================================")
-        print(data)
         StateManager.BlockSaving()
 
         StateManager.Set(f"streamQueue", data)
