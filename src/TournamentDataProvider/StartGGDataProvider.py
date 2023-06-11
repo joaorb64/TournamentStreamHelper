@@ -922,7 +922,7 @@ class StartGGDataProvider(TournamentDataProvider):
                                     "state" : {},
                                     "name" : playerName,
                                     "team" : team,
-                                    "mergedName" : team + "|" + playerName if not team == "" else playerName,
+                                    "mergedName" : team + "|" + playerName if isinstance(team, str) and team != "" else playerName,
                                     "pronoun" : playerData.get("pronoun", ""),
                                     "real_name" : playerData.get("name", ""),
                                     "online_avatar" : playerData.get("avatar", "")
