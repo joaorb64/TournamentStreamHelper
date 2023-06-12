@@ -886,11 +886,14 @@ class StartGGDataProvider(TournamentDataProvider):
                         phase_name += " - " + TSHLocaleHelper.phaseNames.get("group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
                     frt = _set.get("fullRoundText", "")
+                    total_games = _set.get("totalGames", 0)
 
                     setData = {
                         "id": _set.get("id"),
                         "match": StartGGDataProvider.TranslateRoundName(frt),
                         "phase": phase_name,
+                        "best_of" : total_games,
+                        "best_of_text" : TSHLocaleHelper.matchNames.get("best_of").format(total_games) if total_games > 0 else "",
                         "state": _set.get("state"),
                         "team" : {}
                     }
@@ -925,9 +928,9 @@ class StartGGDataProvider(TournamentDataProvider):
                                     "mergedName" : team + "|" + playerName if isinstance(team, str) and team != "" else playerName,
                                     "pronoun" : playerData.get("pronoun", ""),
                                     "real_name" : playerData.get("name", ""),
-                                    "online_avatar" : playerData.get("avatar", "")
+                                    "online_avatar" : playerData.get("avatar", ""),
+                                    "twitter":  playerData.get("twitter", "")
                                 }
-                                
 
                                 teamData["player"][str(playerIndex + 1)] = playerData
 
