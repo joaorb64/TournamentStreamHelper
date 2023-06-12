@@ -179,7 +179,7 @@ body {
     font-size: 18px;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
 }
 

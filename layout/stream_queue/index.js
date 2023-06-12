@@ -1,4 +1,12 @@
 LoadEverything().then(() => {
+    gsap.config({ nullTargetWarn: false, trialWarn: false });
+
+    let startingAnimation = gsap.timeline({ paused: true });
+
+    Start = async (event) => {
+        startingAnimation.restart();
+    };
+
     /**
      * Wraps content in a .text element to emulate SetInnerHtml's behavior.
      */
@@ -76,6 +84,15 @@ LoadEverything().then(() => {
             }
             console.log(html);
             $(".stream_queue_content").html(html);
+
+            for (const [s, set] of Object.values(queue).entries()){
+                gsap.from(
+                    $(`.set${s + 1}`),
+                    { x: -100, autoAlpha: 0, duration: 0.3 },
+                    0.2 + 0.2 * s
+                );
+            }
         }
+
     }
 })
