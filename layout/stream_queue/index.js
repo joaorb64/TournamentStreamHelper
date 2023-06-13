@@ -42,7 +42,7 @@ LoadEverything().then(() => {
         )
 
         resolver.add(`.set${s} .p${t} .twitter`, 
-            (!isTeams) ?  `<span class="twitter_logo"></span>${String("Test_Twitter")}` : ""  
+            (!isTeams) ?  `<span class="twitter_logo"></span>${String(player.twitter)}` : ""  
         )
 
         return `
@@ -66,25 +66,6 @@ LoadEverything().then(() => {
         `
     }
 
-    class SIHResolver{
-        constructor () {
-            this.list = [];
-        }
-
-        add(selector, value){
-            this.list.push({s: selector, v: value});
-            return ""
-        }
-
-        resolve(){
-            console.log(this.list)
-            for (let element of this.list){
-                console.log(element.s, element.v)
-                SetInnerHtml($(element.s), element.v);
-            }
-        }
-    }
-
     Update = async (event) => {
         let data = event.data;
         let oldData = event.oldData;
@@ -94,7 +75,7 @@ LoadEverything().then(() => {
             JSON.stringify(data.streamQueue) !=
             JSON.stringify(oldData.score.streamQueue)
         ) {
-            let resolver = new SIHResolver();
+            let resolver = new ContentResolver();
 
             let stream = data.currentStream || tsh_settings.default_stream;
             let queue = data.streamQueue[stream];
