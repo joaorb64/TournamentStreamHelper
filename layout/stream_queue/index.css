@@ -57,20 +57,29 @@ body {
 }
 
 .vs_container {
-    width: 140px;
+    width: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .vs {
     display: flex;
     justify-content: center;
     width: 100%;
-    font-size: 50px;
+    font-size: 45px;
+}
+
+.match {
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.phase {
+    overflow: hidden;
 }
 
 .flags {

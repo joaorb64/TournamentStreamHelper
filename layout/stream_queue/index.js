@@ -77,15 +77,23 @@ LoadEverything().then(() => {
                         ${ await team_html(set, 1, isTeams) }
                         <div class = "vs_container">
                             <div class = "vs">VS</div>
+                            <div class = "phase"> </div>
+                            <div class = "match"> </div>
                         </div>
                         ${ await team_html(set, 2, isTeams) }
                     </div>
                 `;
+
+                console.log(set.match)
+
             }
-            console.log(html);
+            //console.log(html);
             $(".stream_queue_content").html(html);
 
             for (const [s, set] of Object.values(queue).entries()){
+                SetInnerHtml($(`.set${s + 1} .match`), set.match);
+                SetInnerHtml($(`.set${s + 1} .phase`), set.phase);
+
                 gsap.from(
                     $(`.set${s + 1}`),
                     { x: -100, autoAlpha: 0, duration: 0.3 },
