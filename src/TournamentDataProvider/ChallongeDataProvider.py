@@ -62,7 +62,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 i += 1
                 if i >= max_iter:
                     raise e
-                    #TODO: Find a way to open a warning box and unload tournament if failed
+                    # TODO: Find a way to open a warning box and unload tournament if failed
 
     def GetSlug(self):
         # URL with language
@@ -447,7 +447,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                         rounds[int(r)-1] = rounds[r]
 
             # If we had progressions in, we have to add a fake R1 to send half players to losers side
-            if len(finalData.get("progressionsIn", [])) > 0:
+            if len(finalData.get("progressionsIn", [])) > 0 and not finalData.get("winnersOnlyProgressions"):
                 sortedRounds = list(rounds.keys())
                 sortedRounds.sort(key=lambda x: int(x), reverse=True)
                 for r in sortedRounds:
