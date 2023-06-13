@@ -687,3 +687,23 @@ function nextPow2(v) {
   }
   return p;
 }
+
+/**
+ * Stores content to be added to the DOM with SetInnerHtml later
+ */
+class ContentResolver {
+  constructor () {
+      this.list = [];
+  }
+
+  add(selector, value){
+      this.list.push({s: selector, v: value});
+      return ""
+  }
+
+  resolve(){
+      for (let element of this.list){
+          SetInnerHtml($(element.s), element.v);
+      }
+  }
+}
