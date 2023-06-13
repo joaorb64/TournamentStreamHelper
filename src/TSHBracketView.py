@@ -7,10 +7,9 @@ from .TSHBracket import *
 from .TSHPlayerList import *
 import traceback
 
-# Checks if a number is power of 2
-
 
 def is_power_of_two(n):
+    ''' Checks if a number is power of 2 '''
     return (n != 0) and (n & (n-1) == 0)
 
 
@@ -76,8 +75,6 @@ class BracketSetWidget(QWidget):
                 self.hide()
             elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
                 self.hide()
-            else:
-                self.show()
 
     def SetScore(self, id, score, updateDisplay=True):
         self.bracketSet.score[id] = score
@@ -168,11 +165,14 @@ class BracketSetWidget(QWidget):
                  (self.bracketSet.playerIds[1] == -1 and not self.bracketSet.playerIds[0] == -1))
 
             if self.bracketSet.pos[0] < 0 and hasBye:
-                self.hide()
+                if self.isVisible():
+                    self.hide()
             elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
-                self.hide()
+                if self.isVisible():
+                    self.hide()
             else:
-                self.show()
+                if not self.isVisible():
+                    self.show()
 
             limitExportNumber, winnersOffset, losersOffset = self.bracketView.GetLimitedExportingBracketOffsets()
 
@@ -246,9 +246,6 @@ class TSHBracketView(QGraphicsView):
             else:
                 winnersCutout[0] = 1
 
-            if forExport:
-                winnersCutout[0] -= 1
-
         # Losers right side cutout
         if self.progressionsOut > 0:
             progressionsLosers = self.progressionsOut - \
@@ -266,9 +263,6 @@ class TSHBracketView(QGraphicsView):
         validWR1Sets = self.bracket.originalPlayerNumber - self.bracket.playerNumber/2
 
         if self.progressionsIn == 0 and validWR1Sets <= self.bracket.playerNumber/2/2:
-            losersCutout[0] += 1
-
-        if self.progressionsIn > 0 and not is_power_of_two(self.progressionsIn) and not self.bracket.winnersOnlyProgressions:
             losersCutout[0] += 1
 
         if self.progressionsOut > 0 and not is_power_of_two(self.progressionsOut):

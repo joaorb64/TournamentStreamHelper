@@ -256,9 +256,14 @@ class TSHBracketWidget(QDockWidget):
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(
                 self.phaseGroupSelection.currentData().get("id"))
 
-    def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
-        self.bracket = Bracket(playerNumber, self.progressionsIn.value(
-        ), seedMap, self.winnersOnly.isChecked())
+    def RebuildBracket(self, playerNumber, seedMap=None, byeIds=[], customSeeding=False):
+        self.bracket = Bracket(
+            playerNumber,
+            self.progressionsIn.value(),
+            seedMap,
+            byeIds,
+            self.winnersOnly.isChecked()
+        )
 
         self.bracketView.SetBracket(
             self.bracket,
@@ -321,6 +326,7 @@ class TSHBracketWidget(QDockWidget):
             self.RebuildBracket(
                 len(phaseGroupData.get("entrants")),
                 phaseGroupData.get("seedMap"),
+                phaseGroupData.get("byeIds", []),
                 phaseGroupData.get("customSeeding", False)
             )
 

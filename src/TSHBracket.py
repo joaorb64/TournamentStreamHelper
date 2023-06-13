@@ -53,7 +53,7 @@ def nextLayer(pls):
 
 
 class Bracket():
-    def __init__(self, playerNumber, progressionsIn, seedMap=None, winnersOnlyProgressions=False, customSeeding=False) -> None:
+    def __init__(self, playerNumber, progressionsIn, seedMap=None, byeIds=[], winnersOnlyProgressions=False, customSeeding=False) -> None:
         self.originalPlayerNumber = playerNumber
         self.playerNumber = next_power_of_2(playerNumber)
 
@@ -68,6 +68,9 @@ class Bracket():
             seeds = seeding(self.playerNumber)
 
         self.seedMap = seeds
+
+        # List for byes in the middle of a custom seed
+        self.byeIds = byeIds
 
         self.winnersOnlyProgressions = winnersOnlyProgressions
 
@@ -234,8 +237,18 @@ class Bracket():
                         _set.finished = True
 
                 if _set.winNext:
+                    # One of the players is a forced loss
+                    if _set.playerIds[0] in self.byeIds or _set.playerIds[1] in self.byeIds:
+                        won = 0
+                        lost = 1
+                        if _set.playerIds[0] in self.byeIds:
+                            won = 1
+                            lost = 0
+                        _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
+                        if _set.loseNext:
+                            _set.loseNext.playerIds[targetIdL] = _set.playerIds[lost]
                     # Both slots are bye OR slot 2 is bye, auto win for p1
-                    if (self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1])) or \
+                    elif (self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1])) or \
                             (not self.IsBye(_set.playerIds[0]) and self.IsBye(_set.playerIds[1])):
                         won = 0
                         lost = 1
