@@ -112,11 +112,14 @@ body {
     margin-right: 15px;
     width: 450px;
     height: 100%;
+    overflow: hidden;
 }
 
 .tag {
     font-size: 35px;
     margin-bottom: 8px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .sponsor {
@@ -151,7 +154,10 @@ body {
 .p2 .losers {
     background: #308affff;
 }
-  
+
+.twitter {
+    max-width: 250px;
+}
 
 .avatar_container {
     display: flex;
