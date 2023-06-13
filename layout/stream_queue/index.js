@@ -48,6 +48,12 @@ LoadEverything().then(() => {
         return `
             <div class = "p${t} team">
                 ${isTeams ? "" : online_avatar_html(player, t)}
+                <div class = "flags">
+                    ${ isTeams ? "" : 
+                        (player.country.asset ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
+                        (player.state.asset ? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
+                    }
+                </div>
                 <div class = "name">
                     <div class = "tag"></div>
                     <div class = "extra">
@@ -55,12 +61,6 @@ LoadEverything().then(() => {
                         <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>
                         <div class = "seed"> ${wrap_text("Seed " + team.seed)} </div>
                     </div>
-                </div>
-                <div class = "flags">
-                    ${ isTeams ? "" : 
-                        (player.country.asset ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
-                        (player.state.asset ? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
-                    }
                 </div>
             </div>
         `

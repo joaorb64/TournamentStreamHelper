@@ -41,20 +41,6 @@ body {
     justify-content: center;
 }
 
-.team {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-    overflow: hidden;
-}
-
-.p1 {
-    flex-direction: row;
-}
-
-.p2 {
-    flex-direction: row-reverse;
-}
 
 .vs_container {
     width: 220px;
@@ -71,6 +57,21 @@ body {
     justify-content: center;
     width: 100%;
     font-size: 45px;
+}
+
+.team {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+.p1 {
+    flex-direction: row;
+}
+
+.p2 {
+    flex-direction: row-reverse;
 }
 
 .match {
