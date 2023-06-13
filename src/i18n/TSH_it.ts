@@ -1007,20 +1007,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="64"/>
-        <location filename="../TSHBracketWidget.py" line="71"/>
+        <location filename="../TSHBracketWidget.py" line="77"/>
         <source>Number of slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="74"/>
-        <location filename="../TSHBracketWidget.py" line="84"/>
+        <location filename="../TSHBracketWidget.py" line="90"/>
         <source>Players per slot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="85"/>
         <location filename="../TSHScoreboardWidget.py" line="119"/>
-        <location filename="../TSHBracketWidget.py" line="94"/>
+        <location filename="../TSHBracketWidget.py" line="101"/>
         <source>Characters per player</source>
         <translation>Personaggi per giocatore</translation>
     </message>
