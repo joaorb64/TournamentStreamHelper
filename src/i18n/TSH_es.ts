@@ -1231,20 +1231,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="208"/>
-        <location filename="../TSHScoreboardWidget.py" line="476"/>
+        <location filename="../TSHScoreboardWidget.py" line="486"/>
         <source>Load set</source>
         <translation>Cargar set</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="218"/>
-        <location filename="../TSHScoreboardWidget.py" line="719"/>
-        <location filename="../TSHScoreboardWidget.py" line="724"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
+        <location filename="../TSHScoreboardWidget.py" line="736"/>
         <source>Load current stream set</source>
         <translation>Cargar set actual desde el stream</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="284"/>
-        <location filename="../TSHScoreboardWidget.py" line="311"/>
+        <location filename="../TSHScoreboardWidget.py" line="286"/>
+        <location filename="../TSHScoreboardWidget.py" line="313"/>
         <source>TEAM {0}</source>
         <translation>EQUIPO {0}</translation>
     </message>
@@ -1252,23 +1252,23 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="51"/>
         <location filename="../TournamentStreamHelper.py" line="423"/>
         <location filename="../TournamentStreamHelper.py" line="609"/>
-        <location filename="../TSHScoreboardWidget.py" line="457"/>
+        <location filename="../TSHScoreboardWidget.py" line="467"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="470"/>
+        <location filename="../TSHScoreboardWidget.py" line="480"/>
         <source>Load set from {0}</source>
         <translation>Cargar set de {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="733"/>
+        <location filename="../TSHScoreboardWidget.py" line="745"/>
         <source>Load user set ({0})</source>
         <translation>Cargar set de usuario ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="737"/>
+        <location filename="../TSHScoreboardWidget.py" line="749"/>
         <source>Load user set</source>
         <translation>Cargar set de usuario</translation>
     </message>
@@ -1369,14 +1369,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
         <location filename="../TSHSelectSetWindow.py" line="111"/>
-        <location filename="../TSHScoreboardWidget.py" line="719"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
         <source>(</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="538"/>
         <location filename="../TSHSelectSetWindow.py" line="112"/>
-        <location filename="../TSHScoreboardWidget.py" line="719"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
         <source>)</source>
         <translation></translation>
     </message>
@@ -1450,13 +1450,13 @@ p, li { white-space: pre-wrap; }
         <translation>Falta la tag del jugador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="435"/>
+        <location filename="../TSHScoreboardWidget.py" line="443"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="879"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="438"/>
+        <location filename="../TSHScoreboardWidget.py" line="447"/>
         <source>The thumbnail has been generated here:</source>
         <translation>La miniatura se generó aquí:</translation>
     </message>

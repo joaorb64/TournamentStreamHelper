@@ -6,6 +6,7 @@ query StreamQueueQuery($slug: String) {
                     id
                     identifier
                     fullRoundText
+                    totalGames
                     state
                     slots {
                         entrant {
@@ -28,6 +29,10 @@ query StreamQueueQuery($slug: String) {
                                     }
                                     images(type: "profile") {
                                         url
+                                    }
+                                    authorizations(types: [TWITTER]) {
+                                        type
+                                        externalUsername
                                     }
                                 }
                                 player {
