@@ -53,8 +53,23 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    open('./assets/characters.json', 'wb').write(r.content)
-                    print("startgg characters file updated")
+
+                    open('./assets/characters.json.tmp', 'wb').write(r.content)
+
+                    try:
+                        # Test if downloaded JSON is valid
+                        json.load(open('./assets/characters.json.tmp'))
+
+                        # Remove old file, overwrite with new one
+                        os.remove('./assets/characters.json')
+                        os.rename(
+                            './assets/characters.json.tmp',
+                            './assets/characters.json'
+                        )
+
+                        print("startgg characters file updated")
+                    except:
+                        print("Characters file download failed")
                 except Exception as e:
                     print("Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
