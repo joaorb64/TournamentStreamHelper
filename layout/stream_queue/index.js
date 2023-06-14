@@ -86,12 +86,20 @@ LoadEverything().then(() => {
             }
 
             let resolver = new ContentResolver();
-
-            
+    
             let queue = data.streamQueue[stream];
-            let html = ""
             if (!queue) return;
-            for (const [s, set] of Object.values(queue).entries()){
+
+            let window_config = window.config || {}
+            let first_index = (window_config.display_first_set != undefined ? window_config.display_first_set : tsh_settings.display_first_set) ? 0 : 1;
+            let sets_nb = window_config.sets_displayed || tsh_settings.sets_displayed;
+            if (sets_nb < 0) sets_nb = undefined;
+            if (sets_nb > 0) sets_nb += first_index;
+
+            let html = ""
+            
+            for (const [s, set] of Object.values(queue).slice(first_index, sets_nb).entries()){
+                console.log(set, );
                 let isTeams = Object.keys(set.team["1"].player).length > 1;
                 html += `
                     <div class="set${s + 1} set">
@@ -105,7 +113,8 @@ LoadEverything().then(() => {
                     </div>
                 `;
 
-                console.log(set.match)
+                resolver.add(`.set${s + 1} .match`, set.match);
+                resolver.add(`.set${s + 1} .phase`, set.phase);
 
             }
             //console.log(html);
@@ -114,8 +123,6 @@ LoadEverything().then(() => {
             resolver.resolve()
 
             for (const [s, set] of Object.values(queue).entries()){
-                SetInnerHtml($(`.set${s + 1} .match`), set.match);
-                SetInnerHtml($(`.set${s + 1} .phase`), set.phase);
 
                 gsap.from(
                     $(`.set${s + 1}`),
