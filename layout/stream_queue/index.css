@@ -218,3 +218,9 @@ body {
     height: 18px;
     margin-right: 8px;
 }
+
+.message {
+    color: black;
+    font-size: 50px;
+    font-weight: bold;
+}

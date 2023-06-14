@@ -70,16 +70,27 @@ LoadEverything().then(() => {
         let data = event.data;
         let oldData = event.oldData;
 
+
+        let stream = tsh_settings.stream || data.currentStream || tsh_settings.default_stream;
+
         if (
             !oldData.streamQueue ||
             JSON.stringify(data.streamQueue) !=
-            JSON.stringify(oldData.score.streamQueue)
+            JSON.stringify(oldData.score.streamQueue) || 
+            ( !tsh_settings.stream && oldData.currentStream != data.currentStream)
         ) {
+
+            if (!stream){
+                $(".stream_queue_content").html('<div class = "message">No stream (twitch username) selected. Enter one in TSH or set the "stream" or "default_stream" value in this layout\'s settings.json</div>');
+                return;
+            }
+
             let resolver = new ContentResolver();
 
-            let stream = data.currentStream || tsh_settings.default_stream;
+            
             let queue = data.streamQueue[stream];
             let html = ""
+            if (!queue) return;
             for (const [s, set] of Object.values(queue).entries()){
                 let isTeams = Object.keys(set.team["1"].player).length > 1;
                 html += `
