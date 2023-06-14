@@ -1057,31 +1057,31 @@ p, li { white-space: pre-wrap; }
         <translation>トーナメントの順位表をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="61"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="722"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="732"/>
         <source>Save new player</source>
         <translation>プレイヤーエントリーを保存</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="74"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="75"/>
         <source>Delete player entry</source>
         <translation>プレイヤーエントリーを削除</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="87"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="88"/>
         <source>Clear</source>
         <translation>リセット</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="88"/>
         <location filename="../TSHSelectSetWindow.py" line="90"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="315"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="318"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1112"/>
         <source>Player {0}</source>
         <translation>プレイヤー{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="719"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="729"/>
         <source>Update player</source>
         <translation>プレイヤーエントリーを更新</translation>
     </message>
