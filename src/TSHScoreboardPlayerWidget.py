@@ -12,10 +12,12 @@ from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Workers import Worker
+import threading
 import copy
 import time
 import math
 import random
+from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -31,6 +33,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     characterModel = None
 
     signals = TSHScoreboardPlayerWidgetSignals()
+
+    dataLock = threading.RLock()
 
     def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
@@ -280,38 +284,40 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"{self.path}.seed", seed)
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
-        tmpData = []
+        with self.dataLock():
+            with other.dataLock():
+                tmpData = []
 
-        # Save state
-        for w in [self, other]:
-            data = {}
-            for widget in w.findChildren(QWidget):
-                if type(widget) == QLineEdit:
-                    data[widget.objectName()] = widget.text()
-                if type(widget) == QComboBox:
-                    data[widget.objectName()] = widget.currentIndex()
-            data["online_avatar"] = StateManager.Get(
-                f"{w.path}.online_avatar")
-            data["id"] = StateManager.Get(
-                f"{w.path}.id")
-            data["seed"] = StateManager.Get(
-                f"{w.path}.seed")
-            tmpData.append(data)
+                # Save state
+                for w in [self, other]:
+                    data = {}
+                    for widget in w.findChildren(QWidget):
+                        if type(widget) == QLineEdit:
+                            data[widget.objectName()] = widget.text()
+                        if type(widget) == QComboBox:
+                            data[widget.objectName()] = widget.currentIndex()
+                    data["online_avatar"] = StateManager.Get(
+                        f"{w.path}.online_avatar")
+                    data["id"] = StateManager.Get(
+                        f"{w.path}.id")
+                    data["seed"] = StateManager.Get(
+                        f"{w.path}.seed")
+                    tmpData.append(data)
 
-        # Load state
-        for i, w in enumerate([other, self]):
-            for objName in tmpData[i]:
-                widget = w.findChild(QWidget, objName)
-                if widget:
-                    if type(widget) == QLineEdit:
-                        widget.setText(tmpData[i][objName])
-                        widget.editingFinished.emit()
-                    if type(widget) == QComboBox:
-                        widget.setCurrentIndex(tmpData[i][objName])
-            QCoreApplication.processEvents()
-            w.ExportPlayerImages(tmpData[i]["online_avatar"])
-            w.ExportPlayerId(tmpData[i]["id"])
-            StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
+                # Load state
+                for i, w in enumerate([other, self]):
+                    for objName in tmpData[i]:
+                        widget = w.findChild(QWidget, objName)
+                        if widget:
+                            if type(widget) == QLineEdit:
+                                widget.setText(tmpData[i][objName])
+                                widget.editingFinished.emit()
+                            if type(widget) == QComboBox:
+                                widget.setCurrentIndex(tmpData[i][objName])
+                    QCoreApplication.processEvents()
+                    w.ExportPlayerImages(tmpData[i]["online_avatar"])
+                    w.ExportPlayerId(tmpData[i]["id"])
+                    StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(
@@ -534,7 +540,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         if TSHPlayerDB.model:
             self.findChild(QLineEdit, "name").setCompleter(QCompleter())
             self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
-                lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection)
+                lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)) if x is not None else None, Qt.QueuedConnection)
             self.findChild(QLineEdit, "name").completer().setCaseSensitivity(
                 Qt.CaseSensitivity.CaseInsensitive)
             self.findChild(QLineEdit, "name").completer(
@@ -546,125 +552,134 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageDeletePlayerFromDBActive()
 
     def SetData(self, data, dontLoadFromDB=False, clear=True):
+        self.dataLock.acquire()
         StateManager.BlockSaving()
 
-        if clear:
-            self.Clear()
+        try:
+            if clear:
+                self.Clear()
 
-        # Load player data from DB; will be overwriten by incoming data
-        if not dontLoadFromDB and clear:
-            tag = data.get(
-                "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
+            # Load player data from DB; will be overwriten by incoming data
+            if not dontLoadFromDB and clear:
+                tag = data.get(
+                    "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
 
-            for i in range(TSHPlayerDB.model.rowCount()):
-                item = TSHPlayerDB.model.item(i).data(Qt.ItemDataRole.UserRole)
+                for i in range(TSHPlayerDB.model.rowCount()):
+                    item = TSHPlayerDB.model.item(
+                        i).data(Qt.ItemDataRole.UserRole)
 
-                dbTag = item.get(
-                    "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
+                    dbTag = item.get(
+                        "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
 
-                if tag == dbTag:
-                    self.SetData(item, dontLoadFromDB=True, clear=False)
-                    break
-
-        name = self.findChild(QWidget, "name")
-        if data.get("gamerTag") and data.get("gamerTag") != name.text():
-            name.setText(f'{data.get("gamerTag")}')
-            name.editingFinished.emit()
-
-        team = self.findChild(QWidget, "team")
-        if data.get("prefix") and data.get("prefix") != team.text():
-            team.setText(f'{data.get("prefix")}')
-            team.editingFinished.emit()
-
-        real_name = self.findChild(QWidget, "real_name")
-        if data.get("name") and data.get("name") != real_name.text():
-            real_name.setText(f'{data.get("name")}')
-            real_name.editingFinished.emit()
-
-        if data.get("avatar"):
-            self.ExportPlayerImages(data.get("avatar"))
-
-        if data.get("id"):
-            self.ExportPlayerId(data.get("id"))
-
-        if data.get("seed"):
-            self.ExportPlayerSeed(data.get("seed"))
-
-        twitter = self.findChild(QWidget, "twitter")
-        if data.get("twitter") and data.get("twitter") != twitter.text():
-            twitter.setText(
-                f'{data.get("twitter")}')
-            twitter.editingFinished.emit()
-
-        pronoun = self.findChild(QWidget, "pronoun")
-        if data.get("pronoun") and data.get("pronoun") != pronoun.text():
-            pronoun.setText(
-                f'{data.get("pronoun")}')
-            pronoun.editingFinished.emit()
-
-        if data.get("country_code"):
-            countryElement: QComboBox = self.findChild(
-                QComboBox, "country")
-            countryIndex = 0
-            for i in range(TSHCountryHelper.countryModel.rowCount()):
-                item = TSHCountryHelper.countryModel.item(
-                    i).data(Qt.ItemDataRole.UserRole)
-                if item:
-                    if data.get("country_code") == item.get("code"):
-                        countryIndex = i
+                    if tag == dbTag:
+                        self.SetData(item, dontLoadFromDB=True, clear=False)
                         break
-            countryElement.setCurrentIndex(countryIndex)
 
-        if data.get("state_code"):
-            countryElement: QComboBox = self.findChild(
-                QComboBox, "country")
-            stateElement: QComboBox = self.findChild(QComboBox, "state")
-            stateIndex = 0
-            for i in range(stateElement.model().rowCount()):
-                item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
-                if item:
-                    if data.get("state_code") == item.get("code"):
-                        stateIndex = i
-                        break
-            stateElement.setCurrentIndex(stateIndex)
+            name = self.findChild(QWidget, "name")
+            if data.get("gamerTag") and data.get("gamerTag") != name.text():
+                data["gamerTag"] = TSHBadWordFilter.Censor(data["gamerTag"])
+                name.setText(f'{data.get("gamerTag")}')
+                name.editingFinished.emit()
 
-        if data.get("mains"):
-            if type(data.get("mains")) == list:
-                for element in self.character_elements:
-                    character_element = element[1]
-                    characterIndex = 0
-                    for i in range(character_element.model().rowCount()):
-                        item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
-                        if item:
-                            if item.get("en_name") == data.get("mains")[0]:
-                                characterIndex = i
-                                break
-                    character_element.setCurrentIndex(characterIndex)
-            elif type(data.get("mains")) == dict:
-                mains = data.get("mains").get(
-                    TSHGameAssetManager.instance.selectedGame.get("codename"), [])
+            team = self.findChild(QWidget, "team")
+            if data.get("prefix") and data.get("prefix") != team.text():
+                data["prefix"] = TSHBadWordFilter.Censor(data["prefix"])
+                team.setText(f'{data.get("prefix")}')
+                team.editingFinished.emit()
 
-                for i, main in enumerate(mains):
-                    if i < len(self.character_elements):
-                        character_element = self.character_elements[i][1]
-                        color_element = self.character_elements[i][2]
+            real_name = self.findChild(QWidget, "real_name")
+            if data.get("name") and data.get("name") != real_name.text():
+                data["name"] = TSHBadWordFilter.Censor(data["name"])
+                real_name.setText(f'{data.get("name")}')
+                real_name.editingFinished.emit()
+
+            if data.get("avatar"):
+                self.ExportPlayerImages(data.get("avatar"))
+
+            if data.get("id"):
+                self.ExportPlayerId(data.get("id"))
+
+            if data.get("seed"):
+                self.ExportPlayerSeed(data.get("seed"))
+
+            twitter = self.findChild(QWidget, "twitter")
+            if data.get("twitter") and data.get("twitter") != twitter.text():
+                data["twitter"] = TSHBadWordFilter.Censor(data["twitter"])
+                twitter.setText(
+                    f'{data.get("twitter")}')
+                twitter.editingFinished.emit()
+
+            pronoun = self.findChild(QWidget, "pronoun")
+            if data.get("pronoun") and data.get("pronoun") != pronoun.text():
+                data["pronoun"] = TSHBadWordFilter.Censor(data["pronoun"])
+                pronoun.setText(
+                    f'{data.get("pronoun")}')
+                pronoun.editingFinished.emit()
+
+            if data.get("country_code"):
+                countryElement: QComboBox = self.findChild(
+                    QComboBox, "country")
+                countryIndex = 0
+                for i in range(TSHCountryHelper.countryModel.rowCount()):
+                    item = TSHCountryHelper.countryModel.item(
+                        i).data(Qt.ItemDataRole.UserRole)
+                    if item:
+                        if data.get("country_code") == item.get("code"):
+                            countryIndex = i
+                            break
+                countryElement.setCurrentIndex(countryIndex)
+
+            if data.get("state_code"):
+                countryElement: QComboBox = self.findChild(
+                    QComboBox, "country")
+                stateElement: QComboBox = self.findChild(QComboBox, "state")
+                stateIndex = 0
+                for i in range(stateElement.model().rowCount()):
+                    item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
+                    if item:
+                        if data.get("state_code") == item.get("code"):
+                            stateIndex = i
+                            break
+                stateElement.setCurrentIndex(stateIndex)
+
+            if data.get("mains"):
+                if type(data.get("mains")) == list:
+                    for element in self.character_elements:
+                        character_element = element[1]
                         characterIndex = 0
                         for i in range(character_element.model().rowCount()):
                             item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
                             if item:
-                                if item.get("en_name") == main[0]:
+                                if item.get("en_name") == data.get("mains")[0]:
                                     characterIndex = i
                                     break
                         character_element.setCurrentIndex(characterIndex)
-                        if len(main) > 1:
-                            color_element.setCurrentIndex(int(main[1]))
-                        else:
-                            color_element.setCurrentIndex(0)
+                elif type(data.get("mains")) == dict:
+                    mains = data.get("mains").get(
+                        TSHGameAssetManager.instance.selectedGame.get("codename"), [])
 
-        if data.get("seed"):
-            StateManager.Set(f"{self.path}.seed", data.get("seed"))
+                    for i, main in enumerate(mains):
+                        if i < len(self.character_elements):
+                            character_element = self.character_elements[i][1]
+                            color_element = self.character_elements[i][2]
+                            characterIndex = 0
+                            for i in range(character_element.model().rowCount()):
+                                item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
+                                if item:
+                                    if item.get("en_name") == main[0]:
+                                        characterIndex = i
+                                        break
+                            character_element.setCurrentIndex(characterIndex)
+                            if len(main) > 1:
+                                color_element.setCurrentIndex(int(main[1]))
+                            else:
+                                color_element.setCurrentIndex(0)
 
-        StateManager.ReleaseSaving()
+            if data.get("seed"):
+                StateManager.Set(f"{self.path}.seed", data.get("seed"))
+        finally:
+            StateManager.ReleaseSaving()
+            self.dataLock.release()
 
     def GetCurrentPlayerTag(self):
         gamerTag = self.findChild(QWidget, "name").text()
@@ -744,10 +759,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         TSHPlayerDB.DeletePlayer(tag)
 
     def Clear(self):
-        for c in self.findChildren(QLineEdit):
-            if c.text() != "":
-                c.setText("")
-                c.editingFinished.emit()
+        with self.dataLock:
+            for c in self.findChildren(QLineEdit):
+                if c.text() != "":
+                    c.setText("")
+                    c.editingFinished.emit()
 
-        for c in self.findChildren(QComboBox):
-            c.setCurrentIndex(0)
+            for c in self.findChildren(QComboBox):
+                c.setCurrentIndex(0)
