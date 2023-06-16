@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
+from typing import List
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 
@@ -186,9 +187,9 @@ class TSHScoreboardWidget(QDockWidget):
             action.toggled.connect(
                 lambda toggled, action=action, element=element: self.ToggleElements(action, element[1]))
 
-        self.playerWidgets = []
-        self.team1playerWidgets = []
-        self.team2playerWidgets = []
+        self.playerWidgets: List[TSHScoreboardPlayerWidget] = []
+        self.team1playerWidgets: List[TSHScoreboardPlayerWidget] = []
+        self.team2playerWidgets: List[TSHScoreboardPlayerWidget] = []
 
         self.team1swaps = []
         self.team2swaps = []
@@ -838,32 +839,40 @@ class TSHScoreboardWidget(QDockWidget):
             self.playerNumber.setValue(
                 len(max(data.get("entrants"), key=lambda x: len(x))))
 
-            for t, team in enumerate(data.get("entrants")):
-                teamInstances = [self.team1playerWidgets,
-                                 self.team2playerWidgets]
-                if self.teamsSwapped:
-                    teamInstances.reverse()
-                teamInstance = teamInstances[t]
+            # Lock all player widgets
+            for p in self.playerWidgets:
+                p.dataLock.acquire()
 
-                if len(team) > 1:
-                    teamColumns = [self.team1column, self.team2column]
-                    teamNames = [data.get("p1_name"), data.get("p2_name")]
-                    teamColumns[t].findChild(
-                        QLineEdit, "teamName").setText(teamNames[t])
-                    teamColumns[t].findChild(
-                        QLineEdit, "teamName").editingFinished.emit()
+            try:
+                for t, team in enumerate(data.get("entrants")):
+                    teamInstances = [self.team1playerWidgets,
+                                     self.team2playerWidgets]
+                    if self.teamsSwapped:
+                        teamInstances.reverse()
+                    teamInstance = teamInstances[t]
 
-                for p, player in enumerate(team):
-                    if data.get("overwrite"):
-                        teamInstance[p].SetData(
-                            player, False, True)
+                    if len(team) > 1:
+                        teamColumns = [self.team1column, self.team2column]
+                        teamNames = [data.get("p1_name"), data.get("p2_name")]
+                        teamColumns[t].findChild(
+                            QLineEdit, "teamName").setText(teamNames[t])
+                        teamColumns[t].findChild(
+                            QLineEdit, "teamName").editingFinished.emit()
 
-                    if data.get("has_selection_data"):
-                        player = {
-                            "mains": player.get("mains")
-                        }
-                        teamInstance[p].SetData(
-                            player, True, False)
+                    for p, player in enumerate(team):
+                        if data.get("overwrite"):
+                            teamInstance[p].SetData(
+                                player, False, True)
+
+                        if data.get("has_selection_data"):
+                            player = {
+                                "mains": player.get("mains")
+                            }
+                            teamInstance[p].SetData(
+                                player, True, False)
+            finally:
+                for p in self.playerWidgets:
+                    p.dataLock.release()
 
         if data.get("stage_strike"):
             StateManager.Set(f"score.stage_strike", data.get("stage_strike"))

@@ -48,6 +48,9 @@ class TSHBadWordFilter():
         TSHBadWordFilter.badWordList = open(
             "./assets/bad_word_list.txt", 'r', encoding="utf-8").read().splitlines()
 
+        TSHBadWordFilter.badWordList = [w for w in TSHBadWordFilter.badWordList if len(
+            w.replace(".*", "").replace("^", "").replace("$", "")) > 3]
+
         for index, word in enumerate(TSHBadWordFilter.badWordList):
             word = re.sub("a", "(a|4|\@)", word)
             word = re.sub("i", "(i|1|l)", word)
