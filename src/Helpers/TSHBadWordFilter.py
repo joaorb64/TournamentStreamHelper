@@ -81,7 +81,7 @@ class TSHBadWordFilter():
         testStrings.append(val)
 
         for testVal in testStrings:
-            if len(testVal) <= 1:
+            if len(testVal) <= 3:
                 continue
 
             matches = TSHBadWordFilter.pattern.finditer(testVal)
