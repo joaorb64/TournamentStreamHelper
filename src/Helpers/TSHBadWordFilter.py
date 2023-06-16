@@ -1,6 +1,7 @@
 import re
 import unicodedata
 from typing import Union, Dict
+from ..SettingsManager import SettingsManager
 
 
 def remove_accents_lower(input_str):
@@ -112,6 +113,9 @@ class TSHBadWordFilter():
                     dictionary[key] = TSHBadWordFilter.CensorString(value)
 
     def Censor(value: Union[Dict, str, None]):
+        if SettingsManager.Get("general.profanity_filter", True) != True:
+            return value
+
         if value == None:
             return value
 
