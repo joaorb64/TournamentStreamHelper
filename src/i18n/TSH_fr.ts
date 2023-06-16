@@ -1210,32 +1210,32 @@ p, li { white-space: pre-wrap; }
         <translation>Charger un set utilisateur</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="98"/>
+        <location filename="../TSHTournamentDataProvider.py" line="101"/>
         <source>Paste the tournament URL.</source>
         <translation>Entrez l&apos;URL du tournoi.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="98"/>
+        <location filename="../TSHTournamentDataProvider.py" line="101"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation>Pour StartGG, le lien doit contenir la partie /event/</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="125"/>
+        <location filename="../TSHTournamentDataProvider.py" line="128"/>
         <source>Set tournament URL</source>
         <translation>Définir l&apos;URL du tournoi</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="150"/>
+        <location filename="../TSHTournamentDataProvider.py" line="156"/>
         <source>Set Twitch username</source>
         <translation>Définir le nom d&apos;utilisateur Twitch</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="150"/>
+        <location filename="../TSHTournamentDataProvider.py" line="156"/>
         <source>Twitch Username:</source>
         <translation>Nom d&apos;utilisateur Twitch :</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="160"/>
+        <location filename="../TSHTournamentDataProvider.py" line="166"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation>Entrez l&apos;URL du profil joueur StartGG</translation>
     </message>
@@ -1274,17 +1274,17 @@ p, li { white-space: pre-wrap; }
         <translation>Nom d&apos;utilisateur Twitch : </translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="163"/>
+        <location filename="../TSHTournamentDataProvider.py" line="169"/>
         <source>Insert the player&apos;s name in bracket</source>
         <translation>Entrez le nom du joueur tel qu&apos;affiché dans l&apos;arbre de tournoi</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="167"/>
+        <location filename="../TSHTournamentDataProvider.py" line="173"/>
         <source>Invalid tournament data provider</source>
         <translation>Fournisseur de données de tournoi invalide</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="172"/>
+        <location filename="../TSHTournamentDataProvider.py" line="178"/>
         <source>Set player</source>
         <translation>Définir le joueur</translation>
     </message>
