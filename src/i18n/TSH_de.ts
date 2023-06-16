@@ -796,7 +796,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="202"/>
-        <location filename="../TSHCommentaryWidget.py" line="13"/>
+        <location filename="../TSHCommentaryWidget.py" line="14"/>
         <source>Commentary</source>
         <translation>Kommentar</translation>
     </message>
@@ -1145,7 +1145,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="88"/>
         <location filename="../TSHSelectSetWindow.py" line="90"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="318"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="324"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1112"/>
         <source>Player {0}</source>
         <translation>Spieler {0}</translation>
@@ -1156,23 +1156,23 @@ p, li { white-space: pre-wrap; }
         <translation>Set auswählen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="732"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="66"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="747"/>
         <source>Save new player</source>
         <translation>Neuen Spieler speichern</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="75"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="79"/>
         <source>Delete player entry</source>
         <translation>Spielereintrag löschen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="88"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="92"/>
         <source>Clear</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="729"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="744"/>
         <source>Update player</source>
         <translation>Spielereintrag aktualisieren</translation>
     </message>
@@ -1264,12 +1264,12 @@ p, li { white-space: pre-wrap; }
         <translation>User-Set laden</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="41"/>
+        <location filename="../TSHCommentaryWidget.py" line="42"/>
         <source>Number of commentators</source>
         <translation>Zahl der Kommentatoren</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="70"/>
+        <location filename="../TSHCommentaryWidget.py" line="71"/>
         <source>Commentator {0}</source>
         <translation>Kommentator {0}</translation>
     </message>
