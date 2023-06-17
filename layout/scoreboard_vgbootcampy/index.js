@@ -111,7 +111,7 @@ LoadEverything().then(() => {
           if (
             player.twitter == undefined ||
             String(player.twitter) == "" ||
-            team.player.length != 1
+            Object.values(team.player).length != 1
           ) {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
