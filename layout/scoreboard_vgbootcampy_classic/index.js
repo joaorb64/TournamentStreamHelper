@@ -215,7 +215,10 @@ LoadEverything().then(() => {
         if (player) {
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
 
-          if (!(player.twitter || player.pronoun) || team.player.length != 1) {
+          if (
+            !(player.twitter || player.pronoun) ||
+            Object.values(team.player).length != 1
+          ) {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
           } else {
