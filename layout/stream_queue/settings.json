@@ -3,7 +3,7 @@
     "default": {}
   },
   "stream": "",
-  "default_stream" : "toulouselaststocks",
+  "default_stream" : "",
   "sets_displayed" : -1,
   "display_first_set": true
 }
