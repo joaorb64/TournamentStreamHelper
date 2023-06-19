@@ -2,6 +2,11 @@ import re
 import unicodedata
 from typing import Union, Dict
 from ..SettingsManager import SettingsManager
+import json
+from .TSHLocaleHelper import TSHLocaleHelper
+import traceback
+import os
+from collections import defaultdict
 
 
 def remove_accents_lower(input_str):
@@ -41,67 +46,129 @@ class Trie:
 
 
 class TSHBadWordFilter():
-    badWordList = []
-    badWordTrie = Trie()
-    pattern: str = ""
+    badWordTries = defaultdict(Trie)
+    patterns = defaultdict(re.Pattern)
 
     def LoadBadWordList():
-        TSHBadWordFilter.badWordList = open(
-            "./assets/bad_word_list.txt", 'r', encoding="utf-8").read().splitlines()
+        langs = defaultdict(list)
 
-        TSHBadWordFilter.badWordList = [w for w in TSHBadWordFilter.badWordList if len(
-            w.replace(".*", "").replace("^", "").replace("$", "")) > 3]
+        try:
+            for f in os.listdir("./assets/ngword/"):
+                if not f.endswith(".txt"):
+                    continue
 
-        for index, word in enumerate(TSHBadWordFilter.badWordList):
-            word = re.sub("a", "(a|4|\@)", word)
-            word = re.sub("i", "(i|1|l)", word)
-            word = re.sub("o", "(o|0|\@)", word)
-            word = re.sub("l", "(l|i)", word)
-            word = re.sub("e", "(e|3)", word)
-            word = re.sub("s", "(s|\$|5)", word)
-            word = re.sub("t", "(t|7)", word)
-            TSHBadWordFilter.badWordList[index] = word
+                langs[f.split(".")[0]] = open(
+                    f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
+        except:
+            print(traceback.format_exc())
 
-        for word in TSHBadWordFilter.badWordList:
-            TSHBadWordFilter.badWordTrie.insert(word)
+        for langkey, lang in langs.items():
+            for index, word in enumerate(lang):
+                word = re.sub("a", "(a|4|\@)", word)
 
-        TSHBadWordFilter.pattern = TSHBadWordFilter.badWordTrie.build_regex_pattern()
+                # from i we generate L so that we know which ones we added ourselves
+                word = re.sub("i", "(i|1|L|!)", word)
+                word = re.sub("l", "(l|1|i|!)", word)
+                # Then turn L into l
+                # Otherwise, we'd have (i|(i|l)) all over the place
+                word = re.sub("L", "l", word)
 
-    def CensorString(value: str):
-        oldValue = value
-        testStrings = []
+                # Same logic
+                word = re.sub("u", "(u|V)", word)
+                word = re.sub("v", "(v|u)", word)
+                word = re.sub("V", "v", word)
 
-        # test whole string
-        testStrings.append(remove_accents_lower(value))
+                word = re.sub("o", "(o|0|\@)", word)
+                word = re.sub("e", "(e|3)", word)
+                word = re.sub("s", "(s|\$|5)", word)
+                word = re.sub("t", "(t|7)", word)
 
-        # ignore dividers
+                langs[langkey][index] = word
+
+        for langkey, lang in langs.items():
+            for word in lang:
+                TSHBadWordFilter.badWordTries[langkey].insert(word)
+
+            TSHBadWordFilter.patterns[langkey] =\
+                TSHBadWordFilter.badWordTries[langkey].build_regex_pattern()
+
+    def CensorString(value: str, playerCountry: str = None):
+        langTests = set(["en-us", TSHLocaleHelper.exportLocale.lower()])
+
+        for lang in TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper()):
+            lang = lang.lower()
+
+            print("CHECKING SPOKEN LANGUAGE", lang)
+
+            specificLang = lang + "-" + playerCountry.lower()
+
+            langRemap = next((langGroup for langGroup,
+                              langs in TSHLocaleHelper.remapping.items() if lang+"_"+playerCountry.upper() in langs), None)
+
+            if specificLang in TSHBadWordFilter.patterns:
+                print("ADDING LANGUAGE:", specificLang)
+                langTests.add(specificLang)
+            elif langRemap:
+                langRemap = langRemap.lower().replace("_", "-")
+                print("ADDING LANGUAGE:", langRemap)
+                langTests.add(langRemap)
+            elif lang in TSHBadWordFilter.patterns:
+                print("ADDING LANGUAGE:", lang)
+                langTests.add(lang)
+
         dividers = [" ", "_", ",", ".", "/", "-", "\\", "*"]
-        val = remove_accents_lower(value)
-        for divider in dividers:
-            val = val.replace(divider, "")
-        testStrings.append(val)
+        testString = remove_accents_lower(value)
+        stringStart = 0
 
-        for testVal in testStrings:
-            if len(testVal) <= 3:
-                continue
+        newString = ""
 
-            matches = TSHBadWordFilter.pattern.finditer(testVal)
-            # matches = re.finditer(
-            #     "|".join([f"({w})" for w in TSHBadWordFilter.badWordList]), testVal, flags=re.IGNORECASE)
+        for characterPos, character in enumerate(testString):
+            if character in dividers:
+                substring = testString[stringStart:characterPos]
 
-            for match in matches:
-                print(match.group())
-                print(match.start())
-                print(match.end())
-                value = "***"
-                break
-            if value == "***":
-                break
+                if len(substring) > 0:
+                    matched = False
 
-        if value != oldValue:
-            print(oldValue, "->", value)
+                    for lang in langTests:
+                        if lang not in TSHBadWordFilter.patterns:
+                            continue
 
-        return value
+                        match = TSHBadWordFilter.patterns[lang].match(
+                            substring)
+
+                        if match:
+                            newString += "***"
+                            matched = True
+                            break
+                    if not matched:
+                        newString += value[stringStart:characterPos]
+
+                newString += character
+                stringStart = characterPos+1
+
+        substring = testString[stringStart:]
+
+        if len(substring) > 0:
+            matched = False
+
+            for lang in langTests:
+                if lang not in TSHBadWordFilter.patterns:
+                    continue
+
+                match = TSHBadWordFilter.patterns[lang].match(
+                    substring)
+
+                if match:
+                    newString += "***"
+                    matched = True
+                    break
+            if not matched:
+                newString += value[stringStart:]
+
+        if value != newString:
+            print(value, "->", newString)
+
+        return newString
 
     def CensorDict(dictionary: dict):
         for key, value in dictionary.items():
@@ -112,7 +179,7 @@ class TSHBadWordFilter():
                 if type(value) == str:
                     dictionary[key] = TSHBadWordFilter.CensorString(value)
 
-    def Censor(value: Union[Dict, str, None]):
+    def Censor(value: Union[Dict, str, None], countryCode2: str = None):
         if SettingsManager.Get("general.profanity_filter", True) != True:
             return value
 
@@ -120,7 +187,7 @@ class TSHBadWordFilter():
             return value
 
         if type(value) == str:
-            value = TSHBadWordFilter.CensorString(value)
+            value = TSHBadWordFilter.CensorString(value, countryCode2)
         if isinstance(value, dict):
             TSHBadWordFilter.CensorDict(value)
 

@@ -179,22 +179,26 @@ class TSHCommentaryWidget(QDockWidget):
 
     def SetData(self, widget, data):
         if data.get("gamerTag"):
-            data["gamerTag"] = TSHBadWordFilter.Censor(data["gamerTag"])
+            data["gamerTag"] = TSHBadWordFilter.Censor(
+                data["gamerTag"], data.get("country_code"))
         widget.findChild(QLineEdit, "name").setText(data.get("gamerTag", ""))
         widget.findChild(QLineEdit, "name").editingFinished.emit()
 
         if data.get("team"):
-            data["team"] = TSHBadWordFilter.Censor(data["team"])
+            data["team"] = TSHBadWordFilter.Censor(
+                data["team"], data.get("country_code"))
         widget.findChild(QLineEdit, "team").setText(data.get("prefix"))
         widget.findChild(QLineEdit, "team").editingFinished.emit()
 
         if data.get("real_name"):
-            data["real_name"] = TSHBadWordFilter.Censor(data["real_name"])
+            data["real_name"] = TSHBadWordFilter.Censor(
+                data["real_name"], data.get("country_code"))
         widget.findChild(QLineEdit, "real_name").setText(data.get("name", ""))
         widget.findChild(QLineEdit, "real_name").editingFinished.emit()
 
         if data.get("twitter"):
-            data["twitter"] = TSHBadWordFilter.Censor(data["twitter"])
+            data["twitter"] = TSHBadWordFilter.Censor(
+                data["twitter"], data.get("country_code"))
         widget.findChild(QLineEdit, "twitter").setText(data.get("twitter", ""))
         widget.findChild(QLineEdit, "twitter").editingFinished.emit()
 

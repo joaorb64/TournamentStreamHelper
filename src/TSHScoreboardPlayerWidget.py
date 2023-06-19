@@ -577,19 +577,22 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             name = self.findChild(QWidget, "name")
             if data.get("gamerTag") and data.get("gamerTag") != name.text():
-                data["gamerTag"] = TSHBadWordFilter.Censor(data["gamerTag"])
+                data["gamerTag"] = TSHBadWordFilter.Censor(
+                    data["gamerTag"], data.get("country_code"))
                 name.setText(f'{data.get("gamerTag")}')
                 name.editingFinished.emit()
 
             team = self.findChild(QWidget, "team")
             if data.get("prefix") and data.get("prefix") != team.text():
-                data["prefix"] = TSHBadWordFilter.Censor(data["prefix"])
+                data["prefix"] = TSHBadWordFilter.Censor(
+                    data["prefix"], data.get("country_code"))
                 team.setText(f'{data.get("prefix")}')
                 team.editingFinished.emit()
 
             real_name = self.findChild(QWidget, "real_name")
             if data.get("name") and data.get("name") != real_name.text():
-                data["name"] = TSHBadWordFilter.Censor(data["name"])
+                data["name"] = TSHBadWordFilter.Censor(
+                    data["name"], data.get("country_code"))
                 real_name.setText(f'{data.get("name")}')
                 real_name.editingFinished.emit()
 
@@ -604,14 +607,16 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             twitter = self.findChild(QWidget, "twitter")
             if data.get("twitter") and data.get("twitter") != twitter.text():
-                data["twitter"] = TSHBadWordFilter.Censor(data["twitter"])
+                data["twitter"] = TSHBadWordFilter.Censor(
+                    data["twitter"], data.get("country_code"))
                 twitter.setText(
                     f'{data.get("twitter")}')
                 twitter.editingFinished.emit()
 
             pronoun = self.findChild(QWidget, "pronoun")
             if data.get("pronoun") and data.get("pronoun") != pronoun.text():
-                data["pronoun"] = TSHBadWordFilter.Censor(data["pronoun"])
+                data["pronoun"] = TSHBadWordFilter.Censor(
+                    data["pronoun"], data.get("country_code"))
                 pronoun.setText(
                     f'{data.get("pronoun")}')
                 pronoun.editingFinished.emit()
