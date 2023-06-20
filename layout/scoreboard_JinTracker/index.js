@@ -21,13 +21,15 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
 
-    for (const [t, team] of [
-      data.score.team["1"],
-      data.score.team["2"],
-    ].entries()) {
-      for (const [p, player] of [team.player["1"]].entries()) {
-        if (player) {
-          if (Object.keys(team.player).length == 1) {
+    let isTeams = Object.keys(data.score.team["1"].player).length > 1;
+
+    if (!isTeams) {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        for (const [p, player] of [team.player["1"]].entries()) {
+          if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
@@ -40,96 +42,136 @@ LoadEverything().then(() => {
             </span>
             `
             );
-          } else {
-            let teamName = "";
-
-            if (!team.teamName || team.teamName == "") {
-              let names = [];
-              for (const [p, player] of Object.values(team.player).entries()) {
-                if (player && player.name) {
-                  names.push(await Transcript(player.name));
-                }
-              }
-              teamName = names.join(" / ");
-            } else {
-              teamName = team.teamName;
-            }
 
             SetInnerHtml(
-              $(`.p${t + 1}.container .name`),
-              `
-              <span>
-                ${teamName.toUpperCase()}
-                ${team.losers ? "(L)" : ""}
-              </span>
-              `
+              $(`.p${t + 1} .flagcountry`),
+              player.country.asset
+                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                : ""
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .placeholder_container`),
+              player.character[1].name ? `<div class='placeholder'></div>` : ""
+            );
+
+            let score = [data.score.score_left, data.score.score_right];
+
+            SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
+
+            SetInnerHtml(
+              $(`.p${t + 1} .seed`),
+              player.seed ? `SEED ${player.seed}` : ""
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1} .pronoun`),
+              player.pronoun ? player.pronoun.toUpperCase() : ""
+            );
+
+            // Gets the name of the state instead of the flag and put it next to the location pin logo.
+            SetInnerHtml(
+              $(`.p${t + 1} .flagstate`),
+              player.state.name
+                ? `<span class="location_logo symbol"></span>${String(
+                    player.state.name
+                  ).toUpperCase()}`
+                : ""
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1} .twitter`),
+              player.twitter
+                ? `<span class="twitter_logo symbol"></span>${String(
+                    player.twitter
+                  ).toUpperCase()}`
+                : ""
+            );
+
+            SetInnerHtml(
+              $(".match"),
+              data.score.match ? data.score.match.toUpperCase() : ""
+            );
+
+            SetInnerHtml(
+              $(".phase"),
+              data.score.phase ? data.score.phase.toUpperCase() : ""
+            );
+
+            document
+              .querySelector(`.p${t + 1}.character_container`)
+              .classList.add("unhidden");
+
+            let teamMultiplyier = t == 0 ? 1 : -1;
+
+            await CharacterDisplay(
+              $(`.p${t + 1}.character_container`),
+              {
+                source: `score.team.${t + 1}`,
+                anim_out: {
+                  autoAlpha: 0,
+                  x: -20 * teamMultiplyier + "px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+                anim_in: {
+                  autoAlpha: 1,
+                  x: "0px",
+                  stagger: teamMultiplyier * 0.2,
+                  duration: 0.4,
+                },
+              },
+              event
             );
           }
-
-          SetInnerHtml(
-            $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset && Object.keys(team.player).length == 1
-              ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1} .sponsor-container`),
-            player.sponsor_logo && Object.keys(team.player).length == 1
-              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
-              : ``
-          );
-
-          let score = [data.score.score_left, data.score.score_right];
-
-          SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
-
-          SetInnerHtml(
-            $(`.p${t + 1} .seed`),
-            player.seed && Object.keys(team.player).length == 1
-              ? `SEED ${player.seed}`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1} .pronoun`),
-            player.pronoun && Object.keys(team.player).length == 1
-              ? player.pronoun.toUpperCase()
-              : ""
-          );
-
-          // Gets the name of the state instead of the flag and put it next to the location pin logo.
-          SetInnerHtml(
-            $(`.p${t + 1} .flagstate`),
-            player.state.name && Object.keys(team.player).length == 1
-              ? `<span class="location_logo symbol"></span>${String(
-                  player.state.name
-                ).toUpperCase()}`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(`.p${t + 1} .twitter`),
-            player.twitter && Object.keys(team.player).length == 1
-              ? `<span class="twitter_logo symbol"></span>${String(
-                  player.twitter
-                ).toUpperCase()}`
-              : ""
-          );
-
-          SetInnerHtml(
-            $(".match"),
-            data.score.match ? data.score.match.toUpperCase() : ""
-          );
-
-          SetInnerHtml(
-            $(".phase"),
-            data.score.phase ? data.score.phase.toUpperCase() : ""
-          );
         }
       }
+    } else {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        let teamName = "";
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name.toUpperCase()));
+          }
+        }
+        teamName = names.join(" / ");
+        SetInnerHtml(
+          $(`.p${t + 1}.container .name`),
+          `
+        <span>
+          ${teamName}
+          ${team.losers ? "(L)" : ""}
+        </span>
+        `
+        );
+        for (const [p, player] of [team.player["1"]].entries()) {
+          document
+            .querySelector(`.p${t + 1}.character_container`)
+            .classList.remove("unhidden");
+
+          SetInnerHtml($(`.p${t + 1} .seed`), "");
+          SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
+          SetInnerHtml($(`.p${t + 1} .flagstate`), "");
+          SetInnerHtml($(`.p${t + 1} .twitter`), "");
+          SetInnerHtml($(`.p${t + 1} .pronoun`), "");
+          SetInnerHtml($(`.p${t + 1}.container .placeholder_container`), "");
+          SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
+        }
+      }
+      SetInnerHtml(
+        $(".match"),
+        data.score.match ? data.score.match.toUpperCase() : ""
+      );
+      SetInnerHtml(
+        $(".phase"),
+        data.score.phase ? data.score.phase.toUpperCase() : ""
+      );
     }
-    matchDisplayToggle(); // Displays the topleft container when match is not an empty string
+
     scoreBoxDisplayToggle(); // Displays the boxes when Best Of is greater than 0
     savedBestOf = createGameBoxes(savedBestOf); // Creates the boxes
 
@@ -168,17 +210,20 @@ LoadEverything().then(() => {
    */
   function colorInBoxes() {
     for (let i = 0; i < data.score.best_of; i++) {
-      const gameBox = document.querySelector(`.game${i + 1}.box`);
-      if (gameBox) {
+      const redGameBox = document.querySelector(`.game${i + 1}.p1_won`);
+      const blueGameBox = document.querySelector(`.game${i + 1}.p2_won`);
+      const darkGameBox = document.querySelector(`.game${i + 1}.neither_won`);
+
+      if (blueGameBox) {
         if (savedGameArray[i] == 1) {
-          gameBox.classList.add("p1_won");
-          gameBox.classList.remove("p2_won");
+          redGameBox.classList.add("unhidden");
+          blueGameBox.classList.remove("unhidden");
         } else if (savedGameArray[i] == 2) {
-          gameBox.classList.add("p2_won");
-          gameBox.classList.remove("p1_won");
+          redGameBox.classList.remove("unhidden");
+          blueGameBox.classList.add("unhidden");
         } else {
-          gameBox.classList.remove("p1_won");
-          gameBox.classList.remove("p2_won");
+          redGameBox.classList.remove("unhidden");
+          blueGameBox.classList.remove("unhidden");
         }
       }
     }
@@ -332,28 +377,9 @@ function scoreBoxDisplayToggle() {
   if (data.score.best_of > 0) {
     // Shows the box(es) when Best Of is greater than 0
     scoreBoxes.classList.add("unhidden");
-    scoreBoxes.classList.remove("hidden");
   } else {
     // Hides when Best Of is not greater than 0
-    scoreBoxes.classList.add("hidden");
     scoreBoxes.classList.remove("unhidden");
-  }
-}
-
-/**
- * Displays the topleft container with the match info when match is not an empty string.
- */
-async function matchDisplayToggle() {
-  const topLeftContainer = document.querySelector(".topleft.container");
-
-  if (data.score.match) {
-    // Show the topleft container when the match is not an empty string
-    topLeftContainer.classList.add("unhidden");
-    topLeftContainer.classList.remove("hidden");
-  } else {
-    // Hide when match is just an empty string
-    topLeftContainer.classList.add("hidden");
-    topLeftContainer.classList.remove("unhidden");
   }
 }
 
@@ -364,15 +390,30 @@ async function matchDisplayToggle() {
  */
 function createGameBoxes(savedBestOf) {
   let gameDivText = ""; // Variable to add game boxes inside the score_boxes class
+  let redGameDivText = "";
+  let blueGameDivText = "";
+  let darkGameDivText = ""; // Variable to add game boxes inside the score_boxes class
+
   // If Best Of is not 0 and Best Of has been updated
   if (data.score.best_of > 0 && data.score.best_of != savedBestOf) {
     // The number of boxes should equal Best Of
     for (let i = 1; i <= data.score.best_of; i++) {
       gameDivText += `<div class="game${i} box">GAME ${i}</div>\n`;
+      redGameDivText += `<div class="game${i} box p1_won hidden"></div>\n`;
+      blueGameDivText += `<div class="game${i} box p2_won hidden"></div>\n`;
+      darkGameDivText += `<div class="game${i} box neither_won"></div>\n`;
     }
-    savedBestOf = data.score.best_of; // The new Best Of is saved so it can be used to detect change later
-    SetInnerHtml($(".score_boxes"), gameDivText); // Create the game boxes
+    SetInnerHtml($(".word.score_boxes"), gameDivText); // Create the game boxes
+    SetInnerHtml($(".red.score_boxes"), redGameDivText); // Create the game boxes
+    SetInnerHtml($(".blue.score_boxes"), blueGameDivText); // Create the game boxes
+    SetInnerHtml($(".dark.score_boxes"), darkGameDivText); // Create the game boxes
+  } else if (data.score.best_of === 0) {
+    SetInnerHtml($(".word.score_boxes"), ""); // Create the game boxes
+    SetInnerHtml($(".red.score_boxes"), ""); // Create the game boxes
+    SetInnerHtml($(".blue.score_boxes"), ""); // Create the game boxes
+    SetInnerHtml($(".dark.score_boxes"), ""); // Create the game boxes
   }
+  savedBestOf = data.score.best_of; // The new Best Of is saved so it can be used to detect change later
   return savedBestOf;
 }
 
@@ -389,18 +430,21 @@ function compareObjects(obj1, obj2) {
 
   // Loop through the properties of obj1
   for (let key of obj1Keys) {
-    // Check if the property exists in obj2
-    if (!obj2.hasOwnProperty(key)) {
-      return false;
-    }
-    // Check if the values of the properties are the same
-    // Check to see if there is an object inside the object
-    if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
-      // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
-      if (!compareObjects(obj1[key], obj2[key])) return false;
-      // If the primitive types are not equal to each other, then we return false here as well
-    } else if (obj1[key] !== obj2[key]) {
-      return false;
+    // Seedings can change for a player/team so do not check it
+    if (key !== "seed") {
+      // Check if the property exists in obj2
+      if (!obj2.hasOwnProperty(key)) {
+        return false;
+      }
+      // Check if the values of the properties are the same
+      // Check to see if there is an object inside the object
+      if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
+        // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
+        if (!compareObjects(obj1[key], obj2[key])) return false;
+        // If the primitive types are not equal to each other, then we return false here as well
+      } else if (obj1[key] !== obj2[key]) {
+        return false;
+      }
     }
   }
   // If all properties and their values are the same, return true
