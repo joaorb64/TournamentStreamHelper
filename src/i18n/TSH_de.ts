@@ -1244,7 +1244,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="429"/>
         <location filename="../TournamentStreamHelper.py" line="615"/>
         <location filename="../TSHScoreboardWidget.py" line="459"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="884"/>
         <source>Warning</source>
         <translation>ACHTUNG</translation>
     </message>
@@ -1295,22 +1295,22 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="795"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="799"/>
         <source>Bold Italic</source>
         <translation>fett kursiv</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="793"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="797"/>
         <source>Bold</source>
         <translation>fett</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="792"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="796"/>
         <source>Regular</source>
         <translation>normal</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="794"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="798"/>
         <source>Italic</source>
         <translation>kursiv</translation>
     </message>
@@ -1441,7 +1441,7 @@ p, li { white-space: pre-wrap; }
     <name>thumb_app</name>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="435"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="879"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="883"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
