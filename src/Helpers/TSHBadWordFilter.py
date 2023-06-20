@@ -97,16 +97,21 @@ class TSHBadWordFilter():
     def CensorString(value: str, playerCountry: str = None):
         langTests = set(["en-us"])
 
-        extraLanguages = TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper())\
-            + [TSHLocaleHelper.programLocale.lower()]
+        extraLanguages = set([TSHLocaleHelper.programLocale.lower()])
+
+        if playerCountry is not None:
+            extraLanguages = extraLanguages.union(set(TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper())))
 
         for lang in extraLanguages:
             lang = lang.lower()
+            langRemap = None
+            specificLang = None
 
-            specificLang = lang + "-" + playerCountry.lower()
+            if playerCountry != None:
+                specificLang = lang + "-" + playerCountry.lower()
 
-            langRemap = next((langGroup for langGroup,
-                              langs in TSHLocaleHelper.remapping.items() if lang+"_"+playerCountry.upper() in langs), None)
+                langRemap = next((langGroup for langGroup,
+                                langs in TSHLocaleHelper.remapping.items() if lang+"_"+playerCountry.upper() in langs), None)
 
             if specificLang in TSHBadWordFilter.patterns:
                 langTests.add(specificLang)
