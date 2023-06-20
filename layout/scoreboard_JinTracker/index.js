@@ -69,7 +69,7 @@ LoadEverything().then(() => {
               player.pronoun ? player.pronoun.toUpperCase() : ""
             );
 
-            // Gets the name of the state instead of the flag and put it next to the location pin logo.
+            // Get the name of the state instead of the flag and put it next to the location pin logo.
             SetInnerHtml(
               $(`.p${t + 1} .flagstate`),
               player.state.name
@@ -178,11 +178,11 @@ LoadEverything().then(() => {
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
 
-    scoreBoxDisplayToggle(); // Displays the boxes when Best Of is greater than 0
-    savedBestOf = createGameBoxes(savedBestOf); // Creates the boxes
+    scoreBoxDisplayToggle(); // Display the boxes when Best Of is greater than 0
+    savedBestOf = createGameBoxes(savedBestOf); // Create the boxes
 
     if (!swapDetected) {
-      // If it didn't, then just update the savedGameArray without flipping the colors of the boxes.
+      // If a swap was not detected, then just update the savedGameArray without flipping the colors of the boxes.
       ({ savedGameArray, newP1Score, newP2Score, p1Score, p2Score } =
         updateGameArray(
           savedGameArray,
@@ -192,12 +192,12 @@ LoadEverything().then(() => {
           p2Score
         ));
     }
-    swapDetected = false; // Set swapDetected back to false if it was set true inside the checkSwap function.
+    swapDetected = false; // Set swapDetected back to false if it was set to true inside the checkSwap function.
 
     // Here is where we color in the boxes.
-    // I don't want the colorInBoxes function to be running forever, but it doesn't seem to update
-    // the color of the boxes by executing once or multiple times using the for loop for some reason.
-    // setInterval works, so I'm using it to repeat the colorInBoxes function 10 times.
+    // I do not want the colorInBoxes function to be running forever, but it does not seem to update
+    // the color of the boxes by executing once or multiple times using a for loop for some reason.
+    // setInterval works, so I am using it to repeat the colorInBoxes function 10 times.
     let counter = 0;
     const i = setInterval(function () {
       colorInBoxes();
@@ -209,7 +209,7 @@ LoadEverything().then(() => {
   };
 
   /**
-   * This function puts the colors in the boxes based on the data saved by the savedGameArray.
+   * This function colors in the boxes based on the data saved in the savedGameArray.
    * The array holds 1 for player 1's win and 2 for player 2's win.
    * The result of game 1 is held in index 0, game 2 in index 1, and so on.
    */
@@ -251,7 +251,7 @@ LoadEverything().then(() => {
       });
     });
 
-    // If the swap is detected
+    // If a swap was detected
     if (
       player1 !== undefined &&
       player2 !== undefined &&
@@ -271,7 +271,7 @@ LoadEverything().then(() => {
       [p1Score, p2Score] = [p2Score, p1Score];
     }
 
-    // After the swap, save the player's data to detect swap next time
+    // After a swap, player data are saved to detect the next swap
     player1 = newPlayer1;
     player2 = newPlayer2;
   }
@@ -293,7 +293,7 @@ LoadEverything().then(() => {
       });
     });
 
-    // If the swap is detected
+    // If a swap was detected
     if (
       player1 !== undefined &&
       player2 !== undefined &&
@@ -313,7 +313,7 @@ LoadEverything().then(() => {
       [p1Score, p2Score] = [p2Score, p1Score];
     }
 
-    // After the swap, save the player's data to detect swap next time
+    // After a swap, player data are saved to detect the next swap
     player1 = newPlayer1;
     player2 = newPlayer2;
   }
@@ -336,7 +336,7 @@ function updateGameArray(
   p2Score
 ) {
   let gameNum = 0; // Variable to store which game we are at
-  let gameArray = savedGameArray; // Create an array to hold game winner data
+  let gameArray = savedGameArray; // Array to hold game winner data
 
   // Do a run-through to get P1 score and P2 score to see which game we are at.
   [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
@@ -355,7 +355,7 @@ function updateGameArray(
     gameNum = newP1Score + newP2Score; // Add P1 score and P2 score to see which game we are at
   });
 
-  // Clearing all the boxes when P1 score + P2 score is 0.
+  // Clear all the boxes when P1 score + P2 score is 0.
   if (gameNum == 0) {
     gameArray = new Array(); // Clear the array
   }
@@ -422,10 +422,10 @@ function scoreBoxDisplayToggle() {
   const scoreBoxes = document.querySelector(`.score_boxes`);
 
   if (data.score.best_of > 0) {
-    // Shows the box(es) when Best Of is greater than 0
+    // Show the box(es) when Best Of is greater than 0
     scoreBoxes.classList.add("unhidden");
   } else {
-    // Hides when Best Of is not greater than 0
+    // Hide when Best Of is not greater than 0
     scoreBoxes.classList.remove("unhidden");
   }
 }
@@ -436,10 +436,10 @@ function scoreBoxDisplayToggle() {
  * @returns the new savedBestOf after the boxes are created
  */
 function createGameBoxes(savedBestOf) {
-  let gameDivText = ""; // Variable to add game boxes inside the score_boxes class
+  let gameDivText = "";
   let redGameDivText = "";
   let blueGameDivText = "";
-  let darkGameDivText = ""; // Variable to add game boxes inside the score_boxes class
+  let darkGameDivText = "";
 
   // If Best Of is not 0 and Best Of has been updated
   if (data.score.best_of > 0 && data.score.best_of != savedBestOf) {
@@ -450,15 +450,15 @@ function createGameBoxes(savedBestOf) {
       blueGameDivText += `<div class="game${i} box p2_won hidden"></div>\n`;
       darkGameDivText += `<div class="game${i} box neither_won"></div>\n`;
     }
-    SetInnerHtml($(".word.score_boxes"), gameDivText); // Create the game boxes
-    SetInnerHtml($(".red.score_boxes"), redGameDivText); // Create the game boxes
-    SetInnerHtml($(".blue.score_boxes"), blueGameDivText); // Create the game boxes
-    SetInnerHtml($(".dark.score_boxes"), darkGameDivText); // Create the game boxes
+    SetInnerHtml($(".word.score_boxes"), gameDivText); // Create the game boxes with words
+    SetInnerHtml($(".red.score_boxes"), redGameDivText); // Create the red game boxes
+    SetInnerHtml($(".blue.score_boxes"), blueGameDivText); // Create the blue game boxes
+    SetInnerHtml($(".dark.score_boxes"), darkGameDivText); // Create the dark game boxes
   } else if (data.score.best_of === 0) {
-    SetInnerHtml($(".word.score_boxes"), ""); // Create the game boxes
-    SetInnerHtml($(".red.score_boxes"), ""); // Create the game boxes
-    SetInnerHtml($(".blue.score_boxes"), ""); // Create the game boxes
-    SetInnerHtml($(".dark.score_boxes"), ""); // Create the game boxes
+    SetInnerHtml($(".word.score_boxes"), ""); // The game boxes with words disappear
+    SetInnerHtml($(".red.score_boxes"), ""); // The red game boxes disappear
+    SetInnerHtml($(".blue.score_boxes"), ""); // The blue game boxes disappear
+    SetInnerHtml($(".dark.score_boxes"), ""); // The dark game boxes disappear
   }
   savedBestOf = data.score.best_of; // The new Best Of is saved so it can be used to detect change later
   return savedBestOf;
@@ -477,8 +477,6 @@ function compareObjects(obj1, obj2) {
 
   // Loop through the properties of obj1
   for (let key of obj1Keys) {
-    // Seedings can change for a player/team so do not check it
-
     // Check if the property exists in obj2
     if (!obj2.hasOwnProperty(key)) {
       return false;
@@ -498,6 +496,7 @@ function compareObjects(obj1, obj2) {
 }
 
 /**
+ * This method is for teams.
  * Checks to see whether the properties and their values of obj1 are the same as those of obj2.
  * Does not compare seeding.
  * Created this function with the help of ChatGPT, modified to make it recursive and fit the need of the overlay.
