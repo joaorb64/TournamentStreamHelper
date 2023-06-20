@@ -1,9 +1,9 @@
 import re
 import time
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 import requests
 import threading
 from .SettingsManager import SettingsManager
@@ -17,19 +17,19 @@ from .Workers import Worker
 
 
 class TSHTournamentDataProviderSignals(QObject):
-    tournament_changed = pyqtSignal()
-    entrants_updated = pyqtSignal()
-    tournament_data_updated = pyqtSignal(dict)
-    twitch_username_updated = pyqtSignal()
-    user_updated = pyqtSignal()
-    recent_sets_updated = pyqtSignal(dict)
-    last_sets_updated = pyqtSignal(dict)
-    history_sets_updated = pyqtSignal(dict)
-    get_sets_finished = pyqtSignal(list)
-    tournament_phases_updated = pyqtSignal(list)
-    tournament_phasegroup_updated = pyqtSignal(dict)
-    game_changed = pyqtSignal(int)
-    stream_queue_loaded = pyqtSignal(dict)
+    tournament_changed = Signal()
+    entrants_updated = Signal()
+    tournament_data_updated = Signal(dict)
+    twitch_username_updated = Signal()
+    user_updated = Signal()
+    recent_sets_updated = Signal(dict)
+    last_sets_updated = Signal(dict)
+    history_sets_updated = Signal(dict)
+    get_sets_finished = Signal(list)
+    tournament_phases_updated = Signal(list)
+    tournament_phasegroup_updated = Signal(dict)
+    game_changed = Signal(int)
+    stream_queue_loaded = Signal(dict)
 
 
 class TSHTournamentDataProvider:

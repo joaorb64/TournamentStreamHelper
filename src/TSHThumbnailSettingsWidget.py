@@ -1,9 +1,9 @@
 from email.policy import default
 from multiprocessing import Lock
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from pathlib import Path
 import sys
 import os
@@ -53,7 +53,7 @@ class PreviewWidget(QWidget):
 
 
 class TSHThumbnailSettingsWidgetSignals(QObject):
-    updatePreview = pyqtSignal(str)
+    updatePreview = Signal(str)
 
 
 class TSHThumbnailSettingsWidget(QDockWidget):
@@ -286,7 +286,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
                 key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillX", 
-                val=self.scaleToFillX.checkState(),
+                val=self.scaleToFillX.isChecked(),
                 generatePreview=True
             )]
         )
@@ -295,7 +295,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
                 key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillY", 
-                val=self.scaleToFillY.checkState(),
+                val=self.scaleToFillY.isChecked(),
                 generatePreview=True
             )]
         )
@@ -304,7 +304,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
                 key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.proportionalScaling", 
-                val=self.proportionalScaling.checkState(),
+                val=self.proportionalScaling.isChecked(),
                 generatePreview=True
             )]
         )
@@ -313,7 +313,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
                 key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.hideSeparators", 
-                val=self.hideSeparators.checkState(),
+                val=self.hideSeparators.isChecked(),
                 generatePreview=True
             )]
         )
@@ -340,7 +340,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
                 key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flipSeparators", 
-                val=self.flipSeparators.checkState(),
+                val=self.flipSeparators.isChecked(),
                 generatePreview=True
             )]
         )
@@ -730,14 +730,14 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         if 'l' in uncropped_edge or 'r' in uncropped_edge:
             self.scaleToFillX.setEnabled(True)
             self.scaleToFillX.setChecked(
-                self.GetSetting(f"game.{game_codename}.scaleFillX", 0))
+                self.GetSetting(f"game.{game_codename}.scaleFillX", False))
         else:
             self.scaleToFillX.setEnabled(False)
         
         if 'u' in uncropped_edge or 'd' in uncropped_edge:
             self.scaleToFillY.setEnabled(True)
             self.scaleToFillY.setChecked(
-                self.GetSetting(f"game.{game_codename}.scaleFillY", 0))
+                self.GetSetting(f"game.{game_codename}.scaleFillY", False))
         else:
             self.scaleToFillY.setEnabled(False)
 
@@ -809,7 +809,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         unloadable = []
         family_to_path = {}
 
-        db = QFontDatabase()
+        db = QFontDatabase
         for fpath in font_paths:  # go through all font paths
             if os.path.exists(fpath):
                 # go through all files at each path

@@ -7,29 +7,43 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=M+PLUS+1p:wght@800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@800&family=M+PLUS+1:wght@800&display=swap"
       rel="stylesheet"
     />
   </head>
   <body class="ssbu">
     <div class="logo"></div>
 
-    <div class="tournament_logo"></div>
+    <div class="tournament_logo hidden unhidden"></div>
 
-    <div class="topleft container hidden">
-      <div class="match"></div>
+    <div class="topleft_container">
+      <div class="match_container">
+        <div class="match"></div>
+      </div>
     </div>
     <div class="info chips">
-      <div class="phase chip"></div>
+      <div class="phase_container chip">
+        <div class="phase"></div>
+      </div>
     </div>
 
     <div class="p1 container">
-      <div class="flags_container">
-        <div class="flagcountry"></div>
-      </div>
+      <div class="placeholder_container"></div>
       <div class="name"></div>
-      <div class="sponsor-container"></div>
-      <div class="score"></div>
+      <div class="score_container">
+        <div class="score"></div>
+      </div>
+      <div class="edge">
+        <div class="p1 character_container hidden unhidden"></div>
+      </div>
+    </div>
+
+    <div class="p1 under_chips">
+      <div class="seed chip"></div>
+      <div class="twitter chip"></div>
+      <div class="pronoun chip"></div>
+      <div class="flagstate chip"></div>
+      <div class="flagcountry chip"></div>
     </div>
 
     <div class="p1 chips">
@@ -37,17 +51,28 @@
       <div class="twitter chip"></div>
       <div class="pronoun chip"></div>
       <div class="flagstate chip"></div>
+      <div class="flagcountry chip"></div>
     </div>
 
-    <div class="p1 bg"><div></div></div>
+    <div class="p1 bg hidden unhidden"><div></div></div>
 
     <div class="p2 container">
-      <div class="flags_container">
-        <div class="flagcountry"></div>
-      </div>
+      <div class="placeholder_container"></div>
       <div class="name"></div>
-      <div class="sponsor-container"></div>
-      <div class="score"></div>
+      <div class="score_container">
+        <div class="score"></div>
+      </div>
+      <div class="edge">
+        <div class="p2 character_container hidden unhidden"></div>
+      </div>
+    </div>
+
+    <div class="p2 under_chips">
+      <div class="seed chip"></div>
+      <div class="twitter chip"></div>
+      <div class="pronoun chip"></div>
+      <div class="flagstate chip"></div>
+      <div class="flagcountry chip"></div>
     </div>
 
     <div class="p2 chips">
@@ -55,11 +80,15 @@
       <div class="twitter chip"></div>
       <div class="pronoun chip"></div>
       <div class="flagstate chip"></div>
+      <div class="flagcountry chip"></div>
     </div>
 
-    <div class="p2 bg"><div></div></div>
+    <div class="p2 bg hidden unhidden"><div></div></div>
 
-    <div class="score_boxes"></div>
+    <div class="dark score_boxes"></div>
+    <div class="blue score_boxes"></div>
+    <div class="red score_boxes"></div>
+    <div class="word score_boxes"></div>
 
     <script src="index.js"></script>
   </body>
