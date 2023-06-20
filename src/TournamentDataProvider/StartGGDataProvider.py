@@ -920,9 +920,28 @@ class StartGGDataProvider(TournamentDataProvider):
                                 playerData = StartGGDataProvider.ProcessEntrantData(participant)
                                 playerName = playerData.get("gamerTag", "")
                                 team = playerData.get("prefix", "")
+                                
+                                
+                                countryCode = playerData.get("country_code", "")
+                                stateCode = playerData.get("state_code", "")
+                                countryData = TSHCountryHelper.countries.get(countryCode)
+                                states = countryData.get("states")
+                                stateData = {}
+                                if stateCode:
+                                    stateData = states[stateCode]
+
+                                    path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
+                                    if not os.path.exists(path):
+                                        path = None
+
+                                    stateData.update({
+                                        "asset": path
+                                    })
+                                    
+
                                 playerData = {
-                                    "country": TSHCountryHelper.GetBasicCountryInfo(playerData.get("country_code", "")),
-                                    "state" : {},
+                                    "country": TSHCountryHelper.GetBasicCountryInfo(countryCode),
+                                    "state" : stateData ,
                                     "name" : playerName,
                                     "team" : team,
                                     "mergedName" : team + "|" + playerName if isinstance(team, str) and team != "" else playerName,
