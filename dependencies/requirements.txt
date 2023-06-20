@@ -13,3 +13,4 @@ asyncio
 python-dateutil
 pynput
 pyside6
+cloudscraper

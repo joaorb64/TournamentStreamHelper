@@ -153,8 +153,8 @@ LoadEverything().then(() => {
         size -= 1;
         $(":root").css("--player-height", size);
       }
-      $(":root").css("--name-size", Math.min(size - size * 0.4, 16));
-      $(":root").css("--score-size", size - size * 0.3);
+      $(":root").css("--name-size", Math.min(size - size * 0.3, 24));
+      $(":root").css("--score-size", size - size * 0.25);
       $(":root").css("--flag-height", size - size * 0.4);
 
       if (

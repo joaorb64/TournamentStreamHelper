@@ -16,6 +16,7 @@ import os
 import shutil
 import urllib
 
+
 class TSHTournamentInfoWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
@@ -49,27 +50,32 @@ class TSHTournamentInfoWidget(QDockWidget):
                     f"tournamentInfo.{element.objectName()}", value)
             ])
 
-        self.btLoadInfoFromTournament: QPushButton = self.findChild(QPushButton, "btLoadInfoFromTournament")
+        self.btLoadInfoFromTournament: QPushButton = self.findChild(
+            QPushButton, "btLoadInfoFromTournament")
         self.btLoadInfoFromTournament.clicked.connect(lambda: [
             TSHTournamentDataProvider.instance.GetTournamentData()
         ])
 
-        self.btClearInfo: QPushButton = self.findChild(QPushButton, "btClearInfo")
+        self.btClearInfo: QPushButton = self.findChild(
+            QPushButton, "btClearInfo")
         self.btClearInfo.clicked.connect(lambda: [
             self.UpdateData({})
         ])
 
-        self.btLoadIconFile: QPushButton = self.findChild(QPushButton, "btLoadIconFile")
+        self.btLoadIconFile: QPushButton = self.findChild(
+            QPushButton, "btLoadIconFile")
         self.btLoadIconFile.clicked.connect(lambda: [
             self.LoadIcon()
         ])
 
-        self.btDownloadIcon: QPushButton = self.findChild(QPushButton, "btDownloadIcon")
+        self.btDownloadIcon: QPushButton = self.findChild(
+            QPushButton, "btDownloadIcon")
         self.btDownloadIcon.clicked.connect(lambda: [
             self.DownloadIcon()
         ])
 
-        self.btClearIcon: QPushButton = self.findChild(QPushButton, "btClearIcon")
+        self.btClearIcon: QPushButton = self.findChild(
+            QPushButton, "btClearIcon")
         self.btClearIcon.clicked.connect(lambda: [
             self.SetDefaultIcon()
         ])
@@ -77,7 +83,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         self.iconView: QLabel = self.findChild(QLabel, "iconView")
 
         self.UpdateIcon()
-    
+
     def UpdateIcon(self):
         try:
             # Load icon
@@ -87,22 +93,23 @@ class TSHTournamentInfoWidget(QDockWidget):
             icon = QPixmap("./assets/icons/cancel.svg").scaledToWidth(32)
 
         self.iconView.setPixmap(icon)
-    
+
     def LoadIcon(self):
         try:
             fileName = QFileDialog.getOpenFileName(
                 self,
                 QApplication.translate("app", "Open Image"),
                 ".",
-                QApplication.translate("app", "Image Files")+" (*.png *.jpg *.bmp)"
+                QApplication.translate(
+                    "app", "Image Files")+" (*.png *.jpg *.bmp)"
             )[0]
-        
+
             if fileName != None:
                 pix = QPixmap(fileName)
                 pix.save("./layout/logo.png")
         except Exception as e:
             print(traceback.format_exc())
-            
+
         self.UpdateIcon()
 
     def DownloadIcon(self):
@@ -111,14 +118,14 @@ class TSHTournamentInfoWidget(QDockWidget):
 
             response = urllib.request.urlopen(url)
             data = response.read()
-            
+
             pix = QPixmap()
             pix.loadFromData(data)
 
             pix.save("./layout/logo.png")
         except Exception as e:
             print(traceback.format_exc())
-        
+
         self.UpdateIcon()
 
     def SetDefaultIcon(self):
@@ -126,7 +133,7 @@ class TSHTournamentInfoWidget(QDockWidget):
             shutil.copy("./assets/icons/icon.png", "./layout/logo.png")
         except:
             print(traceback.format_exc())
-        
+
         self.UpdateIcon()
 
     def DisplayErrorMessage(self, message):

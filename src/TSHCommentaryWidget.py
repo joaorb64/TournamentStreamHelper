@@ -5,12 +5,13 @@ from qtpy.QtCore import *
 from qtpy import uic
 
 from .TSHScoreboardPlayerWidget import *
+from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 
 
 class TSHCommentaryWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
-        self.setWindowTitle(QApplication.translate("app","Commentary"))
+        self.setWindowTitle(QApplication.translate("app", "Commentary"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -30,7 +31,7 @@ class TSHCommentaryWidget(QDockWidget):
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
         self.commentatorNumber = QSpinBox()
-        col.layout().addWidget(QLabel(QApplication.translate("app","Number of commentators")))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Number of commentators")))
         col.layout().addWidget(self.commentatorNumber)
         self.commentatorNumber.valueChanged.connect(self.SetCommentatorNumber)
 
@@ -59,7 +60,8 @@ class TSHCommentaryWidget(QDockWidget):
         while len(self.commentaryWidgets) < number:
             comm = QGroupBox()
             uic.loadUi("src/layout/TSHCommentator.ui", comm)
-            comm.setTitle(QApplication.translate("app","Commentator {0}").format(len(self.commentaryWidgets)+1))
+            comm.setTitle(QApplication.translate(
+                "app", "Commentator {0}").format(len(self.commentaryWidgets)+1))
 
             for c in comm.findChildren(QLineEdit):
                 c.editingFinished.connect(
@@ -150,7 +152,8 @@ class TSHCommentaryWidget(QDockWidget):
                         x.data(Qt.ItemDataRole.UserRole)), Qt.QueuedConnection
                 )
                 c.pronoun_completer = QCompleter()
-                c.findChild(QLineEdit, "pronoun").setCompleter(c.pronoun_completer)
+                c.findChild(QLineEdit, "pronoun").setCompleter(
+                    c.pronoun_completer)
                 c.pronoun_list = []
                 for file in ['./user_data/pronouns_list.txt']:
                     try:
@@ -167,13 +170,31 @@ class TSHCommentaryWidget(QDockWidget):
                 c.pronoun_model.setStringList(c.pronoun_list)
 
     def SetData(self, widget, data):
-        widget.findChild(QLineEdit, "name").setText(data.get("gamerTag"))
+        if data.get("gamerTag"):
+            data["gamerTag"] = TSHBadWordFilter.Censor(
+                data["gamerTag"], data.get("country_code"))
+        widget.findChild(QLineEdit, "name").setText(data.get("gamerTag", ""))
         widget.findChild(QLineEdit, "name").editingFinished.emit()
+
+        if data.get("team"):
+            data["team"] = TSHBadWordFilter.Censor(
+                data["team"], data.get("country_code"))
         widget.findChild(QLineEdit, "team").setText(data.get("prefix"))
         widget.findChild(QLineEdit, "team").editingFinished.emit()
-        widget.findChild(QLineEdit, "real_name").setText(data.get("name"))
+
+        if data.get("real_name"):
+            data["real_name"] = TSHBadWordFilter.Censor(
+                data["real_name"], data.get("country_code"))
+        widget.findChild(QLineEdit, "real_name").setText(data.get("name", ""))
         widget.findChild(QLineEdit, "real_name").editingFinished.emit()
-        widget.findChild(QLineEdit, "twitter").setText(data.get("twitter"))
+
+        if data.get("twitter"):
+            data["twitter"] = TSHBadWordFilter.Censor(
+                data["twitter"], data.get("country_code"))
+        widget.findChild(QLineEdit, "twitter").setText(data.get("twitter", ""))
         widget.findChild(QLineEdit, "twitter").editingFinished.emit()
-        widget.findChild(QLineEdit, "pronoun").setText(data.get("pronoun"))
+
+        if data.get("pronoun"):
+            data["pronoun"] = TSHBadWordFilter.Censor(data["pronoun"])
+        widget.findChild(QLineEdit, "pronoun").setText(data.get("pronoun", ""))
         widget.findChild(QLineEdit, "pronoun").editingFinished.emit()

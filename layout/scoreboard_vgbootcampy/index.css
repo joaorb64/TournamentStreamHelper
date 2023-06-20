@@ -58,9 +58,9 @@ body {
 .tournament_container {
   position: absolute;
   border-radius: 8px;
-  left: 67px;
+  left: 30px;
   top: 51px;
-  width: 246px;
+  width: 316px;
   height: 54px;
   padding-top: 0px;
   display: flex;
@@ -76,7 +76,7 @@ body {
   color: var(--text-color);
   height: 100%;
   font-size: 20px;
-  width: 216px;
+  width: 280px;
 }
 
 .inner_container {
@@ -114,6 +114,15 @@ body {
   flex-direction: column;
   overflow: hidden;
   color: var(--text-color);
+}
+
+/* Compensate for sponsor logo */
+.p1 .name {
+  margin-left: 56px;
+}
+
+.p2 .name {
+  margin-right: 56px;
 }
 
 .twitter {

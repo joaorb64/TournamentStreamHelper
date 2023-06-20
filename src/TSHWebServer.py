@@ -232,6 +232,12 @@ class WebServer(QThread):
     def stats_recent_sets():
         TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
         return "OK"
+    
+    # Resubmits Call for Upset Factor
+    @app.route('/stats-upset-factor')
+    def stats_upset_factor():
+        TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+        return "OK"
 
     # Resubmits Call for Last Sets
     @app.route('/stats-last-sets-<player>')
@@ -293,9 +299,8 @@ class WebServer(QThread):
     @cross_origin()
     def test(filename):
         filename = filename or 'stage_strike_app/build/index.html'
-        print(os.path.abspath("."), filename)
-        return send_from_directory(os.path.abspath("."), filename)
+        return send_from_directory(os.path.abspath("."), filename, as_attachment=filename.endswith(".gz"))
 
     def run(self):
         self.app.run(host=self.host_name, port=self.port,
-                     debug=True, use_reloader=False)
+                     debug=False, use_reloader=False)

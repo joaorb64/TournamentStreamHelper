@@ -56,15 +56,43 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
-            `
-              <span class="sponsor">
-                ${player.team ? player.team.toUpperCase() : ""}
+          if (Object.keys(team.player).length == 1) {
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+                <span class="sponsor">
+                  ${player.team ? player.team.toUpperCase() : ""}
+                </span>
+                ${
+                  player.name ? await Transcript(player.name.toUpperCase()) : ""
+                }
+              `
+            );
+          } else {
+            let teamName = "";
+
+            if (!team.teamName || team.teamName == "") {
+              let names = [];
+              for (const [p, player] of Object.values(team.player).entries()) {
+                if (player && player.name) {
+                  names.push(await Transcript(player.name));
+                }
+              }
+              teamName = names.join(" / ");
+            } else {
+              teamName = team.teamName;
+            }
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+              <span>
+                ${teamName.toUpperCase()}
+                ${team.losers ? "(L)" : ""}
               </span>
-              ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
-            `
-          );
+              `
+            );
+          }
 
           SetInnerHtml(
             $(`.p${t + 1} .losers_container`),
@@ -73,14 +101,18 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset
+            player.country.asset && Object.keys(team.player).length == 1
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-              : ""
+              : `<div class='flag' style=''></div>`
           );
 
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
 
-          if (player.twitter == undefined || String(player.twitter) == "") {
+          if (
+            player.twitter == undefined ||
+            String(player.twitter) == "" ||
+            Object.values(team.player).length != 1
+          ) {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
           } else {
@@ -103,9 +135,9 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            player.sponsor_logo
+            player.sponsor_logo && Object.keys(team.player).length == 1
               ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
-              : ""
+              : `<div class='sponsor-logo' style=''></div>`
           );
         }
       }

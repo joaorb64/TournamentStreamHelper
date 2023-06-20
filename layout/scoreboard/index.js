@@ -14,7 +14,7 @@ LoadEverything().then(() => {
       1
     )
     .from(
-      [".bottom"],
+      [".info.bottom"],
       {
         duration: 1,
         autoAlpha: 0,
@@ -145,6 +145,17 @@ LoadEverything().then(() => {
               $(`.p${t + 1}.container .sponsor-container`),
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
+
+            if ($(".sf6.online").length > 0) {
+              console.log("hi");
+              console.log(player.twitter);
+              console.log(player.pronoun);
+              if (!player.twitter && !player.pronoun) {
+                gsap.to($(`.p${t + 1}.chips`), { autoAlpha: 0 });
+              } else {
+                gsap.to($(`.p${t + 1}.chips`), { autoAlpha: 1 });
+              }
+            }
           }
         }
       }

@@ -28,9 +28,16 @@ class TSHSelectSetWindow(QDialog):
         layout.addWidget(searchBar)
         searchBar.textEdited.connect(filterList)
 
+        options = QHBoxLayout()
+
         self.showFinished = QCheckBox(QApplication.translate("app", "Show completed sets"))
-        layout.addWidget(self.showFinished)
+        options.addWidget(self.showFinished)
         self.showFinished.clicked.connect(lambda check: self.LoadSets())
+        self.showCompletePairs = QCheckBox(QApplication.translate("app", "Show complete pairs"))
+        options.addWidget(self.showCompletePairs)
+        self.showCompletePairs.clicked.connect(lambda check: self.LoadSets())
+
+        layout.layout().addLayout(options)
 
         self.startggSetSelectionItemList = QTableView()
         self.startggSetSelectionItemList.doubleClicked.connect(lambda x: self.LoadSelectedSet())
@@ -88,7 +95,10 @@ class TSHSelectSetWindow(QDialog):
             for s in sets:
                 dataItem = QStandardItem(str(s.get("id")))
                 dataItem.setData(s, Qt.ItemDataRole.UserRole)
-
+                
+                if self.showCompletePairs.isChecked():
+                    if s.get("p1_name") == "" or s.get("p2_name") == "":
+                        continue
                 player_names = [s.get("p1_name"), s.get("p2_name")]
 
                 try:

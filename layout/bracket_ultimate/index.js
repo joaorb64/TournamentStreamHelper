@@ -1533,6 +1533,15 @@ LoadEverything().then(() => {
 
           SetInnerHtml($(".header .title"), data.tournamentInfo.tournamentName);
 
+          let infos = [];
+
+          if (data.bracket.phase) infos.push(data.bracket.phase);
+          if (data.bracket.phaseGroup) infos.push(data.bracket.phaseGroup);
+          if (data.tournamentInfo.numEntrants)
+            infos.push(data.tournamentInfo.numEntrants + " Players");
+
+          SetInnerHtml($(".info_content"), infos.join(" / "));
+
           continue;
         }
       }

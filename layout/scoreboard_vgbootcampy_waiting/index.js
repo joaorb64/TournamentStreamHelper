@@ -65,16 +65,44 @@ LoadEverything().then(() => {
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
-            `
-              <span class="sponsor">
-                ${player.team ? player.team.toUpperCase() : ""}
+          if (Object.keys(team.player).length == 1) {
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+                <span class="sponsor">
+                  ${player.team ? player.team.toUpperCase() : ""}
+                </span>
+                ${
+                  player.name ? await Transcript(player.name.toUpperCase()) : ""
+                }
+                ${team.losers ? "(L)" : ""}
+              `
+            );
+          } else {
+            let teamName = "";
+
+            if (!team.teamName || team.teamName == "") {
+              let names = [];
+              for (const [p, player] of Object.values(team.player).entries()) {
+                if (player && player.name) {
+                  names.push(await Transcript(player.name));
+                }
+              }
+              teamName = names.join(" / ");
+            } else {
+              teamName = team.teamName;
+            }
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+              <span>
+                ${teamName.toUpperCase()}
+                ${team.losers ? "(L)" : ""}
               </span>
-              ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
-              ${team.losers ? "(L)" : ""}
-            `
-          );
+              `
+            );
+          }
 
           let score = [data.score.score_left, data.score.score_right];
 

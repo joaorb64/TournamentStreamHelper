@@ -59,7 +59,10 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.userRulesets = []
         self.startggRulesets = []
+
         self.stagesModel = QStandardItemModel()
+        self.neutralModel = QStandardItemModel()
+        self.counterpickModel = QStandardItemModel()
 
         self.rulesetsBox = self.findChild(QComboBox, "rulesetSelect")
         self.rulesetsBox.activated.connect(self.LoadRuleset)
@@ -150,8 +153,43 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.btDelete.clicked.connect(self.DeleteRuleset)
         self.btClear.clicked.connect(self.ClearRuleset)
 
+        self.stagesModel.dataChanged.connect(lambda topLeft, bottomRight: self.update_cloned_items())
+
         # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
         # load tournament ruleset
+    
+    def update_cloned_items(self):
+        neutralStages = []
+
+        for rowNeutral in range(self.neutralModel.rowCount()):
+            neutralItem = self.neutralModel.item(rowNeutral)
+
+            for rowAll in range(self.stagesModel.rowCount()):
+                stageItem = self.stagesModel.item(rowAll)
+
+                if neutralItem.data(Qt.ItemDataRole.UserRole).get("codename") == stageItem.data(Qt.ItemDataRole.UserRole).get("codename"):
+                    neutralStages.append(stageItem)
+        
+        self.neutralModel.clear()
+        
+        for s in neutralStages:
+            self.neutralModel.appendRow(s.clone())
+        
+        counterpickStages = []
+
+        for rowNeutral in range(self.counterpickModel.rowCount()):
+            neutralItem = self.counterpickModel.item(rowNeutral)
+
+            for rowAll in range(self.stagesModel.rowCount()):
+                stageItem = self.stagesModel.item(rowAll)
+
+                if neutralItem.data(Qt.ItemDataRole.UserRole).get("codename") == stageItem.data(Qt.ItemDataRole.UserRole).get("codename"):
+                    counterpickStages.append(stageItem)
+        
+        self.counterpickModel.clear()
+        
+        for s in counterpickStages:
+            self.counterpickModel.appendRow(s.clone())
 
     def GetIP(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -172,11 +210,11 @@ class TSHScoreboardStageWidget(QDockWidget):
             data = selected[0].data(Qt.ItemDataRole.UserRole)
 
             for i in range(self.stagesNeutral.model().rowCount()):
-                if self.stagesNeutral.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
+                if self.stagesNeutral.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("codename") == data.get("codename"):
                     return
 
             for i in range(self.stagesCounterpick.model().rowCount()):
-                if self.stagesCounterpick.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("name") == data.get("name"):
+                if self.stagesCounterpick.model().item(i, 0).data(Qt.ItemDataRole.UserRole).get("codename") == data.get("codename"):
                     return
 
             item = self.stagesView.model().itemFromIndex(selected[0]).clone()
@@ -244,60 +282,10 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.rulesetsBox.clear()
 
         self.ClearRuleset()
-
         self.LoadRulesets()
 
-        self.stagesModel = QStandardItemModel()
-
-        for stage in TSHGameAssetManager.instance.selectedGame.get("stage_to_codename", {}).items():
-            # Load stage name translations
-            stage[1]["en_name"] = stage[1].get("name")
-
-            # Display name
-            display_name = stage[1].get("name")
-
-            locale = TSHLocaleHelper.programLocale
-            if locale.replace('-', '_') in stage[1].get("locale", {}):
-                display_name = stage[1].get("locale", {})[
-                    locale.replace('-', '_')]
-            elif locale.split('-')[0] in stage[1].get("locale", {}):
-                display_name = stage[1].get("locale", {})[
-                    locale.split('-')[0]]
-            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in stage[1].get("locale", {}):
-                display_name = stage[1].get("locale", {})[
-                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale)]
-
-            stage[1]["display_name"] = display_name
-
-            # Export name
-            export_name = stage[1].get("name")
-
-            locale = TSHLocaleHelper.exportLocale
-            if locale.replace('-', '_') in stage[1].get("locale", {}):
-                export_name = stage[1].get("locale", {})[
-                    locale.replace('-', '_')]
-            elif locale.split('-')[0] in stage[1].get("locale", {}):
-                export_name = stage[1].get("locale", {})[
-                    locale.split('-')[0]]
-            elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in stage[1].get("locale", {}):
-                export_name = stage[1].get("locale", {})[
-                    TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale)]
-
-            stage[1]["name"] = export_name
-
-            item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
-                "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
-            item.setData(stage[1], Qt.ItemDataRole.UserRole)
-            item.setIcon(
-                QIcon(QPixmap(stage[1].get("path")).scaled(
-                    64,
-                    64,
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                    Qt.TransformationMode.SmoothTransformation
-                ))
-            )
-            self.stagesModel.appendRow(item)
-
+        self.stagesModel = TSHGameAssetManager.instance.stageModel
+        self.stagesModel.dataChanged.connect(lambda topLeft, bottomRight: self.update_cloned_items())
         self.stagesModel.sort(0)
         self.stagesView.setModel(self.stagesModel)
 
@@ -385,6 +373,12 @@ class TSHScoreboardStageWidget(QDockWidget):
         # Update list
         self.rulesetsBox.setModel(rulesetsModel)
 
+    def FindStageInModel(self, codename: str):
+        for row in range(self.stagesModel.rowCount()):
+            item = self.stagesModel.item(row)
+            if item.data(Qt.ItemDataRole.UserRole).get("codename") == codename:
+                return item
+
     def LoadRuleset(self):
         data = self.rulesetsBox.currentData()
 
@@ -414,38 +408,19 @@ class TSHScoreboardStageWidget(QDockWidget):
                 ",".join([f'{k}:{v}' for k, v in data.banByMaxGames.items()]))
             self.banCount.setValue(0)
 
-        allStages = TSHGameAssetManager.instance.selectedGame.get(
-            "stage_to_codename")
-
-        neutralModel = QStandardItemModel()
+        self.neutralModel = QStandardItemModel()
         if data.neutralStages:
             for stage in data.neutralStages:
-                item = QStandardItem(f'{stage.get("display_name")} / {stage.get("en_name")}' if stage.get(
-                    "display_name") != stage.get("en_name") else stage.get("display_name"))
-                item.setData(stage, Qt.ItemDataRole.UserRole)
-                item.setIcon(QIcon(QPixmap(stage.get("path")).scaled(
-                    64,
-                    64,
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                    Qt.TransformationMode.SmoothTransformation
-                )))
-                neutralModel.appendRow(item)
-        self.stagesNeutral.setModel(neutralModel)
+                item = self.FindStageInModel(stage.get("codename"))
+                self.neutralModel.appendRow(item.clone())
+        self.stagesNeutral.setModel(self.neutralModel)
 
-        counterpickModel = QStandardItemModel()
+        self.counterpickModel = QStandardItemModel()
         if data.counterpickStages:
             for stage in data.counterpickStages:
-                item = QStandardItem(f'{stage.get("display_name")} / {stage.get("en_name")}' if stage.get(
-                    "display_name") != stage.get("en_name") else stage.get("display_name"))
-                item.setData(stage, Qt.ItemDataRole.UserRole)
-                item.setIcon(QIcon(QPixmap(stage.get("path")).scaled(
-                    64,
-                    64,
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                    Qt.TransformationMode.SmoothTransformation
-                )))
-                counterpickModel.appendRow(item)
-        self.stagesCounterpick.setModel(counterpickModel)
+                item = self.FindStageInModel(stage.get("codename"))
+                self.counterpickModel.appendRow(item.clone())
+        self.stagesCounterpick.setModel(self.counterpickModel)
 
         self.ExportCurrentRuleset()
 
