@@ -896,7 +896,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         "best_of_text" : TSHLocaleHelper.matchNames.get("best_of").format(total_games) if total_games > 0 else "",
                         "state": _set.get("state"),
                         "team" : {},
-                        "station" : deep_get(_set, "station.number", 0)
+                        "station" : deep_get(_set, "station.number", -1)
                     }
 
 
