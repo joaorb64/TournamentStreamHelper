@@ -8,6 +8,9 @@ query StreamQueueQuery($slug: String) {
                     fullRoundText
                     totalGames
                     state
+                    station {
+                      number
+                    }
                     slots {
                         entrant {
                             id
