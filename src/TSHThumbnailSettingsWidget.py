@@ -497,7 +497,11 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     isPreview=True, settingsManager=SettingsManager, gameAssetManager=TSHGameAssetManager)
             except Exception as e:
                 self.DisplayErrorMessage(traceback.format_exc())
-        self.preview.setPixmap(QPixmap(tmp_file))
+        
+        try:
+            self.preview.setPixmap(QPixmap(tmp_file))
+        except:
+            print(traceback.format_exc())
 
         self.updateFromSettings()
     
