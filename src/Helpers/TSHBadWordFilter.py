@@ -48,6 +48,8 @@ class Trie:
 class TSHBadWordFilter():
     badWordTries = defaultdict(Trie)
     patterns = defaultdict(re.Pattern)
+    whiteList = []
+    blackList = []
 
     def LoadBadWordList():
         langs = defaultdict(list)
@@ -93,12 +95,13 @@ class TSHBadWordFilter():
                 TSHBadWordFilter.badWordTries[langkey].build_regex_pattern()
 
     def CensorString(value: str, playerCountry: str = None):
-        langTests = set(["en-us", TSHLocaleHelper.exportLocale.lower()])
+        langTests = set(["en-us"])
 
-        for lang in TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper()):
+        extraLanguages = TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper())\
+            + [TSHLocaleHelper.programLocale.lower()]
+
+        for lang in extraLanguages:
             lang = lang.lower()
-
-            print("CHECKING SPOKEN LANGUAGE", lang)
 
             specificLang = lang + "-" + playerCountry.lower()
 
@@ -106,15 +109,14 @@ class TSHBadWordFilter():
                               langs in TSHLocaleHelper.remapping.items() if lang+"_"+playerCountry.upper() in langs), None)
 
             if specificLang in TSHBadWordFilter.patterns:
-                print("ADDING LANGUAGE:", specificLang)
                 langTests.add(specificLang)
             elif langRemap:
                 langRemap = langRemap.lower().replace("_", "-")
-                print("ADDING LANGUAGE:", langRemap)
                 langTests.add(langRemap)
             elif lang in TSHBadWordFilter.patterns:
-                print("ADDING LANGUAGE:", lang)
                 langTests.add(lang)
+
+        print(f"TSHBadWordFilter: using filters [{', '.join(langTests)}]")
 
         dividers = [" ", "_", ",", ".", "/", "-", "\\", "*"]
         testString = remove_accents_lower(value)
@@ -129,17 +131,23 @@ class TSHBadWordFilter():
                 if len(substring) > 0:
                     matched = False
 
-                    for lang in langTests:
-                        if lang not in TSHBadWordFilter.patterns:
-                            continue
+                    if substring in TSHBadWordFilter.blackList:
+                        newString += "***"
+                        matched = True
+                    elif substring in TSHBadWordFilter.whiteList:
+                        pass
+                    else:
+                        for lang in langTests:
+                            if lang not in TSHBadWordFilter.patterns:
+                                continue
 
-                        match = TSHBadWordFilter.patterns[lang].match(
-                            substring)
+                            match = TSHBadWordFilter.patterns[lang].match(
+                                substring)
 
-                        if match:
-                            newString += "***"
-                            matched = True
-                            break
+                            if match:
+                                newString += "***"
+                                matched = True
+                                break
                     if not matched:
                         newString += value[stringStart:characterPos]
 
@@ -151,17 +159,23 @@ class TSHBadWordFilter():
         if len(substring) > 0:
             matched = False
 
-            for lang in langTests:
-                if lang not in TSHBadWordFilter.patterns:
-                    continue
+            if substring in TSHBadWordFilter.blackList:
+                newString += "***"
+                matched = True
+            elif substring in TSHBadWordFilter.whiteList:
+                pass
+            else:
+                for lang in langTests:
+                    if lang not in TSHBadWordFilter.patterns:
+                        continue
 
-                match = TSHBadWordFilter.patterns[lang].match(
-                    substring)
+                    match = TSHBadWordFilter.patterns[lang].match(
+                        substring)
 
-                if match:
-                    newString += "***"
-                    matched = True
-                    break
+                    if match:
+                        newString += "***"
+                        matched = True
+                        break
             if not matched:
                 newString += value[stringStart:]
 
@@ -193,5 +207,20 @@ class TSHBadWordFilter():
 
         return value
 
+    def LoadWordList(file):
+        try:
+            if not os.path.exists(f"./user_data/{file}"):
+                with open(f"./user_data/{file}", 'w', encoding="utf-8") as f:
+                    f.write("")
+            words = open(f"./user_data/{file}", 'r',
+                         encoding="utf-8").read().splitlines()
+            return set([remove_accents_lower(w) for w in words if len(w) > 0])
+        except:
+            print(traceback.format_exc())
+
 
 TSHBadWordFilter.LoadBadWordList()
+TSHBadWordFilter.whiteList = TSHBadWordFilter.LoadWordList(
+    "badword_whitelist.txt")
+TSHBadWordFilter.blackList = TSHBadWordFilter.LoadWordList(
+    "badword_blacklist.txt")
