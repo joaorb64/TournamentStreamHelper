@@ -128,6 +128,7 @@ LoadEverything().then(() => {
           }
         }
       }
+      checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
       for (const [t, team] of [
         data.score.team["1"],
@@ -174,12 +175,12 @@ LoadEverything().then(() => {
         $(".phase"),
         data.score.phase ? data.score.phase.toUpperCase() : ""
       );
+      checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
 
     scoreBoxDisplayToggle(); // Displays the boxes when Best Of is greater than 0
     savedBestOf = createGameBoxes(savedBestOf); // Creates the boxes
 
-    checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     if (!swapDetected) {
       // If it didn't, then just update the savedGameArray without flipping the colors of the boxes.
       ({ savedGameArray, newP1Score, newP2Score, p1Score, p2Score } =
@@ -256,6 +257,48 @@ LoadEverything().then(() => {
       player2 !== undefined &&
       compareObjects(player2, newPlayer1) &&
       compareObjects(player1, newPlayer2)
+    ) {
+      swapDetected = true;
+      // Change player 1's win to player 2's win and vice versa
+      for (let i = 0; i < savedGameArray.length; i++) {
+        if (savedGameArray[i] == 1) {
+          savedGameArray[i] = 2;
+        } else if (savedGameArray[i] == 2) {
+          savedGameArray[i] = 1;
+        }
+      }
+      // Swap score history as well
+      [p1Score, p2Score] = [p2Score, p1Score];
+    }
+
+    // After the swap, save the player's data to detect swap next time
+    player1 = newPlayer1;
+    player2 = newPlayer2;
+  }
+
+  /**
+   * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
+   */
+  function checkSwapForTeam() {
+    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      [team.player["1"]].forEach((player, p) => {
+        if (player) {
+          if (t == 0) {
+            newPlayer1 = player;
+          }
+          if (t == 1) {
+            newPlayer2 = player;
+          }
+        }
+      });
+    });
+
+    // If the swap is detected
+    if (
+      player1 !== undefined &&
+      player2 !== undefined &&
+      compareObjectsForTeam(player2, newPlayer1) &&
+      compareObjectsForTeam(player1, newPlayer2)
     ) {
       swapDetected = true;
       // Change player 1's win to player 2's win and vice versa
@@ -435,6 +478,40 @@ function compareObjects(obj1, obj2) {
   // Loop through the properties of obj1
   for (let key of obj1Keys) {
     // Seedings can change for a player/team so do not check it
+
+    // Check if the property exists in obj2
+    if (!obj2.hasOwnProperty(key)) {
+      return false;
+    }
+    // Check if the values of the properties are the same
+    // Check to see if there is an object inside the object
+    if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
+      // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
+      if (!compareObjects(obj1[key], obj2[key])) return false;
+      // If the primitive types are not equal to each other, then we return false here as well
+    } else if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+  // If all properties and their values are the same, return true
+  return true;
+}
+
+/**
+ * Checks to see whether the properties and their values of obj1 are the same as those of obj2.
+ * Does not compare seeding.
+ * Created this function with the help of ChatGPT, modified to make it recursive and fit the need of the overlay.
+ * @param obj1 Object 1 to compare
+ * @param obj2 Object 2 to compare
+ * @returns boolean of whether the properties and their values of obj1 are the same as those of obj2
+ */
+function compareObjectsForTeam(obj1, obj2) {
+  // Get the property names of obj1
+  const obj1Keys = Object.keys(obj1).sort();
+
+  // Loop through the properties of obj1
+  for (let key of obj1Keys) {
+    // Seedings can change for a player/team so do not check it
     if (key !== "seed") {
       // Check if the property exists in obj2
       if (!obj2.hasOwnProperty(key)) {
@@ -444,7 +521,7 @@ function compareObjects(obj1, obj2) {
       // Check to see if there is an object inside the object
       if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
         // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
-        if (!compareObjects(obj1[key], obj2[key])) return false;
+        if (!compareObjectsForTeam(obj1[key], obj2[key])) return false;
         // If the primitive types are not equal to each other, then we return false here as well
       } else if (obj1[key] !== obj2[key]) {
         return false;
