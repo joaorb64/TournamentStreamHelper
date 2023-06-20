@@ -701,7 +701,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="429"/>
         <location filename="../TournamentStreamHelper.py" line="615"/>
         <location filename="../TSHScoreboardWidget.py" line="459"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="884"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1198,22 +1198,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="792"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="796"/>
         <source>Regular</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="793"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="797"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="794"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="798"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="795"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="799"/>
         <source>Bold Italic</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1400,7 +1400,7 @@ p, li { white-space: pre-wrap; }
     <name>thumb_app</name>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="435"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="879"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="883"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - 缩略图</translation>
     </message>

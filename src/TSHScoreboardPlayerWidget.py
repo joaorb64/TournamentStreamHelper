@@ -373,13 +373,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             btMoveUp.setFixedSize(24, 24)
             btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
             character_element.layout().addWidget(btMoveUp)
-            btMoveUp.clicked.connect(lambda index=len(
+            btMoveUp.clicked.connect(lambda x=None, index=len(
                 self.character_elements): self.SwapCharacters(index, index-1))
             btMoveDown = QPushButton()
             btMoveDown.setFixedSize(24, 24)
             btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
             character_element.layout().addWidget(btMoveDown)
-            btMoveDown.clicked.connect(lambda index=len(
+            btMoveDown.clicked.connect(lambda x=None, index=len(
                 self.character_elements): self.SwapCharacters(index, index+1))
 
             # Add line to characters

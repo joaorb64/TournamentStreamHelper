@@ -1265,7 +1265,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="429"/>
         <location filename="../TournamentStreamHelper.py" line="615"/>
         <location filename="../TSHScoreboardWidget.py" line="459"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="880"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="884"/>
         <source>Warning</source>
         <translation>注意</translation>
     </message>
@@ -1307,25 +1307,25 @@ p, li { white-space: pre-wrap; }
         <translation>プログラムを再度実行した時にこの通知を表示する</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="795"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="799"/>
         <source>Bold Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold Italic</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="793"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="797"/>
         <source>Bold</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Bold</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="792"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="796"/>
         <source>Regular</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Regular</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="794"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="798"/>
         <source>Italic</source>
         <translatorcomment>そのまま</translatorcomment>
         <translation>Italic</translation>
@@ -1467,7 +1467,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="435"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="879"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="883"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>
     </message>
