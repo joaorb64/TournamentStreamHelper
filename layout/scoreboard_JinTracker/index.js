@@ -102,6 +102,8 @@ LoadEverything().then(() => {
               .querySelector(`.p${t + 1}.character_container`)
               .classList.add("unhidden");
 
+            document.querySelector(`.p${t + 1}.bg`).classList.add("unhidden");
+
             let teamMultiplyier = t == 0 ? 1 : -1;
 
             await CharacterDisplay(
@@ -152,6 +154,8 @@ LoadEverything().then(() => {
           document
             .querySelector(`.p${t + 1}.character_container`)
             .classList.remove("unhidden");
+
+          document.querySelector(`.p${t + 1}.bg`).classList.remove("unhidden");
 
           SetInnerHtml($(`.p${t + 1} .seed`), "");
           SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
