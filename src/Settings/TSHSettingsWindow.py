@@ -1,8 +1,9 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
 from ..TSHHotkeys import TSHHotkeys
+
 
 class TSHSettingsWindow(QDialog):
     def __init__(self, parent=None):
@@ -13,7 +14,8 @@ class TSHSettingsWindow(QDialog):
 
         # Create a list widget for the selection
         self.selection_list = QListWidget()
-        self.selection_list.currentRowChanged.connect(self.on_selection_changed)
+        self.selection_list.currentRowChanged.connect(
+            self.on_selection_changed)
 
         # Create a stacked widget for the settings widgets
         self.settings_stack = QStackedWidget()
@@ -33,9 +35,23 @@ class TSHSettingsWindow(QDialog):
         layout.addWidget(splitter)
         self.setLayout(layout)
 
+        # Add general settings
+        generalSettings = []
+
+        generalSettings.append((
+            QApplication.translate(
+                "settings.general", "Enable profanity filter"),
+            "profanity_filter",
+            "checkbox",
+            True
+        ))
+
+        self.add_setting_widget(QApplication.translate(
+            "settings", "General"), SettingsWidget("general", generalSettings))
+
         # Add hotkey settings
         hotkeySettings = []
-        
+
         hotkeySettings.append((
             QApplication.translate("settings.hotkeys", "Enable hotkeys"),
             "hotkeys_enabled",
@@ -62,7 +78,8 @@ class TSHSettingsWindow(QDialog):
                 TSHHotkeys.instance.ReloadHotkeys
             ))
 
-        self.add_setting_widget(QApplication.translate("settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
+        self.add_setting_widget(QApplication.translate(
+            "settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
 
         self.resize(1000, 500)
         QApplication.processEvents()

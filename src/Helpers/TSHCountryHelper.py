@@ -1,7 +1,7 @@
 import re
 import unicodedata
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
 import requests
 import os
 import traceback
@@ -12,7 +12,7 @@ import json
 
 
 class TSHCountryHelperSignals(QObject):
-    countriesUpdated = pyqtSignal()
+    countriesUpdated = Signal()
 
 
 class TSHCountryHelper(QObject):
@@ -34,10 +34,28 @@ class TSHCountryHelper(QObject):
                 try:
                     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
                     r = requests.get(url, allow_redirects=True)
-                    open('./assets/countries+states+cities.json',
-                         'wb').write(r.content)
-                    print("Countries file updated")
-                    TSHCountryHelper.LoadCountries()
+
+                    open(
+                        './assets/countries+states+cities.json.tmp',
+                        'wb'
+                    ).write(r.content)
+
+                    try:
+                        # Test if downloaded JSON is valid
+                        json.load(
+                            open('./assets/countries+states+cities.json.tmp'))
+
+                        # Remove old file, overwrite with new one
+                        os.remove('./assets/countries+states+cities.json')
+                        os.rename(
+                            './assets/countries+states+cities.json.tmp',
+                            './assets/countries+states+cities.json'
+                        )
+
+                        print("Countries file updated")
+                        TSHCountryHelper.LoadCountries()
+                    except:
+                        print("Countries files download failed")
                 except Exception as e:
                     print(
                         "Could not update /assets/countries+states+cities.json: "+str(e))
@@ -103,10 +121,10 @@ class TSHCountryHelper(QObject):
                     "states": {}
                 }
 
-                for s in c["states"]:
+                for s in c.get("states", []):
                     TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
-                        "name": s["name"],
-                        "code": s["state_code"],
+                        "name": s.get("name"),
+                        "code": s.get("state_code"),
                         "latitude": s.get("latitude"),
                         "longitude": s.get("longitude"),
                     }
@@ -131,7 +149,7 @@ class TSHCountryHelper(QObject):
 
             # Setup cities - states for reverse search
             for country in countries_json:
-                for state in country["states"]:
+                for state in country.get("states"):
                     for c in state["cities"]:
                         if country["iso2"] not in TSHCountryHelper.cities:
                             TSHCountryHelper.cities[country["iso2"]] = {}
@@ -177,6 +195,8 @@ class TSHCountryHelper(QObject):
 
             if state is not None:
                 return state
+
+        
 
         return None
 

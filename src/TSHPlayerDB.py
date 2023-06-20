@@ -2,9 +2,9 @@ import copy
 from multiprocessing import Lock
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 import re
 import csv
 import traceback
@@ -13,7 +13,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHPlayerDBSignals(QObject):
-    db_updated = pyqtSignal()
+    db_updated = Signal()
 
 
 class TSHPlayerDB:
@@ -118,48 +118,57 @@ class TSHPlayerDB:
                 charIcons[char] = {}
                 for skin in TSHGameAssetManager.instance.stockIcons[char]:
                     charIcons[char][skin] = QIcon(QPixmap.fromImage(
-                        TSHGameAssetManager.instance.stockIcons[char][skin]).scaledToWidth(
-                        32, Qt.TransformationMode.SmoothTransformation))
+                        TSHGameAssetManager.instance.stockIcons[char][skin]))
 
             for player in TSHPlayerDB.database.values():
                 if player is not None:
-                    tag = player.get(
-                        "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+                    try:
+                        tag = player.get(
+                            "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
 
-                    item = QStandardItem(tag)
-                    item.setData(player, Qt.ItemDataRole.UserRole)
+                        item = QStandardItem(tag)
+                        item.setIcon(cancelIcon)
 
-                    item.setIcon(cancelIcon)
+                        if player.get("mains") and type(player.get("mains")) == dict:
+                            if TSHGameAssetManager.instance.selectedGame.get("codename") in player.get("mains", {}).keys():
+                                playerMains = player.get(
+                                    "mains")[TSHGameAssetManager.instance.selectedGame.get("codename")]
 
-                    if player.get("mains") and type(player.get("mains")) == dict:
-                        if TSHGameAssetManager.instance.selectedGame.get("codename") in player.get("mains", {}).keys():
-                            playerMains = player.get(
-                                "mains")[TSHGameAssetManager.instance.selectedGame.get("codename")]
+                                if playerMains is not None and len(playerMains) > 0:
+                                    # Must be a list of size 2 [character, skin]
+                                    playerMains = [main for main in playerMains if isinstance(
+                                        main, list) and len(main) == 2]
 
-                            if playerMains is not None and len(playerMains) > 0:
-                                character = next((c for c in TSHGameAssetManager.instance.characters.items(
-                                ) if c[0] == playerMains[0][0]), None)
-                                if character:
-                                    assets = charIcons
+                                    # If the skin is invalid, default to 0
+                                    for main in playerMains:
+                                        skin = 0
+                                        try:
+                                            skin = int(main[1])
+                                        except:
+                                            print(
+                                                f'Local DB error: Player {player.get("gamerTag")} has an invalid skin for character {main[0]}')
+                                            print(traceback.format_exc())
+                                        main[1] = skin
 
-                                    if assets == None:
-                                        assets = {}
+                                    if playerMains[0][0] in TSHGameAssetManager.instance.characters.keys():
+                                        character = playerMains[0]
 
-                                    # Set to use first asset as a fallback
-                                    # key = list(assets.keys())[0]
+                                        assets = charIcons
 
-                                    # for k, asset in list(assets.items()):
-                                    #     if "icon" in asset.get("type", []):
-                                    #         key = k
-                                    #         break
-                                    #     elif "portrait" in asset.get("type", []):
-                                    #         key = k
+                                        if assets == None:
+                                            assets = {}
 
-                                    if assets.get(character[0], {}).get(int(playerMains[0][1]), None):
-                                        item.setIcon(assets.get(character[0], {}).get(
-                                            int(playerMains[0][1]), None))
+                                        if assets.get(character[0], {}).get(int(playerMains[0][1]), None):
+                                            item.setIcon(assets.get(character[0], {}).get(
+                                                int(playerMains[0][1]), None))
 
-                    TSHPlayerDB.model.appendRow(item)
+                        item.setData(player, Qt.ItemDataRole.UserRole)
+
+                        TSHPlayerDB.model.appendRow(item)
+                    except:
+                        print(
+                            f'Error loading player from local DB: {player.get("gamerTag")}')
+                        print(traceback.format_exc())
 
             TSHPlayerDB.signals.db_updated.emit()
 

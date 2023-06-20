@@ -1,8 +1,8 @@
 from collections import Counter
 import re
 from time import sleep
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from qtpy.QtCore import *
+from qtpy.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback
@@ -895,8 +895,10 @@ class StartGGDataProvider(TournamentDataProvider):
                         "best_of" : total_games,
                         "best_of_text" : TSHLocaleHelper.matchNames.get("best_of").format(total_games) if total_games > 0 else "",
                         "state": _set.get("state"),
-                        "team" : {}
+                        "team" : {},
+                        "station" : deep_get(_set, "station.number", -1)
                     }
+
 
                     for teamIndex, slot in enumerate(_set.get("slots", [])):
                         entrant = slot.get("entrant", None)
@@ -920,9 +922,28 @@ class StartGGDataProvider(TournamentDataProvider):
                                 playerData = StartGGDataProvider.ProcessEntrantData(participant)
                                 playerName = playerData.get("gamerTag", "")
                                 team = playerData.get("prefix", "")
+                                
+                                
+                                countryCode = playerData.get("country_code", "")
+                                stateCode = playerData.get("state_code", "")
+                                countryData = TSHCountryHelper.countries.get(countryCode)
+                                states = countryData.get("states")
+                                stateData = {}
+                                if stateCode:
+                                    stateData = states[stateCode]
+
+                                    path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
+                                    if not os.path.exists(path):
+                                        path = None
+
+                                    stateData.update({
+                                        "asset": path
+                                    })
+                                    
+
                                 playerData = {
-                                    "country": TSHCountryHelper.GetBasicCountryInfo(playerData.get("country_code", "")),
-                                    "state" : {},
+                                    "country": TSHCountryHelper.GetBasicCountryInfo(countryCode),
+                                    "state" : stateData ,
                                     "name" : playerName,
                                     "team" : team,
                                     "mergedName" : team + "|" + playerName if isinstance(team, str) and team != "" else playerName,

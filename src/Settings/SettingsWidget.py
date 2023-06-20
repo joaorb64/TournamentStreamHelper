@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import *
+from qtpy.QtWidgets import *
 from ..TSHHotkeys import TSHHotkeys
 from ..SettingsManager import SettingsManager
 

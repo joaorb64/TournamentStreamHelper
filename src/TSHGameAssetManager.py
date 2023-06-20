@@ -1,8 +1,8 @@
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from .StateManager import StateManager
 import re
 import traceback
@@ -15,8 +15,8 @@ import requests
 
 
 class TSHGameAssetManagerSignals(QObject):
-    onLoad = pyqtSignal()
-    onLoadAssets = pyqtSignal()
+    onLoad = Signal()
+    onLoadAssets = Signal()
 
 
 class TSHGameAssetManager(QObject):
@@ -53,8 +53,23 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    open('./assets/characters.json', 'wb').write(r.content)
-                    print("startgg characters file updated")
+
+                    open('./assets/characters.json.tmp', 'wb').write(r.content)
+
+                    try:
+                        # Test if downloaded JSON is valid
+                        json.load(open('./assets/characters.json.tmp'))
+
+                        # Remove old file, overwrite with new one
+                        os.remove('./assets/characters.json')
+                        os.rename(
+                            './assets/characters.json.tmp',
+                            './assets/characters.json'
+                        )
+
+                        print("startgg characters file updated")
+                    except:
+                        print("Characters file download failed")
                 except Exception as e:
                     print("Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
@@ -286,7 +301,7 @@ class TSHGameAssetManager(QObject):
                                   str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             if assetsKey != "base_files":
                                 try:
                                     if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
@@ -298,7 +313,7 @@ class TSHGameAssetManager(QObject):
                                     print(traceback.format_exc())
 
                         # Set complete
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             try:
                                 complete = True
 

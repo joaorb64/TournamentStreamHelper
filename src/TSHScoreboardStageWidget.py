@@ -1,8 +1,8 @@
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 import json
 import requests
 
@@ -20,7 +20,7 @@ log.setLevel(logging.ERROR)
 
 
 class TSHScoreboardStageWidgetSignals(QObject):
-    rulesets_changed = pyqtSignal()
+    rulesets_changed = Signal()
 
 
 class Ruleset():
@@ -81,23 +81,23 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.btAddNeutral = self.findChild(QPushButton, "btAddNeutral")
         self.btAddNeutral.clicked.connect(
-            lambda x, view=self.stagesNeutral: self.AddStage(view))
+            lambda x=None, view=self.stagesNeutral: self.AddStage(view))
         self.btAddNeutral.setIcon(QIcon("./assets/icons/arrow_right.svg"))
 
         self.btRemoveNeutral = self.findChild(QPushButton, "btRemoveNeutral")
         self.btRemoveNeutral.clicked.connect(
-            lambda x: self.RemoveStage(self.stagesNeutral))
+            lambda: self.RemoveStage(self.stagesNeutral))
         self.btRemoveNeutral.setIcon(QIcon("./assets/icons/arrow_left.svg"))
 
         self.btAddCounterpick = self.findChild(QPushButton, "btAddCounterpick")
         self.btAddCounterpick.clicked.connect(
-            lambda x, view=self.stagesCounterpick: self.AddStage(view))
+            lambda x=None, view=self.stagesCounterpick: self.AddStage(view))
         self.btAddCounterpick.setIcon(QIcon("./assets/icons/arrow_right.svg"))
 
         self.btRemoveCounterpick = self.findChild(
             QPushButton, "btRemoveCounterpick")
         self.btRemoveCounterpick.clicked.connect(
-            lambda x: self.RemoveStage(self.stagesCounterpick))
+            lambda: self.RemoveStage(self.stagesCounterpick))
         self.btRemoveCounterpick.setIcon(
             QIcon("./assets/icons/arrow_left.svg"))
 
@@ -153,11 +153,12 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.btDelete.clicked.connect(self.DeleteRuleset)
         self.btClear.clicked.connect(self.ClearRuleset)
 
-        self.stagesModel.dataChanged.connect(lambda topLeft, bottomRight: self.update_cloned_items())
+        self.stagesModel.dataChanged.connect(
+            lambda topLeft, bottomRight: self.update_cloned_items())
 
         # TSHTournamentDataProvider.instance.signals.tournament_changed.connect()
         # load tournament ruleset
-    
+
     def update_cloned_items(self):
         neutralStages = []
 
@@ -169,12 +170,12 @@ class TSHScoreboardStageWidget(QDockWidget):
 
                 if neutralItem.data(Qt.ItemDataRole.UserRole).get("codename") == stageItem.data(Qt.ItemDataRole.UserRole).get("codename"):
                     neutralStages.append(stageItem)
-        
+
         self.neutralModel.clear()
-        
+
         for s in neutralStages:
             self.neutralModel.appendRow(s.clone())
-        
+
         counterpickStages = []
 
         for rowNeutral in range(self.counterpickModel.rowCount()):
@@ -185,9 +186,9 @@ class TSHScoreboardStageWidget(QDockWidget):
 
                 if neutralItem.data(Qt.ItemDataRole.UserRole).get("codename") == stageItem.data(Qt.ItemDataRole.UserRole).get("codename"):
                     counterpickStages.append(stageItem)
-        
+
         self.counterpickModel.clear()
-        
+
         for s in counterpickStages:
             self.counterpickModel.appendRow(s.clone())
 
@@ -285,7 +286,8 @@ class TSHScoreboardStageWidget(QDockWidget):
         self.LoadRulesets()
 
         self.stagesModel = TSHGameAssetManager.instance.stageModel
-        self.stagesModel.dataChanged.connect(lambda topLeft, bottomRight: self.update_cloned_items())
+        self.stagesModel.dataChanged.connect(
+            lambda topLeft, bottomRight: self.update_cloned_items())
         self.stagesModel.sort(0)
         self.stagesView.setModel(self.stagesModel)
 
@@ -432,26 +434,31 @@ class TSHScoreboardStageWidget(QDockWidget):
             StateManager.Set(f"score.ruleset", vars(ruleset))
         except:
             traceback.print_exc()
-    
+
     def ValidateRuleset(self, ruleset: Ruleset):
         issues = []
 
         # Validate bans
         if len(ruleset.neutralStages) > 0:
             if sum(ruleset.strikeOrder) != len(ruleset.neutralStages) - 1:
-                remaining = (len(ruleset.neutralStages) - 1) - sum(ruleset.strikeOrder)
-                issues.append(QApplication.translate("app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
+                remaining = (len(ruleset.neutralStages) - 1) - \
+                    sum(ruleset.strikeOrder)
+                issues.append(QApplication.translate(
+                    "app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
 
         # Add errors
         for error in ruleset.errors:
             issues.append(error)
 
         if len(issues) == 0:
-            validText = QApplication.translate("app", "The current ruleset is valid!")
-            self.labelValidation.setText(f"<span style='color: green'>{validText}</span>")
+            validText = QApplication.translate(
+                "app", "The current ruleset is valid!")
+            self.labelValidation.setText(
+                f"<span style='color: green'>{validText}</span>")
         else:
             issuesText = "\n".join(issues)
-            self.labelValidation.setText(f'<span style="color: red">{issuesText}</span>')
+            self.labelValidation.setText(
+                f'<span style="color: red">{issuesText}</span>')
 
     def GetCurrentRuleset(self, forSaving=False):
         ruleset = Ruleset()
@@ -497,7 +504,8 @@ class TSHScoreboardStageWidget(QDockWidget):
                         ruleset.banByMaxGames[key.strip()] = int(value.strip())
             except:
                 ruleset.banByMaxGames = {}
-                ruleset.errors.append(QApplication.translate("app", "The text for banByMaxGames is invalid."))
+                ruleset.errors.append(QApplication.translate(
+                    "app", "The text for banByMaxGames is invalid."))
                 traceback.print_exc()
 
         ruleset.strikeOrder = [
@@ -516,7 +524,8 @@ class TSHScoreboardStageWidget(QDockWidget):
                         )
                         data = json.loads(data.text)
                         rulesets = deep_get(data, "entities.ruleset")
-                        open('./assets/rulesets.json', 'w').write(json.dumps(rulesets))
+                        open('./assets/rulesets.json',
+                             'w').write(json.dumps(rulesets))
                         self.parent().startggRulesets = rulesets
                         print("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()
@@ -524,7 +533,8 @@ class TSHScoreboardStageWidget(QDockWidget):
                         print(traceback.format_exc())
 
                         try:
-                            rulesets = json.loads(open('./assets/rulesets.json').read())
+                            rulesets = json.loads(
+                                open('./assets/rulesets.json').read())
                             self.parent().startggRulesets = rulesets
                             print("startgg Rulesets loaded from local file")
                             self.parent().signals.rulesets_changed.emit()

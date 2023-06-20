@@ -21,7 +21,7 @@ class StateManager:
 
     def BlockSaving():
         StateManager.saveBlocked += 1
-    
+
     def ReleaseSaving():
         StateManager.saveBlocked -= 1
         if StateManager.saveBlocked == 0:
@@ -35,10 +35,12 @@ class StateManager:
                 def ExportAll():
                     with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
                         # print("SaveState")
-                        json.dump(StateManager.state, file, indent=4, sort_keys=False)
+                        json.dump(StateManager.state, file,
+                                  indent=4, sort_keys=False)
 
                     StateManager.ExportText(StateManager.lastSavedState)
-                    StateManager.lastSavedState = copy.deepcopy(StateManager.state)
+                    StateManager.lastSavedState = copy.deepcopy(
+                        StateManager.state)
 
                 exportThread = threading.Thread(target=ExportAll)
                 StateManager.threads.append(exportThread)
@@ -139,19 +141,22 @@ class StateManager:
             if type(di) == str and di.startswith("./"):
                 if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                     try:
-                        os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                        os.remove(f"./out/{path}" + "." +
+                                  di.rsplit(".", 1)[-1])
                     except Exception as e:
                         print(traceback.format_exc())
                 if os.path.exists(di):
                     try:
-                        os.link(os.path.abspath(di), f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                        os.link(os.path.abspath(di),
+                                f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                     except Exception as e:
                         print(traceback.format_exc())
             elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
                 try:
                     if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                         try:
-                            os.remove(f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                            os.remove(f"./out/{path}" +
+                                      "." + di.rsplit(".", 1)[-1])
                         except Exception as e:
                             print(traceback.format_exc())
 
