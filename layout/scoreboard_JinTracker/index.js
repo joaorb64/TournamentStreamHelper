@@ -88,16 +88,6 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            SetInnerHtml(
-              $(".match"),
-              data.score.match ? data.score.match.toUpperCase() : ""
-            );
-
-            SetInnerHtml(
-              $(".phase"),
-              data.score.phase ? data.score.phase.toUpperCase() : ""
-            );
-
             document
               .querySelector(`.p${t + 1}.character_container`)
               .classList.add("unhidden");
@@ -128,6 +118,16 @@ LoadEverything().then(() => {
           }
         }
       }
+      SetInnerHtml(
+        $(".match"),
+        data.score.match ? data.score.match.toUpperCase() : ""
+      );
+
+      SetInnerHtml(
+        $(".phase"),
+        data.score.phase ? data.score.phase.toUpperCase() : ""
+      );
+      document.querySelector(".tournament_logo").classList.add("unhidden");
       checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
       for (const [t, team] of [
@@ -175,6 +175,7 @@ LoadEverything().then(() => {
         $(".phase"),
         data.score.phase ? data.score.phase.toUpperCase() : ""
       );
+      document.querySelector(".tournament_logo").classList.remove("unhidden");
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
 
