@@ -352,7 +352,7 @@ body {
 }
 
 .phase .text:not(.text_empty) {
-  padding-left: 24px;
+  padding-left: 26px;
   min-width: unset;
   color: var(--bg-color);
 }
@@ -369,7 +369,7 @@ body {
 
 .match .text:not(.text_empty) {
   font-size: 24px;
-  padding-left: 24px;
+  padding-left: 26px;
   padding-right: 12px;
   padding-right: 15px;
   min-width: unset;
