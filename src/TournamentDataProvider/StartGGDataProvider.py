@@ -199,7 +199,10 @@ class StartGGDataProvider(TournamentDataProvider):
             oldData = json.loads(oldData.text)
 
             seeds: list = deep_get(data, "data.phaseGroup.seeds.nodes", [])
-            seeds.sort(key=lambda s: s.get("seedNum"))
+            seeds.sort(key=lambda s: s.get("groupSeedNum"))
+
+            for s in seeds:
+                s["seedNum"] = s.get("groupSeedNum")
 
             # StartGG hides empty seeds. Fix that
             fixedSeeds = []
