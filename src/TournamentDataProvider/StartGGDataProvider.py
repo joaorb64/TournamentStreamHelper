@@ -1,8 +1,8 @@
 from collections import Counter
 import re
 from time import sleep
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from qtpy.QtCore import *
+from qtpy.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback

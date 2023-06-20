@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
 from ..TSHHotkeys import TSHHotkeys
 

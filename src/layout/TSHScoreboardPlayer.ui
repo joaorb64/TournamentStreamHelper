@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>393</width>
-    <height>265</height>
+    <height>267</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,9 +28,6 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
    <item row="5" column="2" colspan="2">
     <widget class="QLineEdit" name="real_name">
      <property name="font">
@@ -45,9 +42,6 @@
    </item>
    <item row="12" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <widget class="QComboBox" name="country">
        <property name="sizePolicy">
@@ -176,11 +170,7 @@
      <property name="title">
       <string>CHARACTERS</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-     </layout>
+     <layout class="QVBoxLayout" name="verticalLayout"/>
     </widget>
    </item>
    <item row="4" column="2">

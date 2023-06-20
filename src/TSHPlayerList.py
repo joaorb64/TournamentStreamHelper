@@ -1,8 +1,8 @@
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
@@ -12,9 +12,11 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
+
 class TSHPlayerListWidgetSignals(QObject):
-    UpdateData = pyqtSignal(object)
-    DataChanged = pyqtSignal()
+    UpdateData = Signal(object)
+    DataChanged = Signal()
+
 
 class TSHPlayerList(QWidget):
     def __init__(self, *args, base="player_list"):
@@ -53,17 +55,18 @@ class TSHPlayerList(QWidget):
     def ChildDataChangedEmit(self):
         if not self.childDataChangedLock:
             self.signals.DataChanged.emit()
-    
+
     def LoadFromStandingsClicked(self):
-        TSHTournamentDataProvider.instance.GetStandings(self.slotNumber.value(), self.signals.UpdateData)
-    
+        TSHTournamentDataProvider.instance.GetStandings(
+            self.slotNumber.value(), self.signals.UpdateData)
+
     def LoadFromStandings(self, data):
         StateManager.BlockSaving()
         if len(data) > 0:
             self.SetSlotNumber(len(data))
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
-            
+
             self.childDataChangedLock = True
             for i, slot in enumerate(self.slotWidgets):
                 slot.SetTeamData(data[i])
@@ -73,7 +76,8 @@ class TSHPlayerList(QWidget):
     def SetSlotNumber(self, number):
         StateManager.BlockSaving()
         while len(self.slotWidgets) < number:
-            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self, base=self.base)
+            s = TSHPlayerListSlotWidget(
+                len(self.slotWidgets)+1, self, base=self.base)
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playersPerTeam)
@@ -96,7 +100,7 @@ class TSHPlayerList(QWidget):
             StateManager.Unset(f'{self.base}.slot.{s.index}')
 
         self.signals.DataChanged.emit()
-        
+
         StateManager.ReleaseSaving()
 
     def SetCharactersPerPlayer(self, value):

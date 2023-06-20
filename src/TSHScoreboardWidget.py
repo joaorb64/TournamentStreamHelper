@@ -1,10 +1,10 @@
 import platform
 import subprocess
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from typing import List
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
@@ -22,13 +22,13 @@ from .TSHThumbnailSettingsWidget import *
 
 
 class TSHScoreboardWidgetSignals(QObject):
-    UpdateSetData = pyqtSignal(object)
-    NewSetSelected = pyqtSignal(object)
-    SetSelection = pyqtSignal()
-    StreamSetSelection = pyqtSignal()
-    UserSetSelection = pyqtSignal()
-    CommandScoreChange = pyqtSignal(int, int)
-    SwapTeams = pyqtSignal()
+    UpdateSetData = Signal(object)
+    NewSetSelected = Signal(object)
+    SetSelection = Signal()
+    StreamSetSelection = Signal()
+    UserSetSelection = Signal()
+    CommandScoreChange = Signal(int, int)
+    SwapTeams = Signal()
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -105,8 +105,6 @@ class TSHScoreboardWidget(QDockWidget):
 
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
-        topOptions.layout().setSpacing(0)
-        topOptions.layout().setContentsMargins(0, 0, 0, 0)
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.innerWidget.layout().addWidget(topOptions)
@@ -114,8 +112,6 @@ class TSHScoreboardWidget(QDockWidget):
         col = QWidget()
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Characters per player")))
         col.layout().addWidget(self.charNumber)
@@ -125,8 +121,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setLayout(QVBoxLayout())
         topOptions.layout().addWidget(col)
         topOptions.layout().addStretch()
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.playerNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Players per team")))
         col.layout().addWidget(self.playerNumber)
@@ -138,8 +132,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
 
         self.thumbnailBtn = QPushButton(
             QApplication.translate("app", "Generate Thumbnail") + " ")
@@ -155,8 +147,6 @@ class TSHScoreboardWidget(QDockWidget):
         col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         topOptions.layout().addWidget(col)
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
 
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
@@ -164,9 +154,10 @@ class TSHScoreboardWidget(QDockWidget):
             QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.eyeBt, Qt.AlignmentFlag.AlignRight)
         self.eyeBt.setPopupMode(QToolButton.InstantPopup)
-        self.eyeBt.setMenu(QMenu())
+        menu = QMenu()
+        self.eyeBt.setMenu(menu)
 
-        self.eyeBt.menu().addSection("Players")
+        menu.addSection("Players")
 
         self.elements = [
             ["Real Name", ["real_name", "real_nameLabel"]],
@@ -505,9 +496,9 @@ class TSHScoreboardWidget(QDockWidget):
 
             index = len(self.team1playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(
@@ -530,9 +521,9 @@ class TSHScoreboardWidget(QDockWidget):
 
             index = len(self.team2playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(

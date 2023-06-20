@@ -5,9 +5,9 @@ import itertools
 from math import cos, radians, sin
 import random
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from pathlib import Path
 import json
 import shutil
@@ -139,7 +139,11 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
 
     new_size = (round(new_x), round(new_y))
     new_image = image.scaled(
-        new_size[0], new_size[1], transformMode=Qt.TransformationMode.SmoothTransformation)
+        new_size[0],
+        new_size[1],
+        Qt.AspectRatioMode.KeepAspectRatio,
+        Qt.TransformationMode.SmoothTransformation
+    )
 
     # crop
     if not resized_eyesight:
@@ -427,7 +431,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             areaPaint.drawPixmap(
                 int(xx), int(yy),
                 pix
-                .scaled(int(zoom*tmpWidth), int(zoom*tmpHeight), transformMode=transformMode)
+                .scaled(
+                    int(zoom*tmpWidth),
+                    int(zoom*tmpHeight),
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    transformMode
+                )
             )
 
             areaPaint.end()
@@ -650,7 +659,12 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
             for player_pathes in path_matrix:
                 for path in player_pathes:
                     pix = QPixmap(path)
-                    pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+                    pix = pix.scaled(
+                        int(pix.width() * ratio[0]),
+                        int(pix.height() * ratio[1]),
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
                     max_width = max(max_width, pix.width())
                     max_height = max(max_height, pix.height())
         
@@ -1353,7 +1367,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         background = background.scaled(
             int(background.width()/2),
             int(background.height()/2),
-            transformMode=Qt.TransformationMode.SmoothTransformation
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
         )
 
     global ratio

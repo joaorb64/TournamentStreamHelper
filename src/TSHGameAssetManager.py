@@ -1,8 +1,8 @@
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from .StateManager import StateManager
 import re
 import traceback
@@ -15,8 +15,8 @@ import requests
 
 
 class TSHGameAssetManagerSignals(QObject):
-    onLoad = pyqtSignal()
-    onLoadAssets = pyqtSignal()
+    onLoad = Signal()
+    onLoadAssets = Signal()
 
 
 class TSHGameAssetManager(QObject):
@@ -301,7 +301,7 @@ class TSHGameAssetManager(QObject):
                                   str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             if assetsKey != "base_files":
                                 try:
                                     if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
@@ -313,7 +313,7 @@ class TSHGameAssetManager(QObject):
                                     print(traceback.format_exc())
 
                         # Set complete
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             try:
                                 complete = True
 

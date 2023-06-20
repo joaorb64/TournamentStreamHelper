@@ -1,10 +1,10 @@
 import os
 import re
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
@@ -21,10 +21,10 @@ from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
-    playerId_changed = pyqtSignal()
-    player1Id_changed = pyqtSignal()
-    player2Id_changed = pyqtSignal()
-    dataChanged = pyqtSignal()
+    playerId_changed = Signal()
+    player1Id_changed = Signal()
+    player2Id_changed = Signal()
+    dataChanged = Signal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -284,40 +284,47 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"{self.path}.seed", seed)
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
-        with self.dataLock():
-            with other.dataLock():
-                tmpData = []
+        if self == other:
+            print("Swapping player with themselves")
+            return
+        try:
+            StateManager.BlockSaving()
+            with self.dataLock:
+                with other.dataLock:
+                    tmpData = []
 
-                # Save state
-                for w in [self, other]:
-                    data = {}
-                    for widget in w.findChildren(QWidget):
-                        if type(widget) == QLineEdit:
-                            data[widget.objectName()] = widget.text()
-                        if type(widget) == QComboBox:
-                            data[widget.objectName()] = widget.currentIndex()
-                    data["online_avatar"] = StateManager.Get(
-                        f"{w.path}.online_avatar")
-                    data["id"] = StateManager.Get(
-                        f"{w.path}.id")
-                    data["seed"] = StateManager.Get(
-                        f"{w.path}.seed")
-                    tmpData.append(data)
-
-                # Load state
-                for i, w in enumerate([other, self]):
-                    for objName in tmpData[i]:
-                        widget = w.findChild(QWidget, objName)
-                        if widget:
+                    # Save state
+                    for w in [self, other]:
+                        data = {}
+                        for widget in w.findChildren(QWidget):
                             if type(widget) == QLineEdit:
-                                widget.setText(tmpData[i][objName])
-                                widget.editingFinished.emit()
+                                data[widget.objectName()] = widget.text()
                             if type(widget) == QComboBox:
-                                widget.setCurrentIndex(tmpData[i][objName])
-                    QCoreApplication.processEvents()
-                    w.ExportPlayerImages(tmpData[i]["online_avatar"])
-                    w.ExportPlayerId(tmpData[i]["id"])
-                    StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
+                                data[widget.objectName()] = widget.currentIndex()
+                        data["online_avatar"] = StateManager.Get(
+                            f"{w.path}.online_avatar")
+                        data["id"] = StateManager.Get(
+                            f"{w.path}.id")
+                        data["seed"] = StateManager.Get(
+                            f"{w.path}.seed")
+                        tmpData.append(data)
+
+                    # Load state
+                    for i, w in enumerate([other, self]):
+                        for objName in tmpData[i]:
+                            widget = w.findChild(QWidget, objName)
+                            if widget:
+                                if type(widget) == QLineEdit:
+                                    widget.setText(tmpData[i][objName])
+                                    widget.editingFinished.emit()
+                                if type(widget) == QComboBox:
+                                    widget.setCurrentIndex(tmpData[i][objName])
+                        QCoreApplication.processEvents()
+                        w.ExportPlayerImages(tmpData[i]["online_avatar"])
+                        w.ExportPlayerId(tmpData[i]["id"])
+                        StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
+        finally:
+            StateManager.ReleaseSaving()
 
     def SetIndex(self, index: int, team: int):
         self.findChild(QWidget, "title").setText(
@@ -366,13 +373,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             btMoveUp.setFixedSize(24, 24)
             btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
             character_element.layout().addWidget(btMoveUp)
-            btMoveUp.clicked.connect(lambda checked, index=len(
+            btMoveUp.clicked.connect(lambda index=len(
                 self.character_elements): self.SwapCharacters(index, index-1))
             btMoveDown = QPushButton()
             btMoveDown.setFixedSize(24, 24)
             btMoveDown.setIcon(QIcon("./assets/icons/arrow_down.svg"))
             character_element.layout().addWidget(btMoveDown)
-            btMoveDown.clicked.connect(lambda checked, index=len(
+            btMoveDown.clicked.connect(lambda index=len(
                 self.character_elements): self.SwapCharacters(index, index+1))
 
             # Add line to characters
