@@ -53,7 +53,8 @@ class TSHPlayerListWidget(QDockWidget):
         self.slotNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Number of slots")))
         col.layout().addWidget(self.slotNumber)
-        self.slotNumber.valueChanged.connect(self.playerList.SetSlotNumber)
+        self.slotNumber.valueChanged.connect(
+            lambda val: self.playerList.SetSlotNumber(val))
         row.layout().addWidget(col)
 
         col = QWidget()

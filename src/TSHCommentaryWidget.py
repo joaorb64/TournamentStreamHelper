@@ -33,7 +33,8 @@ class TSHCommentaryWidget(QDockWidget):
         self.commentatorNumber = QSpinBox()
         col.layout().addWidget(QLabel(QApplication.translate("app", "Number of commentators")))
         col.layout().addWidget(self.commentatorNumber)
-        self.commentatorNumber.valueChanged.connect(self.SetCommentatorNumber)
+        self.commentatorNumber.valueChanged.connect(
+            lambda val: self.SetCommentatorNumber(val))
 
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
@@ -74,12 +75,12 @@ class TSHCommentaryWidget(QDockWidget):
             comm.findChild(QPushButton, "btUp").setIcon(
                 QIcon("./assets/icons/arrow_up.svg"))
             comm.findChild(QPushButton, "btUp").clicked.connect(
-                lambda x, index=len(self.commentaryWidgets): self.MoveUp(index))
+                lambda x=None, index=len(self.commentaryWidgets): self.MoveUp(index))
 
             comm.findChild(QPushButton, "btDown").setIcon(
                 QIcon("./assets/icons/arrow_down.svg"))
             comm.findChild(QPushButton, "btDown").clicked.connect(
-                lambda x, index=len(self.commentaryWidgets): self.MoveDown(index))
+                lambda x=None, index=len(self.commentaryWidgets): self.MoveDown(index))
 
             comm.findChild(QLineEdit, "name").editingFinished.connect(
                 lambda c=comm, index=len(self.commentaryWidgets)+1: self.ExportMergedName(c, index))
@@ -102,12 +103,20 @@ class TSHCommentaryWidget(QDockWidget):
                     StateManager.Unset(f'commentary.{k}')
 
     def MoveUp(self, index):
-        if index > 0:
-            self.SwapComms(index, index-1)
+        try:
+            StateManager.BlockSaving()
+            if index > 0:
+                self.SwapComms(index, index-1)
+        finally:
+            StateManager.ReleaseSaving()
 
     def MoveDown(self, index):
-        if index < len(self.commentaryWidgets)-1:
-            self.SwapComms(index, index+1)
+        try:
+            StateManager.BlockSaving()
+            if index < len(self.commentaryWidgets)-1:
+                self.SwapComms(index, index+1)
+        finally:
+            StateManager.ReleaseSaving()
 
     def SwapComms(self, index1, index2):
         saveState = {c.objectName(): c.text()

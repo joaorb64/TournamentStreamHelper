@@ -301,7 +301,7 @@ class TSHGameAssetManager(QObject):
                                   str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             if assetsKey != "base_files":
                                 try:
                                     if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
@@ -313,7 +313,7 @@ class TSHGameAssetManager(QObject):
                                     print(traceback.format_exc())
 
                         # Set complete
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             try:
                                 complete = True
 

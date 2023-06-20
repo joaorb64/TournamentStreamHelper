@@ -496,9 +496,9 @@ class TSHScoreboardWidget(QDockWidget):
 
             index = len(self.team1playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(
@@ -521,9 +521,9 @@ class TSHScoreboardWidget(QDockWidget):
 
             index = len(self.team2playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda x, index=index, p=p: p.SwapWith(
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(
