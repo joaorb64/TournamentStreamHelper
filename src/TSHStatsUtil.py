@@ -14,7 +14,7 @@ class TSHStatsSignals(QObject):
     LastSetsP2Signal = Signal()
     PlayerHistoryStandingsP1Signal = Signal()
     PlayerHistoryStandingsP2Signal = Signal()
-    UpsetFactorCalculation = pyqtSignal()
+    UpsetFactorCalculation = Signal()
 
 
 class TSHStatsUtil:

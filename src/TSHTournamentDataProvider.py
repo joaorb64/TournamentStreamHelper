@@ -29,7 +29,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_phases_updated = Signal(list)
     tournament_phasegroup_updated = Signal(dict)
     game_changed = Signal(int)
-    stream_queue_loaded = pyqtSignal(dict)
+    stream_queue_loaded = Signal(dict)
 
 
 class TSHTournamentDataProvider:
