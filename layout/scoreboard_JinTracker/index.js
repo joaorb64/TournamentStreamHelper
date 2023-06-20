@@ -496,7 +496,7 @@ function compareObjects(obj1, obj2) {
 }
 
 /**
- * This method is for teams.
+ * This function is for teams.
  * Checks to see whether the properties and their values of obj1 are the same as those of obj2.
  * Does not compare seeding.
  * Created this function with the help of ChatGPT, modified to make it recursive and fit the need of the overlay.
