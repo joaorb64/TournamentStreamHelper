@@ -129,6 +129,10 @@ LoadEverything().then(() => {
         return html;
     }
 
+    function stream_name_html(stream){
+        return `<div class = "message">https://twitch.tv/${stream}</div>`
+    }
+
     Update = async (event) => {
         let data = event.data;
         let oldData = event.oldData;
@@ -156,7 +160,7 @@ LoadEverything().then(() => {
                 if (!queue) return;
                 
                 if (config.display_stream_name == true){
-                    html += `<div class = "message">https://twitch.tv/${stream}</div>`
+                    html += stream_name_html()
                 }
 
                 resetSetsCount();
@@ -166,7 +170,7 @@ LoadEverything().then(() => {
 
                 for (stream in data.streamQueue){
                     if (config.display_stream_name){
-                        html += `<div class = "message">https://twitch.tv/${stream}</div>`
+                        html += stream_name_html()
                     }
 
                     html += await queue_html(data.streamQueue[stream], resolver)
