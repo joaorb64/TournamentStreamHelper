@@ -226,7 +226,7 @@ body {
     height: 50px;
     margin-right: 4px;
     display: inline-block;
-    transform: translateY(7px);
+    transform: translateY(10px);
 }
 
 .message {
