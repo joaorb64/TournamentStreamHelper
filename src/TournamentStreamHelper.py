@@ -5,7 +5,6 @@ from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
-import qdarkstyle
 import qdarktheme
 import requests
 import urllib
