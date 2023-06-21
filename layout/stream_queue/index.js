@@ -1,4 +1,34 @@
 LoadEverything().then(() => {
+    let config = {
+        "assets": {
+          "default": {}
+        },
+        "stream": "",
+        "default_stream" : "",
+        "force_multistream" : false,
+        "display_stream_name" : "multistream",
+        "sets_displayed" : -1,
+        "display_first_set": true,
+        "station" : -1,
+    }
+    
+    function isDefault(value){
+        return value === "" || value === -1 || value === undefined || value === null
+    }
+
+    let window_config = window.config || {}
+    for (k in config){
+        if (!isDefault(window_config[k])){
+            config[k] = window_config[k]
+        } else if (!isDefault(tsh_settings[k])) {
+            config[k] = tsh_settings[k]
+        }
+    }
+
+    let first_index = config.display_first_set ? 0 : 1    
+    let sets_nb = config.sets_displayed;
+    if (sets_nb < 0) sets_nb = undefined;
+
     gsap.config({ nullTargetWarn: false, trialWarn: false });
 
     let startingAnimation = gsap.timeline({ paused: true });
@@ -27,8 +57,6 @@ LoadEverything().then(() => {
     async function team_html(set, t, s, isTeams, resolver){
         let team = set.team[""+t];
         let player = team.player["1"];
-
-        console.log(`.set${s} .p${t} .tag`)
 
         resolver.add(`.set${s} .p${t} .tag`, 
             isTeams ? team.name :
@@ -66,12 +94,46 @@ LoadEverything().then(() => {
         `
     }
 
+    current_set_nb = 0; // ooooo dirty ass global var
+    function resetSetsCount(){
+        current_set_nb = 0;
+    }
+
+    async function queue_html(queue, resolver){
+        let html = "";
+
+        for (const [s, set] of Object.values(queue).slice(first_index).entries()){
+            if (sets_nb && (current_set_nb >= sets_nb)) break;
+
+            if (config.station != -1 && config.station != set.station) continue;
+
+            let isTeams = Object.keys(set.team["1"].player).length > 1;
+            html += `
+                <div class="set${s + 1} set">
+                    ${ await team_html(set, 1, s + 1, isTeams, resolver) }
+                    <div class = "vs_container">
+                        <div class = "vs">VS</div>
+                        <div class = "phase"> </div>
+                        <div class = "match"> </div>
+                    </div>
+                    ${ await team_html(set, 2, s + 1, isTeams, resolver) }
+                </div>
+            `;
+
+            resolver.add(`.set${s + 1} .match`, set.match);
+            resolver.add(`.set${s + 1} .phase`, set.phase);
+
+            current_set_nb++;
+        }
+
+        return html;
+    }
+
     Update = async (event) => {
         let data = event.data;
         let oldData = event.oldData;
 
-
-        let stream = tsh_settings.stream || data.currentStream || tsh_settings.default_stream;
+        let stream = config.stream || data.currentStream || config.default_stream
 
         if (
             !oldData.streamQueue ||
@@ -80,56 +142,54 @@ LoadEverything().then(() => {
             ( !tsh_settings.stream && oldData.currentStream != data.currentStream)
         ) {
 
+            /*
             if (!stream){
                 $(".stream_queue_content").html('<div class = "message">No stream (twitch username) selected. Enter one in TSH or set the "stream" or "default_stream" value in this layout\'s settings.json</div>');
                 return;
-            }
-
-            let resolver = new ContentResolver();
+            }*/
     
-            let queue = data.streamQueue[stream];
-            if (!queue) return;
-
-            let window_config = window.config || {}
-            let first_index = (window_config.display_first_set != undefined ? window_config.display_first_set : tsh_settings.display_first_set) ? 0 : 1;
-            let sets_nb = window_config.sets_displayed || tsh_settings.sets_displayed;
-            if (sets_nb < 0) sets_nb = undefined;
-            if (sets_nb > 0) sets_nb += first_index;
-
             let html = ""
-            
-            for (const [s, set] of Object.values(queue).slice(first_index, sets_nb).entries()){
-                console.log(set, );
-                let isTeams = Object.keys(set.team["1"].player).length > 1;
-                html += `
-                    <div class="set${s + 1} set">
-                        ${ await team_html(set, 1, s + 1, isTeams, resolver) }
-                        <div class = "vs_container">
-                            <div class = "vs">VS</div>
-                            <div class = "phase"> </div>
-                            <div class = "match"> </div>
-                        </div>
-                        ${ await team_html(set, 2, s + 1, isTeams, resolver) }
-                    </div>
-                `;
+            let resolver = new ContentResolver();
 
-                resolver.add(`.set${s + 1} .match`, set.match);
-                resolver.add(`.set${s + 1} .phase`, set.phase);
+            if (stream){ //single-stream
+                let queue = data.streamQueue[stream];
+                if (!queue) return;
+                
+                if (config.display_stream_name == true){
+                    html += `<div class = "message">https://twitch.tv/${stream}</div>`
+                }
 
+                resetSetsCount();
+                html += await queue_html(queue, resolver);
+            } else { //multistream
+                resetSetsCount();
+
+                for (stream in data.streamQueue){
+                    if (config.display_stream_name){
+                        html += `<div class = "message">https://twitch.tv/${stream}</div>`
+                    }
+
+                    html += await queue_html(data.streamQueue[stream], resolver)
+                }
             }
+
             //console.log(html);
             $(".stream_queue_content").html(html);
 
             resolver.resolve()
 
-            for (const [s, set] of Object.values(queue).entries()){
-
+            for (let i = 0; i <= current_set_nb; i++){
                 gsap.from(
-                    $(`.set${s + 1}`),
+                    $(`.set${i}`),
                     { x: -100, autoAlpha: 0, duration: 0.3 },
-                    0.2 + 0.2 * s
+                    0.2 + 0.2 * i
                 );
             }
+            gsap.from(
+                $(`.message`),
+                {autoAlpha: 0, duration : 0.3},
+                0.3 + 0.2 * current_set_nb
+            );
         }
 
     }

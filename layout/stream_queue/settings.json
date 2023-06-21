@@ -4,6 +4,9 @@
   },
   "stream": "",
   "default_stream" : "",
+  "force_multistream" : false,
+  "display_stream_name" : true,
   "sets_displayed" : -1,
-  "display_first_set": true
+  "display_first_set": true,
+  "station" : -1
 }
