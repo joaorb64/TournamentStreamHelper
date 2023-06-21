@@ -45,7 +45,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHHotkeys import TSHHotkeys
-from qdarkstyle import palette
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 
