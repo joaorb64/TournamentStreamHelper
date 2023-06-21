@@ -60,8 +60,27 @@ class TSHBadWordFilter():
                 if not f.endswith(".txt"):
                     continue
 
-                langs[f.split(".")[0]] = open(
+                words = open(
                     f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
+
+                newWords = []
+                removedWords = []
+
+                for w in words:
+                    if w.startswith(".*") and w.endswith(".*"):
+                        trimmed = w.replace(".*", "")
+
+                        # Check and remove if word has only roman characters, at most 3
+                        match = re.match("^[a-z]{1,3}$", trimmed)
+
+                        if match:
+                            removedWords.append(w)
+                        else:
+                            newWords.append(w)
+                    else:
+                        newWords.append(w)
+
+                langs[f.split(".")[0]] = newWords
         except:
             print(traceback.format_exc())
 
