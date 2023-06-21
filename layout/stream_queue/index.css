@@ -28,6 +28,8 @@ body {
     width: 1400px;
     height: 100vh; 
     transform: translateX(-50%);
+
+    overflow: hidden;
 }
 
 .set {
@@ -217,6 +219,14 @@ body {
     width: 18px;
     height: 18px;
     margin-right: 8px;
+}
+
+.twitch_logo {
+
+    width: 50px;
+    height: 50px;
+    margin-right: 4px;
+    display: inline-block;
 }
 
 .message {

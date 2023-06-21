@@ -46,6 +46,12 @@ LoadEverything().then(() => {
         `
     }
     
+    current_set_nb = 0; // ooooo dirty ass global var
+    function resetSetsCount(){
+        current_set_nb = 0;
+    }
+
+
     function online_avatar_html(player, t){
         return `
             <div class = "p${t}_avatar avatar_container"> 
@@ -58,7 +64,7 @@ LoadEverything().then(() => {
         let team = set.team[""+t];
         let player = team.player["1"];
 
-        resolver.add(`.set${s} .p${t} .tag`, 
+        resolver.add(`.set${current_set_nb} .p${t} .tag`, 
             isTeams ? team.name :
                 `
                 <span class="sponsor">
@@ -94,11 +100,6 @@ LoadEverything().then(() => {
         `
     }
 
-    current_set_nb = 0; // ooooo dirty ass global var
-    function resetSetsCount(){
-        current_set_nb = 0;
-    }
-
     async function queue_html(queue, resolver){
         let html = "";
 
@@ -109,8 +110,8 @@ LoadEverything().then(() => {
 
             let isTeams = Object.keys(set.team["1"].player).length > 1;
             html += `
-                <div class="set${s + 1} set">
-                    ${ await team_html(set, 1, s + 1, isTeams, resolver) }
+                <div class="set${current_set_nb} set">
+                    ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
                     <div class = "vs_container">
                         <div class = "vs">VS</div>
                         <div class = "phase"> </div>
@@ -120,8 +121,8 @@ LoadEverything().then(() => {
                 </div>
             `;
 
-            resolver.add(`.set${s + 1} .match`, set.match);
-            resolver.add(`.set${s + 1} .phase`, set.phase);
+            resolver.add(`.set${current_set_nb} .match`, set.match);
+            resolver.add(`.set${current_set_nb} .phase`, set.phase);
 
             current_set_nb++;
         }
@@ -130,7 +131,7 @@ LoadEverything().then(() => {
     }
 
     function stream_name_html(stream){
-        return `<div class = "message">https://twitch.tv/${stream}</div>`
+        return `<div class = "message"><img class = "twitch_logo" src = "./twitch.svg"></img>/${stream}</div>`
     }
 
     Update = async (event) => {
@@ -160,7 +161,7 @@ LoadEverything().then(() => {
                 if (!queue) return;
                 
                 if (config.display_stream_name == true){
-                    html += stream_name_html()
+                    html += stream_name_html(stream)
                 }
 
                 resetSetsCount();
@@ -170,9 +171,9 @@ LoadEverything().then(() => {
 
                 for (stream in data.streamQueue){
                     if (config.display_stream_name){
-                        html += stream_name_html()
+                        html += stream_name_html(stream)
                     }
-
+                    console.log(stream, data.streamQueue[stream])
                     html += await queue_html(data.streamQueue[stream], resolver)
                 }
             }
