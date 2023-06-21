@@ -4,7 +4,6 @@ qtpy
 requests
 py7zr
 deepdiff
-qdarkstyle
 pyqtdarktheme
 Pillow
 Flask
