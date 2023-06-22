@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets'],
+    hiddenimports=[],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
@@ -28,7 +28,7 @@ exe = EXE(
     exclude_binaries=True,
     icon='assets/icons/icon.ico',
     noconsole=True,
-    hiddenimports=['PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets'],
+    hiddenimports=[],
     windowed=True
 )
 coll = COLLECT(
