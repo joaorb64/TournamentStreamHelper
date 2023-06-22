@@ -20,6 +20,41 @@ import random
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 
 
+class CustomQCompleter(QCompleter):
+    def __init__(self, parent=None):
+        super(CustomQCompleter, self).__init__(parent)
+        self.local_completion_prefix = ""
+        self.source_model = None
+
+    def setModel(self, model):
+        self.source_model = model
+        super(CustomQCompleter, self).setModel(self.source_model)
+
+    def updateModel(self):
+        local_completion_prefix = self.local_completion_prefix
+
+        class InnerProxyModel(QSortFilterProxyModel):
+            def filterAcceptsRow(self, sourceRow, sourceParent):
+                index0 = self.sourceModel().index(sourceRow, 0, sourceParent)
+                data = self.sourceModel().data(index0, Qt.ItemDataRole.UserRole)
+
+                if data:
+                    for k, v in data.items():
+                        if type(v) == str:
+                            if local_completion_prefix.lower() in v.lower():
+                                return True
+
+                return local_completion_prefix.lower() in self.sourceModel().data(index0).lower()
+        proxy_model = InnerProxyModel()
+        proxy_model.setSourceModel(self.source_model)
+        super(CustomQCompleter, self).setModel(proxy_model)
+
+    def splitPath(self, path):
+        self.local_completion_prefix = path
+        self.updateModel()
+        return [""]
+
+
 class TSHScoreboardPlayerWidgetSignals(QObject):
     playerId_changed = Signal()
     player1Id_changed = Signal()
@@ -545,7 +580,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def SetupAutocomplete(self):
         if TSHPlayerDB.model:
-            self.findChild(QLineEdit, "name").setCompleter(QCompleter())
+            self.findChild(QLineEdit, "name").setCompleter(
+                CustomQCompleter(TSHPlayerDB.model))
             self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
                 lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)) if x is not None else None, Qt.QueuedConnection)
             self.findChild(QLineEdit, "name").completer().setCaseSensitivity(
