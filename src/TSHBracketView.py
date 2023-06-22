@@ -19,7 +19,7 @@ class BracketSetWidget(QWidget):
         self.setLayout(QVBoxLayout())
 
         self.playerId: list(QLabel) = []
-        self.name: list(QLineEdit) = []
+        self.name: list(QLabel) = []
         self.score: list(QSpinBox) = []
 
         self.bracketSet = bracketSet
@@ -33,22 +33,22 @@ class BracketSetWidget(QWidget):
             self.layout().addWidget(hbox)
             hbox.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
-            idLabel = QLineEdit()
-            idLabel.setDisabled(True)
+            idLabel = QLabel()
             idLabel.setMinimumWidth(30)
             idLabel.setMaximumWidth(30)
             idLabel.setFont(QFont(idLabel.font().family(), 8))
             idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            idLabel.setFrameShape(QFrame.Shape.StyledPanel)
             self.playerId.append(idLabel)
             hbox.layout().addWidget(idLabel)
 
-            name = QLineEdit()
+            name = QLabel()
             name.setMinimumWidth(120)
             name.setMaximumWidth(120)
-            name.setDisabled(True)
+            name.setFrameShape(QFrame.Shape.StyledPanel)
             self.name.append(name)
             hbox.layout().addWidget(name)
-            name.sizePolicy().setRetainSizeWhenHidden(False)
+            name.sizePolicy().setRetainSizeWhenHidden(True)
 
             score = QSpinBox()
             score.setMinimum(-1)
@@ -423,8 +423,8 @@ class TSHBracketView(QGraphicsView):
         limitExportNumber, winnersOffset, losersOffset = self.GetLimitedExportingBracketOffsets()
         winnersCutout, losersCutout = self.GetCutouts(forExport=True)
 
-        winnersOffset += winnersCutout[0]
-        losersOffset += losersCutout[0]
+        # winnersOffset += winnersCutout[0]
+        # losersOffset += losersCutout[0]
 
         StateManager.Set("bracket.bracket.limitExportNumber",
                          limitExportNumber)
@@ -450,6 +450,14 @@ class TSHBracketView(QGraphicsView):
                 if abs(int(roundKey)) >= losersCutout[1]:
                     continue
 
+            # Limited export number cutout
+            if int(roundKey) > 0:
+                if int(roundKey) - winnersOffset <= 0:
+                    continue
+            if int(roundKey) < 0:
+                if int(roundKey) + losersOffset + 2 >= 0:
+                    continue
+
             # Get round name or placeholder name
             if self.roundNameLabels.get(roundKey):
                 roundName = self.roundNameLabels.get(roundKey).text()
@@ -459,15 +467,13 @@ class TSHBracketView(QGraphicsView):
             else:
                 roundName = ""
 
-            # Limited export number cutout
+            # Reassign round key
             if int(roundKey) > 0:
-                roundKey = str(int(roundKey) - winnersOffset)
-                if int(roundKey) <= 0:
-                    continue
-            if int(roundKey) < 0:
-                roundKey = str(int(roundKey) + losersOffset)
-                if int(roundKey) >= 0:
-                    continue
+                roundKey = str(int(roundKey) -
+                               max(winnersOffset, winnersCutout[0]))
+            else:
+                roundKey = str(int(roundKey) +
+                               max(losersOffset + 2, losersCutout[0]))
 
             data[roundKey] = {
                 "name": roundName,
@@ -483,12 +489,14 @@ class TSHBracketView(QGraphicsView):
                 # Reassign rounds based on export number
                 if nextWin:
                     if nextWin[0] > 0:
-                        nextWin[0] -= winnersOffset
+                        nextWin[0] -= max(winnersOffset, winnersCutout[0])
                     else:
-                        nextWin[0] += losersOffset - 2
+                        nextWin[0] += max(losersOffset + 2,
+                                          losersCutout[0]) - 2
                 if nextLose:
                     if nextLose[0] < 0:
-                        nextLose[0] += losersOffset - 2
+                        nextLose[0] += max(losersOffset + 2,
+                                           losersCutout[0]) - 2
 
                         """if self.bracket.progressionsIn <= 0:
                             nextLose[0] -= 1
@@ -535,7 +543,6 @@ class TSHBracketView(QGraphicsView):
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
-
         StateManager.ReleaseSaving()
 
     def DrawLines(self):
@@ -714,10 +721,10 @@ class TSHBracketView(QGraphicsView):
 
     def wheelEvent(self, event):
         if event.angleDelta().y() > 0:
-            factor = 1.25
+            factor = 1.02
             self._zoom += 1
         else:
-            factor = 0.8
+            factor = 0.98
             self._zoom -= 1
 
         if self._zoom > 0:
