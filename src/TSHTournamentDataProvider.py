@@ -105,7 +105,7 @@ class TSHTournamentDataProvider:
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
-            QRegularExpression("start.gg/tournament/[^/]+/event[s]/[^/]+"),
+            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
             QRegularExpression("challonge.com/.+")
         ]
 
@@ -133,7 +133,7 @@ class TSHTournamentDataProvider:
 
             if "start.gg" in url:
                 matches = re.match(
-                    "(.*start.gg/tournament/[^/]*/event[s]/[^/]*)", url)
+                    "(.*start.gg/tournament/[^/]*/event[s]?/[^/]*)", url)
                 if matches:
                     url = matches.group(0)
 

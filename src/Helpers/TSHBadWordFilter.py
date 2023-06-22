@@ -7,6 +7,7 @@ from .TSHLocaleHelper import TSHLocaleHelper
 import traceback
 import os
 from collections import defaultdict
+from typing import List, Set, Tuple
 
 
 def remove_accents_lower(input_str):
@@ -59,8 +60,27 @@ class TSHBadWordFilter():
                 if not f.endswith(".txt"):
                     continue
 
-                langs[f.split(".")[0]] = open(
+                words = open(
                     f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
+
+                newWords = []
+                removedWords = []
+
+                for w in words:
+                    if w.startswith(".*") and w.endswith(".*"):
+                        trimmed = w.replace(".*", "")
+
+                        # Check and remove if word has only roman characters, at most 3
+                        match = re.match("^[a-z]{1,3}$", trimmed)
+
+                        if match:
+                            removedWords.append(w)
+                        else:
+                            newWords.append(w)
+                    else:
+                        newWords.append(w)
+
+                langs[f.split(".")[0]] = newWords
         except:
             print(traceback.format_exc())
 
@@ -95,31 +115,54 @@ class TSHBadWordFilter():
                 TSHBadWordFilter.badWordTries[langkey].build_regex_pattern()
 
     def CensorString(value: str, playerCountry: str = None):
-        langTests = set(["en-us"])
+        langTests = set(["common"])
 
-        extraLanguages = set([TSHLocaleHelper.programLocale.lower()])
+        # Saving extra languages as [language, country]
+        extraLanguages: Set[Tuple[str]] = set()
 
+        userLocale = TSHLocaleHelper.programLocale.lower()
+
+        # Add program language
+        if "-" in userLocale:
+            extraLanguages.add(
+                (userLocale.split("-")[0], userLocale.split("-")[-1]))
+        else:
+            extraLanguages.add((userLocale, None))
+
+        # Add languages spoken in player's country
         if playerCountry is not None:
-            extraLanguages = extraLanguages.union(set(TSHLocaleHelper.GetCountrySpokenLanguages(playerCountry.upper())))
+            langs = TSHLocaleHelper.GetCountrySpokenLanguages(
+                playerCountry.upper())
+            for lang in langs:
+                extraLanguages.add((lang, playerCountry))
 
-        for lang in extraLanguages:
+        # Process extra languages
+        for lang, country in extraLanguages:
             lang = lang.lower()
-            langRemap = None
-            specificLang = None
+            country = country.lower()
 
-            if playerCountry != None:
-                specificLang = lang + "-" + playerCountry.lower()
+            # Test language-country
+            canonical = f"{lang}-{country}"
+            if canonical in TSHBadWordFilter.patterns:
+                langTests.add(canonical)
+                continue
 
-                langRemap = next((langGroup for langGroup,
-                                langs in TSHLocaleHelper.remapping.items() if lang+"_"+playerCountry.upper() in langs), None)
+            # Test language-continent
+            if country:
+                regionalLang = None
+                continent = TSHLocaleHelper.GetCountryContinent(country)
 
-            if specificLang in TSHBadWordFilter.patterns:
-                langTests.add(specificLang)
-            elif langRemap:
-                langRemap = langRemap.lower().replace("_", "-")
-                langTests.add(langRemap)
-            elif lang in TSHBadWordFilter.patterns:
+                if continent in ["NA", "SA"]:
+                    regionalLang = f"{lang}-americas"
+
+                if regionalLang and regionalLang in TSHBadWordFilter.patterns:
+                    langTests.add(regionalLang)
+                    continue
+
+            # Test language only
+            if lang in TSHBadWordFilter.patterns:
                 langTests.add(lang)
+                continue
 
         print(f"TSHBadWordFilter: using filters [{', '.join(langTests)}]")
 

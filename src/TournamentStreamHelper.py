@@ -5,7 +5,6 @@ from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
-import qdarkstyle
 import qdarktheme
 import requests
 import urllib
@@ -46,7 +45,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHHotkeys import TSHHotkeys
-from qdarkstyle import palette
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 

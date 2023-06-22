@@ -35,9 +35,9 @@ LoadEverything().then(() => {
               `
             <span>
               <span class="sponsor">
-                ${player.team ? player.team.toUpperCase() : ""}
+                ${player.team ? player.team : ""}
               </span>
-              ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
+              ${player.name ? await Transcript(player.name) : ""}
               ${team.losers ? "(L)" : ""}
             </span>
             `
@@ -66,7 +66,7 @@ LoadEverything().then(() => {
 
             SetInnerHtml(
               $(`.p${t + 1} .pronoun`),
-              player.pronoun ? player.pronoun.toUpperCase() : ""
+              player.pronoun ? player.pronoun : ""
             );
 
             // Get the name of the state instead of the flag and put it next to the location pin logo.
@@ -75,7 +75,7 @@ LoadEverything().then(() => {
               player.state.name
                 ? `<span class="location_logo symbol"></span>${String(
                     player.state.name
-                  ).toUpperCase()}`
+                  )}`
                 : ""
             );
 
@@ -84,7 +84,7 @@ LoadEverything().then(() => {
               player.twitter
                 ? `<span class="twitter_logo symbol"></span>${String(
                     player.twitter
-                  ).toUpperCase()}`
+                  )}`
                 : ""
             );
 
@@ -118,15 +118,9 @@ LoadEverything().then(() => {
           }
         }
       }
-      SetInnerHtml(
-        $(".match"),
-        data.score.match ? data.score.match.toUpperCase() : ""
-      );
+      SetInnerHtml($(".match"), data.score.match ? data.score.match : "");
 
-      SetInnerHtml(
-        $(".phase"),
-        data.score.phase ? data.score.phase.toUpperCase() : ""
-      );
+      SetInnerHtml($(".phase"), data.score.phase ? data.score.phase : "");
       document.querySelector(".tournament_logo").classList.add("unhidden");
       checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
@@ -138,7 +132,7 @@ LoadEverything().then(() => {
         let names = [];
         for (const [p, player] of Object.values(team.player).entries()) {
           if (player && player.name) {
-            names.push(await Transcript(player.name.toUpperCase()));
+            names.push(await Transcript(player.name));
           }
         }
         teamName = names.join(" / ");
@@ -167,14 +161,8 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
         }
       }
-      SetInnerHtml(
-        $(".match"),
-        data.score.match ? data.score.match.toUpperCase() : ""
-      );
-      SetInnerHtml(
-        $(".phase"),
-        data.score.phase ? data.score.phase.toUpperCase() : ""
-      );
+      SetInnerHtml($(".match"), data.score.match ? data.score.match : "");
+      SetInnerHtml($(".phase"), data.score.phase ? data.score.phase : "");
       document.querySelector(".tournament_logo").classList.remove("unhidden");
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }

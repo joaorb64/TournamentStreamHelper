@@ -24,6 +24,7 @@ class TSHLocaleHelper(QObject):
     languages = []
     remapping = {}
     countryToLanguage = {}
+    countryToContinent = {}
 
     def LoadLocale():
         settingsProgramLocale = SettingsManager.Get("program_language", None)
@@ -90,11 +91,16 @@ class TSHLocaleHelper(QObject):
                 open("./assets/data_countries.json", 'rt', encoding='utf-8'))
             TSHLocaleHelper.countryToLanguage = {ccode: cdata.get(
                 "languages") for ccode, cdata in languages_json.items()}
+            TSHLocaleHelper.countryToContinent = {ccode: cdata.get(
+                "continent") for ccode, cdata in languages_json.items()}
         except Exception as e:
             raise Exception(f"Error loading languages") from e
 
     def GetCountrySpokenLanguages(countryCode2: str):
-        return TSHLocaleHelper.countryToLanguage.get(countryCode2, [])
+        return TSHLocaleHelper.countryToLanguage.get(countryCode2.upper(), [])
+
+    def GetCountryContinent(countryCode2: str):
+        return TSHLocaleHelper.countryToContinent.get(countryCode2.upper(), "")
 
     def LoadRoundNames():
         # Load default round names and translation
