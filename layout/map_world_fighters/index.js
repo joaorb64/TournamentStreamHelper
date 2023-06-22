@@ -17,6 +17,7 @@ var mapOptions = {
   minZoom: 0,
   crs,
   zoomSnap: 0,
+  zoomControl: false,
 };
 
 var map = L.map("map", mapOptions);
@@ -114,7 +115,7 @@ LoadEverything().then(() => {
                 <div class="player_name">${player.name}</div>
                 <div class="flag" style="background-image: url('../../${player.country.asset}')"></div>
                 <div class="player_country">${player.country.name}</div>
-                <div class="player_state">${player.state.name}</div>
+                <div class="player_state">${player.state.name ? player.state.name : ""}</div>
               </div>`,
             {
               direction: directions[direction],

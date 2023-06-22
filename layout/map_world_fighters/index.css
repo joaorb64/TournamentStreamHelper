@@ -137,3 +137,11 @@ body {
     filter: brightness(1);
   }
 }
+
+.leaflet-container {
+  background: none !important;
+}
+
+.leaflet-bottom.leaflet-right {
+  display: none;
+}
