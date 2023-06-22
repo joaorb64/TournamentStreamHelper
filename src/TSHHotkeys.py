@@ -1,8 +1,8 @@
 import re
 import unicodedata
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 import requests
 import os
 import traceback
@@ -13,13 +13,13 @@ from .SettingsManager import SettingsManager
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 class TSHHotkeysSignals(QObject):
-    team1_score_up = pyqtSignal()
-    team1_score_down = pyqtSignal()
-    team2_score_up = pyqtSignal()
-    team2_score_down = pyqtSignal()
-    reset_scores = pyqtSignal()
-    load_set = pyqtSignal()
-    swap_teams = pyqtSignal()
+    team1_score_up = Signal()
+    team1_score_down = Signal()
+    team2_score_up = Signal()
+    team2_score_down = Signal()
+    reset_scores = Signal()
+    load_set = Signal()
+    swap_teams = Signal()
 
 class TSHHotkeys(QObject):
     instance: "TSHHotkeys" = None

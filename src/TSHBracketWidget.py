@@ -1,7 +1,7 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 import json
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
@@ -15,11 +15,15 @@ from .TSHBracket import *
 import traceback
 
 # Checks if a number is power of 2
+
+
 def is_power_of_two(n):
     return (n != 0) and (n & (n-1) == 0)
 
+
 class TSHBracketWidgetSignals(QObject):
-    UpdateData = pyqtSignal(object)
+    UpdateData = Signal(object)
+
 
 class TSHBracketWidget(QDockWidget):
     def __init__(self, *args):
@@ -30,8 +34,10 @@ class TSHBracketWidget(QDockWidget):
 
         StateManager.Set("bracket", {})
 
-        TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(self.UpdatePhases)
-        TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.connect(self.UpdatePhaseGroup)
+        TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(
+            self.UpdatePhases)
+        TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.connect(
+            self.UpdatePhaseGroup)
 
         self.signals = TSHBracketWidgetSignals()
 
@@ -46,29 +52,22 @@ class TSHBracketWidget(QDockWidget):
         self.setFloating(True)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self.setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.mainLayout.setContentsMargins(0, 0, 0, 0)
-
         outerLayout: QWidget = self.findChild(QWidget, "bracket")
         self.playerList = TSHPlayerList(base="bracket.players")
-        
+
         list: QWidget = self.findChild(QWidget, "listContainer")
 
         # Add player list settings on the top
         row = QWidget()
         row.setLayout(QHBoxLayout())
-        row.setContentsMargins(0, 0, 0, 0)
-        row.layout().setSpacing(0)
         list.layout().addWidget(row)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
+
         self.slotNumber = QSpinBox()
         self.slotNumber.setMinimum(2)
-        col.layout().addWidget(QLabel(QApplication.translate("app","Number of slots")))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Number of slots")))
         col.layout().addWidget(self.slotNumber)
         self.slotNumber.valueChanged.connect(lambda val: [
             self.playerList.SetSlotNumber(val),
@@ -78,22 +77,20 @@ class TSHBracketWidget(QDockWidget):
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.playerPerTeam = QSpinBox()
-        col.layout().addWidget(QLabel(QApplication.translate("app","Players per slot")))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Players per slot")))
         col.layout().addWidget(self.playerPerTeam)
-        self.playerPerTeam.valueChanged.connect(self.playerList.SetPlayersPerTeam)
+        self.playerPerTeam.valueChanged.connect(
+            lambda val: self.playerList.SetPlayersPerTeam(val))
         row.layout().addWidget(col)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
-        col.setContentsMargins(0, 0, 0, 0)
-        col.layout().setSpacing(0)
         self.charNumber = QSpinBox()
-        col.layout().addWidget(QLabel(QApplication.translate("app","Characters per player")))
+        col.layout().addWidget(QLabel(QApplication.translate("app", "Characters per player")))
         col.layout().addWidget(self.charNumber)
-        self.charNumber.valueChanged.connect(self.playerList.SetCharactersPerPlayer)
+        self.charNumber.valueChanged.connect(
+            self.playerList.SetCharactersPerPlayer)
         row.layout().addWidget(col)
 
         list.layout().addWidget(self.playerList)
@@ -101,25 +98,31 @@ class TSHBracketWidget(QDockWidget):
         self.bracketView = TSHBracketView(self.bracket, self.playerList, self)
         outerLayout.layout().addWidget(self.bracketView)
 
-        self.phaseSelection: QComboBox = self.findChild(QComboBox, "phaseSelection")
+        self.phaseSelection: QComboBox = self.findChild(
+            QComboBox, "phaseSelection")
         self.phaseSelection.currentIndexChanged.connect(self.UpdatePhaseGroups)
 
-        self.phaseGroupSelection: QComboBox = self.findChild(QComboBox, "phaseGroupSelection")
-        self.phaseGroupSelection.currentIndexChanged.connect(self.PhaseGroupChanged)
+        self.phaseGroupSelection: QComboBox = self.findChild(
+            QComboBox, "phaseGroupSelection")
+        self.phaseGroupSelection.currentIndexChanged.connect(
+            self.PhaseGroupChanged)
 
-        self.btRefreshPhase: QPushButton = self.findChild(QPushButton, "btRefreshPhase")
+        self.btRefreshPhase: QPushButton = self.findChild(
+            QPushButton, "btRefreshPhase")
         updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
         self.btRefreshPhase.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
         self.btRefreshPhase.clicked.connect(lambda: [
             TSHTournamentDataProvider.instance.GetTournamentPhases()
         ])
 
-        self.btRefreshPhaseGroup: QPushButton = self.findChild(QPushButton, "btRefreshPhaseGroup")
+        self.btRefreshPhaseGroup: QPushButton = self.findChild(
+            QPushButton, "btRefreshPhaseGroup")
         updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
         self.btRefreshPhaseGroup.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
         self.btRefreshPhaseGroup.clicked.connect(self.PhaseGroupChanged)
 
-        self.progressionsIn: QSpinBox = self.findChild(QSpinBox, "progressionsIn")
+        self.progressionsIn: QSpinBox = self.findChild(
+            QSpinBox, "progressionsIn")
         self.progressionsIn.valueChanged.connect(lambda val: [
             self.bracketView.SetBracket(
                 self.bracket,
@@ -145,7 +148,8 @@ class TSHBracketWidget(QDockWidget):
         ])
         StateManager.Set("bracket.bracket.winnersOnly", True)
 
-        self.progressionsOut: QSpinBox = self.findChild(QSpinBox, "progressionsOut")
+        self.progressionsOut: QSpinBox = self.findChild(
+            QSpinBox, "progressionsOut")
         self.progressionsOut.valueChanged.connect(lambda val: [
             self.bracketView.SetBracket(
                 self.bracket,
@@ -159,7 +163,7 @@ class TSHBracketWidget(QDockWidget):
         StateManager.Set("bracket.bracket.progressionsOut", 0)
 
         self.limitExport: QCheckBox = self.findChild(QCheckBox, "limitExport")
-        self.limitExport.stateChanged.connect(lambda newVal:[
+        self.limitExport.stateChanged.connect(lambda newVal: [
             self.bracketView.SetBracket(
                 self.bracket,
                 progressionsIn=self.progressionsIn.value(),
@@ -170,7 +174,8 @@ class TSHBracketWidget(QDockWidget):
             self.bracketView.Update()
         ])
 
-        self.limitExportNumber: QSpinBox = self.findChild(QSpinBox, "limitExportNumber")
+        self.limitExportNumber: QSpinBox = self.findChild(
+            QSpinBox, "limitExportNumber")
         self.limitExportNumber.valueChanged.connect(lambda val: [
             self.bracketView.SetBracket(
                 self.bracket,
@@ -189,12 +194,12 @@ class TSHBracketWidget(QDockWidget):
         self.charNumber.setValue(1)
 
         self.splitter = self.findChild(QSplitter, "splitter")
-        self.splitter.setSizes([1,1])
+        self.splitter.setSizes([1, 1])
 
         self.bracketView.Update()
 
         StateManager.ReleaseSaving()
-    
+
     def UpdatePhases(self, phases):
         print("phases", phases)
         self.phaseSelection.clear()
@@ -202,7 +207,7 @@ class TSHBracketWidget(QDockWidget):
 
         for phase in phases:
             self.phaseSelection.addItem(phase.get("name"), phase)
-        
+
     def UpdatePhaseGroups(self):
         try:
             selectedGroup = self.phaseSelection.currentData()
@@ -215,30 +220,34 @@ class TSHBracketWidget(QDockWidget):
         if self.phaseSelection.currentData() != None:
             print(self.phaseSelection.currentData().get("groups", []))
             for phaseGroup in self.phaseSelection.currentData().get("groups", []):
-                self.phaseGroupSelection.addItem(phaseGroup.get("name"), phaseGroup)
+                self.phaseGroupSelection.addItem(
+                    phaseGroup.get("name"), phaseGroup)
 
                 # Let's only allow double elimination for now
                 if phaseGroup.get("bracketType") != "DOUBLE_ELIMINATION":
                     itemModel: QStandardItemModel = self.phaseGroupSelection.model()
                     item = itemModel.item(itemModel.rowCount()-1)
                     item.setEnabled(False)
-    
+
     def PhaseGroupChanged(self):
         try:
             # Do not export phaseGroup name if there's only one phaseGroup
             if len(self.phaseSelection.currentData().get("groups", [])) > 1:
                 selectedGroup = self.phaseGroupSelection.currentData()
-                StateManager.Set("bracket.phaseGroup", selectedGroup.get("name"))
+                StateManager.Set("bracket.phaseGroup",
+                                 selectedGroup.get("name"))
             else:
                 StateManager.Set("bracket.phaseGroup", "")
         except:
             StateManager.Set("bracket.phaseGroup", "")
-        
+
         if self.phaseGroupSelection.currentData() != None:
-            TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(self.phaseGroupSelection.currentData().get("id"))
-        
+            TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(
+                self.phaseGroupSelection.currentData().get("id"))
+
     def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
-        self.bracket = Bracket(playerNumber, self.progressionsIn.value(), seedMap, self.winnersOnly.isChecked())
+        self.bracket = Bracket(playerNumber, self.progressionsIn.value(
+        ), seedMap, self.winnersOnly.isChecked())
 
         self.bracketView.SetBracket(
             self.bracket,
@@ -262,22 +271,26 @@ class TSHBracketWidget(QDockWidget):
             print(phaseGroupData)
 
             if phaseGroupData.get("progressionsIn", {}) != None:
-                self.progressionsIn.setValue(len(phaseGroupData.get("progressionsIn", {})))
+                self.progressionsIn.setValue(
+                    len(phaseGroupData.get("progressionsIn", {})))
             else:
                 self.progressionsIn.setValue(0)
-            
+
             if phaseGroupData.get("progressionsOut", {}) != None:
-                self.progressionsOut.setValue(len(phaseGroupData.get("progressionsOut", {})))
+                self.progressionsOut.setValue(
+                    len(phaseGroupData.get("progressionsOut", {})))
             else:
                 self.progressionsOut.setValue(0)
-            
+
             if phaseGroupData.get("winnersOnlyProgressions", False) != None:
-                self.winnersOnly.setChecked(phaseGroupData.get("winnersOnlyProgressions", False))
+                self.winnersOnly.setChecked(
+                    phaseGroupData.get("winnersOnlyProgressions", False))
             else:
                 self.winnersOnly.setChecked(False)
-            
-            self.bracket.customSeeding = phaseGroupData.get("customSeeding", False)
-            
+
+            self.bracket.customSeeding = phaseGroupData.get(
+                "customSeeding", False)
+
             # Make sure progressions are exported
             QGuiApplication.processEvents()
 
@@ -293,7 +306,7 @@ class TSHBracketWidget(QDockWidget):
             self.playerPerTeam.blockSignals(True)
             self.playerPerTeam.setValue(self.playerList.playersPerTeam)
             self.playerPerTeam.blockSignals(False)
-            
+
             self.RebuildBracket(
                 len(phaseGroupData.get("entrants")),
                 phaseGroupData.get("seedMap"),
@@ -304,16 +317,19 @@ class TSHBracketWidget(QDockWidget):
                 for s, _set in enumerate(round):
                     try:
                         score = _set.get("score")
-                        if score[0] == None: score[0] = 0
-                        if score[1] == None: score[1] = 0
+                        if score[0] == None:
+                            score[0] = 0
+                        if score[1] == None:
+                            score[1] = 0
 
                         roundIndex = str(r)
 
                         self.bracket.rounds[roundIndex][s].score = score
-                        self.bracket.rounds[roundIndex][s].finished = _set.get("finished")
+                        self.bracket.rounds[roundIndex][s].finished = _set.get(
+                            "finished")
                     except Exception as e:
                         print(e)
-            
+
             QGuiApplication.processEvents()
             self.bracket.UpdateBracket()
             self.bracketView.Update()
@@ -321,4 +337,5 @@ class TSHBracketWidget(QDockWidget):
             print(traceback.format_exc())
         finally:
             StateManager.ReleaseSaving()
-            self.playerList.signals.DataChanged.connect(self.bracketView.Update)
+            self.playerList.signals.DataChanged.connect(
+                self.bracketView.Update)

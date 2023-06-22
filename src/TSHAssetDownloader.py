@@ -1,7 +1,7 @@
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Workers import Worker
@@ -21,7 +21,7 @@ class IconDelegate(QStyledItemDelegate):
 
 
 class TSHAssetDownloaderSignals(QObject):
-    AssetUpdates = pyqtSignal(dict)
+    AssetUpdates = Signal(dict)
 
 
 class TSHAssetDownloader(QObject):
@@ -83,6 +83,7 @@ class TSHAssetDownloader(QObject):
 
         self.select = QComboBox()
         selectProxy = QSortFilterProxyModel()
+        selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         selectProxy.setSourceModel(self.select.model())
         self.select.model().setParent(selectProxy)
         selectProxy.setSortCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -90,6 +91,9 @@ class TSHAssetDownloader(QObject):
         self.select.setEditable(True)
         self.select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.select.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.font_small = QFont("./assets/font/RobotoCondensed.ttf", pointSize=8)
+        self.select.setFont(self.font_small)
+        self.select.setModel(QStandardItemModel())
         self.preDownloadDialogue.layout().addWidget(self.select)
 
         self.select.setIconSize(QSize(64, 64))

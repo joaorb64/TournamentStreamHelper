@@ -1,14 +1,15 @@
 chardet
 charset-normalizer
-pyqt5
+qtpy
 requests
 py7zr
 deepdiff
-qdarkstyle
+pyqtdarktheme
 Pillow
 Flask
 flask-cors
 asyncio
 python-dateutil
 pynput
+pyside6
 cloudscraper

@@ -1,7 +1,7 @@
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 
 from src.TSHTournamentDataProvider import TSHTournamentDataProvider
 
@@ -18,7 +18,7 @@ class TSHSelectSetWindow(QDialog):
 
         self.proxyModel = QSortFilterProxyModel()
         self.proxyModel.setFilterKeyColumn(-1)
-        self.proxyModel.setFilterCaseSensitivity(False)
+        self.proxyModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
 
         def filterList(text):
             self.proxyModel.setFilterFixedString(text)
@@ -62,7 +62,7 @@ class TSHSelectSetWindow(QDialog):
         self.resize(1200, 500)
 
         qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
+        cp = QApplication.primaryScreen().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 

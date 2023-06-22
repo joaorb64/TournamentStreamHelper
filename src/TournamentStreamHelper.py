@@ -5,7 +5,7 @@ from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
-import qdarkstyle
+import qdarktheme
 import requests
 import urllib
 import json
@@ -16,9 +16,17 @@ import unicodedata
 import sys
 import atexit
 import time
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+import qtpy
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from packaging.version import parse
+
+QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+
+if parse(qtpy.QT_VERSION).major == 6:
+    QImageReader.setAllocationLimit(0)
+
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
@@ -37,7 +45,6 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHHotkeys import TSHHotkeys
-from qdarkstyle import palette
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 
@@ -78,11 +85,11 @@ def remove_accents_lower(input_str):
 
 
 class WindowSignals(QObject):
-    StopTimer = pyqtSignal()
-    ExportStageStrike = pyqtSignal(object)
-    DetectGame = pyqtSignal(int)
-    SetupAutocomplete = pyqtSignal()
-    UiMounted = pyqtSignal()
+    StopTimer = Signal()
+    ExportStageStrike = Signal(object)
+    DetectGame = Signal(int)
+    SetupAutocomplete = Signal()
+    UiMounted = Signal()
 
 
 class Window(QMainWindow):
@@ -98,8 +105,7 @@ class Window(QMainWindow):
 
         self.signals = WindowSignals()
 
-        splash = QSplashScreen(self, QPixmap(
-            'assets/icons/icon.png').scaled(128, 128))
+        splash = QSplashScreen(QPixmap('assets/icons/icon.png').scaled(128, 128))
         splash.show()
 
         time.sleep(0.1)
@@ -217,9 +223,6 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
 
-        # pre_base_layout.setSpacing(0)
-        # pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
-
         # Game
         base_layout = QHBoxLayout()
 
@@ -237,7 +240,7 @@ class Window(QMainWindow):
             QApplication.translate("app", "Set tournament"))
         hbox.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
-            lambda bt, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
+            lambda bt=None, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
 
         self.unsetTournamentBt = QPushButton()
         self.unsetTournamentBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
@@ -286,8 +289,9 @@ class Window(QMainWindow):
             QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.optionsBt.setFixedSize(QSize(32, 32))
         self.optionsBt.setIconSize(QSize(32, 32))
-        self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction(
+        menu = QMenu()
+        self.optionsBt.setMenu(menu)
+        action = menu.addAction(
             QApplication.translate("app", "Always on top"))
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
@@ -749,18 +753,14 @@ class Window(QMainWindow):
 
     def ToggleLightMode(self, checked):
         if checked:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
+            qdarktheme.setup_theme()
 
         SettingsManager.Set("light_mode", checked)
 
     def LoadTheme(self):
         if SettingsManager.Get("light_mode", False):
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
+            qdarktheme.setup_theme()
