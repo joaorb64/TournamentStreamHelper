@@ -18,12 +18,14 @@ Note that in multistream mode, the names of the streams will be displayed : this
 ### Options
 Options can be defined in two places : 
 - In settings.json, you will find all the options that can change the behavior or this layout. Remember that everything between the `:` next to an option name, and the next `,` (or `}` at the end) will be the value of that option. Values can be numbers (written normally), text (between quotes) and the two special values `true` and `false`, options that are basically a yes/no question. 
-- You cna makes copies of the .html file, while overriding some options for each file. If you want an overlay that displays all the stream queue, and an overlay that focuses on a specific stream, that's what you want. To override an option only for a specific .html file, open it, and add a `"option name" : value,` line (same syntax as in settings.json) between the brackets after `window.config`. 
+- You can makes copies of the .html file, while overriding some options for each file. If you want an overlay that displays all the stream queue, and an overlay that focuses on a specific stream, that's what you want. To override an option only for a specific .html file, open it, and add a `"option name" : value,` line (same syntax as in settings.json) between the brackets after `window.config`. 
   ```html
     window.config = {
         "OPTION" : VALUE,
     };
   ```
+
+Basically settings.json contains the global options, and if you want to use multiple instances of the layout with different behaviors you copy index.html and use window.config to override the relevant options.
 
 So, now that you understand options, here are all the possible options and what they do
 
