@@ -240,11 +240,14 @@ class TSHBracketView(QGraphicsView):
                 (int(math.log2(progressionsWinners)) + 1)
 
         # Winners left side cutout
-        if self.progressionsIn > 0 and not self.bracket.winnersOnlyProgressions:
-            if not is_power_of_two(self.progressionsIn) and not self.bracket.customSeeding:
-                winnersCutout[0] = 2
+        if self.progressionsIn > 0:
+            if self.bracket.winnersOnlyProgressions:
+                exactMatch = (int(math.log2((self.progressionsIn-1)))) + 3
+                winnersCutout[0] = len(winnersRounds) - exactMatch
             else:
-                winnersCutout[0] = 1
+                exactMatch = (
+                    int(math.log2((int((self.progressionsIn-1)/2))))) + 3
+                winnersCutout[0] = len(winnersRounds) - exactMatch
 
         # Losers right side cutout
         if self.progressionsOut > 0:
@@ -254,16 +257,26 @@ class TSHBracketView(QGraphicsView):
                 (math.log2(progressionsLosers) * 2 - 1)
 
         # Losers left side cutout
-        losersCutout[0] = 2
+        if self.progressionsIn <= 0 or self.bracket.winnersOnlyProgressions:
+            exactMatch = int(math.log2(self.bracket.playerNumber)) + \
+                round(math.log2((self.bracket.originalPlayerNumber-1))) - 2
+            losersCutout[0] = len(losersRounds) - exactMatch
+        else:
+            exactMatch = int(math.log2(self.bracket.playerNumber)) + \
+                round(math.log2(math.floor((self.bracket.progressionsIn-1)))) - 2
+            losersCutout[0] = len(losersRounds) - exactMatch
 
-        # Losers R1 skipping
-        # Losers R1 has bracket_size / 2 (half bracket is sent to losers from WR1) / 2 (2 players per set) sets
-        # If WR1 has as many sets or less, LR1 will be all [player vs bye]
-        # So this round is hidden
-        validWR1Sets = self.bracket.originalPlayerNumber - self.bracket.playerNumber/2
+        # else:
+        #     # Losers R1 skipping
+        #     # Losers R1 has bracket_size / 2 (half bracket is sent to losers from WR1) / 2 (2 players per set) sets
+        #     # If WR1 has as many sets or less, LR1 will be all [player vs bye]
+        #     # So this round is hidden
+        #     validWR1Sets = self.bracket.originalPlayerNumber - self.bracket.playerNumber/2
 
-        if self.progressionsIn == 0 and validWR1Sets <= self.bracket.playerNumber/2/2:
-            losersCutout[0] += 1
+        #     if self.progressionsIn == 0 and validWR1Sets <= self.bracket.playerNumber/2/2:
+        #         losersCutout[0] += 1
+        #     elif self.progressionsIn > 0:
+        #         losersCutout[0] += 1
 
         if self.progressionsOut > 0 and not is_power_of_two(self.progressionsOut):
             losersCutout[1] += 1
