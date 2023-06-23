@@ -10,6 +10,7 @@ LoadEverything().then(() => {
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
+        "display_station" : false
     }
     
     function isDefault(value){
@@ -113,9 +114,11 @@ LoadEverything().then(() => {
                 <div class="set${current_set_nb} set">
                     ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
                     <div class = "vs_container">
-                        <div class = "vs">VS</div>
+                        <div class = "vs vs_${config.display_station ? 'small' : 'big'}">VS</div>
+                        ${config.display_station ? '<div class = "station"></div>' : ''}
                         <div class = "phase"> </div>
                         <div class = "match"> </div>
+
                     </div>
                     ${ await team_html(set, 2, s + 1, isTeams, resolver) }
                 </div>
@@ -123,6 +126,7 @@ LoadEverything().then(() => {
 
             resolver.add(`.set${current_set_nb} .match`, set.match);
             resolver.add(`.set${current_set_nb} .phase`, set.phase);
+            resolver.add(`.set${current_set_nb} .station`, "Station " + set.station);
 
             current_set_nb++;
         }

@@ -8,5 +8,6 @@
   "display_stream_name" : "multistream",
   "sets_displayed" : -1,
   "display_first_set": true,
-  "station" : -1
+  "station" : -1,
+  "display_station" : true
 }

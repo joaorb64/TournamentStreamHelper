@@ -58,7 +58,14 @@ body {
     display: flex;
     justify-content: center;
     width: 100%;
+}
+
+.vs_big {
     font-size: 45px;
+}
+
+.vs_small {
+    font-size: 30px;
 }
 
 .team {
@@ -84,6 +91,7 @@ body {
 .phase {
     overflow: hidden;
 }
+
 
 .flags {
     display: flex;
