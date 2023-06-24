@@ -10,7 +10,12 @@ LoadEverything().then(() => {
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
-        "display_station" : false
+        "display" : {
+            "station" : false,
+            "country_flag" : true,
+            "state_flag" : true,
+            "avatar" : true
+        }
     }
     
     function isDefault(value){
@@ -25,6 +30,12 @@ LoadEverything().then(() => {
             config[k] = tsh_settings[k]
         }
     }
+
+    if (!config.display){
+        config.display = {};
+    }
+
+    console.log(config)
 
     let first_index = config.display_first_set ? 0 : 1    
     let sets_nb = config.sets_displayed;
@@ -82,11 +93,11 @@ LoadEverything().then(() => {
 
         return `
             <div class = "p${t} team">
-                ${isTeams ? "" : online_avatar_html(player, t)}
+                ${isTeams && !config.display.avatar ? "" : online_avatar_html(player, t)}
                 <div class = "flags">
                     ${ isTeams ? "" : 
-                        (player.country.asset ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
-                        (player.state.asset ? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
+                        (player.country.asset && config.display.country_flag ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
+                        (player.state.asset && config.display.state_flag? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
                     }
                 </div>
                 <div class = "name">
@@ -114,8 +125,8 @@ LoadEverything().then(() => {
                 <div class="set${current_set_nb} set">
                     ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
                     <div class = "vs_container">
-                        <div class = "vs vs_${config.display_station ? 'small' : 'big'}">VS</div>
-                        ${config.display_station ? '<div class = "station"></div>' : ''}
+                        <div class = "vs vs_${config.display.station ? 'small' : 'big'}">VS</div>
+                        ${config.display.station && set.station && set.station != -1 ? '<div class = "station"></div>' : ''}
                         <div class = "phase"> </div>
                         <div class = "match"> </div>
 
@@ -177,7 +188,6 @@ LoadEverything().then(() => {
                     if (config.display_stream_name){
                         html += stream_name_html(stream)
                     }
-                    console.log(stream, data.streamQueue[stream])
                     html += await queue_html(data.streamQueue[stream], resolver)
                 }
             }
