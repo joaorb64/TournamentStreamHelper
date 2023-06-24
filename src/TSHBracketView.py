@@ -245,8 +245,9 @@ class TSHBracketView(QGraphicsView):
                 exactMatch = (int(math.log2((self.progressionsIn-1)))) + 3
                 winnersCutout[0] = len(winnersRounds) - exactMatch
             else:
-                exactMatch = (
-                    int(math.log2((int((self.progressionsIn-1)/2))))) + 3
+                exactMatch = (int(math.log2((self.progressionsIn-1)))) + 1
+                if is_power_of_two(self.progressionsIn):
+                    exactMatch += 1
                 winnersCutout[0] = len(winnersRounds) - exactMatch
 
         # Losers right side cutout
@@ -263,7 +264,8 @@ class TSHBracketView(QGraphicsView):
             losersCutout[0] = len(losersRounds) - exactMatch
         else:
             exactMatch = int(math.log2(self.bracket.playerNumber)) + \
-                round(math.log2(math.floor((self.bracket.progressionsIn-1)))) - 2
+                round(math.log2(math.floor((self.bracket.progressionsIn -
+                      int(math.log2(self.bracket.originalPlayerNumber-1)))))) - 2
             losersCutout[0] = len(losersRounds) - exactMatch
 
         # else:

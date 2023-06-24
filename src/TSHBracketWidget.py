@@ -13,6 +13,7 @@ from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
 import traceback
+import threading
 
 # Checks if a number is power of 2
 
@@ -33,6 +34,8 @@ class TSHBracketWidget(QDockWidget):
         uic.loadUi("src/layout/TSHBracket.ui", self)
 
         StateManager.Set("bracket", {})
+
+        self.loadLock = threading.RLock()
 
         TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(
             self.UpdatePhases)
@@ -269,79 +272,81 @@ class TSHBracketWidget(QDockWidget):
                 _set.finished = False
 
     def UpdatePhaseGroup(self, phaseGroupData):
-        StateManager.BlockSaving()
-        self.playerList.signals.DataChanged.disconnect()
+        with self.loadLock:
+            StateManager.BlockSaving()
+            self.playerList.signals.DataChanged.disconnect()
 
-        try:
-            print(phaseGroupData)
+            try:
+                print(phaseGroupData)
 
-            if phaseGroupData.get("progressionsIn", {}) != None:
-                self.progressionsIn.setValue(
-                    len(phaseGroupData.get("progressionsIn", {})))
-            else:
-                self.progressionsIn.setValue(0)
+                if phaseGroupData.get("progressionsIn", {}) != None:
+                    self.progressionsIn.setValue(
+                        len(phaseGroupData.get("progressionsIn", {})))
+                else:
+                    self.progressionsIn.setValue(0)
 
-            if phaseGroupData.get("progressionsOut", {}) != None:
-                self.progressionsOut.setValue(
-                    len(phaseGroupData.get("progressionsOut", {})))
-            else:
-                self.progressionsOut.setValue(0)
+                if phaseGroupData.get("progressionsOut", {}) != None:
+                    self.progressionsOut.setValue(
+                        len(phaseGroupData.get("progressionsOut", {})))
+                else:
+                    self.progressionsOut.setValue(0)
 
-            if phaseGroupData.get("winnersOnlyProgressions", False) != None:
-                self.winnersOnly.setChecked(
-                    phaseGroupData.get("winnersOnlyProgressions", False))
-            else:
-                self.winnersOnly.setChecked(False)
+                if phaseGroupData.get("winnersOnlyProgressions", False) != None:
+                    self.winnersOnly.setChecked(
+                        phaseGroupData.get("winnersOnlyProgressions", False))
+                else:
+                    self.winnersOnly.setChecked(False)
 
-            self.bracket.customSeeding = phaseGroupData.get(
-                "customSeeding", False)
+                self.bracket.customSeeding = phaseGroupData.get(
+                    "customSeeding", False)
 
-            # Make sure progressions are exported
-            QGuiApplication.processEvents()
+                # Make sure progressions are exported
+                QGuiApplication.processEvents()
 
-            self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
+                self.playerList.LoadFromStandings(
+                    phaseGroupData.get("entrants"))
 
-            # Wait for the player list to update
-            QGuiApplication.processEvents()
+                # Wait for the player list to update
+                QGuiApplication.processEvents()
 
-            self.slotNumber.blockSignals(True)
-            self.slotNumber.setValue(len(self.playerList.slotWidgets))
-            self.slotNumber.blockSignals(False)
+                self.slotNumber.blockSignals(True)
+                self.slotNumber.setValue(len(self.playerList.slotWidgets))
+                self.slotNumber.blockSignals(False)
 
-            self.playerPerTeam.blockSignals(True)
-            self.playerPerTeam.setValue(self.playerList.playersPerTeam)
-            self.playerPerTeam.blockSignals(False)
+                self.playerPerTeam.blockSignals(True)
+                self.playerPerTeam.setValue(self.playerList.playersPerTeam)
+                self.playerPerTeam.blockSignals(False)
 
-            self.RebuildBracket(
-                len(phaseGroupData.get("entrants")),
-                phaseGroupData.get("seedMap"),
-                phaseGroupData.get("byeIds", []),
-                phaseGroupData.get("customSeeding", False)
-            )
+                self.RebuildBracket(
+                    len(phaseGroupData.get("entrants")),
+                    phaseGroupData.get("seedMap"),
+                    phaseGroupData.get("byeIds", []),
+                    phaseGroupData.get("customSeeding", False)
+                )
 
-            for r, round in phaseGroupData.get("sets", {}).items():
-                for s, _set in enumerate(round):
-                    try:
-                        score = _set.get("score")
-                        if score[0] == None:
-                            score[0] = 0
-                        if score[1] == None:
-                            score[1] = 0
+                for r, round in phaseGroupData.get("sets", {}).items():
+                    for s, _set in enumerate(round):
+                        try:
+                            score = _set.get("score")
+                            if score[0] == None:
+                                score[0] = 0
+                            if score[1] == None:
+                                score[1] = 0
 
-                        roundIndex = str(r)
+                            roundIndex = str(r)
 
-                        self.bracket.rounds[roundIndex][s].score = score
-                        self.bracket.rounds[roundIndex][s].finished = _set.get(
-                            "finished")
-                    except Exception as e:
-                        print(e)
+                            self.bracket.rounds[roundIndex][s].score = score
+                            self.bracket.rounds[roundIndex][s].finished = _set.get(
+                                "finished")
+                        except Exception as e:
+                            print(e)
 
-            QGuiApplication.processEvents()
-            self.bracket.UpdateBracket()
-            self.bracketView.Update()
-        except:
-            print(traceback.format_exc())
-        finally:
-            StateManager.ReleaseSaving()
-            self.playerList.signals.DataChanged.connect(
-                self.bracketView.Update)
+                QGuiApplication.processEvents()
+                self.bracket.UpdateBracket()
+                self.bracketView.Update()
+            except:
+                print(traceback.format_exc())
+            finally:
+                StateManager.ReleaseSaving()
+                self.playerList.signals.DataChanged.connect(
+                    self.bracketView.Update)
