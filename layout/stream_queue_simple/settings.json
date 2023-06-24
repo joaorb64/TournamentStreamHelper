@@ -1,0 +1,18 @@
+{
+  "assets": {
+    "default": {}
+  },
+  "stream": "",
+  "default_stream" : "",
+  "force_multistream" : false,
+  "display_stream_name" : "multistream",
+  "sets_displayed" : -1,
+  "display_first_set": true,
+  "station" : -1,
+  "display" : {
+      "avatar" : true,
+      "country_flag" : true,
+      "state_flag" : true,
+      "match" : false
+  }
+}
