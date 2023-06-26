@@ -270,10 +270,7 @@ class WebServer(QThread):
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():
-        WebServer.scoreboard.signals.UpdateSetData.emit({
-            "team1score": 0,
-            "team2score": 0
-        })
+        WebServer.scoreboard.ResetScore()
         return "OK"
 
     # Resets scores, match, phase, and losers status
@@ -282,6 +279,12 @@ class WebServer(QThread):
         WebServer.scoreboard.ClearScore()
         WebServer.scoreboard.scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
+        return "OK"
+    
+    # Resets scores, match, phase, and losers status
+    @app.route('/reset-players')
+    def reset_players():
+        WebServer.scoreboard.CommandClearAll()
         return "OK"
 
     # Resets all values
@@ -292,6 +295,7 @@ class WebServer(QThread):
             QSpinBox, "best_of").setValue(0)
         WebServer.scoreboard.playerNumber.setValue(1)
         WebServer.scoreboard.charNumber.setValue(1)
+        WebServer.scoreboard.CommandClearAll()
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))

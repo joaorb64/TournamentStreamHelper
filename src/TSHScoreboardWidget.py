@@ -763,6 +763,11 @@ class TSHScoreboardWidget(QDockWidget):
             ]
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
+    
+    def CommandClearAll(self):
+        for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
+            for i, p in enumerate(team):
+                p.Clear()
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):
