@@ -177,7 +177,8 @@ class BracketSetWidget(QWidget):
             limitExportNumber, winnersOffset, losersOffset = self.bracketView.GetLimitedExportingBracketOffsets()
 
             if self.bracketSet.pos[0] > 0:
-                if self.bracketSet.pos[0] - winnersOffset <= 0:
+                if self.bracketSet.pos[0] - winnersOffset <= 0 or \
+                        self.bracketSet.pos[0] == winnersCutout[0]+1 and self.bracketView.progressionsIn > 0 and self.bracketSet.score[0] == -1 or self.bracketSet.score[1] == -1:
                     self.name[0].setStyleSheet(
                         "background-color: rgba(0, 0, 0, 80);")
                     self.name[1].setStyleSheet(
@@ -245,10 +246,12 @@ class TSHBracketView(QGraphicsView):
                 exactMatch = (int(math.log2((self.progressionsIn-1)))) + 3
                 winnersCutout[0] = len(winnersRounds) - exactMatch
             else:
-                exactMatch = (int(math.log2((self.progressionsIn-1)))) + 1
-                if is_power_of_two(self.progressionsIn):
+                exactMatch = 1
+                if not is_power_of_two(self.progressionsIn) and not self.bracket.customSeeding:
                     exactMatch += 1
-                winnersCutout[0] = len(winnersRounds) - exactMatch
+                elif self.bracket.customSeeding and not math.log2(self.bracket.playerNumber) % 2 == 0:
+                    exactMatch += 1
+                winnersCutout[0] = exactMatch
 
         # Losers right side cutout
         if self.progressionsOut > 0:
@@ -260,7 +263,7 @@ class TSHBracketView(QGraphicsView):
         # Losers left side cutout
         if self.progressionsIn <= 0 or self.bracket.winnersOnlyProgressions:
             exactMatch = int(math.log2(self.bracket.playerNumber)) + \
-                round(math.log2((self.bracket.originalPlayerNumber-1))) - 2
+                int(math.log2((self.bracket.originalPlayerNumber-1)/2))
             losersCutout[0] = len(losersRounds) - exactMatch
         else:
             exactMatch = int(math.log2(self.bracket.playerNumber)) + \
@@ -543,9 +546,22 @@ class TSHBracketView(QGraphicsView):
                     except:
                         pass
 
+                playerIds = [bracketSet.playerIds[0], bracketSet.playerIds[1]]
+                score = [bracketSet.score[0], bracketSet.score[1]]
+
+                if bracketSet.score[0] == -1 or bracketSet.score[1] == -1:
+                    if self.progressionsIn > 0 and int(roundKey) == 1 and bracketSet.pos[0] == winnersCutout[0]+1:
+                        if bracketSet.score[0] == -1:
+                            playerIds[0] = -1
+                        else:
+                            playerIds[1] = -1
+                        p1name = ""
+                        p2name = ""
+                        score = [-1, -1]
+
                 data[roundKey]["sets"][j] = {
-                    "playerId": bracketSet.playerIds,
-                    "score": bracketSet.score,
+                    "playerId": playerIds,
+                    "score": score,
                     "nextWin": nextWin,
                     "winSlot": bracketSet.winNextSlot,
                     "nextLose": nextLose,

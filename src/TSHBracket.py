@@ -154,22 +154,24 @@ class Bracket():
                     except Exception as e:
                         print(e)
                     try:
-                        if abs(roundNum) % 4 == 0:
+                        shift = 0
+
+                        if (abs(roundNum) + shift) % 4 == 0:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(
                                 int(len(round)/2)+j) % len(round)]
-                        elif abs(roundNum) % 4 == 1:
+                        elif (abs(roundNum) + shift) % 4 == 1:
                             _set.loseNext = self.rounds[str(
                                 -int(2*(roundNum)))][j]
-                        elif abs(roundNum) % 4 == 2:
+                        elif (abs(roundNum) + shift) % 4 == 2:
                             _set.loseNext = self.rounds[str(
                                 -int(2*(roundNum)))][(-1-j) % len(round)]
-                        elif abs(roundNum) % 4 == 3:
+                        elif (abs(roundNum) + shift) % 4 == 3:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(
                                 int(len(round)/2)-1-j) % len(round)]
 
                         targetIdL = 0
 
-                        if roundNum == 1:
+                        if roundNum == 1 or (roundNum == 2 and self.customSeeding and not math.log2(self.playerNumber) % 2 == 0):
                             targetIdL = j % 2
 
                         _set.loseNextSlot = targetIdL
@@ -232,7 +234,9 @@ class Bracket():
                         _set.score = [-1, -1]
                         _set.finished = True
 
-                    if int(roundKey) == 2 and not is_power_of_two(self.progressionsIn) and not self.customSeeding:
+                    if int(roundKey) == 2 and (
+                        (not is_power_of_two(self.progressionsIn) and not self.customSeeding) or
+                            (self.customSeeding and not math.log2(self.playerNumber) % 2 == 0)):
                         _set.score = [-1, -1]
                         _set.finished = True
 
@@ -265,7 +269,10 @@ class Bracket():
                     # -1,-1 draw; advance higher seed
                     elif _set.score[0] == -1 and _set.score[1] == -1:
                         # Advance higher seed
-                        won = 0 if _set.playerIds[0] < _set.playerIds[1] else 1
+                        found1 = self.seedMap.index(_set.playerIds[0])
+                        found2 = self.seedMap.index(_set.playerIds[1])
+
+                        won = 0 if found1 < found2 else 1
                         lost = 0 if won == 1 else 1
                         _set.winNext.playerIds[targetIdW] = _set.playerIds[won]
                         if _set.loseNext:

@@ -307,6 +307,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                 if len(groups) > 0:
                     finalData["progressionsIn"] = [
                         {}] * deep_get(groups[0], "tournament.participant_count_to_advance", 0) * len(groups)
+
+                    finalData["customSeeding"] = True
             else:
                 if id != None:
                     groupId = int(id.split("_")[-1])

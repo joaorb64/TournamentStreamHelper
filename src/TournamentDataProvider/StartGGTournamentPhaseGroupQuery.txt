@@ -19,22 +19,6 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
               gamerTag
               prefix
               name
-              sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
-                nodes {
-                  games {
-                    selections {
-                      entrant {
-                        participants {
-                          player {
-                            id
-                          }
-                        }
-                      }
-                      selectionValue
-                    }
-                  }
-                }
-              }
             }
             user {
               id
@@ -61,7 +45,9 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
       nodes {
         id
         round
-        identifier
+        entrant1Id
+        entrant2Id
+        winnerId
         entrant1Score
         entrant2Score
         state

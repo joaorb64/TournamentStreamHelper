@@ -254,7 +254,8 @@ class TSHBracketWidget(QDockWidget):
             self.progressionsIn.value(),
             seedMap,
             byeIds,
-            self.winnersOnly.isChecked()
+            self.winnersOnly.isChecked(),
+            customSeeding=customSeeding
         )
 
         self.bracketView.SetBracket(
@@ -280,22 +281,32 @@ class TSHBracketWidget(QDockWidget):
                 print(phaseGroupData)
 
                 if phaseGroupData.get("progressionsIn", {}) != None:
+                    self.progressionsIn.blockSignals(True)
                     self.progressionsIn.setValue(
                         len(phaseGroupData.get("progressionsIn", {})))
+                    self.progressionsIn.blockSignals(False)
                 else:
+                    self.progressionsIn.blockSignals(True)
                     self.progressionsIn.setValue(0)
+                    self.progressionsIn.blockSignals(False)
 
                 if phaseGroupData.get("progressionsOut", {}) != None:
+                    self.progressionsOut.blockSignals(True)
                     self.progressionsOut.setValue(
                         len(phaseGroupData.get("progressionsOut", {})))
+                    self.progressionsIn.blockSignals(False)
                 else:
                     self.progressionsOut.setValue(0)
 
                 if phaseGroupData.get("winnersOnlyProgressions", False) != None:
+                    self.winnersOnly.blockSignals(True)
                     self.winnersOnly.setChecked(
                         phaseGroupData.get("winnersOnlyProgressions", False))
+                    self.winnersOnly.blockSignals(False)
                 else:
+                    self.winnersOnly.blockSignals(True)
                     self.winnersOnly.setChecked(False)
+                    self.winnersOnly.blockSignals(False)
 
                 self.bracket.customSeeding = phaseGroupData.get(
                     "customSeeding", False)

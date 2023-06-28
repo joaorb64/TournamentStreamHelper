@@ -84,28 +84,28 @@ class TSHBadWordFilter():
         except:
             print(traceback.format_exc())
 
-        for langkey, lang in langs.items():
-            for index, word in enumerate(lang):
-                word = re.sub("a", "(a|4|\@)", word)
+        # for langkey, lang in langs.items():
+        #     for index, word in enumerate(lang):
+        #         word = re.sub("a", "(a|4|\@)", word)
 
-                # from i we generate L so that we know which ones we added ourselves
-                word = re.sub("i", "(i|1|L|!)", word)
-                word = re.sub("l", "(l|1|i|!)", word)
-                # Then turn L into l
-                # Otherwise, we'd have (i|(i|l)) all over the place
-                word = re.sub("L", "l", word)
+        #         # from i we generate L so that we know which ones we added ourselves
+        #         word = re.sub("i", "(i|1|L|!)", word)
+        #         word = re.sub("l", "(l|1|i|!)", word)
+        #         # Then turn L into l
+        #         # Otherwise, we'd have (i|(i|l)) all over the place
+        #         word = re.sub("L", "l", word)
 
-                # Same logic
-                word = re.sub("u", "(u|V)", word)
-                word = re.sub("v", "(v|u)", word)
-                word = re.sub("V", "v", word)
+        #         # Same logic
+        #         word = re.sub("u", "(u|V)", word)
+        #         word = re.sub("v", "(v|u)", word)
+        #         word = re.sub("V", "v", word)
 
-                word = re.sub("o", "(o|0|\@)", word)
-                word = re.sub("e", "(e|3)", word)
-                word = re.sub("s", "(s|\$|5)", word)
-                word = re.sub("t", "(t|7)", word)
+        #         word = re.sub("o", "(o|0|\@)", word)
+        #         word = re.sub("e", "(e|3)", word)
+        #         word = re.sub("s", "(s|\$|5)", word)
+        #         word = re.sub("t", "(t|7)", word)
 
-                langs[langkey][index] = word
+        #         langs[langkey][index] = word
 
         for langkey, lang in langs.items():
             for word in lang:
