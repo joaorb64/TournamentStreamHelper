@@ -251,10 +251,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 teams.append(team)
 
-            # for s in seedMap:
-            #     if s == -1:
-            #         teams.append({})
-
             finalData["entrants"] = teams
 
             sets = deep_get(data, "data.phaseGroup.sets.nodes", [])
@@ -395,16 +391,16 @@ class StartGGDataProvider(TournamentDataProvider):
             QCoreApplication.processEvents()
 
             finalResult = {}
-            finalResult.update(result["new"])
-            finalResult.update(result["old"])
+            finalResult.update(result.get("new", {}))
+            finalResult.update(result.get("old", {}))
 
-            if result["new"].get("isOnline") == False:
+            if result.get("new", {}).get("isOnline") == False:
                 finalResult["bestOf"] = None
 
-            finalResult["entrants"] = result["new"]["entrants"]
+            finalResult["entrants"] = result.get("new", {}).get("entrants", [])
 
-            if result["old"].get("entrants", []) is not None:
-                for t, team in enumerate(result["old"].get("entrants", [])):
+            if result.get("old", {}).get("entrants", []) is not None:
+                for t, team in enumerate(result.get("old", {}).get("entrants", [])):
                     for p, player in enumerate(team):
                         if player["mains"]:
                             finalResult["entrants"][t][p]["mains"] = player["mains"]
@@ -502,6 +498,9 @@ class StartGGDataProvider(TournamentDataProvider):
         return ([])
 
     def TranslateRoundName(name: str):
+        if name == None:
+            return ""
+
         roundMapping = {
             "Grand Final Reset": "grand_final_reset",
             "Grand Final": "grand_final",
@@ -531,15 +530,16 @@ class StartGGDataProvider(TournamentDataProvider):
         return name
 
     def ParseMatchDataNewApi(self, _set):
-        p1 = deep_get(_set, "slots", [])[0]
-        p2 = deep_get(_set, "slots", [])[1]
+        slots = deep_get(_set, "slots", [])
+        p1 = slots[0] if len(slots) > 0 else {}
+        p2 = slots[1] if len(slots) > 1 else {}
 
         # Add Pool identifier if phase has multiple Pools
         phase_name = deep_get(_set, "phaseGroup.phase.name")
 
         bracket_type = deep_get(_set, "phaseGroup.phase.bracketType", "")
 
-        if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
+        if deep_get(_set, "phaseGroup.phase.groupCount", 0) > 1:
             phase_name += " - " + TSHLocaleHelper.phaseNames.get(
                 "group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
@@ -557,11 +557,11 @@ class StartGGDataProvider(TournamentDataProvider):
         players = [[], []]
 
         entrants = [
-            deep_get(_set, "slots", [])[0].get(
-                "entrant", {}).get("participants", []) if deep_get(_set, "slots", [])[0].get(
+            p1.get(
+                "entrant", {}).get("participants", []) if p1.get(
                 "entrant", {}) is not None else [],
-            deep_get(_set, "slots", [])[1].get(
-                "entrant", {}).get("participants", []) if deep_get(_set, "slots", [])[1].get(
+            p2.get(
+                "entrant", {}).get("participants", []) if p2.get(
                 "entrant", {}) is not None else [],
         ]
 

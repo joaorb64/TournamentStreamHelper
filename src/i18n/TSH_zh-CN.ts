@@ -1006,20 +1006,20 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="73"/>
+        <location filename="../TSHBracketWidget.py" line="70"/>
         <location filename="../TSHPlayerListWidget.py" line="54"/>
         <source>Number of slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="84"/>
+        <location filename="../TSHBracketWidget.py" line="81"/>
         <location filename="../TSHPlayerListWidget.py" line="63"/>
         <source>Players per slot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="116"/>
-        <location filename="../TSHBracketWidget.py" line="93"/>
+        <location filename="../TSHBracketWidget.py" line="90"/>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
         <source>Characters per player</source>
         <translation type="unfinished"></translation>
@@ -1340,7 +1340,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/SettingsWidget.py" line="26"/>
+        <location filename="../Settings/SettingsWidget.py" line="28"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
