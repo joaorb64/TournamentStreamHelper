@@ -250,8 +250,6 @@ class StartGGDataProvider(TournamentDataProvider):
                             entrant, deep_get(seed, "entrant.paginatedSets.nodes")))
 
                 teams.append(team)
-                print("Seed", seed.get("groupSeedNum"),
-                      seed.get("seedNum"), team["players"])
 
             # for s in seedMap:
             #     if s == -1:

@@ -171,7 +171,7 @@ class Bracket():
 
                         targetIdL = 0
 
-                        if roundNum == 1 or (roundNum == 2 and self.customSeeding and not math.log2(self.playerNumber) % 2 == 0):
+                        if roundNum == 1:
                             targetIdL = j % 2
 
                         _set.loseNextSlot = targetIdL
