@@ -53,7 +53,7 @@ class TSHBadWordFilter():
     blackList = []
 
     def LoadBadWordList():
-        langs = defaultdict(list)
+        langs = defaultdict(set)
 
         try:
             for f in os.listdir("./assets/ngword/"):
@@ -63,49 +63,36 @@ class TSHBadWordFilter():
                 words = open(
                     f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
 
-                newWords = []
-                removedWords = []
-
-                for w in words:
-                    if w.startswith(".*") and w.endswith(".*"):
-                        trimmed = w.replace(".*", "")
-
-                        # Check and remove if word has only roman characters, at most 3
-                        match = re.match("^[a-z]{1,3}$", trimmed)
-
-                        if match:
-                            removedWords.append(w)
-                        else:
-                            newWords.append(w)
-                    else:
-                        newWords.append(w)
-
+                newWords = set(words)
                 langs[f.split(".")[0]] = newWords
         except:
             print(traceback.format_exc())
 
-        for langkey, lang in langs.items():
-            for index, word in enumerate(lang):
-                word = re.sub("a", "(a|4|\@)", word)
+        # Commenting this block until we have a better performing alternative
+        # This is too time consuming in cases like loading a huge bracket
 
-                # from i we generate L so that we know which ones we added ourselves
-                word = re.sub("i", "(i|1|L|!)", word)
-                word = re.sub("l", "(l|1|i|!)", word)
-                # Then turn L into l
-                # Otherwise, we'd have (i|(i|l)) all over the place
-                word = re.sub("L", "l", word)
+        # for langkey, lang in langs.items():
+        #     for index, word in enumerate(lang):
+        #         word = re.sub("a", "(a|4|\@)", word)
 
-                # Same logic
-                word = re.sub("u", "(u|V)", word)
-                word = re.sub("v", "(v|u)", word)
-                word = re.sub("V", "v", word)
+        #         # from i we generate L so that we know which ones we added ourselves
+        #         word = re.sub("i", "(i|1|L|!)", word)
+        #         word = re.sub("l", "(l|1|i|!)", word)
+        #         # Then turn L into l
+        #         # Otherwise, we'd have (i|(i|l)) all over the place
+        #         word = re.sub("L", "l", word)
 
-                word = re.sub("o", "(o|0|\@)", word)
-                word = re.sub("e", "(e|3)", word)
-                word = re.sub("s", "(s|\$|5)", word)
-                word = re.sub("t", "(t|7)", word)
+        #         # Same logic
+        #         word = re.sub("u", "(u|V)", word)
+        #         word = re.sub("v", "(v|u)", word)
+        #         word = re.sub("V", "v", word)
 
-                langs[langkey][index] = word
+        #         word = re.sub("o", "(o|0|\@)", word)
+        #         word = re.sub("e", "(e|3)", word)
+        #         word = re.sub("s", "(s|\$|5)", word)
+        #         word = re.sub("t", "(t|7)", word)
+
+        #         langs[langkey][index] = word
 
         for langkey, lang in langs.items():
             for word in lang:
