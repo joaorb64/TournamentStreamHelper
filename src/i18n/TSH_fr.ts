@@ -1437,7 +1437,7 @@ p, li { white-space: pre-wrap; }
         <translation>Raccourcis clavier</translation>
     </message>
     <message>
-        <location filename="../Settings/SettingsWidget.py" line="26"/>
+        <location filename="../Settings/SettingsWidget.py" line="28"/>
         <source>Default</source>
         <translation>Paramètres par défaut</translation>
     </message>
