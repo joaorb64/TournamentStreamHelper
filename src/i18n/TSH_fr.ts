@@ -1061,20 +1061,20 @@ p, li { white-space: pre-wrap; }
         <translation>Commentateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="70"/>
+        <location filename="../TSHBracketWidget.py" line="73"/>
         <location filename="../TSHPlayerListWidget.py" line="54"/>
         <source>Number of slots</source>
         <translation>Nombre d&apos;emplacements</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="81"/>
+        <location filename="../TSHBracketWidget.py" line="84"/>
         <location filename="../TSHPlayerListWidget.py" line="63"/>
         <source>Players per slot</source>
         <translation>Nombre de joueurs par emplacement</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="116"/>
-        <location filename="../TSHBracketWidget.py" line="90"/>
+        <location filename="../TSHBracketWidget.py" line="93"/>
         <location filename="../TSHPlayerListWidget.py" line="72"/>
         <source>Characters per player</source>
         <translation>Nombre de personnages par joueur</translation>
