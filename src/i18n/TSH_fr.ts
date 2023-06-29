@@ -969,7 +969,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="700"/>
         <source>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Veuillez vérifier que le dossier layout et son contenu ne sont pas ouverts dans une autre application avant de fermer cette fenêtre.</translation>
     </message>
     <message>
         <source>Update complete.</source>
@@ -1434,7 +1434,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="49"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="81"/>
@@ -1452,7 +1452,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="42"/>
         <source>Enable profanity filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le filtre anti-jurons</translation>
     </message>
 </context>
 <context>
