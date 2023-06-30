@@ -1,4 +1,6 @@
+from qtpy.QtGui import *
 from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from ..TSHHotkeys import TSHHotkeys
 from ..SettingsManager import SettingsManager
 from dataclasses import dataclass

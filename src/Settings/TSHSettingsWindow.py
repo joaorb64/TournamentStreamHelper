@@ -2,6 +2,7 @@ import sys
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
+from .SettingsWidget import SETTINGS as SettingsWidgetSettings
 from ..TSHHotkeys import TSHHotkeys
 import json
 
@@ -55,13 +56,12 @@ class TSHSettingsWindow(QDialog):
         # Add general settings
         generalSettings = []
 
-        generalSettings.append((
-            QApplication.translate(
-                "settings.general", "Enable profanity filter"),
-            "profanity_filter",
-            "checkbox",
-            True
-        ))
+        generalSettings.append(SettingsWidgetSettings(**{
+            "name": QApplication.translate("settings.general", "Enable profanity filter"),
+            "path": "profanity_filter",
+            "type": "bool",
+            "default": True
+        }))
 
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))
