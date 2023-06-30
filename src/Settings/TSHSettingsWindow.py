@@ -115,24 +115,6 @@ class TSHSettingsWindow(QDialog):
         self.add_setting_widget(QApplication.translate(
             "settings", "Layout"), SettingsWidget("layout", layoutSettings))
 
-        # Layout
-        layoutSettings = []
-
-        layoutJson = json.load(open("./layout/settings_map.json"))
-
-        for entry in iterate_json_leaves(layoutJson):
-            (key, value) = list(entry.items())[0]
-            layoutSettings.append(SettingsWidgetSettings(**{
-                "name": key,
-                "path": key,
-                "type": value.get("type"),
-                "default": value.get("default"),
-                "options": value.get("options")
-            }))
-
-        self.add_setting_widget(QApplication.translate(
-            "settings", "Layout"), SettingsWidget("layout", layoutSettings))
-
         self.resize(1000, 500)
         QApplication.processEvents()
         splitter.setSizes([200, self.width()-200])
