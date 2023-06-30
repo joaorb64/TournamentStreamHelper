@@ -71,11 +71,16 @@ LoadEverything().then(() => {
 
     positions = [];
     isPrecise = [];
+    isValid = [];
 
     let servers = [];
 
     Object.values(data.score.team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
+        if(!player.name){
+          return
+        }
+
         let pos = [
           player.state.latitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.latitude)
@@ -84,6 +89,11 @@ LoadEverything().then(() => {
             ? parseFloat(player.state.longitude)
             : parseFloat(player.country.longitude),
         ];
+
+        let validPos = !Number.isNaN(pos[0]) && !Number.isNaN(pos[1]);
+        if(!validPos) pos = [0, 0]
+        isValid.push(validPos);
+
         positions.push(pos);
 
         let server = findClosestServer(pingData, pos[0], pos[1]);
@@ -100,11 +110,20 @@ LoadEverything().then(() => {
           }
         });
 
+        let offsetDistance = validPos ? 12 : 32
+
+        let offsets = {
+          "top": [0, -offsetDistance],
+          "bottom": [0, offsetDistance],
+          "left":[-offsetDistance, 0],
+          "right": [offsetDistance, 0]
+        }
+
         let marker = L.marker(pos, {
           icon: L.icon({
-            iconUrl: "./marker.svg",
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
+            iconUrl: validPos ? "./marker.svg" : "./questionmark.svg",
+            iconSize: validPos ? [24, 24] : [64, 64],
+            iconAnchor: validPos ? [12, 12] : [32, 32],
             className: "blink",
           }),
         })
@@ -113,31 +132,35 @@ LoadEverything().then(() => {
             `
               <div style="display: flex; flex-direction: column; align-items: center;">
                 <div class="player_name">${player.name}</div>
-                <div class="flag" style="background-image: url('../../${player.country.asset}')"></div>
-                <div class="player_country">${player.country.name}</div>
+                ${player.country.asset ?
+                  `<div class="flag" style="background-image: url('../../${player.country.asset}')"></div>`
+                  :
+                  ""
+                }
+                <div class="player_country">${player.country.name ? player.country.name : ""}</div>
                 <div class="player_state">${player.state.name ? player.state.name : ""}</div>
               </div>`,
             {
               direction: directions[direction],
               className: "leaflet-tooltip-own",
-              offset: [0, -4],
+              offset: offsets[directions[direction]],
             }
           )
           .openTooltip();
 
         markers.push(marker);
 
-        if (!player.state.latitude || window.COUNTRY_ONLY) {
+        if (!player.state.latitude || window.COUNTRY_ONLY || !validPos) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
-              html: '<div class="gps_ring"></div>',
+              html: `<div class="gps_ring ${!validPos ? "gps_ring_big": ""}"></div>`,
               className: "css-icon",
               iconAnchor: [64, 64],
             }),
           }).addTo(map);
 
           markers.push(marker);
-          isPrecise.push(true);
+          isPrecise.push(validPos);
         } else {
           isPrecise.push(true);
         }

@@ -14,7 +14,7 @@ var baseMap = L.tileLayer.colorFilter(
 
 var map = L.map("map", {
   zoomControl: false,
-}).setView([0, 0], 2);
+}).setView([0, 0], 3);
 
 baseMap.addTo(map);
 
@@ -43,11 +43,16 @@ LoadEverything().then(() => {
 
     positions = [];
     isPrecise = [];
+    isValid = [];
 
     let servers = [];
 
     Object.values(data.score.team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
+        if(!player.name){
+          return
+        }
+
         let pos = [
           player.state.latitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.latitude)
@@ -56,6 +61,11 @@ LoadEverything().then(() => {
             ? parseFloat(player.state.longitude)
             : parseFloat(player.country.longitude),
         ];
+
+        let validPos = !Number.isNaN(pos[0]) && !Number.isNaN(pos[1]);
+        if(!validPos) pos = [0, 0]
+        isValid.push(validPos);
+
         positions.push(pos);
 
         let server = findClosestServer(pingData, pos[0], pos[1]);
@@ -72,34 +82,43 @@ LoadEverything().then(() => {
           }
         });
 
+        let offsetDistance = validPos ? 8 : 16
+
+        let offsets = {
+          "top": [0, -offsetDistance],
+          "bottom": [0, offsetDistance],
+          "left":[-offsetDistance, 0],
+          "right": [offsetDistance, 0]
+        }
+
         let marker = L.marker(pos, {
           icon: L.icon({
-            iconUrl: "./marker.svg",
-            iconSize: [12, 12],
-            iconAnchor: [6, 6],
+            iconUrl: validPos ? "./marker.svg" : "./questionmark.svg",
+            iconSize: validPos ? [12, 12] : [32, 32],
+            iconAnchor: validPos ? [6, 6] : [16, 16],
           }),
         })
           .addTo(map)
           .bindTooltip(player.name, {
             direction: directions[direction],
             className: "leaflet-tooltip-own",
-            offset: [0, 0],
+            offset: offsets[directions[direction]],
           })
           .openTooltip();
 
         markers.push(marker);
 
-        if (!player.state.latitude || window.COUNTRY_ONLY) {
+        if (!player.state.latitude || window.COUNTRY_ONLY || !validPos) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
-              html: '<div class="gps_ring"></div>',
+              html: `<div class="gps_ring ${!validPos ? "gps_ring_big": ""}"></div>`,
               className: "css-icon",
               iconAnchor: [64, 64],
             }),
           }).addTo(map);
 
           markers.push(marker);
-          isPrecise.push(true);
+          isPrecise.push(validPos);
         } else {
           isPrecise.push(true);
         }
@@ -207,7 +226,7 @@ LoadEverything().then(() => {
     map.flyToBounds(bounds, {
       paddingTopLeft: [30, 30 + $(".overlay").outerHeight()],
       paddingBottomRight: [30, 30],
-      duration: 2,
+      duration: 1.2,
       easeLinearity: 0.000001,
     });
   }

@@ -35,7 +35,7 @@ body {
 }
 
 .overlay-element {
-  font-size: 16px;
+  font-size: 32px;
   padding: 8px 16px;
   border-radius: var(--border-radius);
   background: var(--bg-color);
@@ -99,7 +99,9 @@ body {
 }
 
 .gps_ring {
-  border: 3px solid blue;
+  border: 8px solid lightblue;
+  margin-left: -8px;
+  margin-top: -8px;
   border-radius: 100%;
   height: 128px;
   width: 128px;
@@ -126,6 +128,11 @@ body {
   -webkit-animation-iteration-count: infinite;
 }
 
+.gps_ring_big {
+  -webkit-animation: pulsate_big 2s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
 @-webkit-keyframes blink {
   0% {
     filter: brightness(1);
@@ -144,4 +151,18 @@ body {
 
 .leaflet-bottom.leaflet-right {
   display: none;
+}
+
+@-webkit-keyframes pulsate_big {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3, 3);
+    opacity: 0;
+  }
 }
