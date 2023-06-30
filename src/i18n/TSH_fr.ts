@@ -609,12 +609,12 @@ p, li { white-space: pre-wrap; }
         <translation>ÉCHANGER</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="458"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="470"/>
         <source>Scale: {0}</source>
         <translation>Échelle : {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="469"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="483"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation>Décalage de la vision : ({0}, {1})</translation>
     </message>
@@ -1086,7 +1086,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="66"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="759"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="766"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1101,15 +1101,15 @@ p, li { white-space: pre-wrap; }
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="331"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="338"/>
         <location filename="../TSHSelectSetWindow.py" line="88"/>
         <location filename="../TSHSelectSetWindow.py" line="90"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1126"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1157"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="756"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="763"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
@@ -1174,8 +1174,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="210"/>
-        <location filename="../TSHScoreboardWidget.py" line="722"/>
-        <location filename="../TSHScoreboardWidget.py" line="728"/>
+        <location filename="../TSHScoreboardWidget.py" line="715"/>
+        <location filename="../TSHScoreboardWidget.py" line="721"/>
         <source>Load current stream set</source>
         <translation>Charger le set actuel du stream</translation>
     </message>
@@ -1200,12 +1200,12 @@ p, li { white-space: pre-wrap; }
         <translation>Charger un set depuis {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="737"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
         <source>Load user set ({0})</source>
         <translation>Charger le set de l&apos;utilisateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="741"/>
+        <location filename="../TSHScoreboardWidget.py" line="734"/>
         <source>Load user set</source>
         <translation>Charger un set utilisateur</translation>
     </message>
@@ -1289,7 +1289,7 @@ p, li { white-space: pre-wrap; }
         <translation>Définir le joueur</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1127"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1158"/>
         <source>Sponsor {0}</source>
         <translation>Sponsor {0}</translation>
     </message>
@@ -1302,8 +1302,8 @@ p, li { white-space: pre-wrap; }
         <translation>Poule {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1173"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1200"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1204"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1231"/>
         <source>Team {0}</source>
         <translation>Équipe {0}</translation>
     </message>
@@ -1410,14 +1410,14 @@ p, li { white-space: pre-wrap; }
         <translation>]</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="722"/>
+        <location filename="../TSHScoreboardWidget.py" line="715"/>
         <location filename="../TSHSelectSetWindow.py" line="111"/>
         <location filename="../TournamentStreamHelper.py" line="542"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="722"/>
+        <location filename="../TSHScoreboardWidget.py" line="715"/>
         <location filename="../TSHSelectSetWindow.py" line="112"/>
         <location filename="../TournamentStreamHelper.py" line="542"/>
         <source>)</source>
@@ -1496,12 +1496,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1306"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1339"/>
         <source>Please select a game first</source>
         <translation>Veuillez sélectionner un jeu</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1310"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1344"/>
         <source>Player {0} tag missing</source>
         <translation>Le pseudo du joueur {0} est absent</translation>
     </message>
