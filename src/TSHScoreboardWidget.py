@@ -658,10 +658,11 @@ class TSHScoreboardWidget(QDockWidget):
 
                 # Force user to be P1 on set change
                 if data.get("auto_update") == "user":
-                    if data.get("reverse") and not self.teamsSwapped:
-                        self.SwapTeams()
-                    elif not data.get("reverse") and self.teamsSwapped:
-                        self.SwapTeams()
+                    if (data.get("reverse") and not self.teamsSwapped) or \
+                            not data.get("reverse") and self.teamsSwapped:
+                        self.teamsSwapped = not self.teamsSwapped
+                        StateManager.Set(
+                            f"score.teamsSwapped", self.teamsSwapped)
 
                 TSHTournamentDataProvider.instance.GetMatch(
                     self, data["id"], overwrite=True)
