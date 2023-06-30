@@ -31,6 +31,11 @@ LoadEverything().then(() => {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
             SetInnerHtml(
+              $(`.p${t + 1}.container .placeholder_container`),
+              player.character[1].name ? `<div class='placeholder'></div>` : ""
+            );
+
+            SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
             <span>
@@ -48,11 +53,6 @@ LoadEverything().then(() => {
               player.country.asset
                 ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
                 : ""
-            );
-
-            SetInnerHtml(
-              $(`.p${t + 1}.container .placeholder_container`),
-              player.character[1].name ? `<div class='placeholder'></div>` : ""
             );
 
             let score = [data.score.score_left, data.score.score_right];
