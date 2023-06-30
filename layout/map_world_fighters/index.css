@@ -35,7 +35,7 @@ body {
 }
 
 .overlay-element {
-  font-size: 16px;
+  font-size: 32px;
   padding: 8px 16px;
   border-radius: var(--border-radius);
   background: var(--bg-color);
@@ -60,7 +60,23 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   color: var(--text-color);
   font-weight: bold;
-  font-size: 20px;
+  font-size: 30px;
+}
+
+.player_country {
+  font-size: 24px;
+}
+
+.player_state {
+  font-size: 18px;
+}
+
+.flag {
+  width: 32px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .leaflet-tooltip-top:before {
@@ -83,16 +99,13 @@ body {
 }
 
 .gps_ring {
-  border: 3px solid blue;
+  border: 8px solid lightblue;
+  margin-left: -8px;
+  margin-top: -8px;
   border-radius: 100%;
   height: 128px;
   width: 128px;
   -webkit-animation: pulsate 2s ease-out;
-  -webkit-animation-iteration-count: infinite;
-}
-
-.gps_ring_big {
-  -webkit-animation: pulsate_big 2s ease-out;
   -webkit-animation-iteration-count: infinite;
 }
 
@@ -108,6 +121,36 @@ body {
     -webkit-transform: scale(1, 1);
     opacity: 0;
   }
+}
+
+.blink {
+  -webkit-animation: blink 1s;
+  -webkit-animation-iteration-count: infinite;
+}
+
+.gps_ring_big {
+  -webkit-animation: pulsate_big 2s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes blink {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.6);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.leaflet-container {
+  background: none !important;
+}
+
+.leaflet-bottom.leaflet-right {
+  display: none;
 }
 
 @-webkit-keyframes pulsate_big {

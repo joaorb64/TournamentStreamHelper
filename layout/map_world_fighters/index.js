@@ -1,22 +1,50 @@
-// See https://github.com/xtk93x/Leaflet.TileLayer.ColorFilter to colorize your map
-let myFilter = [];
+const resolutions = Array.from({ length: 10 })
+  .map((_, i) => (i + 200) ** 2)
+  .reverse();
 
-var baseMap = L.tileLayer.colorFilter(
-  "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+// Define your projection
+var crs = new L.Proj.CRS(
+  "ESRI:53009",
+  "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs",
   {
-    maxZoom: 4,
-    zoomSnap: 0,
-    zoomControl: false,
-    id: "osm.streets",
-    filter: myFilter,
+    resolutions: [65536, 32768, 16384, 8192, 4096, 2048],
   }
 );
 
-var map = L.map("map", {
+var mapOptions = {
+  center: [0, 0],
+  zoom: 1,
+  minZoom: 0,
+  crs,
+  zoomSnap: 0,
   zoomControl: false,
-}).setView([0, 0], 3);
+};
 
-baseMap.addTo(map);
+var map = L.map("map", mapOptions);
+
+console.log(map.getBounds());
+
+// Coordinate system is EPSG:28992 / Amersfoort / RD New
+var imageBounds = L.bounds(
+  [-18019909.21, -9009954.61],
+  [18019909.21, 9009954.61]
+);
+
+var imageOverlay = L.Proj.imageOverlay("./map.svg", imageBounds).addTo(map);
+
+map.fitBounds([
+  [-0, 180],
+  [-0, -180],
+]);
+
+// fetch(
+//   "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
+// )
+//   .then((r) => r.json())
+//   .then((r) => {
+//     const countriesGeoJson = L.geoJson(r).addTo(map);
+//     console.log(countriesGeoJson.getBounds());
+//   });
 
 LoadEverything().then(() => {
   var markers = [];
@@ -82,7 +110,7 @@ LoadEverything().then(() => {
           }
         });
 
-        let offsetDistance = validPos ? 8 : 16
+        let offsetDistance = validPos ? 12 : 32
 
         let offsets = {
           "top": [0, -offsetDistance],
@@ -94,16 +122,30 @@ LoadEverything().then(() => {
         let marker = L.marker(pos, {
           icon: L.icon({
             iconUrl: validPos ? "./marker.svg" : "./questionmark.svg",
-            iconSize: validPos ? [12, 12] : [32, 32],
-            iconAnchor: validPos ? [6, 6] : [16, 16],
+            iconSize: validPos ? [24, 24] : [64, 64],
+            iconAnchor: validPos ? [12, 12] : [32, 32],
+            className: "blink",
           }),
         })
           .addTo(map)
-          .bindTooltip(player.name, {
-            direction: directions[direction],
-            className: "leaflet-tooltip-own",
-            offset: offsets[directions[direction]],
-          })
+          .bindTooltip(
+            `
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="player_name">${player.name}</div>
+                ${player.country.asset ?
+                  `<div class="flag" style="background-image: url('../../${player.country.asset}')"></div>`
+                  :
+                  ""
+                }
+                <div class="player_country">${player.country.name ? player.country.name : ""}</div>
+                <div class="player_state">${player.state.name ? player.state.name : ""}</div>
+              </div>`,
+            {
+              direction: directions[direction],
+              className: "leaflet-tooltip-own",
+              offset: offsets[directions[direction]],
+            }
+          )
           .openTooltip();
 
         markers.push(marker);
@@ -202,16 +244,7 @@ LoadEverything().then(() => {
       $(".overlay").css("height", 0);
     }
 
-    map.on("zoomend", () => {
-      let validPositions = positions.filter((pos, i) => {
-        return isPrecise[i];
-      });
-      var polyline = L.polyline(getPairs(validPositions), {
-        color: "blue",
-        dashArray: "5,10",
-      }).addTo(map);
-      polylines.push(polyline);
-    });
+    map.on("zoomend", () => {});
 
     let bounds = L.latLngBounds(positions);
 
@@ -223,12 +256,22 @@ LoadEverything().then(() => {
       }
     });
 
-    map.flyToBounds(bounds, {
-      paddingTopLeft: [30, 30 + $(".overlay").outerHeight()],
-      paddingBottomRight: [30, 30],
-      duration: 1.2,
-      easeLinearity: 0.000001,
+    // map.flyToBounds(bounds, {
+    //   paddingTopLeft: [30, 30 + $(".overlay").outerHeight()],
+    //   paddingBottomRight: [30, 30],
+    //   duration: 1,
+    //   easeLinearity: 0.2,
+    // });
+
+    let validPositions = positions.filter((pos, i) => {
+      return isPrecise[i];
     });
+    var polyline = L.polyline(getPairs(validPositions), {
+      color: "lightblue",
+      dashArray: "5,14",
+      weight: 8,
+    }).addTo(map);
+    polylines.push(polyline);
   }
 
   function findClosestServer(pingData, lat, lng) {
