@@ -2,7 +2,25 @@ import sys
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
+from .SettingsWidget import SETTINGS as SettingsWidgetSettings
 from ..TSHHotkeys import TSHHotkeys
+import json
+
+
+def iterate_json_leaves(obj, key=None):
+    if isinstance(obj, dict):
+        isLeaf = True
+        for k, value in obj.items():
+            if isinstance(value, dict):
+                isLeaf = False
+                break
+        if isLeaf:
+            yield {key: obj}
+        else:
+            for k, value in obj.items():
+                yield from iterate_json_leaves(value, f'{key}.{k}' if key else k)
+    else:
+        yield obj
 
 
 class TSHSettingsWindow(QDialog):
@@ -38,26 +56,24 @@ class TSHSettingsWindow(QDialog):
         # Add general settings
         generalSettings = []
 
-        generalSettings.append((
-            QApplication.translate(
-                "settings.general", "Enable profanity filter"),
-            "profanity_filter",
-            "checkbox",
-            True
-        ))
+        generalSettings.append(SettingsWidgetSettings(**{
+            "name": QApplication.translate("settings.general", "Enable profanity filter"),
+            "path": "profanity_filter",
+            "type": "bool",
+            "default": True
+        }))
 
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))
 
         # Add hotkey settings
         hotkeySettings = []
-
-        hotkeySettings.append((
-            QApplication.translate("settings.hotkeys", "Enable hotkeys"),
-            "hotkeys_enabled",
-            "checkbox",
-            True
-        ))
+        hotkeySettings.append(SettingsWidgetSettings(**{
+            "name": QApplication.translate("settings.hotkeys", "Enable hotkeys"),
+            "path": "hotkeys_enabled",
+            "type": "bool",
+            "default": True
+        }))
 
         key_names = {
             "load_set": QApplication.translate("settings.hotkeys", "Load set"),
@@ -70,16 +86,34 @@ class TSHSettingsWindow(QDialog):
         }
 
         for i, (setting, value) in enumerate(TSHHotkeys.instance.keys.items()):
-            hotkeySettings.append((
-                key_names[setting],
-                setting,
-                "hotkey",
-                value,
-                TSHHotkeys.instance.ReloadHotkeys
-            ))
+            hotkeySettings.append(SettingsWidgetSettings(**{
+                "name": key_names[setting],
+                "path": setting,
+                "type": "hotkey",
+                "default": value,
+                "callback": TSHHotkeys.instance.ReloadHotkeys
+            }))
 
         self.add_setting_widget(QApplication.translate(
             "settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
+
+        # Layout
+        layoutSettings = []
+
+        layoutJson = json.load(open("./layout/settings_map.json"))
+
+        for entry in iterate_json_leaves(layoutJson):
+            (key, value) = list(entry.items())[0]
+            layoutSettings.append(SettingsWidgetSettings(**{
+                "name": key,
+                "path": key,
+                "type": value.get("type"),
+                "default": value.get("default"),
+                "options": value.get("options")
+            }))
+
+        self.add_setting_widget(QApplication.translate(
+            "settings", "Layout"), SettingsWidget("layout", layoutSettings))
 
         self.resize(1000, 500)
         QApplication.processEvents()

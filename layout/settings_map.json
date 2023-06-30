@@ -1,0 +1,43 @@
+{
+  "assets": {
+    "type": "asset"
+  },
+  "japanese_transcription": {
+    "enabled": {
+      "type": "bool",
+      "default": true
+    },
+    "to": {
+      "type": "combobox",
+      "options": [
+        "romaji",
+        "haragana",
+        "katakana"
+      ],
+      "default": "romaji"
+    },
+    "mode": {
+      "type": "combobox",
+      "options": [
+        "normal",
+        "spaced",
+        "okurigana",
+        "furigana"
+      ],
+      "default": "normal"
+    },
+    "romajiSystem": {
+      "type": "combobox",
+      "options": [
+        "nippon",
+        "passport",
+        "hepburn"
+      ],
+      "default": "nippon"
+    }
+  },
+  "automatic_theme": {
+    "type": "bool",
+    "default": false
+  }
+}
