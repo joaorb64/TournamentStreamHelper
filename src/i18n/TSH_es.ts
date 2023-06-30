@@ -1237,8 +1237,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="210"/>
-        <location filename="../TSHScoreboardWidget.py" line="715"/>
-        <location filename="../TSHScoreboardWidget.py" line="721"/>
+        <location filename="../TSHScoreboardWidget.py" line="716"/>
+        <location filename="../TSHScoreboardWidget.py" line="722"/>
         <source>Load current stream set</source>
         <translation>Cargar set actual desde el stream</translation>
     </message>
@@ -1263,12 +1263,12 @@ p, li { white-space: pre-wrap; }
         <translation>Cargar set de {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="730"/>
+        <location filename="../TSHScoreboardWidget.py" line="731"/>
         <source>Load user set ({0})</source>
         <translation>Cargar set de usuario ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="734"/>
+        <location filename="../TSHScoreboardWidget.py" line="735"/>
         <source>Load user set</source>
         <translation>Cargar set de usuario</translation>
     </message>
@@ -1367,14 +1367,14 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="715"/>
+        <location filename="../TSHScoreboardWidget.py" line="716"/>
         <location filename="../TSHSelectSetWindow.py" line="111"/>
         <location filename="../TournamentStreamHelper.py" line="542"/>
         <source>(</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="715"/>
+        <location filename="../TSHScoreboardWidget.py" line="716"/>
         <location filename="../TSHSelectSetWindow.py" line="112"/>
         <location filename="../TournamentStreamHelper.py" line="542"/>
         <source>)</source>
