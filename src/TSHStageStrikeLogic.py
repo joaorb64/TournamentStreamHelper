@@ -194,6 +194,12 @@ class TSHStageStrikeLogic():
             newState.stagesPicked.append(selectedStage.get("codename"))
             self.AddHistory(newState, justOverwrite=True)
     
+    def initNewState(self, newState):
+        newState.strikedStages = [[]]
+        newState.selectedStage = None
+        newState.strikedBy = [[], []]
+        newState.gentlemans = False
+    
     def MatchWinner(self, id):
         newState = self.CurrentState().Clone()
         newState.currGame += 1
@@ -203,10 +209,7 @@ class TSHStageStrikeLogic():
         newState.stagesPicked.append(newState.selectedStage)
 
         newState.currPlayer = id
-        newState.strikedStages = [[]]
-        newState.selectedStage = None
-        newState.strikedBy = [[], []]
-        newState.gentlemans = False
+        self.initNewState(newState)
 
         newState.lastWinner = id
 

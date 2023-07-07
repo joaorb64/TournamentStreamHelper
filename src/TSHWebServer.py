@@ -79,6 +79,7 @@ class WebServer(QThread):
     @app.route('/stage_strike_match_win', methods=['POST'])
     def match_win():
         WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
+        #Web server updating score here
         WebServer.UpdateScore()
         return "OK"
 
