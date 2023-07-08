@@ -126,25 +126,27 @@ class TSHBadWordFilter():
         # Process extra languages
         for lang, country in extraLanguages:
             lang = lang.lower()
-            country = country.lower()
 
-            # Test language-country
-            canonical = f"{lang}-{country}"
-            if canonical in TSHBadWordFilter.patterns:
-                langTests.add(canonical)
-                continue
+            if country is not None:
+                country = country.lower()
 
-            # Test language-continent
-            if country:
-                regionalLang = None
-                continent = TSHLocaleHelper.GetCountryContinent(country)
-
-                if continent in ["NA", "SA"]:
-                    regionalLang = f"{lang}-americas"
-
-                if regionalLang and regionalLang in TSHBadWordFilter.patterns:
-                    langTests.add(regionalLang)
+                # Test language-country
+                canonical = f"{lang}-{country}"
+                if canonical in TSHBadWordFilter.patterns:
+                    langTests.add(canonical)
                     continue
+
+                # Test language-continent
+                if country:
+                    regionalLang = None
+                    continent = TSHLocaleHelper.GetCountryContinent(country)
+
+                    if continent in ["NA", "SA"]:
+                        regionalLang = f"{lang}-americas"
+
+                    if regionalLang and regionalLang in TSHBadWordFilter.patterns:
+                        langTests.add(regionalLang)
+                        continue
 
             # Test language only
             if lang in TSHBadWordFilter.patterns:
