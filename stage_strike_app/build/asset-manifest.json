@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/stage_strike_app/build/static/css/main.bf05fd52.css",
-    "main.js": "/stage_strike_app/build/static/js/main.9e67a8bc.js",
+    "main.js": "/stage_strike_app/build/static/js/main.39006078.js",
     "static/js/787.38693322.chunk.js": "/stage_strike_app/build/static/js/787.38693322.chunk.js",
     "static/media/logo.svg": "/stage_strike_app/build/static/media/logo.0672973db86abe0e1002e2348284f0e9.svg",
     "static/media/stage_gentlemans.svg": "/stage_strike_app/build/static/media/stage_gentlemans.6a33b444fe27ace83281.svg",
@@ -10,11 +10,11 @@
     "static/media/stage_select.svg": "/stage_strike_app/build/static/media/stage_select.78deac0a00c26aff6752.svg",
     "index.html": "/stage_strike_app/build/index.html",
     "main.bf05fd52.css.map": "/stage_strike_app/build/static/css/main.bf05fd52.css.map",
-    "main.9e67a8bc.js.map": "/stage_strike_app/build/static/js/main.9e67a8bc.js.map",
+    "main.39006078.js.map": "/stage_strike_app/build/static/js/main.39006078.js.map",
     "787.38693322.chunk.js.map": "/stage_strike_app/build/static/js/787.38693322.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bf05fd52.css",
-    "static/js/main.9e67a8bc.js"
+    "static/js/main.39006078.js"
   ]
 }
