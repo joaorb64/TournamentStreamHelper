@@ -79,7 +79,7 @@ class TSHStageStrikeLogic():
         self.Initialize()
     
     def Initialize(self, resetStreamScore = False):
-        print("Initialize")
+        print("Stage Strike Logic Initialize")
         self.AddHistory(TSHStageStrikeState())
         self.ExportState()
     

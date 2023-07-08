@@ -7,6 +7,7 @@ from flask_cors import CORS, cross_origin
 import json
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
+from .SettingsManager import SettingsManager
 
 
 class WebServer(QThread):
@@ -107,6 +108,12 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
+        print("UPDATE SCORE ===================================")
+        print(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
+
+        if not SettingsManager.Get("general.control_score_from_stage_strike", True):
+            return
+
         score = [
             len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[0]),
             len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[1]),
