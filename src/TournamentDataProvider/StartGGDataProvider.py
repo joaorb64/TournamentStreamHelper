@@ -878,7 +878,6 @@ class StartGGDataProvider(TournamentDataProvider):
         })
 
     def GetStreamQueue(self, progress_callback=None):
-
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
@@ -895,10 +894,16 @@ class StartGGDataProvider(TournamentDataProvider):
                 }
             )
             data = json.loads(data.text)
+            print("Stream queue loaded from StartGG")
 
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
             finalData = {}
+
+            if not queues:
+                print("(No stream queue was found)")
+                return finalData
+
             for q in queues:
                 streamName = q.get("stream", {}).get("streamName", "")
                 queueData = {}
