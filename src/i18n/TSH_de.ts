@@ -819,7 +819,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="299"/>
-        <location filename="../TournamentStreamHelper.py" line="727"/>
+        <location filename="../TournamentStreamHelper.py" line="731"/>
         <source>Check for updates</source>
         <translation>Auf Updates prüfen</translation>
     </message>
@@ -948,6 +948,11 @@ p, li { white-space: pre-wrap; }
         <translation>ACHTUNG! FÜR /layout/ WIRD EIN BACKUP ERSTELLT, ALLE ANDEREN VERZEICHNISSE WERDEN ÜBERSCHRIEBEN</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="700"/>
+        <source>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="650"/>
         <location filename="../TournamentStreamHelper.py" line="660"/>
         <location filename="../TSHAssetDownloader.py" line="304"/>
@@ -966,7 +971,7 @@ p, li { white-space: pre-wrap; }
         <translation>Update ausgeführt.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="712"/>
+        <location filename="../TournamentStreamHelper.py" line="716"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -975,12 +980,12 @@ p, li { white-space: pre-wrap; }
         <translation>Update durchgeführt! Das Programm wird beendet.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="714"/>
+        <location filename="../TournamentStreamHelper.py" line="718"/>
         <source>You&apos;re already using the latest version</source>
         <translation>Die neuese Version ist bereits installiert</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="727"/>
+        <location filename="../TournamentStreamHelper.py" line="731"/>
         <source>Update available!</source>
         <translation>Update verfügbar!</translation>
     </message>
@@ -1358,12 +1363,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="727"/>
+        <location filename="../TournamentStreamHelper.py" line="731"/>
         <source>[</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="727"/>
+        <location filename="../TournamentStreamHelper.py" line="731"/>
         <source>]</source>
         <translation></translation>
     </message>
