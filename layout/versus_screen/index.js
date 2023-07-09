@@ -160,7 +160,7 @@ LoadEverything().then(() => {
               `
                 <div class="player_avatar">
                   <div style="background-image: url('${
-                    player.avatar ? player.avatar : "./person.svg"
+                    player.avatar ? '../../'+player.avatar : "./person.svg"
                   }');">
                   </div>
                 </div>
@@ -284,7 +284,7 @@ LoadEverything().then(() => {
           for (const [p, player] of Object.values(team.player).entries()) {
             if (player)
               avatars_html += `<div style="background-image: url('${
-                player.avatar ? player.avatar : "./person.svg"
+                player.avatar ? '../../'+player.avatar : "./person.svg"
               }');"></div>`;
           }
           SetInnerHtml(

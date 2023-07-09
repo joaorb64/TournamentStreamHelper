@@ -5,6 +5,7 @@ from qtpy.QtCore import *
 
 from src.TSHTournamentDataProvider import TSHTournamentDataProvider
 
+
 class TSHSelectSetWindow(QDialog):
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
@@ -18,7 +19,8 @@ class TSHSelectSetWindow(QDialog):
 
         self.proxyModel = QSortFilterProxyModel()
         self.proxyModel.setFilterKeyColumn(-1)
-        self.proxyModel.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.proxyModel.setFilterCaseSensitivity(
+            Qt.CaseSensitivity.CaseInsensitive)
 
         def filterList(text):
             self.proxyModel.setFilterFixedString(text)
@@ -30,17 +32,20 @@ class TSHSelectSetWindow(QDialog):
 
         options = QHBoxLayout()
 
-        self.showFinished = QCheckBox(QApplication.translate("app", "Show completed sets"))
+        self.showFinished = QCheckBox(
+            QApplication.translate("app", "Show completed sets"))
         options.addWidget(self.showFinished)
         self.showFinished.clicked.connect(lambda check: self.LoadSets())
-        self.showCompletePairs = QCheckBox(QApplication.translate("app", "Show complete pairs"))
+        self.showCompletePairs = QCheckBox(
+            QApplication.translate("app", "Show complete pairs"))
         options.addWidget(self.showCompletePairs)
         self.showCompletePairs.clicked.connect(lambda check: self.LoadSets())
 
         layout.layout().addLayout(options)
 
         self.startggSetSelectionItemList = QTableView()
-        self.startggSetSelectionItemList.doubleClicked.connect(lambda x: self.LoadSelectedSet())
+        self.startggSetSelectionItemList.doubleClicked.connect(
+            lambda x: self.LoadSelectedSet())
         self.startggSetSelectionItemList.installEventFilter(self)
         layout.addWidget(self.startggSetSelectionItemList)
         self.startggSetSelectionItemList.setSortingEnabled(True)
@@ -50,7 +55,8 @@ class TSHSelectSetWindow(QDialog):
             QAbstractItemView.NoEditTriggers)
         self.startggSetSelectionItemList.setModel(self.proxyModel)
         self.startggSetSelectionItemList.setColumnHidden(5, True)
-        self.startggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.startggSetSelectionItemList.horizontalHeader(
+        ).setSectionResizeMode(QHeaderView.Stretch)
         self.startggSetSelectionItemList.resizeColumnsToContents()
 
         btOk = QPushButton("OK")
@@ -66,18 +72,20 @@ class TSHSelectSetWindow(QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-        TSHTournamentDataProvider.instance.signals.get_sets_finished.connect(self.SetSets)
-    
+        TSHTournamentDataProvider.instance.signals.get_sets_finished.connect(
+            self.SetSets)
+
     def eventFilter(self, obj, event):
         if obj is self.startggSetSelectionItemList and event.type() == QEvent.KeyPress:
             if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
                 self.LoadSelectedSet()
         return super().eventFilter(obj, event)
-    
+
     def LoadSets(self):
         self.proxyModel.setSourceModel(QStandardItemModel())
-        TSHTournamentDataProvider.instance.LoadSets(showFinished=self.showFinished.checkState()!=0)
-    
+        TSHTournamentDataProvider.instance.LoadSets(
+            showFinished=self.showFinished.isChecked())
+
     def SetSets(self, sets):
         print("Got sets", len(sets))
         model = QStandardItemModel()
@@ -95,7 +103,7 @@ class TSHSelectSetWindow(QDialog):
             for s in sets:
                 dataItem = QStandardItem(str(s.get("id")))
                 dataItem.setData(s, Qt.ItemDataRole.UserRole)
-                
+
                 if self.showCompletePairs.isChecked():
                     if s.get("p1_name") == "" or s.get("p2_name") == "":
                         continue
@@ -125,16 +133,19 @@ class TSHSelectSetWindow(QDialog):
         self.proxyModel.setSourceModel(model)
         self.startggSetSelectionItemList.setColumnHidden(5, True)
         self.startggSetSelectionItemList.resizeColumnsToContents()
-        self.startggSetSelectionItemList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.startggSetSelectionItemList.horizontalHeader(
+        ).setSectionResizeMode(QHeaderView.Stretch)
         QApplication.processEvents()
         self.resize(self.width(), self.height())
-    
+
     def LoadSelectedSet(self):
         row = 0
 
         if len(self.startggSetSelectionItemList.selectionModel().selectedRows()) > 0:
-            row = self.startggSetSelectionItemList.selectionModel().selectedRows()[0].row()
-        setId = self.startggSetSelectionItemList.model().index(row, 5).data(Qt.ItemDataRole.UserRole)
+            row = self.startggSetSelectionItemList.selectionModel().selectedRows()[
+                0].row()
+        setId = self.startggSetSelectionItemList.model().index(
+            row, 5).data(Qt.ItemDataRole.UserRole)
         self.close()
 
         if setId:
