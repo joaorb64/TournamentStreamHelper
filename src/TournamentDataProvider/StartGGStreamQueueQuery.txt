@@ -1,0 +1,64 @@
+query StreamQueueQuery($slug: String) {
+    event(slug: $slug){
+        tournament {
+            streamQueue {
+                sets {
+                    id
+                    identifier
+                    fullRoundText
+                    totalGames
+                    state
+                    station {
+                      number
+                    }
+                    slots {
+                        entrant {
+                            id
+                            name
+                            seeds {
+                                seedNum
+                            }
+                            participants {
+                                id
+                                user {
+                                    id
+                                    slug
+                                    name
+                                    genderPronoun
+                                    location {
+                                        city
+                                        country
+                                        state
+                                    }
+                                    images(type: "profile") {
+                                        url
+                                    }
+                                    authorizations(types: [TWITTER]) {
+                                        type
+                                        externalUsername
+                                    }
+                                }
+                                player {
+                                    id
+                                    gamerTag
+                                    prefix
+                                }
+                            }
+                        }
+                    }
+                    phaseGroup {
+                        displayIdentifier
+                        phase {
+                            name
+                            groupCount
+                        }
+                    }
+                }
+                stream {
+                    streamName
+                    streamSource
+                }
+            }
+        }
+    }
+}

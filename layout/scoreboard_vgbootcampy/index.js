@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -42,29 +42,57 @@
       "<"
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
-
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.player["1"]].forEach((player, p) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
+      for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
-          SetInnerHtml(
-            $(`.p${t + 1}.container .name`),
-            `
-              <span class="sponsor">
-                ${player.team ? player.team.toUpperCase() : ""}
+          if (Object.keys(team.player).length == 1) {
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+                <span class="sponsor">
+                  ${player.team ? player.team.toUpperCase() : ""}
+                </span>
+                ${
+                  player.name ? await Transcript(player.name.toUpperCase()) : ""
+                }
+              `
+            );
+          } else {
+            let teamName = "";
+
+            if (!team.teamName || team.teamName == "") {
+              let names = [];
+              for (const [p, player] of Object.values(team.player).entries()) {
+                if (player && player.name) {
+                  names.push(await Transcript(player.name));
+                }
+              }
+              teamName = names.join(" / ");
+            } else {
+              teamName = team.teamName;
+            }
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .name`),
+              `
+              <span>
+                ${teamName.toUpperCase()}
+                ${team.losers ? "(L)" : ""}
               </span>
-              ${player.name ? player.name.toUpperCase() : ""}
-            `
-          );
+              `
+            );
+          }
 
           SetInnerHtml(
             $(`.p${t + 1} .losers_container`),
@@ -73,14 +101,18 @@
 
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
-            player.country.asset
+            player.country.asset && Object.keys(team.player).length == 1
               ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-              : ""
+              : `<div class='flag' style=''></div>`
           );
 
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
 
-          if (player.twitter == undefined || String(player.twitter) == "") {
+          if (
+            player.twitter == undefined ||
+            String(player.twitter) == "" ||
+            Object.values(team.player).length != 1
+          ) {
             playerTwitter.classList.add("hidden");
             playerTwitter.classList.remove("unhidden");
           } else {
@@ -103,11 +135,13 @@
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            player.sponsor_logo && Object.keys(team.player).length == 1
+              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              : `<div class='sponsor-logo' style=''></div>`
           );
         }
-      });
-    });
+      }
+    }
 
     SetInnerHtml(
       $(".tournament_name"),
@@ -122,22 +156,5 @@
       phaseTexts.push(`${data.score.best_of_text}`.toUpperCase());
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-
-    $(".container div:has(>.text:empty)").css("margin-right", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-right", "");
-    $(".container div:has(>.text:empty)").css("margin-left", "0");
-    $(".container div:not(:has(>.text:empty))").css("margin-left", "");
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+  };
+});

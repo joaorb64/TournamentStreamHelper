@@ -89,13 +89,13 @@ body {
 .container .name {
   color: var(--text-color);
   position: absolute;
-  left: 30px;
+  left: 28px;
   top: 2px;
-  width: 210px;
+  width: 222px;
   height: 34px;
-  font-size: 22px;
-  padding-left: 4px;
-  padding-right: 4px;
+  font-size: 26px;
+  padding-left: 2px;
+  padding-right: 2px;
   justify-content: left;
   text-transform: uppercase;
 }
@@ -120,10 +120,7 @@ body {
   top: 22px;
   width: 170px;
   height: 20px;
-  font-size: 14px;
-  padding-left: 4px;
-  padding-right: 4px;
-  display: flex;
+  font-size: 16px;
   justify-content: center;
   align-items: center;
 }
@@ -167,7 +164,7 @@ body {
   width: 38px;
   height: 26px;
   border: 2px solid white;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .flagcountry {
@@ -185,11 +182,11 @@ body {
 .score {
   position: absolute;
   width: 30px;
-  height: 34px;
+  height: 37px;
   display: flex;
   align-content: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 30px;
   top: 1px;
   right: 18px;
   color: var(--p1-score-color);
@@ -197,10 +194,10 @@ body {
 
 .sponsor-container {
   position: absolute;
-  top: 2px;
-  height: 34px;
-  width: 34px;
-  left: 246px;
+  top: 3px;
+  height: 30px;
+  width: 30px;
+  left: 254px;
   overflow: hidden;
   display: flex;
 }
@@ -338,16 +335,15 @@ body {
 
 .pronoun {
   position: absolute;
-  top: -20px;
-  left: 268px;
-  font-size: 14px;
+  box-sizing: border-box;
+  width: 90px;
+  top: -22px;
+  left: 258px;
+  font-size: 16px;
   text-transform: uppercase;
-  margin-left: 6px;
-  margin-right: 6px;
-  letter-spacing: normal;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 6px;
+  padding-left: 2px;
+  padding-right: 4px;
+  border-radius: 4px;
   color: var(--bg-color);
 }
 

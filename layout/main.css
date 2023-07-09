@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'NotoSans';
-  src: url('./include/NotoSans-Regular.ttf') format('truetype');
+  font-family: "NotoSans";
+  src: url("./include/NotoSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
@@ -8,10 +8,30 @@
   src: url("./include/RobotoCondensed.ttf") format("truetype");
 }
 
+/* Class used for transcriptions, example: Kana -> Romaji (Japanese to Roman alphabet) */
+.tsh_transcript {
+  font-size: 60%;
+  text-transform: uppercase;
+  align-self: end;
+}
+
+.tsh_character_container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.tsh_character,
+.tsh_character > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .text {
   white-space: nowrap;
   display: flex;
-  min-width: 99%;
+  min-width: 100%;
   width: fit-content;
   place-items: center;
   place-content: center;
@@ -22,11 +42,15 @@
 
 /* Main theme -- Dark Gradient */
 :root {
-  --font: 'RobotoCondensed';
+  --font: "RobotoCondensed";
   --border-radius: 16px;
   --text-color: white;
   --bg-color: #18181b;
-  --p1-score-bg-color: linear-gradient(135deg, rgba(189, 63, 50, 1) 0%, rgba(203, 53, 107, 1) 100%);
+  --p1-score-bg-color: linear-gradient(
+    135deg,
+    rgba(189, 63, 50, 1) 0%,
+    rgba(203, 53, 107, 1) 100%
+  );
   --p2-score-bg-color: linear-gradient(
     225deg,
     rgba(47, 128, 237, 1) 0%,

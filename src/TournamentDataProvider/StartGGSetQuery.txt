@@ -15,9 +15,6 @@ query SetQuery($id: ID!) {
             entrant {
                 id
                 name
-                seeds {
-                    seedNum
-                }
                 participants {
                     id
                     user {
@@ -80,6 +77,7 @@ query SetQuery($id: ID!) {
             phase {
                 name
                 groupCount
+                bracketType
             }
             displayIdentifier
         }

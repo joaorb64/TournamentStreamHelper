@@ -1,20 +1,22 @@
 import os
 import json
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from .StateManager import StateManager
 import re
 import traceback
 import threading
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Workers import Worker
+from PIL import Image
 
 import requests
 
 
 class TSHGameAssetManagerSignals(QObject):
-    onLoad = pyqtSignal()
-    onLoadAssets = pyqtSignal()
+    onLoad = Signal()
+    onLoadAssets = Signal()
 
 
 class TSHGameAssetManager(QObject):
@@ -27,10 +29,19 @@ class TSHGameAssetManager(QObject):
         self.characters = {}
         self.selectedGame = {}
         self.stockIcons = {}
+
+        self.characterModel = QStandardItemModel()
+        self.skinModels = {}
+        self.stageModel = QStandardItemModel()
+
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
         self.assetsLoaderThread = None
         self.thumbnailSettingsLoaded = False
+        self.threadpool = QThreadPool()
+        self.workers = []
+
+        self.skinLoaderLock = QMutex()
 
     def UiMounted(self):
         self.DownloadStartGGCharacters()
@@ -42,8 +53,23 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    open('./assets/characters.json', 'wb').write(r.content)
-                    print("startgg characters file updated")
+
+                    open('./assets/characters.json.tmp', 'wb').write(r.content)
+
+                    try:
+                        # Test if downloaded JSON is valid
+                        json.load(open('./assets/characters.json.tmp'))
+
+                        # Remove old file, overwrite with new one
+                        os.remove('./assets/characters.json')
+                        os.rename(
+                            './assets/characters.json.tmp',
+                            './assets/characters.json'
+                        )
+
+                        print("startgg characters file updated")
+                    except:
+                        print("Characters file download failed")
                 except Exception as e:
                     print("Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
@@ -64,7 +90,15 @@ class TSHGameAssetManager(QObject):
 
                         if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
                             self.parent().games[game]["logo"] = QIcon(
-                                "./user_data/games/"+game+"/base_files/logo.png")
+                                QPixmap(
+                                    QImage("./user_data/games/"+game+"/base_files/logo.png").scaled(
+                                        64,
+                                        64,
+                                        Qt.AspectRatioMode.KeepAspectRatio,
+                                        Qt.TransformationMode.SmoothTransformation
+                                    )
+                                )
+                            )
 
                         self.parent().games[game]["assets"] = {}
                         self.parent(
@@ -149,6 +183,7 @@ class TSHGameAssetManager(QObject):
 
                     # Game is already loaded
                     if game == self.parent().selectedGame.get("codename"):
+                        self.parent().threadpool.waitForDone()
                         return
 
                     print("Changed to game: "+game)
@@ -199,7 +234,10 @@ class TSHGameAssetManager(QObject):
                                     print(f)
                                     pass
                                 self.parent().stockIcons[c][number] = QImage(
-                                    './user_data/games/'+game+'/'+assetsKey+'/'+f)
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
+                                        32,
+                                        Qt.TransformationMode.SmoothTransformation
+                                )
 
                         print("Loaded stock icons")
 
@@ -232,17 +270,18 @@ class TSHGameAssetManager(QObject):
                                     except:
                                         pass
                                     self.parent().skins[c][number] = True
-                                    
+
                                     if c not in packSkinMask:
                                         packSkinMask[c] = {}
-                                    
+
                                     if assetsKey not in packSkinMask[c]:
                                         packSkinMask[c][assetsKey] = set()
-                                    
+
                                     packSkinMask[c][assetsKey].add(number)
-                                
+
                                     # Get image dimensions
-                                    imgfile = QImageReader('./user_data/games/'+game+'/'+assetsKey+'/'+f)
+                                    imgfile = QImageReader(
+                                        './user_data/games/'+game+'/'+assetsKey+'/'+f)
 
                                     size = imgfile.size()
 
@@ -256,12 +295,13 @@ class TSHGameAssetManager(QObject):
                                         heights[assetsKey] = []
 
                                     if size.height() != -1:
-                                        heights[assetsKey].append(size.height())
+                                        heights[assetsKey].append(
+                                            size.height())
                             print("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
-                        
+
                         # Set average size
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             if assetsKey != "base_files":
                                 try:
                                     if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
@@ -271,9 +311,9 @@ class TSHGameAssetManager(QObject):
                                         }
                                 except:
                                     print(traceback.format_exc())
-                        
+
                         # Set complete
-                        for assetsKey in list(gameObj["assets"].keys()):
+                        for assetsKey in list(gameObj.get("assets", {}).keys()):
                             try:
                                 complete = True
 
@@ -284,7 +324,7 @@ class TSHGameAssetManager(QObject):
                                         if assetsKey not in packSkinMask[c] or skin not in packSkinMask[c][assetsKey]:
                                             complete = False
                                             break
-                                
+
                                 gameObj["assets"][assetsKey]["complete"] = complete
                             except:
                                 print(traceback.format_exc())
@@ -295,12 +335,13 @@ class TSHGameAssetManager(QObject):
 
                         for asset in list(gameObj.get("assets", {}).keys()):
                             if gameObj["assets"][asset].get("complete") and gameObj["assets"][asset].get("average_size"):
-                                size = sum(gameObj["assets"][asset].get("average_size").values())
+                                size = sum(gameObj["assets"][asset].get(
+                                    "average_size").values())
 
                                 if size > biggestAverage:
                                     assetsKey = asset
                                     biggestAverage = size
-                        
+
                         self.parent().biggestCompletePack = assetsKey
                         print("Biggest complete assets:", assetsKey)
 
@@ -327,23 +368,67 @@ class TSHGameAssetManager(QObject):
                         for s in self.parent().stages.keys():
                             self.parent().stages[s]["name"] = s
 
+                        # Load translations
+                        try:
+                            for c in self.parent().characters.keys():
+                                display_name = c
+                                export_name = c
+                                en_name = c
+
+                                if self.parent().characters[c].get("locale"):
+                                    locale = TSHLocaleHelper.programLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in self.parent().characters[c]["locale"]:
+                                        display_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.programLocale)]
+
+                                    locale = TSHLocaleHelper.exportLocale
+                                    if locale.replace("-", "_") in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in self.parent().characters[c]["locale"]:
+                                        export_name = self.parent().characters[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.exportLocale)]
+
+                                self.parent(
+                                ).characters[c]["display_name"] = display_name
+                                self.parent(
+                                ).characters[c]["export_name"] = export_name
+                                self.parent(
+                                ).characters[c]["en_name"] = en_name
+                        except:
+                            print(traceback.format_exc())
+
                     StateManager.Set(f"game", {
                         "name": self.parent().selectedGame.get("name"),
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                     })
 
+                    self.parent().UpdateCharacterModel()
+                    self.parent().UpdateSkinModel()
+                    self.parent().UpdateStageModel()
                     self.parent().signals.onLoad.emit()
                 except:
                     print(traceback.format_exc())
                 finally:
+                    self.parent().threadpool.waitForDone()
                     self.lock.unlock()
 
         self.thumbnailSettingsLoaded = False
-        self.assetsLoaderThread = AssetsLoaderThread(TSHGameAssetManager.instance)
+        self.assetsLoaderThread = AssetsLoaderThread(
+            TSHGameAssetManager.instance)
         self.assetsLoaderThread.game = game
         self.assetsLoaderThread.lock = self.assetsLoaderLock
-        self.assetsLoaderThread.start()
+        self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
 
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
@@ -359,6 +444,366 @@ class TSHGameAssetManager(QObject):
 
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
+
+    def UpdateStageModel(self):
+        try:
+            self.stageModel = QStandardItemModel()
+
+            for stage in self.selectedGame.get("stage_to_codename", {}).items():
+                # Load stage name translations
+                stage[1]["en_name"] = stage[1].get("name")
+
+                # Display name
+                display_name = stage[1].get("name")
+
+                locale = TSHLocaleHelper.programLocale
+                if locale.replace('-', '_') in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        locale.replace('-', '_')]
+                elif locale.split('-')[0] in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        locale.split('-')[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in stage[1].get("locale", {}):
+                    display_name = stage[1].get("locale", {})[
+                        TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale)]
+
+                stage[1]["display_name"] = display_name
+
+                # Export name
+                export_name = stage[1].get("name")
+
+                locale = TSHLocaleHelper.exportLocale
+                if locale.replace('-', '_') in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        locale.replace('-', '_')]
+                elif locale.split('-')[0] in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        locale.split('-')[0]]
+                elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in stage[1].get("locale", {}):
+                    export_name = stage[1].get("locale", {})[
+                        TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale)]
+
+                stage[1]["name"] = export_name
+
+                item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
+                    "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
+                item.setData(stage[1], Qt.ItemDataRole.UserRole)
+                self.stageModel.appendRow(item)
+
+                worker = Worker(self.LoadStageImage, *[stage[1], item])
+                worker.signals.result.connect(self.LoadStageImageComplete)
+                self.threadpool.start(worker)
+        except:
+            print(traceback.format_exc())
+
+    def LoadStageImage(self, stage, item, progress_callback):
+        try:
+            if stage.get("path"):
+                img = Image.open(stage.get("path"))
+
+                resizeMultiplier = 1
+
+                if img.width > img.height:
+                    resizeMultiplier = 64/img.width
+                else:
+                    resizeMultiplier = 64/img.height
+
+                img = img.resize((int(img.width*resizeMultiplier),
+                                 int(img.height*resizeMultiplier)), Image.BILINEAR)
+
+                img = img.convert("RGBA")
+                data = img.tobytes("raw", "RGBA")
+                qimg = QImage(
+                    data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+                pix = QPixmap.fromImage(qimg)
+                icon = QIcon(pix)
+
+                return ([item, icon])
+            else:
+                raise
+        except Exception as e:
+            img = QPixmap("./assets/icons/cancel.svg").scaled(32, 32)
+            icon = QIcon(img)
+            print(traceback.format_exc())
+            return ([item, icon])
+
+    def LoadStageImageComplete(self, result):
+        try:
+            if result is not None:
+                if result[0] and result[1]:
+                    result[0].setIcon(result[1])
+        except Exception as e:
+            print(traceback.format_exc())
+            return (None)
+
+    def UpdateCharacterModel(self):
+        try:
+            self.characterModel = QStandardItemModel()
+
+            # Add one empty
+            item = QStandardItem("")
+            self.characterModel.appendRow(item)
+
+            for c in self.characters.keys():
+                item = QStandardItem()
+                item.setData(c, Qt.ItemDataRole.EditRole)
+                item.setIcon(
+                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
+                )
+
+                data = {
+                    "name": self.characters[c].get("export_name"),
+                    "en_name": c,
+                    "display_name": self.characters[c].get("display_name"),
+                    "codename": self.characters[c].get("codename")
+                }
+
+                if self.characters[c].get("display_name") != c:
+                    item.setData(
+                        f'{self.characters[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
+
+                item.setData(data, Qt.ItemDataRole.UserRole)
+                self.characterModel.appendRow(item)
+
+            self.characterModel.sort(0)
+        except:
+            print(traceback.format_exc())
+
+    def UpdateSkinModel(self):
+        self.skinModels = {}
+
+        self.workers = []
+
+        for key, character in self.characters.items():
+            characterData = character
+
+            if characterData:
+                skins = TSHGameAssetManager.instance.skins.get(key, {})
+
+            sortedSkins = [int(k) for k in skins.keys()]
+            sortedSkins.sort()
+
+            skinModel = QStandardItemModel()
+
+            allAssetData = []
+            allItem = []
+
+            for skin in sortedSkins:
+                item = QStandardItem()
+
+                skinModel.appendRow(item)
+
+                assetData = {}
+                assetData["assets"] = TSHGameAssetManager.instance.GetCharacterAssets(
+                    character.get("codename"), skin)
+                if assetData["assets"] == None:
+                    assetData["assets"] = {}
+
+                skinIndex = str(skin)
+
+                # Get skin name
+                skinNameData = TSHGameAssetManager.instance.characters.get(
+                    character.get("en_name"), {}).get("skin_name", {})
+
+                skin_name = character.get("name")
+                skin_name_en = character.get("en_name")
+
+                try:
+                    locale = TSHLocaleHelper.programLocale
+
+                    if locale.replace("-", "_") in skinNameData.get(skinIndex, {}).get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get(
+                            "locale", {})[locale.replace("-", "_")]
+                    elif re.split("-|_", locale)[0] in skinNameData.get(skinIndex, {}).get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get(
+                            "locale", {})[re.split("-|_", locale)[0]]
+                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in skinNameData.get("locale", {}):
+                        skin_name = skinNameData.get(skinIndex, {}).get("locale", {})[TSHLocaleHelper.GetRemaps(
+                            TSHLocaleHelper.exportLocale)]
+                    elif skinNameData.get(skinIndex, {}).get("name"):
+                        skin_name = skinNameData.get(skinIndex, {}).get("name")
+
+                    if skinNameData.get(skinIndex, {}).get("name"):
+                        skin_name_en = skinNameData.get(
+                            skinIndex, {}).get("name")
+                except:
+                    print(traceback.format_exc())
+
+                assetData["name"] = skin_name
+                assetData["en_name"] = skin_name_en
+
+                item.setData(skin_name if skin_name else skinIndex,
+                             Qt.ItemDataRole.EditRole)
+                item.setData(assetData, Qt.ItemDataRole.UserRole)
+
+                allItem.append(item)
+                allAssetData.append(assetData)
+
+            worker = Worker(self.LoadSkinImages, *
+                            [allAssetData, allItem, skinModel])
+            worker.signals.result.connect(self.LoadSkinImagesComplete)
+            self.workers.append(worker)
+
+            self.skinModels[key] = skinModel
+
+        for w in self.workers:
+            self.threadpool.start(w)
+
+    def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback):
+        try:
+            icons = []
+
+            for i in range(len(allAssetData)):
+                assetData = allAssetData[i]
+
+                # Set to use first asset as a fallback
+                key = TSHGameAssetManager.instance.biggestCompletePack
+                asset = None
+
+                if assetData["assets"].get(key):
+                    asset = assetData["assets"][key]
+                elif assetData["assets"].get("full"):
+                    asset = assetData["assets"]["full"]
+                elif assetData["assets"].get("base_files/icon"):
+                    asset = assetData["assets"]["base_files/icon"]
+
+                if asset:
+                    # pix = QPixmap(asset["asset"])
+                    img = Image.open(asset["asset"])
+                else:
+                    # pix = QPixmap("./assets/icons/cancel.svg").scaled(16,16)
+                    img = Image.open("./assets/icons/cancel.svg")
+
+                targetW = 128
+                targetH = 96
+
+                originalW = img.width
+                originalH = img.height
+
+                proportional_zoom = 1
+
+                if asset.get("average_size"):
+                    proportional_zoom = 0
+                    proportional_zoom = max(
+                        proportional_zoom,
+                        (targetW / asset.get("average_size", {}).get("x", 0)) * 1.2
+                    )
+                    proportional_zoom = max(
+                        proportional_zoom,
+                        (targetH / asset.get("average_size", {}).get("y", 0)) * 1.2
+                    )
+
+                # For cropped assets, zoom to fill
+                # Calculate max zoom
+                zoom_x = targetW / originalW
+                zoom_y = targetH / originalH
+
+                minZoom = 1
+                rescalingFactor = 1
+                customZoom = 1
+
+                if asset.get("rescaling_factor"):
+                    rescalingFactor = asset.get("rescaling_factor")
+
+                uncropped_edge = asset.get("uncropped_edge", [])
+
+                if not uncropped_edge or len(uncropped_edge) == 0:
+                    if zoom_x > zoom_y:
+                        minZoom = zoom_x
+                    else:
+                        minZoom = zoom_y
+                else:
+                    if (
+                        "u" in uncropped_edge and
+                        "d" in uncropped_edge and
+                        "l" in uncropped_edge and
+                        "r" in uncropped_edge
+                    ):
+                        customZoom = 1.2  # Add zoom in for uncropped assets
+                        minZoom = customZoom * proportional_zoom * rescalingFactor
+                    elif (
+                        not "l" in uncropped_edge and
+                        not "r" in uncropped_edge
+                    ):
+                        minZoom = zoom_x
+                    elif (
+                        not "u" in uncropped_edge and
+                        not "d" in uncropped_edge
+                    ):
+                        minZoom = zoom_y
+                    else:
+                        minZoom = customZoom * proportional_zoom * rescalingFactor
+
+                zoom = max(minZoom, customZoom * minZoom)
+
+                # Centering
+                xx = 0
+                yy = 0
+
+                eyesight = asset.get("eyesight")
+
+                if not eyesight:
+                    eyesight = {
+                        "x": originalW / 2,
+                        "y": originalH / 2
+                    }
+
+                xx = -eyesight["x"] * zoom + targetW / 2
+
+                maxMoveX = targetW - originalW * zoom
+
+                if not uncropped_edge or not "l" in uncropped_edge:
+                    if (xx > 0):
+                        xx = 0
+
+                if not uncropped_edge or not "r" in uncropped_edge:
+                    if (xx < maxMoveX):
+                        xx = maxMoveX
+
+                yy = -eyesight["y"] * zoom + targetH / 2
+
+                maxMoveY = targetH - originalH * zoom
+
+                if not uncropped_edge or not "u" in uncropped_edge:
+                    if (yy > 0):
+                        yy = 0
+
+                if not uncropped_edge or not "d" in uncropped_edge:
+                    if (yy < maxMoveY):
+                        yy = maxMoveY
+
+                img = img.resize(
+                    (int(originalW*zoom), int(originalH*zoom)), Image.BILINEAR)
+                img = img.crop((
+                    int(-xx),
+                    int(-yy),
+                    int(-xx+128),
+                    int(-yy+96)
+                ))
+
+                img = img.convert("RGBA")
+                data = img.tobytes("raw", "RGBA")
+                qimg = QImage(
+                    data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+                pix = QPixmap.fromImage(qimg)
+                icon = QIcon(pix)
+
+                icons.append(icon)
+
+            return ([(allItem[i], icons[i]) for i in range(len(allItem))])
+        except Exception as e:
+            print(traceback.format_exc())
+            return (None)
+
+    def LoadSkinImagesComplete(self, results):
+        try:
+            for result in results:
+                if result is not None:
+                    if result[0] and result[1]:
+                        result[0].setIcon(result[1])
+        except Exception as e:
+            print(traceback.format_exc())
+            return (None)
 
     def GetCharacterAssets(self, characterCodename: str, skin: int, assetpack: str = None):
         charFiles = {}
@@ -432,7 +877,7 @@ class TSHGameAssetManager(QObject):
                             else:
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
-                    
+
                     if asset.get("rescaling_factor"):
                         rescaling_factor = asset.get("rescaling_factor", {}).get(
                             characterCodename, {})
@@ -442,8 +887,9 @@ class TSHGameAssetManager(QObject):
                                 charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
                                     str(skin))
                             else:
-                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get("0", 1)
-                    
+                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
+                                    "0", 1)
+
                     if asset.get("unflippable"):
                         unflippable = asset.get("unflippable", {}).get(
                             characterCodename, {})
@@ -455,20 +901,36 @@ class TSHGameAssetManager(QObject):
                             else:
                                 charFiles[assetKey]["unflippable"] = list(
                                     unflippable.values())[0]
-                    
+
                     if asset.get("metadata"):
                         metadata = {}
                         charFiles[assetKey]['metadata'] = {}
-                        for key in asset.get("metadata").keys():
+                        for key in range(len(asset.get("metadata"))):
                             metadata[key] = asset.get("metadata", {})[key]["values"].get(
                                 characterCodename, {}).get("value", "")
-                            charFiles[assetKey]['metadata'][f"{key}_en"] = metadata[key]
+                            charFiles[assetKey]['metadata'][f"{key}"] = {}
+                            charFiles[assetKey]['metadata'][f"{key}"]["title_en"] = asset.get("metadata", {})[
+                                key].get("title", '')
+                            if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key].get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key].get("locale", {}).keys():
+                                try:
+                                    metadata_title_locale = asset.get("metadata", {})[key].get("locale", {})[
+                                        TSHLocaleHelper.exportLocale]
+                                except KeyError:
+                                    metadata_title_locale = asset.get("metadata", {})[key].get(
+                                        "locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
+                            else:
+                                metadata_title_locale = asset.get("metadata", {})[
+                                    key].get("title", '')
+                            charFiles[assetKey]['metadata'][f"{key}"]["title"] = metadata_title_locale
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value_en"] = metadata[key]
                             if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys():
                                 try:
-                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale]
+                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(
+                                        characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale]
                                 except KeyError:
-                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
-                            charFiles[assetKey]['metadata'][key] = metadata[key]
+                                    metadata[key] = asset.get("metadata", {})[key]["values"].get(
+                                        characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value"] = metadata[key]
 
                         # if len(metadata.keys()) > 0:
                         #     if str(skin) in metadata:
@@ -477,16 +939,18 @@ class TSHGameAssetManager(QObject):
                         #     else:
                         #         charFiles[assetKey]["metadata"] = list(
                         #             metadata.values())[0]
-                    
+
                     if asset.get("uncropped_edge"):
-                        charFiles[assetKey]["uncropped_edge"] = asset.get("uncropped_edge")
-                    
+                        charFiles[assetKey]["uncropped_edge"] = asset.get(
+                            "uncropped_edge")
+
                     if asset.get("average_size"):
-                        charFiles[assetKey]["average_size"] = asset.get("average_size")
+                        charFiles[assetKey]["average_size"] = asset.get(
+                            "average_size")
                 except Exception as e:
                     print(traceback.format_exc())
 
-        return(charFiles)
+        return (charFiles)
 
     def GetCharacterFromStartGGId(self, smashgg_id: int):
         sggcharacters = json.loads(

@@ -14,17 +14,59 @@ body {
   height: 1080px;
 }
 
-.background {
+.stage {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -999;
+}
+
+.stage .text div {
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  width: 100vw;
   height: 100%;
   z-index: -999;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-image: url(./bg.png);
+  filter: blur(5px) brightness(0.9);
+}
+
+.player_avatar {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.p1 .player_avatar {
+  background: var(--p1-score-bg-color);
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+.p2 .player_avatar {
+  background: var(--p2-score-bg-color);
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+
+.player_avatar div {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
 }
 
 .container {
@@ -182,11 +224,11 @@ body {
 }
 
 .p1 .losers {
-  background-color: #ff3837ff;
+  background-color: var(--p1-sponsor-color);
 }
 
 .p2 .losers {
-  background-color: #308affff;
+  background-color: var(--p2-sponsor-color);
 }
 
 .info {
@@ -299,12 +341,26 @@ body {
   flex-direction: column;
 }
 
-.character .portrait {
-  -webkit-mask-image: -webkit-linear-gradient(left, #FFFFFF 0%, #FFFFFF 60%, #FFFFFF00 100%);
+.character .tsh_character {
+  -webkit-mask-image: -webkit-linear-gradient(
+    left,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
 }
 
-.character .portrait.invert_shadow {
-  -webkit-mask-image: -webkit-linear-gradient(left, #FFFFFF00 0%, #FFFFFF 60%, #FFFFFF 100%);
+.p2.character .tsh_character {
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
+}
+
+.p2.character .tsh_character div {
+  transform: scaleX(-1);
 }
 
 .character .video {
@@ -393,9 +449,9 @@ body {
 .sponsor_logo {
   overflow: visible;
   position: fixed;
-  width: 120px;
-  height: 120px;
-  top: -125px;
+  width: 160px;
+  height: 160px;
+  top: -170px;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

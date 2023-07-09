@@ -1,8 +1,8 @@
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5 import uic
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from qtpy import uic
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
@@ -12,9 +12,11 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
+
 class TSHPlayerListWidgetSignals(QObject):
-    UpdateData = pyqtSignal(object)
-    DataChanged = pyqtSignal()
+    UpdateData = Signal(object)
+    DataChanged = Signal()
+
 
 class TSHPlayerList(QWidget):
     def __init__(self, *args, base="player_list"):
@@ -32,6 +34,8 @@ class TSHPlayerList(QWidget):
 
         self.setLayout(QVBoxLayout())
 
+        self.childDataChangedLock = False
+
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
         scrollArea.setFrameShape(QFrame.Shape.NoFrame)
@@ -47,30 +51,38 @@ class TSHPlayerList(QWidget):
 
         StateManager.Set(base, {})
         StateManager.ReleaseSaving()
-    
+
+    def ChildDataChangedEmit(self):
+        if not self.childDataChangedLock:
+            self.signals.DataChanged.emit()
+
     def LoadFromStandingsClicked(self):
-        TSHTournamentDataProvider.instance.GetStandings(self.slotNumber.value(), self.signals.UpdateData)
-    
+        TSHTournamentDataProvider.instance.GetStandings(
+            self.slotNumber.value(), self.signals.UpdateData)
+
     def LoadFromStandings(self, data):
         StateManager.BlockSaving()
         if len(data) > 0:
             self.SetSlotNumber(len(data))
             playerNumber = len(data[0].get("players"))
             self.SetPlayersPerTeam(playerNumber)
-            
+
+            self.childDataChangedLock = True
             for i, slot in enumerate(self.slotWidgets):
                 slot.SetTeamData(data[i])
+            self.childDataChangedLock = False
         StateManager.ReleaseSaving()
 
     def SetSlotNumber(self, number):
         StateManager.BlockSaving()
         while len(self.slotWidgets) < number:
-            s = TSHPlayerListSlotWidget(len(self.slotWidgets)+1, self, base=self.base)
+            s = TSHPlayerListSlotWidget(
+                len(self.slotWidgets)+1, self, base=self.base)
             self.slotWidgets.append(s)
             self.widgetArea.layout().addWidget(s)
             s.SetPlayersPerTeam(self.playersPerTeam)
             s.SetCharacterNumber(self.charactersPerPlayer)
-            s.signals.dataChanged.connect(self.signals.DataChanged.emit)
+            s.signals.dataChanged.connect(self.ChildDataChangedEmit)
 
             # s.SetCharactersPerPlayer(self.charNumber.value())
 
@@ -88,21 +100,25 @@ class TSHPlayerList(QWidget):
             StateManager.Unset(f'{self.base}.slot.{s.index}')
 
         self.signals.DataChanged.emit()
-        
+
         StateManager.ReleaseSaving()
 
     def SetCharactersPerPlayer(self, value):
         self.charactersPerPlayer = value
         StateManager.BlockSaving()
+        self.childDataChangedLock = True
         for s in self.slotWidgets:
             s.SetCharacterNumber(value)
+        self.childDataChangedLock = False
         self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()
 
     def SetPlayersPerTeam(self, number):
         self.playersPerTeam = number
         StateManager.BlockSaving()
+        self.childDataChangedLock = True
         for s in self.slotWidgets:
             s.SetPlayersPerTeam(number)
+        self.childDataChangedLock = False
         self.signals.DataChanged.emit()
         StateManager.ReleaseSaving()

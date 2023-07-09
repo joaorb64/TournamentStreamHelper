@@ -217,7 +217,6 @@ body {
   top: 60%;
   transform: translateY(-50%);
   z-index: -1;
-  opacity: 0.6;
 }
 
 .line_arrow {

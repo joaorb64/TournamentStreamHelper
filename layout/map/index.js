@@ -14,11 +14,11 @@ var baseMap = L.tileLayer.colorFilter(
 
 var map = L.map("map", {
   zoomControl: false,
-}).setView([0, 0], 2);
+}).setView([0, 0], 3);
 
 baseMap.addTo(map);
 
-(($) => {
+LoadEverything().then(() => {
   var markers = [];
   var polylines = [];
   var positions = [];
@@ -26,7 +26,7 @@ baseMap.addTo(map);
   // for country latlng the icon pulses and there's more zoom out
   var isPrecise = [];
 
-  async function Start() {}
+  Start = async (event) => {};
 
   function UpdateMap() {
     console.log(pingData);
@@ -43,19 +43,29 @@ baseMap.addTo(map);
 
     positions = [];
     isPrecise = [];
+    isValid = [];
 
     let servers = [];
 
     Object.values(data.score.team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
+        if(!player.name){
+          return
+        }
+
         let pos = [
-          player.state.latitude != null
+          player.state.latitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.latitude)
             : parseFloat(player.country.latitude),
-          player.state.longitude != null
+          player.state.longitude != null && !window.COUNTRY_ONLY
             ? parseFloat(player.state.longitude)
             : parseFloat(player.country.longitude),
         ];
+
+        let validPos = !Number.isNaN(pos[0]) && !Number.isNaN(pos[1]);
+        if(!validPos) pos = [0, 0]
+        isValid.push(validPos);
+
         positions.push(pos);
 
         let server = findClosestServer(pingData, pos[0], pos[1]);
@@ -72,34 +82,43 @@ baseMap.addTo(map);
           }
         });
 
+        let offsetDistance = validPos ? 8 : 16
+
+        let offsets = {
+          "top": [0, -offsetDistance],
+          "bottom": [0, offsetDistance],
+          "left":[-offsetDistance, 0],
+          "right": [offsetDistance, 0]
+        }
+
         let marker = L.marker(pos, {
           icon: L.icon({
-            iconUrl: "./marker.svg",
-            iconSize: [12, 12],
-            iconAnchor: [6, 6],
+            iconUrl: validPos ? "./marker.svg" : "./questionmark.svg",
+            iconSize: validPos ? [12, 12] : [32, 32],
+            iconAnchor: validPos ? [6, 6] : [16, 16],
           }),
         })
           .addTo(map)
           .bindTooltip(player.name, {
             direction: directions[direction],
             className: "leaflet-tooltip-own",
-            offset: [0, 0],
+            offset: offsets[directions[direction]],
           })
           .openTooltip();
 
         markers.push(marker);
 
-        if (!player.state.latitude) {
+        if (!player.state.latitude || window.COUNTRY_ONLY || !validPos) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
-              html: '<div class="gps_ring"></div>',
+              html: `<div class="gps_ring ${!validPos ? "gps_ring_big": ""}"></div>`,
               className: "css-icon",
               iconAnchor: [64, 64],
             }),
           }).addTo(map);
 
           markers.push(marker);
-          isPrecise.push(false);
+          isPrecise.push(validPos);
         } else {
           isPrecise.push(true);
         }
@@ -207,7 +226,7 @@ baseMap.addTo(map);
     map.flyToBounds(bounds, {
       paddingTopLeft: [30, 30 + $(".overlay").outerHeight()],
       paddingBottomRight: [30, 30],
-      duration: 2,
+      duration: 1.2,
       easeLinearity: 0.000001,
     });
   }
@@ -261,13 +280,13 @@ baseMap.addTo(map);
     return (degree * Math.PI) / 180;
   }
 
-  var data = {};
-  var oldData = {};
+  var pingData = null;
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
-    pingData = await getPings();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
+
+    if (!pingData) pingData = await getPings();
 
     if (
       Object.keys(oldData).length == 0 ||
@@ -278,7 +297,7 @@ baseMap.addTo(map);
     ) {
       UpdateMap();
     }
-  }
+  };
 
   Math.getDistance = function (x1, y1, x2, y2) {
     var xs = x2 - x1,
@@ -303,11 +322,4 @@ baseMap.addTo(map);
       cache: false,
     });
   }
-
-  $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
-      Start();
-      setInterval(Update, 1000);
-    });
-  });
-})(jQuery);
+});

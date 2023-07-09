@@ -1,4 +1,4 @@
-(($) => {
+LoadEverything().then(() => {
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from($(".recent_sets"), { autoAlpha: 0 });
@@ -6,16 +6,16 @@
   var playersRecentSets = null;
   var players = [];
 
-  async function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
   var data = {};
   var oldData = {};
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.score ||
@@ -101,8 +101,11 @@
       }
     }
 
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-      [team.player["1"]].forEach((player, p) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
+      for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
           SetInnerHtml(
             $(`.recent_sets_players .player_${t + 1} .sponsor`),
@@ -110,20 +113,10 @@
           );
           SetInnerHtml(
             $(`.recent_sets_players .player_${t + 1} .name`),
-            player.name
+            await Transcript(player.name)
           );
         }
-      });
-    });
-  }
-
-  // Using update here to set images as soon as possible
-  // so that on window.load they are already preloaded
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(0, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+      }
+    }
+  };
+});

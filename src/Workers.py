@@ -1,6 +1,6 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 import traceback
 import sys
 
@@ -23,10 +23,10 @@ class WorkerSignals(QObject):
         `int` indicating % progress 
 
     '''
-    finished = pyqtSignal()
-    error = pyqtSignal(tuple)
-    result = pyqtSignal(object)
-    progress = pyqtSignal(object)
+    finished = Signal()
+    error = Signal(tuple)
+    result = Signal(object)
+    progress = Signal(object)
 
 
 class Worker(QRunnable):
@@ -55,7 +55,7 @@ class Worker(QRunnable):
         # Add the callback to our kwargs
         self.kwargs['progress_callback'] = self.signals.progress        
 
-    @pyqtSlot()
+    @Slot()
     def run(self):
         '''
         Initialise the runner function with passed args, kwargs.

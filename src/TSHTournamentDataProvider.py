@@ -1,9 +1,9 @@
 import re
 import time
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 import requests
 import threading
 from .SettingsManager import SettingsManager
@@ -17,18 +17,20 @@ from .Workers import Worker
 
 
 class TSHTournamentDataProviderSignals(QObject):
-    tournament_changed = pyqtSignal()
-    entrants_updated = pyqtSignal()
-    tournament_data_updated = pyqtSignal(dict)
-    twitch_username_updated = pyqtSignal()
-    user_updated = pyqtSignal()
-    recent_sets_updated = pyqtSignal(dict)
-    last_sets_updated = pyqtSignal(dict)
-    history_sets_updated = pyqtSignal(dict)
-    get_sets_finished = pyqtSignal(list)
-    tournament_phases_updated = pyqtSignal(list)
-    tournament_phasegroup_updated = pyqtSignal(dict)
-    game_changed = pyqtSignal(int)
+    tournament_changed = Signal()
+    entrants_updated = Signal()
+    tournament_data_updated = Signal(dict)
+    twitch_username_updated = Signal()
+    user_updated = Signal()
+    recent_sets_updated = Signal(dict)
+    last_sets_updated = Signal(dict)
+    history_sets_updated = Signal(dict)
+    get_sets_finished = Signal(list)
+    tournament_phases_updated = Signal(list)
+    tournament_phasegroup_updated = Signal(dict)
+    game_changed = Signal(int)
+    stream_queue_loaded = Signal(dict)
+
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -61,25 +63,33 @@ class TSHTournamentDataProvider:
         if self.provider and self.provider.url == url:
             return
 
-        if "start.gg" in url:
+        if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-        elif "challonge.com" in url:
+        elif url is not None and "challonge.com" in url:
             TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
                 url, self.threadPool, self)
         else:
             print("Unsupported provider...")
-            return
-
-        self.GetTournamentData(initialLoading=initialLoading)
-        self.GetTournamentPhases()
-
-        TSHTournamentDataProvider.instance.provider.GetEntrants()
-        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
-
-        TSHTournamentDataProvider.instance.SetGameFromProvider()
+            TSHTournamentDataProvider.instance.provider = None
 
         SettingsManager.Set("TOURNAMENT_URL", url)
+
+        if self.provider is not None:
+            self.GetTournamentData(initialLoading=initialLoading)
+            self.GetTournamentPhases()
+
+            TSHTournamentDataProvider.instance.provider.GetEntrants()
+            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+            TSHTournamentDataProvider.instance.SetGameFromProvider()
+        else:
+            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({
+            })
+            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit([
+            ])
+            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+            TSHGameAssetManager.instance.LoadGameAssets(0)
 
     def SetStartggEventSlug(self, mainWindow):
         inp = QDialog(mainWindow)
@@ -95,7 +105,7 @@ class TSHTournamentDataProvider:
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
-            QRegularExpression("start.gg/tournament/[^/]+/event/[^/]+"),
+            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
             QRegularExpression("challonge.com/.+")
         ]
 
@@ -123,9 +133,12 @@ class TSHTournamentDataProvider:
 
             if "start.gg" in url:
                 matches = re.match(
-                    "(.*start.gg/tournament/[^/]*/event/[^/]*)", url)
+                    "(.*start.gg/tournament/[^/]*/event[s]?/[^/]*)", url)
                 if matches:
                     url = matches.group(0)
+
+                    # Some URLs in startgg have eventS but the API doesn't work with that format
+                    url = url.replace("/events/", "/event/")
             if "challonge" in url:
                 matches = re.match(
                     "(.*challonge.com/[^/]*/[^/]*)", url)
@@ -172,26 +185,30 @@ class TSHTournamentDataProvider:
         worker = Worker(self.provider.GetTournamentData)
         worker.signals.result.connect(lambda tournamentData: [
             tournamentData.update({"initial_load": initialLoading}),
-            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(tournamentData)
+            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(
+                tournamentData)
         ])
         self.threadPool.start(worker)
-    
+
     def GetTournamentPhases(self):
         worker = Worker(self.provider.GetTournamentPhases)
         worker.signals.result.connect(lambda tournamentPhases: [
-            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit(tournamentPhases)
+            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit(
+                tournamentPhases)
         ])
         self.threadPool.start(worker)
-    
+
     def GetTournamentPhaseGroup(self, id):
         worker = Worker(self.provider.GetTournamentPhaseGroup, **{"id": id})
         worker.signals.result.connect(lambda phaseGroupData: [
-            TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(phaseGroupData)
+            TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(
+                phaseGroupData)
         ])
         self.threadPool.start(worker)
 
     def LoadSets(self, showFinished):
-        worker = Worker(self.provider.GetMatches, **{"getFinished": showFinished})
+        worker = Worker(self.provider.GetMatches, **
+                        {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
             print(data),
             self.signals.get_sets_finished.emit(data)
@@ -231,7 +248,7 @@ class TSHTournamentDataProvider:
             "id1": id1, "id2": id2, "callback": self.signals.recent_sets_updated, "requestTime": time.time_ns()
         })
         self.threadPool.start(worker)
-    
+
     def GetStandings(self, playerNumber, callback):
         worker = Worker(self.provider.GetStandings, **{
             "playerNumber": playerNumber
@@ -256,6 +273,15 @@ class TSHTournamentDataProvider:
             "gameType": gameType,
             "callback": self.signals.history_sets_updated
         })
+        self.threadPool.start(worker)
+
+    def GetStreamQueue(self):
+
+        worker = Worker(self.provider.GetStreamQueue)
+        worker.signals.result.connect(lambda streamQueue: [
+            TSHTournamentDataProvider.instance.signals.stream_queue_loaded.emit(
+                streamQueue)
+        ])
         self.threadPool.start(worker)
 
     def UiMounted(self):

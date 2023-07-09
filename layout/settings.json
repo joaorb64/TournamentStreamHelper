@@ -1,0 +1,21 @@
+{
+  "assets": {
+    "default": {},
+    "ssbu": {
+      "asset_key": "website"
+    },
+    "game_codename_example": {
+      "asset_key": "full",
+      "custom_zoom": 2,
+      "custom_center": [0.5, 0.5],
+      "all_settings": "https://github.com/joaorb64/TournamentStreamHelper/wiki/Layout-Javascript-editing"
+    }
+  },
+  "japanese_transcription": {
+    "enabled": true,
+    "to": "romaji",
+    "mode": "normal",
+    "romajiSystem": "nippon"
+  },
+  "automatic_theme": false
+}

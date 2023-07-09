@@ -6,6 +6,9 @@ on:
       - main
       - locale/*
       - feature/*
+      - fix/*
+    paths-ignore:
+      - 'layout/**'
   workflow_dispatch:
 
 jobs:
@@ -18,10 +21,10 @@ jobs:
         os: ["ubuntu-20.04"]
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.11"
 
       - name: Extract branch name
         shell: bash
@@ -33,7 +36,7 @@ jobs:
           sudo apt-get install -y libgstreamer-plugins-base1.0-dev
           sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
           lrelease -version
-      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
+      - run: pip install -r dependencies/requirements.txt pyinstaller==5.12.0
       - run: |
           python3 src/i18n/gen_translation_files.py
           python3 src/i18n/gen_translation_binaries.py
@@ -49,7 +52,7 @@ jobs:
           fi
 
       - name: push changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.extract_branch.outputs.branch }}
@@ -57,7 +60,7 @@ jobs:
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
-    if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) }}
+    if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) || startsWith( github.ref, 'refs/heads/fix/' ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -66,23 +69,23 @@ jobs:
       - locale_build
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.11"
 
       - name: Extract branch name
         shell: bash
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - run: pip install -r dependencies/requirements.txt pyinstaller==4.10
+      - run: pip install -r dependencies/requirements.txt pyinstaller==5.12.0
       - run: |
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
           python scripts/gen_contributors.py
-          pyinstaller main.py --onefile -w --icon assets\icons\icon.ico
+          pyinstaller --hidden-import PyQt5.QtCore --hidden-import PyQt5.QtGui --hidden-import PyQt5.QtWidgets main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
       - run: git pull
@@ -94,7 +97,7 @@ jobs:
           git commit -m "Update exe" -a
 
       - name: push changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.extract_branch.outputs.branch }}

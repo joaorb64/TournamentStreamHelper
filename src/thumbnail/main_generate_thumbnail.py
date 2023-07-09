@@ -5,9 +5,9 @@ import itertools
 from math import cos, radians, sin
 import random
 import traceback
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
 from pathlib import Path
 import json
 import shutil
@@ -139,7 +139,11 @@ def resize_image_to_max_size(image: QPixmap, max_size, eyesight_coordinates=None
 
     new_size = (round(new_x), round(new_y))
     new_image = image.scaled(
-        new_size[0], new_size[1], transformMode=Qt.TransformationMode.SmoothTransformation)
+        new_size[0],
+        new_size[1],
+        Qt.AspectRatioMode.KeepAspectRatio,
+        Qt.TransformationMode.SmoothTransformation
+    )
 
     # crop
     if not resized_eyesight:
@@ -427,7 +431,12 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
             areaPaint.drawPixmap(
                 int(xx), int(yy),
                 pix
-                .scaled(int(zoom*tmpWidth), int(zoom*tmpHeight), transformMode=transformMode)
+                .scaled(
+                    int(zoom*tmpWidth),
+                    int(zoom*tmpHeight),
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    transformMode
+                )
             )
 
             areaPaint.end()
@@ -650,7 +659,12 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
             for player_pathes in path_matrix:
                 for path in player_pathes:
                     pix = QPixmap(path)
-                    pix = pix.scaled(int(pix.width() * ratio[0]), int(pix.height() * ratio[1]), transformMode=Qt.TransformationMode.SmoothTransformation)
+                    pix = pix.scaled(
+                        int(pix.width() * ratio[0]),
+                        int(pix.height() * ratio[1]),
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
                     max_width = max(max_width, pix.width())
                     max_height = max(max_height, pix.height())
         
@@ -959,48 +973,49 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
 
 def paste_main_icon(thumbnail, icon_path):
-    if icon_path:
-        max_x_size = round(
-            template_data["icons_position"]["main"]["dimensions"]["x"]*ratio[0])
-        max_y_size = round(
-            template_data["icons_position"]["main"]["dimensions"]["y"]*ratio[1])
-        max_size = (max_x_size, max_y_size)
+    max_x_size = round(
+        template_data["icons_position"]["main"]["dimensions"]["x"]*ratio[0])
+    max_y_size = round(
+        template_data["icons_position"]["main"]["dimensions"]["y"]*ratio[1])
+    max_size = (max_x_size, max_y_size)
 
-        icon_image = QPixmap(icon_path, 'RGBA')
-        icon_size = calculate_new_dimensions(icon_image.size(), max_size)
-        icon_image = icon_image.transformed(
-            QTransform().scale(
-                icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()),
-            Qt.TransformationMode.SmoothTransformation)
+    icon_image = QPixmap(icon_path, 'RGBA')
+    if icon_image.isNull():
+        return thumbnail
+    icon_size = calculate_new_dimensions(icon_image.size(), max_size)
+    icon_image = icon_image.transformed(
+        QTransform().scale(
+            icon_size[0]/icon_image.width(), icon_size[1]/icon_image.height()),
+        Qt.TransformationMode.SmoothTransformation)
 
-        x_offset = template_data["base_ratio"]["x"] / 2.0
+    x_offset = template_data["base_ratio"]["x"] / 2.0
+    if template_data["icons_position"]["bind_to_character_images"]:
+        x_offset = template_data["character_images"]["dimensions"]["x"] / \
+            2.0 + template_data["character_images"]["position"]["x"]
+
+    y_offset = template_data["icons_position"]["y_offset"]
+    if template_data["icons_position"]["bind_to_character_images"]:
+        y_offset = y_offset + \
+            template_data["character_images"]["position"]["y"]
+    if template_data["icons_position"]["align"].lower() == "bottom":
+        y_offset = template_data["base_ratio"]["y"] - \
+            template_data["icons_position"]["y_offset"] - \
+            icon_image.height()/ratio[1]
+        print(y_offset)
         if template_data["icons_position"]["bind_to_character_images"]:
-            x_offset = template_data["character_images"]["dimensions"]["x"] / \
-                2.0 + template_data["character_images"]["position"]["x"]
-
-        y_offset = template_data["icons_position"]["y_offset"]
-        if template_data["icons_position"]["bind_to_character_images"]:
-            y_offset = y_offset + \
-                template_data["character_images"]["position"]["y"]
-        if template_data["icons_position"]["align"].lower() == "bottom":
-            y_offset = template_data["base_ratio"]["y"] - \
+            y_offset = template_data["character_images"]["position"]["y"] + template_data["character_images"]["dimensions"]["y"] - \
                 template_data["icons_position"]["y_offset"] - \
                 icon_image.height()/ratio[1]
-            print(y_offset)
-            if template_data["icons_position"]["bind_to_character_images"]:
-                y_offset = template_data["character_images"]["position"]["y"] + template_data["character_images"]["dimensions"]["y"] - \
-                    template_data["icons_position"]["y_offset"] - \
-                    icon_image.height()/ratio[1]
 
-        icon_x = round(x_offset*ratio[0] - icon_size[0]/2)
-        icon_y = y_offset*ratio[1]
-        icon_coordinates = (icon_x, icon_y)
-        composite_image = create_composite_image(
-            icon_image, thumbnail.size(), icon_coordinates)
+    icon_x = round(x_offset*ratio[0] - icon_size[0]/2)
+    icon_y = y_offset*ratio[1]
+    icon_coordinates = (icon_x, icon_y)
+    composite_image = create_composite_image(
+        icon_image, thumbnail.size(), icon_coordinates)
 
-        painter = QPainter(thumbnail)
-        painter.drawPixmap(0, 0, composite_image)
-        painter.end()
+    painter = QPainter(thumbnail)
+    painter.drawPixmap(0, 0, composite_image)
+    painter.end()
     return(thumbnail)
 
 
@@ -1220,16 +1235,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     foreground_path = settings.get("foreground_path")
     if not foreground_path:
         foreground_path = template_data["default_foreground"]
-    if not os.path.isfile(foreground_path):
-        raise Exception(f"Foreground {foreground_path} doesn't exist !")
     background_path = settings.get("background_path")
     if not background_path:
         background_path = template_data["default_background"]
     if not os.path.isfile(background_path):
         raise Exception(f"Background {background_path} doesn't exist !")
     main_icon_path = settings.get("main_icon_path", "")
-    if main_icon_path and not os.path.isfile(main_icon_path):
-        raise Exception(f"Main Icon {main_icon_path} doesn't exist !")
     side_icon_list = [
         deep_get(settings, f"side_icon_list.L", ""),
         deep_get(settings, f"side_icon_list.R", "")
@@ -1356,7 +1367,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         background = background.scaled(
             int(background.width()/2),
             int(background.height()/2),
-            transformMode=Qt.TransformationMode.SmoothTransformation
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
         )
 
     global ratio

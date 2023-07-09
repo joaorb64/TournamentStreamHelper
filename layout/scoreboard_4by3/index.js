@@ -1,15 +1,4 @@
-(($) => {
-  let CONFIG = {
-    default: {
-      asset: "full",
-      zoom: 1,
-    },
-    ssbm: {
-      asset: "full",
-      zoom: 1.4,
-    },
-  };
-
+LoadEverything().then(() => {
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from(
@@ -44,30 +33,18 @@
       0
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
-  var GAME_CONFIG = CONFIG["default"];
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
-
-    if (data.game) {
-      if (data.game.codename) {
-        if (CONFIG[data.game.codename]) {
-          GAME_CONFIG = CONFIG[data.game.codename];
-        } else {
-          GAME_CONFIG = CONFIG["default"];
-        }
-      }
-    }
-
-    Object.values(data.score.team).forEach((team, t) => {
+    for (const [t, team] of [
+      data.score.team["1"],
+      data.score.team["2"],
+    ].entries()) {
       console.log(team);
 
       let team_id = ["left", "right"][t];
@@ -91,14 +68,14 @@
         });
       }
 
-      Object.values(team.player).forEach((player, p) => {
+      for (const [p, player] of Object.values(team.player).entries()) {
         if (player) {
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .name`),
             `
               <span class="sponsor">${
                 player.team ? player.team + "&nbsp;" : ""
-              }</span>${String(player.name)}
+              }</span>${await Transcript(player.name)}
             `
           );
 
@@ -129,41 +106,13 @@
               : ""
           );
 
-          let charactersHtml = "";
-
-          if (
-            $(".cameras").length == 0 &&
-            (!oldData.score ||
-              JSON.stringify(
-                oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-              ) != JSON.stringify(player.character))
-          ) {
-            Object.values(player.character).forEach((character) => {
-              if (character.assets["full"]) {
-                charactersHtml += `
-                <div class='character' style='background-image: url(../../${character.assets["full"].asset})'></div>
-              `;
-              }
-            });
-
-            SetInnerHtml(
-              $(`.${team_id} .p${p + 1} .character_container`),
-              charactersHtml,
-              undefined,
-              0.5,
-              () => {
-                $(
-                  `.${team_id} .p${p + 1} .character_container .character`
-                ).each((i, e) => {
-                  CenterImage(
-                    $(e),
-                    Object.values(player.character)[i].assets[
-                      GAME_CONFIG["asset"]
-                    ],
-                    GAME_CONFIG["zoom"]
-                  );
-                });
-              }
+          if ($(".cameras").length == 0) {
+            await CharacterDisplay(
+              $(`.${team_id} .p${p + 1}.container .character_container`),
+              {
+                source: `score.team.${t + 1}.player.${p + 1}`,
+              },
+              event
             );
           }
 
@@ -181,8 +130,8 @@
             )})'></div>`
           );
         }
-      });
-    });
+      }
+    }
 
     SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
 
@@ -193,17 +142,5 @@
     if (data.score.best_of_text) phaseTexts.push(data.score.best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(500, 1, async () => {
-      Start();
-      setInterval(Update, 500);
-    });
-  });
-})(jQuery);
+  };
+});

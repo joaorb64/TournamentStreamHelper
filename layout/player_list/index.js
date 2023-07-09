@@ -1,23 +1,17 @@
-(($) => {
-  var ASSET_TO_USE = "full"
-  var ZOOM = 1
-  
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".container"], { duration: 1, width: "0", ease: "power2.inOut" }, 0);
 
-  function Start() {
+  Start = async (event) => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.player_list ||
@@ -50,9 +44,11 @@
 
       $(".players_container").html(html);
 
-      Object.values(data.player_list.slot).forEach((slot, t) => {
+      const teams = Object.values(data.player_list.slot);
+      for (const [t, slot] of teams.entries()) {
         SetInnerHtml($(`.slot${t + 1} .title`), slot.name);
-        Object.values(slot.player).forEach((player, p) => {
+        const players = Object.values(slot.player);
+        for (const [p, player] of players.entries()) {
           if (player) {
             SetInnerHtml(
               $(`.slot${t + 1} .p${p + 1}.container .name`),
@@ -61,7 +57,7 @@
               <span class="sponsor">
                 ${player.team ? player.team : ""}
               </span>
-              ${player.name}
+              ${await Transcript(player.name)}
             </span>
             `,
               undefined,
@@ -86,37 +82,14 @@
               0
             );
 
-            let charactersHtml = "";
-
-            Object.values(player.character).forEach((character, index) => {
-              if (character.assets[ASSET_TO_USE]) {
-                charactersHtml += `
-                  <div class="icon stockicon">
-                      <div style='background-image: url(../../${character.assets[ASSET_TO_USE]})'></div>
-                  </div>
-                  `;
-              }
-            });
-            SetInnerHtml(
+            await CharacterDisplay(
               $(`.slot${t + 1} .p${p + 1}.container .character_container`),
-              charactersHtml,
-              undefined,
-              0,
-              () => {
-                $(
-                  `.slot${t + 1} .p${
-                    p + 1
-                  }.container .character_container .icon.stockicon div`
-                ).each((e, i) => {
-                  if (player.character[e + 1].assets[ASSET_TO_USE] != null) {
-                    CenterImage(
-                      $(i),
-                      player.character[e + 1].assets[ASSET_TO_USE],
-                      ZOOM
-                    );
-                  }
-                });
-              }
+              {
+                source: `player_list.slot.${t + 1}.player.${p+1}`,
+                custom_center: [0.5, 0.5],
+                scale_based_on_parent: true,
+              },
+              event
             );
 
             SetInnerHtml(
@@ -162,25 +135,13 @@
               0
             );
           }
-        });
-      });
+        }
+      }
     }
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
 
     $(".container div:has(>.text:empty)").css("margin-right", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-right", "");
     $(".container div:has(>.text:empty)").css("margin-left", "0");
     $(".container div:not(:has(>.text:empty))").css("margin-left", "");
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Start();
-      setInterval(Update, 16);
-    });
-  });
-})(jQuery);
+  };
+});

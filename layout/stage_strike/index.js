@@ -1,14 +1,13 @@
-(($) => {
-  function Start() {}
+LoadEverything().then(() => {
+  Start = async (event) => {};
 
-  var data = {};
-  var oldData = {};
+  var hideStagesTimeout = null;
 
   function GetBannedStages(ruleset, state) {
     let banList = [];
 
     if (ruleset.useDSR) {
-      banList = state.stagesPicked;
+      banList = state.stagesPicked ? state.stagesPicked : [];
     } else if (ruleset.useMDSR && state.lastWinner !== -1) {
       banList =
         state.stagesWon && state.stagesWon.length > 0
@@ -45,9 +44,9 @@
     return false;
   }
 
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (
       !oldData.score ||
@@ -103,7 +102,24 @@
         allStages.forEach((stage) => {
           let path = stage.path;
           html += `
-              <div class="stage-container">
+              <div class="stage-container 
+                ${
+                  IsStageStriked(data.score.stage_strike, stage.codename) ||
+                  IsStageBanned(
+                    data.score.ruleset,
+                    data.score.stage_strike,
+                    stage.codename
+                  )
+                    ? "striked"
+                    : ""
+                }
+                ${
+                  data.score.stage_strike.selectedStage &&
+                  data.score.stage_strike.selectedStage == stage.codename
+                    ? "selected"
+                    : ""
+                }
+                ">
                   <div class="stage-icon" style="background-image: url('../../${path}')">
                       ${
                         IsStageStriked(data.score.stage_strike, stage.codename)
@@ -171,23 +187,36 @@
               </div>
           `;
         });
+
+        // Hide stage strike logic
+        if (hideStagesTimeout != null) {
+          clearTimeout(hideStagesTimeout);
+        }
+
+        if (
+          window.AUTOHIDE &&
+          !_.get(oldData, "score.stage_strike.selectedStage") &&
+          _.get(data, "score.stage_strike.selectedStage")
+        ) {
+          hideStagesTimeout = setTimeout(() => {
+            gsap.to(".container", { autoAlpha: "0" });
+          }, 5000);
+        }
       } catch (e) {
         console.log(e);
       }
       $(".container").html(html);
+
+      // Fade stage strike back in
+      if (!_.get(data, "score.stage_strike.selectedStage")) {
+        gsap.to(".container", { autoAlpha: "1", overwrite: true });
+      }
+
       $(".container")
         .find(".stage-name, .banned-by-name")
         .each(function () {
           FitText($(this));
         });
     }
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1000, 1, async () => {
-      Start();
-      setInterval(Update, 64);
-    });
-  });
-})(jQuery);
+  };
+});

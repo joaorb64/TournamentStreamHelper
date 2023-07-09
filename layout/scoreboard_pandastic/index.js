@@ -1,7 +1,4 @@
-(($) => {
-  var ASSET_TO_USE = "portrait";
-  var ZOOM = 1;
-
+LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -53,20 +50,20 @@
       0.2
     );
 
-  function Start() {
+  Start = async () => {
     startingAnimation.restart();
-  }
+  };
 
-  var data = {};
-  var oldData = {};
-
-  async function Update() {
-    oldData = data;
-    data = await getData();
+  Update = async (event) => {
+    let data = event.data;
+    let oldData = event.oldData;
 
     if (Object.keys(data.score.team["1"].player).length == 1) {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
-        [team.player["1"]].forEach((player, p) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
+        for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -85,7 +82,7 @@
                 <span class="sponsor">
                   ${player.team ? player.team : ""}
                 </span>
-                ${player.name}
+                ${await Transcript(player.name)}
                 ${
                   t == 0
                     ? `
@@ -113,41 +110,13 @@
                 : ""
             );
 
-            if (
-              !oldData.score ||
-              JSON.stringify(player.character) !=
-                JSON.stringify(
-                  oldData.score.team[`${t + 1}`].player[`${p + 1}`].character
-                )
-            ) {
-              let charactersHtml = "";
-              Object.values(player.character).forEach((character, index) => {
-                if (character.assets[ASSET_TO_USE]) {
-                  charactersHtml += `
-                    <div class="icon stockicon">
-                        <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
-                    </div>
-                    `;
-                }
-              });
-              SetInnerHtml(
-                $(`.p${t + 1}.character_container`),
-                charactersHtml,
-                undefined,
-                0.5,
-                () => {
-                  $(`.p${t + 1}.character_container .stockicon div`).each(
-                    (i, e) => {
-                      CenterImage(
-                        $(e),
-                        Object.values(player.character)[i].assets[ASSET_TO_USE],
-                        ZOOM
-                      );
-                    }
-                  );
-                }
-              );
-            }
+            await CharacterDisplay(
+              $(`.p${t + 1}.character_container`),
+              {
+                source: `score.team.${t + 1}`,
+              },
+              event
+            );
 
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
@@ -186,19 +155,22 @@
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
           }
-        });
-      });
+        }
+      }
     } else {
-      [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+      for (const [t, team] of [
+        data.score.team["1"],
+        data.score.team["2"],
+      ].entries()) {
         let teamName = "";
 
         if (!team.teamName || team.teamName == "") {
           let names = [];
-          Object.values(team.player).forEach((player, p) => {
-            if (player) {
-              names.push(player.name);
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player && player.name) {
+              names.push(await Transcript(player.name));
             }
-          });
+          }
           teamName = names.join(" / ");
         } else {
           teamName = team.teamName;
@@ -224,41 +196,13 @@
           player.state.asset ? `` : ""
         );
 
-        let oldCharacters = oldData.score
-          ? Object.values(oldData.score.team[`${t + 1}`].player)
-              .map((p) => Object.values(p.character))
-              .map((p) => p[0])
-          : null;
-
-        let characters = Object.values(team.player)
-          .map((p) => Object.values(p.character))
-          .map((p) => p[0]);
-
-        if (JSON.stringify(oldCharacters) != JSON.stringify(characters)) {
-          let charactersHtml = "";
-          characters.forEach((character, index) => {
-            if (character.assets[ASSET_TO_USE]) {
-              charactersHtml += `
-                <div class="icon stockicon">
-                    <div style='background-image: url(../../${character.assets[ASSET_TO_USE].asset})'></div>
-                </div>
-                `;
-            }
-          });
-          SetInnerHtml(
-            $(`.p${t + 1}.character_container`),
-            charactersHtml,
-            undefined,
-            0.5,
-            () => {
-              $(`.p${t + 1}.character_container .stockicon div`).each(
-                (i, e) => {
-                  CenterImage($(e), characters[i].assets[ASSET_TO_USE], ZOOM);
-                }
-              );
-            }
-          );
-        }
+        await CharacterDisplay(
+          $(`.p${t + 1}.character_container`),
+          {
+            source: `score.team.${t + 1}`,
+          },
+          event
+        );
 
         SetInnerHtml(
           $(`.p${t + 1}.container .sponsor_icon`),
@@ -290,7 +234,7 @@
           $(`.p${t + 1}.container .sponsor-container`),
           `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
         );
-      });
+      }
     }
 
     SetInnerHtml(
@@ -306,18 +250,5 @@
       $(".best_of"),
       data.score.best_of_text ? data.score.best_of_text : ""
     );
-
-    $(".text").each(function (e) {
-      FitText($($(this)[0].parentNode));
-    });
-  }
-
-  Update();
-  $(window).on("load", () => {
-    $("body").fadeTo(1, 1, async () => {
-      Update();
-      Start();
-      setInterval(Update, 100);
-    });
-  });
-})(jQuery);
+  };
+});

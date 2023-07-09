@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: NotoSans;
+  font-family: var(--font);
   font-weight: bold;
   opacity: 0;
   overflow: hidden;
@@ -91,26 +91,10 @@ body {
   justify-content: space-between;
 }
 
-.p1.container > div:not(:last-child) {
-  margin-right: 8px;
-}
-
-.p1.container > div:first-child {
-  margin-right: 8px;
-}
-
-.p2.container > div:not(:last-child) {
-  margin-right: 8px;
-}
-
-.p2.container > div:first-child {
-  margin-right: 8px;
-}
-
 .player.container {
   width: 100%;
   height: 42px;
-  padding: 4px 16px;
+  padding: 0px 4px;
 }
 
 .p1.container {
@@ -138,7 +122,7 @@ body {
 }
 
 .name_twitter .name {
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .name_twitter .twitter {
@@ -240,7 +224,12 @@ body {
   font-size: 16px;
 }
 
-.icon {
+.player.container > div:not(.score) > .text:not(.text_empty) {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.icon > .text > div {
   flex-shrink: 0;
   background-position: center;
   background-repeat: no-repeat;
@@ -250,21 +239,12 @@ body {
   background: #3f3f46;
 }
 
-.portraits .character_container .icon {
-  border-radius: 0;
-}
-
 .icon div:not(.text) {
   width: 32px;
   height: 32px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-}
-
-.portraits .character_container .icon div:not(.text) {
-  width: 100%;
-  height: 100%;
 }
 
 .flags_container {
@@ -277,13 +257,9 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 32px;
-  height: 22px;
-  border-radius: 6px;
-}
-
-.flagstate .text div {
-  margin-left: 4px;
+  width: 28px;
+  height: 20px;
+  border-radius: 4px;
 }
 
 .sponsor_icon > div > div {
@@ -296,57 +272,38 @@ body {
   border-radius: var(--border-radius);
 }
 
-.character_container {
-  display: flex;
-  overflow: hidden;
-  height: 100%;
-  flex-shrink: 0;
-}
-
-.portraits .character_container {
-  height: calc(100% + 8px);
-  margin-right: 0 !important;
-}
-
-.p1 .character_container .icon {
-  background: var(--p1-score-bg-color);
-}
-
-.p2 .character_container .icon {
-  background: var(--p2-score-bg-color);
-}
-
-.portraits .character_container .icon {
-  background: #3f3f46 !important;
-}
-
-.character_container > div {
-  overflow: hidden;
-}
-
-.character_container > div {
-  height: 100%;
-}
-
-.character_container > div > div {
-  height: 100%;
-}
-
-.character_container > div > div {
-  overflow: hidden;
-  width: 32px;
-  height: 32px;
-  display: flex;
+.tsh_character_container {
+  gap: 4px;
+  width: unset;
+  margin-left: 4px;
+  margin-right: 4px;
   align-items: center;
 }
 
-.portraits .character_container > div > div {
+.tsh_character {
+  width: 36px;
+  height: 36px;
+  background: #3f3f46;
+  border-radius: calc(var(--border-radius) / 2);
+  overflow: hidden;
+}
+
+.portraits .tsh_character_container {
   width: 92px;
+}
+
+.portraits .tsh_character {
+  width: 92px;
+  border-radius: 0;
   height: 100%;
 }
 
-.character_container > div > div:not(:last-child) {
-  margin-right: 4px;
+.p1 .tsh_character {
+  background: var(--p1-score-bg-color);
+}
+
+.p2 .tsh_character {
+  background: var(--p2-score-bg-color);
 }
 
 .score {
@@ -357,12 +314,12 @@ body {
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
-  margin-right: -16px;
+  margin-right: -4px;
   font-size: 32px;
 }
 
 .pronoun {
-  font-size: 12px;
+  font-size: 16px;
   text-transform: uppercase;
   margin-top: auto;
   margin-left: 6px;

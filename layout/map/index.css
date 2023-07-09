@@ -91,6 +91,11 @@ body {
   -webkit-animation-iteration-count: infinite;
 }
 
+.gps_ring_big {
+  -webkit-animation: pulsate_big 2s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
 @-webkit-keyframes pulsate {
   0% {
     -webkit-transform: scale(0.1, 0.1);
@@ -101,6 +106,20 @@ body {
   }
   100% {
     -webkit-transform: scale(1, 1);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes pulsate_big {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3, 3);
     opacity: 0;
   }
 }

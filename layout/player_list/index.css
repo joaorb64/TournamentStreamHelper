@@ -174,30 +174,9 @@ body {
   overflow: hidden;
   height: 100%;
   flex-shrink: 0;
-}
-
-.character_container > div {
-  overflow: hidden;
-  height: 48px;
-}
-
-.fgc.thin .character_container > div {
-  height: 100%;
-}
-
-.fgc.thin .character_container > div > div {
-  height: 100%;
-}
-
-.character_container > div > div {
-  overflow: hidden;
-  height: 48px;
-  display: flex;
-  align-items: center;
-}
-
-.character_container > div > div:not(:last-child) {
-  margin-right: 4px;
+  width: 140px;
+  background-color: #3f3f46;
+  border-radius: var(--border-radius);
 }
 
 .score {

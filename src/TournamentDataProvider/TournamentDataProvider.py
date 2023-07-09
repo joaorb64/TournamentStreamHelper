@@ -8,6 +8,9 @@ class TournamentDataProvider:
         self.videogame = None
         self.parent = parent
 
+    def GetIconURL(self):
+        pass
+
     def GetEntrants(self):
         pass
 
@@ -18,6 +21,9 @@ class TournamentDataProvider:
         pass
 
     def GetMatches(self, getFinished=False, progress_callback=None):
+        pass
+
+    def GetStreamQueue(self, streamName, progress_callback=None):
         pass
 
     def GetStreamMatchId(self, streamName):

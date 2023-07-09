@@ -5,7 +5,7 @@ from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
-import qdarkstyle
+import qdarktheme
 import requests
 import urllib
 import json
@@ -15,9 +15,18 @@ import os
 import unicodedata
 import sys
 import atexit
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+import time
+import qtpy
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+from packaging.version import parse
+
+QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+
+if parse(qtpy.QT_VERSION).major == 6:
+    QImageReader.setAllocationLimit(0)
+
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
@@ -35,7 +44,8 @@ from .TSHBracketWidget import TSHBracketWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .TSHPlayerListWidget import TSHPlayerListWidget
-from qdarkstyle import palette
+from .TSHHotkeys import TSHHotkeys
+from .Settings.TSHSettingsWindow import TSHSettingsWindow
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -75,11 +85,11 @@ def remove_accents_lower(input_str):
 
 
 class WindowSignals(QObject):
-    StopTimer = pyqtSignal()
-    ExportStageStrike = pyqtSignal(object)
-    DetectGame = pyqtSignal(int)
-    SetupAutocomplete = pyqtSignal()
-    UiMounted = pyqtSignal()
+    StopTimer = Signal()
+    ExportStageStrike = Signal(object)
+    DetectGame = Signal(int)
+    SetupAutocomplete = Signal()
+    UiMounted = Signal()
 
 
 class Window(QMainWindow):
@@ -95,8 +105,7 @@ class Window(QMainWindow):
 
         self.signals = WindowSignals()
 
-        splash = QSplashScreen(self, QPixmap(
-            'assets/icons/icon.png').scaled(128, 128))
+        splash = QSplashScreen(QPixmap('assets/icons/icon.png').scaled(128, 128))
         splash.show()
 
         time.sleep(0.1)
@@ -214,9 +223,6 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
 
-        # pre_base_layout.setSpacing(0)
-        # pre_base_layout.setContentsMargins(QMargins(0, 0, 0, 0))
-
         # Game
         base_layout = QHBoxLayout()
 
@@ -226,11 +232,23 @@ class Window(QMainWindow):
             QSizePolicy.Minimum, QSizePolicy.Maximum)
         base_layout.layout().addWidget(group_box)
 
+        # Set tournament
+        hbox = QHBoxLayout()
+        group_box.layout().addLayout(hbox)
+
         self.setTournamentBt = QPushButton(
             QApplication.translate("app", "Set tournament"))
-        group_box.layout().addWidget(self.setTournamentBt)
+        hbox.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
-            lambda bt, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
+            lambda bt=None, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
+
+        self.unsetTournamentBt = QPushButton()
+        self.unsetTournamentBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.unsetTournamentBt.setIcon(QIcon("./assets/icons/cancel.svg"))
+        self.unsetTournamentBt.clicked.connect(lambda: [
+            TSHTournamentDataProvider.instance.SetTournament(None)
+        ])
+        hbox.addWidget(self.unsetTournamentBt)
 
         # Follow startgg user
         hbox = QHBoxLayout()
@@ -239,15 +257,12 @@ class Window(QMainWindow):
         self.btLoadPlayerSet = QPushButton(
             QApplication.translate("app", "Load tournament and sets from StartGG user"))
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        self.btLoadPlayerSet.setEnabled(False)
         self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
         self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
         hbox.addWidget(self.btLoadPlayerSet)
+
         TSHTournamentDataProvider.instance.signals.user_updated.connect(
             self.UpdateUserSetButton)
-        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-            self.UpdateUserSetButton)
-
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateUserSetButton)
 
@@ -259,6 +274,8 @@ class Window(QMainWindow):
         self.btLoadPlayerSetOptions.clicked.connect(
             self.LoadUserSetOptionsClicked)
         hbox.addWidget(self.btLoadPlayerSetOptions)
+
+        self.UpdateUserSetButton()
 
         # Settings
         menu_margin = " "*6
@@ -272,8 +289,9 @@ class Window(QMainWindow):
             QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.optionsBt.setFixedSize(QSize(32, 32))
         self.optionsBt.setIconSize(QSize(32, 32))
-        self.optionsBt.setMenu(QMenu())
-        action = self.optionsBt.menu().addAction(
+        menu = QMenu()
+        self.optionsBt.setMenu(menu)
+        action = menu.addAction(
             QApplication.translate("app", "Always on top"))
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
@@ -446,6 +464,13 @@ class Window(QMainWindow):
             help_messagebox.exec()
         ])
 
+        self.settingsWindow = TSHSettingsWindow(self)
+
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("Settings", "Settings"))
+        action.setIcon(QIcon('assets/icons/settings.svg'))
+        action.triggered.connect(lambda: self.settingsWindow.show())
+
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(
             QApplication.translate("About", "About"))
@@ -495,10 +520,12 @@ class Window(QMainWindow):
         self.show()
 
         TSHCountryHelper.LoadCountries()
+        self.settingsWindow.UiMounted()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
         TSHAssetDownloader.instance.UiMounted()
+        TSHHotkeys.instance.UiMounted(self)
         TSHPlayerDB.LoadDB()
 
         StateManager.ReleaseSaving()
@@ -726,23 +753,14 @@ class Window(QMainWindow):
 
     def ToggleLightMode(self, checked):
         if checked:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
+            qdarktheme.setup_theme()
 
         SettingsManager.Set("light_mode", checked)
 
     def LoadTheme(self):
         if SettingsManager.Get("light_mode", False):
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.LightPalette))
+            qdarktheme.setup_theme("light")
         else:
-            App.setStyleSheet(qdarkstyle.load_stylesheet(
-                palette=qdarkstyle.DarkPalette))
-
-
-
-window = Window()
-sys.exit(App.exec_())
+            qdarktheme.setup_theme()

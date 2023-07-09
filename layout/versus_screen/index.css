@@ -14,6 +14,27 @@ body {
   height: 1080px;
 }
 
+.stage {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -999;
+}
+
+.stage .text div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: -999;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url(./bg.png);
+  filter: blur(5px) brightness(0.9);
+}
+
 .background {
   position: absolute;
   left: 0;
@@ -25,6 +46,32 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-image: url(./bg.png);
+}
+
+.player_avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4));
+  overflow: hidden;
+  display: flex;
+}
+
+.p1 .player_avatar {
+  background: var(--p1-score-bg-color);
+}
+.p2 .player_avatar {
+  background: var(--p2-score-bg-color);
+}
+
+.player_avatar div {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
 }
 
 .container {
@@ -176,11 +223,11 @@ body {
 }
 
 .p1 .losers {
-  background-color: #ff3837ff;
+  background-color: var(--p1-sponsor-color);
 }
 
 .p2 .losers {
-  background-color: #308affff;
+  background-color: var(--p2-sponsor-color);
 }
 
 .container.top {
@@ -260,7 +307,7 @@ body {
   justify-content: center;
   border: 2px solid white;
   margin-bottom: 16px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .flagname {
@@ -298,14 +345,15 @@ body {
   position: absolute;
   overflow: visible;
   left: 0px;
-  width: 540px;
+  width: 480px;
   top: 50%;
   transform: translateY(-50%);
   height: 640px;
-  perspective: 1000px;
+  perspective: 500px;
   perspective-origin: right;
   z-index: -1;
   display: flex;
+  flex-direction: row-reverse;
 }
 
 .character .video {
@@ -314,20 +362,13 @@ body {
   left: 0%;
 }
 
-.p2.character video {
-  transform-origin: 50% 50%;
-  transform: scaleX(-1);
-  left: unset;
-  right: 0%;
-}
-
-.p1.character .bg {
+.p1.character .tsh_character {
   width: 100%;
   transform: rotateY(10deg);
   background: var(--p1-score-bg-color);
 }
 
-.bg {
+.tsh_character {
   border-radius: var(--border-radius);
   height: 100%;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.42))
@@ -340,18 +381,18 @@ body {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 540px;
+  width: 480px;
   top: 50%;
   transform: translateY(-50%);
   height: 640px;
-  perspective: 1000px;
+  perspective: 500px;
   perspective-origin: left;
   display: flex;
 }
 
-.p2.character .bg {
+.p2.character > .tsh_character {
   width: 100%;
-  transform: rotateY(-10deg);
+  transform: scaleX(-1) rotateY(10deg);
   background: var(--p2-score-bg-color);
 }
 
