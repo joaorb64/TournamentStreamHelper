@@ -1,0 +1,22 @@
+{
+    "title": "Stage Strike",
+    "initial_explanation": "Play rock-paper-scissors to decide who starts the Stage Strike process, or use the randomize button.",
+    "player_won": "{{player}} won",
+    "randomize": "Randomize",
+    "confirm": "confirm",
+    "report_results": "Report Results",
+    "rock_paper_scissors": "Rock-Paper-Scissors",
+    "p1": "Player 1",
+    "p2": "Player 2",
+    "select_a_stage_prompt": "{{player}}, select a stage",
+    "ban_prompt": "{{player}}, ban {{val}} stage(s)",
+    "no_ruleset_error": "No ruleset is selected. Please notify production/TO to select a ruleset.",
+    "game": "Game {{value}}",
+    "best_of": "Best of {{value}}",
+    "restart_all": "Restart All",
+    "gentlemans": "Gentleman's",
+    "gentlemans_pick": "Gentleman's pick",
+    "gentlemans_prompt": "{{gentlemans_pick}}: select a stage",
+    "undo": "Undo",
+    "redo": "Redo"
+}
