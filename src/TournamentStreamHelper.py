@@ -1,22 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .Settings.TSHSettingsWindow import TSHSettingsWindow
-from .TSHHotkeys import TSHHotkeys
-from .TSHPlayerListWidget import TSHPlayerListWidget
-from .TSHCommentaryWidget import TSHCommentaryWidget
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHBracketWidget import TSHBracketWidget
-from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-from .TSHAlertNotification import TSHAlertNotification
-from .TSHPlayerDB import TSHPlayerDB
-from .Workers import *
-from .TSHScoreboardWidget import *
-from .TSHThumbnailSettingsWidget import *
-from src.TSHAssetDownloader import TSHAssetDownloader
-from src.TSHAboutWidget import TSHAboutWidget
 from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
@@ -46,6 +30,22 @@ if parse(qtpy.QT_VERSION).major == 6:
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
+from .Settings.TSHSettingsWindow import TSHSettingsWindow
+from .TSHHotkeys import TSHHotkeys
+from .TSHPlayerListWidget import TSHPlayerListWidget
+from .TSHCommentaryWidget import TSHCommentaryWidget
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHBracketWidget import TSHBracketWidget
+from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+from .TSHAlertNotification import TSHAlertNotification
+from .TSHPlayerDB import TSHPlayerDB
+from .Workers import *
+from .TSHScoreboardWidget import *
+from .TSHThumbnailSettingsWidget import *
+from src.TSHAssetDownloader import TSHAssetDownloader
+from src.TSHAboutWidget import TSHAboutWidget
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
@@ -706,7 +706,7 @@ class Window(QMainWindow):
                                 + QApplication.translate("app", "Please ensure the layout folder or its contents aren't open in another application before closing this window.")
                                 + "\n"
                             )
-                            
+
                             messagebox.exec()
 
                         worker = Worker(worker)
