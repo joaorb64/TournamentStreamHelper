@@ -54,10 +54,8 @@ async function UpdateData() {
     event.data = data;
     event.oldData = oldData;
 
-    if (JSON.stringify(data.timestamp) != JSON.stringify(oldData.timestamp)) {
-      console.log(data);
-      document.dispatchEvent(event);
-    }
+    console.log(data);
+    document.dispatchEvent(event);
   } catch (e) {
     console.log(e);
   }
