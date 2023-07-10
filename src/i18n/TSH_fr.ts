@@ -751,7 +751,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="303"/>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Check for updates</source>
         <translation>Vérifier les mises à jour</translation>
     </message>
@@ -877,12 +877,12 @@ p, li { white-space: pre-wrap; }
         <translation>Mise à jour réussie. Le programme va maintenant se fermer.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="720"/>
+        <location filename="../TournamentStreamHelper.py" line="724"/>
         <source>You&apos;re already using the latest version</source>
         <translation>Vous utilisez déjà la dernière version du programme</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Update available!</source>
         <translation>Mise à jour disponible !</translation>
     </message>
@@ -967,6 +967,7 @@ p, li { white-space: pre-wrap; }
         <translation>Le téléchargement de la mise à jour est terminé. Celle-ci sera installée lors de la fermeture du programme.</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="706"/>
         <source>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</source>
         <translation>Veuillez vérifier que le dossier layout et son contenu ne sont pas ouverts dans une autre application avant de fermer cette fenêtre.</translation>
     </message>
@@ -975,7 +976,7 @@ p, li { white-space: pre-wrap; }
         <translation>Mise à jour réussie.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="718"/>
+        <location filename="../TournamentStreamHelper.py" line="722"/>
         <source>Info</source>
         <translation>Information</translation>
     </message>
@@ -1404,12 +1405,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>[</source>
         <translation>[</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>]</source>
         <translation>]</translation>
     </message>

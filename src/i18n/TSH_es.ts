@@ -824,7 +824,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="303"/>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Check for updates</source>
         <translation>Buscar actualizaciones</translation>
     </message>
@@ -967,11 +967,16 @@ p, li { white-space: pre-wrap; }
         <translation>Descargando actualización...</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="706"/>
+        <source>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Update complete.</source>
         <translation>Actualización completada</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="718"/>
+        <location filename="../TournamentStreamHelper.py" line="722"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -980,12 +985,12 @@ p, li { white-space: pre-wrap; }
         <translation>Actualizacion completa. El programa se cerrará ahora.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="720"/>
+        <location filename="../TournamentStreamHelper.py" line="724"/>
         <source>You&apos;re already using the latest version</source>
         <translation>Ya estás usando la última versión</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Update available!</source>
         <translation>¡Actualización disponible!</translation>
     </message>
@@ -1357,12 +1362,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>[</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>]</source>
         <translation></translation>
     </message>

@@ -819,7 +819,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="303"/>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Check for updates</source>
         <translation>Auf Updates prüfen</translation>
     </message>
@@ -962,11 +962,16 @@ p, li { white-space: pre-wrap; }
         <translation>Update wird heruntergeladen...</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="706"/>
+        <source>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Update complete.</source>
         <translation>Update ausgeführt.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="718"/>
+        <location filename="../TournamentStreamHelper.py" line="722"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -975,12 +980,12 @@ p, li { white-space: pre-wrap; }
         <translation>Update durchgeführt! Das Programm wird beendet.</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="720"/>
+        <location filename="../TournamentStreamHelper.py" line="724"/>
         <source>You&apos;re already using the latest version</source>
         <translation>Die neuese Version ist bereits installiert</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>Update available!</source>
         <translation>Update verfügbar!</translation>
     </message>
@@ -1358,12 +1363,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>[</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="733"/>
+        <location filename="../TournamentStreamHelper.py" line="737"/>
         <source>]</source>
         <translation></translation>
     </message>
