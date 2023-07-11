@@ -167,121 +167,128 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.instanceSignals.dataChanged.emit()
 
     def CharactersChanged(self):
-        characters = {}
+        with self.dataLock:
+            characters = {}
 
-        for i, (element, character, color) in enumerate(self.character_elements):
-            data = character.currentData()
+            for i, (element, character, color) in enumerate(self.character_elements):
+                data = character.currentData()
 
-            if data == None:
-                data = {}
+                if data == None:
+                    data = {}
 
-            if character.currentData() == None:
-                data = {"name": character.currentText()}
+                if character.currentData() == None:
+                    data = {"name": character.currentText()}
 
-            if color.currentData() and color.currentData().get("name", ""):
-                data["name"] = color.currentData().get("name", "")
+                if color.currentData() and color.currentData().get("name", ""):
+                    data["name"] = color.currentData().get("name", "")
 
-            if color.currentData() and color.currentData().get("en_name", ""):
-                data["en_name"] = color.currentData().get("en_name", "")
+                if color.currentData() and color.currentData().get("en_name", ""):
+                    data["en_name"] = color.currentData().get("en_name", "")
 
-            if color.currentData() and character.currentData():
-                data["assets"] = color.currentData().get("assets", {})
+                if color.currentData() and character.currentData():
+                    data["assets"] = color.currentData().get("assets", {})
 
-            if data.get("assets") == None:
-                data["assets"] = {}
+                if data.get("assets") == None:
+                    data["assets"] = {}
 
-            data["skin"] = color.currentIndex()
+                data["skin"] = color.currentIndex()
 
-            characters[i+1] = data
+                characters[i+1] = data
 
-        StateManager.Set(
-            f"{self.path}.character", characters)
+            StateManager.Set(
+                f"{self.path}.character", characters)
 
     def SetLosers(self, value):
-        self.losers = value
-        self.ExportMergedName()
+        with self.dataLock:
+            self.losers = value
+            self.ExportMergedName()
 
     def NameChanged(self):
-        team = self.findChild(QLineEdit, "team").text()
-        name = self.findChild(QLineEdit, "name").text()
-        merged = team + " " + name
+        with self.dataLock:
+            team = self.findChild(QLineEdit, "team").text()
+            name = self.findChild(QLineEdit, "name").text()
+            merged = team + " " + name
 
-        if merged != self.lastExportedName:
-            self.ExportMergedName()
-            self.ExportPlayerImages()
-            self.ExportPlayerId()
-            self.ExportPlayerSeed()
+            if merged != self.lastExportedName:
+                self.ExportMergedName()
+                self.ExportPlayerImages()
+                self.ExportPlayerId()
+                self.ExportPlayerSeed()
 
-        self.lastExportedName = merged
+            self.lastExportedName = merged
 
     def ExportMergedName(self):
-        team = self.findChild(QLineEdit, "team").text()
-        name = self.findChild(QLineEdit, "name").text()
-        merged = ""
-        nameOnlyMerged = ""
+        with self.dataLock:
+            team = self.findChild(QLineEdit, "team").text()
+            name = self.findChild(QLineEdit, "name").text()
+            merged = ""
+            nameOnlyMerged = ""
 
-        if team != "":
-            merged += team+" | "
+            if team != "":
+                merged += team+" | "
 
-        merged += name
-        nameOnlyMerged += name
+            merged += name
+            nameOnlyMerged += name
 
-        if self.losers:
-            merged += " [L]"
-            nameOnlyMerged += " [L]"
+            if self.losers:
+                merged += " [L]"
+                nameOnlyMerged += " [L]"
 
-        StateManager.Set(
-            f"{self.path}.mergedName", merged)
-        StateManager.Set(
-            f"{self.path}.mergedOnlyName", nameOnlyMerged)
+            StateManager.Set(
+                f"{self.path}.mergedName", merged)
+            StateManager.Set(
+                f"{self.path}.mergedOnlyName", nameOnlyMerged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
-        team = self.findChild(QLineEdit, "team").text()
-        name = self.findChild(QLineEdit, "name").text()
-        merged = ""
+        with self.dataLock:
+            team = self.findChild(QLineEdit, "team").text()
+            name = self.findChild(QLineEdit, "name").text()
+            merged = ""
 
-        if team != "":
-            merged += team+" "
+            if team != "":
+                merged += team+" "
 
-        merged += name
+            merged += name
 
-        merged = merged.replace("/", " ")
-        merged = merged.replace(":", " ")
+            merged = merged.replace("/", " ")
+            merged = merged.replace(":", " ")
 
-        # Online avatar
-        StateManager.Set(
-            f"{self.path}.online_avatar", onlineAvatar)
-
-        # Local avatar
-        if os.path.exists(f"./user_data/player_avatar/{merged}.png"):
+            # Online avatar
             StateManager.Set(
-                f"{self.path}.avatar", f"./user_data/player_avatar/{merged}.png")
-        else:
-            StateManager.Set(
-                f"{self.path}.avatar", None)
+                f"{self.path}.online_avatar", onlineAvatar)
 
-        # Sponsor logo
-        if os.path.exists(f"./user_data/sponsor_logo/{team.upper()}.png"):
-            StateManager.Set(
-                f"{self.path}.sponsor_logo", f"./user_data/sponsor_logo/{team.upper()}.png")
-        else:
-            StateManager.Set(
-                f"{self.path}.sponsor_logo", None)
+            # Local avatar
+            if os.path.exists(f"./user_data/player_avatar/{merged}.png"):
+                StateManager.Set(
+                    f"{self.path}.avatar", f"./user_data/player_avatar/{merged}.png")
+            else:
+                StateManager.Set(
+                    f"{self.path}.avatar", None)
+
+            # Sponsor logo
+            if os.path.exists(f"./user_data/sponsor_logo/{team.upper()}.png"):
+                StateManager.Set(
+                    f"{self.path}.sponsor_logo", f"./user_data/sponsor_logo/{team.upper()}.png")
+            else:
+                StateManager.Set(
+                    f"{self.path}.sponsor_logo", None)
 
     def ExportPlayerId(self, id=None):
-        if StateManager.Get(f"{self.path}.id") != id:
-            StateManager.Set(
-                f"{self.path}.id", id)
-            self.instanceSignals.playerId_changed.emit()
-            if self.path.startswith("score.team.1"):
-                self.instanceSignals.player1Id_changed.emit()
-            else:
-                self.instanceSignals.player2Id_changed.emit()
+        with self.dataLock:
+            if StateManager.Get(f"{self.path}.id") != id:
+                StateManager.Set(
+                    f"{self.path}.id", id)
+                self.instanceSignals.playerId_changed.emit()
+                if self.path.startswith("score.team.1"):
+                    self.instanceSignals.player1Id_changed.emit()
+                else:
+                    self.instanceSignals.player2Id_changed.emit()
 
     def ExportPlayerSeed(self, seed=None):
-        if StateManager.Get(f"{self.path}.seed") != seed:
-            StateManager.Set(
-                f"{self.path}.seed", seed)
+        with self.dataLock:
+            if StateManager.Get(f"{self.path}.seed") != seed:
+                StateManager.Set(
+                    f"{self.path}.seed", seed)
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         if self == other:
@@ -771,6 +778,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         TSHPlayerDB.DeletePlayer(tag)
 
     def Clear(self):
+        StateManager.BlockSaving()
         with self.dataLock:
             for c in self.findChildren(QLineEdit):
                 if c.text() != "":
@@ -779,3 +787,4 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             for c in self.findChildren(QComboBox):
                 c.setCurrentIndex(0)
+        StateManager.ReleaseSaving()

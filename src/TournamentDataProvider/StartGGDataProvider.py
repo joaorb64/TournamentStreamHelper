@@ -314,24 +314,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetMatch(self, setId):
-        try:
-            r = requests.get(
-                f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
-                {
-                    "extensions": {"cacheControl": {"version": 1, "noCache": True}},
-                    "cacheControl": {"version": 1, "noCache": True},
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            )
-
-        except Exception as e:
-            traceback.print_exc()
-        return {}
-
     def GetMatch(self, setId, progress_callback):
-        finalResult = {}
+        finalResult = None
 
         try:
             pool = self.getMatchThreadPool
@@ -387,7 +371,12 @@ class StartGGDataProvider(TournamentDataProvider):
                 "Pragma": "no-cache"
             }
         )
-        data = json.loads(r.text)
+        data = {}
+
+        try:
+            data = json.loads(r.text)
+        except:
+            pass
         return self.ParseMatchDataOldApi(data)
 
     def _GetMatchNewApi(self, setId, progress_callback):
