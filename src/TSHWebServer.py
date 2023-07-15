@@ -108,7 +108,6 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-        print("UPDATE SCORE ===================================")
         print(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
 
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
