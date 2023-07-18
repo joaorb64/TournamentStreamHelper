@@ -1460,12 +1460,12 @@ p, li { white-space: pre-wrap; }
         <translation>Habilitar teclas de atalho</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="49"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="58"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="81"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
         <source>Hotkeys</source>
         <translation>Teclas de atalho</translation>
     </message>
@@ -1473,6 +1473,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../Settings/SettingsWidget.py" line="28"/>
         <source>Default</source>
         <translation>Padrão</translation>
+    </message>
+</context>
+<context>
+    <name>settings.control_score_from_stage_strike</name>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="50"/>
+        <source>Enable score control from the stage striking app</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1518,42 +1526,42 @@ p, li { white-space: pre-wrap; }
         <translation>Habilitar teclas de atalho</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="63"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="72"/>
         <source>Load set</source>
         <translation>Carregar set</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="64"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="73"/>
         <source>Team 1 score up</source>
         <translation>Aumentar pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="65"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="74"/>
         <source>Team 1 score down</source>
         <translation>Diminuir pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="75"/>
         <source>Team 2 score up</source>
         <translation>Aumentar pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="67"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="76"/>
         <source>Team 2 score down</source>
         <translation>Diminuir pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="68"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="77"/>
         <source>Reset scores</source>
         <translation>Zerar placar</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="69"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="78"/>
         <source>Swap teams</source>
         <translation>Inverter times</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="56"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="65"/>
         <source>Enable hotkeys</source>
         <translation>Habilitar teclas de atalho</translation>
     </message>
