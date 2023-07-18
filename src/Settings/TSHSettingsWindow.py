@@ -46,6 +46,15 @@ class TSHSettingsWindow(QDialog):
             True
         ))
 
+        generalSettings.append((
+            QApplication.translate(
+                "settings.control_score_from_stage_strike", "Enable score control from the stage striking app"),
+            "control_score_from_stage_strike",
+            "checkbox",
+            True
+        ))
+
+
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))
 
