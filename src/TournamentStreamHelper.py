@@ -30,6 +30,7 @@ if parse(qtpy.QT_VERSION).major == 6:
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
+# autopep8: off
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
 from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerListWidget import TSHPlayerListWidget
@@ -46,6 +47,7 @@ from .TSHScoreboardWidget import *
 from .TSHThumbnailSettingsWidget import *
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
+# autopep8: on
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
@@ -61,23 +63,85 @@ def generate_restart_messagebox(main_txt):
     return (messagebox)
 
 
+def UpdateProcedure():
+    """
+        Update Procedure -- backup layouts, register extraction on program close
+    """
+
+    try:
+        # Backup layouts
+        os.rename(
+            "./layout", f"./layout_backup_{str(time.time())}")
+
+        # Register update extraction on program close
+        atexit.register(ExtractUpdate)
+
+        messagebox = generate_restart_messagebox(
+            QApplication.translate(
+                "app", "Update download complete. The program will extract the update upon closing.")
+            + "\n\n"
+            + QApplication.translate(
+                "app", "Please ensure the layout folder or its contents aren't open in another application before closing this window.")
+            + "\n"
+        )
+
+        messagebox.exec()
+    except Exception as e:
+        # Layout folder backups failed
+        print(e)
+
+        buttonReply = QDialog()
+        buttonReply.setWindowTitle(
+            QApplication.translate("app", "Warning"))
+        vbox = QVBoxLayout()
+        buttonReply.setLayout(vbox)
+
+        buttonReply.layout().addWidget(
+            QLabel(QApplication.translate(
+                "updater",
+                "Error while backing up the layout folder:")
+            )
+        )
+        buttonReply.layout().addWidget(QLabel(str(e)))
+
+        hbox = QHBoxLayout()
+        vbox.addLayout(hbox)
+
+        btRetry = QPushButton(
+            QApplication.translate("updater", "Retry"))
+        hbox.addWidget(btRetry)
+        btCancel = QPushButton(
+            QApplication.translate("updater", "Cancel"))
+        hbox.addWidget(btCancel)
+
+        btRetry.clicked.connect(lambda: [
+            buttonReply.close(),
+            UpdateProcedure()
+        ])
+
+        btCancel.clicked.connect(
+            lambda: buttonReply.close()
+        )
+
+        buttonReply.exec()
+
+
 def ExtractUpdate():
-    tar = tarfile.open("update.tar.gz")
+    try:
+        tar = tarfile.open("update.tar.gz")
 
-    # backup layouts
-    os.rename(
-        "./layout", f"./layout_backup_{str(time.time())}")
+        # backup exe
+        os.rename("./TSH.exe", "./TSH_old.exe")
 
-    # backup exe
-    os.rename("./TSH.exe", "./TSH_old.exe")
+        for m in tar.getmembers():
+            if "/" in m.name:
+                m.name = m.name.split("/", 1)[1]
+                tar.extract(m)
 
-    for m in tar.getmembers():
-        if "/" in m.name:
-            m.name = m.name.split("/", 1)[1]
-            tar.extract(m)
-
-    tar.close()
-    os.remove("update.tar.gz")
+        tar.close()
+        os.remove("update.tar.gz")
+    except Exception as e:
+        print(traceback.format_exc())
 
 
 def remove_accents_lower(input_str):
@@ -697,17 +761,8 @@ class Window(QMainWindow):
                         def finished():
                             self.downloadDialogue.close()
 
-                            # Register update extraction on program close
-                            atexit.register(ExtractUpdate)
-
-                            messagebox = generate_restart_messagebox(
-                                QApplication.translate("app", "Update download complete. The program will extract the update upon closing.")
-                                + "\n\n"
-                                + QApplication.translate("app", "Please ensure the layout folder or its contents aren't open in another application before closing this window.")
-                                + "\n"
-                            )
-
-                            messagebox.exec()
+                            # Update procedure
+                            UpdateProcedure()
 
                         worker = Worker(worker)
                         worker.signals.progress.connect(progress)
