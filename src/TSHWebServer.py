@@ -7,6 +7,7 @@ from flask_cors import CORS, cross_origin
 import json
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
 
 
@@ -303,6 +304,20 @@ class WebServer(QThread):
         WebServer.scoreboard.playerNumber.setValue(1)
         WebServer.scoreboard.charNumber.setValue(1)
         WebServer.scoreboard.CommandClearAll()
+        return "OK"
+    
+    # Ticks score of Team specified down by 1 point
+    @app.route('/load-set')
+    def load_set():
+        if request.args.get('set') is not None:
+            WebServer.scoreboard.signals.NewSetSelected.emit(
+                json.loads(
+                    json.dumps({
+                        'id': request.args.get('set', default='0', type=str),
+                        'auto_update': "set"
+                        })
+                )
+            )
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))
