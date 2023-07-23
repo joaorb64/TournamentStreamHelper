@@ -306,7 +306,7 @@ class WebServer(QThread):
         WebServer.scoreboard.CommandClearAll()
         return "OK"
     
-    # Ticks score of Team specified down by 1 point
+    # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/load-set')
     def load_set():
         if request.args.get('set') is not None:
