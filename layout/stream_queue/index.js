@@ -87,7 +87,7 @@ LoadEverything().then(() => {
                 `
         )
 
-        resolver.add(`.set${s} .p${t} .twitter`, 
+        resolver.add(`.set${s - 1} .p${t} .twitter`, 
             (!isTeams) ?  `<span class="twitter_logo"></span>${String(player.twitter)}` : ""  
         )
 
@@ -103,9 +103,17 @@ LoadEverything().then(() => {
                 <div class = "name">
                     <div class = "tag"></div>
                     <div class = "extra">
-                        <div class = "twitter">  </div> 
-                        <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>
-                        <div class = "seed"> ${wrap_text("Seed " + team.seed)} </div>
+                        ${ player.twitter ?
+                            ` <div class = "twitter">  </div> ` : ''
+                        }
+                        ${ player.pronoun ?
+                            ` <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>` : ''
+                        }
+                        ${ team.seed ?
+                            `<div class = "seed"> ${wrap_text("Seed " + team.seed)} </div> ` : ''
+                        }
+                       
+                        
                     </div>
                 </div>
             </div>
