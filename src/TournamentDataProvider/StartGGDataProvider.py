@@ -945,18 +945,19 @@ class StartGGDataProvider(TournamentDataProvider):
                                 stateCode = playerData.get("state_code", "")
                                 countryData = TSHCountryHelper.countries.get(
                                     countryCode)
-                                states = countryData.get("states")
-                                stateData = {}
-                                if stateCode:
-                                    stateData = states[stateCode]
+                                if countryData:
+                                    states = countryData.get("states")
+                                    stateData = {}
+                                    if stateCode:
+                                        stateData = states[stateCode]
 
-                                    path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
-                                    if not os.path.exists(path):
-                                        path = None
+                                        path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
+                                        if not os.path.exists(path):
+                                            path = None
 
-                                    stateData.update({
-                                        "asset": path
-                                    })
+                                        stateData.update({
+                                            "asset": path
+                                        })
 
                                 playerData = {
                                     "country": TSHCountryHelper.GetBasicCountryInfo(countryCode),
