@@ -10,6 +10,7 @@ LoadEverything().then(() => {
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
+        "currentEventOnly": false,
         "display" : {
             "station" : false,
             "country_flag" : true,
@@ -126,6 +127,7 @@ LoadEverything().then(() => {
         for (const [s, set] of Object.values(queue).slice(first_index).entries()){
             if (sets_nb && (current_set_nb >= sets_nb)) break;
 
+            if (config.currentEventOnly && !set.isCurrentEvent) continue;
             if (config.station != -1 && config.station != set.station) continue;
 
             let isTeams = Object.keys(set.team["1"].player).length > 1;
