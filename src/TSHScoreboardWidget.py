@@ -654,6 +654,7 @@ class TSHScoreboardWidget(QDockWidget):
         StateManager.BlockSaving()
 
         try:
+            TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
                 StateManager.Unset(f'score.stage_strike')
@@ -670,7 +671,6 @@ class TSHScoreboardWidget(QDockWidget):
 
                 TSHTournamentDataProvider.instance.GetMatch(
                     self, data["id"], overwrite=True)
-                TSHTournamentDataProvider.instance.GetStreamQueue()
 
             self.autoUpdateTimer.timeout.connect(
                 lambda setId=data: self.AutoUpdate(data))
