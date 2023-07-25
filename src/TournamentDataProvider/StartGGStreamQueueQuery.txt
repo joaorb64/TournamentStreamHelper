@@ -1,5 +1,6 @@
 query StreamQueueQuery($slug: String) {
     event(slug: $slug){
+        slug
         tournament {
             streamQueue {
                 sets {
@@ -10,6 +11,9 @@ query StreamQueueQuery($slug: String) {
                     state
                     station {
                       number
+                    }
+                    event {
+                        slug
                     }
                     slots {
                         entrant {
