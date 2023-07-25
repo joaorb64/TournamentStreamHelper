@@ -626,6 +626,10 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
 
+    def AutoUpdate(self, data):
+        TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False)
+        TSHTournamentDataProvider.instance.GetStreamQueue()
+
     def NewSetSelected(self, data):
         self.StopAutoUpdate()
         self.autoUpdateTimer = QTimer()
@@ -669,7 +673,7 @@ class TSHScoreboardWidget(QDockWidget):
                 TSHTournamentDataProvider.instance.GetStreamQueue()
 
             self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
+                lambda setId=data: self.AutoUpdate(data))
 
             if data.get("auto_update") == "stream":
                 self.autoUpdateTimer.timeout.connect(
