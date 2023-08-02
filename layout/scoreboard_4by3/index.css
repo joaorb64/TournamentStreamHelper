@@ -54,7 +54,7 @@ body {
 .player.container {
   top: 236px;
   width: 100%;
-  height: 420px;
+  height: 430px;
   background-size: cover;
   background-repeat: no-repeat;
   color: var(--text-color);
@@ -81,7 +81,7 @@ body {
   padding-right: 16;
   width: 100%;
   top: 0;
-  height: 70px;
+  height: 80px;
   font-size: 32px;
   box-sizing: border-box;
   background-color: var(--bg-color);
@@ -141,13 +141,14 @@ body {
 }
 
 .info.container.top {
-  top: 4px;
+  top: 0;
   height: 50px;
   font-size: 26px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .info.container.bottom {
-  top: 116px;
   display: flex;
   justify-content: space-around;
   height: unset;
@@ -155,10 +156,11 @@ body {
   width: 600px;
   font-size: 20px;
   padding: 4px 10px;
-  top: unset;
-  bottom: 4px;
+  bottom: 0;
   padding: 8px 16px;
   gap: 2px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .phase {
@@ -176,7 +178,7 @@ body {
 .flags_container {
   position: absolute;
   gap: 8px;
-  top: 78px;
+  top: 90px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -196,15 +198,15 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   width: 38px;
-  height: 26px;
+  height: 24px;
   border: 2px solid white;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .character_container {
   position: absolute;
   overflow: hidden;
-  top: 70px;
+  top: 80px;
   height: 304px;
   width: 100%;
   display: flex;
@@ -298,8 +300,9 @@ body {
   color: var(--bg-color);
   place-self: flex-end;
   position: absolute;
-  top: 48px;
+  top: 56px;
   z-index: 9;
+  max-width: 100px;
 }
 
 .left .pronoun {
@@ -310,4 +313,26 @@ body {
 .right .pronoun {
   background: var(--p2-sponsor-color);
   right: 4px;
+}
+
+.seed {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: normal;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  place-self: flex-start;
+  position: absolute;
+  top: 56px;
+  z-index: 9;
+  max-width: 100px;
+}
+
+.left .seed {
+  right: 4px;
+}
+
+.right .seed {
+  left: 4px;
 }

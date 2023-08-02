@@ -84,6 +84,47 @@ body {
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
+.player_col {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.name_row {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.info_grid {
+  display: flex;
+  justify-items: center;
+  gap: 8px;
+  flex-wrap: no-wrap;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.p2 .info_grid {
+  flex-direction: row-reverse;
+}
+
+.info_grid > .text_empty {
+  padding: 0;
+  width: 0;
+  display: none;
+}
+
+.info_grid > div {
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  padding: 2px 8px;
+  border: 2px solid var(--text-color);
+}
+
 .player.container {
   bottom: 0;
   width: 740px;
@@ -92,10 +133,8 @@ body {
   flex-direction: row;
   align-content: center;
   justify-content: flex-start;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-left: 32px;
+  padding-right: 32px;
   z-index: 9;
 }
 
@@ -135,6 +174,11 @@ body {
   flex-direction: row;
 }
 
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
 .p2 .row {
   flex-direction: row-reverse;
 }
@@ -158,7 +202,8 @@ body {
 }
 
 .container .name {
-  font-size: 46px;
+  font-size: 56px;
+  overflow: hidden;
 }
 
 .container .name .text > span {
@@ -170,8 +215,13 @@ body {
   flex-direction: row-reverse;
 }
 
-.container .real_name {
+.real_name {
+  align-self: flex-start;
   font-size: 24px;
+}
+
+.p2 .real_name {
+  align-self: flex-end;
 }
 
 .twitter_logo {
@@ -185,7 +235,7 @@ body {
   margin-right: 6px;
 }
 
-.twitter {
+.twitter, .seed, .real_name, .pronoun {
   font-size: 26px;
 }
 
@@ -211,24 +261,25 @@ body {
   color: var(--p2-sponsor-color);
 }
 
-.losers {
-  display: inline-flex;
-  width: 36px;
-  height: 36px;
-  font-size: 26px;
-  border-radius: 100%;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  margin: 0 10px;
+.losers_badge {
+  position: absolute;
+  font-size: 24px;
+  padding: 2px 12px;
+  bottom: 16px;
+  opacity: 0;
+  border-radius: calc(var(--border-radius)/2);
+  font-weight: 900;
+  color: var(--bg-color);
 }
 
-.p1 .losers {
+.p1 .losers_badge {
   background-color: var(--p1-sponsor-color);
+  right: 24px;
 }
 
-.p2 .losers {
+.p2 .losers_badge {
   background-color: var(--p2-sponsor-color);
+  left: 24px;
 }
 
 .info {
@@ -239,10 +290,14 @@ body {
   width: 800px;
   display: flex;
   flex-direction: column;
-  padding: 20px 40px;
   z-index: 9;
-  filter: drop-shadow(0px 0px 4px white);
-  text-shadow: 0 0 10px white;
+  gap: 8px;
+}
+
+.info div {
+  background: linear-gradient(90deg, transparent 0%, var(--text-color), transparent 100%);
+  padding: 0px 64px;
+  box-sizing: border-box;
 }
 
 .tournament {
@@ -273,9 +328,7 @@ body {
 }
 
 .flagscontainer {
-  width: 60px;
   display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
@@ -291,7 +344,7 @@ body {
   justify-content: center;
   border: 2px solid white;
   margin-bottom: 16px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .flagname {
@@ -312,17 +365,23 @@ body {
 .score {
   top: 0;
   width: 60px;
-  right: 42px;
+  right: 0;
   height: 100%;
   display: flex;
   align-content: center;
   justify-content: center;
   font-size: 120px;
+  margin: 0 16px;
+}
+
+.p1 .score {
+  margin-left: 48px;
 }
 
 .p2 .score {
   right: unset;
-  left: 42px;
+  left: 0;
+  margin-right: 48px;
 }
 
 .p1.character {
@@ -465,20 +524,29 @@ body {
   right: 5px;
 }
 
-.pronoun {
-  font-size: 20px;
+.character_name {
+  position: fixed;
+  max-width: 600px;
+  min-width: 0;
+  top: -56px;
+  font-size: 32px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 6px;
-  color: var(--bg-color);
+  left: 8px;
+  box-sizing: border-box;
+  padding: 4px 64px;
+  background: linear-gradient(90deg, transparent 0%, var(--bg-color), transparent 100%);
+  color: var(--text-color);
 }
 
-.p1 .pronoun {
-  background: var(--p1-sponsor-color);
+.p2 .character_name {
+  right: 8px;
+  left: unset;
 }
 
-.p2 .pronoun {
-  background: var(--p2-sponsor-color);
+.character_name .text {
+  justify-content: flex-start;
+}
+
+.character_name.text_empty {
+  padding: 0 !important;
 }

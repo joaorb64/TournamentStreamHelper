@@ -284,10 +284,12 @@ async function SetInnerHtml(element, html, settings = {}) {
     ) {
       const callback = () => {
         element.find(".text").html(html);
-        if (html.length == 0) {
+        if (html.trim().length == 0) {
           element.find(".text").addClass("text_empty");
+          element.addClass("text_empty");
         } else {
           element.find(".text").removeClass("text_empty");
+          element.removeClass("text_empty");
         }
         FitText(element);
         if (middleFunction != undefined) {

@@ -129,7 +129,9 @@ LoadEverything().then(() => {
               : ""
           );
 
-          SetInnerHtml($(`.p${t + 1} .real_name`), `${player.real_name}`);
+          SetInnerHtml($(`.p${t + 1} .seed`), player.seed ? `Seed ${player.seed}` : "");
+
+          SetInnerHtml($(`.p${t + 1} .real_name`), player.real_name);
 
           SetInnerHtml(
             $(`.p${t + 1} .twitter`),
@@ -185,9 +187,11 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.p${t + 1}.character_name`),
             `
-              ${characterNames.join(" / ")}
+              ${characterNames.join("<br/>")}
           `
           );
+
+          $(`.p${t + 1}.character_name`).css({"font-size": 500/characterNames.length})
 
           let zIndexMultiplyier = 1;
           if (t == 1) zIndexMultiplyier = -1;
@@ -198,7 +202,6 @@ LoadEverything().then(() => {
               {
                 source: `score.team.${t + 1}`,
                 scale_based_on_parent: true,
-                custom_center: [0.4, 0.4],
                 anim_out: {
                   x: -zIndexMultiplyier * 100 + "%",
                   stagger: 0.1,
@@ -269,41 +272,56 @@ LoadEverything().then(() => {
     } else {
       const teams = Object.values(data.score.team);
       for (const [t, team] of teams.entries()) {
-        let teamName = "";
+        let hasTeamName = team.teamName != null && team.teamName != ""
 
-        if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
+        let playerNames = "";
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
           }
-          teamName = names.join(" / ");
+        }
+        playerNames = names.join(" / ");
+
+        if(hasTeamName){
+          SetInnerHtml(
+            $(`.p${t + 1} .name`),
+            `
+              <span>
+                  <div>
+                    ${team.teamName}
+                  </div>
+              </span>
+            `
+          );
+          SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
         } else {
-          teamName = team.teamName;
+          SetInnerHtml(
+            $(`.p${t + 1} .name`),
+            `
+              <span>
+                  <div>
+                    ${playerNames}
+                  </div>
+                  ${team.losers ? "<span class='losers'>L</span>" : ""}
+              </span>
+            `
+          );
+          SetInnerHtml($(`.p${t + 1} .real_name`), ``);
         }
 
-        SetInnerHtml(
-          $(`.p${t + 1} .name`),
-          `
-            <span>
-                <div>
-                  ${teamName}
-                </div>
-                ${team.losers ? "<span class='losers'>L</span>" : ""}
-            </span>
-          `
-        );
-
         SetInnerHtml($(`.p${t + 1} > .sponsor_logo`), "");
-
-        SetInnerHtml($(`.p${t + 1} .real_name`), ``);
 
         SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
         SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
+
+        SetInnerHtml($(`.p${t + 1} .pronoun`), "");
+
+        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `Seed ${team.seed}` : "");
 
         let characterNames = [];
 
@@ -323,9 +341,11 @@ LoadEverything().then(() => {
         SetInnerHtml(
           $(`.p${t + 1}.character_name`),
           `
-              ${characterNames.join(" / ")}
-          `
+            ${characterNames.join("<br/>")}
+        `
         );
+
+        $(`.p${t + 1}.character_name`).css({"font-size": 500/characterNames.length})
 
         let zIndexMultiplyier = 1;
         if (t == 1) zIndexMultiplyier = -1;

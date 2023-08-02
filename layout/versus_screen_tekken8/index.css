@@ -471,6 +471,10 @@ body {
   right: 5px;
 }
 
+.seed {
+  font-size: 24px;
+}
+
 .pronoun {
   height: 32px;
   font-size: 28px;

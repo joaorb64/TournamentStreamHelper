@@ -59,10 +59,15 @@ LoadEverything().then(() => {
                     </span>
                     ${await Transcript(player.name)}
                   </div>
-                  ${team.losers ? "<span class='losers'>L</span>" : ""}
               </span>
             `
           );
+
+          gsap.to($(`.p${t + 1} .losers_badge`), {
+            autoAlpha: team.losers ? 1 : 0,
+            overwrite: true,
+            duration: 0.8,
+          });
 
           SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun);
 
@@ -75,7 +80,27 @@ LoadEverything().then(() => {
               : ""
           );
 
-          SetInnerHtml($(`.p${t + 1} .real_name`), `${player.real_name}`);
+          SetInnerHtml($(`.p${t + 1} .real_name`), player.real_name);
+
+          SetInnerHtml($(`.p${t + 1} .seed`), player.seed ? `Seed ${player.seed}` : "");
+
+          let characterNames = [];
+
+          if(!window.ONLINE_AVATAR && !window.PLAYER_AVATAR){
+            for (const [p, player] of Object.values(team.player).entries()) {
+              let characters = _.get(player, "character");
+              for (const c of Object.values(characters)) {
+                if (c.name) characterNames.push(c.name);
+              }
+            }
+          }
+
+          SetInnerHtml(
+            $(`.p${t + 1} .character_name`),
+            `
+                ${characterNames.join(" / ")}
+            `
+          );
 
           SetInnerHtml(
             $(`.p${t + 1} .twitter`),
@@ -194,41 +219,79 @@ LoadEverything().then(() => {
     } else {
       const teams = Object.values(data.score.team);
       for (const [t, team] of teams.entries()) {
-        let teamName = "";
+        let hasTeamName = team.teamName != null && team.teamName != ""
 
-        if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
+        let playerNames = "";
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
           }
-          teamName = names.join(" / ");
+        }
+        playerNames = names.join(" / ");
+
+        if(hasTeamName){
+          SetInnerHtml(
+            $(`.p${t + 1} .name`),
+            `
+              <span>
+                  <div>
+                    ${team.teamName}
+                  </div>
+              </span>
+            `
+          );
+          SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
         } else {
-          teamName = team.teamName;
+          SetInnerHtml(
+            $(`.p${t + 1} .name`),
+            `
+              <span>
+                  <div>
+                    ${playerNames}
+                  </div>
+              </span>
+            `
+          );
+          SetInnerHtml($(`.p${t + 1} .real_name`), ``);
         }
 
-        SetInnerHtml(
-          $(`.p${t + 1} .name`),
-          `
-            <span>
-                <div>
-                  ${teamName}
-                </div>
-                ${team.losers ? "<span class='losers'>L</span>" : ""}
-            </span>
-          `
-        );
+        gsap.to($(`.p${t + 1} .losers_badge`), {
+          autoAlpha: team.losers ? 1 : 0,
+          overwrite: true,
+          duration: 0.8,
+        });
 
         SetInnerHtml($(`.p${t + 1} > .sponsor_logo`), "");
-
-        SetInnerHtml($(`.p${t + 1} .real_name`), ``);
 
         SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
         SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
 
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
+
+        SetInnerHtml($(`.p${t + 1} .pronoun`), "");
+
+        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `Seed ${team.seed}` : "");
+
+        let characterNames = [];
+
+        if(!window.ONLINE_AVATAR && !window.PLAYER_AVATAR){
+          for (const [p, player] of Object.values(team.player).entries()) {
+            let characters = _.get(player, "character");
+            for (const c of Object.values(characters)) {
+              if (c.name) characterNames.push(c.name);
+            }
+          }
+        }
+
+        SetInnerHtml(
+          $(`.p${t + 1} .character_name`),
+          `
+              ${characterNames.join(" / ")}
+          `
+        );
 
         let zIndexMultiplyier = 1;
         if (t == 1) zIndexMultiplyier = -1;

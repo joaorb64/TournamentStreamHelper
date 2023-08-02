@@ -87,6 +87,11 @@ LoadEverything().then(() => {
           );
 
           SetInnerHtml(
+            $(`.${team_id} .p${p + 1} .seed`),
+            `Seed ${player.seed}`
+          );
+
+          SetInnerHtml(
             $(`.${team_id} .p${p + 1} .flagcountry`),
             player.country.asset
               ? `
