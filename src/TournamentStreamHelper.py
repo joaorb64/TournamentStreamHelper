@@ -30,23 +30,24 @@ if parse(qtpy.QT_VERSION).major == 6:
 App = QApplication(sys.argv)
 print("QApplication successfully initialized")
 
-from src.TSHAboutWidget import TSHAboutWidget
-from src.TSHAssetDownloader import TSHAssetDownloader
-from .TSHThumbnailSettingsWidget import *
-from .TSHScoreboardWidget import *
-from .Workers import *
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHAlertNotification import TSHAlertNotification
-from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
-from .TSHBracketWidget import TSHBracketWidget
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHCommentaryWidget import TSHCommentaryWidget
-from .TSHPlayerListWidget import TSHPlayerListWidget
-from .TSHHotkeys import TSHHotkeys
+# autopep8: off
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
-
+from .TSHHotkeys import TSHHotkeys
+from .TSHPlayerListWidget import TSHPlayerListWidget
+from .TSHCommentaryWidget import TSHCommentaryWidget
+from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHBracketWidget import TSHBracketWidget
+from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+from .TSHAlertNotification import TSHAlertNotification
+from .TSHPlayerDB import TSHPlayerDB
+from .Workers import *
+from .TSHScoreboardWidget import *
+from .TSHThumbnailSettingsWidget import *
+from src.TSHAssetDownloader import TSHAssetDownloader
+from src.TSHAboutWidget import TSHAboutWidget
+# autopep8: on
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
@@ -59,25 +60,89 @@ def generate_restart_messagebox(main_txt):
     messagebox.setText(
         main_txt + "\n" + QApplication.translate("app", "The program will now close."))
     messagebox.finished.connect(QApplication.exit)
-    return(messagebox)
+    return (messagebox)
+
+
+def UpdateProcedure():
+    """
+        Update Procedure -- backup layouts, register extraction on program close
+    """
+
+    try:
+        # Backup layouts
+        os.rename(
+            "./layout", f"./layout_backup_{str(time.time())}")
+
+        # Register update extraction on program close
+        atexit.register(ExtractUpdate)
+
+        messagebox = generate_restart_messagebox(
+            QApplication.translate(
+                "app", "Update download complete. The program will extract the update upon closing.")
+            + "\n\n"
+            + QApplication.translate(
+                "app", "Please ensure the layout folder or its contents aren't open in another application before closing this window.")
+            + "\n"
+        )
+
+        messagebox.exec()
+    except Exception as e:
+        # Layout folder backups failed
+        print(e)
+
+        buttonReply = QDialog()
+        buttonReply.setWindowTitle(
+            QApplication.translate("app", "Warning"))
+        vbox = QVBoxLayout()
+        buttonReply.setLayout(vbox)
+
+        buttonReply.layout().addWidget(
+            QLabel(QApplication.translate(
+                "updater",
+                "Error while backing up the layout folder:")
+            )
+        )
+        buttonReply.layout().addWidget(QLabel(str(e)))
+
+        hbox = QHBoxLayout()
+        vbox.addLayout(hbox)
+
+        btRetry = QPushButton(
+            QApplication.translate("updater", "Retry"))
+        hbox.addWidget(btRetry)
+        btCancel = QPushButton(
+            QApplication.translate("updater", "Cancel"))
+        hbox.addWidget(btCancel)
+
+        btRetry.clicked.connect(lambda: [
+            buttonReply.close(),
+            UpdateProcedure()
+        ])
+
+        btCancel.clicked.connect(
+            lambda: buttonReply.close()
+        )
+
+        buttonReply.exec()
+
 
 def ExtractUpdate():
-    tar = tarfile.open("update.tar.gz")
+    try:
+        tar = tarfile.open("update.tar.gz")
 
-    # backup layouts
-    os.rename(
-        "./layout", f"./layout_backup_{str(time.time())}")
+        # backup exe
+        os.rename("./TSH.exe", "./TSH_old.exe")
 
-    # backup exe
-    os.rename("./TSH.exe", "./TSH_old.exe")
+        for m in tar.getmembers():
+            if "/" in m.name:
+                m.name = m.name.split("/", 1)[1]
+                tar.extract(m)
 
-    for m in tar.getmembers():
-        if "/" in m.name:
-            m.name = m.name.split("/", 1)[1]
-            tar.extract(m)
+        tar.close()
+        os.remove("update.tar.gz")
+    except Exception as e:
+        print(traceback.format_exc())
 
-    tar.close()
-    os.remove("update.tar.gz")
 
 def remove_accents_lower(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -105,7 +170,8 @@ class Window(QMainWindow):
 
         self.signals = WindowSignals()
 
-        splash = QSplashScreen(QPixmap('assets/icons/icon.png').scaled(128, 128))
+        splash = QSplashScreen(
+            QPixmap('assets/icons/icon.png').scaled(128, 128))
         splash.show()
 
         time.sleep(0.1)
@@ -199,8 +265,9 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.stageWidget)
         self.dockWidgets.append(self.stageWidget)
-        
-        self.webserver = WebServer(parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
+
+        self.webserver = WebServer(
+            parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
         self.webserver.start()
 
         commentary = TSHCommentaryWidget()
@@ -243,7 +310,8 @@ class Window(QMainWindow):
             lambda bt=None, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
 
         self.unsetTournamentBt = QPushButton()
-        self.unsetTournamentBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.unsetTournamentBt.setSizePolicy(
+            QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.unsetTournamentBt.setIcon(QIcon("./assets/icons/cancel.svg"))
         self.unsetTournamentBt.clicked.connect(lambda: [
             TSHTournamentDataProvider.instance.SetTournament(None)
@@ -341,7 +409,7 @@ class Window(QMainWindow):
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             SettingsManager.Set("program_language", "default"),
             program_language_messagebox.exec()
         ])
@@ -350,7 +418,7 @@ class Window(QMainWindow):
             action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
-            action.triggered.connect(lambda x, c=code: [
+            action.triggered.connect(lambda x=None, c=code: [
                 SettingsManager.Set("program_language", c),
                 program_language_messagebox.exec()
             ])
@@ -372,7 +440,7 @@ class Window(QMainWindow):
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             SettingsManager.Set("game_asset_language", "default"),
             game_asset_language_messagebox.exec()
         ])
@@ -381,7 +449,7 @@ class Window(QMainWindow):
             action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
-            action.triggered.connect(lambda x, c=code: [
+            action.triggered.connect(lambda x=None, c=code: [
                 SettingsManager.Set("game_asset_language", c),
                 game_asset_language_messagebox.exec()
             ])
@@ -403,7 +471,7 @@ class Window(QMainWindow):
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             SettingsManager.Set("fg_term_language", "default"),
             fg_language_messagebox.exec()
         ])
@@ -412,7 +480,7 @@ class Window(QMainWindow):
             action = languageSelect.addAction(f"{language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
-            action.triggered.connect(lambda x, c=code: [
+            action.triggered.connect(lambda x=None, c=code: [
                 SettingsManager.Set("fg_term_language", c),
                 fg_language_messagebox.exec()
             ])
@@ -424,8 +492,10 @@ class Window(QMainWindow):
         # Help menu code
 
         help_messagebox = QMessageBox()
-        help_messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
-        help_messagebox.setText(QApplication.translate("app", "A new window has been opened in your default webbrowser."))
+        help_messagebox.setWindowTitle(
+            QApplication.translate("app", "Warning"))
+        help_messagebox.setText(QApplication.translate(
+            "app", "A new window has been opened in your default webbrowser."))
 
         helpMenu = QMenu(QApplication.translate(
             "app", "Help") + menu_margin, self.optionsBt.menu())
@@ -433,7 +503,7 @@ class Window(QMainWindow):
         action = helpMenu.addAction(
             QApplication.translate("app", "Open the Wiki"))
         wiki_url = "https://github.com/joaorb64/TournamentStreamHelper/wiki"
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             QDesktopServices.openUrl(QUrl(wiki_url)),
             help_messagebox.exec()
         ])
@@ -441,7 +511,7 @@ class Window(QMainWindow):
         action = helpMenu.addAction(
             QApplication.translate("app", "Report a bug"))
         issues_url = "https://github.com/joaorb64/TournamentStreamHelper/issues"
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             QDesktopServices.openUrl(QUrl(issues_url)),
             help_messagebox.exec()
         ])
@@ -449,7 +519,7 @@ class Window(QMainWindow):
         action = helpMenu.addAction(
             QApplication.translate("app", "Ask for Help on Discord"))
         discord_url = "https://discord.gg/X9Sp2FkcHF"
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             QDesktopServices.openUrl(QUrl(discord_url)),
             help_messagebox.exec()
         ])
@@ -459,7 +529,7 @@ class Window(QMainWindow):
         action = helpMenu.addAction(
             QApplication.translate("app", "Contribute to the Asset Database"))
         asset_url = "https://github.com/joaorb64/StreamHelperAssets/"
-        action.triggered.connect(lambda x: [
+        action.triggered.connect(lambda x=None: [
             QDesktopServices.openUrl(QUrl(asset_url)),
             help_messagebox.exec()
         ])
@@ -669,7 +739,7 @@ class Window(QMainWindow):
                                 response = urllib.request.urlopen(
                                     release["tarball_url"])
 
-                                while(True):
+                                while (True):
                                     chunk = response.read(1024*1024)
 
                                     if not chunk:
@@ -691,13 +761,8 @@ class Window(QMainWindow):
                         def finished():
                             self.downloadDialogue.close()
 
-                            # Register update extraction on program close
-                            atexit.register(ExtractUpdate)
-
-                            messagebox = generate_restart_messagebox(
-                                QApplication.translate("app", "Update download complete. The program will extract the update upon closing."))
-                                
-                            messagebox.exec()
+                            # Update procedure
+                            UpdateProcedure()
 
                         worker = Worker(worker)
                         worker.signals.progress.connect(progress)

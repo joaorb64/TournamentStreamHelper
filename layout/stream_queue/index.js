@@ -10,6 +10,7 @@ LoadEverything().then(() => {
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
+        "currentEventOnly": false,
         "display" : {
             "station" : false,
             "country_flag" : true,
@@ -87,7 +88,7 @@ LoadEverything().then(() => {
                 `
         )
 
-        resolver.add(`.set${s} .p${t} .twitter`, 
+        resolver.add(`.set${s - 1} .p${t} .twitter`, 
             (!isTeams) ?  `<span class="twitter_logo"></span>${String(player.twitter)}` : ""  
         )
 
@@ -103,9 +104,17 @@ LoadEverything().then(() => {
                 <div class = "name">
                     <div class = "tag"></div>
                     <div class = "extra">
-                        <div class = "twitter">  </div> 
-                        <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>
-                        <div class = "seed"> ${wrap_text("Seed " + team.seed)} </div>
+                        ${ player.twitter ?
+                            ` <div class = "twitter">  </div> ` : ''
+                        }
+                        ${ player.pronoun ?
+                            ` <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>` : ''
+                        }
+                        ${ team.seed ?
+                            `<div class = "seed"> ${wrap_text("Seed " + team.seed)} </div> ` : ''
+                        }
+                       
+                        
                     </div>
                 </div>
             </div>
@@ -118,6 +127,7 @@ LoadEverything().then(() => {
         for (const [s, set] of Object.values(queue).slice(first_index).entries()){
             if (sets_nb && (current_set_nb >= sets_nb)) break;
 
+            if (config.currentEventOnly && !set.isCurrentEvent) continue;
             if (config.station != -1 && config.station != set.station) continue;
 
             let isTeams = Object.keys(set.team["1"].player).length > 1;

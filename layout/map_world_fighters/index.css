@@ -1,0 +1,168 @@
+body {
+  font-family: var(--font);
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  align-items: center;
+  padding: 10px;
+  flex-direction: column;
+}
+
+.overlay-element {
+  font-size: 32px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  background: var(--bg-color);
+  color: var(--text-color);
+  opacity: 0;
+  margin: 3px;
+  letter-spacing: 1px;
+}
+
+.leaflet-tooltip-own {
+  position: absolute;
+  background: var(--bg-color);
+  border: 0px solid #000;
+  border-radius: var(--border-radius);
+  padding: 4px 16px;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  color: var(--text-color);
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.player_country {
+  font-size: 24px;
+}
+
+.player_state {
+  font-size: 18px;
+}
+
+.flag {
+  width: 32px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: var(--bg-color);
+}
+
+.leaflet-tooltip-left:before {
+  border-left-color: var(--bg-color);
+}
+
+.leaflet-tooltip-right:before {
+  border-right-color: var(--bg-color);
+}
+
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: var(--bg-color);
+}
+
+.css-icon {
+}
+
+.gps_ring {
+  border: 8px solid lightblue;
+  margin-left: -8px;
+  margin-top: -8px;
+  border-radius: 100%;
+  height: 128px;
+  width: 128px;
+  -webkit-animation: pulsate 2s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes pulsate {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 0;
+  }
+}
+
+.blink {
+  -webkit-animation: blink 1s;
+  -webkit-animation-iteration-count: infinite;
+}
+
+.gps_ring_big {
+  -webkit-animation: pulsate_big 2s ease-out;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes blink {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.6);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.leaflet-container {
+  background: none !important;
+}
+
+.leaflet-bottom.leaflet-right {
+  display: none;
+}
+
+@-webkit-keyframes pulsate_big {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3, 3);
+    opacity: 0;
+  }
+}

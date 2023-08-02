@@ -7,6 +7,8 @@ from flask_cors import CORS, cross_origin
 import json
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .SettingsManager import SettingsManager
 
 
 class WebServer(QThread):
@@ -79,6 +81,7 @@ class WebServer(QThread):
     @app.route('/stage_strike_match_win', methods=['POST'])
     def match_win():
         WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
+        #Web server updating score here
         WebServer.UpdateScore()
         return "OK"
 
@@ -106,6 +109,11 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
+        print(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
+
+        if not SettingsManager.Get("general.control_score_from_stage_strike", True):
+            return
+
         score = [
             len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[0]),
             len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[1]),
@@ -296,6 +304,20 @@ class WebServer(QThread):
         WebServer.scoreboard.playerNumber.setValue(1)
         WebServer.scoreboard.charNumber.setValue(1)
         WebServer.scoreboard.CommandClearAll()
+        return "OK"
+    
+    # Loads a set remotely by providing a set ID to pull from the data provider
+    @app.route('/load-set')
+    def load_set():
+        if request.args.get('set') is not None:
+            WebServer.scoreboard.signals.NewSetSelected.emit(
+                json.loads(
+                    json.dumps({
+                        'id': request.args.get('set', default='0', type=str),
+                        'auto_update': "set"
+                        })
+                )
+            )
         return "OK"
 
     @app.route('/', defaults=dict(filename=None))

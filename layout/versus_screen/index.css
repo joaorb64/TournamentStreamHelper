@@ -14,6 +14,35 @@ body {
   height: 1080px;
 }
 
+.plane {
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  top: 0;
+  height: 100vh;
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.plane > div {
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  top: 0;
+  height: 100vh;
+  transform-style: preserve-3d;
+}
+
+.plane.left_plane > div {
+  transform-origin: left;
+  transform: rotateY(10deg);
+}
+
+.plane.right_plane > div {
+  transform-origin: right;
+  transform: rotateY(-10deg);
+}
+
 .stage {
   position: absolute;
   width: 100vw;
@@ -58,6 +87,7 @@ body {
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4));
   overflow: hidden;
   display: flex;
+  flex-direction: column;
 }
 
 .p1 .player_avatar {
@@ -89,37 +119,63 @@ body {
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
+.player_col {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 470px;
+}
+
+.name_row {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.info_grid {
+  display: flex;
+  justify-items: center;
+  gap: 8px;
+  flex-wrap: no-wrap;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.p2 .info_grid {
+  flex-direction: row-reverse;
+}
+
+.info_grid > .text_empty {
+  padding: 0;
+  width: 0;
+  display: none;
+}
+
+.info_grid > div {
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  padding: 2px 8px;
+  border: 2px solid var(--text-color);
+}
+
 .player.container {
-  bottom: 48px;
-  width: 600px;
-  height: 210px;
+  bottom: 0;
+  width: 640px;
+  height: 200px;
   display: flex;
   flex-direction: row;
   align-content: center;
   justify-content: flex-start;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-left: 32px;
+  padding-right: 32px;
   z-index: 9;
+  gap: 42px;
 }
 
 .player.container.p2 {
   flex-direction: row-reverse;
-}
-
-.player.container .column {
-  display: flex;
-  flex-direction: column;
-  padding-left: 40px;
-  padding-right: 40px;
-  width: 340px;
-  overflow: hidden;
-  align-items: flex-start;
-}
-
-.column > div {
-  max-width: 100%;
 }
 
 .player.container.p2 .column {
@@ -135,6 +191,11 @@ body {
   flex-direction: row;
 }
 
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
 .p2 .row {
   flex-direction: row-reverse;
 }
@@ -148,6 +209,7 @@ body {
   left: 0px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  transform-origin: left;
 }
 
 .p2.container {
@@ -155,10 +217,12 @@ body {
   right: 0px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  transform-origin: right;
 }
 
 .container .name {
-  font-size: 46px;
+  font-size: 56px;
+  overflow: hidden;
 }
 
 .container .name .text > span {
@@ -185,21 +249,26 @@ body {
   margin-right: 6px;
 }
 
-.twitter {
+.twitter, .seed, .real_name, .pronoun {
   font-size: 26px;
 }
 
+.real_name {
+  align-self: flex-start;
+}
+
+.p2 .real_name {
+  align-self: flex-end;
+}
+
 .logo {
-  position: absolute;
-  top: 900px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 150px;
+  width: 72px;
+  height: 72px;
   background-image: url("../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  flex-shrink: 0;
 }
 
 .p1 .sponsor {
@@ -210,40 +279,70 @@ body {
   color: var(--p2-sponsor-color);
 }
 
-.losers {
-  display: inline-flex;
-  width: 36px;
-  height: 36px;
-  font-size: 26px;
-  border-radius: 100%;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  margin: 0 10px;
+.losers_badge {
+  position: absolute;
+  font-size: 24px;
+  padding: 2px 12px;
+  bottom: 16px;
+  opacity: 0;
+  border-radius: calc(var(--border-radius)/2);
+  font-weight: 900;
+  color: var(--bg-color);
 }
 
-.p1 .losers {
+.p1 .losers_badge {
   background-color: var(--p1-sponsor-color);
+  right: 16px;
 }
 
-.p2 .losers {
+.p2 .losers_badge {
   background-color: var(--p2-sponsor-color);
+  left: 16px;
 }
 
 .container.top {
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
+  top: 0;
+  left: 0;
+  width: 100vw;
   display: flex;
-  flex-direction: column;
-  padding: 20px 40px;
+  flex-direction: row;
+  padding: 16px 32px;
+  border-radius: 0;
+}
+
+.tournament_container {
+  display: flex;
+  max-width: 25%;
+  width: 25%;
+  gap: 16px;
+}
+
+.tournament_container .col {
+  gap: 0;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.match_info_container {
+  display: flex;
+  max-width: 25%;
+  width: 25%;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.match_info_container > .col {
+  justify-content: flex-end;
 }
 
 .tournament {
-  top: 20px;
-  width: 800px;
-  font-size: 32px;
+  font-size: 42px;
+  place-content: center;
+  max-width: 100%;
+}
+
+.event {
+  font-size: 24px;
   place-content: center;
   max-width: 100%;
 }
@@ -254,44 +353,23 @@ body {
   place-content: center;
   text-transform: uppercase;
   max-width: 100%;
-}
-
-.container.best_of {
-  top: 20px;
-  right: 64px;
-  width: 320px;
-  font-size: 32px;
-  place-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-position: center;
-  opacity: 0;
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 0 64px;
 }
 
 .best_of {
-  max-width: 100%;
-}
-
-.container.phase {
-  top: 20px;
-  left: 64px;
-  width: 320px;
-  font-size: 32px;
-  place-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-position: center;
-  opacity: 0;
+  font-size: 24px;
+  align-self: flex-end;
 }
 
 .phase {
-  max-width: 100%;
+  font-size: 24px;
+  align-self: flex-end;
 }
 
 .flagscontainer {
-  width: 60px;
   display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
@@ -344,16 +422,18 @@ body {
 .p1.character {
   position: absolute;
   overflow: visible;
-  left: 0px;
-  width: 480px;
+  left: 0;
+  width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 640px;
-  perspective: 500px;
-  perspective-origin: right;
+  height: 720px;
   z-index: -1;
   display: flex;
-  flex-direction: row-reverse;
+}
+
+.character {
+  transform-style: preserve-3d;
+  flex-direction: column;
 }
 
 .character .video {
@@ -364,7 +444,6 @@ body {
 
 .p1.character .tsh_character {
   width: 100%;
-  transform: rotateY(10deg);
   background: var(--p1-score-bg-color);
 }
 
@@ -375,25 +454,29 @@ body {
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.44))
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.42))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.4));
+  overflow: hidden;
 }
 
 .p2.character {
   position: absolute;
   overflow: visible;
   right: 0px;
-  width: 480px;
+  width: 540px;
   top: 50%;
   transform: translateY(-50%);
-  height: 640px;
-  perspective: 500px;
-  perspective-origin: left;
+  height: 720px;
   display: flex;
+  z-index: -1;
 }
 
 .p2.character > .tsh_character {
   width: 100%;
-  transform: scaleX(-1) rotateY(10deg);
+  transform: scaleX(-1);
   background: var(--p2-score-bg-color);
+}
+
+.character .text {
+  transform-style: preserve-3d;
 }
 
 .portrait_container {
@@ -429,39 +512,48 @@ body {
   z-index: 999;
 }
 
+.character_name {
+  position: fixed;
+  max-width: 480px;
+  min-width: 0;
+  top: -56px;
+  font-size: 32px;
+  text-transform: uppercase;
+  left: 48px;
+  box-sizing: border-box;
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius)/2);
+  padding: 4px 16px;
+}
+
+.p2 .character_name {
+  right: 48px;
+  left: unset;
+}
+
+.character_name .text {
+  justify-content: flex-start;
+}
+
+.character_name.text_empty {
+  padding: 0 !important;
+}
+
 .sponsor_logo {
   overflow: visible;
   position: fixed;
-  width: 120px;
-  height: 120px;
-  top: -125px;
+  width: 140px;
+  height: 140px;
+  top: -680px;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .p1 .sponsor_logo {
-  left: 5px;
+  left: 32px;
 }
 
 .p2 .sponsor_logo {
-  right: 5px;
-}
-
-.pronoun {
-  font-size: 20px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding-left: 8px;
-  padding-right: 8px;
-  border-radius: 6px;
-  color: var(--bg-color);
-}
-
-.p1 .pronoun {
-  background: var(--p1-sponsor-color);
-}
-
-.p2 .pronoun {
-  background: var(--p2-sponsor-color);
+  right: 32px;
 }

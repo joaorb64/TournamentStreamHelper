@@ -45,14 +45,17 @@ async function UpdateData() {
   try {
     oldData = data;
     data = await getData();
+
+    if(data.timestamp <= oldData.timestamp){
+      return
+    }
+
     let event = new CustomEvent("tsh_update");
     event.data = data;
     event.oldData = oldData;
 
-    if (JSON.stringify(data) != JSON.stringify(oldData)) {
-      console.log(data);
-      document.dispatchEvent(event);
-    }
+    console.log(data);
+    document.dispatchEvent(event);
   } catch (e) {
     console.log(e);
   }
@@ -281,10 +284,12 @@ async function SetInnerHtml(element, html, settings = {}) {
     ) {
       const callback = () => {
         element.find(".text").html(html);
-        if (html.length == 0) {
+        if (html.trim().length == 0) {
           element.find(".text").addClass("text_empty");
+          element.addClass("text_empty");
         } else {
           element.find(".text").removeClass("text_empty");
+          element.removeClass("text_empty");
         }
         FitText(element);
         if (middleFunction != undefined) {

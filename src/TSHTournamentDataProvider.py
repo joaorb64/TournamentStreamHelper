@@ -220,7 +220,7 @@ class TSHTournamentDataProvider:
             streamName)
 
         if not streamSet:
-            streamSet = {}
+            return
 
         streamSet["auto_update"] = "stream"
         mainWindow.signals.NewSetSelected.emit(streamSet)
@@ -229,7 +229,7 @@ class TSHTournamentDataProvider:
         _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)
 
         if not _set:
-            _set = {}
+            return
 
         _set["auto_update"] = "user"
         mainWindow.signals.NewSetSelected.emit(_set)

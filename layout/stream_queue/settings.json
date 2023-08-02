@@ -9,6 +9,7 @@
   "sets_displayed" : -1,
   "display_first_set": true,
   "station" : -1,
+  "currentEventOnly": true,
   "display" : {
       "station" : false,
       "country_flag" : true,

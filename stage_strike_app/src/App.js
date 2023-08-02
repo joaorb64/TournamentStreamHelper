@@ -74,7 +74,7 @@ class App extends Component {
     canRedo: false,
   };
 
-  Initialize() {
+  RestartStageStrike() {
     fetch("http://" + window.location.hostname + ":5000/stage_strike_reset", {
       method: "POST",
       contentType: "application/json",
@@ -747,7 +747,7 @@ class App extends Component {
                           fontSize: { xs: 10, lg: "unset" },
                         }}
                         onClick={() => {
-                          this.Initialize(true);
+                          this.RestartStageStrike(true);
                         }}
                         startIcon={<RestartAlt />}
                       >

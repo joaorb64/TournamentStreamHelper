@@ -575,74 +575,60 @@ class TSHScoreboardWidget(QDockWidget):
 
     def SwapTeams(self):
         StateManager.BlockSaving()
-        tmpData = [[], []]
 
-        # Save state
-        for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
-            for i, p in enumerate(team):
-                data = {}
-                for widget in p.findChildren(QWidget):
-                    if type(widget) == QLineEdit:
-                        data[widget.objectName()] = widget.text()
-                    if type(widget) == QComboBox:
-                        data[widget.objectName()] = widget.currentIndex()
-                data["online_avatar"] = StateManager.Get(
-                    f"score.team.{t+1}.player.{i+1}.online_avatar")
-                data["id"] = StateManager.Get(
-                    f"score.team.{t+1}.player.{i+1}.id")
-                data["seed"] = StateManager.Get(
-                    f"score.team.{t+1}.player.{i+1}.seed")
-                tmpData[t].append(data)
+        # Lock all player widgets
+        for p in self.playerWidgets:
+            p.dataLock.acquire()
 
-        # Load state
-        for t, team in enumerate([self.team2playerWidgets, self.team1playerWidgets]):
-            for i, p in enumerate(tmpData[t]):
-                for objName in tmpData[t][i]:
-                    widget = team[i].findChild(QWidget, objName)
-                    if widget:
-                        if type(widget) == QLineEdit:
-                            widget.setText(tmpData[t][i][objName])
-                            widget.editingFinished.emit()
-                        if type(widget) == QComboBox:
-                            widget.setCurrentIndex(tmpData[t][i][objName])
-                QCoreApplication.processEvents()
-                team[i].ExportPlayerImages(tmpData[t][i]["online_avatar"])
-                team[i].ExportPlayerId(tmpData[t][i]["id"])
-                StateManager.Set(
-                    f"score.team.{len(tmpData[t])-t+1}.player.{i+1}.seed", tmpData[t][i]["seed"])
+        try:
+            for i, p in enumerate(self.team1playerWidgets):
+                p.SwapWith(self.team2playerWidgets[i])
 
-        # Scores
-        scoreLeft = self.scoreColumn.findChild(QSpinBox, "score_left").value()
-        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(
-            self.scoreColumn.findChild(QSpinBox, "score_right").value())
-        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(scoreLeft)
+            # Scores
+            scoreLeft = self.scoreColumn.findChild(
+                QSpinBox, "score_left").value()
+            self.scoreColumn.findChild(QSpinBox, "score_left").setValue(
+                self.scoreColumn.findChild(QSpinBox, "score_right").value())
+            self.scoreColumn.findChild(
+                QSpinBox, "score_right").setValue(scoreLeft)
 
-        # Losers
-        losersLeft = self.team1column.findChild(
-            QCheckBox, "losers").isChecked()
-        self.team1column.findChild(QCheckBox, "losers").setChecked(
-            self.team2column.findChild(QCheckBox, "losers").isChecked())
-        self.team2column.findChild(QCheckBox, "losers").setChecked(losersLeft)
+            # Losers
+            losersLeft = self.team1column.findChild(
+                QCheckBox, "losers").isChecked()
+            self.team1column.findChild(QCheckBox, "losers").setChecked(
+                self.team2column.findChild(QCheckBox, "losers").isChecked())
+            self.team2column.findChild(
+                QCheckBox, "losers").setChecked(losersLeft)
 
-        # Team Names
-        teamNameLeft = self.team1column.findChild(QLineEdit, "teamName").text()
-        self.team1column.findChild(QLineEdit, "teamName").setText(
-            self.team2column.findChild(QLineEdit, "teamName").text())
-        self.team2column.findChild(QLineEdit, "teamName").setText(teamNameLeft)
-        self.team1column.findChild(
-            QLineEdit, "teamName").editingFinished.emit()
-        self.team2column.findChild(
-            QLineEdit, "teamName").editingFinished.emit()
+            # Team Names
+            teamNameLeft = self.team1column.findChild(
+                QLineEdit, "teamName").text()
+            self.team1column.findChild(QLineEdit, "teamName").setText(
+                self.team2column.findChild(QLineEdit, "teamName").text())
+            self.team2column.findChild(
+                QLineEdit, "teamName").setText(teamNameLeft)
+            self.team1column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
+            self.team2column.findChild(
+                QLineEdit, "teamName").editingFinished.emit()
 
-        self.teamsSwapped = not self.teamsSwapped
+            self.teamsSwapped = not self.teamsSwapped
 
-        StateManager.Set(f"score.teamsSwapped", self.teamsSwapped)
+        finally:
+            StateManager.Set(f"score.teamsSwapped", self.teamsSwapped)
 
-        StateManager.ReleaseSaving()
+            for p in self.playerWidgets:
+                p.dataLock.release()
+
+            StateManager.ReleaseSaving()
 
     def ResetScore(self):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+
+    def AutoUpdate(self, data):
+        TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False)
+        TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def NewSetSelected(self, data):
         self.StopAutoUpdate()
@@ -662,33 +648,45 @@ class TSHScoreboardWidget(QDockWidget):
         else:
             self.labelAutoUpdate.setText("Auto update")
 
-        if data.get("id") != None and data.get("id") != self.lastSetSelected:
-            StateManager.Unset(f'score.stage_strike')
-            self.lastSetSelected = data.get("id")
-            self.ClearScore()
+        # Lock all player widgets
+        for p in self.playerWidgets:
+            p.dataLock.acquire()
+        StateManager.BlockSaving()
 
-            # Force user to be P1 on set change
-            if data.get("auto_update") == "user":
-                if data.get("reverse") and not self.teamsSwapped:
-                    self.SwapTeams()
-                elif not data.get("reverse") and self.teamsSwapped:
-                    self.SwapTeams()
-
-            TSHTournamentDataProvider.instance.GetMatch(
-                self, data["id"], overwrite=True)
+        try:
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
-        self.autoUpdateTimer.timeout.connect(
-            lambda setId=data: TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False))
+            if data.get("id") != None and data.get("id") != self.lastSetSelected:
+                StateManager.Unset(f'score.stage_strike')
+                self.lastSetSelected = data.get("id")
+                self.ClearScore()
 
-        if data.get("auto_update") == "stream":
-            self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+                # Force user to be P1 on set change
+                if data.get("auto_update") == "user":
+                    if (data.get("reverse") and not self.teamsSwapped) or \
+                            not data.get("reverse") and self.teamsSwapped:
+                        self.teamsSwapped = not self.teamsSwapped
+                        StateManager.Set(
+                            f"score.teamsSwapped", self.teamsSwapped)
 
-        if data.get("auto_update") == "user":
+                TSHTournamentDataProvider.instance.GetMatch(
+                    self, data["id"], overwrite=True)
+
             self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
-                    self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
+                lambda setId=data: self.AutoUpdate(data))
+
+            if data.get("auto_update") == "stream":
+                self.autoUpdateTimer.timeout.connect(
+                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+
+            if data.get("auto_update") == "user":
+                self.autoUpdateTimer.timeout.connect(
+                    lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
+                        self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
+        finally:
+            for p in self.playerWidgets:
+                p.dataLock.release()
+            StateManager.ReleaseSaving()
 
     def StopAutoUpdate(self):
         if self.autoUpdateTimer != None:
@@ -763,7 +761,7 @@ class TSHScoreboardWidget(QDockWidget):
             ]
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
-    
+
     def CommandClearAll(self):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
             for i, p in enumerate(team):
@@ -781,101 +779,107 @@ class TSHScoreboardWidget(QDockWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
     def UpdateSetData(self, data):
+        # Do not update the scoreboard on empty data
+        if data is None or len(data) == 0 or data.get("id") == None:
+            return
+
         # If you switched sets and it was still finishing an async update call
         # Avoid loading data from the previous set
-        if data.get("id") != None and data.get("id") != self.lastSetSelected:
+        if str(data.get("id")) != str(self.lastSetSelected):
             return
 
         StateManager.BlockSaving()
 
-        if data.get("round_name"):
-            self.scoreColumn.findChild(
-                QComboBox, "match").setCurrentText(data.get("round_name"))
-            self.scoreColumn.findChild(
-                QComboBox, "match").lineEdit().editingFinished.emit()
+        try:
+            if data.get("round_name"):
+                self.scoreColumn.findChild(
+                    QComboBox, "match").setCurrentText(data.get("round_name"))
+                self.scoreColumn.findChild(
+                    QComboBox, "match").lineEdit().editingFinished.emit()
 
-        if data.get("tournament_phase"):
-            self.scoreColumn.findChild(
-                QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
-            self.scoreColumn.findChild(
-                QComboBox, "phase").lineEdit().editingFinished.emit()
+            if data.get("tournament_phase"):
+                self.scoreColumn.findChild(
+                    QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
+                self.scoreColumn.findChild(
+                    QComboBox, "phase").lineEdit().editingFinished.emit()
 
-        scoreContainers = [
-            self.scoreColumn.findChild(QSpinBox, "score_left"),
-            self.scoreColumn.findChild(QSpinBox, "score_right")
-        ]
-        if self.teamsSwapped:
-            scoreContainers.reverse()
+            scoreContainers = [
+                self.scoreColumn.findChild(QSpinBox, "score_left"),
+                self.scoreColumn.findChild(QSpinBox, "score_right")
+            ]
+            if self.teamsSwapped:
+                scoreContainers.reverse()
 
-        if data.get("reset_score"):
-            scoreContainers[0].setValue(0)
-            scoreContainers[1].setValue(0)
+            if data.get("reset_score"):
+                scoreContainers[0].setValue(0)
+                scoreContainers[1].setValue(0)
 
-        if data.get("team1score"):
-            scoreContainers[0].setValue(data.get("team1score"))
-        if data.get("team2score"):
-            scoreContainers[1].setValue(data.get("team2score"))
-        if data.get("bestOf"):
-            self.scoreColumn.findChild(
-                QSpinBox, "best_of").setValue(data.get("bestOf"))
+            if data.get("team1score"):
+                scoreContainers[0].setValue(data.get("team1score"))
+            if data.get("team2score"):
+                scoreContainers[1].setValue(data.get("team2score"))
+            if data.get("bestOf"):
+                self.scoreColumn.findChild(
+                    QSpinBox, "best_of").setValue(data.get("bestOf"))
 
-        losersContainers = [
-            self.team1column.findChild(QCheckBox, "losers"),
-            self.team2column.findChild(QCheckBox, "losers")
-        ]
-        if self.teamsSwapped:
-            losersContainers.reverse()
+            losersContainers = [
+                self.team1column.findChild(QCheckBox, "losers"),
+                self.team2column.findChild(QCheckBox, "losers")
+            ]
+            if self.teamsSwapped:
+                losersContainers.reverse()
 
-        if data.get("team1losers") is not None:
-            losersContainers[0].setChecked(data.get("team1losers"))
-        if data.get("team2losers") is not None:
-            losersContainers[1].setChecked(data.get("team2losers"))
+            if data.get("team1losers") is not None:
+                losersContainers[0].setChecked(data.get("team1losers"))
+            if data.get("team2losers") is not None:
+                losersContainers[1].setChecked(data.get("team2losers"))
 
-        if data.get("entrants"):
-            self.playerNumber.setValue(
-                len(max(data.get("entrants"), key=lambda x: len(x))))
+            if data.get("entrants"):
+                self.playerNumber.setValue(
+                    len(max(data.get("entrants"), key=lambda x: len(x))))
 
-            # Lock all player widgets
-            for p in self.playerWidgets:
-                p.dataLock.acquire()
-
-            try:
-                for t, team in enumerate(data.get("entrants")):
-                    teamInstances = [self.team1playerWidgets,
-                                     self.team2playerWidgets]
-                    if self.teamsSwapped:
-                        teamInstances.reverse()
-                    teamInstance = teamInstances[t]
-
-                    if len(team) > 1:
-                        teamColumns = [self.team1column, self.team2column]
-                        teamNames = [data.get("p1_name"), data.get("p2_name")]
-                        teamColumns[t].findChild(
-                            QLineEdit, "teamName").setText(teamNames[t])
-                        teamColumns[t].findChild(
-                            QLineEdit, "teamName").editingFinished.emit()
-
-                    for p, player in enumerate(team):
-                        if data.get("overwrite"):
-                            teamInstance[p].SetData(
-                                player, False, True)
-
-                        if data.get("has_selection_data"):
-                            player = {
-                                "mains": player.get("mains")
-                            }
-                            teamInstance[p].SetData(
-                                player, True, False)
-            finally:
+                # Lock all player widgets
                 for p in self.playerWidgets:
-                    p.dataLock.release()
+                    p.dataLock.acquire()
 
-        if data.get("stage_strike"):
-            StateManager.Set(f"score.stage_strike", data.get("stage_strike"))
-            StateManager.Set(f"score.ruleset", data.get("ruleset"))
+                try:
+                    for t, team in enumerate(data.get("entrants")):
+                        teamInstances = [self.team1playerWidgets,
+                                         self.team2playerWidgets]
+                        if self.teamsSwapped:
+                            teamInstances.reverse()
+                        teamInstance = teamInstances[t]
 
-        if data.get("bracket_type"):
-            StateManager.Set(f"score.bracket_type", data.get("bracket_type"))
-            TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+                        if len(team) > 1:
+                            teamColumns = [self.team1column, self.team2column]
+                            teamNames = [
+                                data.get("p1_name"), data.get("p2_name")]
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").setText(teamNames[t])
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").editingFinished.emit()
 
-        StateManager.ReleaseSaving()
+                        for p, player in enumerate(team):
+                            if data.get("overwrite"):
+                                teamInstance[p].SetData(player, False, True)
+
+                            if data.get("has_selection_data"):
+                                player = {
+                                    "mains": player.get("mains")
+                                }
+                                teamInstance[p].SetData(player, True, False)
+                finally:
+                    for p in self.playerWidgets:
+                        p.dataLock.release()
+
+            if data.get("stage_strike"):
+                StateManager.Set(f"score.stage_strike",
+                                 data.get("stage_strike"))
+                StateManager.Set(f"score.ruleset", data.get("ruleset"))
+
+            if data.get("bracket_type"):
+                StateManager.Set(f"score.bracket_type",
+                                 data.get("bracket_type"))
+                TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+        finally:
+            StateManager.ReleaseSaving()

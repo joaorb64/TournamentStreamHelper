@@ -100,6 +100,15 @@ async function updateCharacterContainer(e, event) {
     _.get($(e).data(), "load_settings_path", "assets")
   );
 
+  if(_.get($(e).data(), "load_settings_path")){
+    let defaultAssetSettings = ResolveAssetSetting("assets");
+
+    asset_settings = _.defaultsDeep(
+      Object.assign({}, defaultAssetSettings),
+      Object.assign({}, asset_settings)
+    )
+  }
+
   // Use settings passed via script, default to settings got via json files
   let settings = _.defaultsDeep(
     Object.assign({}, $(e).data()),
