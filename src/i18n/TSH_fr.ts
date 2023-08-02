@@ -1453,7 +1453,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="50"/>
         <source>Enable score control from the stage striking app</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer la mise à jour du score depuis l’application de ban des stages</translation>
     </message>
 </context>
 <context>
@@ -1540,17 +1540,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="100"/>
         <source>Error while backing up the layout folder:</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur est survenue lors de la copie du dossier layout :</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="111"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Réessayer</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="114"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
 </context>
 </TS>
