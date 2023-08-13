@@ -3,6 +3,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
+from loguru import logger
 
 from .TSHScoreboardPlayerWidget import *
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
@@ -172,8 +173,8 @@ class TSHCommentaryWidget(QDockWidget):
                                 if processed_line and processed_line not in c.pronoun_list:
                                     c.pronoun_list.append(processed_line)
                     except Exception as e:
-                        print(f"ERROR: Did not find {file}")
-                        print(traceback.format_exc())
+                        logger.error(f"ERROR: Did not find {file}")
+                        logger.error(traceback.format_exc())
                 c.pronoun_model = QStringListModel()
                 c.pronoun_completer.setModel(c.pronoun_model)
                 c.pronoun_model.setStringList(c.pronoun_list)

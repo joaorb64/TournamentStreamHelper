@@ -4,6 +4,7 @@ from qtpy.QtCore import *
 from qtpy import uic
 import json
 import traceback
+from loguru import logger
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
@@ -112,5 +113,5 @@ class TSHPlayerListWidget(QDockWidget):
                     slot.SetTeamData(data[i])
                 except:
                     slot.Clear()
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
         StateManager.ReleaseSaving()

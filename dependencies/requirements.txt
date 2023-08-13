@@ -13,3 +13,4 @@ python-dateutil
 pynput
 pyside6
 cloudscraper
+loguru

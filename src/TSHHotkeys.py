@@ -11,6 +11,7 @@ import copy
 import pynput
 from .SettingsManager import SettingsManager
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from loguru import logger
 
 class TSHHotkeysSignals(QObject):
     team1_score_up = Signal()
@@ -71,7 +72,7 @@ class TSHHotkeys(QObject):
     
     def HotkeyTriggered(self, k, v):
         if not SettingsManager.Get("hotkeys.hotkeys_enabled", True) == False:
-            print(f"Activated {k} by pressing {v}")
+            logger.info(f"Activated {k} by pressing {v}")
             getattr(self.signals, k).emit()
     
     def LoadUserHotkeys(self):
@@ -81,7 +82,7 @@ class TSHHotkeys(QObject):
         # Update keys
         self.loaded_keys.update((k,v) for k,v in user_keys.items() if k in self.keys)
 
-        print("User hotkeys loaded")
+        logger.info("User hotkeys loaded")
     
     def qshortcut_to_pynput(qshortcut_str):
         try:
@@ -99,8 +100,8 @@ class TSHHotkeys(QObject):
 
             return "+".join(parts)
         except:
-            print(f"Could not convert qshortcut {qshortcut_str} to pynput")
-            print(traceback.format_exc())
+            logger.error(f"Could not convert qshortcut {qshortcut_str} to pynput")
+            logger.error(traceback.format_exc())
             return None
 
 TSHHotkeys.instance = TSHHotkeys()

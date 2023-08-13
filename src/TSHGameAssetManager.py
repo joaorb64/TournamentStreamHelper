@@ -10,6 +10,7 @@ import threading
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Workers import Worker
 from PIL import Image
+from loguru import logger
 
 import requests
 
@@ -67,11 +68,11 @@ class TSHGameAssetManager(QObject):
                             './assets/characters.json'
                         )
 
-                        print("startgg characters file updated")
+                        logger.info("startgg characters file updated")
                     except:
-                        print("Characters file download failed")
+                        logger.error("Characters file download failed")
                 except Exception as e:
-                    print("Could not update /assets/characters.json: "+str(e))
+                    logger.error("Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
         thread.start()
 
@@ -111,14 +112,14 @@ class TSHGameAssetManager(QObject):
                         for dir in assetDirs:
                             if os.path.isdir("./user_data/games/"+game+"/"+dir):
                                 if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
-                                    print(
+                                    logger.info(
                                         "Found asset config for ["+game+"]["+dir+"]")
                                     f = open("./user_data/games/"+game+"/"+dir +
                                              "/config.json", encoding='utf-8')
                                     self.parent().games[game]["assets"][dir] = \
                                         json.load(f)
                                 else:
-                                    print("No config file for "+game+" - "+dir)
+                                    logger.error("No config file for "+game+" - "+dir)
 
                         # Load translated names
                         # Translate game name
@@ -136,7 +137,7 @@ class TSHGameAssetManager(QObject):
                                 self.parent(
                                 ).games[game]["name"] = game_name
                     else:
-                        print("Game config for "+game+" doesn't exist.")
+                        logger.info("Game config for "+game+" doesn't exist.")
                 # print(self.parent().games)
                 self.parent().signals.onLoadAssets.emit()
 
@@ -186,7 +187,7 @@ class TSHGameAssetManager(QObject):
                         self.parent().threadpool.waitForDone()
                         return
 
-                    print("Changed to game: "+game)
+                    logger.info("Changed to game: "+game)
 
                     gameObj = self.parent().games.get(game, {})
                     self.parent().selectedGame = gameObj
@@ -231,7 +232,7 @@ class TSHGameAssetManager(QObject):
                                 try:
                                     number = int(f[numberStart:numberEnd])
                                 except:
-                                    print(f)
+                                    logger.error(f)
                                     pass
                                 self.parent().stockIcons[c][number] = QImage(
                                     './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
@@ -239,7 +240,7 @@ class TSHGameAssetManager(QObject):
                                         Qt.TransformationMode.SmoothTransformation
                                 )
 
-                        print("Loaded stock icons")
+                        logger.info("Loaded stock icons")
 
                         self.parent().skins = {}
 
@@ -297,7 +298,7 @@ class TSHGameAssetManager(QObject):
                                     if size.height() != -1:
                                         heights[assetsKey].append(
                                             size.height())
-                            print("Character "+c+" has " +
+                            logger.info("Character "+c+" has " +
                                   str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
@@ -310,7 +311,7 @@ class TSHGameAssetManager(QObject):
                                             "y": sum(heights[assetsKey])/len(heights[assetsKey])
                                         }
                                 except:
-                                    print(traceback.format_exc())
+                                    logger.error(traceback.format_exc())
 
                         # Set complete
                         for assetsKey in list(gameObj.get("assets", {}).keys()):
@@ -327,7 +328,7 @@ class TSHGameAssetManager(QObject):
 
                                 gameObj["assets"][assetsKey]["complete"] = complete
                             except:
-                                print(traceback.format_exc())
+                                logger.error(traceback.format_exc())
 
                         # Get biggest complete pack
                         assetsKey = "base_files/icon"
@@ -343,7 +344,7 @@ class TSHGameAssetManager(QObject):
                                     biggestAverage = size
 
                         self.parent().biggestCompletePack = assetsKey
-                        print("Biggest complete assets:", assetsKey)
+                        logger.info("Biggest complete assets: " + assetsKey)
 
                         # Get stage icon
                         assetsKey = None
@@ -405,7 +406,7 @@ class TSHGameAssetManager(QObject):
                                 self.parent(
                                 ).characters[c]["en_name"] = en_name
                         except:
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
 
                     StateManager.Set(f"game", {
                         "name": self.parent().selectedGame.get("name"),
@@ -419,7 +420,7 @@ class TSHGameAssetManager(QObject):
                     self.parent().UpdateStageModel()
                     self.parent().signals.onLoad.emit()
                 except:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
                 finally:
                     self.parent().threadpool.waitForDone()
                     self.lock.unlock()
@@ -495,7 +496,7 @@ class TSHGameAssetManager(QObject):
                 worker.signals.result.connect(self.LoadStageImageComplete)
                 self.threadpool.start(worker)
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def LoadStageImage(self, stage, item, progress_callback):
         try:
@@ -525,7 +526,7 @@ class TSHGameAssetManager(QObject):
         except Exception as e:
             img = QPixmap("./assets/icons/cancel.svg").scaled(32, 32)
             icon = QIcon(img)
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return ([item, icon])
 
     def LoadStageImageComplete(self, result):
@@ -534,7 +535,7 @@ class TSHGameAssetManager(QObject):
                 if result[0] and result[1]:
                     result[0].setIcon(result[1])
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return (None)
 
     def UpdateCharacterModel(self):
@@ -568,7 +569,7 @@ class TSHGameAssetManager(QObject):
 
             self.characterModel.sort(0)
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def UpdateSkinModel(self):
         self.skinModels = {}
@@ -628,7 +629,7 @@ class TSHGameAssetManager(QObject):
                         skin_name_en = skinNameData.get(
                             skinIndex, {}).get("name")
                 except:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
 
                 assetData["name"] = skin_name
                 assetData["en_name"] = skin_name_en
@@ -793,7 +794,7 @@ class TSHGameAssetManager(QObject):
 
             return ([(allItem[i], icons[i]) for i in range(len(allItem))])
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return (None)
 
     def LoadSkinImagesComplete(self, results):
@@ -803,7 +804,7 @@ class TSHGameAssetManager(QObject):
                     if result[0] and result[1]:
                         result[0].setIcon(result[1])
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return (None)
 
     def GetCharacterAssets(self, characterCodename: str, skin: int, assetpack: str = None):
@@ -949,7 +950,7 @@ class TSHGameAssetManager(QObject):
                         charFiles[assetKey]["average_size"] = asset.get(
                             "average_size")
                 except Exception as e:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
 
         return (charFiles)
 

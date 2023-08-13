@@ -12,6 +12,7 @@ import py7zr
 import urllib
 import json
 import os
+from loguru import logger
 
 
 class IconDelegate(QStyledItemDelegate):
@@ -61,7 +62,7 @@ class TSHAssetDownloader(QObject):
                     TSHAssetDownloader.instance.signals.AssetUpdates.emit(
                         updates)
                 except:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
 
         thread = AssetUpdatesThread(self)
         thread.start()
@@ -337,7 +338,7 @@ class TSHAssetDownloader(QObject):
             data = response.read()
             return ([index, data])
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return (None)
 
     def DownloadGameIconComplete(self, result):
@@ -351,19 +352,19 @@ class TSHAssetDownloader(QObject):
                     if self.select.model().index(i, 0).data(Qt.ItemDataRole.UserRole) == result[0]:
                         self.select.setItemIcon(i, QIcon(pix))
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return (None)
 
     def DownloadAssetsWorker(self, files, progress_callback):
         totalSize = sum(sum(f["size"] for f in fileList) for fileList in files)
         downloaded = 0
 
-        print("Files to download:", files)
+        logger.info("Files to download:" + str(files))
 
         for i, fileList in enumerate(files):
             for f in fileList:
                 with open("user_data/games/"+f["name"], 'wb') as downloadFile:
-                    print("Downloading "+f["name"])
+                    logger.info("Downloading "+f["name"])
                     progress_callback.emit(QApplication.translate(
                         "app", "Downloading {0}... ({1}/{2})").format(f["name"], i+1, len(files)))
 
@@ -385,7 +386,7 @@ class TSHAssetDownloader(QObject):
                             min(int(downloaded/totalSize*100), 99))
                     downloadFile.close()
 
-                    print("Download OK")
+                    logger.info("Download OK")
 
             is7z = ".7z" in fileList[0]["name"]
 
@@ -415,11 +416,11 @@ class TSHAssetDownloader(QObject):
                     shutil.move("./user_data/games/" +
                                 f["name"], f["extractpath"])
 
-            print("Extract OK")
+            logger.info("Extract OK")
 
         progress_callback.emit(100)
 
-        print("All OK")
+        logger.info("All OK")
 
     def DownloadAssetsProgress(self, n):
         if type(n) == int:

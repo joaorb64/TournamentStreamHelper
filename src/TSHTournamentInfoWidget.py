@@ -15,6 +15,7 @@ import traceback
 import os
 import shutil
 import urllib
+from loguru import logger
 
 
 class TSHTournamentInfoWidget(QDockWidget):
@@ -108,7 +109,7 @@ class TSHTournamentInfoWidget(QDockWidget):
                 pix = QPixmap(fileName)
                 pix.save("./layout/logo.png")
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         self.UpdateIcon()
 
@@ -124,7 +125,7 @@ class TSHTournamentInfoWidget(QDockWidget):
 
             pix.save("./layout/logo.png")
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         self.UpdateIcon()
 
@@ -132,7 +133,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         try:
             shutil.copy("./assets/icons/icon.png", "./layout/logo.png")
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         self.UpdateIcon()
 
@@ -146,7 +147,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         msgBox.exec()
 
     def UpdateData(self, data):
-        print("tournamentdata", data)
+        logger.info("Tournament Data: "+ str(data))
 
         if not data.get("initial_load"):
             for widget in self.findChildren(QLineEdit):
@@ -181,7 +182,7 @@ class TSHTournamentInfoWidget(QDockWidget):
                         d = QDate.fromString(local_date, "yyyy-MM-dd")
                         widget.setDate(d)
             except:
-                print(traceback.format_exc())
+                logger.error(traceback.format_exc())
                 SettingsManager.Set("TOURNAMENT_URL", '')
                 error_message = QApplication.translate("app", "The tournament URL could not be loaded.") + "\n" + QApplication.translate(
                     "app", "Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.")

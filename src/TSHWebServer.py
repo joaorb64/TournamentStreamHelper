@@ -9,6 +9,7 @@ from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
+from loguru import logger
 
 
 class WebServer(QThread):
@@ -109,7 +110,7 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-        print(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
+        logger.info(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
 
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return
@@ -258,7 +259,7 @@ class WebServer(QThread):
             TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
             TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
         else:
-            print("[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
+            logger.error("[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
    # Resubmits Call for History Sets
@@ -272,7 +273,7 @@ class WebServer(QThread):
             TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
             TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
         else:
-            print("[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
+            logger.error("[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
     # Resets scores

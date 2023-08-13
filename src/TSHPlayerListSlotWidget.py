@@ -4,6 +4,7 @@ from qtpy.QtCore import *
 from qtpy import uic
 import json
 import traceback
+from loguru import logger
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
 from .Helpers.TSHCountryHelper import TSHCountryHelper
@@ -109,7 +110,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
                     pw.SetData(data.get("players")[i])
                 except:
                     pw.Clear()
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
             else:
                 pw.Clear()
         StateManager.ReleaseSaving()

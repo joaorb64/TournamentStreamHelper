@@ -13,10 +13,7 @@ from .StateManager import StateManager
 from .TSHWebServer import WebServer
 from .TSHGameAssetManager import TSHGameAssetManager
 import socket
-import logging
-
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+from loguru import logger
 
 
 class TSHScoreboardStageWidgetSignals(QObject):
@@ -274,7 +271,7 @@ class TSHScoreboardStageWidget(QDockWidget):
             with open("./user_data/rulesets.json", 'w', encoding="utf-8") as outfile:
                 json.dump(self.userRulesets, outfile, indent=4, sort_keys=True)
         except Exception as e:
-            traceback.print_exc()
+            logger.error(traceback.format_exc())
 
         self.LoadRulesets()
         self.UpdateBottomButtons()
@@ -326,7 +323,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                     rulesetsModel.appendRow(item)
         except:
             self.userRulesets = []
-            traceback.print_exc()
+            logger.error(traceback.format_exc())
 
         # Load startgg rulesets
         for ruleset in self.startggRulesets:
@@ -433,7 +430,7 @@ class TSHScoreboardStageWidget(QDockWidget):
             self.ValidateRuleset(ruleset)
             StateManager.Set(f"score.ruleset", vars(ruleset))
         except:
-            traceback.print_exc()
+            logger.error(traceback.format_exc())
 
     def ValidateRuleset(self, ruleset: Ruleset):
         issues = []
@@ -506,7 +503,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                 ruleset.banByMaxGames = {}
                 ruleset.errors.append(QApplication.translate(
                     "app", "The text for banByMaxGames is invalid."))
-                traceback.print_exc()
+                logger.error(traceback.format_exc())
 
         ruleset.strikeOrder = [
             int(n.strip()) for n in (self.strikeOrder.text().split(",") if self.strikeOrder.text() != "" else "1,2,1".split(",")) if n.strip() != ""
@@ -527,23 +524,23 @@ class TSHScoreboardStageWidget(QDockWidget):
                         open('./assets/rulesets.json',
                              'w').write(json.dumps(rulesets))
                         self.parent().startggRulesets = rulesets
-                        print("startgg Rulesets downloaded from startgg")
+                        logger.info("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()
                     except:
-                        print(traceback.format_exc())
+                        logger.error(traceback.format_exc())
 
                         try:
                             rulesets = json.loads(
                                 open('./assets/rulesets.json').read())
                             self.parent().startggRulesets = rulesets
-                            print("startgg Rulesets loaded from local file")
+                            logger.info("startgg Rulesets loaded from local file")
                             self.parent().signals.rulesets_changed.emit()
                         except:
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
             downloadThread = DownloadThread(self)
             downloadThread.start()
         except Exception as e:
-            traceback.print_exc()
+            logger.error(traceback.format_exc())
 
         # https://www.start.gg/api/-/gg_api./rulesets
         # entities > ruleset[]
