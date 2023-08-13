@@ -303,7 +303,7 @@ class TSHGameAssetManager(QObject):
 
                         # Set average size
                         for assetsKey in list(gameObj.get("assets", {}).keys()):
-                            if assetsKey != "base_files":
+                            if assetsKey != "base_files" and assetsKey != "stage_icon":
                                 try:
                                     if len(widths[assetsKey]) > 0 and len(heights[assetsKey]) > 0:
                                         gameObj["assets"][assetsKey]["average_size"] = {
@@ -500,7 +500,7 @@ class TSHGameAssetManager(QObject):
 
     def LoadStageImage(self, stage, item, progress_callback):
         try:
-            if stage.get("path"):
+            if stage.get("path") and os.path.exists(stage.get("path")):
                 img = Image.open(stage.get("path"))
 
                 resizeMultiplier = 1
@@ -521,8 +521,6 @@ class TSHGameAssetManager(QObject):
                 icon = QIcon(pix)
 
                 return ([item, icon])
-            else:
-                raise
         except Exception as e:
             img = QPixmap("./assets/icons/cancel.svg").scaled(32, 32)
             icon = QIcon(img)
@@ -874,8 +872,9 @@ class TSHGameAssetManager(QObject):
 
                         if len(eyesights.keys()) > 0:
                             if str(skin) in eyesights:
-                                charFiles[assetKey]["eyesight"] = eyesights.get(
-                                    str(skin))
+                                if assetKey in charFiles:
+                                    charFiles[assetKey]["eyesight"] = eyesights.get(
+                                        str(skin))
                             else:
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
@@ -886,8 +885,9 @@ class TSHGameAssetManager(QObject):
 
                         if len(rescaling_factor.keys()) > 0:
                             if str(skin) in rescaling_factor:
-                                charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
-                                    str(skin))
+                                if assetKey in charFiles:
+                                    charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
+                                        str(skin))
                             else:
                                 charFiles[assetKey]["rescaling_factor"] = rescaling_factor.get(
                                     "0", 1)
@@ -898,8 +898,9 @@ class TSHGameAssetManager(QObject):
 
                         if len(unflippable.keys()) > 0:
                             if str(skin) in unflippable:
-                                charFiles[assetKey]["unflippable"] = unflippable.get(
-                                    str(skin))
+                                if assetKey in charFiles:
+                                    charFiles[assetKey]["unflippable"] = unflippable.get(
+                                        str(skin))
                             else:
                                 charFiles[assetKey]["unflippable"] = list(
                                     unflippable.values())[0]
@@ -943,12 +944,14 @@ class TSHGameAssetManager(QObject):
                         #             metadata.values())[0]
 
                     if asset.get("uncropped_edge"):
-                        charFiles[assetKey]["uncropped_edge"] = asset.get(
-                            "uncropped_edge")
+                        if assetKey in charFiles:
+                            charFiles[assetKey]["uncropped_edge"] = asset.get(
+                                "uncropped_edge")
 
                     if asset.get("average_size"):
-                        charFiles[assetKey]["average_size"] = asset.get(
-                            "average_size")
+                        if assetKey in charFiles:
+                            charFiles[assetKey]["average_size"] = asset.get(
+                                "average_size")
                 except Exception as e:
                     logger.error(traceback.format_exc())
 
