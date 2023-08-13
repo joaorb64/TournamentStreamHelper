@@ -88,7 +88,7 @@ class TSHStageStrikeLogic():
         return self.history[self.historyIndex]
     
     def RpsResult(self, player):
-        logger.info("RPS won by", player)
+        logger.info("RPS won by " + str(player+1))
         newState = self.CurrentState().Clone()
         newState.lastWinner = player
         newState.currPlayer = player
@@ -137,7 +137,7 @@ class TSHStageStrikeLogic():
                 return 0
 
     def StageClicked(self, stage):
-        logger.info("Clicked on stage", stage.get("codename"))
+        logger.info("Clicked on stage " + stage.get("codename"))
 
         if (self.CurrentState().currGame > 0 and self.CurrentState().currStep > 0) or self.CurrentState().gentlemans:
             # we're picking

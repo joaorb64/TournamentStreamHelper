@@ -202,7 +202,7 @@ class TSHBracketWidget(QDockWidget):
         StateManager.ReleaseSaving()
 
     def UpdatePhases(self, phases):
-        logger.info("Phases :" + str(phases))
+        logger.info("Phases: " + str(phases))
         self.phaseSelection.clear()
         self.phaseSelection.addItem("", {})
 

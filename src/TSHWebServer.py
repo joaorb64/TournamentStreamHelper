@@ -11,6 +11,10 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
 from loguru import logger
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
@@ -110,7 +114,6 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-        logger.info(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
 
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return

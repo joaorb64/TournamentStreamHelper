@@ -88,7 +88,7 @@ class TSHSelectSetWindow(QDialog):
             showFinished=self.showFinished.isChecked())
 
     def SetSets(self, sets):
-        logger.info("Got sets" + len(sets))
+        logger.info("Got sets" + str(len(sets)))
         model = QStandardItemModel()
         horizontal_labels = ["Stream", "Wave", "Title", "Player 1", "Player 2"]
         horizontal_labels[0] = QApplication.translate("app", "Stream")

@@ -152,7 +152,7 @@ class TSHLocaleHelper(QObject):
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():
             if language.replace('-', '_') in langs:
-                logger.info("Loaded remap: ", remap)
+                logger.info("Loaded remap: " + str(remap))
                 return remap
         return None
 
