@@ -29,6 +29,7 @@ class TSHScoreboardWidgetSignals(QObject):
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
     SwapTeams = Signal()
+    SetDataFromWebserver = Signal(dict)
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -48,6 +49,7 @@ class TSHScoreboardWidget(QDockWidget):
         TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
         self.signals.StreamSetSelection.connect(self.LoadStreamSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
+        self.signals.SetDataFromWebserver.connect(self.SetDataFromWebserver)
 
         TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
         TSHHotkeys.signals.swap_teams.connect(self.SwapTeams)
@@ -627,7 +629,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
 
     def AutoUpdate(self, data):
-        TSHTournamentDataProvider.instance.GetMatch(self, data.get("id"), overwrite=False)
+        TSHTournamentDataProvider.instance.GetMatch(
+            self, data.get("id"), overwrite=False)
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def NewSetSelected(self, data):
@@ -778,9 +781,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
-    # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident 
+    # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):
-
         StateManager.BlockSaving()
 
         try:
@@ -866,6 +868,20 @@ class TSHScoreboardWidget(QDockWidget):
                 finally:
                     for p in self.playerWidgets:
                         p.dataLock.release()
+            else:
+                team = int(data.get("team"))-1
+                player = int(data.get("player"))-1
+
+                try:
+                    teamInstances = [self.team1playerWidgets,
+                                     self.team2playerWidgets]
+                    teamInstance = teamInstances[team]
+
+                    teamInstance[player].SetData(
+                        data.get("data"), False, False)
+                finally:
+                    for p in self.playerWidgets:
+                        p.dataLock.release()
 
             if data.get("stage_strike"):
                 StateManager.Set(f"score.stage_strike",
@@ -888,5 +904,5 @@ class TSHScoreboardWidget(QDockWidget):
         # Avoid loading data from the previous set
         if str(data.get("id")) != str(self.lastSetSelected):
             return
-        
+
         self.ChangeSetData(data)
