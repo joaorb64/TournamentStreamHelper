@@ -720,7 +720,7 @@ p, li { white-space: pre-wrap; }
         <translation>Spieler pro Slot</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="116"/>
+        <location filename="../TSHScoreboardWidget.py" line="118"/>
         <location filename="../TSHPlayerListWidget.py" line="73"/>
         <location filename="../TSHBracketWidget.py" line="91"/>
         <source>Characters per player</source>
@@ -789,7 +789,7 @@ p, li { white-space: pre-wrap; }
         <translation>Turnierdaten</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="82"/>
+        <location filename="../TSHScoreboardWidget.py" line="84"/>
         <location filename="../TournamentStreamHelper.py" line="284"/>
         <source>Scoreboard</source>
         <translation></translation>
@@ -1191,61 +1191,61 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="125"/>
+        <location filename="../TSHScoreboardWidget.py" line="127"/>
         <source>Players per team</source>
         <translation>Spieler pro Team</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="137"/>
+        <location filename="../TSHScoreboardWidget.py" line="139"/>
         <source>Generate Thumbnail</source>
         <translation>Thumbnail erstellen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="169"/>
+        <location filename="../TSHScoreboardWidget.py" line="171"/>
         <source>Real Name</source>
         <translation>Klarname</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="170"/>
+        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <source>Twitter</source>
         <translation>Twitter</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="171"/>
+        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <source>Location</source>
         <translation>Staat/Region</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="172"/>
+        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <source>Characters</source>
         <translation>Charaktere</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="173"/>
+        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <source>Pronouns</source>
         <translation>Pronomen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="200"/>
-        <location filename="../TSHScoreboardWidget.py" line="478"/>
+        <location filename="../TSHScoreboardWidget.py" line="202"/>
+        <location filename="../TSHScoreboardWidget.py" line="480"/>
         <source>Load set</source>
         <translation>Set laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="210"/>
-        <location filename="../TSHScoreboardWidget.py" line="720"/>
-        <location filename="../TSHScoreboardWidget.py" line="726"/>
+        <location filename="../TSHScoreboardWidget.py" line="212"/>
+        <location filename="../TSHScoreboardWidget.py" line="723"/>
+        <location filename="../TSHScoreboardWidget.py" line="729"/>
         <source>Load current stream set</source>
         <translation>aktuelles Stream-Set laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="278"/>
-        <location filename="../TSHScoreboardWidget.py" line="305"/>
+        <location filename="../TSHScoreboardWidget.py" line="280"/>
+        <location filename="../TSHScoreboardWidget.py" line="307"/>
         <source>TEAM {0}</source>
         <translation>TEAM {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="459"/>
+        <location filename="../TSHScoreboardWidget.py" line="461"/>
         <location filename="../TournamentStreamHelper.py" line="86"/>
         <location filename="../TournamentStreamHelper.py" line="122"/>
         <location filename="../TournamentStreamHelper.py" line="523"/>
@@ -1255,17 +1255,17 @@ p, li { white-space: pre-wrap; }
         <translation>ACHTUNG</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="472"/>
+        <location filename="../TSHScoreboardWidget.py" line="474"/>
         <source>Load set from {0}</source>
         <translation>Set von {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="735"/>
+        <location filename="../TSHScoreboardWidget.py" line="738"/>
         <source>Load user set ({0})</source>
         <translation>User-Set {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="739"/>
+        <location filename="../TSHScoreboardWidget.py" line="742"/>
         <source>Load user set</source>
         <translation>User-Set laden</translation>
     </message>
@@ -1350,14 +1350,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="720"/>
+        <location filename="../TSHScoreboardWidget.py" line="723"/>
         <location filename="../TournamentStreamHelper.py" line="639"/>
         <location filename="../TSHSelectSetWindow.py" line="120"/>
         <source>(</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="720"/>
+        <location filename="../TSHScoreboardWidget.py" line="723"/>
         <location filename="../TournamentStreamHelper.py" line="639"/>
         <location filename="../TSHSelectSetWindow.py" line="121"/>
         <source>)</source>
@@ -1454,13 +1454,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="435"/>
+        <location filename="../TSHScoreboardWidget.py" line="437"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="928"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="439"/>
+        <location filename="../TSHScoreboardWidget.py" line="441"/>
         <source>The thumbnail has been generated here:</source>
         <translation>Thumbnail wurde erstellt:</translation>
     </message>
