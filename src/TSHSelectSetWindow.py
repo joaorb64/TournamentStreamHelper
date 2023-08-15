@@ -2,6 +2,7 @@ import traceback
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+from loguru import logger
 
 from src.TSHTournamentDataProvider import TSHTournamentDataProvider
 
@@ -87,7 +88,7 @@ class TSHSelectSetWindow(QDialog):
             showFinished=self.showFinished.isChecked())
 
     def SetSets(self, sets):
-        print("Got sets", len(sets))
+        logger.info("Got sets" + str(len(sets)))
         model = QStandardItemModel()
         horizontal_labels = ["Stream", "Wave", "Title", "Player 1", "Player 2"]
         horizontal_labels[0] = QApplication.translate("app", "Stream")
@@ -119,7 +120,7 @@ class TSHSelectSetWindow(QDialog):
                             player_names[t] += " "+QApplication.translate(
                                 "punctuation", "(")+", ".join(pnames)+QApplication.translate("punctuation", ")")
                 except Exception as e:
-                    traceback.print_exc()
+                    logger.error(traceback.format_exc())
 
                 model.appendRow([
                     QStandardItem(s.get("stream", "")),

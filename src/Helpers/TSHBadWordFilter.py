@@ -8,6 +8,7 @@ import traceback
 import os
 from collections import defaultdict
 from typing import List, Set, Tuple
+from loguru import logger
 
 
 def remove_accents_lower(input_str):
@@ -66,7 +67,7 @@ class TSHBadWordFilter():
                 newWords = set(words)
                 langs[f.split(".")[0]] = newWords
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         # Commenting this block until we have a better performing alternative
         # This is too time consuming in cases like loading a huge bracket
@@ -153,7 +154,7 @@ class TSHBadWordFilter():
                 langTests.add(lang)
                 continue
 
-        print(f"TSHBadWordFilter: using filters [{', '.join(langTests)}]")
+        logger.info(f"TSHBadWordFilter: using filters [{', '.join(langTests)}]")
 
         dividers = [" ", "_", ",", ".", "/", "-", "\\", "*"]
         testString = remove_accents_lower(value)
@@ -217,7 +218,7 @@ class TSHBadWordFilter():
                 newString += value[stringStart:]
 
         if value != newString:
-            print(value, "->", newString)
+            logger.info(value, "->", newString)
 
         return newString
 
@@ -253,7 +254,7 @@ class TSHBadWordFilter():
                          encoding="utf-8").read().splitlines()
             return set([remove_accents_lower(w) for w in words if len(w) > 0])
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
 
 TSHBadWordFilter.LoadBadWordList()

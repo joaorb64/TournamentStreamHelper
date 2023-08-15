@@ -5,6 +5,7 @@ from qtpy.QtGui import *
 import os
 import traceback
 from copy import deepcopy
+from loguru import logger
 
 from src.SettingsManager import SettingsManager
 from src.StateManager import StateManager
@@ -36,7 +37,7 @@ class TSHLocaleHelper(QObject):
         else:
             current_locale = QtCore.QLocale().uiLanguages()
 
-        print("OS locale", current_locale)
+        logger.info("OS locale: " + str(current_locale))
 
         oldTranslator = TSHLocaleHelper.translator
 
@@ -131,7 +132,7 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.matchNames = term_names.get("match")
             TSHLocaleHelper.phaseNames = term_names.get("phase")
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         # Load user round names in a separate try/catch
         try:
@@ -146,12 +147,12 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.phaseNames.update(term_names["phase"])
             TSHLocaleHelper.matchNames.update(term_names["match"])
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():
             if language.replace('-', '_') in langs:
-                print("Loaded remap: ", remap)
+                logger.info("Loaded remap: " + str(remap))
                 return remap
         return None
 

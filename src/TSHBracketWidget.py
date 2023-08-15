@@ -13,6 +13,7 @@ from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
 import traceback
+from loguru import logger
 
 # Checks if a number is power of 2
 
@@ -201,7 +202,7 @@ class TSHBracketWidget(QDockWidget):
         StateManager.ReleaseSaving()
 
     def UpdatePhases(self, phases):
-        print("phases", phases)
+        logger.info("Phases: " + str(phases))
         self.phaseSelection.clear()
         self.phaseSelection.addItem("", {})
 
@@ -218,7 +219,7 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection.clear()
 
         if self.phaseSelection.currentData() != None:
-            print(self.phaseSelection.currentData().get("groups", []))
+            logger.info(str(self.phaseSelection.currentData().get("groups", [])))
             for phaseGroup in self.phaseSelection.currentData().get("groups", []):
                 self.phaseGroupSelection.addItem(
                     phaseGroup.get("name"), phaseGroup)
@@ -268,7 +269,7 @@ class TSHBracketWidget(QDockWidget):
         self.playerList.signals.DataChanged.disconnect()
 
         try:
-            print(phaseGroupData)
+            logger.info("Phase Group Data: " + str(phaseGroupData))
 
             if phaseGroupData.get("progressionsIn", {}) != None:
                 self.progressionsIn.setValue(
@@ -328,13 +329,13 @@ class TSHBracketWidget(QDockWidget):
                         self.bracket.rounds[roundIndex][s].finished = _set.get(
                             "finished")
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
 
             QGuiApplication.processEvents()
             self.bracket.UpdateBracket()
             self.bracketView.Update()
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
         finally:
             StateManager.ReleaseSaving()
             self.playerList.signals.DataChanged.connect(

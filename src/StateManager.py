@@ -8,6 +8,7 @@ import threading
 import requests
 from PIL import Image
 import time
+from loguru import logger
 
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -35,7 +36,7 @@ class StateManager:
 
                 def ExportAll():
                     with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
-                        # print("SaveState")
+                        # logger.info("SaveState")
                         StateManager.state.update({"timestamp": time.time()})
                         json.dump(StateManager.state, file,
                                   indent=4, sort_keys=False)
@@ -86,21 +87,21 @@ class StateManager:
         return deep_get(StateManager.state, key, default)
 
     def ExportText(oldState):
-        # print("ExportState")
+        # logger.info("ExportState")
         diff = DeepDiff(oldState, StateManager.state)
-        # print(diff)
+        # logger.info(diff)
 
         mergedDiffs = list(diff.get("values_changed", {}).items())
         mergedDiffs.extend(list(diff.get("type_changes", {}).items()))
 
-        # print(mergedDiffs)
+        # logger.info(mergedDiffs)
 
         for changeKey, change in mergedDiffs:
             # Remove "root[" from start and separate keys
             filename = "/".join(changeKey[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            # print(filename)
+            # logger.info(filename)
 
             if change.get("new_type") == type(None):
                 StateManager.RemoveFilesDict(
@@ -118,7 +119,7 @@ class StateManager:
             filename = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            # print("Removed:", filename, item)
+            # logger.info("Removed:", filename, item)
 
             StateManager.RemoveFilesDict(filename, item)
 
@@ -131,7 +132,7 @@ class StateManager:
             path = "/".join(key[5:].replace(
                 "'", "").replace("]", "").replace("/", "_").split("["))
 
-            # print("Added:", path, item)
+            # logger.info("Added:", path, item)
 
             StateManager.CreateFilesDict(path, item)
 
@@ -146,20 +147,20 @@ class StateManager:
                 StateManager.CreateFilesDict(
                     path+"/"+str(k).replace("/", "_"), i)
         else:
-            # print("try to add: ", path)
+            # logger.info("try to add: ", path)
             if type(di) == str and di.startswith("./"):
                 if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
                     try:
                         os.remove(f"./out/{path}" + "." +
                                   di.rsplit(".", 1)[-1])
                     except Exception as e:
-                        print(traceback.format_exc())
+                        logger.error(traceback.format_exc())
                 if os.path.exists(di):
                     try:
                         os.link(os.path.abspath(di),
                                 f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                     except Exception as e:
-                        print(traceback.format_exc())
+                        logger.error(traceback.format_exc())
             elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
                 try:
                     if os.path.exists(f"./out/{path}" + "." + di.rsplit(".", 1)[-1]):
@@ -167,7 +168,7 @@ class StateManager:
                             os.remove(f"./out/{path}" +
                                       "." + di.rsplit(".", 1)[-1])
                         except Exception as e:
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
 
                     def downloadImage(url, dlpath):
                         try:
@@ -183,7 +184,7 @@ class StateManager:
                                     ".", 1)[0]+".png", format="png")
                                 os.remove(dlpath)
                         except Exception as e:
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
 
                     t = threading.Thread(
                         target=downloadImage,
@@ -195,7 +196,7 @@ class StateManager:
                     StateManager.threads.append(t)
                     t.start()
                 except Exception as e:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
             else:
                 with open(f"./out/{path}.txt", 'w', encoding='utf-8') as file:
                     file.write(str(di))
@@ -212,26 +213,26 @@ class StateManager:
                 try:
                     removeFile = f"./out/{path}" + \
                         "." + di.rsplit(".", 1)[-1]
-                    # print("try to remove: ", removeFile)
+                    # logger.info("try to remove: ", removeFile)
                     if os.path.exists(removeFile):
                         os.remove(removeFile)
                 except:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
             else:
                 try:
                     removeFile = f"./out/{path}.txt"
-                    # print("try to remove: ", removeFile)
+                    # logger.info("try to remove: ", removeFile)
                     if os.path.exists(removeFile):
                         os.remove(removeFile)
                 except:
-                    print(traceback.format_exc())
+                    logger.error(traceback.format_exc())
 
         try:
-            # print("Remove path", f"./out/{path}")
+            # logger.info("Remove path", f"./out/{path}")
             if os.path.exists(f"./out/{path}"):
                 shutil.rmtree(f"./out/{path}")
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
 
 if not os.path.exists("./out"):
