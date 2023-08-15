@@ -31,9 +31,9 @@ if parse(qtpy.QT_VERSION).major == 6:
 App = QApplication(sys.argv)
 
 fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
-      "| <level>{level}</level> | " +
-      "<yellow>{file}</yellow>:<blue>{function}</blue>:<cyan>{line}</cyan> " +
-      "- <level>{message}</level>")
+       "| <level>{level}</level> | " +
+       "<yellow>{file}</yellow>:<blue>{function}</blue>:<cyan>{line}</cyan> " +
+       "- <level>{message}</level>")
 config = {
     "handlers": [
         {"sink": sys.stdout, "format": fmt},
@@ -41,14 +41,24 @@ config = {
 }
 logger.configure(**config)
 
-logger.add("./logs/log-{time:YYYY-MM-DD - HH.mm.ss}.log"
-           , format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}"
-           , encoding="utf-8"
-           , level="INFO")
-logger.add("./logs/errors/error-{time:YYYY-MM-DD - HH.mm.ss}.log"
-           , format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}"
-           , encoding="utf-8"
-           , level="ERROR")
+logger.add(
+    "./logs/tsh.log",
+    format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}",
+    encoding="utf-8",
+    level="INFO",
+    rotation="20 MB"
+)
+
+logger.add(
+    "./logs/tsh-error.log",
+    format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}",
+    encoding="utf-8",
+    level="ERROR",
+    rotation="20 MB"
+)
+
+logger.critical("=== TSH IS STARTING ===")
+
 logger.info("QApplication successfully initialized")
 
 # autopep8: off
