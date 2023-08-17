@@ -115,6 +115,9 @@ class WebServer(QThread):
 
     def UpdateScore():
 
+        logger.info("================UPDATE SCORE !============")
+        logger.info(SettingsManager.Get("general.control_score_from_stage_strike"))
+
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return
 
@@ -123,7 +126,11 @@ class WebServer(QThread):
             len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[1]),
         ]
         
-        WebServer.scoreboard.signals.UpdateSetData.emit({
+        logger.info("La on est suppose update le score")
+        print(score)
+        print(score[0])
+
+        WebServer.scoreboard.ChangeSetData({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
