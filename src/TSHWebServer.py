@@ -176,7 +176,7 @@ class WebServer(QThread):
         # Best Of argument
         # best-of=<Best Of Amount>
         if request.args.get('best-of') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'bestOf': request.args.get(
                         'best-of', default='0', type=int)})
@@ -186,7 +186,7 @@ class WebServer(QThread):
         # Phase argument
         # phase=<Phase Name>
         if request.args.get('phase') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'tournament_phase': request.args.get(
                         'phase', default='Pools', type=str)})
@@ -196,7 +196,7 @@ class WebServer(QThread):
         # Match argument
         # match=<Match Name>
         if request.args.get('match') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'round_name': request.args.get(
                         'match', default='Pools', type=str)})
@@ -219,7 +219,7 @@ class WebServer(QThread):
         # losers=<True/False>&team=<Team Number>
         if request.args.get('losers') is not None:
             losers = request.args.get('losers', default=False, type=bool)
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'team' + request.args.get('team',
                                default='1', type=str) + 'losers': bool(losers)})
