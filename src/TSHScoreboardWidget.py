@@ -778,15 +778,8 @@ class TSHScoreboardWidget(QDockWidget):
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
-    def UpdateSetData(self, data):
-        # Do not update the scoreboard on empty data
-        if data is None or len(data) == 0 or data.get("id") == None:
-            return
-
-        # If you switched sets and it was still finishing an async update call
-        # Avoid loading data from the previous set
-        if str(data.get("id")) != str(self.lastSetSelected):
-            return
+    # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident 
+    def ChangeSetData(self, data):
 
         StateManager.BlockSaving()
 
@@ -813,6 +806,8 @@ class TSHScoreboardWidget(QDockWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
+
+            logger.info(data.get("team1score"))
 
             if data.get("team1score"):
                 scoreContainers[0].setValue(data.get("team1score"))
@@ -883,3 +878,15 @@ class TSHScoreboardWidget(QDockWidget):
                 TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
         finally:
             StateManager.ReleaseSaving()
+
+    def UpdateSetData(self, data):
+        # Do not update the scoreboard on empty data
+        if data is None or len(data) == 0 or data.get("id") == None:
+            return
+
+        # If you switched sets and it was still finishing an async update call
+        # Avoid loading data from the previous set
+        if str(data.get("id")) != str(self.lastSetSelected):
+            return
+        
+        self.ChangeSetData(data)
