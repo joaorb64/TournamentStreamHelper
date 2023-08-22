@@ -119,7 +119,6 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-
         logger.info("================UPDATE SCORE !============")
         logger.info(SettingsManager.Get(
             "general.control_score_from_stage_strike"))
@@ -136,7 +135,7 @@ class WebServer(QThread):
 
         logger.info(f"We're supposed to update the score {score}")
 
-        WebServer.scoreboard.ChangeSetData({
+        WebServer.scoreboard.signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
@@ -146,7 +145,7 @@ class WebServer(QThread):
     def post_score():
         score = json.loads(request.get_data())
         score.update({"reset_score": True})
-        WebServer.scoreboard.signals.UpdateSetData.emit(score)
+        WebServer.scoreboard.signals.ChangeSetData.emit(score)
         return "OK"
 
     # Ticks score of Team specified up by 1 point
@@ -233,7 +232,7 @@ class WebServer(QThread):
     def set_team_data(team, player):
         data = request.get_json()
 
-        WebServer.scoreboard.signals.SetDataFromWebserver.emit({
+        WebServer.scoreboard.signals.ChangeSetData.emit({
             "team": team,
             "player": player,
             "data": data

@@ -29,7 +29,7 @@ class TSHScoreboardWidgetSignals(QObject):
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
     SwapTeams = Signal()
-    SetDataFromWebserver = Signal(dict)
+    ChangeSetData = Signal(dict)
 
 
 class TSHScoreboardWidget(QDockWidget):
@@ -49,7 +49,7 @@ class TSHScoreboardWidget(QDockWidget):
         TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
         self.signals.StreamSetSelection.connect(self.LoadStreamSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
-        self.signals.SetDataFromWebserver.connect(self.SetDataFromWebserver)
+        self.signals.ChangeSetData.connect(self.ChangeSetData)
 
         TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
         TSHHotkeys.signals.swap_teams.connect(self.SwapTeams)
@@ -869,10 +869,14 @@ class TSHScoreboardWidget(QDockWidget):
                     for p in self.playerWidgets:
                         p.dataLock.release()
             else:
-                team = int(data.get("team"))-1
-                player = int(data.get("player"))-1
-
                 try:
+                    # Lock all player widgets
+                    for p in self.playerWidgets:
+                        p.dataLock.acquire()
+
+                    team = int(data.get("team"))-1
+                    player = int(data.get("player"))-1
+
                     teamInstances = [self.team1playerWidgets,
                                      self.team2playerWidgets]
                     teamInstance = teamInstances[team]
