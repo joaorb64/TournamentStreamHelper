@@ -33,12 +33,12 @@ body {
   transform-style: preserve-3d;
 }
 
-.plane.left_plane > div {
+.r3d .plane.left_plane > div {
   transform-origin: left;
   transform: rotateY(10deg);
 }
 
-.plane.right_plane > div {
+.r3d .plane.right_plane > div {
   transform-origin: right;
   transform: rotateY(-10deg);
 }
