@@ -34,12 +34,14 @@ fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
        "| <level>{level}</level> | " +
        "<yellow>{file}</yellow>:<blue>{function}</blue>:<cyan>{line}</cyan> " +
        "- <level>{message}</level>")
-config = {
-    "handlers": [
-        {"sink": sys.stdout, "format": fmt},
-    ],
-}
-logger.configure(**config)
+
+if sys.stdout != None:
+    config = {
+        "handlers": [
+            {"sink": sys.stdout, "format": fmt},
+        ],
+    }
+    logger.configure(**config)
 
 logger.add(
     "./logs/tsh.log",
