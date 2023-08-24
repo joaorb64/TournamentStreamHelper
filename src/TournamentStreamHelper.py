@@ -21,6 +21,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from packaging.version import parse
+from loguru import logger
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
@@ -28,7 +29,39 @@ if parse(qtpy.QT_VERSION).major == 6:
     QImageReader.setAllocationLimit(0)
 
 App = QApplication(sys.argv)
-print("QApplication successfully initialized")
+
+fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
+       "| <level>{level}</level> | " +
+       "<yellow>{file}</yellow>:<blue>{function}</blue>:<cyan>{line}</cyan> " +
+       "- <level>{message}</level>")
+
+if sys.stdout != None:
+    config = {
+        "handlers": [
+            {"sink": sys.stdout, "format": fmt},
+        ],
+    }
+    logger.configure(**config)
+
+logger.add(
+    "./logs/tsh.log",
+    format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}",
+    encoding="utf-8",
+    level="INFO",
+    rotation="20 MB"
+)
+
+logger.add(
+    "./logs/tsh-error.log",
+    format="[{time:YYYY-MM-DD HH:mm:ss}] - {level} - {file}:{function}:{line} | {message}",
+    encoding="utf-8",
+    level="ERROR",
+    rotation="20 MB"
+)
+
+logger.critical("=== TSH IS STARTING ===")
+
+logger.info("QApplication successfully initialized")
 
 # autopep8: off
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
@@ -48,10 +81,6 @@ from .TSHThumbnailSettingsWidget import *
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 # autopep8: on
-
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    sys.stderr = open('./assets/log_error.txt', 'w', encoding="utf-8")
-    sys.stdout = open('./assets/log.txt', 'w', encoding="utf-8")
 
 
 def generate_restart_messagebox(main_txt):
@@ -88,7 +117,7 @@ def UpdateProcedure():
         messagebox.exec()
     except Exception as e:
         # Layout folder backups failed
-        print(e)
+        logger.error(e)
 
         buttonReply = QDialog()
         buttonReply.setWindowTitle(
@@ -141,7 +170,7 @@ def ExtractUpdate():
         tar.close()
         os.remove("update.tar.gz")
     except Exception as e:
-        print(traceback.format_exc())
+        logger.error(traceback.format_exc())
 
 
 def remove_accents_lower(input_str):
@@ -638,7 +667,7 @@ class Window(QMainWindow):
             shutil.rmtree("./tmp")
 
     def ReloadGames(self):
-        print("Reload games")
+        logger.info("Reload games")
         self.gameSelect.setModel(QStandardItemModel())
         self.gameSelect.addItem("", 0)
         for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
@@ -689,7 +718,7 @@ class Window(QMainWindow):
             versions = json.load(
                 open('./assets/versions.json', encoding='utf-8'))
         except Exception as e:
-            print("Local version file not found")
+            logger.error("Local version file not found")
 
         if versions and release:
             myVersion = versions.get("program", "0.0")
@@ -807,7 +836,7 @@ class Window(QMainWindow):
                 baseIcon = self.downloadAssetsAction.icon().pixmap(32, 32)
                 self.downloadAssetsAction.setIcon(QIcon(baseIcon))
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def ToggleAlwaysOnTop(self, checked):
         if checked:

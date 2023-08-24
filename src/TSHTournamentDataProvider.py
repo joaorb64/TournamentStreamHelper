@@ -12,6 +12,7 @@ from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvide
 from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 import json
+from loguru import logger
 
 from .Workers import Worker
 
@@ -57,7 +58,7 @@ class TSHTournamentDataProvider:
             TSHGameAssetManager.instance.SetGameFromChallongeId(
                 self.provider.videogame)
         else:
-            print("Unsupported provider...")
+            logger.error("Unsupported provider...")
 
     def SetTournament(self, url, initialLoading=False):
         if self.provider and self.provider.url == url:
@@ -70,7 +71,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
                 url, self.threadPool, self)
         else:
-            print("Unsupported provider...")
+            logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
 
         SettingsManager.Set("TOURNAMENT_URL", url)
@@ -170,7 +171,7 @@ class TSHTournamentDataProvider:
                 "app", "Insert the player's name in bracket")
             providerName = self.provider.name
         else:
-            print(QApplication.translate(
+            logger.error(QApplication.translate(
                 "app", "Invalid tournament data provider"))
             return
 
@@ -210,7 +211,7 @@ class TSHTournamentDataProvider:
         worker = Worker(self.provider.GetMatches, **
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
-            print(data),
+            logger.info(data),
             self.signals.get_sets_finished.emit(data)
         ])
         self.threadPool.start(worker)

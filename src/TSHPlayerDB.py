@@ -8,6 +8,7 @@ from qtpy.QtCore import *
 import re
 import csv
 import traceback
+from loguru import logger
 
 from .TSHGameAssetManager import TSHGameAssetManager
 
@@ -44,14 +45,14 @@ class TSHPlayerDB:
                                 player.get("mains", "{}"))
                         except:
                             player["mains"] = {}
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
 
             TSHPlayerDB.SetupModel()
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def AddPlayers(players, overwrite=False):
-        print(f"Adding players to DB: {len(players)}")
+        logger.info(f"Adding players to DB: {len(players)}")
         for player in players:
             if player is not None:
                 tag = player.get(
@@ -92,7 +93,7 @@ class TSHPlayerDB:
                             mains.update(player.get("mains", {}))
                             player["mains"] = mains
                         except:
-                            print(traceback.format_exc())
+                            logger.error(traceback.format_exc())
                     TSHPlayerDB.database[tag] = player
 
         TSHPlayerDB.SaveDB()
@@ -145,9 +146,9 @@ class TSHPlayerDB:
                                         try:
                                             skin = int(main[1])
                                         except:
-                                            print(
+                                            logger.error(
                                                 f'Local DB error: Player {player.get("gamerTag")} has an invalid skin for character {main[0]}')
-                                            print(traceback.format_exc())
+                                            logger.error(traceback.format_exc())
                                         main[1] = skin
 
                                     if playerMains[0][0] in TSHGameAssetManager.instance.characters.keys():
@@ -166,9 +167,9 @@ class TSHPlayerDB:
 
                         TSHPlayerDB.model.appendRow(item)
                     except:
-                        print(
+                        logger.error(
                             f'Error loading player from local DB: {player.get("gamerTag")}')
-                        print(traceback.format_exc())
+                        logger.error(traceback.format_exc())
 
             TSHPlayerDB.signals.db_updated.emit()
 
@@ -188,7 +189,7 @@ class TSHPlayerDB:
 
                         spamwriter.writerow(playerData)
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
 
 TSHGameAssetManager.instance.signals.onLoad.connect(TSHPlayerDB.SetupModel)

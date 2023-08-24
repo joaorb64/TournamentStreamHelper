@@ -9,6 +9,7 @@ from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
 import json
+from loguru import logger
 
 
 class TSHCountryHelperSignals(QObject):
@@ -52,12 +53,12 @@ class TSHCountryHelper(QObject):
                             './assets/countries+states+cities.json'
                         )
 
-                        print("Countries file updated")
+                        logger.info("Countries file updated")
                         TSHCountryHelper.LoadCountries()
                     except:
-                        print("Countries files download failed")
+                        logger.error("Countries files download failed")
                 except Exception as e:
-                    print(
+                    logger.error(
                         "Could not update /assets/countries+states+cities.json: "+str(e))
         downloaderThread = DownloaderThread(self)
         downloaderThread.start()
@@ -162,7 +163,7 @@ class TSHCountryHelper(QObject):
             TSHCountryHelper.signals.countriesUpdated.emit()
         except:
             TSHCountryHelper.countries_json = {}
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
     def FindState(countryCode, city):
         # State explicit?

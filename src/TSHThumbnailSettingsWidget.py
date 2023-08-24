@@ -7,6 +7,7 @@ from qtpy import uic
 from pathlib import Path
 import sys
 import os
+from loguru import logger
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
@@ -172,7 +173,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 config["filename"] = t
                 self.templates.append(config)
             except Exception as e:
-                print(e)
+                logger.error(e)
 
         for t in self.templates:
             self.templateSelect.addItem(
@@ -530,7 +531,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         try:
             self.preview.setPixmap(QPixmap(tmp_file))
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         self.updateFromSettings()
 
@@ -558,7 +559,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                     self.templateSelect.setCurrentIndex(i)
                     self.templateSelect.blockSignals(False)
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
 
         # Upper checkboxes
         self.phase_name.blockSignals(True)
@@ -810,8 +811,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.SaveSettings(f"{key}", val=fontSetting)
                 self.GeneratePreview()
         except Exception as e:
-            print("error save font")
-            print(e)
+            logger.error("Error saving font")
+            logger.error(e)
 
     def ColorPicker(self, button, key):
         try:
@@ -822,19 +823,19 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.SaveSettings(f"{key}", val=color)
                 self.updateFromSettings()
         except Exception as e:
-            print(e)
+            logger.error(e)
 
     def SaveSettings(self, key, val, generatePreview=False):
         try:
             SettingsManager.Set(f"thumbnail_config.{key}", val)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
         if generatePreview:
             self.GeneratePreview()
 
     def SetTypeFont(self, index, cbFont, cbType):
-        print(f'set type font {cbFont.currentData()}')
+        logger.info(f'set type font {cbFont.currentData()}')
         types = ["Regular", "Bold", "Italic", "Bold Italic"]
         types_localised = ["Regular", "Bold", "Italic", "Bold Italic"]
         types_localised[0] = QApplication.translate("app", "Regular")
@@ -921,7 +922,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 pass
 
     def DisplayErrorMessage(self, e):
-        print(e)
+        logger.error(e)
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle(QApplication.translate(

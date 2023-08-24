@@ -14,6 +14,7 @@ import shutil
 import datetime
 import os
 import re
+from loguru import logger
 
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
@@ -304,7 +305,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     max_size[0], round(max_size[1]/num_line))
                 individual_paste_x = paste_coordinates[0]
 
-            print(f"Processing asset: {image_path}")
+            logger.info(f"Processing asset: {image_path}")
 
             pix = QPixmap(image_path, "RGBA")
             tmpWidth = int(pix.width() * image_ratio[0])
@@ -1280,10 +1281,10 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     ]
     # not blocking so empty
     if side_icon_list[0] and not os.path.isfile(side_icon_list[0]):
-        print(f"Top Left Icon {side_icon_list[0]} doesn't exist !")
+        logger.info(f"Top Left Icon {side_icon_list[0]} doesn't exist !")
         side_icon_list[0] = ''
     if side_icon_list[1] and not os.path.isfile(side_icon_list[1]):
-        print(f"Top Right Icon {side_icon_list[1]} doesn't exist !")
+        logger.info(f"Top Right Icon {side_icon_list[1]} doesn't exist !")
         side_icon_list[1] = ''
     # BOOLEAN
     display_phase = deep_get(settings, f"display_phase")
@@ -1482,12 +1483,12 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         thumbnail.save(f"{out_path}/{thumbnail_filename}.jpg")
         if os.path.isdir(tmp_path):
             shutil.rmtree(tmp_path)
-        print(
+        logger.info(
             f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
         return f"{out_path}/{thumbnail_filename}.png"
     else:
         thumbnail_filename = f"template"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
-        print(
+        logger.info(
             f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png")
         return f"{out_path}/{thumbnail_filename}.png"

@@ -1,5 +1,6 @@
 from .StateManager import StateManager
 from copy import deepcopy
+from loguru import logger
 
 class TSHStageStrikeState:
     def __init__(self) -> None:
@@ -79,7 +80,7 @@ class TSHStageStrikeLogic():
         self.Initialize()
     
     def Initialize(self, resetStreamScore = False):
-        print("Stage Strike Logic Initialize")
+        logger.info("Stage Strike Logic Initialize")
         self.AddHistory(TSHStageStrikeState())
         self.ExportState()
     
@@ -87,7 +88,7 @@ class TSHStageStrikeLogic():
         return self.history[self.historyIndex]
     
     def RpsResult(self, player):
-        print("RPS won by", player)
+        logger.info("RPS won by " + str(player+1))
         newState = self.CurrentState().Clone()
         newState.lastWinner = player
         newState.currPlayer = player
@@ -136,14 +137,14 @@ class TSHStageStrikeLogic():
                 return 0
 
     def StageClicked(self, stage):
-        print("Clicked on stage", stage.get("codename"))
+        logger.info("Clicked on stage " + stage.get("codename"))
 
         if (self.CurrentState().currGame > 0 and self.CurrentState().currStep > 0) or self.CurrentState().gentlemans:
             # we're picking
             if (not self.IsStageBanned(stage.get("codename")) and not self.IsStageStriked(stage.get("codename"))) or self.CurrentState().gentlemans:
                 newState = self.CurrentState().Clone()
                 newState.selectedStage = stage.get("codename")
-                print("Stage picked")
+                logger.info("Stage picked")
                 self.AddHistory(newState)
         elif not self.IsStageStriked(stage.get("codename"), True) and not self.IsStageBanned(stage.get("codename")):
             # we're banning
@@ -151,13 +152,13 @@ class TSHStageStrikeLogic():
             
             if foundIndex == None:
                 if len(self.CurrentState().strikedStages[self.CurrentState().currStep]) < self.GetStrikeNumber():
-                    print("Stage banned")
+                    logger.info("Stage banned")
                     newState = self.CurrentState().Clone()
                     newState.strikedStages[newState.currStep].append(stage.get("codename"));
                     newState.strikedBy[newState.currPlayer].append(stage.get("codename"));
                     self.AddHistory(newState)
             else:
-                print("Stage unbanned")
+                logger.info("Stage unbanned")
 
                 newState = self.CurrentState().Clone()
                 newState.strikedStages[newState.currStep].pop(foundIndex)
@@ -220,7 +221,7 @@ class TSHStageStrikeLogic():
             self.ConfirmClicked(justOverwrite=True)
     
     def SetGentlemans(self, value):
-        print(f"Setting gentlemans to {value}")
+        logger.info(f"Setting gentlemans to {value}")
         newState = self.CurrentState().Clone()
 
         newState.gentlemans = value

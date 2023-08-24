@@ -18,6 +18,7 @@ import time
 import math
 import random
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
+from loguru import logger
 
 
 class TSHScoreboardPlayerWidgetSignals(QObject):
@@ -155,8 +156,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         if processed_line and processed_line not in self.pronoun_list:
                             self.pronoun_list.append(processed_line)
             except Exception as e:
-                print(f"ERROR: Did not find {file}")
-                print(traceback.format_exc())
+                logger.error(f"ERROR: Did not find {file}")
+                logger.error(traceback.format_exc())
         self.pronoun_model = QStringListModel()
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
@@ -292,7 +293,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         if self == other:
-            print("Swapping player with themselves")
+            logger.info("Swapping player with themselves")
             return
         try:
             StateManager.BlockSaving()
@@ -493,7 +494,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             state.lineEdit().setFont(QFont(state.font().family(), 9))
 
         except Exception as e:
-            print(e)
+            logger.error(e)
             exit()
 
     def LoadStates(self, index):
@@ -574,7 +575,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.Clear()
 
             # Load player data from DB; will be overwriten by incoming data
-            if not dontLoadFromDB and clear:
+            if not dontLoadFromDB:
                 tag = data.get(
                     "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
 

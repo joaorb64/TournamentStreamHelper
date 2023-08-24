@@ -9,6 +9,12 @@ from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
+from loguru import logger
+from .TSHGameAssetManager import TSHGameAssetManager
+
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 class WebServer(QThread):
@@ -65,29 +71,33 @@ class WebServer(QThread):
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
     def stage_clicked():
-        WebServer.stageWidget.stageStrikeLogic.StageClicked(json.loads(request.get_data()))
+        WebServer.stageWidget.stageStrikeLogic.StageClicked(
+            json.loads(request.get_data()))
         return "OK"
-    
+
     @app.route('/stage_strike_confirm_clicked', methods=['POST'])
     def confirm_clicked():
         WebServer.stageWidget.stageStrikeLogic.ConfirmClicked()
         return "OK"
-    
+
     @app.route('/stage_strike_rps_win', methods=['POST'])
     def rps_win():
-        WebServer.stageWidget.stageStrikeLogic.RpsResult(int(json.loads(request.get_data()).get("winner")))
+        WebServer.stageWidget.stageStrikeLogic.RpsResult(
+            int(json.loads(request.get_data()).get("winner")))
         return "OK"
-    
+
     @app.route('/stage_strike_match_win', methods=['POST'])
     def match_win():
-        WebServer.stageWidget.stageStrikeLogic.MatchWinner(int(json.loads(request.get_data()).get("winner")))
-        #Web server updating score here
+        WebServer.stageWidget.stageStrikeLogic.MatchWinner(
+            int(json.loads(request.get_data()).get("winner")))
+        # Web server updating score here
         WebServer.UpdateScore()
         return "OK"
 
     @app.route('/stage_strike_set_gentlemans', methods=['POST'])
     def set_gentlemans():
-        WebServer.stageWidget.stageStrikeLogic.SetGentlemans(json.loads(request.get_data()).get("value"))
+        WebServer.stageWidget.stageStrikeLogic.SetGentlemans(
+            json.loads(request.get_data()).get("value"))
         return "OK"
 
     @app.route('/stage_strike_undo', methods=['POST'])
@@ -101,7 +111,7 @@ class WebServer(QThread):
         WebServer.stageWidget.stageStrikeLogic.Redo()
         WebServer.UpdateScore()
         return "OK"
-    
+
     @app.route('/stage_strike_reset', methods=['POST'])
     def reset():
         WebServer.stageWidget.stageStrikeLogic.Initialize()
@@ -109,17 +119,23 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-        print(SettingsManager.Get("general.control_score_from_stage_strike", True), SettingsManager.Get("general.control_score_from_stage_strike", 12))
+        logger.info("================UPDATE SCORE !============")
+        logger.info(SettingsManager.Get(
+            "general.control_score_from_stage_strike"))
 
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return
 
         score = [
-            len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[0]),
-            len(WebServer.stageWidget.stageStrikeLogic.CurrentState().stagesWon[1]),
+            len(WebServer.stageWidget.stageStrikeLogic.CurrentState(
+            ).stagesWon[0]),
+            len(WebServer.stageWidget.stageStrikeLogic.CurrentState(
+            ).stagesWon[1]),
         ]
-        
-        WebServer.scoreboard.signals.UpdateSetData.emit({
+
+        logger.info(f"We're supposed to update the score {score}")
+
+        WebServer.scoreboard.signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
@@ -129,7 +145,7 @@ class WebServer(QThread):
     def post_score():
         score = json.loads(request.get_data())
         score.update({"reset_score": True})
-        WebServer.scoreboard.signals.UpdateSetData.emit(score)
+        WebServer.scoreboard.signals.ChangeSetData.emit(score)
         return "OK"
 
     # Ticks score of Team specified up by 1 point
@@ -160,7 +176,7 @@ class WebServer(QThread):
         # Best Of argument
         # best-of=<Best Of Amount>
         if request.args.get('best-of') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'bestOf': request.args.get(
                         'best-of', default='0', type=int)})
@@ -170,7 +186,7 @@ class WebServer(QThread):
         # Phase argument
         # phase=<Phase Name>
         if request.args.get('phase') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'tournament_phase': request.args.get(
                         'phase', default='Pools', type=str)})
@@ -180,7 +196,7 @@ class WebServer(QThread):
         # Match argument
         # match=<Match Name>
         if request.args.get('match') is not None:
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'round_name': request.args.get(
                         'match', default='Pools', type=str)})
@@ -203,13 +219,38 @@ class WebServer(QThread):
         # losers=<True/False>&team=<Team Number>
         if request.args.get('losers') is not None:
             losers = request.args.get('losers', default=False, type=bool)
-            WebServer.scoreboard.signals.UpdateSetData.emit(
+            WebServer.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'team' + request.args.get('team',
                                default='1', type=str) + 'losers': bool(losers)})
                 )
             )
         return "OK"
+
+    # Set player data
+    @app.post('/update-team-<team>-<player>')
+    def set_team_data(team, player):
+        data = request.get_json()
+
+        WebServer.scoreboard.signals.ChangeSetData.emit({
+            "team": team,
+            "player": player,
+            "data": data
+        })
+        return "OK"
+
+    # Get characters
+    @app.route('/characters')
+    def get_characters():
+        data = {}
+        for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
+            item: QStandardItem = TSHGameAssetManager.instance.characterModel.index(
+                row, 0)
+            item_data = item.data(Qt.ItemDataRole.UserRole)
+
+            if item_data != None:
+                data[item_data.get("name")] = item_data
+        return data
 
     # Swaps teams
     @app.route('/swap-teams')
@@ -240,7 +281,7 @@ class WebServer(QThread):
     def stats_recent_sets():
         TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
         return "OK"
-    
+
     # Resubmits Call for Upset Factor
     @app.route('/stats-upset-factor')
     def stats_upset_factor():
@@ -258,7 +299,8 @@ class WebServer(QThread):
             TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
             TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
         else:
-            print("[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
+            logger.error(
+                "[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
    # Resubmits Call for History Sets
@@ -272,7 +314,8 @@ class WebServer(QThread):
             TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
             TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
         else:
-            print("[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
+            logger.error(
+                "[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
     # Resets scores
@@ -288,7 +331,7 @@ class WebServer(QThread):
         WebServer.scoreboard.scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
         return "OK"
-    
+
     # Resets scores, match, phase, and losers status
     @app.route('/reset-players')
     def reset_players():
@@ -305,7 +348,7 @@ class WebServer(QThread):
         WebServer.scoreboard.charNumber.setValue(1)
         WebServer.scoreboard.CommandClearAll()
         return "OK"
-    
+
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/load-set')
     def load_set():
@@ -315,7 +358,7 @@ class WebServer(QThread):
                     json.dumps({
                         'id': request.args.get('set', default='0', type=str),
                         'auto_update': "set"
-                        })
+                    })
                 )
             )
         return "OK"

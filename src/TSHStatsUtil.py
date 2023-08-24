@@ -6,6 +6,7 @@ import math
 from .StateManager import *
 from .SettingsManager import *
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from loguru import logger
 
 
 class TSHStatsSignals(QObject):
@@ -154,10 +155,10 @@ class TSHStatsUtil:
                 p1 = StateManager.Get(f"score.team.1.player.1.seed")
                 p2 = StateManager.Get(f"score.team.2.player.1.seed")
                 if p1 and p2:
-                    print("P1 Seed: " + str(p1))
+                    logger.info("P1 Seed: " + str(p1))
                     p1_upset = self.CalculatePlacementMath(bracket_type, p1)
 
-                    print("P2 Seed: " + str(p2))
+                    logger.info("P2 Seed: " + str(p2))
                     p2_upset = self.CalculatePlacementMath(bracket_type, p2)
 
                     StateManager.Set(f"score.upset_factor",

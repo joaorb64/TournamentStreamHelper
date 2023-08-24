@@ -33,12 +33,12 @@ body {
   transform-style: preserve-3d;
 }
 
-.plane.left_plane > div {
+.r3d .plane.left_plane > div {
   transform-origin: left;
   transform: rotateY(10deg);
 }
 
-.plane.right_plane > div {
+.r3d .plane.right_plane > div {
   transform-origin: right;
   transform: rotateY(-10deg);
 }
@@ -315,12 +315,14 @@ body {
   max-width: 25%;
   width: 25%;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .tournament_container .col {
   gap: 0;
   justify-content: center;
   align-items: flex-start;
+  overflow: hidden;
 }
 
 .match_info_container {
@@ -329,6 +331,7 @@ body {
   width: 25%;
   gap: 16px;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .match_info_container > .col {
@@ -336,7 +339,7 @@ body {
 }
 
 .tournament {
-  font-size: 42px;
+  font-size: 40px;
   place-content: center;
   max-width: 100%;
 }

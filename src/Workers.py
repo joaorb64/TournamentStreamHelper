@@ -3,6 +3,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import traceback
 import sys
+from loguru import logger
 
 class WorkerSignals(QObject):
     '''
@@ -65,8 +66,7 @@ class Worker(QRunnable):
         try:
             result = self.fn(*self.args, **self.kwargs)
         except Exception as e:
-            print(traceback.format_exc())
-            traceback.print_exc()
+            logger.error(traceback.format_exc())
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:

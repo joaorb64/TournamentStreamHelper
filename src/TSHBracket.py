@@ -1,5 +1,6 @@
 import math
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from loguru import logger
 
 
 class BracketSet():
@@ -152,7 +153,7 @@ class Bracket():
                             targetIdW = 1
                         _set.winNextSlot = targetIdW
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
                     try:
                         shift = 0
 
@@ -176,7 +177,7 @@ class Bracket():
 
                         _set.loseNextSlot = targetIdL
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
             else:
                 for j, _set in enumerate(round):
                     try:
@@ -190,7 +191,7 @@ class Bracket():
                             targetIdW = 1
                         _set.winNextSlot = targetIdW
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
 
         # Connect losers to winners for grand finals
         lastLosers = min([int(r) for r in self.rounds.keys()])
