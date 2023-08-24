@@ -1335,7 +1335,7 @@ LoadEverything().then(() => {
             Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
           );
 
-          if (Object.keys(losersRounds).length % 2 == 0 && !allWinners) {
+          if (Object.keys(losersRounds).length % 2 == 0) {
             Object.values(bracket["-1"].sets).forEach((set, index) => {
               appearRounds.push([-1, index, 0]);
               appearRounds.push([-1, index, 1]);

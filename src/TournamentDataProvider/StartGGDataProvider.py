@@ -14,7 +14,8 @@ from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
 import json
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
-from ..TSHBracket import is_power_of_two
+from ..TSHBracket import is_power_of_two, next_power_of_2
+import math
 
 from ..Workers import Worker
 import sys
@@ -199,14 +200,39 @@ class StartGGDataProvider(TournamentDataProvider):
             )
             oldData = json.loads(oldData.text)
 
-            seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
-            seeds.sort(key=lambda s: s.get("seedNum"))
+            seeds: list = deep_get(data, "data.phaseGroup.seeds.nodes", [])
+            seeds.sort(key=lambda s: s.get("groupSeedNum"))
+
+            # for s in seeds:
+            #     s["seedNum"] = s.get("groupSeedNum")
+
+            # StartGG hides empty seeds. Fix that
+            fixedSeeds = []
+
+            lastSeed = 0
+
+            byeIds = []
+
+            while len(seeds) > 0:
+                minSeed = min(seeds, key=lambda s: s.get("groupSeedNum"))
+
+                while minSeed.get("groupSeedNum") > lastSeed+1:
+                    fixedSeeds.append({})
+                    lastSeed += 1
+                    byeIds.append(lastSeed)
+                else:
+                    fixedSeeds.append(minSeed)
+                    seeds.remove(minSeed)
+                    lastSeed = minSeed.get("groupSeedNum")
+
+            seeds = fixedSeeds
 
             seedMap: list = deep_get(data, "data.phaseGroup.seedMap.1")
 
             if seedMap:
                 seedMap = [s if s != "bye" else -1 for s in seedMap]
                 finalData["seedMap"] = seedMap
+                finalData["byeIds"] = byeIds
 
             teams = []
 
@@ -252,8 +278,16 @@ class StartGGDataProvider(TournamentDataProvider):
                 if not str(round) in finalSets:
                     finalSets[str(round)] = []
 
+                score = [s.get("entrant1Score"), s.get("entrant2Score")]
+
+                if s.get("entrant1Score") == None and s.get("entrant2Score") == None and s.get("winnerId") != None and s.get("state", 0) == 3:
+                    if s.get("winnerId") == s.get("entrant1Id"):
+                        score = [1, 0]
+                    else:
+                        score = [0, 1]
+
                 finalSets[str(round)].append({
-                    "score": [s.get("entrant1Score"), s.get("entrant2Score")],
+                    "score": score,
                     "finished": s.get("state", 0) == 3
                 })
 
@@ -291,7 +325,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     len(finalData["progressionsIn"])) else 2
 
                 if deep_get(oldData, "entities.groups.hasCustomWinnerByes"):
-                    shift = 1
+                    shift = 1 if math.log2(
+                        next_power_of_2(len(teams))) % 2 == 0 else 2
 
                 for roundKey in originalKeys:
                     round = int(roundKey)
@@ -614,10 +649,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         player.get("id"),
                         0
                     ]
-                if playerData.get("id") and len(playerData.get("id")) > 0:
-                    if playerData["id"][0] is not None:
-                        playerData["seed"] = self.player_seeds.get(
-                            playerData["id"][0])
+                if playerData["id"][0] is not None:
+                    playerData["seed"] = self.player_seeds[playerData["id"][0]]
 
                 players[i].append(playerData)
 
@@ -899,7 +932,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 streamName = q.get("stream", {}).get("streamName", "")
                 queueData = {}
                 for setIndex, _set in enumerate(q.get("sets", [])):
-
 
                     phase_name = deep_get(_set, "phaseGroup.phase.name")
                     if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
@@ -1457,7 +1489,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(
                             entrant)
-                        if deep_get(team, "seeds", []) is not None and len(deep_get(team, "seeds", [])) > 0:
+                        if deep_get(team, "seeds", []) != []:
                             playerData["seed"] = deep_get(team, "seeds", [])[
                                 0].get("seedNum", 0)
                             self.player_seeds[playerData["id"]

@@ -13,6 +13,7 @@ from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
 import traceback
+import threading
 from loguru import logger
 
 # Checks if a number is power of 2
@@ -34,6 +35,8 @@ class TSHBracketWidget(QDockWidget):
         uic.loadUi("src/layout/TSHBracket.ui", self)
 
         StateManager.Set("bracket", {})
+
+        self.loadLock = threading.RLock()
 
         TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(
             self.UpdatePhases)
@@ -219,7 +222,8 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection.clear()
 
         if self.phaseSelection.currentData() != None:
-            logger.info(str(self.phaseSelection.currentData().get("groups", [])))
+            logger.info(
+                str(self.phaseSelection.currentData().get("groups", [])))
             for phaseGroup in self.phaseSelection.currentData().get("groups", []):
                 self.phaseGroupSelection.addItem(
                     phaseGroup.get("name"), phaseGroup)
@@ -246,9 +250,15 @@ class TSHBracketWidget(QDockWidget):
             TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(
                 self.phaseGroupSelection.currentData().get("id"))
 
-    def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
-        self.bracket = Bracket(playerNumber, self.progressionsIn.value(
-        ), seedMap, self.winnersOnly.isChecked())
+    def RebuildBracket(self, playerNumber, seedMap=None, byeIds=[], customSeeding=False):
+        self.bracket = Bracket(
+            playerNumber,
+            self.progressionsIn.value(),
+            seedMap,
+            byeIds,
+            self.winnersOnly.isChecked(),
+            customSeeding=customSeeding
+        )
 
         self.bracketView.SetBracket(
             self.bracket,
@@ -265,29 +275,40 @@ class TSHBracketWidget(QDockWidget):
                 _set.finished = False
 
     def UpdatePhaseGroup(self, phaseGroupData):
-        StateManager.BlockSaving()
-        self.playerList.signals.DataChanged.disconnect()
+        with self.loadLock:
+            StateManager.BlockSaving()
+            self.playerList.signals.DataChanged.disconnect()
 
         try:
             logger.info("Phase Group Data: " + str(phaseGroupData))
 
             if phaseGroupData.get("progressionsIn", {}) != None:
+                self.progressionsIn.blockSignals(True)
                 self.progressionsIn.setValue(
                     len(phaseGroupData.get("progressionsIn", {})))
+                self.progressionsIn.blockSignals(False)
             else:
+                self.progressionsIn.blockSignals(True)
                 self.progressionsIn.setValue(0)
+                self.progressionsIn.blockSignals(False)
 
             if phaseGroupData.get("progressionsOut", {}) != None:
+                self.progressionsOut.blockSignals(True)
                 self.progressionsOut.setValue(
                     len(phaseGroupData.get("progressionsOut", {})))
+                self.progressionsIn.blockSignals(False)
             else:
                 self.progressionsOut.setValue(0)
 
             if phaseGroupData.get("winnersOnlyProgressions", False) != None:
+                self.winnersOnly.blockSignals(True)
                 self.winnersOnly.setChecked(
                     phaseGroupData.get("winnersOnlyProgressions", False))
+                self.winnersOnly.blockSignals(False)
             else:
+                self.winnersOnly.blockSignals(True)
                 self.winnersOnly.setChecked(False)
+                self.winnersOnly.blockSignals(False)
 
             self.bracket.customSeeding = phaseGroupData.get(
                 "customSeeding", False)
@@ -295,7 +316,8 @@ class TSHBracketWidget(QDockWidget):
             # Make sure progressions are exported
             QGuiApplication.processEvents()
 
-            self.playerList.LoadFromStandings(phaseGroupData.get("entrants"))
+            self.playerList.LoadFromStandings(
+                phaseGroupData.get("entrants"))
 
             # Wait for the player list to update
             QGuiApplication.processEvents()
@@ -311,6 +333,7 @@ class TSHBracketWidget(QDockWidget):
             self.RebuildBracket(
                 len(phaseGroupData.get("entrants")),
                 phaseGroupData.get("seedMap"),
+                phaseGroupData.get("byeIds", []),
                 phaseGroupData.get("customSeeding", False)
             )
 
