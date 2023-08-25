@@ -5,6 +5,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 import requests
 import os
+import platform
 import traceback
 import json
 import copy
@@ -67,6 +68,10 @@ class TSHHotkeys(QObject):
                 shortcuts[pynputShortcut] = lambda key=key, value=value: self.HotkeyTriggered(key, value)
         
         self.pynputListener = pynput.keyboard.GlobalHotKeys(shortcuts)
+
+        if platform.system() == "Darwin":
+            logger.error("macOS detected, deactivating hotkeys for now")
+            return
 
         self.pynputListener.start()
     
