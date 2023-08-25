@@ -11,6 +11,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
 from loguru import logger
 from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHScoreboardManager import TSHScoreboardManager
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -23,9 +24,8 @@ class WebServer(QThread):
     app.config['CORS_HEADERS'] = 'Content-Type'
     scoreboard = None
 
-    def __init__(self, parent=None, scoreboard=None, stageWidget=None) -> None:
+    def __init__(self, parent=None, stageWidget=None) -> None:
         super().__init__(parent)
-        WebServer.scoreboard = scoreboard
         WebServer.stageWidget = stageWidget
         self.host_name = "0.0.0.0"
         self.port = 5000
@@ -47,13 +47,13 @@ class WebServer(QThread):
             teams.reverse()
 
         for i, t in enumerate(teams):
-            if StateManager.Get(f"score.team.{i+1}.teamName"):
+            if StateManager.Get(f"score.1.team.{i+1}.teamName"):
                 data.update({
-                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
+                    f"p{t}": StateManager.Get(f"score.1.team.{i+1}.teamName")
                 })
             else:
                 names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
+                    f"score.1.team.{i+1}.player", {}).values() if p.get("name")]
 
                 data.update({
                     f"p{t}": " / ".join(names)
@@ -61,10 +61,10 @@ class WebServer(QThread):
 
         # Add set data
         data.update({
-            "best_of": StateManager.Get(f"score.best_of"),
-            "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase"),
-            "state": StateManager.Get(f"score.stage_strike", {})
+            "best_of": StateManager.Get(f"score.1.best_of"),
+            "match": StateManager.Get(f"score.1.match"),
+            "phase": StateManager.Get(f"score.1.phase"),
+            "state": StateManager.Get(f"score.1.stage_strike", {})
         })
 
         return data
@@ -119,7 +119,6 @@ class WebServer(QThread):
         return "OK"
 
     def UpdateScore():
-        logger.info("================UPDATE SCORE !============")
         logger.info(SettingsManager.Get(
             "general.control_score_from_stage_strike"))
 
@@ -135,7 +134,7 @@ class WebServer(QThread):
 
         logger.info(f"We're supposed to update the score {score}")
 
-        WebServer.scoreboard.signals.ChangeSetData.emit({
+        TSHScoreboardManager.instance.GetScoreboard(1).signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
@@ -145,25 +144,29 @@ class WebServer(QThread):
     def post_score():
         score = json.loads(request.get_data())
         score.update({"reset_score": True})
-        WebServer.scoreboard.signals.ChangeSetData.emit(score)
+        TSHScoreboardManager.instance.GetScoreboard(1).signals.ChangeSetData.emit(score)
         return "OK"
 
     # Ticks score of Team specified up by 1 point
-    @app.route('/team<team>-scoreup')
-    def team_scoreup(team):
+    @app.route('/scoreboard<scoreboardNumber>-team<team>-scoreup')
+    def team_scoreup(scoreboardNumber, team):
         if team == "1":
-            WebServer.scoreboard.signals.CommandScoreChange.emit(0, 1)
+            TSHScoreboardManager.instance.GetScoreboard(
+                scoreboardNumber).signals.CommandScoreChange.emit(0, 1)
         else:
-            WebServer.scoreboard.signals.CommandScoreChange.emit(1, 1)
+            TSHScoreboardManager.instance.GetScoreboard(
+                scoreboardNumber).signals.CommandScoreChange.emit(1, 1)
         return "OK"
 
     # Ticks score of Team specified down by 1 point
-    @app.route('/team<team>-scoredown')
-    def team_scoredown(team):
+    @app.route('/scoreboard<scoreboardNumber>-team<team>-scoredown')
+    def team_scoredown(scoreboardNumber, team):
         if team == "1":
-            WebServer.scoreboard.signals.CommandScoreChange.emit(0, -1)
+            TSHScoreboardManager.instance.GetScoreboard(
+                scoreboardNumber).signals.CommandScoreChange.emit(0, -1)
         else:
-            WebServer.scoreboard.signals.CommandScoreChange.emit(1, -1)
+            TSHScoreboardManager.instance.GetScoreboard(
+                scoreboardNumber).signals.CommandScoreChange.emit(1, -1)
         return "OK"
 
     # Dynamic endpoint to allow flexible sets of information
@@ -171,12 +174,14 @@ class WebServer(QThread):
     #
     # Test Scenario that was used
     # Ex. http://192.168.4.34:5000/set?best-of=5&phase=Top 32&match=Winners Finals
-    @app.route('/set')
-    def set_route():
+    @app.route('/scoreboard<scoreboardNumber>-set')
+    def set_route(scoreboardNumber):
+        scoreboard = TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber)
+        
         # Best Of argument
         # best-of=<Best Of Amount>
         if request.args.get('best-of') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
+            scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'bestOf': request.args.get(
                         'best-of', default='0', type=int)})
@@ -186,7 +191,7 @@ class WebServer(QThread):
         # Phase argument
         # phase=<Phase Name>
         if request.args.get('phase') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
+            scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'tournament_phase': request.args.get(
                         'phase', default='Pools', type=str)})
@@ -196,7 +201,7 @@ class WebServer(QThread):
         # Match argument
         # match=<Match Name>
         if request.args.get('match') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
+            scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'round_name': request.args.get(
                         'match', default='Pools', type=str)})
@@ -206,20 +211,20 @@ class WebServer(QThread):
         # Players argument
         # players=<Amount of Players>
         if request.args.get('players') is not None:
-            WebServer.scoreboard.playerNumber.setValue(
+            scoreboard.playerNumber.setValue(
                 request.args.get('players', default=1, type=int))
 
         # Characters argument
         # characters=<Amount of Characters>
         if request.args.get('characters') is not None:
-            WebServer.scoreboard.charNumber.setValue(
+            scoreboard.charNumber.setValue(
                 request.args.get('characters', default=1, type=int))
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
         if request.args.get('losers') is not None:
             losers = request.args.get('losers', default=False, type=bool)
-            WebServer.scoreboard.signals.ChangeSetData.emit(
+            scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'team' + request.args.get('team',
                                default='1', type=str) + 'losers': bool(losers)})
@@ -228,11 +233,12 @@ class WebServer(QThread):
         return "OK"
 
     # Set player data
-    @app.post('/update-team-<team>-<player>')
-    def set_team_data(team, player):
+    @app.post('/scoreboard<scoreboardNumber>-update-team-<team>-<player>')
+    def set_team_data(scoreboardNumber, team, player):
         data = request.get_json()
 
-        WebServer.scoreboard.signals.ChangeSetData.emit({
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.ChangeSetData.emit({
             "team": team,
             "player": player,
             "data": data
@@ -253,27 +259,30 @@ class WebServer(QThread):
         return data
 
     # Swaps teams
-    @app.route('/swap-teams')
-    def swap_teams():
-        WebServer.scoreboard.signals.SwapTeams.emit()
+    @app.route('/scoreboard<scoreboardNumber>-swap-teams')
+    def swap_teams(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.SwapTeams.emit()
         return "OK"
 
     # Opens Set Selector Window
-    @app.route('/open-set')
-    def open_sets():
-        WebServer.scoreboard.signals.SetSelection.emit()
+    @app.route('/scoreboard<scoreboardNumber>-open-set')
+    def open_sets(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.SetSelection.emit()
         return "OK"
 
     # Pulls Current Stream Set
-    @app.route('/pull-stream')
-    def pull_stream_set():
-        WebServer.scoreboard.signals.StreamSetSelection.emit()
+    @app.route('/scoreboard<scoreboardNumber>-pull-stream')
+    def pull_stream_set(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.StreamSetSelection.emit()
         return "OK"
 
     # Pulls Current User Set
     @app.route('/pull-user')
     def pull_user_set():
-        WebServer.scoreboard.signals.UserSetSelection.emit()
+        TSHScoreboardManager.instance.GetScoreboard(1).signals.UserSetSelection.emit()
         return "OK"
 
     # Resubmits Call for Recent Sets
@@ -319,41 +328,43 @@ class WebServer(QThread):
         return "OK"
 
     # Resets scores
-    @app.route('/reset-scores')
-    def reset_scores():
-        WebServer.scoreboard.ResetScore()
+    @app.route('/scoreboard<scoreboardNumber>-reset-scores')
+    def reset_scores(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber).ResetScore()
         return "OK"
 
     # Resets scores, match, phase, and losers status
-    @app.route('/reset-match')
-    def reset_match():
-        WebServer.scoreboard.ClearScore()
-        WebServer.scoreboard.scoreColumn.findChild(
-            QSpinBox, "best_of").setValue(0)
+    @app.route('/scoreboard<scoreboardNumber>-reset-match')
+    def reset_match(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber).ClearScore()
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).scoreColumn.findChild(QSpinBox, "best_of").setValue(0)
         return "OK"
 
     # Resets scores, match, phase, and losers status
-    @app.route('/reset-players')
-    def reset_players():
-        WebServer.scoreboard.CommandClearAll()
+    @app.route('/scoreboard<scoreboardNumber>-reset-players')
+    def reset_players(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber).CommandClearAll()
         return "OK"
 
     # Resets all values
-    @app.route('/clear-all')
-    def clear_all():
-        WebServer.scoreboard.ClearScore()
-        WebServer.scoreboard.scoreColumn.findChild(
+    @app.route('/scoreboard<scoreboardNumber>-clear-all')
+    def clear_all(scoreboardNumber):
+        scoreboard = TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber)
+        scoreboard.ClearScore()
+        scoreboard.scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
-        WebServer.scoreboard.playerNumber.setValue(1)
-        WebServer.scoreboard.charNumber.setValue(1)
-        WebServer.scoreboard.CommandClearAll()
+        scoreboard.playerNumber.setValue(1)
+        scoreboard.charNumber.setValue(1)
+        scoreboard.CommandClearAll()
         return "OK"
 
     # Loads a set remotely by providing a set ID to pull from the data provider
-    @app.route('/load-set')
-    def load_set():
+    @app.route('/scoreboard<scoreboardNumber>-load-set')
+    def load_set(scoreboardNumber):
         if request.args.get('set') is not None:
-            WebServer.scoreboard.signals.NewSetSelected.emit(
+            TSHScoreboardManager.instance.GetScoreboard(
+                scoreboardNumber).signals.NewSetSelected.emit(
                 json.loads(
                     json.dumps({
                         'id': request.args.get('set', default='0', type=str),

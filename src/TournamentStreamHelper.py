@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
@@ -76,10 +75,12 @@ from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHAlertNotification import TSHAlertNotification
 from .TSHPlayerDB import TSHPlayerDB
 from .Workers import *
-from .TSHScoreboardWidget import *
+from .TSHScoreboardManager import *
 from .TSHThumbnailSettingsWidget import *
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
+from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
+from src.TSHWebServer import WebServer
 # autopep8: on
 
 
@@ -280,7 +281,7 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
 
-        self.scoreboard = TSHScoreboardWidget()
+        self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
         self.scoreboard.setObjectName(
             QApplication.translate("app", "Scoreboard"))
@@ -296,7 +297,7 @@ class Window(QMainWindow):
         self.dockWidgets.append(self.stageWidget)
 
         self.webserver = WebServer(
-            parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
+            parent=None, stageWidget=self.stageWidget)
         self.webserver.start()
 
         commentary = TSHCommentaryWidget()
@@ -576,6 +577,12 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/info.svg'))
         action.triggered.connect(lambda: self.aboutWidget.show())
 
+        # Game Select and Scoreboard Count
+        
+        # Follow startgg user
+        hbox = QHBoxLayout()
+        group_box.layout().addLayout(hbox)
+
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
         self.gameSelect.completer().setFilterMode(Qt.MatchFlag.MatchContains)
@@ -602,7 +609,25 @@ class Window(QMainWindow):
             self.SetGame)
 
         pre_base_layout.addLayout(base_layout)
-        group_box.layout().addWidget(self.gameSelect)
+        hbox.addWidget(self.gameSelect)
+
+        self.scoreboardAmount = QSpinBox()
+        self.scoreboardAmount.setMaximumWidth(100)
+        self.scoreboardAmount.setMinimum(1)
+        self.scoreboardAmount.setMaximum(10)
+
+        self.scoreboardAmount.valueChanged.connect(
+            lambda val: 
+            TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.emit(val)
+        )
+
+        label_margin = " "*18
+        label = QLabel(label_margin + QApplication.translate("app", "Number of Scoreboards"))
+        label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        hbox.addWidget(label)
+        hbox.addWidget(self.scoreboardAmount)
+
+        TSHScoreboardManager.instance.updateAmount(1)
 
         self.CheckForUpdates(True)
         self.ReloadGames()

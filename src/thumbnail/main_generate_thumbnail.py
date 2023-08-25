@@ -547,7 +547,7 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
     return (thumbnail)
 
 
-def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50):
+def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, flip_p2=False, fill_x=True, fill_y=True, zoom=1, horizontalAlign=50, verticalAlign=50, scoreboardNumber=1):
     max_x_size = round(
         template_data["character_images"]["dimensions"]["x"]*ratio[0]/2)
     max_y_size = round(
@@ -574,7 +574,12 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         uncropped_edge_matrix = []
         rescaling_matrix = []
 
-        current_team = find(f"score.team.{team_index}.player", data)
+        try:
+            current_team = find(f"score.{scoreboardNumber}.team.{team_index}.player", data)
+        except Exception as e:
+            logger.error(e) 
+            return
+        
         for player_key in current_team.keys():
             character_list = []
             eyesight_list = []
@@ -825,7 +830,7 @@ def draw_text(thumbnail, text, font_data, max_font_size, color, pos, container_s
     painter.end()
 
 
-def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
+def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True, scoreboardNumber=1):
     text_player_max_dimensions = (round(template_data["character_images"]["dimensions"]["x"]*ratio[0]/2.0), round(
         template_data["player_text"]["dimensions"]["y"]*ratio[1]))
     text_player_coordinates = [
@@ -846,11 +851,11 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         color_mask = []
         final_color_mask = []
 
-        if use_team_names and find(f"score.team.{team_index}.teamName", data):
-            player_name = find(f"score.team.{team_index}.teamName", data)
+        if use_team_names and find(f"score.{scoreboardNumber}.team.{team_index}.teamName", data):
+            player_name = find(f"score.{scoreboardNumber}.team.{team_index}.teamName", data)
             final_color_mask = player_text_color["font_color"]
         else:
-            current_team = find(f"score.team.{team_index}.player", data)
+            current_team = find(f"score.{scoreboardNumber}.team.{team_index}.player", data)
             for key in current_team.keys():
                 current_data = ""
                 individual_color_mask = []
@@ -914,7 +919,7 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True):
         )
 
 
-def paste_round_text(thumbnail, data, display_phase=True):
+def paste_round_text(thumbnail, data, display_phase=True, scoreboardNumber=1):
     if display_phase:
         if template_data["info_text"]["horizontal"]:
             round_text_pos = (round(template_data["info_text"]["x_position"]*ratio[0]), round((template_data["info_text"]["height_center"]-(
@@ -943,7 +948,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
         draw_text(
             thumbnail,
-            find(f"score.phase", data),
+            find(f"score.{scoreboardNumber}.phase", data),
             font_2,
             text_size,
             text_color[1]["font_color"],
@@ -963,7 +968,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
         draw_text(
             thumbnail,
-            find(f"score.match", data),
+            find(f"score.{scoreboardNumber}.match", data),
             font_2,
             text_size,
             text_color[1]["font_color"],
@@ -990,7 +995,7 @@ def paste_round_text(thumbnail, data, display_phase=True):
 
         draw_text(
             thumbnail,
-            find(f"score.match", data),
+            find(f"score.{scoreboardNumber}.match", data),
             font_2,
             text_size,
             text_color[1]["font_color"],
@@ -1244,7 +1249,7 @@ def remove_special_chars(input_str: str):
     return input_str
 
 
-def generate(settingsManager, isPreview=False, gameAssetManager=None):
+def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboardNumber=1):
     # can't import SettingsManager (ImportError: attempted relative import beyond top-level package) so.. parameter ?
     settings = settingsManager.Get("thumbnail_config")
 
@@ -1341,10 +1346,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
                 "thumb_app", "Please select a game first"))
         # - if more than one player (team of 2,3 etc), not necessary because test is made on paste_player_text
         for i in [1, 2]:
-            if 'name' not in data.get("score").get("team").get(str(i)).get("player").get("1"):
+            if 'name' not in data.get("score").get(str(scoreboardNumber)).get("team").get(str(i)).get("player").get("1"):
                 raise Exception(QApplication.translate(
                     "thumb_app", "Player {0} tag missing").format(i))
-
         game_codename = data.get("game").get("codename")
         used_assets = deep_get(settings, f"game.{game_codename}.asset_pack")
         asset_data_path = f"./user_data/games/{game_codename}/{used_assets}/config.json"
@@ -1365,7 +1369,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
             smooth_scale = deep_get(
                 settings, f"game.{game_codename}.smooth_scale")
         else:
-            raise traceback.format_exc()
+            raise e
 
     try:
         with open(asset_data_path, 'rt', encoding='utf-8') as f:
@@ -1461,7 +1465,9 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
         settings, f"game.{game_codename}.align.vertical", 40)
 
     thumbnail = paste_characters(
-        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign)
+        thumbnail, data, all_eyesight, used_assets, flip_p1, flip_p2, fill_x=True, fill_y=True, zoom=zoom, horizontalAlign=horizontalAlign, verticalAlign=verticalAlign, scoreboardNumber=scoreboardNumber)
+    if thumbnail is None:
+        return
     composite_image = create_composite_image(
         foreground, thumbnail.size(), (0, 0))
 
@@ -1469,15 +1475,15 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None):
     painter.drawPixmap(0, 0, composite_image)
     painter.end()
 
-    paste_player_text(thumbnail, data, use_team_names, use_sponsors)
-    paste_round_text(thumbnail, data, display_phase)
+    paste_player_text(thumbnail, data, use_team_names, use_sponsors, scoreboardNumber=scoreboardNumber)
+    paste_round_text(thumbnail, data, display_phase, scoreboardNumber=scoreboardNumber)
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
     thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
     if not isPreview:
-        tag_player1 = find("score.team.1.player.1.name", data)
-        tag_player2 = find("score.team.2.player.1.name", data)
+        tag_player1 = find(f"score.{scoreboardNumber}.team.1.player.1.name", data)
+        tag_player2 = find(f"score.{scoreboardNumber}.team.2.player.1.name", data)
         thumbnail_filename = f"{remove_special_chars(tag_player1)}-vs-{remove_special_chars(tag_player2)}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
         thumbnail.save(f"{out_path}/{thumbnail_filename}.jpg")
