@@ -54,6 +54,8 @@ LoadEverything().then(() => {
   // for country latlng the icon pulses and there's more zoom out
   var isPrecise = [];
 
+  let scoreboardNumber = 1;
+
   Start = async (event) => {};
 
   function UpdateMap() {
@@ -75,7 +77,7 @@ LoadEverything().then(() => {
 
     let servers = [];
 
-    Object.values(data.score.team).forEach((team) => {
+    Object.values(data.score[scoreboardNumber].team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
         if(!player.name){
           return

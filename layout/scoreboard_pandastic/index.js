@@ -1,4 +1,7 @@
 LoadEverything().then(() => {
+
+  let scoreboardNumber = 1;
+  
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -58,10 +61,10 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    if (Object.keys(data.score.team["1"].player).length == 1) {
+    if (Object.keys(data.score[scoreboardNumber].team["1"].player).length == 1) {
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
@@ -113,7 +116,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.character_container`),
               {
-                source: `score.team.${t + 1}`,
+                source: `score.${scoreboardNumber}.team.${t + 1}`,
               },
               event
             );
@@ -146,7 +149,7 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let score = [data.score.score_left, data.score.score_right];
+            let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
             SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
@@ -159,8 +162,8 @@ LoadEverything().then(() => {
       }
     } else {
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         let teamName = "";
 
@@ -199,7 +202,7 @@ LoadEverything().then(() => {
         await CharacterDisplay(
           $(`.p${t + 1}.character_container`),
           {
-            source: `score.team.${t + 1}`,
+            source: `score.${scoreboardNumber}.team.${t + 1}`,
           },
           event
         );
@@ -226,7 +229,7 @@ LoadEverything().then(() => {
             : ""
         );
 
-        let score = [data.score.score_left, data.score.score_right];
+        let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
@@ -244,11 +247,11 @@ LoadEverything().then(() => {
 
     let phaseTexts = [];
 
-    SetInnerHtml($(".phase"), data.score.phase);
-    SetInnerHtml($(".match"), data.score.match);
+    SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase);
+    SetInnerHtml($(".match"), data.score[scoreboardNumber].match);
     SetInnerHtml(
       $(".best_of"),
-      data.score.best_of_text ? data.score.best_of_text : ""
+      data.score[scoreboardNumber].best_of_text ? data.score[scoreboardNumber].best_of_text : ""
     );
   };
 });

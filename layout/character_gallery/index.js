@@ -7,12 +7,14 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
+    let scoreboardNumber = 1;
+
     let src = "";
 
     if (window.team != undefined && window.player != undefined) {
-      src = `score.team.${window.team}.player.${window.player}`;
+      src = `score.${scoreboardNumber}.team.${window.team}.player.${window.player}`;
     } else {
-      src = `score.team.${window.team}`;
+      src = `score.${scoreboardNumber}.team.${window.team}`;
     }
 
     await CharacterDisplay(

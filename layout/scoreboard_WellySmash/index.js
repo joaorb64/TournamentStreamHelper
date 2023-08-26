@@ -1,4 +1,7 @@
 LoadEverything().then(() => {
+
+  let scoreboardNumber = 1;
+
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -19,8 +22,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     for (const [t, team] of [
-      data.score.team["1"],
-      data.score.team["2"],
+      data.score[scoreboardNumber].team["1"],
+      data.score[scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
@@ -115,7 +118,7 @@ LoadEverything().then(() => {
     let phaseTexts = [];
     if (data.tournamentInfo.eventName)
       phaseTexts.push(data.tournamentInfo.eventName);
-    if (data.score.best_of_text) phaseTexts.push(data.score.phase);
+    if (data.score[scoreboardNumber].phase) phaseTexts.push(data.score[scoreboardNumber].phase);
 
     SetInnerHtml($(".info.material_container .phase"), phaseTexts.join(" - "));
     SetInnerHtml(
@@ -123,7 +126,7 @@ LoadEverything().then(() => {
       data.tournamentInfo.tournamentName
     );
 
-    SetInnerHtml($(".singles .match"), data.score.match);
-    SetInnerHtml($(".singles .best_of"), data.score.best_of_text);
+    SetInnerHtml($(".singles .match"), data.score[scoreboardNumber].match);
+    SetInnerHtml($(".singles .best_of"), data.score[scoreboardNumber].best_of_text);
   };
 });

@@ -1,4 +1,7 @@
 LoadEverything().then(() => {
+
+  let scoreboardNumber = 1;
+  
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -61,11 +64,11 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    if (Object.keys(data.score.team["1"].player).length == 1) {
+    if (Object.keys(data.score[scoreboardNumber].team["1"].player).length == 1) {
       // Singles
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         for (const [p, player] of Object.values(team.player).entries()) {
           if (player) {
@@ -100,7 +103,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.container .character_container`),
               {
-                source: `score.team.${t + 1}`,
+                source: `score.${scoreboardNumber}.team.${t + 1}`,
                 scale_based_on_parent: window.PORTRAITS ? true : false,
               },
               event
@@ -134,7 +137,7 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let score = [data.score.score_left, data.score.score_right];
+            let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
             SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
@@ -148,8 +151,8 @@ LoadEverything().then(() => {
     } else {
       // Doubles
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         let teamName = "";
 
@@ -188,7 +191,7 @@ LoadEverything().then(() => {
         await CharacterDisplay(
           $(`.p${t + 1}.container .character_container`),
           {
-            source: `score.team.${t + 1}`,
+            source: `score.${scoreboardNumber}.team.${t + 1}`,
             slice_character: [0, 1],
             custom_element: window.PORTRAITS ? -2 : 0,
           },
@@ -232,8 +235,8 @@ LoadEverything().then(() => {
 
     SetInnerHtml($(".event_name"), data.tournamentInfo.eventName);
 
-    SetInnerHtml($(".phase"), data.score.phase);
-    SetInnerHtml($(".match"), data.score.match);
-    SetInnerHtml($(".best_of"), data.score.best_of_text);
+    SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase);
+    SetInnerHtml($(".match"), data.score[scoreboardNumber].match);
+    SetInnerHtml($(".best_of"), data.score[scoreboardNumber].best_of_text);
   };
 });

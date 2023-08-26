@@ -1,3 +1,5 @@
+let scoreboardNumber = 1;
+
 LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
@@ -21,12 +23,12 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
 
-    let isTeams = Object.keys(data.score.team["1"].player).length > 1;
+    let isTeams = Object.keys(data.score[scoreboardNumber].team["1"].player).length > 1;
 
     if (!isTeams) {
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
@@ -55,7 +57,7 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let score = [data.score.score_left, data.score.score_right];
+            let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
             SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
 
@@ -99,7 +101,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.character_container`),
               {
-                source: `score.team.${t + 1}`,
+                source: `score.${scoreboardNumber}.team.${t + 1}`,
                 anim_out: {
                   autoAlpha: 0,
                   x: -20 * teamMultiplyier + "px",
@@ -118,15 +120,15 @@ LoadEverything().then(() => {
           }
         }
       }
-      SetInnerHtml($(".match"), data.score.match ? data.score.match : "");
+      SetInnerHtml($(".match"), data.score[scoreboardNumber].match ? data.score[scoreboardNumber].match : "");
 
-      SetInnerHtml($(".phase"), data.score.phase ? data.score.phase : "");
+      SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase ? data.score[scoreboardNumber].phase : "");
       document.querySelector(".tournament_logo").classList.add("unhidden");
       checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
       for (const [t, team] of [
-        data.score.team["1"],
-        data.score.team["2"],
+        data.score[scoreboardNumber].team["1"],
+        data.score[scoreboardNumber].team["2"],
       ].entries()) {
         let teamName = "";
         let names = [];
@@ -161,8 +163,8 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
         }
       }
-      SetInnerHtml($(".match"), data.score.match ? data.score.match : "");
-      SetInnerHtml($(".phase"), data.score.phase ? data.score.phase : "");
+      SetInnerHtml($(".match"), data.score[scoreboardNumber].match ? data.score[scoreboardNumber].match : "");
+      SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase ? data.score[scoreboardNumber].phase : "");
       document.querySelector(".tournament_logo").classList.remove("unhidden");
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
@@ -227,7 +229,7 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwap() {
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -269,7 +271,7 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwapForTeam() {
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -328,7 +330,7 @@ function updateGameArray(
   let gameArray = savedGameArray; // Array to hold game winner data
 
   // Do a run-through to get P1 score and P2 score to see which game we are at.
-  [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+  [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
     [team.player["1"]].forEach((player, p) => {
       if (player) {
         // If we are looking at P1

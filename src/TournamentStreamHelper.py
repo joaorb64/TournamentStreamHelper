@@ -520,7 +520,6 @@ class Window(QMainWindow):
         self.optionsBt.menu().addSeparator()
 
         # Help menu code
-
         help_messagebox = QMessageBox()
         help_messagebox.setWindowTitle(
             QApplication.translate("app", "Warning"))
@@ -578,8 +577,6 @@ class Window(QMainWindow):
         action.triggered.connect(lambda: self.aboutWidget.show())
 
         # Game Select and Scoreboard Count
-        
-        # Follow startgg user
         hbox = QHBoxLayout()
         group_box.layout().addLayout(hbox)
 

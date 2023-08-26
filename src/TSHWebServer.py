@@ -43,7 +43,7 @@ class WebServer(QThread):
 
         # Add player names
         teams = [1, 2]
-        if WebServer.scoreboard.teamsSwapped:
+        if TSHScoreboardManager.instance.GetScoreboard(1).teamsSwapped:
             teams.reverse()
 
         for i, t in enumerate(teams):

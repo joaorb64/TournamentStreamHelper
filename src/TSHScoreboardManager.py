@@ -12,6 +12,8 @@ class TSHScoreboardManager(QDockWidget):
 
     def __init__(self, *args):
         super().__init__(*args)
+        
+        StateManager.Unset("score")
 
         self.signals: TSHScoreboardManagerSignals = TSHScoreboardManagerSignals()
         logger.info("Scoreboard Manager - Initializing")

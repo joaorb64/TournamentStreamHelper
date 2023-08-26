@@ -320,7 +320,7 @@ class TSHScoreboardWidget(QWidget):
 
         StateManager.Unset(f'score.{self.scoreboardNumber}.team.1.player')
         StateManager.Unset(f'score.{self.scoreboardNumber}.team.2.player')
-        StateManager.Unset(f'score.stage_strike')
+        StateManager.Unset(f'score.{self.scoreboardNumber}.stage_strike')
         self.playerNumber.setValue(1)
         self.charNumber.setValue(1)
 
@@ -654,7 +654,7 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
-                StateManager.Unset(f'score.stage_strike')
+                StateManager.Unset(f'score.{self.scoreboardNumber}.stage_strike')
                 self.lastSetSelected = data.get("id")
                 self.ClearScore()
 
@@ -803,8 +803,6 @@ class TSHScoreboardWidget(QWidget):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
 
-            logger.info(data.get("team1score"))
-
             if data.get("team1score"):
                 scoreContainers[0].setValue(data.get("team1score"))
             if data.get("team2score"):
@@ -868,6 +866,9 @@ class TSHScoreboardWidget(QWidget):
                     for p in self.playerWidgets:
                         p.dataLock.acquire()
 
+                    if not data.get("team") or not data.get("player"):
+                        return
+
                     team = int(data.get("team"))-1
                     player = int(data.get("player"))-1
 
@@ -882,7 +883,7 @@ class TSHScoreboardWidget(QWidget):
                         p.dataLock.release()
 
             if data.get("stage_strike"):
-                StateManager.Set(f"score.stage_strike",
+                StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike",
                                  data.get("stage_strike"))
                 StateManager.Set(f"score.ruleset", data.get("ruleset"))
 
