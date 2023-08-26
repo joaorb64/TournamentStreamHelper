@@ -9,9 +9,9 @@ from typing import List
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 
-from .TSHScoreboardPlayerWidget import *
-from .SettingsManager import *
-from .StateManager import *
+from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
+from .SettingsManager import SettingsManager
+from .StateManager import StateManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHStatsUtil import TSHStatsUtil
 from .TSHHotkeys import TSHHotkeys
@@ -32,7 +32,7 @@ class TSHScoreboardWidgetSignals(QObject):
 
 
 class TSHScoreboardWidget(QWidget):
-    def __init__(self, scoreboardNumber=0, *args):
+    def __init__(self, scoreboardNumber=1, *args):
         super().__init__(*args)
 
         self.scoreboardNumber = scoreboardNumber
@@ -75,7 +75,7 @@ class TSHScoreboardWidget(QWidget):
         self.signals.CommandScoreChange.connect(self.CommandScoreChange)
         self.signals.SwapTeams.connect(self.SwapTeams)
 
-        TSHStatsUtil.instance.scoreboard = self
+        self.stats = TSHStatsUtil(self.scoreboardNumber, self)
 
         self.lastSetSelected = None
 
@@ -416,6 +416,9 @@ class TSHScoreboardWidget(QWidget):
                 if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
                     self.scoreColumn.findChild(
                         QComboBox, "match").addItem(matchString)
+        
+        if self.scoreboardNumber > 1:
+            self.UpdateStreamButton()
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -498,11 +501,11 @@ class TSHScoreboardWidget(QWidget):
                 self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(
-                TSHStatsUtil.instance.signals.RecentSetsSignal.emit)
+                self.stats.signals.RecentSetsSignal.emit)
             p.instanceSignals.player1Id_changed.connect(
-                TSHStatsUtil.instance.signals.LastSetsP1Signal.emit)
+                self.stats.signals.LastSetsP1Signal.emit)
             p.instanceSignals.player1Id_changed.connect(
-                TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit)
+                self.stats.signals.PlayerHistoryStandingsP1Signal.emit)
 
             self.team1playerWidgets.append(p)
 
@@ -523,11 +526,11 @@ class TSHScoreboardWidget(QWidget):
                 self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
 
             p.instanceSignals.playerId_changed.connect(
-                TSHStatsUtil.instance.signals.RecentSetsSignal.emit)
+                self.stats.signals.RecentSetsSignal.emit)
             p.instanceSignals.player2Id_changed.connect(
-                TSHStatsUtil.instance.signals.LastSetsP2Signal.emit)
+                self.stats.signals.LastSetsP2Signal.emit)
             p.instanceSignals.player2Id_changed.connect(
-                TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit)
+                self.stats.signals.PlayerHistoryStandingsP2Signal.emit)
 
             self.team2playerWidgets.append(p)
 
@@ -890,7 +893,7 @@ class TSHScoreboardWidget(QWidget):
             if data.get("bracket_type"):
                 StateManager.Set(f"score.bracket_type",
                                  data.get("bracket_type"))
-                TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+                self.stats.signals.UpsetFactorCalculation.emit()
         finally:
             StateManager.ReleaseSaving()
 

@@ -75,8 +75,11 @@ from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHAlertNotification import TSHAlertNotification
 from .TSHPlayerDB import TSHPlayerDB
 from .Workers import *
-from .TSHScoreboardManager import *
-from .TSHThumbnailSettingsWidget import *
+from .StateManager import StateManager
+from .SettingsManager import SettingsManager
+from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .TSHScoreboardManager import TSHScoreboardManager
+from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget

@@ -222,7 +222,7 @@ class WebServer(QThread):
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
-        if request.args.get('losers') is not None:
+        if request.args.get('losers') is not None and request.args.get('team') is not None:
             losers = request.args.get('losers', default=False, type=bool)
             scoreboard.signals.ChangeSetData.emit(
                 json.loads(
@@ -230,6 +230,13 @@ class WebServer(QThread):
                                default='1', type=str) + 'losers': bool(losers)})
                 )
             )
+
+        # Sets a Tab Title for easier tracking
+        # name=<New Name of the Scoreboard>
+        if request.args.get('name') is not None:
+            TSHScoreboardManager.instance.SetTabName(
+                scoreboardNumber, request.args.get(
+                'name', default='Scoreboard', type=str))
         return "OK"
 
     # Set player data
@@ -286,42 +293,52 @@ class WebServer(QThread):
         return "OK"
 
     # Resubmits Call for Recent Sets
-    @app.route('/stats-recent-sets')
-    def stats_recent_sets():
-        TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
+    @app.route('/scoreboard<scoreboardNumber>-stats-recent-sets')
+    def stats_recent_sets(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.RecentSetsSignal.emit()
         return "OK"
 
     # Resubmits Call for Upset Factor
-    @app.route('/stats-upset-factor')
-    def stats_upset_factor():
-        TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
+    @app.route('/scoreboard<scoreboardNumber>-stats-upset-factor')
+    def stats_upset_factor(scoreboardNumber):
+        TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.UpsetFactorCalculation.emit()
         return "OK"
 
     # Resubmits Call for Last Sets
-    @app.route('/stats-last-sets-<player>')
-    def stats_last_sets(player):
+    @app.route('/scoreboard<scoreboardNumber>-stats-last-sets-<player>')
+    def stats_last_sets(scoreboardNumber, player):
         if player == "1":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.LastSetsP1Signal.emit()
         elif player == "2":
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.LastSetsP2Signal.emit()
         elif player == "both":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.LastSetsP1Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.LastSetsP2Signal.emit()
         else:
             logger.error(
                 "[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
    # Resubmits Call for History Sets
-    @app.route('/stats-history-sets-<player>')
-    def stats_history_sets(player):
+    @app.route('/scoreboard<scoreboardNumber>-stats-history-sets-<player>')
+    def stats_history_sets(scoreboardNumber, player):
         if player == "1":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.PlayerHistoryStandingsP1Signal.emit()
         elif player == "2":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.PlayerHistoryStandingsP2Signal.emit()
         elif player == "both":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.PlayerHistoryStandingsP1Signal.emit()
+            TSHScoreboardManager.instance.GetScoreboard(
+            scoreboardNumber).signals.PlayerHistoryStandingsP2Signal.emit()
         else:
             logger.error(
                 "[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
@@ -341,7 +358,7 @@ class WebServer(QThread):
             scoreboardNumber).scoreColumn.findChild(QSpinBox, "best_of").setValue(0)
         return "OK"
 
-    # Resets scores, match, phase, and losers status
+    # Resets Players
     @app.route('/scoreboard<scoreboardNumber>-reset-players')
     def reset_players(scoreboardNumber):
         TSHScoreboardManager.instance.GetScoreboard(scoreboardNumber).CommandClearAll()
