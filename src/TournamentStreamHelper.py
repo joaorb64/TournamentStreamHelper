@@ -624,8 +624,15 @@ class Window(QMainWindow):
         label_margin = " "*18
         label = QLabel(label_margin + QApplication.translate("app", "Number of Scoreboards"))
         label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+
+        self.btLoadModifyTabName = QPushButton(
+            QApplication.translate("app", "Modify Tab Name"))
+        self.btLoadModifyTabName.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.btLoadModifyTabName.clicked.connect(self.ChangeTab)
+
         hbox.addWidget(label)
         hbox.addWidget(self.scoreboardAmount)
+        hbox.addWidget(self.btLoadModifyTabName)
 
         TSHScoreboardManager.instance.updateAmount(1)
 
@@ -883,3 +890,32 @@ class Window(QMainWindow):
             qdarktheme.setup_theme("light")
         else:
             qdarktheme.setup_theme()
+    
+    def ChangeTab(self):
+        buttonTabName = QDialog(self)
+        buttonTabName.setWindowTitle(
+            QApplication.translate("app", "Change Tab Title"))
+        buttonTabName.setMinimumWidth(400)
+        vbox = QVBoxLayout()
+        buttonTabName.setLayout(vbox)
+        hbox = QHBoxLayout()
+        label = QLabel(QApplication.translate("app", "Scoreboard Number"))
+        number = QSpinBox()
+        number.setMinimum(1)
+        number.setMaximum(TSHScoreboardManager.instance.GetTabAmount())
+        hbox.addWidget(label)
+        hbox.addWidget(number)
+        vbox.addLayout(hbox)
+        name = QLineEdit()
+        vbox.addWidget(name)
+
+        setSelection = QPushButton(text=QApplication.translate("app", "Set Tab Title"))
+        def UpdateTabName():
+            TSHScoreboardManager.instance.SetTabName(number.value(), name.text())
+            buttonTabName.close()
+        
+        setSelection.clicked.connect(UpdateTabName)
+
+        vbox.addWidget(setSelection)
+
+        buttonTabName.show()

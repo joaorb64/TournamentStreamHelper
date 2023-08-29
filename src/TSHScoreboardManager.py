@@ -32,12 +32,12 @@ class TSHScoreboardManager(QDockWidget):
         self.widget.layout().addWidget(self.tabs)
 
         self.signals.ScoreboardAmountChanged.connect(
-            lambda val: self.updateAmount(val)
+            lambda val: self.UpdateAmount(val)
         )
 
         self.scoreboardholder = []
 
-    def updateAmount(self, amount):
+    def UpdateAmount(self, amount):
         if amount > len(self.scoreboardholder):
             logger.info("Scoreboard Manager - Creating Scoreboard " + str(amount))
             
@@ -68,6 +68,9 @@ class TSHScoreboardManager(QDockWidget):
         else:
             logger.error(f"Invalid Scoreboard ID provided: {index}")
             logger.error(f"Please provide an ID between 1 and {len(self.tabs)}")
+
+    def GetTabAmount(self):
+        return len(self.tabs)
 
 
 TSHScoreboardManager.instance = TSHScoreboardManager()
