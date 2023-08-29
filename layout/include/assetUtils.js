@@ -203,6 +203,8 @@ async function updateCharacterContainer(e, event) {
       let index = 0;
 
       if (characters) {
+        let totalCharacters = characters.flat(Infinity).length;
+
         for (let i = 0; i < Object.values(characters).length; i += 1) {
           let player = Object.values(characters)[i];
           for (let j = 0; j < player.length; j += 1) {
@@ -220,7 +222,7 @@ async function updateCharacterContainer(e, event) {
             // If not using dividers, calculate proper placement for each character
             if (settings.use_dividers === false) {
               settingsClone.custom_center = GenerateMulticharacterPositions(
-                Object.values(player).length,
+                totalCharacters,
                 settings.custom_center
               )[index];
               console.log(settingsClone.custom_center);
