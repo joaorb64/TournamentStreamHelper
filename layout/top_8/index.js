@@ -22,7 +22,7 @@ LoadEverything().then(() => {
       Object.values(data.player_list.slot).forEach((slot, i) => {
         let html = `<div class="slot slot${i + 1}">`;
 
-        Object.values(slot.player).forEach((player, p) => {
+        [Object.values(slot.player)[0]].forEach((player, p) => {
           html += `
             <div class="p${p + 1} player container">
               <div class="score">${
@@ -34,6 +34,7 @@ LoadEverything().then(() => {
                 <!-- <div class="icon online_avatar"></div> -->
                 <div class="name_twitter">
                   <div class="name"></div>
+                  <div class="team_members"></div>
                   <div class="twitter"></div>
                 </div>
                 <div class="sponsor_icon"></div>
@@ -72,111 +73,171 @@ LoadEverything().then(() => {
         }
       }
 
-      for (const [t, slot] of Object.entries(data.player_list.slot)) {
-        for (const [p, player] of Object.entries(slot.player)) {
-          if (player) {
-            SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .name`),
-              `
-            <span>
-              <span class="sponsor">
-                ${player.team ? player.team : ""}
+      let isTeams = Object.keys(data.player_list.slot["1"].player).length > 1;
+
+      for (const [t, team] of Object.entries(data.player_list.slot)) {
+        if(!isTeams){
+
+          for (const [p, player] of Object.entries(team.player)) {
+            if (player) {
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .name`),
+                `
+              <span>
+                <span class="sponsor">
+                  ${player.team ? player.team : ""}
+                </span>
+                ${await Transcript(player.name)}
               </span>
-              ${await Transcript(player.name)}
-            </span>
-            `,
-              undefined,
-              0
-            );
+              `,
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagcountry`),
+                player.country.asset
+                  ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                  : "",
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagstate`),
+                player.state.asset
+                  ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                  : "",
+                undefined,
+                0
+              );
+  
+              let load_settings_path = "top_1";
+  
+              if (t == 1) load_settings_path = "top_1";
+              else if (t <= 4) load_settings_path = "top_4";
+              else if (t <= 8) load_settings_path = "top_8";
+  
+              if (window.SAME_SIZE) load_settings_path = "same_size";
+  
+              await CharacterDisplay(
+                $(
+                  `.slot${parseInt(t)} .p${parseInt(
+                    p
+                  )}.container .character_container`
+                ),
+                {
+                  source: `player_list.slot.${parseInt(t)}`,
+                  load_settings_path: load_settings_path,
+                },
+                event
+              );
+  
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .sponsor_icon`),
+                player.sponsor_logo
+                  ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                  : "<div></div>",
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .avatar`),
+                player.avatar
+                  ? `<div style="background-image: url('../../${player.avatar}')"></div>`
+                  : "",
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(
+                  `.slot${parseInt(t)} .p${parseInt(p)}.container .online_avatar`
+                ),
+                player.online_avatar
+                  ? `<div style="background-image: url('${player.online_avatar}')"></div>`
+                  : "",
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(`.slot${parseInt(t)} .p${parseInt(p)}.container .twitter`),
+                player.twitter
+                  ? `<span class="twitter_logo"></span>${String(player.twitter)}`
+                  : "",
+                undefined,
+                0
+              );
+  
+              SetInnerHtml(
+                $(
+                  `.slot${parseInt(t)} .p${parseInt(
+                    p
+                  )}.container .sponsor-container`
+                ),
+                `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
+                undefined,
+                0
+              );
+            }
+          }
+        } else {
+          let hasTeamName = team.name != null && team.name != ""
 
+          let names = [];
+          for (const [p, player] of Object.values(team.player).entries()) {
+            if (player && player.name) {
+              names.push(await Transcript(player.name));
+            }
+          }
+          let playerNames = names.join(" / ");
+
+          if(hasTeamName){
             SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagcountry`),
-              player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-                : "",
-              undefined,
-              0
+              $(`.slot${parseInt(t)} .p1.container .name`),
+              `
+                ${team.name}
+              `
             );
-
             SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagstate`),
-              player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
-                : "",
-              undefined,
-              0
+              $(`.slot${parseInt(t)} .p1.container .team_members`),
+              `
+                ${playerNames}
+              `
             );
-
-            let load_settings_path = "top_1";
-
-            if (t == 1) load_settings_path = "top_1";
-            else if (t <= 4) load_settings_path = "top_4";
-            else if (t <= 8) load_settings_path = "top_8";
-
-            if (window.SAME_SIZE) load_settings_path = "same_size";
-
-            await CharacterDisplay(
-              $(
-                `.slot${parseInt(t)} .p${parseInt(
-                  p
-                )}.container .character_container`
-              ),
-              {
-                source: `player_list.slot.${parseInt(t)}`,
-                load_settings_path: load_settings_path,
-              },
-              event
-            );
-
+          } else {
             SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .sponsor_icon`),
-              player.sponsor_logo
-                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                : "<div></div>",
-              undefined,
-              0
-            );
-
-            SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .avatar`),
-              player.avatar
-                ? `<div style="background-image: url('../../${player.avatar}')"></div>`
-                : "",
-              undefined,
-              0
-            );
-
-            SetInnerHtml(
-              $(
-                `.slot${parseInt(t)} .p${parseInt(p)}.container .online_avatar`
-              ),
-              player.online_avatar
-                ? `<div style="background-image: url('${player.online_avatar}')"></div>`
-                : "",
-              undefined,
-              0
-            );
-
-            SetInnerHtml(
-              $(`.slot${parseInt(t)} .p${parseInt(p)}.container .twitter`),
-              player.twitter
-                ? `<span class="twitter_logo"></span>${String(player.twitter)}`
-                : "",
-              undefined,
-              0
-            );
-
-            SetInnerHtml(
-              $(
-                `.slot${parseInt(t)} .p${parseInt(
-                  p
-                )}.container .sponsor-container`
-              ),
-              `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
-              undefined,
-              0
+              $(`.slot${parseInt(t)} .p1.container .name`),
+              `
+                ${playerNames}
+              `
             );
           }
+
+
+          let load_settings_path = "top_1";
+  
+          if (t == 1) load_settings_path = "top_1";
+          else if (t <= 4) load_settings_path = "top_4";
+          else if (t <= 8) load_settings_path = "top_8";
+
+          if (window.SAME_SIZE) load_settings_path = "same_size";
+
+          await CharacterDisplay(
+            $(
+              `.slot${parseInt(t)} .p${parseInt(
+                1
+              )}.container .character_container`
+            ),
+            {
+              source: `player_list.slot.${parseInt(t)}`,
+              load_settings_path: load_settings_path,
+              slice_character: [0, 1],
+            },
+            event
+          );
         }
       }
     }

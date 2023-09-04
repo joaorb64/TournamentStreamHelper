@@ -436,6 +436,12 @@ body {
   padding: 8px 16px;
 }
 
+.ssbu .container.top {
+  bottom: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .tournament_name {
   font-size: 22px;
   width: 100%;
