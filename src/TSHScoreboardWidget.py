@@ -634,22 +634,23 @@ class TSHScoreboardWidget(QDockWidget):
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def NewSetSelected(self, data):
-        self.StopAutoUpdate()
-        self.autoUpdateTimer = QTimer()
-        self.autoUpdateTimer.start(5000)
-        self.timeLeftTimer = QTimer()
-        self.timeLeftTimer.start(100)
-        self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
-        self.timerLayout.setVisible(True)
+        if not SettingsManager.Get("general.disable_autoupdate", False):
+            self.StopAutoUpdate()
+            self.autoUpdateTimer = QTimer()
+            self.autoUpdateTimer.start(5000)
+            self.timeLeftTimer = QTimer()
+            self.timeLeftTimer.start(100)
+            self.timeLeftTimer.timeout.connect(self.UpdateTimeLeftTimer)
+            self.timerLayout.setVisible(True)
 
-        if data.get("auto_update") == "set":
-            self.labelAutoUpdate.setText("Auto update (Set)")
-        elif data.get("auto_update") == "stream":
-            self.labelAutoUpdate.setText("Auto update (Stream)")
-        elif data.get("auto_update") == "user":
-            self.labelAutoUpdate.setText("Auto update (User)")
-        else:
-            self.labelAutoUpdate.setText("Auto update")
+            if data.get("auto_update") == "set":
+                self.labelAutoUpdate.setText("Auto update (Set)")
+            elif data.get("auto_update") == "stream":
+                self.labelAutoUpdate.setText("Auto update (Stream)")
+            elif data.get("auto_update") == "user":
+                self.labelAutoUpdate.setText("Auto update (User)")
+            else:
+                self.labelAutoUpdate.setText("Auto update")
 
         # Lock all player widgets
         for p in self.playerWidgets:
@@ -675,17 +676,18 @@ class TSHScoreboardWidget(QDockWidget):
                 TSHTournamentDataProvider.instance.GetMatch(
                     self, data["id"], overwrite=True)
 
-            self.autoUpdateTimer.timeout.connect(
-                lambda setId=data: self.AutoUpdate(data))
-
-            if data.get("auto_update") == "stream":
+            if not SettingsManager.Get("general.disable_autoupdate", False):
                 self.autoUpdateTimer.timeout.connect(
-                    lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+                    lambda setId=data: self.AutoUpdate(data))
 
-            if data.get("auto_update") == "user":
-                self.autoUpdateTimer.timeout.connect(
-                    lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
-                        self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
+                if data.get("auto_update") == "stream":
+                    self.autoUpdateTimer.timeout.connect(
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+
+                if data.get("auto_update") == "user":
+                    self.autoUpdateTimer.timeout.connect(
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
+                            self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
         finally:
             for p in self.playerWidgets:
                 p.dataLock.release()
