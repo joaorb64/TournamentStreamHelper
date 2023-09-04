@@ -111,6 +111,10 @@ body {
   max-width: 100%;
 }
 
+.name_twitter .team_members {
+  font-size: 24px;
+}
+
 .name_twitter .twitter {
   font-size: 24px;
   max-width: 100%;

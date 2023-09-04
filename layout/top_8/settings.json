@@ -9,21 +9,21 @@
     "default": {
       "use_dividers": false,
       "custom_center": [0.5, 0.4],
-      "custom_zoom": 0.9
+      "custom_zoom": 1
     }
   },
   "top_8": {
     "default": {
       "use_dividers": false,
       "custom_center": [0.5, 0.4],
-      "custom_zoom": 0.8
+      "custom_zoom": 1
     }
   },
   "same_size": {
     "default": {
       "use_dividers": false,
       "custom_center": [0.5, 0.4],
-      "custom_zoom": 0.9
+      "custom_zoom": 1
     }
   }
 }
