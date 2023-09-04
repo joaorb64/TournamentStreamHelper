@@ -286,8 +286,6 @@ class Window(QMainWindow):
 
         self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
-        self.scoreboard.setObjectName(
-            QApplication.translate("app", "Scoreboard"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
@@ -634,7 +632,7 @@ class Window(QMainWindow):
         hbox.addWidget(self.scoreboardAmount)
         hbox.addWidget(self.btLoadModifyTabName)
 
-        TSHScoreboardManager.instance.updateAmount(1)
+        TSHScoreboardManager.instance.UpdateAmount(1)
 
         self.CheckForUpdates(True)
         self.ReloadGames()

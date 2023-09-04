@@ -1300,7 +1300,7 @@ class StartGGDataProvider(TournamentDataProvider):
             byId = {_set.get("id"): _set for _set in recentSets}
             recentSets = list(byId.values())
             recentSets.sort(key=lambda s: s.get("timestamp"), reverse=True)
-            logger.info("Recent sets size:", len(recentSets))
+            logger.info("Recent sets size: " + str(len(recentSets)))
             callback.emit({"sets": recentSets, "request_time": requestTime})
         except Exception as e:
             logger.error(traceback.format_exc())
