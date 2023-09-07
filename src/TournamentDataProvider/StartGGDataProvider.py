@@ -1459,6 +1459,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(
                             entrant)
+                        playerData["seed"] = self.player_seeds.get(playerData["id"][0])
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
