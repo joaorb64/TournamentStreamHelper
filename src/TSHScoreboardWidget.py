@@ -663,7 +663,7 @@ class TSHScoreboardWidget(QDockWidget):
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
                 StateManager.Unset(f'score.stage_strike')
                 self.lastSetSelected = data.get("id")
-                self.ClearScore()
+                self.CommandClearAll()
 
                 # Force user to be P1 on set change
                 if data.get("auto_update") == "user":
