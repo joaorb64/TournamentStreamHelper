@@ -286,6 +286,8 @@ class Window(QMainWindow):
 
         self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
+        self.scoreboard.setObjectName(
+            QApplication.translate("app", "Scoreboard Manager"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
@@ -422,6 +424,12 @@ class Window(QMainWindow):
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
         toggleWidgets.addAction(bracket.toggleViewAction())
+
+        self.optionsBt.menu().addSeparator()
+
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Migrate Layout"))
+        action.triggered.connect(self.MigrateWindow)
 
         self.optionsBt.menu().addSeparator()
 
@@ -890,12 +898,12 @@ class Window(QMainWindow):
             qdarktheme.setup_theme()
     
     def ChangeTab(self):
-        buttonTabName = QDialog(self)
-        buttonTabName.setWindowTitle(
+        tabNameWindow = QDialog(self)
+        tabNameWindow.setWindowTitle(
             QApplication.translate("app", "Change Tab Title"))
-        buttonTabName.setMinimumWidth(400)
+        tabNameWindow.setMinimumWidth(400)
         vbox = QVBoxLayout()
-        buttonTabName.setLayout(vbox)
+        tabNameWindow.setLayout(vbox)
         hbox = QHBoxLayout()
         label = QLabel(QApplication.translate("app", "Scoreboard Number"))
         number = QSpinBox()
@@ -910,10 +918,80 @@ class Window(QMainWindow):
         setSelection = QPushButton(text=QApplication.translate("app", "Set Tab Title"))
         def UpdateTabName():
             TSHScoreboardManager.instance.SetTabName(number.value(), name.text())
-            buttonTabName.close()
+            tabNameWindow.close()
         
         setSelection.clicked.connect(UpdateTabName)
 
         vbox.addWidget(setSelection)
 
-        buttonTabName.show()
+        tabNameWindow.show()
+    
+    def MigrateWindow(self):
+        migrateWindow = QDialog(self)
+        migrateWindow.setWindowTitle(
+            QApplication.translate("app", "Migrate Scoreboard Layout"))
+        migrateWindow.setMinimumWidth(800)
+        vbox = QVBoxLayout()
+        migrateWindow.setLayout(vbox)
+        hbox = QHBoxLayout()
+        label = QLabel(QApplication.translate("app", "File Path"))
+        filePath = QLineEdit()
+        fileExplorer = QPushButton(text=QApplication.translate("app", "Find File..."))
+        hbox.addWidget(label)
+        hbox.addWidget(filePath)
+        hbox.addWidget(fileExplorer)
+        vbox.addLayout(hbox)
+
+        migrate = QPushButton(text=QApplication.translate("app", "Migrate Layout"))
+
+        def open_dialog():
+            fname, _ok = QFileDialog.getOpenFileName(
+                migrateWindow,
+                "Open Layout Javascript File",
+                os.getcwd(),
+                "Javascript File (*.js)",
+            )
+            if fname:
+                filePath.setText(str(fname))
+        
+        fileExplorer.clicked.connect(open_dialog)
+
+        def MigrateLayout():
+            data = None
+            with open(filePath.text(), 'r') as file:
+                data = file.read()
+            
+                data = data.replace("data.score.", "data.score[1].")
+                data = data.replace("oldData.score.", "oldData.score[1].")
+                data = data.replace("_.get(data, \"score.stage_strike."
+                                    , "_.get(data, \"score.1.stage_strike.")
+                data = data.replace("_.get(oldData, \"score.stage_strike."
+                                    , "_.get(oldData, \"score.1.stage_strike.")
+                data = data.replace("source: `score.team.${t + 1}`"
+                                    , "source: `score.1.team.${t + 1}`")
+                data = data.replace("data.score[1].ruleset", "data.score.ruleset")
+            
+            with open(filePath.text(), 'w') as file:
+                file.write(data)
+            
+            logger.info("Completed Layout Migration at: " + filePath.text())
+
+            completeDialog = QDialog(migrateWindow)
+            completeDialog.setWindowTitle(
+            QApplication.translate("app", "Migration Complete"))
+            completeDialog.setMinimumWidth(500)
+            vbox2 = QVBoxLayout()
+            completeDialog.setLayout(vbox2)
+            completeText = QLabel(QApplication.translate("app", "Layout Migration has completed!"))
+            completeText.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            closeButton = QPushButton(text=QApplication.translate("app", "Close Window"))
+            vbox2.addWidget(completeText)
+            vbox2.addWidget(closeButton)
+            closeButton.clicked.connect(completeDialog.close)
+            completeDialog.show()
+        
+        migrate.clicked.connect(MigrateLayout)
+
+        vbox.addWidget(migrate)
+
+        migrateWindow.show()
