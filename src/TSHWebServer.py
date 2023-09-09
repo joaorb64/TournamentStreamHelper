@@ -4,13 +4,10 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO, send
 import json
-from .StateManager import StateManager
-from .TSHStatsUtil import TSHStatsUtil
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .SettingsManager import SettingsManager
 from loguru import logger
-from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHWebServerActions import WebServerActions
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -20,151 +17,117 @@ log.setLevel(logging.ERROR)
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
     cors = CORS(app)
+    socketio = SocketIO(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
-    scoreboard = None
+    actions = None
 
     def __init__(self, parent=None, scoreboard=None, stageWidget=None) -> None:
         super().__init__(parent)
-        WebServer.scoreboard = scoreboard
-        WebServer.stageWidget = stageWidget
+        WebServer.actions = WebServerActions(
+            parent=parent,
+            scoreboard=scoreboard,
+            stageWidget=stageWidget
+        )
         self.host_name = "0.0.0.0"
         self.port = 5000
 
-    @app.route("/ruleset")
-    def main():
-        data = {}
+    @app.route('/ruleset')
+    def ruleset():
+        return WebServer.actions.ruleset()
 
-        data["ruleset"] = StateManager.Get(f"score.ruleset", {})
-
-        # Add webserver base path
-        data.update({
-            "basedir": os.path.abspath(".")
-        })
-
-        # Add player names
-        teams = [1, 2]
-        if WebServer.scoreboard.teamsSwapped:
-            teams.reverse()
-
-        for i, t in enumerate(teams):
-            if StateManager.Get(f"score.team.{i+1}.teamName"):
-                data.update({
-                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
-                })
-            else:
-                names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
-
-                data.update({
-                    f"p{t}": " / ".join(names)
-                })
-
-        # Add set data
-        data.update({
-            "best_of": StateManager.Get(f"score.best_of"),
-            "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase"),
-            "state": StateManager.Get(f"score.stage_strike", {})
-        })
-
-        return data
+    @socketio.on('ruleset', namespace='/ws')
+    def ws_ruleset():
+        send(WebServer.actions.ruleset())
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
     def stage_clicked():
-        WebServer.stageWidget.stageStrikeLogic.StageClicked(
-            json.loads(request.get_data()))
-        return "OK"
+        return WebServer.actions.stage_clicked(request.get_data())
+
+    @socketio.on('stage_strike_stage_clicked', namespace='/ws')
+    def ws_stage_clicked(message):
+        send(WebServer.actions.stage_clicked(message))
 
     @app.route('/stage_strike_confirm_clicked', methods=['POST'])
     def confirm_clicked():
-        WebServer.stageWidget.stageStrikeLogic.ConfirmClicked()
-        return "OK"
+        return WebServer.actions.confirm_clicked()
+
+    @socketio.on('stage_strike_confirm_clicked', namespace='/ws')
+    def ws_confirm_clicked():
+        send(WebServer.actions.confirm_clicked())
 
     @app.route('/stage_strike_rps_win', methods=['POST'])
     def rps_win():
-        WebServer.stageWidget.stageStrikeLogic.RpsResult(
-            int(json.loads(request.get_data()).get("winner")))
-        return "OK"
+        return WebServer.actions.rps_win(json.loads(request.get_data()).get("winner"))
+
+    @socketio.on('stage_strike_rps_win', namespace='/ws')
+    def ws_rps_win(message):
+        send(WebServer.actions.rps_win(json.loads(message).get("winner")))
 
     @app.route('/stage_strike_match_win', methods=['POST'])
     def match_win():
-        WebServer.stageWidget.stageStrikeLogic.MatchWinner(
-            int(json.loads(request.get_data()).get("winner")))
-        # Web server updating score here
-        WebServer.UpdateScore()
-        return "OK"
+        return WebServer.actions.match_win(json.loads(request.get_data()).get("winner"))
+
+    @socketio.on('stage_strike_match_win', namespace='/ws')
+    def ws_match_win(message):
+        send(WebServer.actions.match_win(json.loads(message).get("winner")))
 
     @app.route('/stage_strike_set_gentlemans', methods=['POST'])
     def set_gentlemans():
-        WebServer.stageWidget.stageStrikeLogic.SetGentlemans(
-            json.loads(request.get_data()).get("value"))
-        return "OK"
+        return WebServer.actions.set_gentlemans(json.loads(request.get_data()).get("value"))
+
+    @socketio.on('stage_strike_set_gentlemans', namespace='/ws')
+    def ws_set_gentlemans(message):
+        send(WebServer.actions.set_gentlemans(json.loads(message).get("value")))
 
     @app.route('/stage_strike_undo', methods=['POST'])
     def stage_strike_undo():
-        WebServer.stageWidget.stageStrikeLogic.Undo()
-        WebServer.UpdateScore()
-        return "OK"
+        return WebServer.actions.stage_strike_undo()
+
+    @socketio.on('stage_strike_undo', namespace='/ws')
+    def ws_stage_strike_undo():
+        send(WebServer.actions.stage_strike_undo())
 
     @app.route('/stage_strike_redo', methods=['POST'])
     def stage_strike_redo():
-        WebServer.stageWidget.stageStrikeLogic.Redo()
-        WebServer.UpdateScore()
-        return "OK"
+        return WebServer.actions.stage_strike_redo()
+
+    @socketio.on('stage_strike_redo', namespace='/ws')
+    def ws_stage_strike_redo():
+        send(WebServer.actions.stage_strike_redo())
 
     @app.route('/stage_strike_reset', methods=['POST'])
     def reset():
-        WebServer.stageWidget.stageStrikeLogic.Initialize()
-        WebServer.UpdateScore()
-        return "OK"
+        return WebServer.actions.reset()
 
-    def UpdateScore():
-        logger.info("================UPDATE SCORE !============")
-        logger.info(SettingsManager.Get(
-            "general.control_score_from_stage_strike"))
-
-        if not SettingsManager.Get("general.control_score_from_stage_strike", True):
-            return
-
-        score = [
-            len(WebServer.stageWidget.stageStrikeLogic.CurrentState(
-            ).stagesWon[0]),
-            len(WebServer.stageWidget.stageStrikeLogic.CurrentState(
-            ).stagesWon[1]),
-        ]
-
-        logger.info(f"We're supposed to update the score {score}")
-
-        WebServer.scoreboard.signals.ChangeSetData.emit({
-            "team1score": score[0],
-            "team2score": score[1],
-            "reset_score": True
-        })
+    @socketio.on('stage_strike_reset', namespace='/ws')
+    def ws_reset():
+        send(WebServer.actions.reset())
 
     @app.route('/score', methods=['POST'])
     def post_score():
-        score = json.loads(request.get_data())
-        score.update({"reset_score": True})
-        WebServer.scoreboard.signals.ChangeSetData.emit(score)
-        return "OK"
+        return WebServer.actions.post_score(request.get_data())
+
+    @socketio.on('score', namespace='/ws')
+    def ws_post_score(message):
+        send(WebServer.actions.post_score(message))
 
     # Ticks score of Team specified up by 1 point
     @app.route('/team<team>-scoreup')
     def team_scoreup(team):
-        if team == "1":
-            WebServer.scoreboard.signals.CommandScoreChange.emit(0, 1)
-        else:
-            WebServer.scoreboard.signals.CommandScoreChange.emit(1, 1)
-        return "OK"
+        return WebServer.actions.team_scoreup(team)
+
+    @socketio.on('team_scoreup', namespace='/ws')
+    def ws_team_scoreup(message):
+        send(WebServer.actions.team_scoreup(message))
 
     # Ticks score of Team specified down by 1 point
     @app.route('/team<team>-scoredown')
     def team_scoredown(team):
-        if team == "1":
-            WebServer.scoreboard.signals.CommandScoreChange.emit(0, -1)
-        else:
-            WebServer.scoreboard.signals.CommandScoreChange.emit(1, -1)
-        return "OK"
+        return WebServer.actions.team_scoredown(team)
+
+    @socketio.on('team_scoredown', namespace='/ws')
+    def ws_team_scoredown(message):
+        send(WebServer.actions.team_scoredown(message))
 
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
@@ -173,195 +136,165 @@ class WebServer(QThread):
     # Ex. http://192.168.4.34:5000/set?best-of=5&phase=Top 32&match=Winners Finals
     @app.route('/set')
     def set_route():
-        # Best Of argument
-        # best-of=<Best Of Amount>
-        if request.args.get('best-of') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'bestOf': request.args.get(
-                        'best-of', default='0', type=int)})
-                )
-            )
+        return WebServer.actions.set_route(
+            bestOf=request.args.get('best-of'),
+            phase=request.args.get('phase'),
+            match=request.args.get('match'),
+            players=request.args.get('players'),
+            characters=request.args.get('characters'),
+            losers=request.args.get('losers'),
+            team=request.args.get('team')
+        )
 
-        # Phase argument
-        # phase=<Phase Name>
-        if request.args.get('phase') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'tournament_phase': request.args.get(
-                        'phase', default='Pools', type=str)})
-                )
-            )
-
-        # Match argument
-        # match=<Match Name>
-        if request.args.get('match') is not None:
-            WebServer.scoreboard.signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'round_name': request.args.get(
-                        'match', default='Pools', type=str)})
-                )
-            )
-
-        # Players argument
-        # players=<Amount of Players>
-        if request.args.get('players') is not None:
-            WebServer.scoreboard.playerNumber.setValue(
-                request.args.get('players', default=1, type=int))
-
-        # Characters argument
-        # characters=<Amount of Characters>
-        if request.args.get('characters') is not None:
-            WebServer.scoreboard.charNumber.setValue(
-                request.args.get('characters', default=1, type=int))
-
-        # Losers argument
-        # losers=<True/False>&team=<Team Number>
-        if request.args.get('losers') is not None:
-            losers = request.args.get('losers', default=False, type=bool)
-            WebServer.scoreboard.signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'team' + request.args.get('team',
-                               default='1', type=str) + 'losers': bool(losers)})
-                )
-            )
-        return "OK"
+    @socketio.on('set', namespace='/ws')
+    def ws_set_route(message):
+        parsed = json.loads(message)
+        send(WebServer.actions.set_route(
+            bestOf=parsed.get('best_of'),
+            phase=parsed.get('phase'),
+            match=parsed.get('match'),
+            players=parsed.get('players'),
+            characters=parsed.get('characters'),
+            losers=parsed.get('losers'),
+            team=parsed.get('team')
+        ))
 
     # Set player data
     @app.post('/update-team-<team>-<player>')
     def set_team_data(team, player):
         data = request.get_json()
-
-        WebServer.scoreboard.signals.ChangeSetData.emit({
-            "team": team,
-            "player": player,
-            "data": data
-        })
-        return "OK"
+        return WebServer.actions.set_team_data(team, player, data)
+    
+    @socketio.on('update_team', namespace='/ws')
+    def ws_set_team_data(message):
+        data = json.loads(message)
+        send(WebServer.actions.set_team_data(data.get("team"), data.get("player"), data.get("data")))
 
     # Get characters
     @app.route('/characters')
     def get_characters():
-        data = {}
-        for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
-            item: QStandardItem = TSHGameAssetManager.instance.characterModel.index(
-                row, 0)
-            item_data = item.data(Qt.ItemDataRole.UserRole)
-
-            if item_data != None:
-                data[item_data.get("name")] = item_data
-        return data
+        return WebServer.actions.get_characters()
+    
+    @socketio.on('characters', namespace='/ws')
+    def ws_get_characters():
+        send(WebServer.actions.get_characters())
 
     # Swaps teams
     @app.route('/swap-teams')
     def swap_teams():
-        WebServer.scoreboard.signals.SwapTeams.emit()
-        return "OK"
+        return WebServer.actions.swap_teams()
+    
+    @socketio.on('swap_teams', namespace='/ws')
+    def ws_swap_teams():
+        send(WebServer.actions.swap_teams())
 
     # Opens Set Selector Window
     @app.route('/open-set')
     def open_sets():
-        WebServer.scoreboard.signals.SetSelection.emit()
-        return "OK"
+        return WebServer.actions.open_sets()
+    
+    @socketio.on('open_set', namespace='/ws')
+    def ws_open_sets():
+        send(WebServer.actions.open_sets())
 
     # Pulls Current Stream Set
     @app.route('/pull-stream')
     def pull_stream_set():
-        WebServer.scoreboard.signals.StreamSetSelection.emit()
-        return "OK"
+        return WebServer.actions.pull_stream_set()
+    
+    @socketio.on('pull_stream', namespace='/ws')
+    def ws_pull_stream_set():
+        send(WebServer.actions.pull_stream_set())
 
     # Pulls Current User Set
     @app.route('/pull-user')
     def pull_user_set():
-        WebServer.scoreboard.signals.UserSetSelection.emit()
-        return "OK"
+        return WebServer.actions.pull_user_set()
+    
+    @socketio.on('pull_user', namespace='/ws')
+    def ws_pull_user_set():
+        send(WebServer.actions.pull_user_set())
 
     # Resubmits Call for Recent Sets
     @app.route('/stats-recent-sets')
     def stats_recent_sets():
-        TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
-        return "OK"
+        return WebServer.actions.stats_recent_sets()
+    
+    @socketio.on('stats_recent_sets', namespace='/ws')
+    def ws_stats_recent_sets():
+        send(WebServer.actions.stats_recent_sets())
 
     # Resubmits Call for Upset Factor
     @app.route('/stats-upset-factor')
     def stats_upset_factor():
-        TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
-        return "OK"
+        return WebServer.actions.stats_upset_factor()
+    
+    @socketio.on('stats_upset_factor', namespace='/ws')
+    def ws_stats_upset_factor():
+        send(WebServer.actions.stats_upset_factor())
 
     # Resubmits Call for Last Sets
     @app.route('/stats-last-sets-<player>')
     def stats_last_sets(player):
-        if player == "1":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
-        elif player == "2":
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
-        elif player == "both":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
-        else:
-            logger.error(
-                "[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
-        return "OK"
+        return WebServer.actions.stats_last_sets(player)
+    
+    @socketio.on('stats_last_sets', namespace='/ws')
+    def ws_stats_last_sets(message):
+        send(WebServer.actions.stats_last_sets(message))
 
    # Resubmits Call for History Sets
     @app.route('/stats-history-sets-<player>')
     def stats_history_sets(player):
-        if player == "1":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
-        elif player == "2":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
-        elif player == "both":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
-        else:
-            logger.error(
-                "[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
-        return "OK"
+        return WebServer.actions.stats_history_sets(player)
+    
+    @socketio.on('stats_history_sets', namespace='/ws')
+    def ws_stats_history_sets(message):
+        send(WebServer.actions.stats_history_sets(message))
 
     # Resets scores
     @app.route('/reset-scores')
     def reset_scores():
-        WebServer.scoreboard.ResetScore()
-        return "OK"
+        return WebServer.actions.reset_scores()
+    
+    @socketio.on('reset_scores', namespace='/ws')
+    def ws_reset_scores():
+        send(WebServer.actions.reset_scores())
 
     # Resets scores, match, phase, and losers status
     @app.route('/reset-match')
     def reset_match():
-        WebServer.scoreboard.ClearScore()
-        WebServer.scoreboard.scoreColumn.findChild(
-            QSpinBox, "best_of").setValue(0)
-        return "OK"
+        return WebServer.actions.reset_match()
+    
+    @socketio.on('reset_match', namespace='/ws')
+    def ws_reset_match():
+        send(WebServer.actions.reset_match())
 
     # Resets scores, match, phase, and losers status
     @app.route('/reset-players')
     def reset_players():
-        WebServer.scoreboard.CommandClearAll()
-        return "OK"
+        return WebServer.actions.reset_players()
+    
+    @socketio.on('reset_players', namespace='/ws')
+    def ws_reset_players():
+        send(WebServer.actions.reset_players())
 
     # Resets all values
     @app.route('/clear-all')
     def clear_all():
-        WebServer.scoreboard.ClearScore()
-        WebServer.scoreboard.scoreColumn.findChild(
-            QSpinBox, "best_of").setValue(0)
-        WebServer.scoreboard.playerNumber.setValue(1)
-        WebServer.scoreboard.charNumber.setValue(1)
-        WebServer.scoreboard.CommandClearAll()
-        return "OK"
+        return WebServer.actions.clear_all()
+    
+    @socketio.on('clear_all', namespace='/ws')
+    def ws_clear_all():
+        send(WebServer.actions.clear_all())
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/load-set')
     def load_set():
-        if request.args.get('set') is not None:
-            WebServer.scoreboard.signals.NewSetSelected.emit(
-                json.loads(
-                    json.dumps({
-                        'id': request.args.get('set', default='0', type=str),
-                        'auto_update': "set"
-                    })
-                )
-            )
-        return "OK"
+        return WebServer.actions.load_set(request.args.get("set"))
+
+    @socketio.on('load_set', namespace='/ws')
+    def ws_load_set(message):
+        send(WebServer.actions.load_set(message))
 
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
@@ -371,5 +304,5 @@ class WebServer(QThread):
         return send_from_directory(os.path.abspath("."), filename, as_attachment=filename.endswith(".gz"))
 
     def run(self):
-        self.app.run(host=self.host_name, port=self.port,
-                     debug=False, use_reloader=False)
+        self.socketio.run(app=self.app, host=self.host_name, port=self.port,
+                          debug=False, use_reloader=False)
