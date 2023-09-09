@@ -9,6 +9,7 @@ import requests
 from PIL import Image
 import time
 from loguru import logger
+from .TSHWebServer import WebServer
 
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -41,6 +42,8 @@ class StateManager:
                         json.dump(StateManager.state, file,
                                   indent=4, sort_keys=False)
                         StateManager.state.pop("timestamp")
+
+                    WebServer.socketio.emit('program_state', StateManager.state, json=True, broadcast=True)
 
                     StateManager.ExportText(StateManager.lastSavedState)
                     StateManager.lastSavedState = copy.deepcopy(
