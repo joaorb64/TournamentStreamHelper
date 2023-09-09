@@ -1461,7 +1461,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="58"/>
         <source>Disable automatic set updating for the scoreboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver la mise à jour automatique du tableau des scores depuis le fournisseur de données de tournoi</translation>
     </message>
 </context>
 <context>
