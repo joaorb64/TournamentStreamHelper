@@ -101,8 +101,10 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.childDataChangedLock = True
         if (data.get("name")):
             self.slotName.setText(data.get("name"))
+            self.slotName.editingFinished.emit()
         else:
             self.slotName.setText("")
+            self.slotName.editingFinished.emit()
 
         for i, pw in enumerate(self.playerWidgets):
             if data.get("players"):
