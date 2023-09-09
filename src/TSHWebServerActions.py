@@ -148,9 +148,7 @@ class WebServerActions(QThread):
         # Best Of argument
         # best-of=<Best Of Amount>
         if bestOf is not None:
-            try:
-                bestOf = int(bestOf)
-            except:
+            if not isinstance(bestOf, int):
                 bestOf = 0
 
             self.scoreboard.signals.ChangeSetData.emit(
@@ -162,8 +160,7 @@ class WebServerActions(QThread):
         # Phase argument
         # phase=<Phase Name>
         if phase is not None:
-            phase = str(phase)
-            if phase == '':
+            if not isinstance(phase, str):
                 phase = 'Pools'
 
             self.scoreboard.signals.ChangeSetData.emit(
@@ -175,8 +172,7 @@ class WebServerActions(QThread):
         # Match argument
         # match=<Match Name>
         if match is not None:
-            match = str(phase)
-            if match == '':
+            if not isinstance(match, str):
                 match = 'Pools'
 
             self.scoreboard.signals.ChangeSetData.emit(
@@ -188,32 +184,26 @@ class WebServerActions(QThread):
         # Players argument
         # players=<Amount of Players>
         if players is not None:
-            try:
-                players = int(players)
-            except:
+            if not isinstance(players, int):
                 players = 1
+
             self.scoreboard.playerNumber.setValue(players)
 
         # Characters argument
         # characters=<Amount of Characters>
         if characters is not None:
-            try:
-                characters = int(characters)
-            except:
+            if not isinstance(characters, int):
                 characters = 1
+
             self.scoreboard.charNumber.setValue(characters)
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
         if losers is not None:
-            try:
-                losers = bool(losers)
-            except:
-                losers = False
-            try:
-                team = str(team)
-            except:
+            losers = bool(losers)
+            if not isinstance(team, str):
                 team = '1'
+
             self.scoreboard.signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'team' + team + 'losers': losers})
@@ -315,9 +305,7 @@ class WebServerActions(QThread):
 
     def load_set(self, set=None):
         if set is not None:
-            try:
-                set = str(set)
-            except:
+            if not isinstance(set, str):
                 set = '0'
             self.scoreboard.signals.NewSetSelected.emit(
                 json.loads(
@@ -423,10 +411,9 @@ class WebServerActions(QThread):
     
     def load_set(self, set=None):
         if set is not None:
-            try:
-                set = str(set)
-            except:
-                set = "0"
+            if not isinstance(set, str):
+                set = '0'
+
             self.scoreboard.signals.NewSetSelected.emit(
                 json.loads(
                     json.dumps({
