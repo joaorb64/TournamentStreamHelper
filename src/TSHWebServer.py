@@ -17,7 +17,7 @@ log.setLevel(logging.ERROR)
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
     cors = CORS(app)
-    socketio = SocketIO(app, cors_allowed_origins='*', logger=log, engineio_logger=log)
+    socketio = SocketIO(app, cors_allowed_origins='*', logger=logger, engineio_logger=logger)
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
 
@@ -37,7 +37,7 @@ class WebServer(QThread):
 
     @socketio.on_error_default
     def ws_on_error(e):
-        log.error(e)
+        logger.error(e)
 
     @app.route('/ruleset')
     def ruleset():
