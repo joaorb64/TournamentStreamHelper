@@ -785,6 +785,10 @@ class TSHScoreboardWidget(QDockWidget):
     def ChangeSetData(self, data):
         StateManager.BlockSaving()
 
+        StateManager.Set("score.phase_size", data.get("numSeeds"))
+        StateManager.Set("score.num_groups", data.get("groupCount"))
+        StateManager.Set("score.round", data.get("round"))
+
         try:
             if data.get("round_name"):
                 self.scoreColumn.findChild(

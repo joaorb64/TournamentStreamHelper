@@ -73,11 +73,13 @@ query SetQuery($id: ID!) {
             }
             winnerId
         }
+        round
         phaseGroup {
             phase {
                 name
                 groupCount
-                bracketType
+                numSeeds
+                seedNum
             }
             displayIdentifier
         }
