@@ -4,7 +4,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from flask import Flask, send_from_directory, request
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
 import json
 from loguru import logger
 from .TSHWebServerActions import WebServerActions
@@ -17,7 +17,7 @@ log.setLevel(logging.ERROR)
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
     cors = CORS(app)
-    socketio = SocketIO(app)
+    socketio = SocketIO(app, cors_allowed_origins='*', logger=log, engineio_logger=log)
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
 
@@ -31,13 +31,17 @@ class WebServer(QThread):
         self.host_name = "0.0.0.0"
         self.port = 5000
 
+    @socketio.on('connect', namespace='/ws')
+    def ws_connect(message):
+        emit('program_state', WebServer.actions.program_state())
+
     @app.route('/ruleset')
     def ruleset():
         return WebServer.actions.ruleset()
 
     @socketio.on('ruleset', namespace='/ws')
-    def ws_ruleset():
-        send(WebServer.actions.ruleset())
+    def ws_ruleset(message):
+        emit('ruleset', WebServer.actions.ruleset())
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
     def stage_clicked():
@@ -52,7 +56,7 @@ class WebServer(QThread):
         return WebServer.actions.confirm_clicked()
 
     @socketio.on('stage_strike_confirm_clicked', namespace='/ws')
-    def ws_confirm_clicked():
+    def ws_confirm_clicked(message):
         send(WebServer.actions.confirm_clicked())
 
     @app.route('/stage_strike_rps_win', methods=['POST'])
@@ -84,7 +88,7 @@ class WebServer(QThread):
         return WebServer.actions.stage_strike_undo()
 
     @socketio.on('stage_strike_undo', namespace='/ws')
-    def ws_stage_strike_undo():
+    def ws_stage_strike_undo(message):
         send(WebServer.actions.stage_strike_undo())
 
     @app.route('/stage_strike_redo', methods=['POST'])
@@ -92,7 +96,7 @@ class WebServer(QThread):
         return WebServer.actions.stage_strike_redo()
 
     @socketio.on('stage_strike_redo', namespace='/ws')
-    def ws_stage_strike_redo():
+    def ws_stage_strike_redo(message):
         send(WebServer.actions.stage_strike_redo())
 
     @app.route('/stage_strike_reset', methods=['POST'])
@@ -100,7 +104,7 @@ class WebServer(QThread):
         return WebServer.actions.reset()
 
     @socketio.on('stage_strike_reset', namespace='/ws')
-    def ws_reset():
+    def ws_reset(message):
         send(WebServer.actions.reset())
 
     @app.route('/score', methods=['POST'])
@@ -176,7 +180,7 @@ class WebServer(QThread):
         return WebServer.actions.get_characters()
     
     @socketio.on('characters', namespace='/ws')
-    def ws_get_characters():
+    def ws_get_characters(message):
         send(WebServer.actions.get_characters())
 
     # Swaps teams
@@ -185,7 +189,7 @@ class WebServer(QThread):
         return WebServer.actions.swap_teams()
     
     @socketio.on('swap_teams', namespace='/ws')
-    def ws_swap_teams():
+    def ws_swap_teams(message):
         send(WebServer.actions.swap_teams())
 
     # Opens Set Selector Window
@@ -194,7 +198,7 @@ class WebServer(QThread):
         return WebServer.actions.open_sets()
     
     @socketio.on('open_set', namespace='/ws')
-    def ws_open_sets():
+    def ws_open_sets(message):
         send(WebServer.actions.open_sets())
 
     # Pulls Current Stream Set
@@ -203,7 +207,7 @@ class WebServer(QThread):
         return WebServer.actions.pull_stream_set()
     
     @socketio.on('pull_stream', namespace='/ws')
-    def ws_pull_stream_set():
+    def ws_pull_stream_set(message):
         send(WebServer.actions.pull_stream_set())
 
     # Pulls Current User Set
@@ -212,7 +216,7 @@ class WebServer(QThread):
         return WebServer.actions.pull_user_set()
     
     @socketio.on('pull_user', namespace='/ws')
-    def ws_pull_user_set():
+    def ws_pull_user_set(message):
         send(WebServer.actions.pull_user_set())
 
     # Resubmits Call for Recent Sets
@@ -221,7 +225,7 @@ class WebServer(QThread):
         return WebServer.actions.stats_recent_sets()
     
     @socketio.on('stats_recent_sets', namespace='/ws')
-    def ws_stats_recent_sets():
+    def ws_stats_recent_sets(message):
         send(WebServer.actions.stats_recent_sets())
 
     # Resubmits Call for Upset Factor
@@ -230,7 +234,7 @@ class WebServer(QThread):
         return WebServer.actions.stats_upset_factor()
     
     @socketio.on('stats_upset_factor', namespace='/ws')
-    def ws_stats_upset_factor():
+    def ws_stats_upset_factor(message):
         send(WebServer.actions.stats_upset_factor())
 
     # Resubmits Call for Last Sets
@@ -257,7 +261,7 @@ class WebServer(QThread):
         return WebServer.actions.reset_scores()
     
     @socketio.on('reset_scores', namespace='/ws')
-    def ws_reset_scores():
+    def ws_reset_scores(message):
         send(WebServer.actions.reset_scores())
 
     # Resets scores, match, phase, and losers status
@@ -266,7 +270,7 @@ class WebServer(QThread):
         return WebServer.actions.reset_match()
     
     @socketio.on('reset_match', namespace='/ws')
-    def ws_reset_match():
+    def ws_reset_match(message):
         send(WebServer.actions.reset_match())
 
     # Resets scores, match, phase, and losers status
@@ -275,7 +279,7 @@ class WebServer(QThread):
         return WebServer.actions.reset_players()
     
     @socketio.on('reset_players', namespace='/ws')
-    def ws_reset_players():
+    def ws_reset_players(message):
         send(WebServer.actions.reset_players())
 
     # Resets all values
@@ -284,7 +288,7 @@ class WebServer(QThread):
         return WebServer.actions.clear_all()
     
     @socketio.on('clear_all', namespace='/ws')
-    def ws_clear_all():
+    def ws_clear_all(message):
         send(WebServer.actions.clear_all())
 
     # Loads a set remotely by providing a set ID to pull from the data provider

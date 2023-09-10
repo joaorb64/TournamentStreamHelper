@@ -22,6 +22,9 @@ class WebServerActions(QThread):
         self.host_name = "0.0.0.0"
         self.port = 5000
 
+    def program_state(self):
+        return StateManager.state
+
     def ruleset(self):
         data = {}
 

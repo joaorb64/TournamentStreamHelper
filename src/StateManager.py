@@ -9,7 +9,6 @@ import requests
 from PIL import Image
 import time
 from loguru import logger
-from .TSHWebServer import WebServer
 
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
@@ -18,6 +17,7 @@ class StateManager:
     lastSavedState = {}
     state = {}
     saveBlocked = 0
+    socketio = None
 
     lock = threading.RLock()
     threads = []
@@ -43,7 +43,8 @@ class StateManager:
                                   indent=4, sort_keys=False)
                         StateManager.state.pop("timestamp")
 
-                    WebServer.socketio.emit('program_state', StateManager.state, json=True, broadcast=True)
+                    if StateManager.socketio is not None:
+                        StateManager.socketio.emit('program_state', StateManager.state)
 
                     StateManager.ExportText(StateManager.lastSavedState)
                     StateManager.lastSavedState = copy.deepcopy(
