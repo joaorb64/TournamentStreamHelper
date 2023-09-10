@@ -34,6 +34,8 @@ class StartGGDataProvider(TournamentDataProvider):
     TournamentPhasesQuery = None
     TournamentPhaseGroupQuery = None
     StreamQueueQuery = None
+    MainPhaseQuery = None
+    SeedsQuery = None
 
     player_seeds = {}
 
@@ -1422,6 +1424,7 @@ class StartGGDataProvider(TournamentDataProvider):
             return []
 
     def GetEntrantsWorker(self, eventSlug, gameId, progress_callback):
+        self.GetSeeds()
         try:
             page = 1
             totalPages = 1
@@ -1445,7 +1448,6 @@ class StartGGDataProvider(TournamentDataProvider):
                         },
                         "query": StartGGDataProvider.EntrantsQuery
                     }
-
                 )
 
                 data = json.loads(data.text)
@@ -1460,11 +1462,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(
                             entrant)
-                        if deep_get(team, "seeds", []) is not None and len(deep_get(team, "seeds", [])) > 0:
-                            playerData["seed"] = deep_get(team, "seeds", [])[
-                                0].get("seedNum", 0)
-                            self.player_seeds[playerData["id"]
-                                              [0]] = playerData["seed"]
+                        playerData["seed"] = self.player_seeds.get(playerData["id"][0])
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
@@ -1586,6 +1584,63 @@ class StartGGDataProvider(TournamentDataProvider):
             ]
 
         return (playerData)
+    
+    def GetSeeds(self):
+        try:
+            data = requests.post(
+                "https://www.start.gg/api/-/gql",
+                headers={
+                    "client-version": "20",
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    "operationName": "TournamentMainPhaseQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.MainPhaseQuery
+                }
+            )
+
+            data = json.loads(data.text)
+
+            phaseId = deep_get(data, "data.event.phases", [])[0].get("id")
+            logger.info("Phase ID: " + str(phaseId))
+
+            page = 1
+            totalPages = 1
+
+            while page <= totalPages:
+                data = requests.post(
+                    "https://www.start.gg/api/-/gql",
+                    headers={
+                        "client-version": "20",
+                        'Content-Type': 'application/json'
+                    },
+                    json={
+                        "operationName": "PhaseSeeds",
+                        "variables": {
+                            "phaseId": phaseId,
+                            "page": page,
+                        },
+                        "query": StartGGDataProvider.SeedsQuery
+                    }
+                )
+
+                data = json.loads(data.text)
+
+                totalPages = deep_get(
+                    data, "data.phase.seeds.pageInfo.totalPages", 0)
+                
+                seeds = deep_get(data, "data.phase.seeds.nodes", [])
+
+                for seed in seeds:
+                    for player in seed.get("players"):
+                        self.player_seeds[player.get("id", 0)] = seed.get("seedNum")
+                
+                page += 1
+        except:
+            logger.error(traceback.format_exc)
 
     def GetStandings(self, playerNumber, progress_callback):
         try:
@@ -1670,3 +1725,9 @@ StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGStreamQueueQuery.txt", 'r')
 StartGGDataProvider.StreamQueueQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentMainPhaseQuery.txt", 'r')
+StartGGDataProvider.MainPhaseQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGTournamentSeedsQuery.txt", 'r')
+StartGGDataProvider.SeedsQuery = f.read()

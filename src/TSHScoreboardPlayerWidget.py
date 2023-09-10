@@ -788,4 +788,5 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             for c in self.findChildren(QComboBox):
                 c.setCurrentIndex(0)
+        StateManager.Unset(f"{self.path}.seed")
         StateManager.ReleaseSaving()
