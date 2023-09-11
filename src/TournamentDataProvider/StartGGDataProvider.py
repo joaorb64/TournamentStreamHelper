@@ -504,6 +504,9 @@ class StartGGDataProvider(TournamentDataProvider):
 
         setData = {
             "id": _set.get("id"),
+            "round": _set.get("round"),
+            "groupCount" : deep_get(_set, "phaseGroup.phase.groupCount"),
+            "numSeeds": deep_get(_set, "phaseGroup.phase.numSeeds", -1),
             "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
             "tournament_phase": phase_name,
             "bracket_type": bracket_type,
