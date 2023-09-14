@@ -14,3 +14,5 @@ pynput
 pyside6
 cloudscraper
 loguru
+flask-socketio
+simple_websocket

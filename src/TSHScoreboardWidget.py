@@ -436,7 +436,7 @@ class TSHScoreboardWidget(QWidget):
             thumbnailPath = thumbnail.generate(settingsManager=SettingsManager, scoreboardNumber=self.scoreboardNumber)
             msgBox.setText(QApplication.translate(
                 "thumb_app", "The thumbnail has been generated here:") + " ")
-            msgBox.setIcon(QMessageBox.NoIcon)
+            msgBox.setIcon(QMessageBox.Information)
             msgBox.setInformativeText(thumbnailPath)
 
             thumbnail_settings = SettingsManager.Get("thumbnail_config")
