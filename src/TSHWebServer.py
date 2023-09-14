@@ -176,7 +176,7 @@ class WebServer(QThread):
     @socketio.on('update_team')
     def ws_set_team_data(message):
         data = json.loads(message)
-        emit('update_team', WebServer.actions.set_team_data(data.get("team"), data.get("player"), data.get("data")))
+        emit('update_team', WebServer.actions.set_team_data(data.get("team"), data.get("player"), data))
 
     # Get characters
     @app.route('/characters')
