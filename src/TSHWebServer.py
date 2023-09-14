@@ -33,7 +33,7 @@ class WebServer(QThread):
 
     @socketio.on('connect')
     def ws_connect(message):
-        emit('program_state', WebServer.actions.program_state())
+        emit('program_state', WebServer.actions.program_state(), json=True)
 
     @socketio.on_error_default
     def ws_on_error(e):
@@ -45,7 +45,7 @@ class WebServer(QThread):
 
     @socketio.on('ruleset')
     def ws_ruleset(message):
-        emit('ruleset', WebServer.actions.ruleset())
+        emit('ruleset', WebServer.actions.ruleset(), json=True)
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
     def stage_clicked():
@@ -185,7 +185,7 @@ class WebServer(QThread):
     
     @socketio.on('characters')
     def ws_get_characters(message):
-        emit('characters', WebServer.actions.get_characters())
+        emit('characters', WebServer.actions.get_characters(), json=True)
 
     # Swaps teams
     @app.route('/swap-teams')
@@ -314,3 +314,4 @@ class WebServer(QThread):
     def run(self):
         self.socketio.run(app=self.app, host=self.host_name, port=self.port,
                           debug=False, use_reloader=False)
+

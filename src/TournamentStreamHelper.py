@@ -297,8 +297,8 @@ class Window(QMainWindow):
 
         self.webserver = WebServer(
             parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
+        StateManager.socketio = WebServer.socketio
         self.webserver.start()
-        StateManager.socketio = self.webserver.socketio
 
         commentary = TSHCommentaryWidget()
         commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
