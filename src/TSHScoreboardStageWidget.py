@@ -10,7 +10,6 @@ from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.TSHStageStrikeLogic import TSHStageStrikeLogic
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
-from .TSHWebServer import WebServer
 from .TSHGameAssetManager import TSHGameAssetManager
 import socket
 from loguru import logger

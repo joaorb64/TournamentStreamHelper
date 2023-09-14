@@ -9,7 +9,6 @@ import requests
 from PIL import Image
 import time
 from loguru import logger
-
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
 
@@ -17,6 +16,7 @@ class StateManager:
     lastSavedState = {}
     state = {}
     saveBlocked = 0
+    webServer = None
 
     lock = threading.RLock()
     threads = []
@@ -35,6 +35,12 @@ class StateManager:
 
     def SaveState():
         if StateManager.saveBlocked == 0:
+            try:
+                if StateManager.webServer is not None:
+                    StateManager.webServer.emit('program_state', StateManager.state)
+            except Exception as e:
+                logger.error(e)
+
             with StateManager.lock:
                 StateManager.threads = []
 
