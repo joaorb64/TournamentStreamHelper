@@ -297,7 +297,7 @@ class Window(QMainWindow):
 
         self.webserver = WebServer(
             parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
-        StateManager.socketio = WebServer.socketio
+        StateManager.webServer = self.webserver
         self.webserver.start()
 
         commentary = TSHCommentaryWidget()

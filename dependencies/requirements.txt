@@ -15,4 +15,4 @@ pyside6
 cloudscraper
 loguru
 flask-socketio
-eventlet
+simple_websocket
