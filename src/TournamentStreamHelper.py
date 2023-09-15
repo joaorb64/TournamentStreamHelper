@@ -947,9 +947,9 @@ class Window(QMainWindow):
         def open_dialog():
             fname, _ok = QFileDialog.getOpenFileName(
                 migrateWindow,
-                "Open Layout Javascript File",
+                QApplication.translate("app", "Open Layout Javascript File"),
                 os.getcwd(),
-                "Javascript File (*.js)",
+                QApplication.translate("app", "Javascript File") + "  (*.js)",
             )
             if fname:
                 filePath.setText(str(fname))
