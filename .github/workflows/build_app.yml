@@ -85,7 +85,7 @@ jobs:
           chcp 65001
           set PYTHONIOENCODING=utf-8
           python scripts/gen_contributors.py
-          pyinstaller --hidden-import PyQt6.QtCore --hidden-import PyQt6.QtGui --hidden-import PyQt6.QtWidgets --hidden-import=loguru main.py --onefile -w --icon assets\icons\icon.ico
+          pyinstaller --hidden-import PyQt6.QtCore --hidden-import PyQt6.QtGui --hidden-import PyQt6.QtWidgets --hidden-import=loguru --hidden-import=engineio.async_drivers.threading main.py --onefile -w --icon assets\icons\icon.ico
           copy dist\main.exe TSH.exe
 
       - run: git pull
