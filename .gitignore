@@ -15,6 +15,7 @@ assets/log_error.txt
 layout_backup*
 layout_custom*
 .idea/
+.DS_Store
 
 TSH.cflags
 

@@ -1,4 +1,7 @@
 LoadEverything().then(() => {
+
+  let scoreboardNumber = 1;
+  
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from($(".recent_sets"), { autoAlpha: 0 });
@@ -15,10 +18,10 @@ LoadEverything().then(() => {
 
     if (
       !oldData.score ||
-      JSON.stringify(oldData.score.recent_sets) !=
-        JSON.stringify(data.score.recent_sets)
+      JSON.stringify(oldData.score[scoreboardNumber].recent_sets) !=
+        JSON.stringify(data.score[scoreboardNumber].recent_sets)
     ) {
-      playersRecentSets = data.score.recent_sets;
+      playersRecentSets = data.score[scoreboardNumber].recent_sets;
       console.log(playersRecentSets);
     }
 

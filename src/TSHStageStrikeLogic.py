@@ -60,7 +60,7 @@ class TSHStageStrikeLogic():
         self.ExportState()
     
     def ExportState(self):
-        StateManager.Set("score.stage_strike", {
+        StateManager.Set("score.1.stage_strike", {
             "currGame": self.CurrentState().currGame,
             "currPlayer": self.CurrentState().currPlayer,
             "currStep": self.CurrentState().currStep,
@@ -104,7 +104,7 @@ class TSHStageStrikeLogic():
         return False
     
     def GetBannedStages(self):
-        banList = [];
+        banList = []
 
         if self.ruleset.useDSR:
             banList = self.CurrentState().stagesPicked
@@ -114,7 +114,7 @@ class TSHStageStrikeLogic():
         return banList
     
     def IsStageBanned(self, stage):
-        banList = self.GetBannedStages();
+        banList = self.GetBannedStages()
 
         found = next((i for i, e in enumerate(banList) if e == stage), None)
         if found != None:

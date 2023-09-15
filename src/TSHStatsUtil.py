@@ -2,9 +2,10 @@ from qtpy.QtCore import *
 
 from datetime import datetime
 import math
+import json
 
-from .StateManager import *
-from .SettingsManager import *
+from .StateManager import StateManager
+from .SettingsManager import SettingsManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from loguru import logger
 
@@ -21,17 +22,24 @@ class TSHStatsSignals(QObject):
 class TSHStatsUtil:
     instance: "TSHStatsUtil" = None
 
-    def __init__(self):
+    def __init__(self, scoreboardNumber, scoreboard):
         self.signals: TSHStatsSignals = TSHStatsSignals()
+
+        self.scoreboardNumber = scoreboardNumber
+        self.scoreboard = scoreboard
 
         self.signals.PlayerHistoryStandingsP1Signal.connect(
             self.GetPlayerHistoryStandingsP1)
         self.signals.PlayerHistoryStandingsP2Signal.connect(
             self.GetPlayerHistoryStandingsP2)
-        self.signals.LastSetsP1Signal.connect(self.GetLastSetsP1)
-        self.signals.LastSetsP2Signal.connect(self.GetLastSetsP2)
-        self.signals.RecentSetsSignal.connect(self.GetRecentSets)
-        self.signals.UpsetFactorCalculation.connect(self.GetSetUpsetFactor)
+        self.signals.LastSetsP1Signal.connect(
+            self.GetLastSetsP1)
+        self.signals.LastSetsP2Signal.connect(
+            self.GetLastSetsP2)
+        self.signals.RecentSetsSignal.connect(
+            self.GetRecentSets)
+        self.signals.UpsetFactorCalculation.connect(
+            self.GetSetUpsetFactor)
 
         TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
             self.UpdateHistorySets)
@@ -46,10 +54,10 @@ class TSHStatsUtil:
         updated = False
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
-                StateManager.Set(f"score.recent_sets", {
+                StateManager.Set(f"score.{self.scoreboardNumber}.recent_sets", {
                     "state": "loading",
                     "sets": []
                 })
@@ -57,16 +65,16 @@ class TSHStatsUtil:
                 updated = True
 
         if not updated:
-            StateManager.Set(f"score.recent_sets", {
+            StateManager.Set(f"score.{self.scoreboardNumber}.recent_sets", {
                 "state": "done",
                 "sets": []
             })
 
     def UpdateRecentSets(self, data):
-        lastUpdateTime = StateManager.Get(f"score.recent_sets.request_time", 0)
+        lastUpdateTime = StateManager.Get(f"score.{self.scoreboardNumber}.recent_sets.request_time", 0)
 
         if data.get("request_time", 0) > lastUpdateTime:
-            StateManager.Set(f"score.recent_sets", {
+            StateManager.Set(f"score.{self.scoreboardNumber}.recent_sets", {
                 "state": "done",
                 "sets": data.get("sets"),
                 "request_time": data.get("request_time")
@@ -75,26 +83,26 @@ class TSHStatsUtil:
     def GetLastSetsP1(self):
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
             else:
-                StateManager.Set(f"score.last_sets.1", {})
+                StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.1", {})
 
     def GetLastSetsP2(self):
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
             else:
-                StateManager.Set(f"score.last_sets.2", {})
+                StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.2", {})
 
     def UpdateLastSets(self, data):
         StateManager.BlockSaving()
         i = 1
         for set in data.get("last_sets", []):
-            StateManager.Set(f"score.last_sets." + data.get("playerNumber") + "." + str(i), {
+            StateManager.Set(f"score.{self.scoreboardNumber}.last_sets." + data.get("playerNumber") + "." + str(i), {
                 "phase_id": set.get("phase_id"),
                 "phase_name": set.get("phase_name"),
                 "round_name": set.get("round_name"),
@@ -111,28 +119,28 @@ class TSHStatsUtil:
     def GetPlayerHistoryStandingsP1(self):
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
+            p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
                     p1id, "1", StateManager.Get(f"game.smashgg_id"))
             else:
-                StateManager.Set(f"score.history_sets.1", {})
+                StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
 
     def GetPlayerHistoryStandingsP2(self):
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
                     p2id, "2", StateManager.Get(f"game.smashgg_id"))
             else:
-                StateManager.Set(f"score.history_sets.2", {})
+                StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
 
     def UpdateHistorySets(self, data):
         StateManager.BlockSaving()
         i = 1
         for set in data.get("history_sets", []):
-            StateManager.Set(f"score.history_sets." + data.get("playerNumber") + "." + str(i), {
+            StateManager.Set(f"score.{self.scoreboardNumber}.history_sets." + data.get("playerNumber") + "." + str(i), {
                 "placement": set.get("placement"),
                 "event_name": set.get("event_name"),
                 "tournament_name": set.get("tournament_name"),
@@ -148,20 +156,20 @@ class TSHStatsUtil:
     def GetSetUpsetFactor(self):
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             bracket_type = StateManager.Get(f"score.bracket_type", "")
-            p1id = StateManager.Get(f"score.team.1.player.1.id")
-            p2id = StateManager.Get(f"score.team.2.player.1.id")
+            p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
+            p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
 
             if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
-                p1 = StateManager.Get(f"score.team.1.player.1.seed")
-                p2 = StateManager.Get(f"score.team.2.player.1.seed")
+                p1 = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.seed")
+                p2 = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.seed")
                 if p1 and p2:
-                    logger.info("P1 Seed: " + str(p1))
+                    logger.info(f"Scoreboard {self.scoreboardNumber} - P1 Seed: " + str(p1))
                     p1_upset = self.CalculatePlacementMath(bracket_type, p1)
 
-                    logger.info("P2 Seed: " + str(p2))
+                    logger.info(f"Scoreboard {self.scoreboardNumber} - P2 Seed: " + str(p2))
                     p2_upset = self.CalculatePlacementMath(bracket_type, p2)
 
-                    StateManager.Set(f"score.upset_factor",
+                    StateManager.Set(f"score.{self.scoreboardNumber}.upset_factor",
                                      abs(p1_upset - p2_upset))
         else:
             StateManager.Set(f"score.upset_factor", 0)
@@ -207,6 +215,3 @@ class TSHStatsUtil:
             return single_elim_calc
         else:
             return 0
-
-
-TSHStatsUtil.instance = TSHStatsUtil()

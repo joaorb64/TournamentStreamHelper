@@ -444,8 +444,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.generateThumbnail = self.settings.findChild(
             QPushButton, "btGenerate")
-        self.generateThumbnail.clicked.connect(
-            lambda: self.parent().scoreboard.GenerateThumbnail())
+        self.generateThumbnail.setHidden(True)
 
         # Load OpenSans
         QFontDatabase.addApplicationFont(

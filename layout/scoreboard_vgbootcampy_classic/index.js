@@ -15,6 +15,8 @@ LoadEverything().then(() => {
 
   let intervalID = "";
 
+  let scoreboardNumber = 1;
+
   let startingAnimation = gsap
     .timeline({ paused: true })
     .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
@@ -72,8 +74,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     for (const [t, team] of [
-      data.score.team["1"],
-      data.score.team["2"],
+      data.score[scoreboardNumber].team["1"],
+      data.score[scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
@@ -132,7 +134,7 @@ LoadEverything().then(() => {
               : ``
           );
 
-          let score = [data.score.score_left, data.score.score_right];
+          let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
           SetInnerHtml($(`.p${t + 1}.score`), String(team.score));
 
@@ -159,35 +161,35 @@ LoadEverything().then(() => {
   async function UpdateMatch() {
     const tournamentContainer = document.querySelector(".tournament_container");
 
-    if (!(data.score.best_of || data.score.match)) {
+    if (!(data.score[scoreboardNumber].best_of || data.score[scoreboardNumber].match)) {
       tournamentContainer.classList.add("hidden");
       tournamentContainer.classList.remove("unhidden");
     } else {
       tournamentContainer.classList.add("unhidden");
       tournamentContainer.classList.remove("hidden");
 
-      if (!data.score.best_of && data.score.match) {
-        SetInnerHtml($(".match"), data.score.match.toUpperCase());
-      } else if (data.score.best_of && !data.score.match) {
-        SetInnerHtml($(".match"), data.score.best_of_text.toUpperCase());
-      } else if (savedMatch != data.score.match) {
-        SetInnerHtml($(".match"), data.score.match.toUpperCase());
-      } else if (savedBestOf != data.score.best_of) {
-        SetInnerHtml($(".match"), data.score.match.toUpperCase());
+      if (!data.score[scoreboardNumber].best_of && data.score[scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
+      } else if (data.score.best_of && !data.score[scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].best_of_text.toUpperCase());
+      } else if (savedMatch != data.score[scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
+      } else if (savedBestOf != data.score[scoreboardNumber].best_of) {
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
       } else {
-        SetInnerHtml($(".match"), data.score.best_of_text.toUpperCase());
-        SetInnerHtml($(".match"), data.score.match.toUpperCase());
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].best_of_text.toUpperCase());
+        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
       }
     }
-    savedBestOf = data.score.best_of;
-    savedMatch = data.score.match;
+    savedBestOf = data.score[scoreboardNumber].best_of;
+    savedMatch = data.score[scoreboardNumber].match;
   }
 
   async function UpdateTwitter() {
     changeInP1 = false;
     changeInP2 = false;
 
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -210,7 +212,7 @@ LoadEverything().then(() => {
       }
     });
 
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
@@ -289,7 +291,7 @@ LoadEverything().then(() => {
 
   async function TwitterPronounChecker() {
     let refreshNeeded = false;
-    [data.score.team["1"], data.score.team["2"]].forEach((team, t) => {
+    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (
           t == 0 &&
@@ -320,7 +322,8 @@ LoadEverything().then(() => {
     let refreshNeeded = false;
 
     if (
-      !(savedBestOf == data.score.best_of && savedMatch == data.score.match)
+      !(savedBestOf == data.score[scoreboardNumber].best_of
+        && savedMatch == data.score[scoreboardNumber].match)
     ) {
       refreshNeeded = true;
     }

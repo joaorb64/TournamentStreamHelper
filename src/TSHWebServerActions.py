@@ -19,8 +19,6 @@ class WebServerActions(QThread):
         super().__init__(parent)
         self.scoreboard = scoreboard
         self.stageWidget = stageWidget
-        self.host_name = "0.0.0.0"
-        self.port = 5000
 
     def program_state(self):
         return StateManager.state
@@ -35,19 +33,22 @@ class WebServerActions(QThread):
             "basedir": os.path.abspath(".")
         })
 
+        if self.scoreboard.GetTabAmount() < 1:
+            return data
+
         # Add player names
         teams = [1, 2]
-        if self.scoreboard.teamsSwapped:
+        if self.scoreboard.GetScoreboard(1).teamsSwapped:
             teams.reverse()
 
         for i, t in enumerate(teams):
-            if StateManager.Get(f"score.team.{i+1}.teamName"):
+            if StateManager.Get(f"score.1.team.{i+1}.teamName"):
                 data.update({
-                    f"p{t}": StateManager.Get(f"score.team.{i+1}.teamName")
+                    f"p{t}": StateManager.Get(f"score.1.team.{i+1}.teamName")
                 })
             else:
                 names = [p.get("name") for p in StateManager.Get(
-                    f"score.team.{i+1}.player", {}).values() if p.get("name")]
+                    f"score.1.team.{i+1}.player", {}).values() if p.get("name")]
 
                 data.update({
                     f"p{t}": " / ".join(names)
@@ -55,10 +56,10 @@ class WebServerActions(QThread):
 
         # Add set data
         data.update({
-            "best_of": StateManager.Get(f"score.best_of"),
-            "match": StateManager.Get(f"score.match"),
-            "phase": StateManager.Get(f"score.phase"),
-            "state": StateManager.Get(f"score.stage_strike", {})
+            "best_of": StateManager.Get(f"score.1.best_of"),
+            "match": StateManager.Get(f"score.1.match"),
+            "phase": StateManager.Get(f"score.1.phase"),
+            "state": StateManager.Get(f"score.1.stage_strike", {})
         })
 
         return data
@@ -105,10 +106,6 @@ class WebServerActions(QThread):
         return "OK"
 
     def UpdateScore(self):
-        logger.info("================UPDATE SCORE !============")
-        logger.info(SettingsManager.Get(
-            "general.control_score_from_stage_strike"))
-
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return
 
@@ -121,7 +118,7 @@ class WebServerActions(QThread):
 
         logger.info(f"We're supposed to update the score {score}")
 
-        self.scoreboard.signals.ChangeSetData.emit({
+        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
@@ -130,31 +127,40 @@ class WebServerActions(QThread):
     def post_score(self, data):
         score = json.loads(data)
         score.update({"reset_score": True})
-        self.scoreboard.signals.ChangeSetData.emit(score)
+        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit(score)
         return "OK"
 
-    def team_scoreup(self, team):
-        if team == "1":
-            self.scoreboard.signals.CommandScoreChange.emit(0, 1)
+    def team_scoreup(self, scoreboard, team):
+        logger.info(team)
+        if team == 1 or team == "1":
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, 1)
         else:
-            self.scoreboard.signals.CommandScoreChange.emit(1, 1)
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, 1)
         return "OK"
 
-    def team_scoredown(self, team):
-        if team == "1":
-            self.scoreboard.signals.CommandScoreChange.emit(0, -1)
+    def team_scoredown(self, scoreboard, team):
+        if team == 1 or team == "1":
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, -1)
         else:
-            self.scoreboard.signals.CommandScoreChange.emit(1, -1)
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
         return "OK"
 
-    def set_route(self, bestOf=None, phase=None, match=None, players=None, characters=None, losers=None, team=None):
+    def set_route(self,
+                  scoreboard,
+                  bestOf=None,
+                  phase=None,
+                  match=None,
+                  players=None,
+                  characters=None,
+                  losers=None,
+                  team=None):
         # Best Of argument
         # best-of=<Best Of Amount>
         if bestOf is not None:
             if not isinstance(bestOf, int):
                 bestOf = 0
 
-            self.scoreboard.signals.ChangeSetData.emit(
+            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'bestOf': bestOf})
                 )
@@ -166,7 +172,7 @@ class WebServerActions(QThread):
             if not isinstance(phase, str):
                 phase = 'Pools'
 
-            self.scoreboard.signals.ChangeSetData.emit(
+            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'tournament_phase': phase})
                 )
@@ -178,7 +184,7 @@ class WebServerActions(QThread):
             if not isinstance(match, str):
                 match = 'Pools'
 
-            self.scoreboard.signals.ChangeSetData.emit(
+            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'round_name': match})
                 )
@@ -190,7 +196,7 @@ class WebServerActions(QThread):
             if not isinstance(players, int):
                 players = 1
 
-            self.scoreboard.playerNumber.setValue(players)
+            self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(players)
 
         # Characters argument
         # characters=<Amount of Characters>
@@ -198,7 +204,7 @@ class WebServerActions(QThread):
             if not isinstance(characters, int):
                 characters = 1
 
-            self.scoreboard.charNumber.setValue(characters)
+            self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(characters)
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
@@ -207,15 +213,15 @@ class WebServerActions(QThread):
             if not isinstance(team, str):
                 team = '1'
 
-            self.scoreboard.signals.ChangeSetData.emit(
+            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'team' + team + 'losers': losers})
                 )
             )
         return "OK"
 
-    def set_team_data(self, team, player, data):
-        self.scoreboard.signals.ChangeSetData.emit({
+    def set_team_data(self, scoreboard, team, player, data):
+        self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit({
             "team": team,
             "player": player,
             "data": data
@@ -233,84 +239,92 @@ class WebServerActions(QThread):
                 data[item_data.get("name")] = item_data
         return data
 
-    def swap_teams(self):
-        self.scoreboard.signals.SwapTeams.emit()
+    def swap_teams(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).signals.SwapTeams.emit()
         return "OK"
 
-    def open_sets(self):
-        self.scoreboard.signals.SetSelection.emit()
+    def open_sets(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).signals.SetSelection.emit()
         return "OK"
 
-    def pull_stream_set(self):
-        self.scoreboard.signals.StreamSetSelection.emit()
+    def pull_stream_set(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).signals.StreamSetSelection.emit()
         return "OK"
 
     def pull_user_set(self):
-        self.scoreboard.signals.UserSetSelection.emit()
+        self.scoreboard.GetScoreboard(1).signals.UserSetSelection.emit()
         return "OK"
 
-    def stats_recent_sets(self):
+    def stats_recent_sets(self, scoreboard):
         TSHStatsUtil.instance.signals.RecentSetsSignal.emit()
         return "OK"
 
-    def stats_upset_factor(self):
+    def stats_upset_factor(self, scoreboard):
         TSHStatsUtil.instance.signals.UpsetFactorCalculation.emit()
         return "OK"
 
-    def stats_last_sets(self, player):
-        if player == "1":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
-        elif player == "2":
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+    def stats_last_sets(self, scoreboard, player):
+        if player == 1 or player == "1":
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.LastSetsP1Signal.emit()
+        elif player == 2 or player == "2":
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.LastSetsP2Signal.emit()
         elif player == "both":
-            TSHStatsUtil.instance.signals.LastSetsP1Signal.emit()
-            TSHStatsUtil.instance.signals.LastSetsP2Signal.emit()
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.LastSetsP1Signal.emit()
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.LastSetsP2Signal.emit()
         else:
             logger.error(
                 "[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
-    def stats_history_sets(self, player):
-        if player == "1":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
-        elif player == "2":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+    def stats_history_sets(self, scoreboard, player):
+        if player == 1 or player == "1":
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.PlayerHistoryStandingsP1Signal.emit()
+        elif player == 2 or player == "2":
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.PlayerHistoryStandingsP2Signal.emit()
         elif player == "both":
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP1Signal.emit()
-            TSHStatsUtil.instance.signals.PlayerHistoryStandingsP2Signal.emit()
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.PlayerHistoryStandingsP1Signal.emit()
+            self.scoreboard.GetScoreboard(
+                scoreboard).stats.signals.PlayerHistoryStandingsP2Signal.emit()
         else:
             logger.error(
                 "[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
-    def reset_scores(self):
-        self.scoreboard.ResetScore()
+    def reset_scores(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).ResetScore()
         return "OK"
 
-    def reset_match(self):
-        self.scoreboard.ClearScore()
-        self.scoreboard.scoreColumn.findChild(
+    def reset_match(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).ClearScore()
+        self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
         return "OK"
 
-    def reset_players(self):
-        self.scoreboard.CommandClearAll()
+    def reset_players(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
         return "OK"
 
-    def clear_all(self):
-        self.scoreboard.ClearScore()
-        self.scoreboard.scoreColumn.findChild(
+    def clear_all(self, scoreboard):
+        self.scoreboard.GetScoreboard(scoreboard).ClearScore()
+        self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
-        self.scoreboard.playerNumber.setValue(1)
-        self.scoreboard.charNumber.setValue(1)
-        self.scoreboard.CommandClearAll()
+        self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(1)
+        self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(1)
+        self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
         return "OK"
 
-    def load_set(self, set=None):
+    def load_set(self, scoreboard, set=None):
         if set is not None:
             if not isinstance(set, str):
                 set = '0'
-            self.scoreboard.signals.NewSetSelected.emit(
+            self.scoreboard.GetScoreboard(scoreboard).signals.NewSetSelected.emit(
                 json.loads(
                     json.dumps({
                         'id': set,

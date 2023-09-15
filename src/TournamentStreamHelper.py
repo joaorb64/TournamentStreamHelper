@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from src.TSHWebServer import WebServer
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import shutil
 import tarfile
@@ -76,10 +75,15 @@ from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHAlertNotification import TSHAlertNotification
 from .TSHPlayerDB import TSHPlayerDB
 from .Workers import *
-from .TSHScoreboardWidget import *
-from .TSHThumbnailSettingsWidget import *
+from .StateManager import StateManager
+from .SettingsManager import SettingsManager
+from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .TSHScoreboardManager import TSHScoreboardManager
+from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
+from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
+from src.TSHWebServer import WebServer
 # autopep8: on
 
 
@@ -280,10 +284,10 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
 
-        self.scoreboard = TSHScoreboardWidget()
+        self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
         self.scoreboard.setObjectName(
-            QApplication.translate("app", "Scoreboard"))
+            QApplication.translate("app", "Scoreboard Manager"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
@@ -296,8 +300,7 @@ class Window(QMainWindow):
         self.dockWidgets.append(self.stageWidget)
 
         self.webserver = WebServer(
-            parent=None, scoreboard=self.scoreboard, stageWidget=self.stageWidget)
-        StateManager.webServer = self.webserver
+            parent=None, stageWidget=self.stageWidget)
         self.webserver.start()
 
         commentary = TSHCommentaryWidget()
@@ -424,6 +427,12 @@ class Window(QMainWindow):
 
         self.optionsBt.menu().addSeparator()
 
+        action = self.optionsBt.menu().addAction(
+            QApplication.translate("app", "Migrate Layout"))
+        action.triggered.connect(self.MigrateWindow)
+
+        self.optionsBt.menu().addSeparator()
+
         languageSelect = QMenu(QApplication.translate(
             "app", "Program Language") + menu_margin, self.optionsBt.menu())
         self.optionsBt.menu().addMenu(languageSelect)
@@ -520,7 +529,6 @@ class Window(QMainWindow):
         self.optionsBt.menu().addSeparator()
 
         # Help menu code
-
         help_messagebox = QMessageBox()
         help_messagebox.setWindowTitle(
             QApplication.translate("app", "Warning"))
@@ -577,6 +585,10 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/info.svg'))
         action.triggered.connect(lambda: self.aboutWidget.show())
 
+        # Game Select and Scoreboard Count
+        hbox = QHBoxLayout()
+        group_box.layout().addLayout(hbox)
+
         self.gameSelect = QComboBox()
         self.gameSelect.setEditable(True)
         self.gameSelect.completer().setFilterMode(Qt.MatchFlag.MatchContains)
@@ -603,7 +615,32 @@ class Window(QMainWindow):
             self.SetGame)
 
         pre_base_layout.addLayout(base_layout)
-        group_box.layout().addWidget(self.gameSelect)
+        hbox.addWidget(self.gameSelect)
+
+        self.scoreboardAmount = QSpinBox()
+        self.scoreboardAmount.setMaximumWidth(100)
+        self.scoreboardAmount.setMinimum(1)
+        self.scoreboardAmount.setMaximum(10)
+
+        self.scoreboardAmount.valueChanged.connect(
+            lambda val: 
+            TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.emit(val)
+        )
+
+        label_margin = " "*18
+        label = QLabel(label_margin + QApplication.translate("app", "Number of Scoreboards"))
+        label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+
+        self.btLoadModifyTabName = QPushButton(
+            QApplication.translate("app", "Modify Tab Name"))
+        self.btLoadModifyTabName.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.btLoadModifyTabName.clicked.connect(self.ChangeTab)
+
+        hbox.addWidget(label)
+        hbox.addWidget(self.scoreboardAmount)
+        hbox.addWidget(self.btLoadModifyTabName)
+
+        TSHScoreboardManager.instance.UpdateAmount(1)
 
         self.CheckForUpdates(True)
         self.ReloadGames()
@@ -859,3 +896,102 @@ class Window(QMainWindow):
             qdarktheme.setup_theme("light")
         else:
             qdarktheme.setup_theme()
+    
+    def ChangeTab(self):
+        tabNameWindow = QDialog(self)
+        tabNameWindow.setWindowTitle(
+            QApplication.translate("app", "Change Tab Title"))
+        tabNameWindow.setMinimumWidth(400)
+        vbox = QVBoxLayout()
+        tabNameWindow.setLayout(vbox)
+        hbox = QHBoxLayout()
+        label = QLabel(QApplication.translate("app", "Scoreboard Number"))
+        number = QSpinBox()
+        number.setMinimum(1)
+        number.setMaximum(TSHScoreboardManager.instance.GetTabAmount())
+        hbox.addWidget(label)
+        hbox.addWidget(number)
+        vbox.addLayout(hbox)
+        name = QLineEdit()
+        vbox.addWidget(name)
+
+        setSelection = QPushButton(text=QApplication.translate("app", "Set Tab Title"))
+        def UpdateTabName():
+            TSHScoreboardManager.instance.SetTabName(number.value(), name.text())
+            tabNameWindow.close()
+        
+        setSelection.clicked.connect(UpdateTabName)
+
+        vbox.addWidget(setSelection)
+
+        tabNameWindow.show()
+    
+    def MigrateWindow(self):
+        migrateWindow = QDialog(self)
+        migrateWindow.setWindowTitle(
+            QApplication.translate("app", "Migrate Scoreboard Layout"))
+        migrateWindow.setMinimumWidth(800)
+        vbox = QVBoxLayout()
+        migrateWindow.setLayout(vbox)
+        hbox = QHBoxLayout()
+        label = QLabel(QApplication.translate("app", "File Path"))
+        filePath = QLineEdit()
+        fileExplorer = QPushButton(text=QApplication.translate("app", "Find File..."))
+        hbox.addWidget(label)
+        hbox.addWidget(filePath)
+        hbox.addWidget(fileExplorer)
+        vbox.addLayout(hbox)
+
+        migrate = QPushButton(text=QApplication.translate("app", "Migrate Layout"))
+
+        def open_dialog():
+            fname, _ok = QFileDialog.getOpenFileName(
+                migrateWindow,
+                "Open Layout Javascript File",
+                os.getcwd(),
+                "Javascript File (*.js)",
+            )
+            if fname:
+                filePath.setText(str(fname))
+        
+        fileExplorer.clicked.connect(open_dialog)
+
+        def MigrateLayout():
+            data = None
+            with open(filePath.text(), 'r') as file:
+                data = file.read()
+            
+                data = data.replace("data.score.", "data.score[1].")
+                data = data.replace("oldData.score.", "oldData.score[1].")
+                data = data.replace("_.get(data, \"score.stage_strike."
+                                    , "_.get(data, \"score.1.stage_strike.")
+                data = data.replace("_.get(oldData, \"score.stage_strike."
+                                    , "_.get(oldData, \"score.1.stage_strike.")
+                data = data.replace("source: `score.team.${t + 1}`"
+                                    , "source: `score.1.team.${t + 1}`")
+                data = data.replace("data.score[1].ruleset", "data.score.ruleset")
+            
+            with open(filePath.text(), 'w') as file:
+                file.write(data)
+            
+            logger.info("Completed Layout Migration at: " + filePath.text())
+
+            completeDialog = QDialog(migrateWindow)
+            completeDialog.setWindowTitle(
+            QApplication.translate("app", "Migration Complete"))
+            completeDialog.setMinimumWidth(500)
+            vbox2 = QVBoxLayout()
+            completeDialog.setLayout(vbox2)
+            completeText = QLabel(QApplication.translate("app", "Layout Migration has completed!"))
+            completeText.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            closeButton = QPushButton(text=QApplication.translate("app", "Close Window"))
+            vbox2.addWidget(completeText)
+            vbox2.addWidget(closeButton)
+            closeButton.clicked.connect(completeDialog.close)
+            completeDialog.show()
+        
+        migrate.clicked.connect(MigrateLayout)
+
+        vbox.addWidget(migrate)
+
+        migrateWindow.show()
