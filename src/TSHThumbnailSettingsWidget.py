@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 import os
 from loguru import logger
+import traceback
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *
@@ -173,7 +174,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 config["filename"] = t
                 self.templates.append(config)
             except Exception as e:
-                logger.error(e)
+                logger.error(traceback.format_exc()) 
 
         for t in self.templates:
             self.templateSelect.addItem(
@@ -811,7 +812,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.GeneratePreview()
         except Exception as e:
             logger.error("Error saving font")
-            logger.error(e)
+            logger.error(traceback.format_exc()) 
 
     def ColorPicker(self, button, key):
         try:
@@ -822,13 +823,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.SaveSettings(f"{key}", val=color)
                 self.updateFromSettings()
         except Exception as e:
-            logger.error(e)
+            logger.error(traceback.format_exc()) 
 
     def SaveSettings(self, key, val, generatePreview=False):
         try:
             SettingsManager.Set(f"thumbnail_config.{key}", val)
         except Exception as e:
-            logger.error(e)
+            logger.error(traceback.format_exc()) 
 
         if generatePreview:
             self.GeneratePreview()
@@ -921,7 +922,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 pass
 
     def DisplayErrorMessage(self, e):
-        logger.error(e)
+        logger.error(traceback.format_exc()) 
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle(QApplication.translate(

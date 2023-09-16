@@ -10,6 +10,7 @@ import json
 from loguru import logger
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
+import traceback
 
 import logging
 log = logging.getLogger('socketio.server')
@@ -45,7 +46,7 @@ class WebServer(QThread):
 
     @socketio.on_error_default
     def ws_on_error(e):
-        logger.error(e)
+        logger.error(traceback.format_exc()) 
 
     def emit(self, event, *args, **kwargs):
         WebServer.socketio.emit(event, *args, **kwargs)

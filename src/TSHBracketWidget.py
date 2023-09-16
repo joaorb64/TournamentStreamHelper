@@ -329,7 +329,7 @@ class TSHBracketWidget(QDockWidget):
                         self.bracket.rounds[roundIndex][s].finished = _set.get(
                             "finished")
                     except Exception as e:
-                        logger.error(e)
+                        logger.error(traceback.format_exc()) 
 
             QGuiApplication.processEvents()
             self.bracket.UpdateBracket()

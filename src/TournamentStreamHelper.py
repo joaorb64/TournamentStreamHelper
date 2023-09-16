@@ -121,7 +121,7 @@ def UpdateProcedure():
         messagebox.exec()
     except Exception as e:
         # Layout folder backups failed
-        logger.error(e)
+        logger.error(traceback.format_exc()) 
 
         buttonReply = QDialog()
         buttonReply.setWindowTitle(

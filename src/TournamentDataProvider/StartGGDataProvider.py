@@ -1637,7 +1637,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 
                 page += 1
         except:
-            logger.error(traceback.format_exc)
+            logger.error(traceback.format_exc())
 
     def GetStandings(self, playerNumber, progress_callback):
         try:
