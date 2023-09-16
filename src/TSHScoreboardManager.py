@@ -63,14 +63,14 @@ class TSHScoreboardManager(QDockWidget):
             return self.scoreboardholder[0]
         
     def SetTabName(self, index, name):
-        if int(index)-1 < len(self.tabs):
+        if int(index)-1 < self.tabs.count():
             self.tabs.setTabText(int(index)-1, name)
         else:
             logger.error(f"Invalid Scoreboard ID provided: {index}")
             logger.error(f"Please provide an ID between 1 and {len(self.tabs)}")
 
     def GetTabAmount(self):
-        return len(self.tabs)
+        return self.tabs.count()
 
 
 TSHScoreboardManager.instance = TSHScoreboardManager()
