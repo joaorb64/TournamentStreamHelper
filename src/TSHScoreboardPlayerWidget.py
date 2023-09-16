@@ -494,7 +494,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             state.lineEdit().setFont(QFont(state.font().family(), 9))
 
         except Exception as e:
-            logger.error(e)
+            logger.error(traceback.format_exc()) 
             exit()
 
     def LoadStates(self, index):

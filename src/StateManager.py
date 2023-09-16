@@ -39,7 +39,7 @@ class StateManager:
                 if StateManager.webServer is not None:
                     StateManager.webServer.emit('program_state', StateManager.state)
             except Exception as e:
-                logger.error(e)
+                logger.error(traceback.format_exc()) 
 
             with StateManager.lock:
                 StateManager.threads = []

@@ -121,7 +121,7 @@ def UpdateProcedure():
         messagebox.exec()
     except Exception as e:
         # Layout folder backups failed
-        logger.error(e)
+        logger.error(traceback.format_exc()) 
 
         buttonReply = QDialog()
         buttonReply.setWindowTitle(
@@ -947,9 +947,9 @@ class Window(QMainWindow):
         def open_dialog():
             fname, _ok = QFileDialog.getOpenFileName(
                 migrateWindow,
-                "Open Layout Javascript File",
+                QApplication.translate("app", "Open Layout Javascript File"),
                 os.getcwd(),
-                "Javascript File (*.js)",
+                QApplication.translate("app", "Javascript File") + "  (*.js)",
             )
             if fname:
                 filePath.setText(str(fname))

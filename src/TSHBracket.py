@@ -1,6 +1,7 @@
 import math
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from loguru import logger
+import traceback
 
 class BracketSet():
     BYE = -1
@@ -135,7 +136,7 @@ class Bracket():
                         if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
                         _set.winNextSlot = targetIdW
                     except Exception as e:
-                        logger.error(e)
+                        logger.error(traceback.format_exc()) 
                     try:
                         if abs(roundNum)%4 == 0:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)+j)%len(round)]
@@ -153,7 +154,7 @@ class Bracket():
                         
                         _set.loseNextSlot = targetIdL
                     except Exception as e:
-                        logger.error(e)
+                        logger.error(traceback.format_exc()) 
             else:
                 for j, _set in enumerate(round):
                     try:
@@ -165,7 +166,7 @@ class Bracket():
                         if int(k) < 0 and abs(int(k))%2 == 1: targetIdW = 1
                         _set.winNextSlot = targetIdW
                     except Exception as e:
-                        logger.error(e)
+                        logger.error(traceback.format_exc()) 
         
         # Connect losers to winners for grand finals
         lastLosers = min([int(r) for r in self.rounds.keys()])

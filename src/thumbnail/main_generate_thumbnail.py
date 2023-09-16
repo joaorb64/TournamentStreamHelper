@@ -577,7 +577,7 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         try:
             current_team = find(f"score.{scoreboardNumber}.team.{team_index}.player", data)
         except Exception as e:
-            logger.error(e) 
+            logger.error(traceback.format_exc()) 
             return
         
         for player_key in current_team.keys():

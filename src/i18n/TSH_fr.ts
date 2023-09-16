@@ -702,7 +702,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="75"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
         <location filename="../TournamentStreamHelper.py" line="266"/>
         <source>Thumbnail Settings</source>
         <translation>Paramètres de la miniature</translation>
@@ -716,12 +716,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="282"/>
         <source>Tournament Info</source>
         <translation>Info Tournoi</translation>
-    </message>
-    <message>
-        <location filename="../TSHScoreboardManager.py" line="24"/>
-        <location filename="../TournamentStreamHelper.py" line="290"/>
-        <source>Scoreboard Manager</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardManager.py" line="50"/>
@@ -840,10 +834,16 @@ p, li { white-space: pre-wrap; }
         <translation>Le programme va maintenant se fermer.</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardManager.py" line="24"/>
+        <location filename="../TournamentStreamHelper.py" line="290"/>
+        <source>Scoreboard Manager</source>
+        <translation>Tableaux des scores</translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="431"/>
         <location filename="../TournamentStreamHelper.py" line="945"/>
         <source>Migrate Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Migrer des graphismes externes</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="436"/>
@@ -876,12 +876,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="631"/>
         <source>Number of Scoreboards</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de tableaux des scores</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="635"/>
         <source>Modify Tab Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer un tableau</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="775"/>
@@ -985,47 +985,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="903"/>
         <source>Change Tab Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier le nom d’un tableau des scores</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="908"/>
         <source>Scoreboard Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numéro du tableau des scores</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="918"/>
         <source>Set Tab Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier le nom</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="932"/>
         <source>Migrate Scoreboard Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Migrer des graphismes externes (Tableau des scores)</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="937"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin du fichier</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="939"/>
         <source>Find File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Explorer</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="950"/>
+        <source>Open Layout Javascript File</source>
+        <translation>Ouvrir un fichier Javascript</translation>
+    </message>
+    <message>
+        <location filename="../TournamentStreamHelper.py" line="952"/>
+        <source>Javascript File</source>
+        <translation>Fichier code source Javascript</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="981"/>
         <source>Migration Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Migration terminée</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="985"/>
         <source>Layout Migration has completed!</source>
-        <translation type="unfinished"></translation>
+        <translation>La migration a été effectuée avec succès !</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="987"/>
         <source>Close Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermer la fenêtre</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="113"/>
@@ -1257,7 +1267,7 @@ p, li { white-space: pre-wrap; }
         <translation>ÉQUIPE {0}</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="929"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <location filename="../TSHScoreboardWidget.py" line="457"/>
         <location filename="../TournamentStreamHelper.py" line="92"/>
         <location filename="../TournamentStreamHelper.py" line="128"/>
@@ -1415,22 +1425,22 @@ p, li { white-space: pre-wrap; }
         <translation>Rappeler plus tard</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="843"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="844"/>
         <source>Bold Italic</source>
         <translation>Gras Italique</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="841"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="842"/>
         <source>Bold</source>
         <translation>Gras</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="840"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="841"/>
         <source>Regular</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="842"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="843"/>
         <source>Italic</source>
         <translation>Italique</translation>
     </message>
@@ -1598,7 +1608,7 @@ p, li { white-space: pre-wrap; }
         <translation>Miniature sauvegardée sous {0}/{1}.png et {0}/{1}.jpg</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="927"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="928"/>
         <location filename="../TSHScoreboardWidget.py" line="433"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - Miniature</translation>

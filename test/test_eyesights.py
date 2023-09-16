@@ -6,7 +6,14 @@ import re
 from copy import deepcopy
 
 tested_assets = {
-    "sdb": ["full"]
+    "abaa": ["full"],
+    "arms": ["full"],
+    "en1a": ["full"],
+    "jackie": ["full"],
+    "sdbz": ["full"],
+    "sf6": ["base_files/icon", "full"],
+    "idols": ["base_files/icon", "full"],
+    "jojoasbr": ["full"]
 }
 
 main_out_path = "../out/test"
@@ -49,7 +56,7 @@ def draw_eyesight(game, asset_pack):
                     eyesight_coordinates = (eyesight_coordinates_dict.get(
                         "x"), eyesight_coordinates_dict.get("y"))
 
-                    png_image = Image.open(png_path)
+                    png_image = Image.open(png_path).convert("RGBA")
                     png_size = png_image.size
                     new_png_image = deepcopy(png_image)
                     draw = ImageDraw.Draw(new_png_image)
