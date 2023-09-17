@@ -1372,8 +1372,8 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1210"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1237"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1211"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1238"/>
         <source>Team {0}</source>
         <translation></translation>
     </message>
@@ -1550,12 +1550,12 @@ p, li { white-space: pre-wrap; }
         <translation>Thumbnail wurde erstellt:</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1345"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1347"/>
         <source>Please select a game first</source>
         <translation>Zuerst bitte ein Spiel wählen</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1350"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1352"/>
         <source>Player {0} tag missing</source>
         <translation>Spieler {0}: Name fehlt</translation>
     </message>

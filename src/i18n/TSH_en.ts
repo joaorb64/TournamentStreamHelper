@@ -1332,8 +1332,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1210"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1237"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1211"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1238"/>
         <source>Team {0}</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1541,12 +1541,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1345"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1347"/>
         <source>Please select a game first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1350"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1352"/>
         <source>Player {0} tag missing</source>
         <translation type="unfinished"></translation>
     </message>
