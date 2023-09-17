@@ -1187,54 +1187,56 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
             "smashgg_id": 0
         },
         "score": {
-            "best_of": 0,
-            "match": TSHLocaleHelper.matchNames.get("winners_final"),
-            "phase": TSHLocaleHelper.phaseNames.get("group").format("A"),
-            "team": {
-                "1": {
-                    "losers": False,
-                    "player": {
-                        "1": {
-                            "character": {
-                                "1": chars[0]["asset"],
-                                "2": chars[1]["asset"]
-                            },
-                            "country": {},
-                            "mergedName": f"{chars[0]['team']} | {chars[0]['name']}",
-                            "name": chars[0]["name"],
-                            "state": {},
-                            "team": chars[0]["team"]
-                        }
-                    },
-                    "score": 0,
-                    "teamName": QApplication.translate("app", "Team {0}").format("A")
-                },
-                "2": {
-                    "losers": False,
-                    "player": {
-                        "1": {
-                            "character": {
-                                "1": chars[2]["asset"]
-                            },
-                            "country": {},
-                            "mergedName": f"{chars[2]['team']} | {chars[2]['name']}",
-                            "name": chars[2]["name"],
-                            "state": {},
-                            "team": chars[2]["team"]
+            "1": {
+                "best_of": 0,
+                "match": TSHLocaleHelper.matchNames.get("winners_final"),
+                "phase": TSHLocaleHelper.phaseNames.get("group").format("A"),
+                "team": {
+                    "1": {
+                        "losers": False,
+                        "player": {
+                            "1": {
+                                "character": {
+                                    "1": chars[0]["asset"],
+                                    "2": chars[1]["asset"]
+                                },
+                                "country": {},
+                                "mergedName": f"{chars[0]['team']} | {chars[0]['name']}",
+                                "name": chars[0]["name"],
+                                "state": {},
+                                "team": chars[0]["team"]
+                            }
                         },
-                        "2": {
-                            "character": {
-                                "1": chars[3]["asset"]
-                            },
-                            "country": {},
-                            "mergedName": f"{chars[3]['team']} | {chars[3]['name']}",
-                            "name": chars[3]["name"],
-                            "state": {},
-                            "team": chars[3]["team"]
-                        }
+                        "score": 0,
+                        "teamName": QApplication.translate("app", "Team {0}").format("A")
                     },
-                    "score": 0,
-                    "teamName": QApplication.translate("app", "Team {0}").format("B")
+                    "2": {
+                        "losers": False,
+                        "player": {
+                            "1": {
+                                "character": {
+                                    "1": chars[2]["asset"]
+                                },
+                                "country": {},
+                                "mergedName": f"{chars[2]['team']} | {chars[2]['name']}",
+                                "name": chars[2]["name"],
+                                "state": {},
+                                "team": chars[2]["team"]
+                            },
+                            "2": {
+                                "character": {
+                                    "1": chars[3]["asset"]
+                                },
+                                "country": {},
+                                "mergedName": f"{chars[3]['team']} | {chars[3]['name']}",
+                                "name": chars[3]["name"],
+                                "state": {},
+                                "team": chars[3]["team"]
+                            }
+                        },
+                        "score": 0,
+                        "teamName": QApplication.translate("app", "Team {0}").format("B")
+                    }
                 }
             }
         }
@@ -1361,6 +1363,7 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
             game_codename = data.get("game").get("codename")
             data = createFalseData(gameAssetManager, deep_get(
                 settings, f"game.{game_codename}.asset_pack"))
+            logger.critical(data)
             used_assets = "full"
             asset_data_path = f"./assets/mock_data/mock_asset/config.json"
             zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
