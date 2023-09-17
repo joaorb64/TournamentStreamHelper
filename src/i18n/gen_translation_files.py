@@ -37,6 +37,7 @@ for out_path in output:
         out = out_file.read()
     with open(out_path, "wt", encoding='utf-8') as out_file:
         out_file.write(out.replace(' type="vanished"', ""))
+        out_file.write(out.replace('<translation></translation>', '<translation type="vanished"></translation>'))
 
 with open("src/i18n/mapping.json", 'rt', encoding='utf-8') as mapping_file:
     mapping_data = json.loads(mapping_file.read())
