@@ -1363,7 +1363,6 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
             game_codename = data.get("game").get("codename")
             data = createFalseData(gameAssetManager, deep_get(
                 settings, f"game.{game_codename}.asset_pack"))
-            logger.critical(data)
             used_assets = "full"
             asset_data_path = f"./assets/mock_data/mock_asset/config.json"
             zoom = deep_get(settings, f"game.{game_codename}.zoom", 100)/100
