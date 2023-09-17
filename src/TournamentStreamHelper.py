@@ -641,6 +641,8 @@ class Window(QMainWindow):
         hbox.addWidget(self.scoreboardAmount)
         hbox.addWidget(self.btLoadModifyTabName)
 
+        TSHScoreboardManager.instance.UpdateAmount(1)
+
         self.CheckForUpdates(True)
         self.ReloadGames()
 
