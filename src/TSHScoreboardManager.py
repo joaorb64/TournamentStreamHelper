@@ -36,8 +36,6 @@ class TSHScoreboardManager(QDockWidget):
 
         self.scoreboardholder = []
 
-        self.UpdateAmount(1)
-
     def UpdateAmount(self, amount):
         if amount > len(self.scoreboardholder):
             logger.info("Scoreboard Manager - Creating Scoreboard " + str(amount))
