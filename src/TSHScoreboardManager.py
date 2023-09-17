@@ -16,12 +16,11 @@ class TSHScoreboardManager(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
         
-        StateManager.Unset("score")
+        #StateManager.Unset("score")
 
         self.signals: TSHScoreboardManagerSignals = TSHScoreboardManagerSignals()
         logger.info("Scoreboard Manager - Initializing")
 
-        self.setWindowTitle(QApplication.translate("app", "Scoreboard Manager"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
@@ -36,6 +35,8 @@ class TSHScoreboardManager(QDockWidget):
         )
 
         self.scoreboardholder = []
+
+        self.UpdateAmount(1)
 
     def UpdateAmount(self, amount):
         if amount > len(self.scoreboardholder):
@@ -64,7 +65,11 @@ class TSHScoreboardManager(QDockWidget):
         
     def SetTabName(self, index, name):
         if int(index)-1 < self.tabs.count():
-            self.tabs.setTabText(int(index)-1, name)
+            if name != "":
+                self.tabs.setTabText(int(index)-1, name)
+            else:
+                self.tabs.setTabText(int(index)-1,
+                    QApplication.translate("app", "Scoreboard") + " " + str(index))
         else:
             logger.error(f"Invalid Scoreboard ID provided: {index}")
             logger.error(f"Please provide an ID between 1 and {len(self.tabs)}")
