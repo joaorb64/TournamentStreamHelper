@@ -35,12 +35,6 @@ class StateManager:
 
     def SaveState():
         if StateManager.saveBlocked == 0:
-            try:
-                if StateManager.webServer is not None:
-                    StateManager.webServer.emit('program_state', StateManager.state)
-            except Exception as e:
-                logger.error(traceback.format_exc()) 
-
             with StateManager.lock:
                 StateManager.threads = []
 
@@ -60,6 +54,12 @@ class StateManager:
                                 StateManager.state)
 
                 if len(diff) > 0:
+                    try:
+                        if StateManager.webServer is not None:
+                            StateManager.webServer.emit('program_state', StateManager.state)
+                    except Exception as e:
+                        logger.error(traceback.format_exc())
+
                     exportThread = threading.Thread(target=ExportAll)
                     StateManager.threads.append(exportThread)
                     exportThread.start()
