@@ -10,9 +10,6 @@ var oldData = {};
 // where the local settings have priority over global ones
 var tsh_settings = {};
 
-// Interval timer for UpdateData
-var updateDataTimer = null;
-
 // This is called once after initialization. Layouts should reimplement this function.
 var Start = async () => {
   console.log("Start(): Implement me");
@@ -64,40 +61,53 @@ async function UpdateData() {
   }
 }
 
-// Same as above, except for using SocketIO
-function UpdateData_SocketIO() {
-  // Call UpdateData initially for a quick load while
-  // connecting to SocketIO
-  UpdateData();
-
+// Gets current program state using SocketIO,
+// Dispatch "tsh_update" event if data has changed
+// This function is called in a high frequency.
+// Similar to UpdateData() except for SocketIO support
+// which requires being on HTTP/HTTPS
+async function UpdateData_SocketIO() {
   try {
-    const proto = window.location.protocol.replace('http', 'ws');
-    const socket = io(proto + '//' + window.location.host + '/', {
+    // Connect to Socket.io. Valid: websocket, webtransport, polling
+    // Python threading with Qt is weird so put in polling method if
+    // really absolutely necessary.
+    const socket = io(window.location.protocol + '//' + window.location.host + '/', {
       transports: ['websocket', 'webtransport'],
-      timeout: 5000,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 4000
+      timeout: 500,
+      reconnectionDelay: 500,
+      reconnectionDelayMax: 1500
     });
 
     socket.on('connect', () => {
       console.log('socket.io connected');
-
-      //clear timer
-      if(updateDataTimer != null) {
-        clearInterval(updateDataTimer);
-        updateDataTimer = null;
-      }
     });
 
     socket.on('disconnect', () => {
+      // call program_state.json initially in case it's a
+      // websocket issue and not with web server being gone
+      // e.g. TSH being closed
       console.log('socket.io disconnected');
+      UpdateData();
+    });
 
-      //fallback to file loading if issue with websocket
-      if(updateDataTimer == null) {
-        updateDataTimer = setInterval(async () => {
-          await UpdateData();
-        }, 64);
-      }
+    socket.io.on('reconnect', () => {
+      console.log('socket.io reconnected');
+    });
+
+    socket.io.on('reconnect_attempt', (attempt_number) => {
+      // every 1-2 seconds, it will attempt to reconnect to
+      // the websocket. before that happens, call UpdateData
+      // in case it's an issue with the websocket and not
+      // with the web server being gone
+      UpdateData();
+    });
+
+    socket.io.on('reconnect_failed', () => {
+      // reconnect_failed, if max retries are reached,
+      // will fall back to file loading program_state.json
+      setInterval(async () => {
+        await UpdateData();
+      }, 64);
     });
 
     socket.on('error', (err) => {
@@ -112,6 +122,7 @@ function UpdateData_SocketIO() {
       event.data = data;
       event.oldData = oldData;
 
+      console.log(data);
       document.dispatchEvent(event);
     });
   } catch(e) {
@@ -174,7 +185,10 @@ async function InitAll() {
       await UpdateData();
     }, 64);
   } else {
-    UpdateData_SocketIO();
+    // Call program_state.json load just in case it takes
+    // a bit to start the websocket
+    await UpdateData();
+    await UpdateData_SocketIO();
   }
 
   console.log("== Init complete ==");
