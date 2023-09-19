@@ -332,6 +332,7 @@ class Window(QMainWindow):
 
         self.webserver = WebServer(
             parent=None, stageWidget=self.stageWidget)
+        StateManager.webServer = self.webserver
         self.webserver.start()
 
         commentary = TSHCommentaryWidget()
