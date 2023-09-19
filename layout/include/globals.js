@@ -10,6 +10,9 @@ var oldData = {};
 // where the local settings have priority over global ones
 var tsh_settings = {};
 
+// Interval timer for UpdateData
+var updateDataTimer = null;
+
 // This is called once after initialization. Layouts should reimplement this function.
 var Start = async () => {
   console.log("Start(): Implement me");
@@ -61,6 +64,57 @@ async function UpdateData() {
   }
 }
 
+// Same as above, except for using SocketIO
+function UpdateData_SocketIO() {
+  try {
+    const proto = window.location.protocol.replace('http', 'ws');
+    const socket = io(proto + '//' + window.location.host + '/', {
+      transports: ['websocket', 'webtransport'],
+      timeout: 5000,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 4000
+    });
+
+    socket.on('connect', () => {
+      console.log('socket.io connected');
+
+      //clear timer
+      if(updateDataTimer != null) {
+        clearInterval(updateDataTimer);
+        updateDataTimer = null;
+      }
+    });
+
+    socket.on('disconnect', () => {
+      console.log('socket.io disconnected');
+
+      //fallback to file loading if issue with websocket
+      if(updateDataTimer == null) {
+        updateDataTimer = setInterval(async () => {
+          await UpdateData();
+        }, 64);
+      }
+    });
+
+    socket.on('error', (err) => {
+      console.log(err);
+    });
+
+    socket.on('program_state', (newData) => {
+      oldData = data;
+      data = newData;
+
+      let event = new CustomEvent("tsh_update");
+      event.data = data;
+      event.oldData = oldData;
+
+      document.dispatchEvent(event);
+    });
+  } catch(e) {
+    console.log(e);
+  }
+}
+
 // Load libraries sequentially (to respect dependencies)
 // Then call InitAll
 async function LoadEverything() {
@@ -75,6 +129,7 @@ async function LoadEverything() {
     "jquery.waitforimages.min.js",
     "color-thief.min.js",
     "assetUtils.js",
+    "socket.io.min.js",
   ];
 
   for (let i = 0; i < scripts.length; i += 1) {
@@ -110,9 +165,13 @@ async function InitAll() {
 
   await LoadKuroshiro();
 
-  setInterval(async () => {
-    await UpdateData();
-  }, 64);
+  if(window.location.protocol === 'file:') {
+    setInterval(async () => {
+      await UpdateData();
+    }, 64);
+  } else {
+    UpdateData_SocketIO();
+  }
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));
