@@ -4,7 +4,6 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from flask import Flask, send_from_directory, request
-from flask.logging import default_handler
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import json
