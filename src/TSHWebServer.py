@@ -1,9 +1,9 @@
 import os
+import traceback
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from flask import Flask, send_from_directory, request
-from flask.logging import default_handler
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import json
@@ -15,12 +15,6 @@ import traceback
 import logging
 log = logging.getLogger('socketio.server')
 log.setLevel(logging.ERROR)
-
-
-class FlaskLoguruInterceptHandler(logging.Handler):
-    def emit(self, record):
-        logger_opt = logger.opt(depth=6, exception=record.exc_info)
-        logger_opt.log(record.levelno, record.getMessage())
 
 
 class WebServer(QThread):
@@ -358,8 +352,9 @@ class WebServer(QThread):
         return send_from_directory(os.path.abspath("."), filename, as_attachment=filename.endswith(".gz"))
 
     def run(self):
-        self.app.logger.addHandler(FlaskLoguruInterceptHandler())
-        self.app.logger.removeHandler(default_handler)
-        self.socketio.run(app=self.app, host=self.host_name, port=self.port,
-                          debug=False, use_reloader=False)
+        try:
+            self.socketio.run(app=self.app, host=self.host_name, port=self.port,
+                          debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
+        except Exception as e:
+            logger.error(traceback.format_exc())
 
