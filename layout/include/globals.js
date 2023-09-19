@@ -66,6 +66,10 @@ async function UpdateData() {
 
 // Same as above, except for using SocketIO
 function UpdateData_SocketIO() {
+  // Call UpdateData initially for a quick load while
+  // connecting to SocketIO
+  UpdateData();
+
   try {
     const proto = window.location.protocol.replace('http', 'ws');
     const socket = io(proto + '//' + window.location.host + '/', {
