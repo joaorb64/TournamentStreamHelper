@@ -47,7 +47,7 @@ class BracketSetWidget(QWidget):
             name.setDisabled(True)
             self.name.append(name)
             hbox.layout().addWidget(name)
-            name.sizePolicy().setRetainSizeWhenHidden(True)
+            name.sizePolicy().setRetainSizeWhenHidden(False)
 
             score = QSpinBox()
             score.setMinimum(-1)
@@ -64,7 +64,17 @@ class BracketSetWidget(QWidget):
         self.sizePolicy().setRetainSizeWhenHidden(True)
         self.layout().setSpacing(2)
 
-        self.Update()
+        if self.bracketSet is not None:
+            hasBye = \
+                ((self.bracketSet.playerIds[0] == -1 and not self.bracketSet.playerIds[1] == -1) or
+                 (self.bracketSet.playerIds[1] == -1 and not self.bracketSet.playerIds[0] == -1))
+
+            if self.bracketSet.pos[0] < 0 and hasBye:
+                self.hide()
+            elif self.bracketSet.pos[0] > 0 and self.bracketSet.pos[0] == 1 and hasBye:
+                self.hide()
+            else:
+                self.show()
     
     def SetScore(self, id, score, updateDisplay=True):
         self.bracketSet.score[id] = score

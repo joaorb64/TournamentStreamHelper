@@ -167,7 +167,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             f"{self.path}.{element.objectName()}", element.currentData())
         self.instanceSignals.dataChanged.emit()
 
-    def CharactersChanged(self):
+    def CharactersChanged(self, includeMains=False):
         with self.dataLock:
             characters = {}
 
@@ -198,6 +198,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             StateManager.Set(
                 f"{self.path}.character", characters)
+            
+            if includeMains:
+                StateManager.Set(
+                    f"{self.path}.mains", characters)
 
     def SetLosers(self, value):
         with self.dataLock:
@@ -421,7 +425,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
 
-        self.CharactersChanged()
+        self.CharactersChanged(includeMains=True)
 
     def SwapCharacters(self, index1: int, index2: int):
         StateManager.BlockSaving()
@@ -755,6 +759,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 pronouns_file.write(playerData["pronoun"] + "\n")
                 self.pronoun_list.append(playerData["pronoun"])
                 self.pronoun_model.setStringList(self.pronoun_list)
+        
+        self.CharactersChanged(includeMains=True)
 
     def ManageSavePlayerToDBText(self):
         tag = self.GetCurrentPlayerTag()
