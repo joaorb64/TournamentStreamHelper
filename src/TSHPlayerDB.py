@@ -45,7 +45,7 @@ class TSHPlayerDB:
                                 player.get("mains", "{}"))
                         except:
                             player["mains"] = {}
-                            logger.error(traceback.format_exc())
+                            logger.error(f"No mains found for: {tag}")
 
             TSHPlayerDB.SetupModel()
         except Exception as e:
