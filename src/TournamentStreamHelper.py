@@ -724,7 +724,7 @@ class Window(QMainWindow):
                 TSHTournamentDataProvider.instance
             )
             TSHTournamentDataProvider.instance.LoadUserSet(
-                self.scoreboard, SettingsManager.Get("StartGG_user"))
+                self.scoreboard.GetScoreboard(1), SettingsManager.Get("StartGG_user"))
 
     def LoadUserSetOptionsClicked(self):
         TSHTournamentDataProvider.instance.SetUserAccount(
