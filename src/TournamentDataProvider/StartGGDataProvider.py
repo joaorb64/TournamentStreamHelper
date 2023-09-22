@@ -48,15 +48,19 @@ class StartGGDataProvider(TournamentDataProvider):
     # Queries the provided URL until a proper 200 status code has been provided back
     # 
     # This should work fine in theory unless an API restriction is added
-    def QueryRequests(self, url=None, headers=None, jsonParams=None):
+    def QueryRequests(self, url=None, type=None, headers=None, jsonParams=None, params=None):
+        if type is None:
+            type = "Post"
+        
         requestCode = 0
         data = None
         while requestCode != 200:
-            data = requests.post(
+            data = type(
                 url,
                 headers=headers,
-                json=jsonParams
-            )
+                json=jsonParams,
+                params=params
+            ) 
             requestCode = data.status_code
         
         return json.loads(data.text)
@@ -67,6 +71,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -108,6 +113,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -147,6 +153,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -188,6 +195,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -204,6 +212,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
             oldData = self.QueryRequests(
                 f"https://api.smash.gg/phase_group/{id}",
+                type=requests.get,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -256,7 +265,7 @@ class StartGGDataProvider(TournamentDataProvider):
             finalSets = {}
 
             for s in sets:
-                logger.info(s)
+                #logger.info(s)
 
                 round = int(s.get("round"))
 
@@ -374,26 +383,22 @@ class StartGGDataProvider(TournamentDataProvider):
         return finalResult
 
     def _GetMatchTasks(self, setId, progress_callback):
-        r = requests.get(
+        data = self.QueryRequests(
             f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
-            {
+            type=requests.get,
+            params={
                 "extensions": {"cacheControl": {"version": 1, "noCache": True}},
                 "cacheControl": {"version": 1, "noCache": True},
                 "Cache-Control": "no-cache",
                 "Pragma": "no-cache"
             }
         )
-        data = {}
-
-        try:
-            data = json.loads(r.text)
-        except:
-            pass
         return self.ParseMatchDataOldApi(data)
 
     def _GetMatchNewApi(self, setId, progress_callback):
         data = self.QueryRequests(
             "https://www.start.gg/api/-/gql",
+            type=requests.post,
             headers={
                 "client-version": "20",
                 'Content-Type': 'application/json'
@@ -426,6 +431,7 @@ class StartGGDataProvider(TournamentDataProvider):
             while page <= totalPages:
                 data = self.QueryRequests(
                     "https://www.start.gg/api/-/gql",
+                    type=requests.post,
                     headers={
                         "client-version": "20",
                         'Content-Type': 'application/json'
@@ -880,6 +886,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1021,6 +1028,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1069,6 +1077,7 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.info(user)
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1093,6 +1102,7 @@ class StartGGDataProvider(TournamentDataProvider):
             if sets is not None and len(sets) == 0:
                 data = self.QueryRequests(
                     "https://www.start.gg/api/-/gql",
+                    type=requests.post,
                     headers={
                         "client-version": "20",
                         'Content-Type': 'application/json'
@@ -1148,6 +1158,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1218,6 +1229,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1311,6 +1323,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1428,6 +1441,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 logger.info(str(page) + "/" + str(totalPages))
                 data = self.QueryRequests(
                     "https://www.start.gg/api/-/gql",
+                    type=requests.post,
                     headers={
                         "client-version": "20",
                         'Content-Type': 'application/json'
@@ -1580,6 +1594,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
@@ -1602,6 +1617,7 @@ class StartGGDataProvider(TournamentDataProvider):
             while page <= totalPages:
                 data = self.QueryRequests(
                     "https://www.start.gg/api/-/gql",
+                    type=requests.post,
                     headers={
                         "client-version": "20",
                         'Content-Type': 'application/json'
@@ -1633,6 +1649,7 @@ class StartGGDataProvider(TournamentDataProvider):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
+                type=requests.post,
                 headers={
                     "client-version": "20",
                     'Content-Type': 'application/json'
