@@ -79,6 +79,11 @@ body {
   width: 580px;
 }
 
+.tekken8 .player.container {
+  width: 530px;
+  height: 61px;
+}
+
 .fgc.thin .player.container {
   top: 2px;
   height: 48px;
@@ -96,6 +101,13 @@ body {
   width: 480px;
 }
 
+
+.mk1 .player.container {
+  top: 105px;
+  height: 48px;
+  width: 500px;
+}
+
 .p1.container {
   background-position: 100% 0;
   left: 380px;
@@ -110,12 +122,20 @@ body {
   left: 226px;
 }
 
+.tekken8 .p1.container {
+  left: 180px;
+}
+
 .fgc.thin .p1.container {
   left: 164px;
 }
 
 .sf6 .p1.container {
   left: 248px;
+}
+
+.mk1 .p1.container {
+  left: 350px;
 }
 
 .p2.container {
@@ -132,12 +152,20 @@ body {
   right: 226px;
 }
 
+.tekken8 .p2.container {
+  right: 180px;
+}
+
 .fgc.thin .p2.container {
   right: 164px;
 }
 
 .sf6 .p2.container {
   right: 248px;
+}
+
+.mk1 .p2.container {
+  right: 350px;
 }
 
 .thin .player.container {
@@ -184,6 +212,17 @@ body {
   border-radius: calc(var(--border-radius) / 2);
 }
 
+.mk1 .chips {
+  top: 4px;
+  height: 32px;
+}
+
+.mk1.online .chips {
+  width: 350px;
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+}
+
 .chip {
   overflow: hidden;
   border-radius: calc(var(--border-radius) / 2);
@@ -207,6 +246,15 @@ body {
   justify-content: left;
 }
 
+.mk1 .chip {
+  height: 32px;
+}
+
+.mk1.online .p1.chips {
+  left: 25px;
+  justify-content: left;
+}
+
 .p2.chips {
   flex-direction: row-reverse;
   left: 1040px;
@@ -216,6 +264,12 @@ body {
 .sf6.online .p2.chips {
   left: unset;
   right: 200px;
+  justify-content: right;
+}
+
+.mk1.online .p2.chips {
+  left: unset;
+  right: 25px;
   justify-content: right;
 }
 
@@ -237,6 +291,24 @@ body {
 }
 
 .sf6.online .p2 .seed {
+  left: unset;
+  right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.mk1.online .seed {
+  position: absolute;
+  top: 190px;
+}
+
+.mk1.online .p1 .seed {
+  left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.mk1.online .p2 .seed {
   left: unset;
   right: 0;
   border-top-right-radius: 0;
@@ -267,6 +339,17 @@ body {
   width: 130px;
 }
 
+.mk1 .chip .text:not(.text_empty) {
+  font-size: 20px;
+  height: 100%;
+}
+
+.mk1.online .seed.chip .text:not(.text_empty) {
+  margin: 0;
+  border-radius: 0;
+  width: 130px;
+}
+
 .fgc .name_twitter {
   flex-direction: row;
   justify-content: space-between;
@@ -285,6 +368,10 @@ body {
 }
 
 .sf6 .name_twitter .name {
+  width: 100%;
+  font-size: 30px;
+}
+.mk1 .name_twitter .name {
   width: 100%;
   font-size: 30px;
 }
@@ -388,6 +475,24 @@ body {
   height: 100px;
 }
 
+.fgc.thin.arms .player.container {
+  top: 55px;
+}
+
+.fgc.thin.arms .p1.container {
+  left: 110px;
+}
+
+.fgc.thin.arms .p2.container {
+  right: 110px;
+}
+
+.fgc.thin.arms .logo {
+  top: 150px;
+  width: 192px;
+  height: 108px;
+}
+
 .fgc.thin.strive .logo {
   top: 200px;
 }
@@ -400,6 +505,20 @@ body {
   width: 80px;
   height: 80px;
   top: 924px;
+}
+
+.mk1 .logo {
+  width: 80px;
+  height: 80px;
+  bottom: 90px;
+  top: unset;
+}
+
+.tekken8 .logo {
+  width: 80px;
+  height: 80px;
+  bottom: 90px;
+  top: unset;
 }
 
 .info.container {
@@ -436,6 +555,7 @@ body {
   padding: 8px 16px;
 }
 
+
 .ssbu .container.top {
   bottom: 0;
   border-bottom-right-radius: 0;
@@ -456,8 +576,17 @@ body {
   padding: 8px 16px;
 }
 
+.mk1 .info.container.top {
+  top: 160px;
+}
+
 .tekken7 .info.container.top {
   height: 48px;
+}
+
+.tekken8 .info.container.top {
+  height: 30px;
+  top: 5px;
 }
 
 .fgc.thin .info.container.top {
@@ -529,6 +658,24 @@ body {
 .bblue .info.container.bottom {
   top: 180px;
   bottom: unset;
+}
+
+.arms .info.container.bottom {
+  top: unset;
+  bottom: 20px;
+  right: 15px;
+  left: unset;
+  transform: unset;
+}
+
+.fgc.thin.arms .info.container.top {
+  top: unset;
+  bottom: 20px;
+  right: unset;
+  left: 15px;
+  transform: unset;
+  width: 280px;
+  height: 64px;
 }
 
 .icon,
