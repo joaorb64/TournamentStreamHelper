@@ -37,7 +37,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     dataLock = threading.RLock()
 
-    def __init__(self, index=0, teamNumber=0, path="", *args):
+    def __init__(self, index=0, teamNumber=0, path="", scoreboardNumber=1, *args):
         super().__init__(*args)
 
         self.instanceSignals = TSHScoreboardPlayerWidgetSignals()
@@ -46,6 +46,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.index = index
         self.teamNumber = teamNumber
+        self.scoreboardNumber = scoreboardNumber
 
         self.losers = False
 
@@ -284,7 +285,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 StateManager.Set(
                     f"{self.path}.id", id)
                 self.instanceSignals.playerId_changed.emit()
-                if self.path.startswith("score.team.1"):
+                if self.path.startswith(f"score.{self.scoreboardNumber}.team.1"):
                     self.instanceSignals.player1Id_changed.emit()
                 else:
                     self.instanceSignals.player2Id_changed.emit()

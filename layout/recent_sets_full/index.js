@@ -49,7 +49,7 @@ LoadEverything().then(() => {
           JSON.stringify(oldData.score.recent_sets) !=
             JSON.stringify(data.score.recent_sets)
         ) {
-          playersRecentSets = data.score.recent_sets;
+          playersRecentSets = data.score[scoreboardNumber].recent_sets;
 
           console.log(playersRecentSets);
 
@@ -105,8 +105,8 @@ LoadEverything().then(() => {
     }
 
     for (const [t, team] of [
-      data.score.team["1"],
-      data.score.team["2"],
+      data.score[scoreboardNumber].team["1"],
+      data.score[scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {

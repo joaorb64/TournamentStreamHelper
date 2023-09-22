@@ -48,7 +48,7 @@ LoadEverything().then(() => {
           </div>
         </div>`;
         });
-      if (Object.values(data.score.last_sets[window.PLAYER]).length > 0) {
+      if (Object.values(data.score[scoreboardNumber].last_sets[window.PLAYER]).length > 0) {
         sets_html +=
           '<div class="bracket_line"><div class="line_arrow"></div></div>';
       }

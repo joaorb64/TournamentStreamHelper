@@ -484,7 +484,10 @@ class TSHScoreboardWidget(QWidget):
     def SetPlayersPerTeam(self, number):
         while len(self.team1playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team1playerWidgets)+1, teamNumber=1, path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}')
+                index=len(self.team1playerWidgets)+1,
+                teamNumber=1,
+                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}',
+                scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
 
             self.team1column.findChild(
@@ -510,8 +513,12 @@ class TSHScoreboardWidget(QWidget):
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
-                index=len(self.team2playerWidgets)+1, teamNumber=2, path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}')
+                index=len(self.team2playerWidgets)+1,
+                teamNumber=2,
+                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
+                scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
+            
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())

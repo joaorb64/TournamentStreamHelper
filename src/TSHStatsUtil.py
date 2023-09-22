@@ -84,6 +84,7 @@ class TSHStatsUtil:
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
+            logger.info(f"Player 1 ID: {p1id}")
             if p1id:
                 TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
             else:
@@ -93,6 +94,7 @@ class TSHStatsUtil:
         # Only if 1 player on each side
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance:
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
+            logger.info(f"Player 2 ID: {p2id}")
             if p2id:
                 TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
             else:
