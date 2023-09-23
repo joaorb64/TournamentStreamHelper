@@ -49,9 +49,6 @@ class StartGGDataProvider(TournamentDataProvider):
     # 
     # This should work fine in theory unless an API restriction is added
     def QueryRequests(self, url=None, type=None, headers=None, jsonParams=None, params=None):
-        if type is None:
-            type = "Post"
-        
         requestCode = 0
         data = None
         while requestCode != 200:
