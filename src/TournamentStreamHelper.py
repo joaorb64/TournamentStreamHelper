@@ -699,6 +699,8 @@ class Window(QMainWindow):
 
         StateManager.ReleaseSaving()
 
+        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(self.ToggleTopOption)
+
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
@@ -928,6 +930,14 @@ class Window(QMainWindow):
             qdarktheme.setup_theme("light")
         else:
             qdarktheme.setup_theme()
+
+    def ToggleTopOption(self):
+        if TSHScoreboardManager.instance.GetTabAmount() > 1:
+            self.btLoadPlayerSet.setHidden(True)
+            self.btLoadPlayerSetOptions.setHidden(True)
+        else:
+            self.btLoadPlayerSet.setHidden(False)
+            self.btLoadPlayerSetOptions.setHidden(False)
     
     def ChangeTab(self):
         tabNameWindow = QDialog(self)
