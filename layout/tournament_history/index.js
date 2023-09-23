@@ -47,7 +47,7 @@ LoadEverything().then(() => {
       $(".player1_content").html(tournament_html);
 
       for (const [s, tournament] of Object.values(
-        data.score.history_sets[window.PLAYER]
+        data.score[scoreboardNumber].history_sets[window.PLAYER]
       )
         .slice(0, 6)
         .entries()) {

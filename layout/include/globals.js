@@ -180,7 +180,7 @@ async function InitAll() {
 
   await LoadKuroshiro();
 
-  if(window.location.protocol === 'file:') {
+  if(window.location.protocol === 'file:' || window.location.host === 'absolute') {
     setInterval(async () => {
       await UpdateData();
     }, 64);
