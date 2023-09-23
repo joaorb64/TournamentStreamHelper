@@ -112,6 +112,11 @@ body {
   width: 500px;
 }
 
+.pokken .player.container {
+  height: 48px;
+  width: 500px;
+}
+
 .p1.container {
   background-position: 100% 0;
   left: 380px;
@@ -146,6 +151,12 @@ body {
   left: 350px;
 }
 
+.pokken .p1.container {
+  top: unset;
+  bottom: 50px;
+  left: 205px;
+}
+
 .p2.container {
   background-position: 0 0;
   right: 380px;
@@ -178,6 +189,12 @@ body {
 
 .mk1 .p2.container {
   right: 350px;
+}
+
+.pokken .p2.container {
+  bottom: unset;
+  top: 20px;
+  right: 180px;
 }
 
 .thin .player.container {
@@ -235,6 +252,16 @@ body {
   border-radius: calc(var(--border-radius) / 2);
 }
 
+.pokken .chips {
+  height: 32px;
+}
+
+.pokken.online .chips {
+  width: 270px;
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 2);
+}
+
 .chip {
   overflow: hidden;
   border-radius: calc(var(--border-radius) / 2);
@@ -267,6 +294,17 @@ body {
   justify-content: left;
 }
 
+.pokken .chip {
+  height: 32px;
+}
+
+.pokken.online .p1.chips {
+  left: 265px;
+  top: unset;
+  bottom: 155px;
+  justify-content: left;
+}
+
 .p2.chips {
   flex-direction: row-reverse;
   left: 1040px;
@@ -282,6 +320,14 @@ body {
 .mk1.online .p2.chips {
   left: unset;
   right: 25px;
+  justify-content: right;
+}
+
+.pokken.online .p2.chips {
+  left: unset;
+  right: 227px;
+  bottom: unset;
+  top: 118px;
   justify-content: right;
 }
 
@@ -362,6 +408,17 @@ body {
   width: 130px;
 }
 
+.pokken .chip .text:not(.text_empty) {
+  font-size: 20px;
+  height: 100%;
+}
+
+.pokken.online .seed.chip .text:not(.text_empty) {
+  margin: 0;
+  border-radius: 0;
+  width: 130px;
+}
+
 .fgc .name_twitter {
   flex-direction: row;
   justify-content: space-between;
@@ -383,7 +440,13 @@ body {
   width: 100%;
   font-size: 30px;
 }
+
 .mk1 .name_twitter .name {
+  width: 100%;
+  font-size: 30px;
+}
+
+.pokken .name_twitter .name {
   width: 100%;
   font-size: 30px;
 }
@@ -526,6 +589,13 @@ body {
   top: unset;
 }
 
+.pokken .logo {
+  width: 80px;
+  height: 80px;
+  bottom: 10px;
+  top: unset;
+}
+
 .skullgirls .logo {
   width: 80px;
   height: 80px;
@@ -597,6 +667,14 @@ body {
 
 .mk1 .info.container.top {
   top: 160px;
+}
+
+.pokken .info.container.top {
+  top: unset;
+  bottom: 10px;
+  transform: unset;
+  left: unset;
+  right: 10px;
 }
 
 .skullgirls .info.container.top {
@@ -681,6 +759,13 @@ body {
 .bblue .info.container.bottom {
   top: 180px;
   bottom: unset;
+}
+
+.pokken .info.container.bottom {
+  top: 10px;
+  bottom: unset;
+  transform: unset;
+  left: 10px;
 }
 
 .arms .info.container.bottom {
