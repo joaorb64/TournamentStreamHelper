@@ -678,7 +678,10 @@ body {
 }
 
 .skullgirls .info.container.top {
-  top: 160px;
+  top: 0px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  height: 25px;
 }
 
 .tekken7 .info.container.top {
