@@ -16,7 +16,7 @@ class TSHScoreboardManager(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
         
-        #StateManager.Unset("score")
+        StateManager.Unset("score")
 
         self.signals: TSHScoreboardManagerSignals = TSHScoreboardManagerSignals()
         logger.info("Scoreboard Manager - Initializing")
@@ -39,6 +39,10 @@ class TSHScoreboardManager(QDockWidget):
     def UpdateAmount(self, amount):
         if amount > len(self.scoreboardholder):
             logger.info("Scoreboard Manager - Creating Scoreboard " + str(amount))
+
+            if int(amount)-1 == 1:
+                self.GetScoreboard(1).btLoadPlayerSet.setHidden(True)
+                self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(True)
             
             scoreboard = QWidget()
             scoreboard.setLayout(QVBoxLayout())
@@ -52,6 +56,9 @@ class TSHScoreboardManager(QDockWidget):
             self.tabs.removeTab(amount)
             self.scoreboardholder[amount].deleteLater()
             self.scoreboardholder.pop(amount)
+            if int(amount) == 1:
+                self.GetScoreboard(1).btLoadPlayerSet.setHidden(False)
+                self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(False)
             StateManager.Unset(f"score.{amount+1}")
 
     def GetScoreboard(self, number):
@@ -70,7 +77,7 @@ class TSHScoreboardManager(QDockWidget):
                     QApplication.translate("app", "Scoreboard") + " " + str(index))
         else:
             logger.error(f"Invalid Scoreboard ID provided: {index}")
-            logger.error(f"Please provide an ID between 1 and {len(self.tabs)}")
+            logger.error(f"Please provide an ID between 1 and {self.tabs.count()}")
 
     def GetTabAmount(self):
         return self.tabs.count()

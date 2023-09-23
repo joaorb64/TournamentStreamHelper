@@ -5,7 +5,7 @@ query EventEntrantsListQuery($eventSlug: String!, $videogameId: Int, $page: Int!
       id
       name
     }
-    entrants(query: {page: $page, perPage: 500}) {
+    entrants(query: {page: $page, perPage: 64}) {
       pageInfo {
         page
         total

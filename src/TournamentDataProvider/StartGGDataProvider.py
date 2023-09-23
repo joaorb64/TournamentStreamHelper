@@ -57,9 +57,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 headers=headers,
                 json=jsonParams,
                 params=params
-            ) 
+            )
             requestCode = data.status_code
-        
         return json.loads(data.text)
 
     def GetTournamentData(self, progress_callback=None):
