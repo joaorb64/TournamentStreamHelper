@@ -84,6 +84,12 @@ body {
   height: 61px;
 }
 
+.pbrave .player.container {
+  width: 622px;
+  height: 65px;
+  top: 35px;
+}
+
 .skullgirls .player.container {
   width: 535px;
 }
@@ -135,6 +141,10 @@ body {
   left: 180px;
 }
 
+.pbrave .p1.container {
+  left: 222px;
+}
+
 .skullgirls .p1.container {
   left: 235px;
 }
@@ -173,6 +183,10 @@ body {
 
 .tekken8 .p2.container {
   right: 180px;
+}
+
+.pbrave .p2.container {
+  right: 222px;
 }
 
 .skullgirls .p2.container {
@@ -610,6 +624,13 @@ body {
   top: unset;
 }
 
+.pbrave .logo {
+  width: 80px;
+  height: 80px;
+  bottom: 90px;
+  top: unset;
+}
+
 .info.container {
   left: 50%;
   padding-left: 20px;
@@ -691,6 +712,13 @@ body {
 .tekken8 .info.container.top {
   height: 30px;
   top: 5px;
+}
+
+.pbrave .info.container.top {
+  top: 0px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  height: 30px;
 }
 
 .fgc.thin .info.container.top {
