@@ -84,6 +84,10 @@ body {
   height: 61px;
 }
 
+.skullgirls .player.container {
+  width: 535px;
+}
+
 .fgc.thin .player.container {
   top: 2px;
   height: 48px;
@@ -126,6 +130,10 @@ body {
   left: 180px;
 }
 
+.skullgirls .p1.container {
+  left: 235px;
+}
+
 .fgc.thin .p1.container {
   left: 164px;
 }
@@ -154,6 +162,10 @@ body {
 
 .tekken8 .p2.container {
   right: 180px;
+}
+
+.skullgirls .p2.container {
+  right: 235px;
 }
 
 .fgc.thin .p2.container {
@@ -514,6 +526,13 @@ body {
   top: unset;
 }
 
+.skullgirls .logo {
+  width: 80px;
+  height: 80px;
+  bottom: 90px;
+  top: unset;
+}
+
 .tekken8 .logo {
   width: 80px;
   height: 80px;
@@ -577,6 +596,10 @@ body {
 }
 
 .mk1 .info.container.top {
+  top: 160px;
+}
+
+.skullgirls .info.container.top {
   top: 160px;
 }
 
