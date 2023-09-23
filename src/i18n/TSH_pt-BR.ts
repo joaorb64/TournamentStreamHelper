@@ -1186,31 +1186,31 @@ p, li { white-space: pre-wrap; }
         <translation>Carregar resultados do torneio</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="67"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="773"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="68"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="774"/>
         <source>Save new player</source>
         <translation>Salvar novo jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="80"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="81"/>
         <source>Delete player entry</source>
         <translation>Deletar jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="93"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="94"/>
         <source>Clear</source>
         <translation>Limpar</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="97"/>
         <location filename="../TSHSelectSetWindow.py" line="99"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="343"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="344"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1163"/>
         <source>Player {0}</source>
         <translation>Jogador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="770"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="771"/>
         <source>Update player</source>
         <translation>Atualizar jogador</translation>
     </message>
@@ -1418,8 +1418,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="204"/>
-        <location filename="../TSHScoreboardWidget.py" line="723"/>
-        <location filename="../TSHScoreboardWidget.py" line="729"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
+        <location filename="../TSHScoreboardWidget.py" line="736"/>
         <source>Load current stream set</source>
         <translation>Carregar set atual do stream</translation>
     </message>
@@ -1429,12 +1429,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gerar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="738"/>
+        <location filename="../TSHScoreboardWidget.py" line="745"/>
         <source>Load user set ({0})</source>
         <translation>Carregar set do usuário ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="742"/>
+        <location filename="../TSHScoreboardWidget.py" line="749"/>
         <source>Load user set</source>
         <translation>Carregar set do usuário</translation>
     </message>
@@ -1517,14 +1517,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="120"/>
-        <location filename="../TSHScoreboardWidget.py" line="723"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
         <location filename="../TournamentStreamHelper.py" line="711"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="121"/>
-        <location filename="../TSHScoreboardWidget.py" line="723"/>
+        <location filename="../TSHScoreboardWidget.py" line="730"/>
         <location filename="../TournamentStreamHelper.py" line="711"/>
         <source>)</source>
         <translation>)</translation>
