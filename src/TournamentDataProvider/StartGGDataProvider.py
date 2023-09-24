@@ -379,6 +379,9 @@ class StartGGDataProvider(TournamentDataProvider):
         return finalResult
 
     def _GetMatchTasks(self, setId, progress_callback):
+        if "preview" in str(setId):
+            return self.ParseMatchDataOldApi({})
+
         data = self.QueryRequests(
             f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
             type=requests.get,
@@ -963,9 +966,9 @@ class StartGGDataProvider(TournamentDataProvider):
                                 stateCode = playerData.get("state_code", "")
                                 countryData = TSHCountryHelper.countries.get(
                                     countryCode)
+                                stateData = {}
                                 if countryData:
                                     states = countryData.get("states")
-                                    stateData = {}
                                     if stateCode:
                                         stateData = states[stateCode]
 
