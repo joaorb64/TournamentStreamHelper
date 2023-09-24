@@ -20,7 +20,13 @@ log.setLevel(logging.ERROR)
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
     cors = CORS(app)
-    socketio = SocketIO(app, cors_allowed_origins='*', logger=logger, async_mode='threading')
+    socketio = SocketIO(
+        app,
+        cors_allowed_origins='*',
+        #Uncomment to enable SocketIO logging (As logging is unuseful, we'll make this a dev flag)
+        #logger=logger,
+        async_mode='threading'
+    )
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
 
