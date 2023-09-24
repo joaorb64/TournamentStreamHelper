@@ -131,15 +131,14 @@ class WebServerActions(QThread):
         return "OK"
 
     def team_scoreup(self, scoreboard, team):
-        logger.info(team)
-        if team == 1 or team == "1":
+        if str(team) == "1":
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, 1)
         else:
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, 1)
         return "OK"
 
     def team_scoredown(self, scoreboard, team):
-        if team == 1 or team == "1":
+        if str(team) == "1":
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, -1)
         else:
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
@@ -157,21 +156,15 @@ class WebServerActions(QThread):
         # Best Of argument
         # best-of=<Best Of Amount>
         if bestOf is not None:
-            if not isinstance(bestOf, int):
-                bestOf = 0
-
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
-                    json.dumps({'bestOf': bestOf})
+                    json.dumps({'bestOf': int(bestOf)})
                 )
             )
 
         # Phase argument
         # phase=<Phase Name>
         if phase is not None:
-            if not isinstance(phase, str):
-                phase = 'Pools'
-
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'tournament_phase': phase})
@@ -181,9 +174,6 @@ class WebServerActions(QThread):
         # Match argument
         # match=<Match Name>
         if match is not None:
-            if not isinstance(match, str):
-                match = 'Pools'
-
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
                     json.dumps({'round_name': match})
@@ -193,29 +183,19 @@ class WebServerActions(QThread):
         # Players argument
         # players=<Amount of Players>
         if players is not None:
-            if not isinstance(players, int):
-                players = 1
-
-            self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(players)
+            self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(int(players))
 
         # Characters argument
         # characters=<Amount of Characters>
         if characters is not None:
-            if not isinstance(characters, int):
-                characters = 1
-
-            self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(characters)
+            self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(int(characters))
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
         if losers is not None:
-            losers = bool(losers)
-            if not isinstance(team, str):
-                team = '1'
-
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 json.loads(
-                    json.dumps({'team' + team + 'losers': losers})
+                    json.dumps({'team' + str(team) + 'losers': bool(losers)})
                 )
             )
         return "OK"
@@ -264,10 +244,10 @@ class WebServerActions(QThread):
         return "OK"
 
     def stats_last_sets(self, scoreboard, player):
-        if player == 1 or player == "1":
+        if str(player) == "1":
             self.scoreboard.GetScoreboard(
                 scoreboard).stats.signals.LastSetsP1Signal.emit()
-        elif player == 2 or player == "2":
+        elif str(player) == "2":
             self.scoreboard.GetScoreboard(
                 scoreboard).stats.signals.LastSetsP2Signal.emit()
         elif player == "both":
@@ -281,10 +261,10 @@ class WebServerActions(QThread):
         return "OK"
 
     def stats_history_sets(self, scoreboard, player):
-        if player == 1 or player == "1":
+        if str(player) == "1":
             self.scoreboard.GetScoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP1Signal.emit()
-        elif player == 2 or player == "2":
+        elif str(player) == "2":
             self.scoreboard.GetScoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP2Signal.emit()
         elif player == "both":
