@@ -18,6 +18,9 @@ class TSHStatsSignals(QObject):
     PlayerHistoryStandingsP2Signal = Signal()
     UpsetFactorCalculation = Signal()
 
+    recent_sets_updated = Signal(dict)
+    last_sets_updated = Signal(dict)
+    history_sets_updated = Signal(dict)
 
 class TSHStatsUtil:
     instance: "TSHStatsUtil" = None
@@ -41,11 +44,11 @@ class TSHStatsUtil:
         self.signals.UpsetFactorCalculation.connect(
             self.GetSetUpsetFactor)
 
-        TSHTournamentDataProvider.instance.signals.history_sets_updated.connect(
+        self.signals.history_sets_updated.connect(
             self.UpdateHistorySets)
-        TSHTournamentDataProvider.instance.signals.last_sets_updated.connect(
+        self.signals.last_sets_updated.connect(
             self.UpdateLastSets)
-        TSHTournamentDataProvider.instance.signals.recent_sets_updated.connect(
+        self.signals.recent_sets_updated.connect(
             self.UpdateRecentSets)
         TSHTournamentDataProvider.instance.signals.stream_queue_loaded.connect(
             self.UpdateStreamQueue)
@@ -61,7 +64,7 @@ class TSHStatsUtil:
                     "state": "loading",
                     "sets": []
                 })
-                TSHTournamentDataProvider.instance.GetRecentSets(p1id, p2id)
+                TSHTournamentDataProvider.instance.GetRecentSets(self.signals.recent_sets_updated, p1id, p2id)
                 updated = True
 
         if not updated:
@@ -86,7 +89,7 @@ class TSHStatsUtil:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             logger.info(f"Player 1 ID: {p1id}")
             if p1id:
-                TSHTournamentDataProvider.instance.GetLastSets(p1id, "1")
+                TSHTournamentDataProvider.instance.GetLastSets(self.signals.last_sets_updated, p1id, "1")
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.1", {})
 
@@ -96,7 +99,7 @@ class TSHStatsUtil:
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             logger.info(f"Player 2 ID: {p2id}")
             if p2id:
-                TSHTournamentDataProvider.instance.GetLastSets(p2id, "2")
+                TSHTournamentDataProvider.instance.GetLastSets(self.signals.last_sets_updated, p2id, "2")
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.2", {})
 
@@ -124,7 +127,7 @@ class TSHStatsUtil:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    p1id, "1", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p1id, "1", StateManager.Get(f"game.smashgg_id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
 
@@ -134,7 +137,7 @@ class TSHStatsUtil:
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    p2id, "2", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p2id, "2", StateManager.Get(f"game.smashgg_id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
 

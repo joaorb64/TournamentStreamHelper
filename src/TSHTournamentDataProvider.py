@@ -23,15 +23,11 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_data_updated = Signal(dict)
     twitch_username_updated = Signal()
     user_updated = Signal()
-    recent_sets_updated = Signal(dict)
-    last_sets_updated = Signal(dict)
-    history_sets_updated = Signal(dict)
     get_sets_finished = Signal(list)
     tournament_phases_updated = Signal(list)
     tournament_phasegroup_updated = Signal(dict)
     game_changed = Signal(int)
     stream_queue_loaded = Signal(dict)
-
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -244,9 +240,9 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def GetRecentSets(self, id1, id2):
+    def GetRecentSets(self, callback, id1, id2):
         worker = Worker(self.provider.GetRecentSets, **{
-            "id1": id1, "id2": id2, "callback": self.signals.recent_sets_updated, "requestTime": time.time_ns()
+            "id1": id1, "id2": id2, "callback": callback, "requestTime": time.time_ns()
         })
         self.threadPool.start(worker)
 
@@ -259,25 +255,24 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def GetLastSets(self, playerId, playerNumber):
+    def GetLastSets(self, callback, playerId, playerNumber):
         worker = Worker(self.provider.GetLastSets, **{
             "playerID": playerId[0],
             "playerNumber": playerNumber,
-            "callback": self.signals.last_sets_updated
+            "callback": callback
         })
         self.threadPool.start(worker)
 
-    def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
+    def GetPlayerHistoryStandings(self, callback, playerId, playerNumber, gameType):
         worker = Worker(self.provider.GetPlayerHistoryStandings, **{
             "playerID": playerId[0],
             "playerNumber": playerNumber,
             "gameType": gameType,
-            "callback": self.signals.history_sets_updated
+            "callback": callback
         })
         self.threadPool.start(worker)
 
     def GetStreamQueue(self):
-
         worker = Worker(self.provider.GetStreamQueue)
         worker.signals.result.connect(lambda streamQueue: [
             TSHTournamentDataProvider.instance.signals.stream_queue_loaded.emit(
