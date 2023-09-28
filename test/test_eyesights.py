@@ -13,7 +13,9 @@ tested_assets = {
     "sdbz": ["full"],
     "sf6": ["base_files/icon", "full"],
     "idols": ["base_files/icon", "full"],
-    "jojoasbr": ["full"]
+    "jojoasbr": ["full"],
+    "roa": ["base_files/icon", "full"],
+    "avg2": ["full"]
 }
 
 main_out_path = "../out/test"

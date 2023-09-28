@@ -118,6 +118,10 @@ body {
   width: 500px;
 }
 
+.fgc.thin.uni2 .player.container {
+  width: 520px;
+}
+
 .pokken .player.container {
   height: 48px;
   width: 500px;
@@ -131,6 +135,10 @@ body {
 
 .fgc .p1.container {
   left: 154px;
+}
+
+.fgc.thin.uni2 .p1.container {
+  left: 250px;
 }
 
 .tekken7 .p1.container {
@@ -175,6 +183,10 @@ body {
 
 .fgc .p2.container {
   right: 154px;
+}
+
+.fgc.thin.uni2 .p2.container {
+  right: 250px;
 }
 
 .tekken7 .p2.container {
@@ -564,6 +576,10 @@ body {
   height: 100px;
 }
 
+.fgc.thin.uni2 .logo {
+  top: 160px;
+}
+
 .fgc.thin.arms .player.container {
   top: 55px;
 }
@@ -805,6 +821,11 @@ body {
   right: 15px;
   left: unset;
   transform: unset;
+}
+
+.uni2 .info.container.bottom {
+  top: unset;
+  bottom: 130px;
 }
 
 .fgc.thin.arms .info.container.top {
