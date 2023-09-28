@@ -37,7 +37,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     dataLock = threading.RLock()
 
-    def __init__(self, index=0, teamNumber=0, path="", scoreboardNumber=1, *args):
+    def __init__(self, index=0, teamNumber=0, path="", scoreboardNumber=1, customName="", *args):
         super().__init__(*args)
 
         self.instanceSignals = TSHScoreboardPlayerWidgetSignals()
@@ -47,6 +47,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.index = index
         self.teamNumber = teamNumber
         self.scoreboardNumber = scoreboardNumber
+        self.customName = customName
 
         self.losers = False
 
@@ -284,11 +285,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             if StateManager.Get(f"{self.path}.id") != id:
                 StateManager.Set(
                     f"{self.path}.id", id)
-                self.instanceSignals.playerId_changed.emit()
-                if self.path.startswith(f"score.{self.scoreboardNumber}.team.1"):
-                    self.instanceSignals.player1Id_changed.emit()
-                else:
-                    self.instanceSignals.player2Id_changed.emit()
+                if "score" in self.path:
+                    self.instanceSignals.playerId_changed.emit()
+                    if "team.1" in self.path:
+                        self.instanceSignals.player1Id_changed.emit()
+                    else:
+                        self.instanceSignals.player2Id_changed.emit()
 
     def ExportPlayerSeed(self, seed=None):
         with self.dataLock:
@@ -340,8 +342,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             StateManager.ReleaseSaving()
 
     def SetIndex(self, index: int, team: int):
-        self.findChild(QWidget, "title").setText(
-            QApplication.translate("app", "Player {0}").format(index))
+        if self.customName == "":
+            self.findChild(QWidget, "title").setText(
+                QApplication.translate("app", "Player {0}").format(index))
+        else:
+            title = self.customName + " {0}"
+            self.findChild(QWidget, "title").setText(
+                QApplication.translate("app", title).format(index))
         self.index = index
         self.teamNumber = team
 

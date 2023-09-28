@@ -510,32 +510,34 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         return ruleset
 
+    def QueryRequests(self, url=None, type=None, headers=None, jsonParams=None, params=None):
+        requestCode = 0
+        data = None
+        while requestCode != 200:
+            data = type(
+                url,
+                headers=headers,
+                json=jsonParams,
+                params=params
+            )
+            requestCode = data.status_code
+        return json.loads(data.text)
+
     def LoadStartggRulesets(self):
         try:
             class DownloadThread(QThread):
+                query = self.QueryRequests
                 def run(self):
-                    try:
-                        data = requests.get(
-                            "https://www.start.gg/api/-/gg_api./rulesets"
+                        data = self.query(
+                            "https://www.start.gg/api/-/gg_api./rulesets",
+                            type=requests.get
                         )
-                        data = json.loads(data.text)
                         rulesets = deep_get(data, "entities.ruleset")
                         open('./assets/rulesets.json',
                              'w').write(json.dumps(rulesets))
                         self.parent().startggRulesets = rulesets
                         logger.info("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()
-                    except:
-                        logger.error(traceback.format_exc())
-
-                        try:
-                            rulesets = json.loads(
-                                open('./assets/rulesets.json').read())
-                            self.parent().startggRulesets = rulesets
-                            logger.info("startgg Rulesets loaded from local file")
-                            self.parent().signals.rulesets_changed.emit()
-                        except:
-                            logger.error(traceback.format_exc())
             downloadThread = DownloadThread(self)
             downloadThread.start()
         except Exception as e:
