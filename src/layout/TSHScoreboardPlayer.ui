@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>393</width>
-    <height>267</height>
+    <height>345</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,19 +28,54 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="2" colspan="2">
-    <widget class="QLineEdit" name="real_name">
+   <item row="16" column="0" colspan="4">
+    <widget class="QGroupBox" name="characters">
      <property name="font">
       <font>
-       <pointsize>9</pointsize>
+       <pointsize>8</pointsize>
+       <bold>true</bold>
       </font>
      </property>
-     <property name="placeholderText">
-      <string>Real Name</string>
+     <property name="title">
+      <string>CHARACTERS</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout"/>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <layout class="QHBoxLayout" name="titleContainer">
+     <item>
+      <widget class="QLabel" name="title">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>PLAYER</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="nameLabel">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>SPONSOR/TAG</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="2">
+   <item row="15" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QComboBox" name="country">
@@ -92,64 +127,39 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="2" colspan="2">
-    <widget class="QLineEdit" name="pronoun">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string/>
-     </property>
-    </widget>
+   <item row="8" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLineEdit" name="twitter">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="placeholderText">
+        <string>Handle Only</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="pronoun">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="placeholderText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="2" column="2">
-    <widget class="QLabel" name="nameLabel">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>SPONSOR/TAG</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="2">
-    <widget class="QLabel" name="twitterLabel">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>TWITTER</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="2" colspan="2">
-    <widget class="QLineEdit" name="twitter">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string>Handle Only</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="2">
+   <item row="13" column="2">
     <widget class="QLabel" name="locationLabel">
      <property name="font">
       <font>
        <pointsize>8</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -158,32 +168,15 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="0" colspan="4">
-    <widget class="QGroupBox" name="characters">
+   <item row="5" column="2" colspan="2">
+    <widget class="QLineEdit" name="real_name">
      <property name="font">
       <font>
-       <pointsize>8</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <pointsize>9</pointsize>
       </font>
      </property>
-     <property name="title">
-      <string>CHARACTERS</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout"/>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QLabel" name="real_nameLabel">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>REAL NAME</string>
+     <property name="placeholderText">
+      <string>Real Name</string>
      </property>
     </widget>
    </item>
@@ -224,36 +217,44 @@
      </item>
     </layout>
    </item>
-   <item row="8" column="2">
-    <widget class="QLabel" name="pronounLabel">
+   <item row="4" column="2">
+    <widget class="QLabel" name="real_nameLabel">
      <property name="font">
       <font>
        <pointsize>8</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>PRONOUNS</string>
+      <string>REAL NAME</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <layout class="QHBoxLayout" name="titleContainer">
+   <item row="7" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLabel" name="title">
+      <widget class="QLabel" name="twitterLabel">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
+         <pointsize>8</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>PLAYER</string>
+        <string>TWITTER</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="pronounLabel">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>PRONOUNS</string>
        </property>
       </widget>
      </item>
@@ -263,8 +264,6 @@
  </widget>
  <tabstops>
   <tabstop>real_name</tabstop>
-  <tabstop>twitter</tabstop>
-  <tabstop>pronoun</tabstop>
  </tabstops>
  <resources/>
  <connections/>
