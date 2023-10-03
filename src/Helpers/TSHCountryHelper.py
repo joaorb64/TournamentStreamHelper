@@ -161,6 +161,19 @@ class TSHCountryHelper(QObject):
                                                     ][city_name] = state["state_code"]
 
             TSHCountryHelper.signals.countriesUpdated.emit()
+
+            AdditionalFlags = os.listdir("./assets/additional_flag")
+            for flag in AdditionalFlags:
+                item = QStandardItem()
+                item.setIcon(QIcon(f"./assets/additional_flag/{flag}"))
+                item.setData({
+                                "name": flag[:-4],
+                                "display_name": flag[:-4],
+                                "en_name": flag[:-4],
+                                "asset": f'./assets/additional_flag/{flag}'
+                             }, Qt.ItemDataRole.UserRole)
+                item.setData(flag[:-4], Qt.ItemDataRole.EditRole)
+                TSHCountryHelper.countryModel.appendRow(item)
         except:
             TSHCountryHelper.countries_json = {}
             logger.error(traceback.format_exc())
