@@ -162,15 +162,15 @@ class TSHCountryHelper(QObject):
 
             TSHCountryHelper.signals.countriesUpdated.emit()
 
-            AdditionalFlags = os.listdir("./assets/additional_flag")
+            AdditionalFlags = os.listdir("./user_data/additional_flag")
             for flag in AdditionalFlags:
                 item = QStandardItem()
-                item.setIcon(QIcon(f"./assets/additional_flag/{flag}"))
+                item.setIcon(QIcon(f"./user_data/additional_flag/{flag}"))
                 item.setData({
                                 "name": flag[:-4],
                                 "display_name": flag[:-4],
                                 "en_name": flag[:-4],
-                                "asset": f'./assets/additional_flag/{flag}'
+                                "asset": f'./user_data/additional_flag/{flag}'
                              }, Qt.ItemDataRole.UserRole)
                 item.setData(flag[:-4], Qt.ItemDataRole.EditRole)
                 TSHCountryHelper.countryModel.appendRow(item)
