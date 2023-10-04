@@ -101,6 +101,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataModifier import TSHTournamentDataModifier
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TSHAlertNotification import TSHAlertNotification
 from .TSHPlayerDB import TSHPlayerDB
