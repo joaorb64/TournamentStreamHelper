@@ -14,6 +14,7 @@ from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
 from .TournamentDataModifier.TournamentDataModifier import TournamentDataModifier
 from .TournamentDataModifier.StartGGDataModifier import StartGGDataModifier
+from .GamesManager import GamesManager
 import json 
 from loguru import logger
 
@@ -67,7 +68,7 @@ class TSHTournamentDataManager:
         if url is not None and "start.gg" in url:
             TSHTournamentDataManager.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-            TSHTournamentDataModifier.instance.modifier = StartGGDataModifier(
+            TSHTournamentDataManager.instance.modifier = StartGGDataModifier(
                 url, self.threadPool, self)
         elif url is not None and "challonge.com" in url:
             TSHTournamentDataManager.instance.provider = ChallongeDataProvider(
@@ -76,7 +77,7 @@ class TSHTournamentDataManager:
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataManager.instance.provider = None
-            TSHTournamentDataModifier.instance.modifier = None
+            TSHTournamentDataManager.instance.modifier = None
 
         SettingsManager.Set("TOURNAMENT_URL", url)
 
@@ -288,6 +289,25 @@ class TSHTournamentDataManager:
         worker.signals.result.connect(lambda streamQueue: [
             TSHTournamentDataManager.instance.signals.stream_queue_loaded.emit(
                 streamQueue)
+        ])
+        self.threadPool.start(worker)
+
+    # expectedMaxScore is the score at which one is supposed to win the match
+    # so if the new score of any players reaches this value the "finish set" checkbox can be checked by default
+    def ReportGame(self, window, gameManager: GamesManager, expectedMaxScore: int):
+        #Spawn a window allowing the user to report a game
+        # - Who won
+        # - Characters for both players
+        # - Stage
+        # - Whether this game was the final game (in which case the set is reported as over)
+        # The idea would be that pressing "OK" would send a modification request using the TournamentDataModifier, but also change the score in the scoreboad
+        pass
+
+    def SetSetGames(self, setId, winnerId, games):
+        worker = Worker(self.modifier.SetMatchGames, **{
+            "id": setId, "winnerId": winnerId, "gameData": games
+        })
+        worker.signals.result.connect(lambda result: [
         ])
         self.threadPool.start(worker)
 
