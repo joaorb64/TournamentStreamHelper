@@ -220,7 +220,7 @@ LoadEverything().then(() => {
             : ""
         );
 
-        let score = [data.score.score_left, data.score.score_right];
+        let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
 
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
