@@ -8,7 +8,7 @@ from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataManager
 from .SettingsManager import SettingsManager
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 import traceback
@@ -24,7 +24,7 @@ class TSHTournamentInfoWidget(QDockWidget):
 
         uic.loadUi("src/layout/TSHTournamentInfo.ui", self)
 
-        TSHTournamentDataProvider.instance.signals.tournament_data_updated.connect(
+        TSHTournamentDataManager.instance.signals.tournament_data_updated.connect(
             self.UpdateData)
 
         for widget in self.findChildren(QDateEdit):
@@ -54,7 +54,7 @@ class TSHTournamentInfoWidget(QDockWidget):
         self.btLoadInfoFromTournament: QPushButton = self.findChild(
             QPushButton, "btLoadInfoFromTournament")
         self.btLoadInfoFromTournament.clicked.connect(lambda: [
-            TSHTournamentDataProvider.instance.GetTournamentData()
+            TSHTournamentDataManager.instance.GetTournamentData()
         ])
 
         self.btClearInfo: QPushButton = self.findChild(
@@ -115,7 +115,7 @@ class TSHTournamentInfoWidget(QDockWidget):
 
     def DownloadIcon(self):
         try:
-            url = TSHTournamentDataProvider.instance.provider.GetIconURL()
+            url = TSHTournamentDataManager.instance.provider.GetIconURL()
 
             response = urllib.request.urlopen(url)
             data = response.read()

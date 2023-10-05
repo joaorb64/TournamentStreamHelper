@@ -1,4 +1,4 @@
-class TournamentDataProvider:
+class TournamentDataModifier:
     def __init__(self, url, threadpool, parent) -> None:
         self.name = ""
         self.url = url

@@ -4,7 +4,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from loguru import logger
 
-from src.TSHTournamentDataProvider import TSHTournamentDataProvider
+from src.TSHTournamentDataProvider import TSHTournamentDataManager
 
 
 class TSHSelectSetWindow(QDialog):
@@ -73,7 +73,7 @@ class TSHSelectSetWindow(QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-        TSHTournamentDataProvider.instance.signals.get_sets_finished.connect(
+        TSHTournamentDataManager.instance.signals.get_sets_finished.connect(
             self.SetSets)
 
     def eventFilter(self, obj, event):
@@ -84,7 +84,7 @@ class TSHSelectSetWindow(QDialog):
 
     def LoadSets(self):
         self.proxyModel.setSourceModel(QStandardItemModel())
-        TSHTournamentDataProvider.instance.LoadSets(
+        TSHTournamentDataManager.instance.LoadSets(
             showFinished=self.showFinished.isChecked())
 
     def SetSets(self, sets):

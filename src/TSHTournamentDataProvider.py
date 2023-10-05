@@ -6,18 +6,21 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import requests
 import threading
+
 from .SettingsManager import SettingsManager
 from .TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-import json
+from .TournamentDataModifier.TournamentDataModifier import TournamentDataModifier
+from .TournamentDataModifier.StartGGDataModifier import StartGGDataModifier
+import json 
 from loguru import logger
 
 from .Workers import Worker
 
 
-class TSHTournamentDataProviderSignals(QObject):
+class TSHTournamentDataManagerSignals(QObject):
     tournament_changed = Signal()
     entrants_updated = Signal()
     tournament_data_updated = Signal(dict)
@@ -29,12 +32,13 @@ class TSHTournamentDataProviderSignals(QObject):
     game_changed = Signal(int)
     stream_queue_loaded = Signal(dict)
 
-class TSHTournamentDataProvider:
-    instance: "TSHTournamentDataProvider" = None
+class TSHTournamentDataManager:
+    instance: "TSHTournamentDataManager" = None
 
     def __init__(self) -> None:
         self.provider: TournamentDataProvider = None
-        self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
+        self.modifier: TournamentDataModifier = None
+        self.signals: TSHTournamentDataManagerSignals = TSHTournamentDataManagerSignals()
         self.entrantsModel: QStandardItemModel = None
         self.threadPool = QThreadPool()
 
@@ -61,14 +65,18 @@ class TSHTournamentDataProvider:
             return
 
         if url is not None and "start.gg" in url:
-            TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
+            TSHTournamentDataManager.instance.provider = StartGGDataProvider(
+                url, self.threadPool, self)
+            TSHTournamentDataModifier.instance.modifier = StartGGDataModifier(
                 url, self.threadPool, self)
         elif url is not None and "challonge.com" in url:
-            TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
+            TSHTournamentDataManager.instance.provider = ChallongeDataProvider(
                 url, self.threadPool, self)
+            TSHTournamentDataManager.instance.modifier = None  
         else:
             logger.error("Unsupported provider...")
-            TSHTournamentDataProvider.instance.provider = None
+            TSHTournamentDataManager.instance.provider = None
+            TSHTournamentDataModifier.instance.modifier = None
 
         SettingsManager.Set("TOURNAMENT_URL", url)
 
@@ -76,16 +84,16 @@ class TSHTournamentDataProvider:
             self.GetTournamentData(initialLoading=initialLoading)
             self.GetTournamentPhases()
 
-            TSHTournamentDataProvider.instance.provider.GetEntrants()
-            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+            TSHTournamentDataManager.instance.provider.GetEntrants()
+            TSHTournamentDataManager.instance.signals.tournament_changed.emit()
 
-            TSHTournamentDataProvider.instance.SetGameFromProvider()
+            TSHTournamentDataManager.instance.SetGameFromProvider()
         else:
-            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({
+            TSHTournamentDataManager.instance.signals.tournament_data_updated.emit({
             })
-            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit([
+            TSHTournamentDataManager.instance.signals.tournament_phases_updated.emit([
             ])
-            TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+            TSHTournamentDataManager.instance.signals.tournament_changed.emit()
             TSHGameAssetManager.instance.LoadGameAssets(0)
 
     def SetStartggEventSlug(self, mainWindow):
@@ -143,7 +151,7 @@ class TSHTournamentDataProvider:
                     url = matches.group(0)
 
             SettingsManager.Set("TOURNAMENT_URL", url)
-            TSHTournamentDataProvider.instance.SetTournament(
+            TSHTournamentDataManager.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"))
 
         inp.deleteLater()
@@ -153,7 +161,7 @@ class TSHTournamentDataProvider:
             window, QApplication.translate("app", "Set Twitch username"), QApplication.translate("app", "Twitch Username:")+" ", QLineEdit.Normal, "")
         if okPressed:
             SettingsManager.Set("twitch_username", text)
-            TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
+            TSHTournamentDataManager.instance.signals.twitch_username_updated.emit()
 
     def SetUserAccount(self, window, startgg=False):
         providerName = "StartGG"
@@ -176,13 +184,16 @@ class TSHTournamentDataProvider:
 
         if okPressed:
             SettingsManager.Set(providerName+"_user", text)
-            TSHTournamentDataProvider.instance.signals.user_updated.emit()
+            TSHTournamentDataManager.instance.signals.user_updated.emit()
+
+    def CanModify(self):
+        return bool(self.modifier)
 
     def GetTournamentData(self, initialLoading=False):
         worker = Worker(self.provider.GetTournamentData)
         worker.signals.result.connect(lambda tournamentData: [
             tournamentData.update({"initial_load": initialLoading}),
-            TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit(
+            TSHTournamentDataManager.instance.signals.tournament_data_updated.emit(
                 tournamentData)
         ])
         self.threadPool.start(worker)
@@ -190,7 +201,7 @@ class TSHTournamentDataProvider:
     def GetTournamentPhases(self):
         worker = Worker(self.provider.GetTournamentPhases)
         worker.signals.result.connect(lambda tournamentPhases: [
-            TSHTournamentDataProvider.instance.signals.tournament_phases_updated.emit(
+            TSHTournamentDataManager.instance.signals.tournament_phases_updated.emit(
                 tournamentPhases)
         ])
         self.threadPool.start(worker)
@@ -198,7 +209,7 @@ class TSHTournamentDataProvider:
     def GetTournamentPhaseGroup(self, id):
         worker = Worker(self.provider.GetTournamentPhaseGroup, **{"id": id})
         worker.signals.result.connect(lambda phaseGroupData: [
-            TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(
+            TSHTournamentDataManager.instance.signals.tournament_phasegroup_updated.emit(
                 phaseGroupData)
         ])
         self.threadPool.start(worker)
@@ -213,7 +224,7 @@ class TSHTournamentDataProvider:
         self.threadPool.start(worker)
 
     def LoadStreamSet(self, mainWindow, streamName):
-        streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
+        streamSet = TSHTournamentDataManager.instance.provider.GetStreamMatchId(
             streamName)
 
         if not streamSet:
@@ -223,7 +234,7 @@ class TSHTournamentDataProvider:
         mainWindow.signals.NewSetSelected.emit(streamSet)
 
     def LoadUserSet(self, mainWindow, user):
-        _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)
+        _set = TSHTournamentDataManager.instance.provider.GetUserMatchId(user)
 
         if not _set:
             return
@@ -275,17 +286,17 @@ class TSHTournamentDataProvider:
     def GetStreamQueue(self):
         worker = Worker(self.provider.GetStreamQueue)
         worker.signals.result.connect(lambda streamQueue: [
-            TSHTournamentDataProvider.instance.signals.stream_queue_loaded.emit(
+            TSHTournamentDataManager.instance.signals.stream_queue_loaded.emit(
                 streamQueue)
         ])
         self.threadPool.start(worker)
 
     def UiMounted(self):
         if SettingsManager.Get("TOURNAMENT_URL"):
-            TSHTournamentDataProvider.instance.SetTournament(
+            TSHTournamentDataManager.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
-            TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
-            TSHTournamentDataProvider.instance.signals.user_updated.emit()
+            TSHTournamentDataManager.instance.signals.twitch_username_updated.emit()
+            TSHTournamentDataManager.instance.signals.user_updated.emit()
 
 
-TSHTournamentDataProvider.instance = TSHTournamentDataProvider()
+TSHTournamentDataManager.instance = TSHTournamentDataManager()

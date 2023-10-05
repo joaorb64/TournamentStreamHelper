@@ -12,7 +12,7 @@ from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataManager
 from .TSHPlayerList import TSHPlayerList
 
 
@@ -99,7 +99,7 @@ class TSHPlayerListWidget(QDockWidget):
         StateManager.ReleaseSaving()
 
     def LoadFromStandingsClicked(self):
-        TSHTournamentDataProvider.instance.GetStandings(
+        TSHTournamentDataManager.instance.GetStandings(
             self.slotNumber.value(), self.signals.UpdateData)
 
     def LoadFromStandings(self, data):

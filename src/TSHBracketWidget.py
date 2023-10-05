@@ -7,7 +7,7 @@ from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataManager
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
@@ -35,9 +35,9 @@ class TSHBracketWidget(QDockWidget):
 
         StateManager.Set("bracket", {})
 
-        TSHTournamentDataProvider.instance.signals.tournament_phases_updated.connect(
+        TSHTournamentDataManager.instance.signals.tournament_phases_updated.connect(
             self.UpdatePhases)
-        TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.connect(
+        TSHTournamentDataManager.instance.signals.tournament_phasegroup_updated.connect(
             self.UpdatePhaseGroup)
 
         self.signals = TSHBracketWidgetSignals()
@@ -113,7 +113,7 @@ class TSHBracketWidget(QDockWidget):
         updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
         self.btRefreshPhase.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
         self.btRefreshPhase.clicked.connect(lambda: [
-            TSHTournamentDataProvider.instance.GetTournamentPhases()
+            TSHTournamentDataManager.instance.GetTournamentPhases()
         ])
 
         self.btRefreshPhaseGroup: QPushButton = self.findChild(
@@ -243,7 +243,7 @@ class TSHBracketWidget(QDockWidget):
             StateManager.Set("bracket.phaseGroup", "")
 
         if self.phaseGroupSelection.currentData() != None:
-            TSHTournamentDataProvider.instance.GetTournamentPhaseGroup(
+            TSHTournamentDataManager.instance.GetTournamentPhaseGroup(
                 self.phaseGroupSelection.currentData().get("id"))
 
     def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):

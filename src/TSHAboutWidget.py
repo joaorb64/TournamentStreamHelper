@@ -7,7 +7,7 @@ from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataManager
 
 
 class TSHAboutWidget(QDialog):

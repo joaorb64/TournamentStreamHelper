@@ -10,7 +10,7 @@ from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHTournamentDataProvider import TSHTournamentDataManager
 
 
 class TSHPlayerListWidgetSignals(QObject):
@@ -57,7 +57,7 @@ class TSHPlayerList(QWidget):
             self.signals.DataChanged.emit()
 
     def LoadFromStandingsClicked(self):
-        TSHTournamentDataProvider.instance.GetStandings(
+        TSHTournamentDataManager.instance.GetStandings(
             self.slotNumber.value(), self.signals.UpdateData)
 
     def LoadFromStandings(self, data):

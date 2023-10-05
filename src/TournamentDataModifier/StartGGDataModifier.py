@@ -40,6 +40,5 @@ class StartGGDataModifier(TournamentDataModifier):
         logger.info(data)
 
 
-
-f = open("src/TournamentDataModifier/StartGGSetGamesMutation", 'r')
+f = open("src/TournamentDataModifier/StartGGSetGamesMutation.txt", 'r')
 StartGGDataModifier.SetGamesMutation = f.read()
