@@ -170,7 +170,7 @@ LoadEverything().then(() => {
 
       if (!data.score[scoreboardNumber].best_of && data.score[scoreboardNumber].match) {
         SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
-      } else if (data.score.best_of && !data.score[scoreboardNumber].match) {
+      } else if (data.score[scoreboardNumber].best_of && !data.score[scoreboardNumber].match) {
         SetInnerHtml($(".match"), data.score[scoreboardNumber].best_of_text.toUpperCase());
       } else if (savedMatch != data.score[scoreboardNumber].match) {
         SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
