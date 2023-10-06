@@ -762,7 +762,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         TSHPlayerDB.AddPlayers([playerData], overwrite=True)
 
-        if playerData["pronoun"] not in self.pronoun_list:
+        if playerData.get("pronoun") and playerData["pronoun"] not in self.pronoun_list:
             with open("./user_data/pronouns_list.txt", 'at') as pronouns_file:
                 pronouns_file.write(playerData["pronoun"] + "\n")
                 self.pronoun_list.append(playerData["pronoun"])
