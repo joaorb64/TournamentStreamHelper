@@ -19,8 +19,8 @@ LoadEverything().then(() => {
 
     if (
       !oldData.score ||
-      JSON.stringify(data.score.last_sets) !=
-        JSON.stringify(oldData.score.last_sets)
+      JSON.stringify(data.score[scoreboardNumber].last_sets) !=
+        JSON.stringify(oldData.score[scoreboardNumber].last_sets)
     ) {
       sets_html = "";
       Object.values(data.score[scoreboardNumber].last_sets[window.PLAYER])

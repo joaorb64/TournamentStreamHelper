@@ -651,6 +651,7 @@ class Window(QMainWindow):
 
         self.scoreboardAmount = QSpinBox()
         self.scoreboardAmount.setMaximumWidth(100)
+        self.scoreboardAmount.lineEdit().setReadOnly(True)
         self.scoreboardAmount.setMinimum(1)
         self.scoreboardAmount.setMaximum(10)
 
