@@ -47,7 +47,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add TSH.exe
+          git add Voidscape.exe
           git commit -m "Update EXE" -a
 
       - name: push changes
