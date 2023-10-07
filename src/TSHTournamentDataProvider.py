@@ -207,7 +207,7 @@ class TSHTournamentDataProvider:
         worker = Worker(self.provider.GetMatches, **
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
-            logger.info(data),
+            #logger.info(data),
             self.signals.get_sets_finished.emit(data)
         ])
         self.threadPool.start(worker)

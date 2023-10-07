@@ -28,14 +28,14 @@ class TSHLocaleHelper(QObject):
     countryToContinent = {}
 
     def LoadLocale():
-        settingsProgramLocale = SettingsManager.Get("program_language", None)
-        settingsExportLocale = SettingsManager.Get("game_asset_language", None)
-        settingsFgTerm = SettingsManager.Get("fg_term_language", None)
+        #settingsProgramLocale = SettingsManager.Get("program_language", None)
+        #settingsExportLocale = SettingsManager.Get("game_asset_language", None)
+        #settingsFgTerm = SettingsManager.Get("fg_term_language", None)
 
-        if settingsProgramLocale and settingsProgramLocale != "default":
-            current_locale = [settingsProgramLocale]
-        else:
-            current_locale = QtCore.QLocale().uiLanguages()
+        #if settingsProgramLocale and settingsProgramLocale != "default":
+        #    current_locale = [settingsProgramLocale]
+        #else:
+        current_locale = QtCore.QLocale().uiLanguages()
 
         logger.info("OS locale: " + str(current_locale))
 
@@ -67,15 +67,15 @@ class TSHLocaleHelper(QObject):
 
         QGuiApplication.instance().installTranslator(TSHLocaleHelper.translator)
 
-        if settingsExportLocale and settingsExportLocale != "default":
-            TSHLocaleHelper.exportLocale = settingsExportLocale
-        else:
-            TSHLocaleHelper.exportLocale = current_locale[0]
+        #if settingsExportLocale and settingsExportLocale != "default":
+        #    TSHLocaleHelper.exportLocale = settingsExportLocale
+        #else:
+        TSHLocaleHelper.exportLocale = current_locale[0]
 
-        if settingsFgTerm and settingsFgTerm != "default":
-            TSHLocaleHelper.fgTermLocale = settingsFgTerm
-        else:
-            TSHLocaleHelper.fgTermLocale = current_locale[0]
+        #if settingsFgTerm and settingsFgTerm != "default":
+        #    TSHLocaleHelper.fgTermLocale = settingsFgTerm
+        #else:
+        TSHLocaleHelper.fgTermLocale = current_locale[0]
 
     def LoadLanguages():
         try:

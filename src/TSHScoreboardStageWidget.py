@@ -322,7 +322,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                     rulesetsModel.appendRow(item)
         except:
             self.userRulesets = []
-            logger.error(traceback.format_exc())
+            logger.error("No custom rulesets found")
 
         # Load startgg rulesets
         for ruleset in self.startggRulesets:

@@ -51,26 +51,26 @@ class TSHScoreboardWidget(QWidget):
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
         self.signals.ChangeSetData.connect(self.ChangeSetData)
 
-        if self.scoreboardNumber == 1:
-            TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
-            TSHHotkeys.signals.swap_teams.connect(self.SwapTeams)
-            TSHHotkeys.signals.reset_scores.connect(self.ResetScore)
-
-            TSHHotkeys.signals.team1_score_up.connect(lambda: [
-                self.CommandScoreChange(0, 1)
-            ])
-
-            TSHHotkeys.signals.team1_score_down.connect(lambda: [
-                self.CommandScoreChange(0, -1)
-            ])
-
-            TSHHotkeys.signals.team2_score_up.connect(lambda: [
-                self.CommandScoreChange(1, 1)
-            ])
-
-            TSHHotkeys.signals.team2_score_down.connect(lambda: [
-                self.CommandScoreChange(1, -1)
-            ])
+        #if self.scoreboardNumber == 1:
+        #    TSHHotkeys.signals.load_set.connect(self.LoadSetClicked)
+        #    TSHHotkeys.signals.swap_teams.connect(self.SwapTeams)
+        #    TSHHotkeys.signals.reset_scores.connect(self.ResetScore)
+        #
+        #    TSHHotkeys.signals.team1_score_up.connect(lambda: [
+        #        self.CommandScoreChange(0, 1)
+        #    ])
+        #
+        #    TSHHotkeys.signals.team1_score_down.connect(lambda: [
+        #        self.CommandScoreChange(0, -1)
+        #    ])
+        #
+        #    TSHHotkeys.signals.team2_score_up.connect(lambda: [
+        #        self.CommandScoreChange(1, 1)
+        #    ])
+        #
+        #    TSHHotkeys.signals.team2_score_down.connect(lambda: [
+        #        self.CommandScoreChange(1, -1)
+        #    ])
 
         self.signals.CommandScoreChange.connect(self.CommandScoreChange)
         self.signals.SwapTeams.connect(self.SwapTeams)
@@ -127,13 +127,13 @@ class TSHScoreboardWidget(QWidget):
         col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         topOptions.layout().addWidget(col)
 
-        self.thumbnailBtn = QPushButton(
-            QApplication.translate("app", "Generate Thumbnail") + " ")
-        self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
-        self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
+        #self.thumbnailBtn = QPushButton(
+        #    QApplication.translate("app", "Generate Thumbnail") + " ")
+        #self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
+        #self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        #col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
         # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
-        self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
+        #self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
 
         # VISIBILITY
         col = QWidget()
@@ -222,26 +222,26 @@ class TSHScoreboardWidget(QWidget):
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
 
-        if self.scoreboardNumber <= 1:
-            self.btLoadPlayerSet = QPushButton("Load player set")
-            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
-            self.btLoadPlayerSet.setEnabled(False)
-            self.btLoadPlayerSet.clicked.connect(
-                self.signals.UserSetSelection.emit)
-            hbox.addWidget(self.btLoadPlayerSet)
-            TSHTournamentDataProvider.instance.signals.user_updated.connect(
-                self.UpdateUserSetButton)
-            TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-                self.UpdateUserSetButton)
-
-            self.btLoadPlayerSetOptions = QPushButton()
-            self.btLoadPlayerSetOptions.setSizePolicy(
-                QSizePolicy.Maximum, QSizePolicy.Maximum)
-            self.btLoadPlayerSetOptions.setIcon(
-                QIcon("./assets/icons/settings.svg"))
-            self.btLoadPlayerSetOptions.clicked.connect(
-                self.LoadUserSetOptionsClicked)
-            hbox.addWidget(self.btLoadPlayerSetOptions)
+        #if self.scoreboardNumber <= 1:
+        #    self.btLoadPlayerSet = QPushButton("Load player set")
+        #    self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
+        #    self.btLoadPlayerSet.setEnabled(False)
+        #    self.btLoadPlayerSet.clicked.connect(
+        #        self.signals.UserSetSelection.emit)
+        #    hbox.addWidget(self.btLoadPlayerSet)
+        #    TSHTournamentDataProvider.instance.signals.user_updated.connect(
+        #        self.UpdateUserSetButton)
+        #    TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+        #        self.UpdateUserSetButton)
+        #
+        #    self.btLoadPlayerSetOptions = QPushButton()
+        #    self.btLoadPlayerSetOptions.setSizePolicy(
+        #        QSizePolicy.Maximum, QSizePolicy.Maximum)
+        #    self.btLoadPlayerSetOptions.setIcon(
+        #        QIcon("./assets/icons/settings.svg"))
+        #    self.btLoadPlayerSetOptions.clicked.connect(
+        #        self.LoadUserSetOptionsClicked)
+        #    hbox.addWidget(self.btLoadPlayerSetOptions)
 
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateBottomButtons)
@@ -470,8 +470,8 @@ class TSHScoreboardWidget(QWidget):
                 QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
             self.btSelectSet.setEnabled(True)
             self.btLoadStreamSet.setEnabled(True)
-            if self.scoreboardNumber <= 1:
-                self.btLoadPlayerSet.setEnabled(True)
+            #if self.scoreboardNumber <= 1:
+            #    self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btSelectSet.setText(
                 QApplication.translate("app", "Load set"))
@@ -638,7 +638,7 @@ class TSHScoreboardWidget(QWidget):
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def NewSetSelected(self, data):
-        if not SettingsManager.Get("general.disable_autoupdate", False):
+        if not SettingsManager.Get("general.disable_autoupdate", True):
             self.StopAutoUpdate()
             self.autoUpdateTimer = QTimer()
             self.autoUpdateTimer.start(5000)
@@ -681,7 +681,7 @@ class TSHScoreboardWidget(QWidget):
                 TSHTournamentDataProvider.instance.GetMatch(
                     self, data["id"], overwrite=True)
 
-            if not SettingsManager.Get("general.disable_autoupdate", False):
+            if not SettingsManager.Get("general.disable_autoupdate", True):
                 self.autoUpdateTimer.timeout.connect(
                     lambda setId=data: self.AutoUpdate(data))
 

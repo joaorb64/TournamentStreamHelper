@@ -9,54 +9,10 @@ on:
       - fix/*
     paths-ignore:
       - 'layout/**'
+      - 'TSH.exe'
   workflow_dispatch:
 
 jobs:
-  locale_build:
-    name: Build locale files
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-20.04"]
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-        id: extract_branch
-
-      - run: |
-          sudo apt-get update
-          sudo apt-get install -y libgstreamer-plugins-base1.0-dev
-          sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
-          lrelease -version
-      - run: pip install -r dependencies/requirements.txt pyinstaller==5.12.0
-      - run: |
-          python3 src/i18n/gen_translation_files.py
-          python3 src/i18n/gen_translation_binaries.py
-
-      - run: git pull
-      - name: commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add *
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "Update locale files" -a
-          fi
-
-      - name: push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.extract_branch.outputs.branch }}
-
   build:
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
@@ -65,8 +21,6 @@ jobs:
       fail-fast: false
       matrix:
         os: ["windows-latest"]
-    needs:
-      - locale_build
 
     steps:
       - uses: actions/checkout@v3
@@ -85,8 +39,8 @@ jobs:
           chcp 65001
           set PYTHONIOENCODING=utf-8
           python scripts/gen_contributors.py
-          pyinstaller --hidden-import PyQt6.QtCore --hidden-import PyQt6.QtGui --hidden-import PyQt6.QtWidgets --hidden-import=loguru --hidden-import=engineio.async_drivers.threading main.py --onefile -w --icon assets\icons\icon.ico
-          copy dist\main.exe TSH.exe
+          pyinstaller --hidden-import PyQt6.QtCore --hidden-import PyQt6.QtGui --hidden-import PyQt6.QtWidgets --hidden-import=loguru --hidden-import=engineio.async_drivers.threading main.py --onefile -w --icon assets\icons\Hammer.ico
+          copy dist\main.exe Voidscape.exe
 
       - run: git pull
       - name: commit files
@@ -94,7 +48,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add TSH.exe
-          git commit -m "Update exe" -a
+          git commit -m "Update EXE" -a
 
       - name: push changes
         uses: ad-m/github-push-action@master

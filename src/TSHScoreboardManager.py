@@ -39,10 +39,6 @@ class TSHScoreboardManager(QDockWidget):
     def UpdateAmount(self, amount):
         if amount > len(self.scoreboardholder):
             logger.info("Scoreboard Manager - Creating Scoreboard " + str(amount))
-
-            if int(amount)-1 == 1:
-                self.GetScoreboard(1).btLoadPlayerSet.setHidden(True)
-                self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(True)
             
             scoreboard = QWidget()
             scoreboard.setLayout(QVBoxLayout())
@@ -56,9 +52,6 @@ class TSHScoreboardManager(QDockWidget):
             self.tabs.removeTab(amount)
             self.scoreboardholder[amount].deleteLater()
             self.scoreboardholder.pop(amount)
-            if int(amount) == 1:
-                self.GetScoreboard(1).btLoadPlayerSet.setHidden(False)
-                self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(False)
             StateManager.Unset(f"score.{amount+1}")
 
     def GetScoreboard(self, number):

@@ -232,7 +232,7 @@ class TSHBadWordFilter():
                     dictionary[key] = TSHBadWordFilter.CensorString(value)
 
     def Censor(value: Union[Dict, str, None], countryCode2: str = None):
-        if SettingsManager.Get("general.profanity_filter", True) != True:
+        if not SettingsManager.Get("general.profanity_filter", True):
             return value
 
         if value == None:

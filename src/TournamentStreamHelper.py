@@ -234,10 +234,10 @@ class Window(QMainWindow):
         self.signals = WindowSignals()
 
         splash = QSplashScreen(
-            QPixmap('assets/icons/icon.png').scaled(128, 128))
+            QPixmap('assets/icons/Voidscape.png').scaled(1280, 720))
         splash.show()
 
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         App.processEvents()
 
@@ -245,7 +245,7 @@ class Window(QMainWindow):
         self.savedProgramState = {}
         self.programStateDiff = {}
 
-        self.setWindowIcon(QIcon('assets/icons/icon.png'))
+        self.setWindowIcon(QIcon('assets/icons/Hammer.png'))
 
         if not os.path.exists("out/"):
             os.mkdir("out/")
@@ -274,10 +274,10 @@ class Window(QMainWindow):
             version = "?"
 
         self.setGeometry(300, 300, 800, 100)
-        self.setWindowTitle("TournamentStreamHelper v"+version)
+        self.setWindowTitle("Watch Tower - Version: "+version)
 
         self.setDockOptions(
-            QMainWindow.DockOption.AllowTabbedDocks)
+            QMainWindow.DockOption.AllowNestedDocks | QMainWindow.DockOption.AllowTabbedDocks)
 
         self.setTabPosition(
             Qt.DockWidgetArea.AllDockWidgetAreas, QTabWidget.TabPosition.North)
@@ -291,12 +291,12 @@ class Window(QMainWindow):
 
         self.dockWidgets = []
 
-        thumbnailSetting = TSHThumbnailSettingsWidget()
-        thumbnailSetting.setObjectName(
-            QApplication.translate("app", "Thumbnail Settings"))
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
-        self.dockWidgets.append(thumbnailSetting)
+        #thumbnailSetting = TSHThumbnailSettingsWidget()
+        #thumbnailSetting.setObjectName(
+        #    QApplication.translate("app", "Thumbnail Settings"))
+        #self.addDockWidget(
+        #    Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+        #self.dockWidgets.append(thumbnailSetting)
 
         bracket = TSHBracketWidget()
         bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
@@ -350,7 +350,7 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
-        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
+        #self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.scoreboard.raise_()
@@ -387,28 +387,28 @@ class Window(QMainWindow):
         hbox = QHBoxLayout()
         group_box.layout().addLayout(hbox)
 
-        self.btLoadPlayerSet = QPushButton(
-            QApplication.translate("app", "Load tournament and sets from StartGG user"))
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        hbox.addWidget(self.btLoadPlayerSet)
-
-        TSHTournamentDataProvider.instance.signals.user_updated.connect(
-            self.UpdateUserSetButton)
-        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-            self.UpdateUserSetButton)
-
-        self.btLoadPlayerSetOptions = QPushButton()
-        self.btLoadPlayerSetOptions.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadPlayerSetOptions.setIcon(
-            QIcon("./assets/icons/settings.svg"))
-        self.btLoadPlayerSetOptions.clicked.connect(
-            self.LoadUserSetOptionsClicked)
-        hbox.addWidget(self.btLoadPlayerSetOptions)
-
-        self.UpdateUserSetButton()
+        #self.btLoadPlayerSet = QPushButton(
+        #    QApplication.translate("app", "Load tournament and sets from StartGG user"))
+        #self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
+        #self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
+        #self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
+        #hbox.addWidget(self.btLoadPlayerSet)
+        #
+        #TSHTournamentDataProvider.instance.signals.user_updated.connect(
+        #    self.UpdateUserSetButton)
+        #TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+        #    self.UpdateUserSetButton)
+        #
+        #self.btLoadPlayerSetOptions = QPushButton()
+        #self.btLoadPlayerSetOptions.setSizePolicy(
+        #    QSizePolicy.Maximum, QSizePolicy.Maximum)
+        #self.btLoadPlayerSetOptions.setIcon(
+        #    QIcon("./assets/icons/settings.svg"))
+        #self.btLoadPlayerSetOptions.clicked.connect(
+        #    self.LoadUserSetOptionsClicked)
+        #hbox.addWidget(self.btLoadPlayerSetOptions)
+        #
+        #self.UpdateUserSetButton()
 
         # Settings
         menu_margin = " "*6
@@ -428,23 +428,23 @@ class Window(QMainWindow):
             QApplication.translate("app", "Always on top"))
         action.setCheckable(True)
         action.toggled.connect(self.ToggleAlwaysOnTop)
-        action = self.optionsBt.menu().addAction(
-            QApplication.translate("app", "Check for updates"))
-        self.updateAction = action
-        action.setIcon(QIcon('assets/icons/undo.svg'))
-        action.triggered.connect(self.CheckForUpdates)
+        #action = self.optionsBt.menu().addAction(
+        #    QApplication.translate("app", "Check for updates"))
+        #self.updateAction = action
+        #action.setIcon(QIcon('assets/icons/undo.svg'))
+        #action.triggered.connect(self.CheckForUpdates)
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Download assets"))
         action.setIcon(QIcon('assets/icons/download.svg'))
         action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
         self.downloadAssetsAction = action
 
-        action = self.optionsBt.menu().addAction(
-            QApplication.translate("app", "Light mode"))
-        action.setCheckable(True)
+        #action = self.optionsBt.menu().addAction(
+        #    QApplication.translate("app", "Light mode"))
+        #action.setCheckable(True)
         self.LoadTheme()
-        action.setChecked(SettingsManager.Get("light_mode", False))
-        action.toggled.connect(self.ToggleLightMode)
+        #action.setChecked(SettingsManager.Get("light_mode", False))
+        #action.toggled.connect(self.ToggleLightMode)
 
         toggleWidgets = QMenu(QApplication.translate(
             "app", "Toggle widgets") + menu_margin, self.optionsBt.menu())
@@ -452,7 +452,7 @@ class Window(QMainWindow):
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(self.stageWidget.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
-        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
+        #toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
         toggleWidgets.addAction(bracket.toggleViewAction())
@@ -675,7 +675,7 @@ class Window(QMainWindow):
 
         TSHScoreboardManager.instance.UpdateAmount(1)
 
-        self.CheckForUpdates(True)
+        #self.CheckForUpdates(True)
         self.ReloadGames()
 
         self.qtSettings = QSettings("joao_shino", "TournamentStreamHelper")
@@ -693,14 +693,14 @@ class Window(QMainWindow):
         self.settingsWindow.UiMounted()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
-        TSHAlertNotification.instance.UiMounted()
+        #TSHAlertNotification.instance.UiMounted()
         TSHAssetDownloader.instance.UiMounted()
-        TSHHotkeys.instance.UiMounted(self)
+        #TSHHotkeys.instance.UiMounted(self)
         TSHPlayerDB.LoadDB()
 
         StateManager.ReleaseSaving()
 
-        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(self.ToggleTopOption)
+        #TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(self.ToggleTopOption)
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
@@ -770,129 +770,6 @@ class Window(QMainWindow):
             self.gameSelect.setCurrentIndex(game)
             self.LoadGameAssets(game)
 
-    def CheckForUpdates(self, silent=False):
-        release = None
-        versions = None
-
-        try:
-            response = requests.get(
-                "https://api.github.com/repos/joaorb64/TournamentStreamHelper/releases/latest")
-            release = json.loads(response.text)
-        except Exception as e:
-            if silent == False:
-                messagebox = QMessageBox()
-                messagebox.setWindowTitle(
-                    QApplication.translate("app", "Warning"))
-                messagebox.setText(
-                    QApplication.translate("app", "Failed to fetch version from github:")+"\n"+str(e))
-                messagebox.exec()
-
-        try:
-            versions = json.load(
-                open('./assets/versions.json', encoding='utf-8'))
-        except Exception as e:
-            logger.error("Local version file not found")
-
-        if versions and release:
-            myVersion = versions.get("program", "0.0")
-            currVersion = release.get("tag_name", "0.0")
-
-            if silent == False:
-                if myVersion < currVersion:
-                    buttonReply = QDialog(self)
-                    buttonReply.setWindowTitle(
-                        QApplication.translate("app", "Updater"))
-                    buttonReply.setWindowModality(Qt.WindowModal)
-                    vbox = QVBoxLayout()
-                    buttonReply.setLayout(vbox)
-
-                    buttonReply.layout().addWidget(
-                        QLabel(QApplication.translate("app", "New version available:")+" "+myVersion+" → "+currVersion))
-                    buttonReply.layout().addWidget(QLabel(release["body"]))
-                    buttonReply.layout().addWidget(QLabel(
-                        QApplication.translate("app", "Update to latest version?")+"\n"+QApplication.translate("app", "NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES")))
-
-                    hbox = QHBoxLayout()
-                    vbox.addLayout(hbox)
-
-                    btUpdate = QPushButton(
-                        QApplication.translate("app", "Update"))
-                    hbox.addWidget(btUpdate)
-                    btCancel = QPushButton(
-                        QApplication.translate("app", "Cancel"))
-                    hbox.addWidget(btCancel)
-
-                    buttonReply.show()
-
-                    def Update():
-                        db = QFontDatabase()
-                        db.removeAllApplicationFonts()
-                        QFontDatabase.removeAllApplicationFonts()
-                        self.downloadDialogue = QProgressDialog(
-                            QApplication.translate("app", "Downloading update..."), QApplication.translate("app", "Cancel"), 0, 0, self)
-                        self.downloadDialogue.setWindowModality(
-                            Qt.WindowModality.WindowModal)
-                        self.downloadDialogue.show()
-
-                        def worker(progress_callback):
-                            with open("update.tar.gz", 'wb') as downloadFile:
-                                downloaded = 0
-
-                                response = urllib.request.urlopen(
-                                    release["tarball_url"])
-
-                                while (True):
-                                    chunk = response.read(1024*1024)
-
-                                    if not chunk:
-                                        break
-
-                                    downloaded += len(chunk)
-                                    downloadFile.write(chunk)
-
-                                    if self.downloadDialogue.wasCanceled():
-                                        return
-
-                                    progress_callback.emit(int(downloaded))
-                                downloadFile.close()
-
-                        def progress(downloaded):
-                            self.downloadDialogue.setLabelText(
-                                QApplication.translate("app", "Downloading update...")+" "+str(downloaded/1024/1024)+" MB")
-
-                        def finished():
-                            self.downloadDialogue.close()
-
-                            # Update procedure
-                            UpdateProcedure()
-
-                        worker = Worker(worker)
-                        worker.signals.progress.connect(progress)
-                        worker.signals.finished.connect(finished)
-                        self.threadpool.start(worker)
-
-                    btUpdate.clicked.connect(Update)
-                    btCancel.clicked.connect(lambda: buttonReply.close())
-                else:
-                    messagebox = QMessageBox()
-                    messagebox.setWindowTitle(
-                        QApplication.translate("app", "Info"))
-                    messagebox.setText(
-                        QApplication.translate("app", "You're already using the latest version"))
-                    messagebox.exec()
-            else:
-                if myVersion < currVersion:
-                    baseIcon = QPixmap(
-                        QImage("assets/icons/menu.svg").scaled(32, 32))
-                    updateIcon = QImage(
-                        "./assets/icons/update_circle.svg").scaled(12, 12)
-                    p = QPainter(baseIcon)
-                    p.drawImage(QPoint(20, 0), updateIcon)
-                    p.end()
-                    self.optionsBt.setIcon(QIcon(baseIcon))
-                    self.updateAction.setText(
-                        QApplication.translate("app", "Check for updates") + " " + QApplication.translate("punctuation", "[") + QApplication.translate("app", "Update available!") + QApplication.translate("punctuation", "]"))
-
     # Checks for asset updates after game assets are loaded
     # If updates are available, edit QAction icon
     def OnAssetUpdates(self, updates):
@@ -918,27 +795,8 @@ class Window(QMainWindow):
             self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
         self.show()
 
-    def ToggleLightMode(self, checked):
-        if checked:
-            qdarktheme.setup_theme("light")
-        else:
-            qdarktheme.setup_theme()
-
-        SettingsManager.Set("light_mode", checked)
-
     def LoadTheme(self):
-        if SettingsManager.Get("light_mode", False):
-            qdarktheme.setup_theme("light")
-        else:
-            qdarktheme.setup_theme()
-
-    def ToggleTopOption(self):
-        if TSHScoreboardManager.instance.GetTabAmount() > 1:
-            self.btLoadPlayerSet.setHidden(True)
-            self.btLoadPlayerSetOptions.setHidden(True)
-        else:
-            self.btLoadPlayerSet.setHidden(False)
-            self.btLoadPlayerSetOptions.setHidden(False)
+        qdarktheme.setup_theme()
     
     def ChangeTab(self):
         tabNameWindow = QDialog(self)

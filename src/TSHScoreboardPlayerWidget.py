@@ -157,9 +157,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         processed_line = l.replace("\n", "").strip()
                         if processed_line and processed_line not in self.pronoun_list:
                             self.pronoun_list.append(processed_line)
-            except Exception as e:
-                logger.error(f"ERROR: Did not find {file}")
-                logger.error(traceback.format_exc())
+            except Exception:
+                continue
         self.pronoun_model = QStringListModel()
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
@@ -706,9 +705,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 color_element.setCurrentIndex(int(main[1]))
                             else:
                                 color_element.setCurrentIndex(0)
-
-            if data.get("seed"):
-                StateManager.Set(f"{self.path}.seed", data.get("seed"))
         finally:
             StateManager.ReleaseSaving()
             self.dataLock.release()

@@ -59,7 +59,7 @@ class TSHSettingsWindow(QDialog):
                 "settings.disable_autoupdate", "Disable automatic set updating for the scoreboard"),
             "disable_autoupdate",
             "checkbox",
-            False
+            True
         ))
 
 
@@ -73,7 +73,7 @@ class TSHSettingsWindow(QDialog):
             QApplication.translate("settings.hotkeys", "Enable hotkeys"),
             "hotkeys_enabled",
             "checkbox",
-            True
+            False
         ))
 
         key_names = {
@@ -91,8 +91,8 @@ class TSHSettingsWindow(QDialog):
                 key_names[setting],
                 setting,
                 "hotkey",
-                value,
-                TSHHotkeys.instance.ReloadHotkeys
+                value#,
+                #TSHHotkeys.instance.ReloadHotkeys
             ))
 
         self.add_setting_widget(QApplication.translate(

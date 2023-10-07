@@ -45,15 +45,15 @@ class TSHHotkeys(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self.LoadUserHotkeys()
+        #self.LoadUserHotkeys()
 
     def UiMounted(self, parent):
         self.parent = parent
-        self.SetupHotkeys()
+        #self.SetupHotkeys()
 
-    def ReloadHotkeys(self):
-        self.LoadUserHotkeys()
-        self.SetupHotkeys()
+    #def ReloadHotkeys(self):
+    #    self.LoadUserHotkeys()
+    #    self.SetupHotkeys()
     
     def SetupHotkeys(self):
         if self.pynputListener:
