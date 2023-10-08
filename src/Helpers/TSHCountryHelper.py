@@ -178,6 +178,7 @@ class TSHCountryHelper(QObject):
                                 "name": flag[:-4],
                                 "display_name": flag[:-4],
                                 "en_name": flag[:-4],
+                                "code": flag[:-4],
                                 "asset": f'./user_data/additional_flag/{flag}'
                              }, Qt.ItemDataRole.UserRole)
                 item.setData(flag[:-4], Qt.ItemDataRole.EditRole)
