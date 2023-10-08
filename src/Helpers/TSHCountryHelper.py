@@ -2,6 +2,7 @@ import re
 import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 import requests
 import os
 import traceback
@@ -163,6 +164,13 @@ class TSHCountryHelper(QObject):
             TSHCountryHelper.signals.countriesUpdated.emit()
 
             AdditionalFlags = os.listdir("./user_data/additional_flag")
+            if AdditionalFlags:
+                separator = QStandardItem()
+                separator.setData("    " + QApplication.translate("app", "Custom Flags").upper() + "    ", Qt.ItemDataRole.EditRole)
+                separator.setEnabled(False)
+                separator.setSelectable(False)
+                TSHCountryHelper.countryModel.appendRow(separator)
+
             for flag in AdditionalFlags:
                 item = QStandardItem()
                 item.setIcon(QIcon(f"./user_data/additional_flag/{flag}"))
