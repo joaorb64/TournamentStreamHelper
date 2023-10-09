@@ -6,6 +6,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from typing import List
+from src import ScoreManager
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 
@@ -36,6 +37,8 @@ class TSHScoreboardWidget(QWidget):
         super().__init__(*args)
 
         self.scoreboardNumber = scoreboardNumber
+
+        self.scoreManager = ScoreManager()
 
         StateManager.Set(f"score.{self.scoreboardNumber}", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.1", {})
