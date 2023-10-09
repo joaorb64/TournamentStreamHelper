@@ -164,6 +164,15 @@ class TSHCountryHelper(QObject):
             TSHCountryHelper.signals.countriesUpdated.emit()
 
             AdditionalFlags = os.listdir("./user_data/additional_flag")
+
+            AdditionalFlagsFiltered = []
+            for flag in AdditionalFlags:
+                filename = os.path.basename(flag)
+                ext = filename.split(".")[-1]
+                if len(filename.removesuffix("."+ext)) >= 3: # Remove flags with less than 3 characters
+                    AdditionalFlagsFiltered.append(flag)
+            AdditionalFlags = AdditionalFlagsFiltered
+
             if AdditionalFlags:
                 separator = QStandardItem()
                 separator.setData("    " + QApplication.translate("app", "Custom Flags").upper() + "    ", Qt.ItemDataRole.EditRole)
