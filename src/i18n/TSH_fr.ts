@@ -718,8 +718,8 @@ p, li { white-space: pre-wrap; }
         <translation>Info Tournoi</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardManager.py" line="53"/>
-        <location filename="../TSHScoreboardManager.py" line="77"/>
+        <location filename="../TSHScoreboardManager.py" line="58"/>
+        <location filename="../TSHScoreboardManager.py" line="88"/>
         <source>Scoreboard</source>
         <translation>Tableau des scores</translation>
     </message>
