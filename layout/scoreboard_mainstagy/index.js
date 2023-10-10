@@ -212,7 +212,7 @@ LoadEverything().then(() => {
   async function UpdateMatch() {
     const tournamentContainer = document.querySelector(".tournament_container");
 
-    if (!(data.score.best_of || data.score.match)) {
+    if (!(data.score[scoreboardNumber].best_of || data.score[scoreboardNumber].match)) {
       tournamentContainer.classList.add("hidden");
       tournamentContainer.classList.remove("unhidden");
     } else {

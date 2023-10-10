@@ -335,10 +335,10 @@ LoadEverything().then(() => {
 
     if (
       Object.keys(oldData).length == 0 ||
-      JSON.stringify(oldData.score.team["1"].player) !=
-        JSON.stringify(data.score.team["1"].player) ||
-      JSON.stringify(oldData.score.team["2"].player) !=
-        JSON.stringify(data.score.team["2"].player)
+      JSON.stringify(oldData.score[scoreboardNumber].team["1"].player) !=
+        JSON.stringify(data.score[scoreboardNumber].team["1"].player) ||
+      JSON.stringify(oldData.score[scoreboardNumber].team["2"].player) !=
+        JSON.stringify(data.score[scoreboardNumber].team["2"].player)
     ) {
       UpdateMap();
     }

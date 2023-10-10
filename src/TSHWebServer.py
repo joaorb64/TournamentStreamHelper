@@ -145,7 +145,7 @@ class WebServer(QThread):
     # Ticks score of Team specified down by 1 point
     @app.route('/scoreboard<scoreboardNumber>-team<team>-scoredown')
     def team_scoredown(scoreboardNumber, team):
-        return WebServer.actions.team_scoredown(team)
+        return WebServer.actions.team_scoredown(scoreboardNumber, team)
 
     @socketio.on('team_scoredown')
     def ws_team_scoredown(message):

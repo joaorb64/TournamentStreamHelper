@@ -205,7 +205,7 @@ LoadEverything().then(() => {
    * The result of game 1 is held in index 0, game 2 in index 1, and so on.
    */
   function colorInBoxes() {
-    for (let i = 0; i < data.score.best_of; i++) {
+    for (let i = 0; i < data.score[scoreboardNumber].best_of; i++) {
       const redGameBox = document.querySelector(`.game${i + 1}.p1_won`);
       const blueGameBox = document.querySelector(`.game${i + 1}.p2_won`);
       const darkGameBox = document.querySelector(`.game${i + 1}.neither_won`);
@@ -372,7 +372,7 @@ function updateGameArray(
     if (p1Score < 100) {
       for (let i = 0; i < p1Score - newP1Score; i++) {
         let index = -1;
-        for (let j = 0; j < data.score.best_of; j++) {
+        for (let j = 0; j < data.score[scoreboardNumber].best_of; j++) {
           if (gameArray[j] == 1) {
             index = j; // Locate the index of the most recent win
           }
@@ -389,7 +389,7 @@ function updateGameArray(
     if (p2Score < 100) {
       for (let i = 0; i < p2Score - newP2Score; i++) {
         let index = -1;
-        for (let j = 0; j < data.score.best_of; j++) {
+        for (let j = 0; j < data.score[scoreboardNumber].best_of; j++) {
           if (gameArray[j] == 2) {
             index = j; // Locate the index of the most recent win
           }
@@ -412,7 +412,7 @@ function updateGameArray(
 function scoreBoxDisplayToggle() {
   const scoreBoxes = document.querySelector(`.score_boxes`);
 
-  if (data.score.best_of > 0) {
+  if (data.score[scoreboardNumber].best_of > 0) {
     // Show the box(es) when Best Of is greater than 0
     scoreBoxes.classList.add("unhidden");
   } else {
@@ -433,9 +433,9 @@ function createGameBoxes(savedBestOf) {
   let darkGameDivText = "";
 
   // If Best Of is not 0 and Best Of has been updated
-  if (data.score.best_of > 0 && data.score.best_of != savedBestOf) {
+  if (data.score[scoreboardNumber].best_of > 0 && data.score[scoreboardNumber].best_of != savedBestOf) {
     // The number of boxes should equal Best Of
-    for (let i = 1; i <= data.score.best_of; i++) {
+    for (let i = 1; i <= data.score[scoreboardNumber].best_of; i++) {
       gameDivText += `<div class="game${i} box">GAME ${i}</div>\n`;
       redGameDivText += `<div class="game${i} box p1_won hidden"></div>\n`;
       blueGameDivText += `<div class="game${i} box p2_won hidden"></div>\n`;
@@ -445,13 +445,13 @@ function createGameBoxes(savedBestOf) {
     SetInnerHtml($(".red.score_boxes"), redGameDivText); // Create the red game boxes
     SetInnerHtml($(".blue.score_boxes"), blueGameDivText); // Create the blue game boxes
     SetInnerHtml($(".dark.score_boxes"), darkGameDivText); // Create the dark game boxes
-  } else if (data.score.best_of === 0) {
+  } else if (data.score[scoreboardNumber].best_of === 0) {
     SetInnerHtml($(".word.score_boxes"), ""); // The game boxes with words disappear
     SetInnerHtml($(".red.score_boxes"), ""); // The red game boxes disappear
     SetInnerHtml($(".blue.score_boxes"), ""); // The blue game boxes disappear
     SetInnerHtml($(".dark.score_boxes"), ""); // The dark game boxes disappear
   }
-  savedBestOf = data.score.best_of; // The new Best Of is saved so it can be used to detect change later
+  savedBestOf = data.score[scoreboardNumber].best_of; // The new Best Of is saved so it can be used to detect change later
   return savedBestOf;
 }
 

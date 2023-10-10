@@ -54,8 +54,10 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
+                    r_json = json.loads(r.text)
+                    r_json = json.dumps(r_json, indent=2)
 
-                    open('./assets/characters.json.tmp', 'wb').write(r.content)
+                    open('./assets/characters.json.tmp', 'wt', encoding="utf-8").write(r_json)
 
                     try:
                         # Test if downloaded JSON is valid

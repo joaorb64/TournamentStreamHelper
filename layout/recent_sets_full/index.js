@@ -46,8 +46,8 @@ LoadEverything().then(() => {
       } else {
         if (
           !oldData.score ||
-          JSON.stringify(oldData.score.recent_sets) !=
-            JSON.stringify(data.score.recent_sets)
+          JSON.stringify(oldData.score[scoreboardNumber].recent_sets) !=
+            JSON.stringify(data.score[scoreboardNumber].recent_sets)
         ) {
           playersRecentSets = data.score[scoreboardNumber].recent_sets;
 
