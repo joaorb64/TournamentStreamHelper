@@ -6,7 +6,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from typing import List
-from src import ScoreManager
+from .ScoreManager import ScoreManager
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 
@@ -38,7 +38,7 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreboardNumber = scoreboardNumber
 
-        self.scoreManager = ScoreManager()
+        self.scoreManager = ScoreManager(self)
 
         StateManager.Set(f"score.{self.scoreboardNumber}", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.1", {})
@@ -352,7 +352,13 @@ class TSHScoreboardWidget(QWidget):
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
+        self.scoreContainers = [
+            self.scoreColumn.findChild(QSpinBox, "score_left"),
+            self.scoreColumn.findChild(QSpinBox, "score_right")
+        ]
+
         self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
+            #lambda value: self.scoreManager.OnScoreChanged(1, value)
             lambda value: StateManager.Set(
                 f"score.{self.scoreboardNumber}.team.1.score", value)
         )
@@ -422,6 +428,11 @@ class TSHScoreboardWidget(QWidget):
         
         if self.scoreboardNumber > 1:
             self.UpdateStreamButton()
+
+    def SetScore(self, team, score):
+        container = self.scoreContainers[team]
+        if container:
+            container.setValue(score)
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -632,8 +643,8 @@ class TSHScoreboardWidget(QWidget):
             StateManager.ReleaseSaving()
 
     def ResetScore(self):
-        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
-        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+        self.SetScore(0, 0)
+        self.SetScore(1, 0)
 
     def AutoUpdate(self, data):
         TSHTournamentDataProvider.instance.GetMatch(
@@ -768,12 +779,9 @@ class TSHScoreboardWidget(QWidget):
     # Change <team>(0, 1) score by <change>(+X, -X)
     def CommandScoreChange(self, team: int, change: int):
         if team in (0, 1):
-            scoreContainers = [
-                self.scoreColumn.findChild(QSpinBox, "score_left"),
-                self.scoreColumn.findChild(QSpinBox, "score_right")
-            ]
-            scoreContainers[team].setValue(
-                scoreContainers[team].value()+change)
+            
+            self.SetScore(team,
+                self.scoreContainers[team].value()+change)
 
     def CommandClearAll(self):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
@@ -785,8 +793,8 @@ class TSHScoreboardWidget(QWidget):
             c.setCurrentText("")
             c.lineEdit().editingFinished.emit()
 
-        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
-        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+        self.SetScore(0)
+        self.SetScore(0)
 
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
@@ -794,6 +802,9 @@ class TSHScoreboardWidget(QWidget):
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):
         StateManager.BlockSaving()
+
+        # STATEMANAGER PR : much work to do here. A lot of lines need to be changed to call ScoreManager instead of changing the State or the UI;
+        # It should also be considered that this method will most likely no longer be called when receiving data from the stage strike app
 
         try:
             if data.get("round_name"):
