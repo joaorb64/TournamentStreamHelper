@@ -101850,6 +101850,84 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2343,
+        "name": "Infernal Host",
+        "isCommon": true,
+        "videogameId": 50435,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 6178894,
+            "width": 200,
+            "height": 200,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2343/image-6a924acaeb55765597982b4ec8ccd965.png?ehk=KyucVEAHBGQP5a2ztmiwJdYNPibzdHsZN7CAP%2F9xbbk%3D&ehkOptimized=SYz7LncC0KR9aBqkyhXrrT8GJ3MQanXHNu%2Fds%2BXuUw8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 6178895,
+            "width": 200,
+            "height": 200,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2343/image-9f6c1cb933c0db19da4359a3f8ce0930.png?ehk=s2fnwZfmjY05T316FSX804IUQV4UuT6v3XEArsPCgj8%3D&ehkOptimized=aufF8XRx1GFtLA3GDkVvYwgBHfK4RYrQxzFHD01vukY%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2344,
+        "name": "Vanguard",
+        "isCommon": true,
+        "videogameId": 50435,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 6178897,
+            "width": 200,
+            "height": 200,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2344/image-25052384ad79679f2614090e9d8bf563.png?ehk=%2F%2BioQFt2hk9bBf%2Bec8zcdJ6gprwve3tP%2B4BCKellD%2Bg%3D&ehkOptimized=FTfbnOmG%2FNV2VO%2BzguN6o6JNq5eSS0dLmVeqtbX4ikk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 6178898,
+            "width": 200,
+            "height": 200,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2344/image-5ac9babde33ca82b162acc980414927a.png?ehk=IxWnSuZHjKV22cSC%2F8mPC23vm0upJt1UvRB3Zzd28Vw%3D&ehkOptimized=oKpQD5e6L%2Fyw7ebpgHM2Zqd7%2FcYpsad7eJOVCLzTUR8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -103958,7 +104036,9 @@
     2339,
     2340,
     2341,
-    2342
+    2342,
+    2343,
+    2344
   ],
   "resultEntity": "character",
   "actionRecords": []
