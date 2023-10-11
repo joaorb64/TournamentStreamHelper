@@ -801,8 +801,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardManager.py" line="53"/>
-        <location filename="../TSHScoreboardManager.py" line="77"/>
+        <location filename="../TSHScoreboardManager.py" line="58"/>
+        <location filename="../TSHScoreboardManager.py" line="88"/>
         <source>Scoreboard</source>
         <translation>Marcador</translation>
     </message>
@@ -1439,6 +1439,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTournamentInfoWidget.py" line="187"/>
         <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Helpers/TSHCountryHelper.py" line="178"/>
+        <source>Custom Flags</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

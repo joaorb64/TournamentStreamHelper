@@ -2,6 +2,7 @@ import re
 import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 import requests
 import os
 import traceback
@@ -161,6 +162,36 @@ class TSHCountryHelper(QObject):
                                                     ][city_name] = state["state_code"]
 
             TSHCountryHelper.signals.countriesUpdated.emit()
+
+            AdditionalFlags = os.listdir("./user_data/additional_flag")
+
+            AdditionalFlagsFiltered = []
+            for flag in AdditionalFlags:
+                filename = os.path.basename(flag)
+                ext = filename.split(".")[-1]
+                if len(filename.removesuffix("."+ext)) >= 3: # Remove flags with less than 3 characters
+                    AdditionalFlagsFiltered.append(flag)
+            AdditionalFlags = AdditionalFlagsFiltered
+
+            if AdditionalFlags:
+                separator = QStandardItem()
+                separator.setData("    " + QApplication.translate("app", "Custom Flags").upper() + "    ", Qt.ItemDataRole.EditRole)
+                separator.setEnabled(False)
+                separator.setSelectable(False)
+                TSHCountryHelper.countryModel.appendRow(separator)
+
+            for flag in AdditionalFlags:
+                item = QStandardItem()
+                item.setIcon(QIcon(f"./user_data/additional_flag/{flag}"))
+                item.setData({
+                                "name": flag[:-4],
+                                "display_name": flag[:-4],
+                                "en_name": flag[:-4],
+                                "code": flag[:-4],
+                                "asset": f'./user_data/additional_flag/{flag}'
+                             }, Qt.ItemDataRole.UserRole)
+                item.setData(flag[:-4], Qt.ItemDataRole.EditRole)
+                TSHCountryHelper.countryModel.appendRow(item)
         except:
             TSHCountryHelper.countries_json = {}
             logger.error(traceback.format_exc())
