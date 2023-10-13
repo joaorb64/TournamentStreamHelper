@@ -45,9 +45,6 @@ LoadEverything().then(() => {
     assignDefault(config, tsh_settings);
     assignDefault(config, window_config);
 
-
-    console.log("ONCIF", config)
-
     if (!config.display){
         config.display = {};
     }
@@ -176,8 +173,6 @@ LoadEverything().then(() => {
     Update = async (event) => {
         let data = event.data;
         let oldData = event.oldData;
-
-        console.log(config.display.stream_name)
 
         let stream = config.stream || data.currentStream || config.default_stream
         if (stream == "all") stream = null;
