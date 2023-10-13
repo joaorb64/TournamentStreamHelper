@@ -6,7 +6,6 @@ LoadEverything().then(() => {
         "stream": "",
         "default_stream" : "",
         "force_multistream" : false,
-        "display_stream_name" : "multistream",
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
@@ -15,7 +14,8 @@ LoadEverything().then(() => {
             "station" : false,
             "country_flag" : true,
             "state_flag" : true,
-            "avatar" : true
+            "avatar" : true,
+            "stream_name": "multistream"
         }
     }
     
@@ -24,19 +24,30 @@ LoadEverything().then(() => {
     }
 
     let window_config = window.config || {}
-    for (k in config){
-        if (!isDefault(window_config[k])){
-            config[k] = window_config[k]
-        } else if (!isDefault(tsh_settings[k])) {
-            config[k] = tsh_settings[k]
+
+    function assignDefault(target, source){
+        for (k in target){
+            let value = source[k]
+            if (typeof value === 'object' && value !== null){
+                let matchingObject = target[k];
+                if (typeof matchingObject != 'object'){
+                    matchingObject = value;
+                } else {
+                    assignDefault(matchingObject, value);
+                }
+            }
+            if (!isDefault(value)){
+                target[k] = value
+            }
         }
     }
+
+    assignDefault(config, tsh_settings);
+    assignDefault(config, window_config);
 
     if (!config.display){
         config.display = {};
     }
-
-    console.log(config)
 
     let first_index = config.display_first_set ? 0 : 1    
     let sets_nb = config.sets_displayed;
@@ -164,6 +175,7 @@ LoadEverything().then(() => {
         let oldData = event.oldData;
 
         let stream = config.stream || data.currentStream || config.default_stream
+        if (stream == "all") stream = null;
 
         if (
             !oldData.streamQueue ||
@@ -185,7 +197,7 @@ LoadEverything().then(() => {
                 let queue = data.streamQueue[stream];
                 if (!queue) return;
                 
-                if (config.display_stream_name == true){
+                if (config.display.stream_name == true){
                     html += stream_name_html(stream)
                 }
 
@@ -195,7 +207,7 @@ LoadEverything().then(() => {
                 resetSetsCount();
 
                 for (stream in data.streamQueue){
-                    if (config.display_stream_name){
+                    if (config.display.stream_name){
                         html += stream_name_html(stream)
                     }
                     html += await queue_html(data.streamQueue[stream], resolver)
