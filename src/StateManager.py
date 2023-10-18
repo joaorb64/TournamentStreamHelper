@@ -1,5 +1,6 @@
 import os
 import json
+import orjson
 import copy
 import traceback
 from deepdiff import DeepDiff, extract
@@ -42,11 +43,12 @@ class StateManager:
                     with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
                         # logger.info("SaveState")
                         StateManager.state.update({"timestamp": time.time()})
-                        json.dump(StateManager.state, file,
-                                  indent=4, sort_keys=False)
+                        txt: bytes = orjson.dumps(
+                            StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
+                        file.write(txt.decode())
                         StateManager.state.pop("timestamp")
 
-                    StateManager.ExportText(StateManager.lastSavedState)
+                    # StateManager.ExportText(StateManager.lastSavedState)
                     StateManager.lastSavedState = copy.deepcopy(
                         StateManager.state)
 
@@ -56,7 +58,8 @@ class StateManager:
                 if len(diff) > 0:
                     try:
                         if StateManager.webServer is not None:
-                            StateManager.webServer.emit('program_state', StateManager.state)
+                            StateManager.webServer.emit(
+                                'program_state', StateManager.state)
                     except Exception as e:
                         logger.error(traceback.format_exc())
 
@@ -70,7 +73,7 @@ class StateManager:
     def LoadState():
         try:
             with open("./out/program_state.json", 'r', encoding='utf-8') as file:
-                StateManager.state = json.load(file)
+                StateManager.state = orjson.loads(file.read())
         except:
             StateManager.state = {}
             StateManager.SaveState()
