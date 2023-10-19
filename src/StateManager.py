@@ -6,6 +6,7 @@ import traceback
 from deepdiff import DeepDiff, extract
 import shutil
 import threading
+import queue
 import requests
 from PIL import Image
 import time
@@ -13,11 +14,22 @@ from loguru import logger
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
 
 
+def ExportWorker():
+    while True:
+        item = StateManager.exportQueue.get()
+        item[0](item[1], item[2])
+        StateManager.exportQueue.task_done()
+        print(
+            f"TASK DONE! REMAINING: {StateManager.exportQueue.unfinished_tasks}")
+
+
 class StateManager:
     lastSavedState = {}
     state = {}
     saveBlocked = 0
     webServer = None
+
+    exportQueue = queue.Queue()
 
     lock = threading.RLock()
     threads = []
@@ -48,7 +60,7 @@ class StateManager:
                         file.write(txt.decode())
                         StateManager.state.pop("timestamp")
 
-                    # StateManager.ExportText(StateManager.lastSavedState)
+                    StateManager.ExportText(StateManager.lastSavedState)
                     StateManager.lastSavedState = copy.deepcopy(
                         StateManager.state)
 
@@ -134,7 +146,9 @@ class StateManager:
 
             # logger.info("Removed:", filename, item)
 
-            StateManager.RemoveFilesDict(filename, item)
+            # StateManager.RemoveFilesDict(filename, item)
+            StateManager.exportQueue.put(
+                (StateManager.RemoveFilesDict, filename, item))
 
         addedKeys = diff.get("dictionary_item_added", {})
 
@@ -147,7 +161,9 @@ class StateManager:
 
             # logger.info("Added:", path, item)
 
-            StateManager.CreateFilesDict(path, item)
+            # StateManager.CreateFilesDict(path, item)
+            StateManager.exportQueue.put(
+                (StateManager.CreateFilesDict, path, item))
 
     def CreateFilesDict(path, di):
         pathdirs = "/".join(path.split("/")[0:-1])
@@ -255,3 +271,6 @@ if not os.path.isfile("./out/program_state.json"):
     StateManager.SaveState()
 
 StateManager.LoadState()
+
+# Turn-on the worker thread.
+threading.Thread(target=ExportWorker, daemon=True).start()
