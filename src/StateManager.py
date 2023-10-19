@@ -48,26 +48,11 @@ class StateManager:
 
     def SaveState():
         if StateManager.saveBlocked == 0:
-            with StateManager.lock:
-                StateManager.threads = []
+            def ExportAll():
+                with StateManager.lock:
+                    diff = DeepDiff(StateManager.lastSavedState,
+                                    StateManager.state)
 
-                def ExportAll():
-                    with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
-                        # logger.info("SaveState")
-                        StateManager.state.update({"timestamp": time.time()})
-                        txt: bytes = orjson.dumps(
-                            StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
-                        file.write(txt.decode())
-                        StateManager.state.pop("timestamp")
-
-                    StateManager.ExportText(StateManager.lastSavedState)
-                    StateManager.lastSavedState = copy.deepcopy(
-                        StateManager.state)
-
-                diff = DeepDiff(StateManager.lastSavedState,
-                                StateManager.state)
-
-                if len(diff) > 0:
                     try:
                         if StateManager.webServer is not None:
                             StateManager.webServer.emit(
@@ -75,12 +60,23 @@ class StateManager:
                     except Exception as e:
                         logger.error(traceback.format_exc())
 
-                    exportThread = threading.Thread(target=ExportAll)
-                    StateManager.threads.append(exportThread)
-                    exportThread.start()
+                    if len(diff) > 0:
+                        with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
+                            # logger.info("SaveState")
+                            StateManager.state.update(
+                                {"timestamp": time.time()})
+                            txt: bytes = orjson.dumps(
+                                StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
+                            file.write(txt.decode())
+                            StateManager.state.pop("timestamp")
 
-                    for t in StateManager.threads:
-                        t.join()
+                        StateManager.ExportText(StateManager.lastSavedState)
+                        StateManager.lastSavedState = copy.deepcopy(
+                            StateManager.state)
+
+            exportThread = threading.Thread(
+                target=ExportAll, daemon=True)
+            exportThread.start()
 
     def LoadState():
         try:
@@ -129,11 +125,17 @@ class StateManager:
             # logger.info(filename)
 
             if change.get("new_type") == type(None):
-                StateManager.RemoveFilesDict(
-                    filename, extract(oldState, changeKey))
+                StateManager.exportQueue.put((
+                    StateManager.RemoveFilesDict,
+                    filename,
+                    extract(oldState, changeKey)
+                ))
             else:
-                StateManager.CreateFilesDict(
-                    filename, change.get("new_value"))
+                StateManager.exportQueue.put((
+                    StateManager.CreateFilesDict,
+                    filename,
+                    change.get("new_value")
+                ))
 
         removedKeys = diff.get("dictionary_item_removed", {})
 
