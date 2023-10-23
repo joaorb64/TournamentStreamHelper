@@ -6,6 +6,7 @@ import traceback
 from deepdiff import DeepDiff, extract
 import shutil
 import threading
+import asyncio
 import queue
 import requests
 from PIL import Image
@@ -48,7 +49,7 @@ class StateManager:
 
     def SaveState():
         if StateManager.saveBlocked == 0:
-            def ExportAll():
+            async def ExportAll():
                 with StateManager.lock:
                     diff = DeepDiff(StateManager.lastSavedState,
                                     StateManager.state)
@@ -74,9 +75,10 @@ class StateManager:
                         StateManager.lastSavedState = copy.deepcopy(
                             StateManager.state)
 
-            exportThread = threading.Thread(
-                target=ExportAll, daemon=True)
-            exportThread.start()
+            asyncio.run(ExportAll())
+            # exportThread = threading.Thread(
+            #     target=ExportAll, daemon=True)
+            # exportThread.start()
 
     def LoadState():
         try:
