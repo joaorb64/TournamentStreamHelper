@@ -439,6 +439,14 @@ class TSHGameAssetManager(QObject):
         self.assetsLoaderThread.lock = self.assetsLoaderLock
         self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
 
+        # Setup startgg chacter id to character name
+        sggcharacters = json.loads(
+            open('./assets/characters.json', 'r').read())
+        self.startgg_id_to_character = {}
+
+        for c in sggcharacters.get("entities", {}).get("character", []):
+            self.startgg_id_to_character[str(c.get("id"))] = c
+
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
 
@@ -573,14 +581,6 @@ class TSHGameAssetManager(QObject):
                 self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
-
-            # Setup startgg chacter id to character name
-            sggcharacters = json.loads(
-                open('./assets/characters.json', 'r').read())
-            self.startgg_id_to_character = {}
-
-            for c in sggcharacters.get("entities", {}).get("character", []):
-                self.startgg_id_to_character[str(c.get("id"))] = c
         except:
             logger.error(traceback.format_exc())
 
