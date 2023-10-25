@@ -44,6 +44,8 @@ class TSHGameAssetManager(QObject):
 
         self.skinLoaderLock = QMutex()
 
+        self.startgg_id_to_character = {}
+
     def UiMounted(self):
         self.DownloadStartGGCharacters()
         self.LoadGames()
@@ -57,7 +59,8 @@ class TSHGameAssetManager(QObject):
                     r_json = json.loads(r.text)
                     r_json = json.dumps(r_json, indent=2)
 
-                    open('./assets/characters.json.tmp', 'wt', encoding="utf-8").write(r_json)
+                    open('./assets/characters.json.tmp',
+                         'wt', encoding="utf-8").write(r_json)
 
                     try:
                         # Test if downloaded JSON is valid
@@ -74,7 +77,8 @@ class TSHGameAssetManager(QObject):
                     except:
                         logger.error("Characters file download failed")
                 except Exception as e:
-                    logger.error("Could not update /assets/characters.json: "+str(e))
+                    logger.error(
+                        "Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
         thread.start()
 
@@ -121,7 +125,8 @@ class TSHGameAssetManager(QObject):
                                     self.parent().games[game]["assets"][dir] = \
                                         json.load(f)
                                 else:
-                                    logger.error("No config file for "+game+" - "+dir)
+                                    logger.error(
+                                        "No config file for "+game+" - "+dir)
 
                         # Load translated names
                         # Translate game name
@@ -301,7 +306,7 @@ class TSHGameAssetManager(QObject):
                                         heights[assetsKey].append(
                                             size.height())
                             logger.info("Character "+c+" has " +
-                                  str(len(self.parent().skins[c]))+" skins")
+                                        str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
                         for assetsKey in list(gameObj.get("assets", {}).keys()):
@@ -568,6 +573,14 @@ class TSHGameAssetManager(QObject):
                 self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
+
+            # Setup startgg chacter id to character name
+            sggcharacters = json.loads(
+                open('./assets/characters.json', 'r').read())
+            self.startgg_id_to_character = {}
+
+            for c in sggcharacters.get("entities", {}).get("character", []):
+                self.startgg_id_to_character[str(c.get("id"))] = c
         except:
             logger.error(traceback.format_exc())
 
@@ -960,11 +973,7 @@ class TSHGameAssetManager(QObject):
         return (charFiles)
 
     def GetCharacterFromStartGGId(self, smashgg_id: int):
-        sggcharacters = json.loads(
-            open('./assets/characters.json', 'r').read())
-
-        startggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
-            "character", []) if str(c.get("id")) == str(smashgg_id)), None)
+        startggcharacter = self.startgg_id_to_character.get(str(smashgg_id))
 
         if startggcharacter:
             character = next((c for c in self.characters.items() if c[1].get(
