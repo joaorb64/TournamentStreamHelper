@@ -15,6 +15,5 @@
       "country_flag" : true,
       "state_flag" : true,
       "avatar" : true
-  },
-  "minimum_determined_players" : 0
+  }
 }
