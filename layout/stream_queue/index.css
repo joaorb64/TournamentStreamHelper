@@ -68,6 +68,31 @@ body {
     font-size: 30px;
 }
 
+.tbd_container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* justify-items: center; */
+    align-content: center;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.p1.tbd_container {
+    left: 300px;
+}
+
+.p2.tbd_container {
+    right: 300px;
+}
+
+
+.tbd {
+    font-size: 45px;
+    font-weight: bold;
+    text-align: center;
+}
+
 .team {
     display: flex;
     width: 100%;
