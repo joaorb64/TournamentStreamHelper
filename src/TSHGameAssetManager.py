@@ -1,5 +1,6 @@
 import os
 import json
+import orjson
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -54,8 +55,8 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    r_json = json.loads(r.text)
-                    r_json = json.dumps(r_json, indent=2)
+                    r_json = orjson.loads(r.text)
+                    r_json = orjson.dumps(r_json, indent=2)
 
                     open('./assets/characters.json.tmp', 'wt', encoding="utf-8").write(r_json)
 
@@ -960,7 +961,7 @@ class TSHGameAssetManager(QObject):
         return (charFiles)
 
     def GetCharacterFromStartGGId(self, smashgg_id: int):
-        sggcharacters = json.loads(
+        sggcharacters = orjson.loads(
             open('./assets/characters.json', 'r').read())
 
         startggcharacter = next((c for c in sggcharacters.get("entities", {}).get(

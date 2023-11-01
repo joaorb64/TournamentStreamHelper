@@ -1,5 +1,5 @@
-import copy
 from multiprocessing import Lock
+import msgpack
 import os
 import json
 from qtpy.QtGui import *
@@ -67,8 +67,9 @@ class TSHPlayerDB:
                                     main.append(0)
                         TSHPlayerDB.database[tag] = player
                     else:
-                        dbMains = copy.deepcopy(
-                            TSHPlayerDB.database[tag].get("mains", {}))
+                        dbMains = msgpack.unpackb(msgpack.packb(
+                            TSHPlayerDB.database[tag].get("mains", {})
+                        ))
                         incomingMains = player.get("mains", {})
 
                         newMains = []
@@ -182,7 +183,7 @@ class TSHPlayerDB:
 
                 for player in TSHPlayerDB.database.values():
                     if player is not None:
-                        playerData = copy.deepcopy(player)
+                        playerData = msgpack.unpackb(msgpack.packb(player))
 
                         if player.get("mains") is not None:
                             playerData["mains"] = json.dumps(player["mains"])

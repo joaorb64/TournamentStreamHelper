@@ -1,5 +1,5 @@
 import os
-import json
+import orjson
 from .Helpers.TSHDictHelper import *
 
 
@@ -8,11 +8,11 @@ class SettingsManager:
 
     def SaveSettings():
         with open("./user_data/settings.json", 'w') as file:
-            json.dump(SettingsManager.settings, file, indent=4, sort_keys=True)
+            file.write(orjson.dumps(SettingsManager.settings))
 
     def LoadSettings():
         with open("./user_data/settings.json", 'r') as file:
-            SettingsManager.settings = json.load(file)
+            SettingsManager.settings = orjson.loads(file.read())
 
     def Set(key: str, value):
         deep_set(SettingsManager.settings, key, value)

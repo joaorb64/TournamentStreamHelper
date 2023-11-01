@@ -1,6 +1,6 @@
 import os
-import json
-import copy
+import orjson
+import msgpack
 import traceback
 from deepdiff import DeepDiff, extract
 import shutil
@@ -42,13 +42,11 @@ class StateManager:
                     with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
                         # logger.info("SaveState")
                         StateManager.state.update({"timestamp": time.time()})
-                        json.dump(StateManager.state, file,
-                                  indent=4, sort_keys=False)
+                        file.write(orjson.dumps(StateManager.state))
                         StateManager.state.pop("timestamp")
 
                     StateManager.ExportText(StateManager.lastSavedState)
-                    StateManager.lastSavedState = copy.deepcopy(
-                        StateManager.state)
+                    StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
 
                 diff = DeepDiff(StateManager.lastSavedState,
                                 StateManager.state)
@@ -70,14 +68,15 @@ class StateManager:
     def LoadState():
         try:
             with open("./out/program_state.json", 'r', encoding='utf-8') as file:
-                StateManager.state = json.load(file)
-        except:
+                StateManager.state = orjson.loads(file.read())
+        except Exception as e:
+            logger.error(traceback.format_exc())
             StateManager.state = {}
             StateManager.SaveState()
 
     def Set(key: str, value):
         with StateManager.lock:
-            oldState = copy.deepcopy(StateManager.state)
+            StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
 
             deep_set(StateManager.state, key, value)
 
@@ -87,7 +86,7 @@ class StateManager:
 
     def Unset(key: str):
         with StateManager.lock:
-            oldState = copy.deepcopy(StateManager.state)
+            StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
             deep_unset(StateManager.state, key)
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()

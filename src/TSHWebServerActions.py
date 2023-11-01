@@ -2,7 +2,7 @@ import os
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-import json
+import orjson
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -66,7 +66,7 @@ class WebServerActions(QThread):
 
     def stage_clicked(self, data):
         self.stageWidget.stageStrikeLogic.StageClicked(
-            json.loads(data))
+            orjson.loads(data))
         return "OK"
 
     def confirm_clicked(self):
@@ -125,7 +125,7 @@ class WebServerActions(QThread):
         })
 
     def post_score(self, data):
-        score = json.loads(data)
+        score = orjson.loads(data)
         score.update({"reset_score": True})
         self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit(score)
         return "OK"
@@ -157,8 +157,8 @@ class WebServerActions(QThread):
         # best-of=<Best Of Amount>
         if bestOf is not None:
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'bestOf': int(bestOf)})
+                orjson.loads(
+                    orjson.dumps({'bestOf': int(bestOf)})
                 )
             )
 
@@ -166,8 +166,8 @@ class WebServerActions(QThread):
         # phase=<Phase Name>
         if phase is not None:
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'tournament_phase': phase})
+                orjson.loads(
+                    orjson.dumps({'tournament_phase': phase})
                 )
             )
 
@@ -175,8 +175,8 @@ class WebServerActions(QThread):
         # match=<Match Name>
         if match is not None:
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'round_name': match})
+                orjson.loads(
+                    orjson.dumps({'round_name': match})
                 )
             )
 
@@ -194,8 +194,8 @@ class WebServerActions(QThread):
         # losers=<True/False>&team=<Team Number>
         if losers is not None:
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
-                json.loads(
-                    json.dumps({'team' + str(team) + 'losers': bool(losers)})
+                orjson.loads(
+                    orjson.dumps({'team' + str(team) + 'losers': bool(losers)})
                 )
             )
         return "OK"
@@ -305,8 +305,8 @@ class WebServerActions(QThread):
             if not isinstance(set, str):
                 set = '0'
             self.scoreboard.GetScoreboard(scoreboard).signals.NewSetSelected.emit(
-                json.loads(
-                    json.dumps({
+                orjson.loads(
+                    orjson.dumps({
                         'id': set,
                         'auto_update': "set"
                     })

@@ -16,3 +16,5 @@ cloudscraper
 loguru
 flask-socketio
 simple_websocket
+orjson
+msgpack
