@@ -1,5 +1,4 @@
 from multiprocessing import Lock
-import msgpack
 import os
 import json
 from qtpy.QtGui import *
@@ -10,6 +9,7 @@ import csv
 import traceback
 from loguru import logger
 
+from .Helpers.TSHDictHelper import deep_clone
 from .TSHGameAssetManager import TSHGameAssetManager
 
 
@@ -67,9 +67,9 @@ class TSHPlayerDB:
                                     main.append(0)
                         TSHPlayerDB.database[tag] = player
                     else:
-                        dbMains = msgpack.unpackb(msgpack.packb(
+                        dbMains = deep_clone(
                             TSHPlayerDB.database[tag].get("mains", {})
-                        ))
+                        )
                         incomingMains = player.get("mains", {})
 
                         newMains = []
@@ -183,7 +183,7 @@ class TSHPlayerDB:
 
                 for player in TSHPlayerDB.database.values():
                     if player is not None:
-                        playerData = msgpack.unpackb(msgpack.packb(player))
+                        playerData = deep_clone(player)
 
                         if player.get("mains") is not None:
                             playerData["mains"] = json.dumps(player["mains"])

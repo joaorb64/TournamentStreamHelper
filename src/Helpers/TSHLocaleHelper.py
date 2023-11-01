@@ -1,15 +1,14 @@
 import json
-import msgpack
 from qtpy import QtGui, QtWidgets, QtCore
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 import os
 import traceback
-from copy import deepcopy
 from loguru import logger
 
 from src.SettingsManager import SettingsManager
 from src.StateManager import StateManager
+from .TSHDictHelper import deep_clone
 
 
 class TSHLocaleHelperSignals(QObject):
@@ -109,7 +108,7 @@ class TSHLocaleHelper(QObject):
         try:
             original_term_names: dict = json.load(
                 open("./src/i18n/tournament_term/en.json", 'rt', encoding='utf-8'))
-            term_names = msgpack.unpackb(msgpack.packb(original_term_names))
+            term_names = deep_clone(original_term_names)
 
             for f in os.listdir("./src/i18n/tournament_term/"):
                 if f.endswith(".json"):

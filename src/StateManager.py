@@ -1,15 +1,15 @@
 import os
 import orjson
-import msgpack
 import traceback
 from deepdiff import DeepDiff, extract
+from functools import partial
 import shutil
 import threading
 import requests
 from PIL import Image
 import time
 from loguru import logger
-from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset
+from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset, deep_clone
 
 
 class StateManager:
@@ -38,15 +38,15 @@ class StateManager:
             with StateManager.lock:
                 StateManager.threads = []
 
-                def ExportAll():
-                    with open("./out/program_state.json", 'w', encoding='utf-8', buffering=8192) as file:
+                def ExportAll(ref_diff):
+                    with open("./out/program_state.json", 'wb', buffering=8192) as file:
                         # logger.info("SaveState")
                         StateManager.state.update({"timestamp": time.time()})
-                        file.write(orjson.dumps(StateManager.state))
+                        file.write(orjson.dumps(StateManager.state, option=orjson.OPT_NON_STR_KEYS))
                         StateManager.state.pop("timestamp")
 
-                    StateManager.ExportText(StateManager.lastSavedState)
-                    StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
+                    StateManager.ExportText(StateManager.lastSavedState, ref_diff)
+                    StateManager.lastSavedState = deep_clone(StateManager.state)
 
                 diff = DeepDiff(StateManager.lastSavedState,
                                 StateManager.state)
@@ -58,7 +58,7 @@ class StateManager:
                     except Exception as e:
                         logger.error(traceback.format_exc())
 
-                    exportThread = threading.Thread(target=ExportAll)
+                    exportThread = threading.Thread(target=partial(ExportAll, ref_diff=diff))
                     StateManager.threads.append(exportThread)
                     exportThread.start()
 
@@ -67,7 +67,7 @@ class StateManager:
 
     def LoadState():
         try:
-            with open("./out/program_state.json", 'r', encoding='utf-8') as file:
+            with open("./out/program_state.json", 'rb') as file:
                 StateManager.state = orjson.loads(file.read())
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -76,7 +76,7 @@ class StateManager:
 
     def Set(key: str, value):
         with StateManager.lock:
-            StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
+            StateManager.lastSavedState = deep_clone(StateManager.state)
 
             deep_set(StateManager.state, key, value)
 
@@ -86,7 +86,7 @@ class StateManager:
 
     def Unset(key: str):
         with StateManager.lock:
-            StateManager.lastSavedState = msgpack.unpackb(msgpack.packb(StateManager.state))
+            StateManager.lastSavedState = deep_clone(StateManager.state)
             deep_unset(StateManager.state, key)
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
@@ -95,9 +95,8 @@ class StateManager:
     def Get(key: str, default=None):
         return deep_get(StateManager.state, key, default)
 
-    def ExportText(oldState):
+    def ExportText(oldState, diff):
         # logger.info("ExportState")
-        diff = DeepDiff(oldState, StateManager.state)
         # logger.info(diff)
 
         mergedDiffs = list(diff.get("values_changed", {}).items())
