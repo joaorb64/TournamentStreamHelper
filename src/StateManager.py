@@ -42,7 +42,7 @@ class StateManager:
                     with open("./out/program_state.json", 'wb', buffering=8192) as file:
                         # logger.info("SaveState")
                         StateManager.state.update({"timestamp": time.time()})
-                        file.write(orjson.dumps(StateManager.state, option=orjson.OPT_NON_STR_KEYS))
+                        file.write(orjson.dumps(StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2))
                         StateManager.state.pop("timestamp")
 
                     StateManager.ExportText(StateManager.lastSavedState, ref_diff)
