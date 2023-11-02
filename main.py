@@ -22,6 +22,10 @@ async def main(event_loop):
         getattr(src.App, "aboutToQuit").connect(partial(close_future, future, event_loop))
 
     await future
+    if isinstance(future.result(), int):
+        return future.result()
+
+    return 0
 
 
 if __name__ == '__main__':
@@ -31,6 +35,6 @@ if __name__ == '__main__':
     try:
         loop = QEventLoop()
         asyncio.set_event_loop(loop)
-        run(main(loop))
+        sys.exit(run(main(loop)))
     except asyncio.exceptions.CancelledError:
         sys.exit(0)
