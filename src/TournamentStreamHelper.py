@@ -228,8 +228,6 @@ class Window(QMainWindow):
         super().__init__()
 
         StateManager.loop = loop
-        self.exitCode = 0
-
         StateManager.BlockSaving()
 
         TSHLocaleHelper.LoadLocale()
