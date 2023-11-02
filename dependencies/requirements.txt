@@ -18,3 +18,5 @@ flask-socketio
 simple_websocket
 orjson
 msgpack
+qasync
+

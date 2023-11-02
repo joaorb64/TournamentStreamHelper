@@ -224,8 +224,11 @@ class WindowSignals(QObject):
 class Window(QMainWindow):
     signals = WindowSignals()
 
-    def __init__(self):
+    def __init__(self, loop):
         super().__init__()
+
+        StateManager.loop = loop
+        self.exitCode = 0
 
         StateManager.BlockSaving()
 

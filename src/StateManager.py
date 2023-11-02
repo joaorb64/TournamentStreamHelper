@@ -20,6 +20,7 @@ class StateManager:
 
     lock = threading.RLock()
     threads = []
+    loop = None
 
     def BlockSaving():
         StateManager.saveBlocked += 1
