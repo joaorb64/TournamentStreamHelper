@@ -3,16 +3,14 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 
-use_phase_name = True
-
 def load_program_state():
     data_path = "./out/program_state.json"
     with open(data_path, "rt", encoding="utf-8") as data_file:
         data_json = json.loads(data_file.read())
     return(data_json)
     
-def generate_youtube(scoreboard_id = 1):
-    length_limit = 100    # Character limit for video titles
+def generate_youtube(scoreboard_id = 1, use_phase_name = True):
+    title_length_limit = 100    # Character limit for video titles
     data = load_program_state()
     tournament_name = data.get("tournamentInfo").get("tournamentName")
     event_name = data.get("tournamentInfo").get("eventName")
@@ -85,11 +83,11 @@ Game: {game_name}
     description = description + QApplication.translate("altText", "Stream powered by TournamentStreamHelper:") + " " + "https://github.com/joaorb64/TournamentStreamHelper/releases"
     description = description.strip()
 
-    if len(title_long) <= length_limit:
+    if len(title_long) <= title_length_limit:
         return(title_long, description)
     else:
-        if len(title_short) > length_limit:
-            while len(title_short) > length_limit - 1:
+        if len(title_short) > title_length_limit:
+            while len(title_short) > title_length_limit - 1:
                 title_short = title_short[:-1]
             return(f"{title_short}…", description)
         else:

@@ -18,6 +18,10 @@ tested_assets = {
     "avg2": ["full"],
     "umvc3": ["full"],
     "bh": ["full"],
+    "opxdbz": ["full"],
+    "ssmack": ["full"],
+    "trotb": ["base_files/icon"],
+    "nasb2": ["render"]
 }
 
 main_out_path = "../out/test"
