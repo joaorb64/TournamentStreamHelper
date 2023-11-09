@@ -705,30 +705,30 @@ p, li { white-space: pre-wrap; }
         <location filename="../Helpers/TSHAltTextHelper.py" line="30"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="147"/>
         <source>Game:</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeu :</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="81"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="83"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="85"/>
         <source>VS</source>
-        <translation type="unfinished"></translation>
+        <translation>contre</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="96"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
         <source>Commentators:</source>
-        <translation type="unfinished"></translation>
+        <translation>Commentateurs :</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
         <source>Stream powered by TournamentStreamHelper:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stream produit avec Tournament Stream Helper :</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="194"/>
         <source>Stream powered by TournamentStreamHelper</source>
-        <translation type="unfinished"></translation>
+        <translation>Stream produit avec Tournament Stream Helper</translation>
     </message>
 </context>
 <context>
