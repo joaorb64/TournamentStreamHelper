@@ -4,6 +4,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 import json
+import orjson
 import requests
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
@@ -294,7 +295,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         # Load local rulesets
         try:
-            self.userRulesets = json.loads(
+            self.userRulesets = orjson.loads(
                 open("./user_data/rulesets.json", encoding="utf-8").read())
 
             for ruleset in self.userRulesets:
@@ -521,7 +522,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                 params=params
             )
             requestCode = data.status_code
-        return json.loads(data.text)
+        return orjson.loads(data.text)
 
     def LoadStartggRulesets(self):
         try:
@@ -534,7 +535,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                         )
                         rulesets = deep_get(data, "entities.ruleset")
                         open('./assets/rulesets.json',
-                             'w').write(json.dumps(rulesets, indent=4))
+                             'wb').write(orjson.dumps(rulesets))
                         self.parent().startggRulesets = rulesets
                         logger.info("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()

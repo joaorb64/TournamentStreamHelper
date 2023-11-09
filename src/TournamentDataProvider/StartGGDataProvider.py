@@ -12,7 +12,7 @@ from ..Helpers.TSHDictHelper import deep_get
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
-import json
+import orjson
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import is_power_of_two
 
@@ -59,7 +59,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 params=params
             )
             requestCode = data.status_code
-        return json.loads(data.text)
+        return orjson.loads(data.text)
 
     def GetTournamentData(self, progress_callback=None):
         finalData = {}

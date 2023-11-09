@@ -8,6 +8,7 @@ import qdarktheme
 import requests
 import urllib
 import json
+import orjson
 import traceback
 import time
 import os
@@ -223,9 +224,10 @@ class WindowSignals(QObject):
 class Window(QMainWindow):
     signals = WindowSignals()
 
-    def __init__(self):
+    def __init__(self, loop):
         super().__init__()
 
+        StateManager.loop = loop
         StateManager.BlockSaving()
 
         TSHLocaleHelper.LoadLocale()
@@ -777,7 +779,7 @@ class Window(QMainWindow):
         try:
             response = requests.get(
                 "https://api.github.com/repos/joaorb64/TournamentStreamHelper/releases/latest")
-            release = json.loads(response.text)
+            release = orjson.loads(response.text)
         except Exception as e:
             if silent == False:
                 messagebox = QMessageBox()

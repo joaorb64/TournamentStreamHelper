@@ -1,4 +1,5 @@
 from functools import reduce
+from msgpack import unpackb, packb
 
 
 def deep_get(dictionary, keys, default=None):
@@ -22,3 +23,7 @@ def deep_unset(dictionary, keys):
         d = d[key]
     if keys.split(".")[-1] in d:
         del d[keys.split(".")[-1]]
+
+def deep_clone(dictionary):
+    return unpackb(packb(dictionary), strict_map_key=False)
+

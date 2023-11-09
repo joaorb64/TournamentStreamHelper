@@ -2,7 +2,7 @@ import requests
 import os
 import traceback
 import re
-import json
+import orjson
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -101,7 +101,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             )
 
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
             collection = deep_get(data, "collection", [{}])[0]
             details = deep_get(collection, "details", [])
 
@@ -151,7 +151,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 headers=HEADERS
             )
 
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
             collection = deep_get(data, "collection", [{}])[0]
 
             url = collection.get("organizer")
@@ -171,7 +171,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.GetEnglishUrl()+".json",
                 headers=HEADERS
             )
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             all_matches = self.GetAllMatchesFromData(data)
 
@@ -196,7 +196,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             )
             logger.info(self.GetEnglishUrl()+".json")
             logger.info(str(data.text))
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             all_matches = self.GetAllMatchesFromData(data)
 
@@ -225,7 +225,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.GetEnglishUrl()+".json",
                 headers=HEADERS
             )
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             if len(deep_get(data, "groups", [])) > 0:
                 phaseObj = {
@@ -266,7 +266,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.GetEnglishUrl()+".json",
                 headers=HEADERS
             )
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             entrants = self.GetAllEntrantsFromData(data, id)
             entrants.sort(key=lambda e: e.get("seed"))
@@ -662,7 +662,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.GetEnglishUrl()+".json",
                 headers=HEADERS
             )
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             entrants = self.GetAllEntrantsFromData(data)
             players = []
@@ -729,7 +729,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 headers=HEADERS
             )
 
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             all_matches = self.GetAllMatchesFromData(data)
 
@@ -773,7 +773,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 headers=HEADERS
             )
 
-            data = json.loads(data.text)
+            data = orjson.loads(data.text)
 
             set_data = []
 
