@@ -601,12 +601,21 @@ body {
   top: 55px;
 }
 
+.fgc.thin.gbvsr .player.container {
+  top: 15px;
+  width: 550px;
+}
+
 .nasb2 .player.container {
   top: 63px;
 }
 
 .fgc.thin.arms .p1.container {
   left: 110px;
+}
+
+.fgc.thin.gbvsr .p1.container {
+  left: 180px;
 }
 
 .nasb2 .p1.container {
@@ -617,6 +626,10 @@ body {
   right: 110px;
 }
 
+.fgc.thin.gbvsr .p2.container {
+  right: 180px;
+}
+
 .nasb2 .p2.container {
   right: 350px;
 }
@@ -625,6 +638,11 @@ body {
   top: 150px;
   width: 192px;
   height: 108px;
+}
+
+.fgc.thin.gbvsr .logo {
+  top: unset;
+  bottom: 20px;
 }
 
 .fgc.thin.strive .logo {
@@ -862,12 +880,30 @@ body {
   transform: unset;
 }
 
+.gbvsr .info.container.bottom {
+  top: unset;
+  bottom: 20px;
+  right: 15px;
+  left: unset;
+  transform: unset;
+}
+
 .uni2 .info.container.bottom {
   top: unset;
   bottom: 130px;
 }
 
 .fgc.thin.arms .info.container.top {
+  top: unset;
+  bottom: 20px;
+  right: unset;
+  left: 15px;
+  transform: unset;
+  width: 280px;
+  height: 64px;
+}
+
+.fgc.thin.gbvsr .info.container.top {
   top: unset;
   bottom: 20px;
   right: unset;
