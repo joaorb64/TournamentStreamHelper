@@ -1,6 +1,6 @@
 LoadEverything().then(() => {
 
-  let scoreboardNumber = 1;
+  let scoreboardNumber = window.scoreboardNumber;
   
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
@@ -98,7 +98,6 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.container .character_container`),
               {
-                asset_key: "base_files/icon",
                 source: `score.${scoreboardNumber}.team.${t + 1}`,
               },
               event

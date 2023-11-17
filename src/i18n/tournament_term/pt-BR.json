@@ -11,7 +11,8 @@
         "winners_round": "Rodada {0}",
         "losers_round": "Repescagem Rodada {0}",
         "round": "Rodada {0}",
-        "best_of": "Melhor de {0}"
+        "best_of": "Melhor de {0}",
+        "qualifier": "Classificatória para {0}"
     },
     "phase": {
         "group_stage": "Fase de Grupos",

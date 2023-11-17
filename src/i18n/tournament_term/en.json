@@ -11,7 +11,8 @@
         "winners_round": "Winners Round {0}",
         "losers_round": "Losers Round {0}",
         "round": "Round {0}",
-        "best_of": "Best of {0}"
+        "best_of": "Best of {0}",
+        "qualifier": "{0} Qualifier"
     },
     "phase": {
         "group_stage": "Pools",

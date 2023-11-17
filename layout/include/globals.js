@@ -147,6 +147,15 @@ async function LoadEverything() {
     "socket.io.min.js",
   ];
 
+  let urlParams = new URLSearchParams(window.location.search);
+  window.scoreboardNumber = 1;
+  
+  for(let [k, v] of urlParams.entries()){
+    window[k] = v;
+  }
+
+  console.log(window.scoreboardNumber)
+
   for (let i = 0; i < scripts.length; i += 1) {
     const script = scripts[i];
     const src = libPath + script;
