@@ -53,7 +53,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentDataQuery",
@@ -96,7 +97,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentIconQuery",
@@ -136,7 +138,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentPhasesQuery",
@@ -179,7 +182,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentPhaseGroupQuery",
@@ -196,7 +200,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 f"https://api.smash.gg/phase_group/{id}",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 }
             )
             oldData = json.loads(oldData.text)
@@ -387,7 +392,8 @@ class StartGGDataProvider(TournamentDataProvider):
             "https://www.start.gg/api/-/gql",
             headers={
                 "client-version": "20",
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
             },
             json={
                 "operationName": "SetQuery",
@@ -420,7 +426,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "https://www.start.gg/api/-/gql",
                     headers={
                         "client-version": "20",
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                     },
                     json={
                         "operationName": "EventMatchListQuery",
@@ -875,7 +882,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "StreamQueueQuery",
@@ -901,7 +909,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 streamName = q.get("stream", {}).get("streamName", "")
                 queueData = {}
                 for setIndex, _set in enumerate(q.get("sets", [])):
-
 
                     phase_name = deep_get(_set, "phaseGroup.phase.name")
                     if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
@@ -1017,7 +1024,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "StreamSetsQuery",
@@ -1066,7 +1074,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "UserSetQuery",
@@ -1091,7 +1100,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "https://www.start.gg/api/-/gql",
                     headers={
                         "client-version": "20",
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                     },
                     json={
                         "operationName": "UserSetQuery",
@@ -1147,7 +1157,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "PlayerLastSetsQuery",
@@ -1220,7 +1231,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentHistoryDataQuery",
@@ -1316,7 +1328,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "RecentSetsQuery",
@@ -1434,7 +1447,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "https://www.start.gg/api/-/gql",
                     headers={
                         "client-version": "20",
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                     },
                     json={
                         "operationName": "EventEntrantsListQuery",
@@ -1459,7 +1473,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     for j, entrant in enumerate(team.get("participants", [])):
                         playerData = StartGGDataProvider.ProcessEntrantData(
                             entrant)
-                        playerData["seed"] = self.player_seeds.get(playerData["id"][0])
+                        playerData["seed"] = self.player_seeds.get(
+                            playerData["id"][0])
                         players.append(playerData)
 
                 TSHPlayerDB.AddPlayers(players)
@@ -1581,14 +1596,15 @@ class StartGGDataProvider(TournamentDataProvider):
             ]
 
         return (playerData)
-    
+
     def GetSeeds(self):
         try:
             data = requests.post(
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentMainPhaseQuery",
@@ -1612,7 +1628,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     "https://www.start.gg/api/-/gql",
                     headers={
                         "client-version": "20",
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                     },
                     json={
                         "operationName": "PhaseSeeds",
@@ -1628,13 +1645,14 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 totalPages = deep_get(
                     data, "data.phase.seeds.pageInfo.totalPages", 0)
-                
+
                 seeds = deep_get(data, "data.phase.seeds.nodes", [])
 
                 for seed in seeds:
                     for player in seed.get("players"):
-                        self.player_seeds[player.get("id", 0)] = seed.get("seedNum")
-                
+                        self.player_seeds[player.get(
+                            "id", 0)] = seed.get("seedNum")
+
                 page += 1
         except:
             logger.error(traceback.format_exc)
@@ -1645,7 +1663,8 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 headers={
                     "client-version": "20",
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
                 },
                 json={
                     "operationName": "TournamentStandingsQuery",
