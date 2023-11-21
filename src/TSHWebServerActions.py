@@ -222,6 +222,9 @@ class WebServerActions(QThread):
     def swap_teams(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).signals.SwapTeams.emit()
         return "OK"
+    
+    def get_swap(self, scoreboard):
+        return str(self.scoreboard.GetScoreboard(scoreboard).teamsSwapped)
 
     def open_sets(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).signals.SetSelection.emit()
