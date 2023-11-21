@@ -10,6 +10,7 @@ import orjson
 from loguru import logger
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 import traceback
 
 import logging
@@ -338,6 +339,18 @@ class WebServer(QThread):
         info = orjson.loads(message)
         emit('clear_all',
             WebServer.actions.clear_all(info.get("scoreboardNumber")))
+        
+    # Get the sets to be played
+    @app.route('/get-sets')
+    def get_sets():
+        if request.args.get('getFinished') is not None:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=True)
+            return sets
+        else:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=False)
+            return sets
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-load-set')
