@@ -16,3 +16,7 @@ cloudscraper
 loguru
 flask-socketio
 simple_websocket
+termcolor==2.3.0
+orjson
+msgpack
+qasync

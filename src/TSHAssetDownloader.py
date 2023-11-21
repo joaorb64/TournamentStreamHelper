@@ -10,7 +10,7 @@ import requests
 import shutil
 import py7zr
 import urllib
-import json
+import orjson
 import os
 from loguru import logger
 
@@ -323,7 +323,7 @@ class TSHAssetDownloader(QObject):
         try:
             response = requests.get(
                 "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/assets.json")
-            assets = json.loads(response.text)
+            assets = orjson.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
             messagebox.setText(QApplication.translate(

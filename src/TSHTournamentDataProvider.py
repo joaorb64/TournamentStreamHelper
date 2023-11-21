@@ -286,6 +286,9 @@ class TSHTournamentDataProvider:
                 SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
             TSHTournamentDataProvider.instance.signals.user_updated.emit()
+            
+    def GetProvider(self):
+        return self.provider
 
 
 TSHTournamentDataProvider.instance = TSHTournamentDataProvider()

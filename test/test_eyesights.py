@@ -10,12 +10,18 @@ tested_assets = {
     "arms": ["full"],
     "en1a": ["full"],
     "jackie": ["full"],
-    "sdbz": ["full"],
+    "sdbz": ["base_files/icon","full"],
     "sf6": ["base_files/icon", "full"],
     "idols": ["base_files/icon", "full"],
     "jojoasbr": ["full"],
     "roa": ["base_files/icon", "full"],
-    "avg2": ["full"]
+    "avg2": ["full"],
+    "umvc3": ["full"],
+    "bh": ["full"],
+    "opxdbz": ["full"],
+    "ssmack": ["full"],
+    "trotb": ["base_files/icon"],
+    "nasb2": ["render"]
 }
 
 main_out_path = "../out/test"
@@ -30,6 +36,7 @@ def draw_eyesight(game, asset_pack):
     with open(asset_pack_config_path, 'rt', encoding='utf-8') as f:
         asset_pack_config = json.loads(f.read())
         eyesight_data = asset_pack_config.get("eyesights")
+        uncropped_edges = asset_pack_config.get("uncropped_edge", [])
         prefix = asset_pack_config.get("prefix")
         postfix = asset_pack_config.get("postfix")
 
@@ -66,6 +73,23 @@ def draw_eyesight(game, asset_pack):
                         255, 0, 0), width=5)
                     draw.line([(0, eyesight_coordinates[1]), (png_size[0],
                             eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
+                    
+                    if "l" not in uncropped_edges:
+                        draw.line([(0, 0), (0, png_size[1])], fill=(
+                            0, 255, 0), width=5)
+                    
+                    if "r" not in uncropped_edges:
+                        draw.line([(png_size[0], 0), (png_size[0], png_size[1])], fill=(
+                            0, 255, 0), width=5)
+                    
+                    if "u" not in uncropped_edges:
+                        draw.line([(0, 0), (png_size[0], 0)], fill=(
+                            0, 255, 0), width=5)
+                    
+                    if "d" not in uncropped_edges:
+                        draw.line([(0, png_size[1]), (png_size[0], png_size[1])], fill=(
+                            0, 255, 0), width=5)
+
                     new_png_image.save(new_png_path)
             except Exception as e:
                 print(f"Error in file {png_filename}")

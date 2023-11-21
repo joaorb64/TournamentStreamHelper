@@ -252,6 +252,10 @@ body {
   overflow: hidden;
 }
 
+.nasb2 .chips {
+  top: 137px
+}
+
 .sf6 .chips {
   top: 106px;
   height: 32px;
@@ -297,6 +301,10 @@ body {
   left: 380px;
 }
 
+.nasb2 .p1.chips {
+  left: 350px;
+}
+
 .sf6 .chip {
   height: 32px;
 }
@@ -335,6 +343,11 @@ body {
   flex-direction: row-reverse;
   left: 1040px;
   justify-content: left;
+}
+
+.nasb2 .p2.chips {
+  left: unset;
+  right: 350px;
 }
 
 .sf6.online .p2.chips {
@@ -580,22 +593,56 @@ body {
   top: 160px;
 }
 
+.nasb2 .logo {
+  top: 150px;
+}
+
 .fgc.thin.arms .player.container {
   top: 55px;
+}
+
+.fgc.thin.gbvsr .player.container {
+  top: 15px;
+  width: 550px;
+}
+
+.nasb2 .player.container {
+  top: 63px;
 }
 
 .fgc.thin.arms .p1.container {
   left: 110px;
 }
 
+.fgc.thin.gbvsr .p1.container {
+  left: 180px;
+}
+
+.nasb2 .p1.container {
+  left: 350px;
+}
+
 .fgc.thin.arms .p2.container {
   right: 110px;
+}
+
+.fgc.thin.gbvsr .p2.container {
+  right: 180px;
+}
+
+.nasb2 .p2.container {
+  right: 350px;
 }
 
 .fgc.thin.arms .logo {
   top: 150px;
   width: 192px;
   height: 108px;
+}
+
+.fgc.thin.gbvsr .logo {
+  top: unset;
+  bottom: 20px;
 }
 
 .fgc.thin.strive .logo {
@@ -683,6 +730,12 @@ body {
 
 
 .ssbu .container.top {
+  bottom: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.nasb2 .container.top {
   bottom: 0;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -793,6 +846,10 @@ body {
   transform: translateX(-50%);
 }
 
+.nasb2 .info.container.bottom {
+  top: 63px;
+}
+
 .sf6 .info.container.bottom {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -823,12 +880,30 @@ body {
   transform: unset;
 }
 
+.gbvsr .info.container.bottom {
+  top: unset;
+  bottom: 20px;
+  right: 15px;
+  left: unset;
+  transform: unset;
+}
+
 .uni2 .info.container.bottom {
   top: unset;
   bottom: 130px;
 }
 
 .fgc.thin.arms .info.container.top {
+  top: unset;
+  bottom: 20px;
+  right: unset;
+  left: 15px;
+  transform: unset;
+  width: 280px;
+  height: 64px;
+}
+
+.fgc.thin.gbvsr .info.container.top {
   top: unset;
   bottom: 20px;
   right: unset;

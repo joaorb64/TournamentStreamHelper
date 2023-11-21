@@ -2,7 +2,7 @@ from qtpy.QtCore import *
 
 from datetime import datetime
 import math
-import json
+import orjson
 
 from .StateManager import StateManager
 from .SettingsManager import SettingsManager
@@ -59,7 +59,7 @@ class TSHStatsUtil:
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
-            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+            if p1id and p2id and orjson.dumps(p1id) != orjson.dumps(p2id):
                 StateManager.Set(f"score.{self.scoreboardNumber}.recent_sets", {
                     "state": "loading",
                     "sets": []
@@ -164,7 +164,7 @@ class TSHStatsUtil:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
 
-            if p1id and p2id and json.dumps(p1id) != json.dumps(p2id):
+            if p1id and p2id and orjson.dumps(p1id) != orjson.dumps(p2id):
                 p1 = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.seed")
                 p2 = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.seed")
                 if p1 and p2:

@@ -1,5 +1,6 @@
 import os
 import json
+import orjson
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -30,6 +31,7 @@ class TSHGameAssetManager(QObject):
         self.characters = {}
         self.selectedGame = {}
         self.stockIcons = {}
+        self.startgg_id_to_character = {}
 
         self.characterModel = QStandardItemModel()
         self.skinModels = {}
@@ -54,10 +56,9 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    r_json = json.loads(r.text)
-                    r_json = json.dumps(r_json, indent=2)
+                    r_json = orjson.dumps(orjson.loads(r.text))
 
-                    open('./assets/characters.json.tmp', 'wt', encoding="utf-8").write(r_json)
+                    open('./assets/characters.json.tmp', 'wb').write(r_json)
 
                     try:
                         # Test if downloaded JSON is valid
@@ -87,9 +88,9 @@ class TSHGameAssetManager(QObject):
 
                 for game in gameDirs:
                     if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
-                        f = open("./user_data/games/"+game +
-                                 "/base_files/config.json", encoding='utf-8')
-                        self.parent().games[game] = json.load(f)
+                        with open("./user_data/games/"+game +
+                                 "/base_files/config.json", "rb") as f:
+                            self.parent().games[game] = orjson.loads(f.read())
 
                         if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
                             self.parent().games[game]["logo"] = QIcon(
@@ -116,10 +117,10 @@ class TSHGameAssetManager(QObject):
                                 if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
                                     logger.info(
                                         "Found asset config for ["+game+"]["+dir+"]")
-                                    f = open("./user_data/games/"+game+"/"+dir +
-                                             "/config.json", encoding='utf-8')
-                                    self.parent().games[game]["assets"][dir] = \
-                                        json.load(f)
+                                    with open("./user_data/games/"+game+"/"+dir +
+                                             "/config.json", "rb") as f:
+                                        self.parent().games[game]["assets"][dir] = \
+                                            orjson.loads(f.read())
                                 else:
                                     logger.error("No config file for "+game+" - "+dir)
 
@@ -433,6 +434,13 @@ class TSHGameAssetManager(QObject):
         self.assetsLoaderThread.game = game
         self.assetsLoaderThread.lock = self.assetsLoaderLock
         self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
+
+        # Setup startgg character id to character name
+        sggcharacters = orjson.loads(open('./assets/characters.json', 'rb').read())
+        self.startgg_id_to_character = {}
+
+        for c in sggcharacters.get("entities", {}).get("character", []):
+            self.startgg_id_to_character[str(c.get("id"))] = c
 
         # self.programState["asset_path"] = self.selectedGame.get("path")
         # self.programState["game"] = game
@@ -960,11 +968,7 @@ class TSHGameAssetManager(QObject):
         return (charFiles)
 
     def GetCharacterFromStartGGId(self, smashgg_id: int):
-        sggcharacters = json.loads(
-            open('./assets/characters.json', 'r').read())
-
-        startggcharacter = next((c for c in sggcharacters.get("entities", {}).get(
-            "character", []) if str(c.get("id")) == str(smashgg_id)), None)
+        startggcharacter = self.startgg_id_to_character.get(str(smashgg_id))
 
         if startggcharacter:
             character = next((c for c in self.characters.items() if c[1].get(
