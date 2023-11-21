@@ -221,6 +221,11 @@ class WebServer(QThread):
         info = orjson.loads(message)
         emit('swap_teams', WebServer.actions.swap_teams(info.get("scoreboardNumber")))
 
+    # Are the teams currently swapped?
+    @app.route('/get-swap')
+    def get_swap():
+        return str(WebServer.scoreboard.teamsSwapped)
+
     # Opens Set Selector Window
     @app.route('/scoreboard<scoreboardNumber>-open-set')
     def open_sets(scoreboardNumber):
