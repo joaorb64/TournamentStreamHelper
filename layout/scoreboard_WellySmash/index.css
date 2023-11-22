@@ -322,7 +322,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 300px;
+  width: auto;
   text-align: justify;
   align-items: center;
   overflow: hidden;
