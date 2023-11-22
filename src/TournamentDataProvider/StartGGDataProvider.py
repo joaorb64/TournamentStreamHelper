@@ -36,6 +36,8 @@ class StartGGDataProvider(TournamentDataProvider):
     StreamQueueQuery = None
     MainPhaseQuery = None
     SeedsQuery = None
+    StationsQuery = None
+    StationSetsQuery = None
 
     player_seeds = {}
 
@@ -442,6 +444,40 @@ class StartGGDataProvider(TournamentDataProvider):
                 page += 1
 
                 logger.info(f"Fetching sets... {page}/{totalPages}")
+
+            return (final_data)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return (final_data)
+        return ([])
+
+    def GetStations(self, progress_callback=None):
+        try:
+            logger.info("Get stations")
+
+            final_data = []
+
+            logger.info("Fetching stations")
+
+            data = self.QueryRequests(
+                "https://www.start.gg/api/-/gql",
+                type=requests.post,
+                jsonParams={
+                    "operationName": "Stations",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1],
+                    },
+                    "query": StartGGDataProvider.StationsQuery
+                }
+            )
+
+            stations = deep_get(data, "data.event.stations.nodes", [])
+
+            for station in stations:
+                final_data.append({
+                    "id": station.get("id"),
+                    "identifier": station.get("number")
+                })
 
             return (final_data)
         except Exception as e:
@@ -1036,6 +1072,43 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
 
         return streamSet
+
+    def GetStationMatchId(self, stationId):
+        stationSet = None
+
+        try:
+            data = self.QueryRequests(
+                "https://www.start.gg/api/-/gql",
+                type=requests.post,
+                jsonParams={
+                    "operationName": "StationSetsQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1],
+                        "filters": {
+                            "state": [1, 2, 4, 5, 6],
+                            "hideEmpty": True
+                        }
+                    },
+                    "query": StartGGDataProvider.StationSetsQuery
+                }
+            )
+
+            sets = deep_get(data, "data.event.sets.nodes", [])
+
+            print("SETS", sets, stationId)
+
+            sets = [s for s in sets if str(deep_get(
+                s, "station.id", "-1")) == str(stationId)]
+
+            print("SETS", sets)
+
+            if len(sets) > 0:
+                stationSet = sets[0]
+
+        except Exception as e:
+            logger.error(traceback.format_exc())
+
+        return stationSet
 
     def GetUserMatchId(self, user):
         matches = re.match(
@@ -1672,3 +1745,9 @@ StartGGDataProvider.MainPhaseQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGTournamentSeedsQuery.txt", 'r')
 StartGGDataProvider.SeedsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGStationsQuery.txt", 'r')
+StartGGDataProvider.StationsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGStationSetsQuery.txt", 'r')
+StartGGDataProvider.StationSetsQuery = f.read()

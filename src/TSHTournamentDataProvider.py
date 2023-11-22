@@ -24,10 +24,12 @@ class TSHTournamentDataProviderSignals(QObject):
     twitch_username_updated = Signal()
     user_updated = Signal()
     get_sets_finished = Signal(list)
+    get_stations_finished = Signal(list)
     tournament_phases_updated = Signal(list)
     tournament_phasegroup_updated = Signal(dict)
     game_changed = Signal(int)
     stream_queue_loaded = Signal(dict)
+
 
 class TSHTournamentDataProvider:
     instance: "TSHTournamentDataProvider" = None
@@ -212,6 +214,14 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
+    def LoadStations(self):
+        worker = Worker(self.provider.GetStations)
+        worker.signals.result.connect(lambda data: [
+            logger.info(data),
+            self.signals.get_stations_finished.emit(data)
+        ])
+        self.threadPool.start(worker)
+
     def LoadStreamSet(self, mainWindow, streamName):
         streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
             streamName)
@@ -221,6 +231,16 @@ class TSHTournamentDataProvider:
 
         streamSet["auto_update"] = "stream"
         mainWindow.signals.NewSetSelected.emit(streamSet)
+
+    def LoadStationSet(self, mainWindow):
+        stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
+            mainWindow.lastStationSelected)
+
+        if not stationSet:
+            return
+
+        stationSet["auto_update"] = "station"
+        mainWindow.signals.NewSetSelected.emit(stationSet)
 
     def LoadUserSet(self, mainWindow, user):
         _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)
@@ -286,7 +306,7 @@ class TSHTournamentDataProvider:
                 SettingsManager.Get("TOURNAMENT_URL"), initialLoading=True)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
             TSHTournamentDataProvider.instance.signals.user_updated.emit()
-            
+
     def GetProvider(self):
         return self.provider
 
