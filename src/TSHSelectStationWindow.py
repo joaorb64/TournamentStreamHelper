@@ -116,4 +116,4 @@ class TSHSelectStationWindow(QDialog):
         self.close()
 
         if station:
-            self.parent().signals.StationSelected.emit(str(station.get("id")))
+            self.parent().signals.StationSelected.emit(station)

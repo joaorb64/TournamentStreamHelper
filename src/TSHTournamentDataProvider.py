@@ -234,12 +234,13 @@ class TSHTournamentDataProvider:
 
     def LoadStationSet(self, mainWindow):
         stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
-            mainWindow.lastStationSelected)
+            mainWindow.lastStationSelected.get("id"))
 
         if not stationSet:
-            return
+            stationSet = {}
 
         stationSet["auto_update"] = "station"
+
         mainWindow.signals.NewSetSelected.emit(stationSet)
 
     def LoadUserSet(self, mainWindow, user):

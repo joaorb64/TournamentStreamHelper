@@ -27,7 +27,7 @@ class TSHScoreboardWidgetSignals(QObject):
     SetSelection = Signal()
     StreamSetSelection = Signal()
     StationSelection = Signal()
-    StationSelected = Signal(str)
+    StationSelected = Signal(object)
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
     SwapTeams = Signal()
@@ -676,7 +676,8 @@ class TSHScoreboardWidget(QWidget):
             elif data.get("auto_update") == "stream":
                 self.labelAutoUpdate.setText("Auto update (Stream)")
             elif data.get("auto_update") == "station":
-                self.labelAutoUpdate.setText("Auto update (Station)")
+                self.labelAutoUpdate.setText(
+                    f"Auto update (Station {self.lastStationSelected.get('identifier')})")
             elif data.get("auto_update") == "user":
                 self.labelAutoUpdate.setText("Auto update (User)")
             else:
@@ -752,8 +753,9 @@ class TSHScoreboardWidget(QWidget):
         TSHTournamentDataProvider.instance.LoadStreamSet(
             self, SettingsManager.Get("twitch_username"))
 
-    def LoadStationSet(self, stationId):
-        self.lastStationSelected = stationId
+    def LoadStationSet(self, station):
+        self.lastSetSelected = None
+        self.lastStationSelected = station
         TSHTournamentDataProvider.instance.LoadStationSet(self)
 
     def LoadStationSetClicked(self):
