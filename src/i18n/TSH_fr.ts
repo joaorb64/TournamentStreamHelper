@@ -1216,8 +1216,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
-        <location filename="../TSHSelectSetWindow.py" line="97"/>
         <location filename="../TSHSelectSetWindow.py" line="99"/>
+        <location filename="../TSHSelectSetWindow.py" line="101"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1163"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
@@ -1370,17 +1370,22 @@ p, li { white-space: pre-wrap; }
         <translation>Afficher uniquement les paires complètes</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="94"/>
+        <location filename="../TSHSelectSetWindow.py" line="95"/>
         <source>Stream</source>
         <translation>Stream</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="95"/>
+        <location filename="../TSHSelectSetWindow.py" line="96"/>
+        <source>Station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHSelectSetWindow.py" line="97"/>
         <source>Phase</source>
         <translation>Phase</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="96"/>
+        <location filename="../TSHSelectSetWindow.py" line="98"/>
         <source>Match</source>
         <translation>Match</translation>
     </message>
@@ -1556,14 +1561,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="716"/>
-        <location filename="../TSHSelectSetWindow.py" line="120"/>
+        <location filename="../TSHSelectSetWindow.py" line="122"/>
         <location filename="../TSHScoreboardWidget.py" line="771"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="716"/>
-        <location filename="../TSHSelectSetWindow.py" line="121"/>
+        <location filename="../TSHSelectSetWindow.py" line="123"/>
         <location filename="../TSHScoreboardWidget.py" line="771"/>
         <source>)</source>
         <translation>)</translation>
