@@ -539,6 +539,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
             "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
             "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else "",
+            "station": _set.get("station", {}).get("number", "") if _set.get("station", {}) != None else "",
             "isOnline": deep_get(_set, "event.isOnline"),
         }
 

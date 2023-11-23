@@ -50,7 +50,8 @@ class ChallongeDataProvider(TournamentDataProvider):
         i, initialized = 0, False
         while not initialized and i < max_iter:
             if i > 0:
-                logger.info(f"Retrying Cloudfare initialization (Attempt #{i+1})")
+                logger.info(
+                    f"Retrying Cloudfare initialization (Attempt #{i+1})")
             try:
                 self.scraper = cloudscraper.create_scraper(browser={
                     'browser': 'firefox',
@@ -63,7 +64,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 i += 1
                 if i >= max_iter:
                     raise e
-                    #TODO: Find a way to open a warning box and unload tournament if failed
+                    # TODO: Find a way to open a warning box and unload tournament if failed
 
     def GetSlug(self):
         # URL with language
@@ -184,6 +185,58 @@ class ChallongeDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
 
         return finalData
+
+    def GetStations(self, progress_callback=None):
+        try:
+            logger.info("Get stations")
+
+            final_data = []
+
+            logger.info("Fetching stations")
+
+            data = self.scraper.get(
+                self.GetEnglishUrl()+"/stations.json",
+                headers=HEADERS,
+                allow_redirects=True
+            )
+            logger.info(self.GetEnglishUrl()+"/stations.json")
+            logger.info(str(data.text))
+            data = orjson.loads(data.text)
+
+            for station in data:
+                final_data.append({
+                    "id": station.get("id"),
+                    "identifier": station.get("name")
+                })
+
+            return final_data
+
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return (final_data)
+        return ([])
+
+    def GetStationMatchId(self, stationId):
+        stationSet = None
+
+        try:
+            data = self.scraper.get(
+                self.GetEnglishUrl()+"/stations.json",
+                headers=HEADERS,
+                allow_redirects=True
+            )
+
+            logger.info(self.GetEnglishUrl()+"/stations.json")
+            logger.info(str(data.text))
+            data = orjson.loads(data.text)
+
+            for station in data:
+                if station.get("id") == stationId:
+                    stationSet = deep_get(station, "match")
+
+        except Exception as e:
+            logger.error(traceback.format_exc())
+        return stationSet
 
     def GetMatches(self, getFinished=False, progress_callback=None):
         final_data = []
@@ -638,7 +691,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.ParseEntrant(deep_get(match, "player1")).get("players"),
                 self.ParseEntrant(deep_get(match, "player2")).get("players"),
             ],
-            "stream": stream,
+            "stream": deep_get(match, "station.stream_url", None),
+            "station": deep_get(match, "station.name", None),
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
             "team1score": scores[0],
             "team2score": scores[1],

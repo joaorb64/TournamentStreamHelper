@@ -677,7 +677,7 @@ class TSHScoreboardWidget(QWidget):
                 self.labelAutoUpdate.setText("Auto update (Stream)")
             elif data.get("auto_update") == "station":
                 self.labelAutoUpdate.setText(
-                    f"Auto update (Station {self.lastStationSelected.get('identifier')})")
+                    f"Auto update (Station [{self.lastStationSelected.get('identifier')}])")
             elif data.get("auto_update") == "user":
                 self.labelAutoUpdate.setText("Auto update (User)")
             else:
