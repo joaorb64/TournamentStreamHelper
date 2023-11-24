@@ -79,16 +79,20 @@ class TSHSelectStationWindow(QDialog):
     def SetStations(self, stations):
         logger.info("Got stations" + str(len(stations)))
         model = QStandardItemModel()
-        horizontal_labels = ["Id", "Identifier"]
-        horizontal_labels[0] = QApplication.translate("app", "Id")
-        horizontal_labels[1] = QApplication.translate("app", "Identifier")
+        horizontal_labels = ["Type", "Id", "Stream", "Identifier"]
+        horizontal_labels[0] = QApplication.translate("app", "Type")
+        horizontal_labels[1] = QApplication.translate("app", "Id")
+        horizontal_labels[2] = QApplication.translate("app", "Stream")
+        horizontal_labels[3] = QApplication.translate("app", "Identifier")
         model.setHorizontalHeaderLabels(horizontal_labels)
 
         if stations is not None:
             for s in stations:
                 model.appendRow([
+                    QStandardItem(str(s.get("type", ""))),
                     QStandardItem(str(s.get("id", ""))),
-                    QStandardItem(str(s.get("identifier", ""))),
+                    QStandardItem(str(s.get("stream", ""))),
+                    QStandardItem(str(s.get("identifier", "")))
                 ])
 
                 model.setData(

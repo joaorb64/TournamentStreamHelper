@@ -222,26 +222,24 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def LoadStreamSet(self, mainWindow, streamName):
-        streamSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
-            streamName)
-
-        if not streamSet:
-            return
-
-        streamSet["auto_update"] = "stream"
-        mainWindow.signals.NewSetSelected.emit(streamSet)
-
     def LoadStationSet(self, mainWindow):
-        stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
-            mainWindow.lastStationSelected.get("id"))
+        if mainWindow.lastStationSelected:
+            stationSet = None
 
-        if not stationSet:
-            stationSet = {}
+            if mainWindow.lastStationSelected.get("type") == "stream":
+                stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
+                    mainWindow.lastStationSelected.get("identifier"))
+            else:
+                stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
+                    mainWindow.lastStationSelected.get("id"))
 
-        stationSet["auto_update"] = "station"
+            if not stationSet:
+                stationSet = {}
 
-        mainWindow.signals.NewSetSelected.emit(stationSet)
+            stationSet["auto_update"] = mainWindow.lastStationSelected.get(
+                "type")
+
+            mainWindow.signals.NewSetSelected.emit(stationSet)
 
     def LoadUserSet(self, mainWindow, user):
         _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)

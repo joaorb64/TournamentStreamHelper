@@ -11,6 +11,17 @@ query Stations($eventSlug: String!) {
         prefix
         queueDepth
         state
+        streamId
+      }
+    }
+    tournament {
+      streamQueue {
+        id
+        stream {
+          id
+          streamName
+          streamSource
+        }
       }
     }
   }
