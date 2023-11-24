@@ -50,7 +50,6 @@ class TSHScoreboardWidget(QWidget):
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
         self.signals.SetSelection.connect(self.LoadSetClicked)
-        self.signals.StreamSetSelection.connect(self.LoadStreamSetClicked)
         self.signals.StationSelected.connect(self.LoadStationSet)
         self.signals.StationSelection.connect(self.LoadStationSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
@@ -203,28 +202,6 @@ class TSHScoreboardWidget(QWidget):
         self.btSelectSet.setEnabled(False)
         bottomOptions.layout().addWidget(self.btSelectSet)
         self.btSelectSet.clicked.connect(self.signals.SetSelection.emit)
-
-        hbox = QHBoxLayout()
-        bottomOptions.layout().addLayout(hbox)
-
-        self.btLoadStreamSet = QPushButton(
-            QApplication.translate("app", "Load current stream set"))
-        self.btLoadStreamSet.setIcon(QIcon("./assets/icons/twitch.svg"))
-        self.btLoadStreamSet.setEnabled(False)
-        hbox.addWidget(self.btLoadStreamSet)
-        self.btLoadStreamSet.clicked.connect(
-            self.signals.StreamSetSelection.emit)
-        TSHTournamentDataProvider.instance.signals.twitch_username_updated.connect(
-            self.UpdateStreamButton)
-
-        self.btLoadStreamSetOptions = QPushButton()
-        self.btLoadStreamSetOptions.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadStreamSetOptions.setIcon(
-            QIcon("./assets/icons/settings.svg"))
-        self.btLoadStreamSetOptions.clicked.connect(
-            self.LoadStreamSetOptionsClicked)
-        hbox.addWidget(self.btLoadStreamSetOptions)
 
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
@@ -491,7 +468,6 @@ class TSHScoreboardWidget(QWidget):
             self.btSelectSet.setText(
                 QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
             self.btSelectSet.setEnabled(True)
-            self.btLoadStreamSet.setEnabled(True)
             if self.scoreboardNumber <= 1:
                 self.btLoadPlayerSet.setEnabled(True)
         else:
@@ -674,7 +650,8 @@ class TSHScoreboardWidget(QWidget):
             if data.get("auto_update") == "set":
                 self.labelAutoUpdate.setText("Auto update (Set)")
             elif data.get("auto_update") == "stream":
-                self.labelAutoUpdate.setText("Auto update (Stream)")
+                self.labelAutoUpdate.setText(
+                    f"Auto update (Stream [{self.lastStationSelected.get('identifier')}])")
             elif data.get("auto_update") == "station":
                 self.labelAutoUpdate.setText(
                     f"Auto update (Station [{self.lastStationSelected.get('identifier')}])")
@@ -713,18 +690,14 @@ class TSHScoreboardWidget(QWidget):
                 self.autoUpdateTimer.timeout.connect(
                     lambda setId=data: self.AutoUpdate(data))
 
-                if data.get("auto_update") == "stream":
+                if data.get("auto_update") in ("stream", "station"):
                     self.autoUpdateTimer.timeout.connect(
-                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSet(self))
 
                 if data.get("auto_update") == "user":
                     self.autoUpdateTimer.timeout.connect(
                         lambda setId=data: TSHTournamentDataProvider.instance.LoadUserSet(
                             self, SettingsManager.Get(TSHTournamentDataProvider.instance.provider.name+"_user")))
-
-                if data.get("auto_update") == "station":
-                    self.autoUpdateTimer.timeout.connect(
-                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSet(self))
         finally:
             for p in self.playerWidgets:
                 p.dataLock.release()
@@ -748,11 +721,6 @@ class TSHScoreboardWidget(QWidget):
         self.selectSetWindow.LoadSets()
         self.selectSetWindow.show()
 
-    def LoadStreamSetClicked(self):
-        self.lastSetSelected = None
-        TSHTournamentDataProvider.instance.LoadStreamSet(
-            self, SettingsManager.Get("twitch_username"))
-
     def LoadStationSet(self, station):
         self.lastSetSelected = None
         self.lastStationSelected = station
@@ -761,21 +729,6 @@ class TSHScoreboardWidget(QWidget):
     def LoadStationSetClicked(self):
         self.selectStationWindow.LoadStations()
         self.selectStationWindow.show()
-
-    def LoadStreamSetOptionsClicked(self):
-        TSHTournamentDataProvider.instance.SetTwitchUsername(self)
-
-    def UpdateStreamButton(self):
-        if SettingsManager.Get("twitch_username"):
-            self.btLoadStreamSet.setText(
-                QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
-            self.btLoadStreamSet.setEnabled(True)
-            StateManager.Set(f"currentStream",
-                             SettingsManager.Get("twitch_username"))
-        else:
-            self.btLoadStreamSet.setText(
-                QApplication.translate("app", "Load current stream set"))
-            self.btLoadStreamSet.setEnabled(False)
 
     def UpdateUserSetButton(self):
         provider = None

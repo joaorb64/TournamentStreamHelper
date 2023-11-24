@@ -201,12 +201,15 @@ class ChallongeDataProvider(TournamentDataProvider):
             )
             logger.info(self.GetEnglishUrl()+"/stations.json")
             logger.info(str(data.text))
+
             data = orjson.loads(data.text)
 
             for station in data:
                 final_data.append({
                     "id": station.get("id"),
-                    "identifier": station.get("name")
+                    "type": "station",
+                    "identifier": station.get("name"),
+                    "stream": station.get("stream_url")
                 })
 
             return final_data
