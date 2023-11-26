@@ -47,7 +47,8 @@ class StateManager:
                         file.write(orjson.dumps(StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2))
                         StateManager.state.pop("timestamp")
 
-                    StateManager.ExportText(StateManager.lastSavedState, ref_diff)
+                    if not SettingsManager.Get("general.disable_export", False):
+                        StateManager.ExportText(StateManager.lastSavedState, ref_diff)
                     StateManager.lastSavedState = deep_clone(StateManager.state)
 
                 diff = DeepDiff(StateManager.lastSavedState,
