@@ -34,7 +34,7 @@ LoadEverything().then(() => {
           if (player) {
             SetInnerHtml(
               $(`.p${t + 1}.container .placeholder_container`),
-              player.character[1].name ? `<div class='placeholder'></div>` : ""
+              (Object.keys(player.character).length > 0 && player.character[1].name) ? `<div class='placeholder'></div>` : ""
             );
 
             SetInnerHtml(

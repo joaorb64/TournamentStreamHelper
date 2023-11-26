@@ -659,7 +659,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         if data.get("country_code") == item.get("code"):
                             countryIndex = i
                             break
-                countryElement.setCurrentIndex(countryIndex)
+                if countryElement.currentIndex() != countryIndex:
+                    countryElement.setCurrentIndex(countryIndex)
 
             if data.get("state_code"):
                 countryElement: QComboBox = self.findChild(
@@ -672,7 +673,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         if data.get("state_code") == item.get("code"):
                             stateIndex = i
                             break
-                stateElement.setCurrentIndex(stateIndex)
+                if stateElement.currentIndex() != stateIndex:
+                    stateElement.setCurrentIndex(stateIndex)
 
             if data.get("mains"):
                 if type(data.get("mains")) == list:
@@ -701,11 +703,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     if item.get("en_name") == main[0]:
                                         characterIndex = i
                                         break
-                            character_element.setCurrentIndex(characterIndex)
+                            if character_element.currentIndex() != characterIndex:
+                                character_element.setCurrentIndex(characterIndex)
                             if len(main) > 1:
-                                color_element.setCurrentIndex(int(main[1]))
+                                if color_element.currentIndex() != int(main[1]):
+                                    color_element.setCurrentIndex(int(main[1]))
                             else:
-                                color_element.setCurrentIndex(0)
+                                if color_element.currentIndex() != 0:
+                                    color_element.setCurrentIndex(0)
 
             if data.get("seed"):
                 StateManager.Set(f"{self.path}.seed", data.get("seed"))

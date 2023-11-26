@@ -6,7 +6,6 @@ LoadEverything().then(() => {
         "stream": "",
         "default_stream" : "",
         "force_multistream" : false,
-        "display_stream_name" : "multistream",
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
@@ -15,8 +14,10 @@ LoadEverything().then(() => {
             "station" : false,
             "country_flag" : true,
             "state_flag" : true,
-            "avatar" : true
-        }
+            "avatar" : true,
+            "stream_name": "multistream"
+        },
+        "minimum_determined_players": 1
     }
     
     function isDefault(value){
@@ -24,19 +25,30 @@ LoadEverything().then(() => {
     }
 
     let window_config = window.config || {}
-    for (k in config){
-        if (!isDefault(window_config[k])){
-            config[k] = window_config[k]
-        } else if (!isDefault(tsh_settings[k])) {
-            config[k] = tsh_settings[k]
+
+    function assignDefault(target, source){
+        for (k in target){
+            let value = source[k]
+            if (typeof value === 'object' && value !== null){
+                let matchingObject = target[k];
+                if (typeof matchingObject != 'object'){
+                    matchingObject = value;
+                } else {
+                    assignDefault(matchingObject, value);
+                }
+            }
+            if (!isDefault(value)){
+                target[k] = value
+            }
         }
     }
+
+    assignDefault(config, tsh_settings);
+    assignDefault(config, window_config);
 
     if (!config.display){
         config.display = {};
     }
-
-    console.log(config)
 
     let first_index = config.display_first_set ? 0 : 1    
     let sets_nb = config.sets_displayed;
@@ -74,7 +86,11 @@ LoadEverything().then(() => {
     }
 
     async function team_html(set, t, s, isTeams, resolver){
+
         let team = set.team[""+t];
+
+        if (!team) return `<div class = "p${t} tbd_container"><div class = "TBD">TBD</div></div>`;
+
         let player = team.player["1"];
 
         resolver.add(`.set${current_set_nb} .p${t} .tag`, 
@@ -126,11 +142,14 @@ LoadEverything().then(() => {
 
         for (const [s, set] of Object.values(queue).slice(first_index).entries()){
             if (sets_nb && (current_set_nb >= sets_nb)) break;
+            if (!set.team) continue;
+            if (config.minimum_determined_players > 0 && !set.team[""+config.minimum_determined_players]) continue;
 
             if (config.currentEventOnly && !set.isCurrentEvent) continue;
             if (config.station != -1 && config.station != set.station) continue;
 
-            let isTeams = Object.keys(set.team["1"].player).length > 1;
+            let isTeams = set.team["1"] && Object.keys(set.team["1"].player).length > 1;
+
             html += `
                 <div class="set${current_set_nb} set">
                     ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
@@ -164,6 +183,7 @@ LoadEverything().then(() => {
         let oldData = event.oldData;
 
         let stream = config.stream || data.currentStream || config.default_stream
+        if (stream == "all") stream = null;
 
         if (
             !oldData.streamQueue ||
@@ -185,7 +205,7 @@ LoadEverything().then(() => {
                 let queue = data.streamQueue[stream];
                 if (!queue) return;
                 
-                if (config.display_stream_name == true){
+                if (config.display.stream_name == true){
                     html += stream_name_html(stream)
                 }
 
@@ -195,7 +215,7 @@ LoadEverything().then(() => {
                 resetSetsCount();
 
                 for (stream in data.streamQueue){
-                    if (config.display_stream_name){
+                    if (config.display.stream_name){
                         html += stream_name_html(stream)
                     }
                     html += await queue_html(data.streamQueue[stream], resolver)
