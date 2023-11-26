@@ -414,9 +414,6 @@ class TSHScoreboardWidget(QWidget):
                     self.scoreColumn.findChild(
                         QComboBox, "match").addItem(matchString)
 
-        if self.scoreboardNumber > 1:
-            self.UpdateStreamButton()
-
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo",
