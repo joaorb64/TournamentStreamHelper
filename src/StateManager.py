@@ -10,6 +10,7 @@ from PIL import Image
 import time
 from loguru import logger
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset, deep_clone
+from .SettingsManager import SettingsManager
 
 
 class StateManager:
