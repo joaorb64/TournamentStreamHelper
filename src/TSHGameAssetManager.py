@@ -56,7 +56,7 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    r_json = orjson.dumps(orjson.loads(r.text))
+                    r_json = orjson.dumps(orjson.loads(r.text), option=orjson.OPT_INDENT_2)
 
                     open('./assets/characters.json.tmp', 'wb').write(r_json)
 
