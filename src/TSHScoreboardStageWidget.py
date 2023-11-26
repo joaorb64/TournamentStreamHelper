@@ -535,7 +535,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                         )
                         rulesets = deep_get(data, "entities.ruleset")
                         open('./assets/rulesets.json',
-                             'wb').write(orjson.dumps(rulesets))
+                             'wb').write(orjson.dumps(rulesets, option=orjson.OPT_INDENT_2))
                         self.parent().startggRulesets = rulesets
                         logger.info("startgg Rulesets downloaded from startgg")
                         self.parent().signals.rulesets_changed.emit()
