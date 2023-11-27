@@ -111,6 +111,9 @@ LoadEverything().then(() => {
 
           SetInnerHtml($(`.p${t + 1}.score`), String(team.score));
         }
+        if(team.color) {
+          document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+        }
       }
     }
   };
