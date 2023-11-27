@@ -54,6 +54,10 @@ LoadEverything().then(() => {
 
       SetInnerHtml($(`.${team_id} .score`), String(team.score));
 
+      if(team.color) {
+        document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+      }
+
       let team_size = Object.values(team.player).length;
 
       let firstRun = Object.keys(oldData).length == 0;
