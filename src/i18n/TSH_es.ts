@@ -614,12 +614,12 @@ p, li { white-space: pre-wrap; }
         <translation>INTERCAMBIAR EQUIPOS</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="471"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="472"/>
         <source>Scale: {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="484"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="485"/>
         <source>Eyesight offset: ({0}, {1})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -760,7 +760,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHBracketWidget.py" line="91"/>
         <location filename="../TSHCommentaryWidget.py" line="47"/>
         <location filename="../TSHPlayerListWidget.py" line="73"/>
-        <location filename="../TSHScoreboardWidget.py" line="116"/>
+        <location filename="../TSHScoreboardWidget.py" line="119"/>
         <source>Characters per player</source>
         <translation>Personajes por jugador</translation>
     </message>
@@ -1297,7 +1297,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
         <location filename="../TSHSelectSetWindow.py" line="99"/>
         <location filename="../TSHSelectSetWindow.py" line="101"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1163"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1164"/>
         <source>Player {0}</source>
         <translation>Jugador {0}</translation>
     </message>
@@ -1316,48 +1316,48 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="125"/>
+        <location filename="../TSHScoreboardWidget.py" line="128"/>
         <source>Players per team</source>
         <translation>Jugadores por equipo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="137"/>
+        <location filename="../TSHScoreboardWidget.py" line="140"/>
         <source>Generate Thumbnail</source>
         <translation>Generar Miniatura</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="71"/>
-        <location filename="../TSHScoreboardWidget.py" line="169"/>
+        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <source>Real Name</source>
         <translation>Nombre Real</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
-        <location filename="../TSHScoreboardWidget.py" line="170"/>
+        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <source>Twitter</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
-        <location filename="../TSHScoreboardWidget.py" line="171"/>
+        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <source>Location</source>
         <translation>Localidad</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="74"/>
-        <location filename="../TSHScoreboardWidget.py" line="172"/>
+        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <source>Characters</source>
         <translation>Personajes</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="75"/>
-        <location filename="../TSHScoreboardWidget.py" line="173"/>
+        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <source>Pronouns</source>
         <translation>Pronombres</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="200"/>
-        <location filename="../TSHScoreboardWidget.py" line="472"/>
+        <location filename="../TSHScoreboardWidget.py" line="203"/>
+        <location filename="../TSHScoreboardWidget.py" line="499"/>
         <source>Load set</source>
         <translation>Cargar set</translation>
     </message>
@@ -1366,13 +1366,13 @@ p, li { white-space: pre-wrap; }
         <translation>Cargar set actual desde el stream</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="210"/>
+        <location filename="../TSHScoreboardWidget.py" line="213"/>
         <source>Track station sets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="269"/>
-        <location filename="../TSHScoreboardWidget.py" line="296"/>
+        <location filename="../TSHScoreboardWidget.py" line="272"/>
+        <location filename="../TSHScoreboardWidget.py" line="311"/>
         <source>TEAM {0}</source>
         <translation>EQUIPO {0}</translation>
     </message>
@@ -1382,22 +1382,22 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="568"/>
         <location filename="../TournamentStreamHelper.py" line="787"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
-        <location filename="../TSHScoreboardWidget.py" line="453"/>
+        <location filename="../TSHScoreboardWidget.py" line="480"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="466"/>
+        <location filename="../TSHScoreboardWidget.py" line="493"/>
         <source>Load set from {0}</source>
         <translation>Cargar set de {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="736"/>
+        <location filename="../TSHScoreboardWidget.py" line="763"/>
         <source>Load user set ({0})</source>
         <translation>Cargar set de usuario ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="740"/>
+        <location filename="../TSHScoreboardWidget.py" line="767"/>
         <source>Load user set</source>
         <translation>Cargar set de usuario</translation>
     </message>
@@ -1411,7 +1411,7 @@ p, li { white-space: pre-wrap; }
         <translation>Comentarista {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1164"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1165"/>
         <source>Sponsor {0}</source>
         <translation>Patrocinador {0}</translation>
     </message>
@@ -1420,8 +1420,8 @@ p, li { white-space: pre-wrap; }
         <translation>Grupo {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1211"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1238"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1212"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1239"/>
         <source>Team {0}</source>
         <translation>Equipo {0}</translation>
     </message>
@@ -1535,12 +1535,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="74"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="106"/>
         <source>Hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1567,6 +1567,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>settings.disable_export</name>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
+        <source>Disable TSH file exporting</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>settings.general</name>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="42"/>
@@ -1577,42 +1585,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.hotkeys</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="80"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="88"/>
         <source>Load set</source>
         <translation type="unfinished">Cargar set</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="81"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="89"/>
         <source>Team 1 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="82"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
         <source>Team 1 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="83"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="91"/>
         <source>Team 2 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="84"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="92"/>
         <source>Team 2 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="85"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="93"/>
         <source>Reset scores</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="86"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="94"/>
         <source>Swap teams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="73"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="81"/>
         <source>Enable hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1620,23 +1628,23 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1347"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1348"/>
         <source>Please select a game first</source>
         <translation>Seleccione un juego primero</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1352"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1353"/>
         <source>Player {0} tag missing</source>
         <translation>Falta la tag del jugador {0}</translation>
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="928"/>
-        <location filename="../TSHScoreboardWidget.py" line="428"/>
+        <location filename="../TSHScoreboardWidget.py" line="455"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="433"/>
+        <location filename="../TSHScoreboardWidget.py" line="460"/>
         <source>The thumbnail has been generated here:</source>
         <translation>La miniatura se generó aquí:</translation>
     </message>
