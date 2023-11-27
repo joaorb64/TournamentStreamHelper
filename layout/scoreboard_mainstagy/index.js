@@ -168,6 +168,9 @@ LoadEverything().then(() => {
             `<div class='sponsor_logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
           );
         }
+        if(team.color) {
+          document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+        }
       }
     }
 

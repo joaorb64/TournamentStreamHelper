@@ -1,0 +1,28 @@
+query Stations($eventSlug: String!) {
+  event(slug: $eventSlug) {
+    stations(page: 1, perPage: 999) {
+      nodes {
+        id
+        clusterNumber
+        clusterPrefix
+        enabled
+        identifier
+        number
+        prefix
+        queueDepth
+        state
+        streamId
+      }
+    }
+    tournament {
+      streamQueue {
+        id
+        stream {
+          id
+          streamName
+          streamSource
+        }
+      }
+    }
+  }
+}

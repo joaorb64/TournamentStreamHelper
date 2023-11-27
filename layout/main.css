@@ -46,7 +46,9 @@
   --border-radius: 16px;
   --text-color: white;
   --bg-color: #18181b;
-  --p1-score-bg-color: linear-gradient(
+  /* see DEFAULT_TEAM1_COLOR and DEFAULT_TEAM2_COLOR in src/TSHScoreboardWidget.py */
+
+  /* --p1-score-bg-color: linear-gradient(
     135deg,
     rgba(189, 63, 50, 1) 0%,
     rgba(203, 53, 107, 1) 100%
@@ -55,7 +57,8 @@
     225deg,
     rgba(47, 128, 237, 1) 0%,
     rgba(60, 139, 166, 1) 100%
-  );
+  ); */
+
   --p1-sponsor-color: #ff7a6d;
   --p2-sponsor-color: #29b6f6;
   --p1-score-color: white;

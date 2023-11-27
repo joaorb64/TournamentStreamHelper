@@ -6,8 +6,10 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from typing import List
+from src.TSHColorButton import TSHColorButton
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
+from src.TSHSelectStationWindow import TSHSelectStationWindow
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
 from .SettingsManager import SettingsManager
@@ -25,8 +27,11 @@ class TSHScoreboardWidgetSignals(QObject):
     NewSetSelected = Signal(object)
     SetSelection = Signal()
     StreamSetSelection = Signal()
+    StationSelection = Signal()
+    StationSelected = Signal(object)
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
+    CommandTeamColor = Signal(int, str)
     SwapTeams = Signal()
     ChangeSetData = Signal(dict)
 
@@ -47,7 +52,8 @@ class TSHScoreboardWidget(QWidget):
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
         self.signals.SetSelection.connect(self.LoadSetClicked)
-        self.signals.StreamSetSelection.connect(self.LoadStreamSetClicked)
+        self.signals.StationSelected.connect(self.LoadStationSet)
+        self.signals.StationSelection.connect(self.LoadStationSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
         self.signals.ChangeSetData.connect(self.ChangeSetData)
 
@@ -74,10 +80,13 @@ class TSHScoreboardWidget(QWidget):
 
         self.signals.CommandScoreChange.connect(self.CommandScoreChange)
         self.signals.SwapTeams.connect(self.SwapTeams)
+        self.signals.CommandTeamColor.connect(self.CommandTeamColor)
 
         self.stats = TSHStatsUtil(self.scoreboardNumber, self)
 
         self.lastSetSelected = None
+
+        self.lastStationSelected = None
 
         self.autoUpdateTimer: QTimer = None
         self.timeLeftTimer: QTimer = None
@@ -200,31 +209,20 @@ class TSHScoreboardWidget(QWidget):
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
 
-        self.btLoadStreamSet = QPushButton(
-            QApplication.translate("app", "Load current stream set"))
-        self.btLoadStreamSet.setIcon(QIcon("./assets/icons/twitch.svg"))
-        self.btLoadStreamSet.setEnabled(False)
-        hbox.addWidget(self.btLoadStreamSet)
-        self.btLoadStreamSet.clicked.connect(
-            self.signals.StreamSetSelection.emit)
-        TSHTournamentDataProvider.instance.signals.twitch_username_updated.connect(
-            self.UpdateStreamButton)
-
-        self.btLoadStreamSetOptions = QPushButton()
-        self.btLoadStreamSetOptions.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadStreamSetOptions.setIcon(
-            QIcon("./assets/icons/settings.svg"))
-        self.btLoadStreamSetOptions.clicked.connect(
-            self.LoadStreamSetOptionsClicked)
-        hbox.addWidget(self.btLoadStreamSetOptions)
+        self.btLoadStationSet = QPushButton(
+            QApplication.translate("app", "Track station sets"))
+        self.btLoadStationSet.setIcon(QIcon("./assets/icons/station.svg"))
+        hbox.addWidget(self.btLoadStationSet)
+        self.btLoadStationSet.clicked.connect(
+            self.signals.StationSelection.emit)
 
         hbox = QHBoxLayout()
         bottomOptions.layout().addLayout(hbox)
 
         #if self.scoreboardNumber <= 1:
         #    self.btLoadPlayerSet = QPushButton("Load player set")
-        #    self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
+        #    self.btLoadPlayerSet.setIcon(
+        #        QIcon("./assets/icons/person_search.svg"))
         #    self.btLoadPlayerSet.setEnabled(False)
         #    self.btLoadPlayerSet.clicked.connect(
         #        self.signals.UserSetSelection.emit)
@@ -248,6 +246,7 @@ class TSHScoreboardWidget(QWidget):
         TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
 
         self.selectSetWindow = TSHSelectSetWindow(self)
+        self.selectStationWindow = TSHSelectStationWindow(self)
 
         self.timerLayout = QWidget()
         self.timerLayout.setLayout(QHBoxLayout())
@@ -271,6 +270,19 @@ class TSHScoreboardWidget(QWidget):
         self.columns.layout().addWidget(self.team1column)
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
+
+        DEFAULT_TEAM1_COLOR = 'rgb(254, 54, 54)'
+
+        self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
+        # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
+        self.colorButton1.colorChanged.connect(
+            lambda color: [
+                self.CommandTeamColor(0, color)
+            ])
+        self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
+
+        self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
+        ).insertWidget(0, self.colorButton1)
         self.team1column.findChild(QScrollArea).setWidget(QWidget())
         self.team1column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -298,6 +310,19 @@ class TSHScoreboardWidget(QWidget):
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))
+
+        DEFAULT_TEAM2_COLOR = 'rgb(46, 137, 255)'
+
+        self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
+        self.colorButton2.colorChanged.connect(
+            lambda color: [
+                self.CommandTeamColor(1, color)
+            ])
+        # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
+        self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
+        self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
+        ).insertWidget(0, self.colorButton2)
+
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
         self.team2column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -342,7 +367,8 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.best_of", value),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.best_of", value),
                 StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
                     "best_of").format(value) if value > 0 else ""),
             ]
@@ -416,16 +442,14 @@ class TSHScoreboardWidget(QWidget):
                 if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
                     self.scoreColumn.findChild(
                         QComboBox, "match").addItem(matchString)
-        
-        if self.scoreboardNumber > 1:
-            self.UpdateStreamButton()
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo",
                              f"./user_data/team_logo/{value.lower()}.png")
         else:
-            StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo", None)
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.team.{team}.logo", None)
 
     def GenerateThumbnail(self):
         msgBox = QMessageBox()
@@ -433,7 +457,8 @@ class TSHScoreboardWidget(QWidget):
         msgBox.setWindowTitle(QApplication.translate(
             "thumb_app", "TSH - Thumbnail"))
         try:
-            thumbnailPath = thumbnail.generate(settingsManager=SettingsManager, scoreboardNumber=self.scoreboardNumber)
+            thumbnailPath = thumbnail.generate(
+                settingsManager=SettingsManager, scoreboardNumber=self.scoreboardNumber)
             msgBox.setText(QApplication.translate(
                 "thumb_app", "The thumbnail has been generated here:") + " ")
             msgBox.setIcon(QMessageBox.NoIcon)
@@ -469,7 +494,6 @@ class TSHScoreboardWidget(QWidget):
             self.btSelectSet.setText(
                 QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
             self.btSelectSet.setEnabled(True)
-            self.btLoadStreamSet.setEnabled(True)
             #if self.scoreboardNumber <= 1:
             #    self.btLoadPlayerSet.setEnabled(True)
         else:
@@ -518,7 +542,7 @@ class TSHScoreboardWidget(QWidget):
                 path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
                 scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
-            
+
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
@@ -560,7 +584,8 @@ class TSHScoreboardWidget(QWidget):
             if StateManager.Get(f'score.{self.scoreboardNumber}.team.{team}'):
                 for k in list(StateManager.Get(f'score.{self.scoreboardNumber}.team.{team}.player').keys()):
                     if int(k) > number:
-                        StateManager.Unset(f'score.{self.scoreboardNumber}.team.{team}.player.{k}')
+                        StateManager.Unset(
+                            f'score.{self.scoreboardNumber}.team.{team}.player.{k}')
 
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -621,7 +646,8 @@ class TSHScoreboardWidget(QWidget):
             self.teamsSwapped = not self.teamsSwapped
 
         finally:
-            StateManager.Set(f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
 
             for p in self.playerWidgets:
                 p.dataLock.release()
@@ -650,7 +676,11 @@ class TSHScoreboardWidget(QWidget):
             if data.get("auto_update") == "set":
                 self.labelAutoUpdate.setText("Auto update (Set)")
             elif data.get("auto_update") == "stream":
-                self.labelAutoUpdate.setText("Auto update (Stream)")
+                self.labelAutoUpdate.setText(
+                    f"Auto update (Stream [{self.lastStationSelected.get('identifier')}])")
+            elif data.get("auto_update") == "station":
+                self.labelAutoUpdate.setText(
+                    f"Auto update (Station [{self.lastStationSelected.get('identifier')}])")
             elif data.get("auto_update") == "user":
                 self.labelAutoUpdate.setText("Auto update (User)")
             else:
@@ -665,7 +695,8 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
-                StateManager.Unset(f'score.{self.scoreboardNumber}.stage_strike')
+                StateManager.Unset(
+                    f'score.{self.scoreboardNumber}.stage_strike')
                 self.lastSetSelected = data.get("id")
                 self.CommandClearAll()
                 self.ClearScore()
@@ -685,9 +716,9 @@ class TSHScoreboardWidget(QWidget):
                 self.autoUpdateTimer.timeout.connect(
                     lambda setId=data: self.AutoUpdate(data))
 
-                if data.get("auto_update") == "stream":
+                if data.get("auto_update") in ("stream", "station"):
                     self.autoUpdateTimer.timeout.connect(
-                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStreamSet(self, SettingsManager.Get("twitch_username")))
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSet(self))
 
                 if data.get("auto_update") == "user":
                     self.autoUpdateTimer.timeout.connect(
@@ -716,25 +747,14 @@ class TSHScoreboardWidget(QWidget):
         self.selectSetWindow.LoadSets()
         self.selectSetWindow.show()
 
-    def LoadStreamSetClicked(self):
+    def LoadStationSet(self, station):
         self.lastSetSelected = None
-        TSHTournamentDataProvider.instance.LoadStreamSet(
-            self, SettingsManager.Get("twitch_username"))
+        self.lastStationSelected = station
+        TSHTournamentDataProvider.instance.LoadStationSet(self)
 
-    def LoadStreamSetOptionsClicked(self):
-        TSHTournamentDataProvider.instance.SetTwitchUsername(self)
-
-    def UpdateStreamButton(self):
-        if SettingsManager.Get("twitch_username"):
-            self.btLoadStreamSet.setText(
-                QApplication.translate("app",  "Load current stream set") + " "+QApplication.translate("punctuation", "(")+SettingsManager.Get("twitch_username")+QApplication.translate("punctuation", ")"))
-            self.btLoadStreamSet.setEnabled(True)
-            StateManager.Set(f"currentStream",
-                             SettingsManager.Get("twitch_username"))
-        else:
-            self.btLoadStreamSet.setText(
-                QApplication.translate("app", "Load current stream set"))
-            self.btLoadStreamSet.setEnabled(False)
+    def LoadStationSetClicked(self):
+        self.selectStationWindow.LoadStations()
+        self.selectStationWindow.show()
 
     def UpdateUserSetButton(self):
         provider = None
@@ -787,6 +807,13 @@ class TSHScoreboardWidget(QWidget):
 
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
+
+    def CommandTeamColor(self, team: int, color):
+        if team in (0, 1):
+            StateManager.BlockSaving()
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.team.{team + 1}.color", color)
+            StateManager.ReleaseSaving()
 
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):

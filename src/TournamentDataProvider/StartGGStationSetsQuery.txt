@@ -1,0 +1,13 @@
+query StationSetsQuery($eventSlug: String!, $filters: SetFilters = {}) {
+  event(slug: $eventSlug) {
+    sets(page: 1, perPage: 999, filters: $filters) {
+      nodes {
+        id
+        state
+        station {
+          id
+        }
+      }
+    }
+  }
+}

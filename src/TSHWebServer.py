@@ -154,6 +154,17 @@ class WebServer(QThread):
         emit('team_scoredown',
             WebServer.actions.team_scoredown(info.get("scoreboardNumber"), info.get("team")))
 
+    # Set color of team
+    @app.route('/scoreboard<scoreboardNumber>-team<team>-color-<color>')
+    def team_color(scoreboardNumber, team, color):
+        return WebServer.actions.team_color(scoreboardNumber, team, "#" + color)
+        
+    @socketio.on('team_color')
+    def ws_team_color(message):
+        info = orjson.loads(message)
+        emit('team_scoredown',
+            WebServer.actions.team_color(info.get("scoreboardNumber"), info.get("team"), info.get("team")))
+
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
     #

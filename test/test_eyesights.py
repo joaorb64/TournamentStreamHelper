@@ -21,7 +21,8 @@ tested_assets = {
     "opxdbz": ["full"],
     "ssmack": ["full"],
     "trotb": ["base_files/icon"],
-    "nasb2": ["render"]
+    "nasb2": ["render"],
+    "rbff2": ["full"]
 }
 
 main_out_path = "../out/test"
