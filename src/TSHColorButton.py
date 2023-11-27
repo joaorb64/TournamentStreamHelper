@@ -1,8 +1,12 @@
 # https://www.pythonguis.com/widgets/qcolorbutton-a-color-selector-tool-for-pyqt/
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, pyqtSignal
 
-class TSHColorButton(QtWidgets.QToolButton):
+import qtpy
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
+from qtpy.QtCore import *
+
+
+class TSHColorButton(QToolButton):
     '''
     Custom Qt Widget to show a chosen color.
 
@@ -10,7 +14,7 @@ class TSHColorButton(QtWidgets.QToolButton):
     right-clicking resets the color to None (no-color).
     '''
 
-    colorChanged = pyqtSignal(object)
+    colorChanged = Signal(object)
 
     def __init__(self, *args, color=None, **kwargs):
         super(TSHColorButton, self).__init__(*args, **kwargs)
@@ -42,9 +46,9 @@ class TSHColorButton(QtWidgets.QToolButton):
         Qt will use the native dialog by default.
 
         '''
-        dlg = QtWidgets.QColorDialog(self)
+        dlg = QColorDialog(self)
         if self._color:
-            dlg.setCurrentColor(QtGui.QColor(self._color))
+            dlg.setCurrentColor(QColor(self._color))
 
         if dlg.exec_():
             self.setColor(dlg.currentColor().name())
