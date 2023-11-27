@@ -1293,7 +1293,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="213"/>
         <source>Track station sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Suivre les matchs d’un poste de jeu</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="272"/>
@@ -1375,7 +1375,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="96"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Poste</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="97"/>
@@ -1532,22 +1532,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectStationWindow.py" line="15"/>
         <source>Select a station</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un poste</translation>
     </message>
     <message>
         <location filename="../TSHSelectStationWindow.py" line="83"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../TSHSelectStationWindow.py" line="84"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>ID Machine</translation>
     </message>
     <message>
         <location filename="../TSHSelectStationWindow.py" line="86"/>
         <source>Identifier</source>
-        <translation type="unfinished"></translation>
+        <translation>Identifiant</translation>
     </message>
 </context>
 <context>
@@ -1614,7 +1614,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
         <source>Disable TSH file exporting</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver l’export des fichiers individuels de données</translation>
     </message>
 </context>
 <context>
