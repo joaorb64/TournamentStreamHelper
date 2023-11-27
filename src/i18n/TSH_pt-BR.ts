@@ -710,30 +710,30 @@ p, li { white-space: pre-wrap; }
     <name>altText</name>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="30"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="147"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="150"/>
         <source>Game:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="81"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="83"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="85"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="84"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="86"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="88"/>
         <source>VS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="96"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="195"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="102"/>
         <source>Stream powered by TournamentStreamHelper:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="194"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="199"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
