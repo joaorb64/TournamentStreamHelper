@@ -19,6 +19,7 @@ from loguru import logger
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.Helpers.TSHDictHelper import *
+from src.Helpers.TSHAltTextHelper import generate_youtube
 
 is_preview = False
 
@@ -1493,6 +1494,13 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
             shutil.rmtree(tmp_path)
         logger.info(
             f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
+        yt_title, yt_description = generate_youtube(scoreboardNumber, display_phase)
+        with open(f"{out_path}/{thumbnail_filename}_title.txt", "wt", encoding="utf-8") as txt_file:
+            txt_file.write(yt_title)
+        with open(f"{out_path}/{thumbnail_filename}_desc.txt", "wt", encoding="utf-8") as txt_file:
+            txt_file.write(yt_description)
+        logger.info(
+            f"YouTube data successfully saved as {out_path}/{thumbnail_filename}_title.txt and {out_path}/{thumbnail_filename}_desc.txt")
         return f"{out_path}/{thumbnail_filename}.png"
     else:
         thumbnail_filename = f"template"
