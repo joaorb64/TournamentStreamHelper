@@ -2,7 +2,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal
 
-class TSHColorButton(QtWidgets.QPushButton):
+class TSHColorButton(QtWidgets.QToolButton):
     '''
     Custom Qt Widget to show a chosen color.
 
