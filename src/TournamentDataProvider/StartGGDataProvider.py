@@ -474,22 +474,30 @@ class StartGGDataProvider(TournamentDataProvider):
             stations = deep_get(data, "data.event.stations.nodes", [])
             queues = deep_get(data, "data.event.tournament.streamQueue", [])
 
-            for station in stations:
-                final_data.append({
-                    "id": station.get("id"),
-                    "identifier": station.get("number"),
-                    "type": "station",
-                    "stream": next((deep_get(s, "stream.streamName", None) for s in queues if str(deep_get(s, "stream.id", None)) == str(station.get("streamId"))), "")
-                })
+            if stations is not None:
+                for station in stations:
+                    stream = ""
 
-            for queue in queues:
-                if queue.get("stream") is not None:
-                    stream = queue.get("stream")
+                    if queues is not None:
+                        stream = next((deep_get(s, "stream.streamName", None) for s in queues if str(
+                            deep_get(s, "stream.id", None)) == str(station.get("streamId"))), "")
+
                     final_data.append({
-                        "id": stream.get("id"),
-                        "identifier": stream.get("streamName"),
-                        "type": "stream"
+                        "id": station.get("id"),
+                        "identifier": station.get("number"),
+                        "type": "station",
+                        "stream": stream
                     })
+
+            if queues is not None:
+                for queue in queues:
+                    if queue.get("stream") is not None:
+                        stream = queue.get("stream")
+                        final_data.append({
+                            "id": stream.get("id"),
+                            "identifier": stream.get("streamName"),
+                            "type": "stream"
+                        })
 
             return (final_data)
         except Exception as e:

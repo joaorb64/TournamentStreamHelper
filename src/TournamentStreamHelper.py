@@ -49,7 +49,8 @@ else:
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
 
-        logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+        logger.critical("Uncaught exception", exc_info=(
+            exc_type, exc_value, exc_traceback))
 
     sys.excepthook = handle_exception
 
@@ -152,7 +153,7 @@ def UpdateProcedure():
         messagebox.exec()
     except Exception as e:
         # Layout folder backups failed
-        logger.error(traceback.format_exc()) 
+        logger.error(traceback.format_exc())
 
         buttonReply = QDialog()
         buttonReply.setWindowTitle(
@@ -323,7 +324,8 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, self.scoreboard)
         self.dockWidgets.append(self.scoreboard)
-        TSHScoreboardManager.instance.setWindowTitle(QApplication.translate("app", "Scoreboard Manager"))
+        TSHScoreboardManager.instance.setWindowTitle(
+            QApplication.translate("app", "Scoreboard Manager"))
 
         self.stageWidget = TSHScoreboardStageWidget()
         self.stageWidget.setObjectName(
@@ -658,17 +660,21 @@ class Window(QMainWindow):
         self.scoreboardAmount.setMaximum(10)
 
         self.scoreboardAmount.valueChanged.connect(
-            lambda val: 
-            TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.emit(val)
+            lambda val:
+            TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.emit(
+                val)
         )
 
         label_margin = " "*18
-        label = QLabel(label_margin + QApplication.translate("app", "Number of Scoreboards"))
-        label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        label = QLabel(
+            label_margin + QApplication.translate("app", "Number of Scoreboards"))
+        label.setSizePolicy(QSizePolicy.Policy.Fixed,
+                            QSizePolicy.Policy.Minimum)
 
         self.btLoadModifyTabName = QPushButton(
             QApplication.translate("app", "Modify Tab Name"))
-        self.btLoadModifyTabName.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.btLoadModifyTabName.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         self.btLoadModifyTabName.clicked.connect(self.ChangeTab)
 
         hbox.addWidget(label)
@@ -702,7 +708,8 @@ class Window(QMainWindow):
 
         StateManager.ReleaseSaving()
 
-        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(self.ToggleTopOption)
+        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
+            self.ToggleTopOption)
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
@@ -941,7 +948,7 @@ class Window(QMainWindow):
         else:
             self.btLoadPlayerSet.setHidden(False)
             self.btLoadPlayerSetOptions.setHidden(False)
-    
+
     def ChangeTab(self):
         tabNameWindow = QDialog(self)
         tabNameWindow.setWindowTitle(
@@ -960,17 +967,20 @@ class Window(QMainWindow):
         name = QLineEdit()
         vbox.addWidget(name)
 
-        setSelection = QPushButton(text=QApplication.translate("app", "Set Tab Title"))
+        setSelection = QPushButton(
+            text=QApplication.translate("app", "Set Tab Title"))
+
         def UpdateTabName():
-            TSHScoreboardManager.instance.SetTabName(number.value(), name.text())
+            TSHScoreboardManager.instance.SetTabName(
+                number.value(), name.text())
             tabNameWindow.close()
-        
+
         setSelection.clicked.connect(UpdateTabName)
 
         vbox.addWidget(setSelection)
 
         tabNameWindow.show()
-    
+
     def MigrateWindow(self):
         migrateWindow = QDialog(self)
         migrateWindow.setWindowTitle(
@@ -981,13 +991,15 @@ class Window(QMainWindow):
         hbox = QHBoxLayout()
         label = QLabel(QApplication.translate("app", "File Path"))
         filePath = QLineEdit()
-        fileExplorer = QPushButton(text=QApplication.translate("app", "Find File..."))
+        fileExplorer = QPushButton(
+            text=QApplication.translate("app", "Find File..."))
         hbox.addWidget(label)
         hbox.addWidget(filePath)
         hbox.addWidget(fileExplorer)
         vbox.addLayout(hbox)
 
-        migrate = QPushButton(text=QApplication.translate("app", "Migrate Layout"))
+        migrate = QPushButton(
+            text=QApplication.translate("app", "Migrate Layout"))
 
         def open_dialog():
             fname, _ok = QFileDialog.getOpenFileName(
@@ -998,43 +1010,46 @@ class Window(QMainWindow):
             )
             if fname:
                 filePath.setText(str(fname))
-        
+
         fileExplorer.clicked.connect(open_dialog)
 
         def MigrateLayout():
             data = None
             with open(filePath.text(), 'r') as file:
                 data = file.read()
-            
+
                 data = data.replace("data.score.", "data.score[1].")
                 data = data.replace("oldData.score.", "oldData.score[1].")
-                data = data.replace("_.get(data, \"score.stage_strike."
-                                    , "_.get(data, \"score.1.stage_strike.")
-                data = data.replace("_.get(oldData, \"score.stage_strike."
-                                    , "_.get(oldData, \"score.1.stage_strike.")
-                data = data.replace("source: `score.team.${t + 1}`"
-                                    , "source: `score.1.team.${t + 1}`")
-                data = data.replace("data.score[1].ruleset", "data.score.ruleset")
-            
+                data = data.replace(
+                    "_.get(data, \"score.stage_strike.", "_.get(data, \"score.1.stage_strike.")
+                data = data.replace(
+                    "_.get(oldData, \"score.stage_strike.", "_.get(oldData, \"score.1.stage_strike.")
+                data = data.replace(
+                    "source: `score.team.${t + 1}`", "source: `score.1.team.${t + 1}`")
+                data = data.replace(
+                    "data.score[1].ruleset", "data.score.ruleset")
+
             with open(filePath.text(), 'w') as file:
                 file.write(data)
-            
+
             logger.info("Completed Layout Migration at: " + filePath.text())
 
             completeDialog = QDialog(migrateWindow)
             completeDialog.setWindowTitle(
-            QApplication.translate("app", "Migration Complete"))
+                QApplication.translate("app", "Migration Complete"))
             completeDialog.setMinimumWidth(500)
             vbox2 = QVBoxLayout()
             completeDialog.setLayout(vbox2)
-            completeText = QLabel(QApplication.translate("app", "Layout Migration has completed!"))
+            completeText = QLabel(QApplication.translate(
+                "app", "Layout Migration has completed!"))
             completeText.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            closeButton = QPushButton(text=QApplication.translate("app", "Close Window"))
+            closeButton = QPushButton(
+                text=QApplication.translate("app", "Close Window"))
             vbox2.addWidget(completeText)
             vbox2.addWidget(closeButton)
             closeButton.clicked.connect(completeDialog.close)
             completeDialog.show()
-        
+
         migrate.clicked.connect(MigrateLayout)
 
         vbox.addWidget(migrate)

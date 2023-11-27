@@ -270,19 +270,20 @@ class TSHScoreboardWidget(QWidget):
         self.columns.layout().addWidget(self.team1column)
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
-        
+
         DEFAULT_TEAM1_COLOR = 'rgb(254, 54, 54)'
-        
+
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
         # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
         self.colorButton1.colorChanged.connect(
-                lambda color: [
-                    self.CommandTeamColor(0, color)
-                ])
+            lambda color: [
+                self.CommandTeamColor(0, color)
+            ])
         self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
-        
-        self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, self.colorButton1)
-        self.team1column.findChild(QScrollArea).setWidget(QWidget())    
+
+        self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
+        ).insertWidget(0, self.colorButton1)
+        self.team1column.findChild(QScrollArea).setWidget(QWidget())
         self.team1column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
 
@@ -309,18 +310,19 @@ class TSHScoreboardWidget(QWidget):
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))
-        
+
         DEFAULT_TEAM2_COLOR = 'rgb(46, 137, 255)'
-        
+
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
         self.colorButton2.colorChanged.connect(
-                lambda color: [
-                    self.CommandTeamColor(1, color)
-                ])
+            lambda color: [
+                self.CommandTeamColor(1, color)
+            ])
         # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
         self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
-        self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, self.colorButton2)
-        
+        self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
+        ).insertWidget(0, self.colorButton2)
+
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
         self.team2column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -805,11 +807,12 @@ class TSHScoreboardWidget(QWidget):
 
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
-        
+
     def CommandTeamColor(self, team: int, color):
         if team in (0, 1):
             StateManager.BlockSaving()
-            StateManager.Set(f"score.{self.scoreboardNumber}.team.{team + 1}.color", color)
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.team.{team + 1}.color", color)
             StateManager.ReleaseSaving()
 
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
