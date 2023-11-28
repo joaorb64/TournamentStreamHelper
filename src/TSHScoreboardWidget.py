@@ -809,6 +809,10 @@ class TSHScoreboardWidget(QWidget):
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
     def CommandTeamColor(self, team: int, color):
+        if team == 0:
+            self.colorButton1.setColor(color)
+        if team == 1:
+            self.colorButton2.setColor(color)
         if team in (0, 1):
             StateManager.BlockSaving()
             StateManager.Set(
