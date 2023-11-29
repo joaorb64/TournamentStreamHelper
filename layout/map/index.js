@@ -51,8 +51,8 @@ LoadEverything().then(() => {
 
     Object.values(data.score[scoreboardNumber].team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
-        if(!player.name){
-          return
+        if (!player.name) {
+          return;
         }
 
         let pos = [
@@ -65,7 +65,7 @@ LoadEverything().then(() => {
         ];
 
         let validPos = !Number.isNaN(pos[0]) && !Number.isNaN(pos[1]);
-        if(!validPos) pos = [0, 0]
+        if (!validPos) pos = [0, 0];
         isValid.push(validPos);
 
         positions.push(pos);
@@ -84,14 +84,14 @@ LoadEverything().then(() => {
           }
         });
 
-        let offsetDistance = validPos ? 8 : 16
+        let offsetDistance = validPos ? 8 : 16;
 
         let offsets = {
-          "top": [0, -offsetDistance],
-          "bottom": [0, offsetDistance],
-          "left":[-offsetDistance, 0],
-          "right": [offsetDistance, 0]
-        }
+          top: [0, -offsetDistance],
+          bottom: [0, offsetDistance],
+          left: [-offsetDistance, 0],
+          right: [offsetDistance, 0],
+        };
 
         let marker = L.marker(pos, {
           icon: L.icon({
@@ -113,7 +113,9 @@ LoadEverything().then(() => {
         if (!player.state.latitude || window.COUNTRY_ONLY || !validPos) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
-              html: `<div class="gps_ring ${!validPos ? "gps_ring_big": ""}"></div>`,
+              html: `<div class="gps_ring ${
+                !validPos ? "gps_ring_big" : ""
+              }"></div>`,
               className: "css-icon",
               iconAnchor: [64, 64],
             }),
