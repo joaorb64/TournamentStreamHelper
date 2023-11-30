@@ -62,6 +62,14 @@ class TSHSettingsWindow(QDialog):
             False
         ))
 
+        generalSettings.append((
+            QApplication.translate(
+                "settings.disable_export", "Disable TSH file exporting"),
+            "disable_export",
+            "checkbox",
+            False
+        ))
+
 
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))

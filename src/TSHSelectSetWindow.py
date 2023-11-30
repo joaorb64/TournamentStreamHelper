@@ -55,7 +55,7 @@ class TSHSelectSetWindow(QDialog):
         self.startggSetSelectionItemList.setEditTriggers(
             QAbstractItemView.NoEditTriggers)
         self.startggSetSelectionItemList.setModel(self.proxyModel)
-        self.startggSetSelectionItemList.setColumnHidden(5, True)
+        self.startggSetSelectionItemList.setColumnHidden(6, True)
         self.startggSetSelectionItemList.horizontalHeader(
         ).setSectionResizeMode(QHeaderView.Stretch)
         self.startggSetSelectionItemList.resizeColumnsToContents()
@@ -90,13 +90,15 @@ class TSHSelectSetWindow(QDialog):
     def SetSets(self, sets):
         logger.info("Got sets" + str(len(sets)))
         model = QStandardItemModel()
-        horizontal_labels = ["Stream", "Wave", "Title", "Player 1", "Player 2"]
+        horizontal_labels = ["Stream", "Station",
+                             "Wave", "Title", "Player 1", "Player 2"]
         horizontal_labels[0] = QApplication.translate("app", "Stream")
-        horizontal_labels[1] = QApplication.translate("app", "Phase")
-        horizontal_labels[2] = QApplication.translate("app", "Match")
-        horizontal_labels[3] = QApplication.translate(
-            "app", "Player {0}").format(1)
+        horizontal_labels[1] = QApplication.translate("app", "Station")
+        horizontal_labels[2] = QApplication.translate("app", "Phase")
+        horizontal_labels[3] = QApplication.translate("app", "Match")
         horizontal_labels[4] = QApplication.translate(
+            "app", "Player {0}").format(1)
+        horizontal_labels[5] = QApplication.translate(
             "app", "Player {0}").format(2)
         model.setHorizontalHeaderLabels(horizontal_labels)
 
@@ -124,6 +126,8 @@ class TSHSelectSetWindow(QDialog):
 
                 model.appendRow([
                     QStandardItem(s.get("stream", "")),
+                    QStandardItem(str(s.get("station", "")) if s.get(
+                        "station", "") != None else ""),
                     QStandardItem(s.get("tournament_phase", "")),
                     QStandardItem(s["round_name"]),
                     QStandardItem(player_names[0]),
@@ -132,7 +136,7 @@ class TSHSelectSetWindow(QDialog):
                 ])
 
         self.proxyModel.setSourceModel(model)
-        self.startggSetSelectionItemList.setColumnHidden(5, True)
+        self.startggSetSelectionItemList.setColumnHidden(6, True)
         self.startggSetSelectionItemList.resizeColumnsToContents()
         self.startggSetSelectionItemList.horizontalHeader(
         ).setSectionResizeMode(QHeaderView.Stretch)
@@ -146,7 +150,7 @@ class TSHSelectSetWindow(QDialog):
             row = self.startggSetSelectionItemList.selectionModel().selectedRows()[
                 0].row()
         setId = self.startggSetSelectionItemList.model().index(
-            row, 5).data(Qt.ItemDataRole.UserRole)
+            row, 6).data(Qt.ItemDataRole.UserRole)
         self.close()
 
         if setId:

@@ -146,6 +146,9 @@ LoadEverything().then(() => {
               `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
             );
           }
+          if(team.color) {
+            document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+          }
         }
       }
     } else {
@@ -228,6 +231,9 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.container .sponsor-container`),
           `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
         );
+      }
+      if(team.color) {
+        document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
       }
     }
 

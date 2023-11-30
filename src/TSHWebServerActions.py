@@ -144,6 +144,14 @@ class WebServerActions(QThread):
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
         return "OK"
 
+    
+    def team_color(self, scoreboard, team, color):
+        if str(team) == "1":
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(0, color)
+        else:
+            self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(1, color)
+        return "OK"
+
     def set_route(self,
                   scoreboard,
                   bestOf=None,
@@ -222,6 +230,9 @@ class WebServerActions(QThread):
     def swap_teams(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).signals.SwapTeams.emit()
         return "OK"
+    
+    def get_swap(self, scoreboard):
+        return str(self.scoreboard.GetScoreboard(scoreboard).teamsSwapped)
 
     def open_sets(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).signals.SetSelection.emit()

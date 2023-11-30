@@ -10,6 +10,7 @@ import orjson
 from loguru import logger
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 import traceback
 
 import logging
@@ -153,6 +154,17 @@ class WebServer(QThread):
         emit('team_scoredown',
             WebServer.actions.team_scoredown(info.get("scoreboardNumber"), info.get("team")))
 
+    # Set color of team
+    @app.route('/scoreboard<scoreboardNumber>-team<team>-color-<color>')
+    def team_color(scoreboardNumber, team, color):
+        return WebServer.actions.team_color(scoreboardNumber, team, "#" + color)
+        
+    @socketio.on('team_color')
+    def ws_team_color(message):
+        info = orjson.loads(message)
+        emit('team_scoredown',
+            WebServer.actions.team_color(info.get("scoreboardNumber"), info.get("team"), info.get("team")))
+
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
     #
@@ -220,6 +232,11 @@ class WebServer(QThread):
     def ws_swap_teams(message):
         info = orjson.loads(message)
         emit('swap_teams', WebServer.actions.swap_teams(info.get("scoreboardNumber")))
+        
+    # Are the teams currently swapped?
+    @app.route('/scoreboard<scoreboardNumber>-get-swap')
+    def get_swap(scoreboardNumber):
+        return WebServer.actions.get_swap(scoreboardNumber)
 
     # Opens Set Selector Window
     @app.route('/scoreboard<scoreboardNumber>-open-set')
@@ -338,6 +355,18 @@ class WebServer(QThread):
         info = orjson.loads(message)
         emit('clear_all',
             WebServer.actions.clear_all(info.get("scoreboardNumber")))
+        
+    # Get the sets to be played
+    @app.route('/get-sets')
+    def get_sets():
+        if request.args.get('getFinished') is not None:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=True)
+            return sets
+        else:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=False)
+            return sets
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-load-set')
