@@ -379,6 +379,11 @@ class WebServer(QThread):
         emit('load_set',
             WebServer.actions.load_set(info.get("scoreboardNumber"), info.get("set")))
 
+    # Update bracket
+    @app.route('/update-bracket')
+    def update_bracket():
+        return WebServer.actions.update_bracket()
+
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()

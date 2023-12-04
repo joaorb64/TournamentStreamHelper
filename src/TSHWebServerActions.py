@@ -8,6 +8,9 @@ from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
 from loguru import logger
 from .TSHGameAssetManager import TSHGameAssetManager
+from .TSHBracketView import TSHBracketView
+from .TSHBracketWidget import TSHBracketWidget
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -309,6 +312,12 @@ class WebServerActions(QThread):
         self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(1)
         self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(1)
         self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
+        return "OK"
+    
+    def update_bracket(self):
+        id = TSHTournamentDataProvider.instance.provider.GetTournamentPhases()[0].get("groups")[0].get("id")
+        data = TSHTournamentDataProvider.instance.provider.GetTournamentPhaseGroup(id)
+        TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
         return "OK"
 
     def load_set(self, scoreboard, set=None):
