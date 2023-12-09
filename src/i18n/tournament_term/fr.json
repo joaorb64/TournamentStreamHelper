@@ -12,7 +12,7 @@
         "losers_round": "Tour {0} Loser",
         "round": "Tour {0}",
         "best_of": "Best of {0}",
-        "qualifier": "Qualifications pour le {0}"
+        "qualifier": "Match de qualification - {0}"
     },
     "phase": {
         "group_stage": "Poules",
