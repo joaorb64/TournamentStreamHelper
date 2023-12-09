@@ -142,10 +142,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation>Formulaire</translation>
@@ -1186,10 +1186,10 @@ p, li { white-space: pre-wrap; }
         <translation>Nombre de joueurs par emplacement</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="92"/>
-        <location filename="../TSHCommentaryWidget.py" line="47"/>
-        <location filename="../TSHPlayerListWidget.py" line="73"/>
         <location filename="../TSHScoreboardWidget.py" line="119"/>
+        <location filename="../TSHCommentaryWidget.py" line="47"/>
+        <location filename="../TSHBracketWidget.py" line="92"/>
+        <location filename="../TSHPlayerListWidget.py" line="73"/>
         <source>Characters per player</source>
         <translation>Nombre de personnages par joueur</translation>
     </message>
@@ -1371,8 +1371,8 @@ p, li { white-space: pre-wrap; }
         <translation>Afficher uniquement les paires complètes</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="95"/>
         <location filename="../TSHSelectStationWindow.py" line="85"/>
+        <location filename="../TSHSelectSetWindow.py" line="95"/>
         <source>Stream</source>
         <translation>Stream</translation>
     </message>
@@ -1435,32 +1435,32 @@ p, li { white-space: pre-wrap; }
         <translation>Équipe {0}</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="71"/>
         <location filename="../TSHScoreboardWidget.py" line="172"/>
+        <location filename="../TSHCommentaryWidget.py" line="71"/>
         <source>Real Name</source>
         <translation>Nom Réel</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="72"/>
         <location filename="../TSHScoreboardWidget.py" line="173"/>
+        <location filename="../TSHCommentaryWidget.py" line="72"/>
         <source>Twitter</source>
         <translation>Twitter</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="73"/>
         <location filename="../TSHScoreboardWidget.py" line="174"/>
+        <location filename="../TSHCommentaryWidget.py" line="73"/>
         <source>Location</source>
         <translation>Lieu</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="74"/>
         <location filename="../TSHScoreboardWidget.py" line="175"/>
+        <location filename="../TSHCommentaryWidget.py" line="74"/>
         <source>Characters</source>
         <translation>Personnages</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="75"/>
         <location filename="../TSHScoreboardWidget.py" line="176"/>
+        <location filename="../TSHCommentaryWidget.py" line="75"/>
         <source>Pronouns</source>
         <translation>Pronoms</translation>
     </message>
