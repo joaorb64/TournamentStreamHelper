@@ -314,6 +314,7 @@ body {
   display: flex;
   flex-direction: row;
   gap: 2px;
+  border-bottom-right-radius: 12px;
 }
 
 .info.material_container.middle .info {
@@ -322,7 +323,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 300px;
+  width: auto;
   text-align: justify;
   align-items: center;
   overflow: hidden;
@@ -411,4 +412,83 @@ body {
 
 .t2 .below_name {
   right: 130px;
+}
+
+.com_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-content: center;
+  width: max-content;
+  gap: 16px;
+  color: var(--text-color);
+  flex-wrap: wrap;
+  padding-top: 16px;
+}
+
+.commentator_container {
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-color);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background: #01020199;
+}
+
+.mic_icon {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  -webkit-mask-image: url(./icon_mic.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
+}
+
+.name {
+  font-size: 26px;
+}
+
+.team {
+  opacity: 0.6;
+}
+
+.twitter {
+  font-size: 20px;
+}
+
+.icon {
+  width: 128px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex-grow: 1;
+}
+
+.index_display {
+  position: absolute;
+  bottom: 8px;
+  right: 32px;
+  z-index: 999;
+  color: white;
+  font-size: 100px;
+  text-shadow: 12px 12px 2px black;
+}
+
+.pronoun {
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  color: var(--text-color);
+  align-self: center;
 }

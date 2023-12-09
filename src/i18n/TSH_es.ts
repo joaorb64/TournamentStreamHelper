@@ -745,19 +745,19 @@ p, li { white-space: pre-wrap; }
         <translation>Lista de Jugadores</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="71"/>
+        <location filename="../TSHBracketWidget.py" line="72"/>
         <location filename="../TSHPlayerListWidget.py" line="55"/>
         <source>Number of slots</source>
         <translation>Número de grupos</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="82"/>
+        <location filename="../TSHBracketWidget.py" line="83"/>
         <location filename="../TSHPlayerListWidget.py" line="64"/>
         <source>Players per slot</source>
         <translation>Jugadores por grupo</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="91"/>
+        <location filename="../TSHBracketWidget.py" line="92"/>
         <location filename="../TSHCommentaryWidget.py" line="47"/>
         <location filename="../TSHPlayerListWidget.py" line="73"/>
         <location filename="../TSHScoreboardWidget.py" line="119"/>

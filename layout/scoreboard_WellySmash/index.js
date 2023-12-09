@@ -132,5 +132,51 @@ LoadEverything().then(() => {
 
     SetInnerHtml($(".singles .match"), data.score[scoreboardNumber].match);
     SetInnerHtml($(".singles .best_of"), data.score[scoreboardNumber].best_of_text);
+
+    if (
+      Object.keys(oldData).length == 0 ||
+      Object.keys(oldData.commentary).length 
+    ) {
+      let html = "";
+      Object.values(data.commentary).forEach((commentator, index) => {
+        html += `
+              <div class="commentator_container commentator${index}">
+                  <div class="name"></div>
+                  <div class="pronoun"></div>
+              </div>
+          `;
+      });
+      console.log({html});
+      $(".com_container").html(html);
+    }
+
+    for (const [index, commentator] of Object.values(
+      data.commentary
+    ).entries()) {
+      if (commentator.name) {
+        $(`.commentator${index}`).css("display", "");
+        SetInnerHtml(
+          $(`.commentator${index} .name`),
+          `
+            <span class="mic_icon"></span>
+            <span class="team">
+              ${commentator.team ? commentator.team + "&nbsp;" : ""}
+            </span>
+            ${await Transcript(commentator.name)}
+          `
+        );
+        SetInnerHtml($(`.commentator${index} .pronoun`), commentator.pronoun);
+        SetInnerHtml(
+          $(`.commentator${index} .real_name`),
+          commentator.real_name
+        );
+        SetInnerHtml(
+          $(`.commentator${index} .twitter`),
+          commentator.twitter ? "@" + commentator.twitter : ""
+        );
+      } else {
+        $(`.commentator${index}`).css("display", "none");
+      }
+    }
   };
 });

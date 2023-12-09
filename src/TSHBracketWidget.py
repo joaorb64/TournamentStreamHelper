@@ -27,6 +27,7 @@ class TSHBracketWidgetSignals(QObject):
 
 
 class TSHBracketWidget(QDockWidget):
+    instance: "TSHBracketWidget" = None
     def __init__(self, *args):
         StateManager.BlockSaving()
         super().__init__(*args)
@@ -200,6 +201,8 @@ class TSHBracketWidget(QDockWidget):
         self.bracketView.Update()
 
         StateManager.ReleaseSaving()
+        
+        TSHBracketWidget.instance = self
 
     def UpdatePhases(self, phases):
         logger.info("Phases: " + str(phases))
