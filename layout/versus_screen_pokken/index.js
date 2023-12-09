@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-
-  let scoreboardNumber = 1;
-  
   let startingAnimation = gsap
     .timeline({ paused: true })
     .to([".logo"], { duration: 0.8, top: 160 }, 0)
@@ -45,10 +42,10 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    let isTeams = Object.keys(data.score[scoreboardNumber].team["1"].player).length > 1;
+    let isTeams = Object.keys(data.score[window.scoreboardNumber].team["1"].player).length > 1;
 
     if (!isTeams) {
-      const teams = Object.values(data.score[scoreboardNumber].team);
+      const teams = Object.values(data.score[window.scoreboardNumber].team);
       for (const [t, team] of teams.entries()) {
         const players = Object.values(team.player);
         for (const [p, player] of players.entries()) {
@@ -150,7 +147,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.character`),
               {
-                source: `score.${scoreboardNumber}.team.${t + 1}`,
+                source: `score.${window.scoreboardNumber}.team.${t + 1}`,
                 scale_based_on_parent: true,
                 anim_out: {
                   x: -zIndexMultiplyier * 100 + "%",
@@ -220,7 +217,7 @@ LoadEverything().then(() => {
         }
       }
     } else {
-      const teams = Object.values(data.score[scoreboardNumber].team);
+      const teams = Object.values(data.score[window.scoreboardNumber].team);
       for (const [t, team] of teams.entries()) {
         let hasTeamName = team.teamName != null && team.teamName != ""
 
@@ -303,7 +300,7 @@ LoadEverything().then(() => {
           await CharacterDisplay(
             $(`.p${t + 1}.character`),
             {
-              source: `score.${scoreboardNumber}.team.${t + 1}`,
+              source: `score.${window.scoreboardNumber}.team.${t + 1}`,
               scale_based_on_parent: true,
               anim_out: {
                 x: -zIndexMultiplyier * 100 + "%",
@@ -381,16 +378,16 @@ LoadEverything().then(() => {
       }
     }
 
-    SetInnerHtml($(`.p1 .score`), String(data.score[scoreboardNumber].team["1"].score));
-    SetInnerHtml($(`.p2 .score`), String(data.score[scoreboardNumber].team["2"].score));
+    SetInnerHtml($(`.p1 .score`), String(data.score[window.scoreboardNumber].team["1"].score));
+    SetInnerHtml($(`.p2 .score`), String(data.score[window.scoreboardNumber].team["2"].score));
 
     SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
-    SetInnerHtml($(".match"), data.score[scoreboardNumber].match);
+    SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match);
 
     let stage = null;
 
-    if (_.get(data, `score.${scoreboardNumber}.stage_strike.selectedStage`)) {
-      let stageId = _.get(data, `score.${scoreboardNumber}.stage_strike.selectedStage`);
+    if (_.get(data, `score.${window.scoreboardNumber}.stage_strike.selectedStage`)) {
+      let stageId = _.get(data, `score.${window.scoreboardNumber}.stage_strike.selectedStage`);
 
       let allStages = _.get(data, "score.ruleset.neutralStages", []).concat(
         _.get(data, "score.ruleset.counterpickStages", [])
@@ -401,8 +398,8 @@ LoadEverything().then(() => {
 
     if (
       stage &&
-      _.get(data, `score.${scoreboardNumber}.stage_strike.selectedStage`) !=
-        _.get(oldData, `score.${scoreboardNumber}.stage_strike.selectedStage`)
+      _.get(data, `score.${window.scoreboardNumber}.stage_strike.selectedStage`) !=
+        _.get(oldData, `score.${window.scoreboardNumber}.stage_strike.selectedStage`)
     ) {
       gsap.fromTo(
         $(`.stage`),
@@ -424,8 +421,8 @@ LoadEverything().then(() => {
 
     SetInnerHtml(
       $(".phase_best_of"),
-      data.score[scoreboardNumber].phase +
-        (data.score[scoreboardNumber].best_of_text ? ` | ${data.score[scoreboardNumber].best_of_text}` : "")
+      data.score[window.scoreboardNumber].phase +
+        (data.score[window.scoreboardNumber].best_of_text ? ` | ${data.score[window.scoreboardNumber].best_of_text}` : "")
     );
   };
 });

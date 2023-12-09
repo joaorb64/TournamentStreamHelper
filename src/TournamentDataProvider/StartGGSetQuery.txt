@@ -78,6 +78,9 @@ query SetQuery($id: ID!) {
                 name
                 groupCount
                 bracketType
+                progressionsOut {
+                    id
+                }
             }
             displayIdentifier
         }

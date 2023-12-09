@@ -14,8 +14,6 @@ LoadEverything().then(() => {
   let firstTime = true;
 
   let intervalID = "";
-  
-  let scoreboardNumber = 1;
 
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -74,8 +72,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     for (const [t, team] of [
-      data.score[scoreboardNumber].team["1"],
-      data.score[scoreboardNumber].team["2"],
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
@@ -134,7 +132,7 @@ LoadEverything().then(() => {
               : ``
           );
 
-          let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
+          let score = [data.score[window.scoreboardNumber].score_left, data.score[window.scoreboardNumber].score_right];
 
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
 
@@ -164,38 +162,38 @@ LoadEverything().then(() => {
   async function UpdateMatch() {
     const tournamentContainer = document.querySelector(".tournament_container");
 
-    if (!(data.score[scoreboardNumber].best_of
-      || data.score[scoreboardNumber].match)) {
+    if (!(data.score[window.scoreboardNumber].best_of
+      || data.score[window.scoreboardNumber].match)) {
       tournamentContainer.classList.add("hidden");
       tournamentContainer.classList.remove("unhidden");
     } else {
       tournamentContainer.classList.add("unhidden");
       tournamentContainer.classList.remove("hidden");
 
-      if (!data.score[scoreboardNumber].best_of
-        && data.score[scoreboardNumber].match) {
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
-      } else if (data.score[scoreboardNumber].best_of
-        && !data.score[scoreboardNumber].match) {
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].best_of_text.toUpperCase());
-      } else if (savedMatch != data.score[scoreboardNumber].match) {
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
-      } else if (savedBestOf != data.score[scoreboardNumber].best_of) {
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
+      if (!data.score[window.scoreboardNumber].best_of
+        && data.score[window.scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match.toUpperCase());
+      } else if (data.score[window.scoreboardNumber].best_of
+        && !data.score[window.scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].best_of_text.toUpperCase());
+      } else if (savedMatch != data.score[window.scoreboardNumber].match) {
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match.toUpperCase());
+      } else if (savedBestOf != data.score[window.scoreboardNumber].best_of) {
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match.toUpperCase());
       } else {
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].best_of_text.toUpperCase());
-        SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].best_of_text.toUpperCase());
+        SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match.toUpperCase());
       }
     }
-    savedBestOf = data.score[scoreboardNumber].best_of;
-    savedMatch = data.score[scoreboardNumber].match;
+    savedBestOf = data.score[window.scoreboardNumber].best_of;
+    savedMatch = data.score[window.scoreboardNumber].match;
   }
 
   async function UpdateTwitter() {
     changeInP1 = false;
     changeInP2 = false;
 
-    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+    [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -218,8 +216,8 @@ LoadEverything().then(() => {
       }
     });
 
-    [data.score[scoreboardNumber].team["1"]
-    , data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+    [data.score[window.scoreboardNumber].team["1"]
+    , data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           const playerTwitter = document.querySelector(`.p${t + 1}.twitter`);
@@ -298,8 +296,8 @@ LoadEverything().then(() => {
 
   async function TwitterPronounChecker() {
     let refreshNeeded = false;
-    [data.score[scoreboardNumber].team["1"]
-    , data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+    [data.score[window.scoreboardNumber].team["1"]
+    , data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (
           t == 0 &&
@@ -330,8 +328,8 @@ LoadEverything().then(() => {
     let refreshNeeded = false;
 
     if (
-      !(savedBestOf == data.score[scoreboardNumber].best_of
-        && savedMatch == data.score[scoreboardNumber].match)
+      !(savedBestOf == data.score[window.scoreboardNumber].best_of
+        && savedMatch == data.score[window.scoreboardNumber].match)
     ) {
       refreshNeeded = true;
     }

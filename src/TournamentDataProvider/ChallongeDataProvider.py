@@ -33,6 +33,7 @@ HEADERS = {
 def CHALLONGE_BRACKET_TYPE(bracketType: str):
     mapping = {
         "MatchPlotter": "ROUND_ROBIN",
+        "SchedulePlotter": "ROUND_ROBIN",
         "DoubleEliminationBracketPlotter": "DOUBLE_ELIMINATION"
     }
     if bracketType in mapping:
@@ -566,16 +567,33 @@ class ChallongeDataProvider(TournamentDataProvider):
                 groups = [groups[groupId]]
 
             for group in groups:
-                rounds = deep_get(group, "rounds", {})
+                rounds = deep_get(group, "rounds", [])
                 matches = deep_get(group, "matches_by_round", {})
+
+                roundNumbers = [r.get("number") for r in rounds]
+                maxRoundNumber = max(roundNumbers)
+                minRoundNumber = min(roundNumbers)
 
                 for round in matches.values():
                     for match in round:
                         # match["round_name"] = next(
                         #     r["title"] for r in rounds if r["number"] == match.get("round"))
                         match["phase"] = group.get("name")
-                        match["round_name"] = ChallongeDataProvider.TranslateRoundName(
-                            match, rounds, CHALLONGE_BRACKET_TYPE(group.get("requested_plotter")))
+
+                        if int(match.get("round")) >= 0:
+                            match["round_name"] = TSHLocaleHelper.matchNames.get(
+                                "winners_round").format(abs(match.get("round")))
+                        else:
+                            match["round_name"] = TSHLocaleHelper.matchNames.get(
+                                "losers_round").format(abs(match.get("round")))
+
+                        # For final rounds in group, use "Qualifier"
+                        if int(match.get("round")) in [maxRoundNumber, minRoundNumber]:
+                            match["round_name"] = TSHLocaleHelper.matchNames.get("qualifier").format(
+                                TSHLocaleHelper.phaseNames.get("final_stage"))
+                            match["winnerProgression"] = TSHLocaleHelper.phaseNames.get(
+                                "final_stage")
+
                         all_matches.append(match)
 
         return all_matches

@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-
-  let scoreboardNumber = 1;
-  
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -54,8 +51,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     for (const [t, team] of [
-      data.score[scoreboardNumber].team["1"],
-      data.score[scoreboardNumber].team["2"],
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
@@ -132,7 +129,7 @@ LoadEverything().then(() => {
               : ""
           );
 
-          let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
+          let score = [data.score[window.scoreboardNumber].score_left, data.score[window.scoreboardNumber].score_right];
 
           SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 
@@ -154,12 +151,12 @@ LoadEverything().then(() => {
       data.tournamentInfo.tournamentName.toUpperCase()
     );
 
-    SetInnerHtml($(".match"), data.score[scoreboardNumber].match.toUpperCase());
+    SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match.toUpperCase());
 
     let phaseTexts = [];
-    if (data.score[scoreboardNumber].phase) phaseTexts.push(data.score[scoreboardNumber].phase.toUpperCase());
-    if (data.score[scoreboardNumber].best_of_text)
-      phaseTexts.push(`${data.score[scoreboardNumber].best_of_text}`.toUpperCase());
+    if (data.score[window.scoreboardNumber].phase) phaseTexts.push(data.score[window.scoreboardNumber].phase.toUpperCase());
+    if (data.score[window.scoreboardNumber].best_of_text)
+      phaseTexts.push(`${data.score[window.scoreboardNumber].best_of_text}`.toUpperCase());
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
   };

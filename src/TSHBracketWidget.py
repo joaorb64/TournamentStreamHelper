@@ -222,7 +222,8 @@ class TSHBracketWidget(QDockWidget):
         self.phaseGroupSelection.clear()
 
         if self.phaseSelection.currentData() != None:
-            logger.info(str(self.phaseSelection.currentData().get("groups", [])))
+            logger.info(
+                str(self.phaseSelection.currentData().get("groups", [])))
             for phaseGroup in self.phaseSelection.currentData().get("groups", []):
                 self.phaseGroupSelection.addItem(
                     phaseGroup.get("name"), phaseGroup)
@@ -251,7 +252,7 @@ class TSHBracketWidget(QDockWidget):
 
     def RebuildBracket(self, playerNumber, seedMap=None, customSeeding=False):
         self.bracket = Bracket(playerNumber, self.progressionsIn.value(
-        ), seedMap, self.winnersOnly.isChecked())
+        ), seedMap, self.winnersOnly.isChecked(), progressionsOut=self.progressionsOut.value())
 
         self.bracketView.SetBracket(
             self.bracket,
@@ -332,7 +333,7 @@ class TSHBracketWidget(QDockWidget):
                         self.bracket.rounds[roundIndex][s].finished = _set.get(
                             "finished")
                     except Exception as e:
-                        logger.error(traceback.format_exc()) 
+                        logger.error(traceback.format_exc())
 
             QGuiApplication.processEvents()
             self.bracket.UpdateBracket()
