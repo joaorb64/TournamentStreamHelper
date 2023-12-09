@@ -54,8 +54,6 @@ LoadEverything().then(() => {
   // for country latlng the icon pulses and there's more zoom out
   var isPrecise = [];
 
-  let scoreboardNumber = 1;
-
   Start = async (event) => {};
 
   function UpdateMap() {
@@ -77,7 +75,7 @@ LoadEverything().then(() => {
 
     let servers = [];
 
-    Object.values(data.score[scoreboardNumber].team).forEach((team) => {
+    Object.values(data.score[window.scoreboardNumber].team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
         if(!player.name){
           return
@@ -335,10 +333,10 @@ LoadEverything().then(() => {
 
     if (
       Object.keys(oldData).length == 0 ||
-      JSON.stringify(oldData.score[scoreboardNumber].team["1"].player) !=
-        JSON.stringify(data.score[scoreboardNumber].team["1"].player) ||
-      JSON.stringify(oldData.score[scoreboardNumber].team["2"].player) !=
-        JSON.stringify(data.score[scoreboardNumber].team["2"].player)
+      JSON.stringify(oldData.score[window.scoreboardNumber].team["1"].player) !=
+        JSON.stringify(data.score[window.scoreboardNumber].team["1"].player) ||
+      JSON.stringify(oldData.score[window.scoreboardNumber].team["2"].player) !=
+        JSON.stringify(data.score[window.scoreboardNumber].team["2"].player)
     ) {
       UpdateMap();
     }

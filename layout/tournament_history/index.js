@@ -3,8 +3,6 @@ LoadEverything().then(() => {
     window.PLAYER = 1;
   }
 
-  let scoreboardNumber = 1;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
@@ -25,11 +23,11 @@ LoadEverything().then(() => {
 
     if (
       !oldData.score ||
-      JSON.stringify(data.score[scoreboardNumber].history_sets) !=
-        JSON.stringify(oldData.score[scoreboardNumber].history_sets)
+      JSON.stringify(data.score[window.scoreboardNumber].history_sets) !=
+        JSON.stringify(oldData.score[window.scoreboardNumber].history_sets)
     ) {
       tournament_html = "";
-      Object.values(data.score[scoreboardNumber].history_sets[window.PLAYER])
+      Object.values(data.score[window.scoreboardNumber].history_sets[window.PLAYER])
         .slice(0, 6)
         .forEach((sets, s) => {
           tournament_html += `
@@ -47,7 +45,7 @@ LoadEverything().then(() => {
       $(".player1_content").html(tournament_html);
 
       for (const [s, tournament] of Object.values(
-        data.score[scoreboardNumber].history_sets[window.PLAYER]
+        data.score[window.scoreboardNumber].history_sets[window.PLAYER]
       )
         .slice(0, 6)
         .entries()) {

@@ -59,5 +59,14 @@ LoadEverything().then(() => {
         "height": `${(workingWidth/1920)/columns*1080}px`,
       })
     }
+
+    SetInnerHtml($(`.tournament_name`),
+      data.tournamentInfo.tournamentName ?
+        `<span class="faded">${data.tournamentInfo.tournamentName}</span>
+        <span class="divider">/</span>`
+        :
+        data.tournamentInfo.tournamentName
+    );
+    SetInnerHtml($(`.event_name`), data.tournamentInfo.eventName);
   };
 });

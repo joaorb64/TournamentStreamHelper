@@ -1,6 +1,4 @@
 LoadEverything().then(() => {
-
-  let scoreboardNumber = 1;
   
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -45,8 +43,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     for (const [t, team] of [
-      data.score[scoreboardNumber].team["1"],
-      data.score[scoreboardNumber].team["2"],
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
     ].entries()) {
       console.log(team);
 
@@ -122,7 +120,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.${team_id} .p${p + 1}.container .character_container`),
               {
-                source: `score.${scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
+                source: `score.${window.scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
               },
               event
             );
@@ -147,11 +145,11 @@ LoadEverything().then(() => {
 
     SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
 
-    SetInnerHtml($(".match"), data.score[scoreboardNumber].match);
+    SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match);
 
     let phaseTexts = [];
-    if (data.score[scoreboardNumber].phase) phaseTexts.push(data.score[scoreboardNumber].phase);
-    if (data.score[scoreboardNumber].best_of_text) phaseTexts.push(data.score[scoreboardNumber].best_of_text);
+    if (data.score[window.scoreboardNumber].phase) phaseTexts.push(data.score[window.scoreboardNumber].phase);
+    if (data.score[window.scoreboardNumber].best_of_text) phaseTexts.push(data.score[window.scoreboardNumber].best_of_text);
 
     SetInnerHtml($(".phase"), phaseTexts.join(" - "));
   };

@@ -1,6 +1,4 @@
 LoadEverything().then(() => {
-
-  let scoreboardNumber = 1;
   
   let startingAnimation = gsap
     .timeline({ paused: true })
@@ -22,10 +20,10 @@ LoadEverything().then(() => {
 
     if (
       !oldData.score ||
-      JSON.stringify(oldData.score[scoreboardNumber].recent_sets) !=
-        JSON.stringify(data.score[scoreboardNumber].recent_sets)
+      JSON.stringify(oldData.score[window.scoreboardNumber].recent_sets) !=
+        JSON.stringify(data.score[window.scoreboardNumber].recent_sets)
     ) {
-      playersRecentSets = data.score[scoreboardNumber].recent_sets;
+      playersRecentSets = data.score[window.scoreboardNumber].recent_sets;
       console.log(playersRecentSets);
 
       players = [];
@@ -46,10 +44,10 @@ LoadEverything().then(() => {
       } else {
         if (
           !oldData.score ||
-          JSON.stringify(oldData.score[scoreboardNumber].recent_sets) !=
-            JSON.stringify(data.score[scoreboardNumber].recent_sets)
+          JSON.stringify(oldData.score[window.scoreboardNumber].recent_sets) !=
+            JSON.stringify(data.score[window.scoreboardNumber].recent_sets)
         ) {
-          playersRecentSets = data.score[scoreboardNumber].recent_sets;
+          playersRecentSets = data.score[window.scoreboardNumber].recent_sets;
 
           console.log(playersRecentSets);
 
@@ -105,8 +103,8 @@ LoadEverything().then(() => {
     }
 
     for (const [t, team] of [
-      data.score[scoreboardNumber].team["1"],
-      data.score[scoreboardNumber].team["2"],
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
     ].entries()) {
       for (const [p, player] of [team.player["1"]].entries()) {
         if (player) {
