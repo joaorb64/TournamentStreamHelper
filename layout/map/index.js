@@ -26,8 +26,6 @@ LoadEverything().then(() => {
   // for country latlng the icon pulses and there's more zoom out
   var isPrecise = [];
 
-  let scoreboardNumber = 1;
-
   Start = async (event) => {};
 
   function UpdateMap() {
@@ -49,10 +47,10 @@ LoadEverything().then(() => {
 
     let servers = [];
 
-    Object.values(data.score[scoreboardNumber].team).forEach((team) => {
+    Object.values(data.score[window.scoreboardNumber].team).forEach((team) => {
       Object.values(team.player).forEach((player) => {
-        if(!player.name){
-          return
+        if (!player.name) {
+          return;
         }
 
         let pos = [
@@ -65,7 +63,7 @@ LoadEverything().then(() => {
         ];
 
         let validPos = !Number.isNaN(pos[0]) && !Number.isNaN(pos[1]);
-        if(!validPos) pos = [0, 0]
+        if (!validPos) pos = [0, 0];
         isValid.push(validPos);
 
         positions.push(pos);
@@ -84,14 +82,14 @@ LoadEverything().then(() => {
           }
         });
 
-        let offsetDistance = validPos ? 8 : 16
+        let offsetDistance = validPos ? 8 : 16;
 
         let offsets = {
-          "top": [0, -offsetDistance],
-          "bottom": [0, offsetDistance],
-          "left":[-offsetDistance, 0],
-          "right": [offsetDistance, 0]
-        }
+          top: [0, -offsetDistance],
+          bottom: [0, offsetDistance],
+          left: [-offsetDistance, 0],
+          right: [offsetDistance, 0],
+        };
 
         let marker = L.marker(pos, {
           icon: L.icon({
@@ -113,7 +111,9 @@ LoadEverything().then(() => {
         if (!player.state.latitude || window.COUNTRY_ONLY || !validPos) {
           let marker = L.marker(pos, {
             icon: L.divIcon({
-              html: `<div class="gps_ring ${!validPos ? "gps_ring_big": ""}"></div>`,
+              html: `<div class="gps_ring ${
+                !validPos ? "gps_ring_big" : ""
+              }"></div>`,
               className: "css-icon",
               iconAnchor: [64, 64],
             }),
@@ -292,10 +292,10 @@ LoadEverything().then(() => {
 
     if (
       Object.keys(oldData).length == 0 ||
-      JSON.stringify(oldData.score[scoreboardNumber].team["1"].player) !=
-        JSON.stringify(data.score[scoreboardNumber].team["1"].player) ||
-      JSON.stringify(oldData.score[scoreboardNumber].team["2"].player) !=
-        JSON.stringify(data.score[scoreboardNumber].team["2"].player)
+      JSON.stringify(oldData.score[window.scoreboardNumber].team["1"].player) !=
+        JSON.stringify(data.score[window.scoreboardNumber].team["1"].player) ||
+      JSON.stringify(oldData.score[window.scoreboardNumber].team["2"].player) !=
+        JSON.stringify(data.score[window.scoreboardNumber].team["2"].player)
     ) {
       UpdateMap();
     }

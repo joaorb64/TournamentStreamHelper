@@ -47,6 +47,7 @@ class TSHColorButton(QToolButton):
 
         '''
         dlg = QColorDialog(self)
+        dlg.setStyleSheet("* { background-color: rgb(41, 41, 41); }")
         if self._color:
             dlg.setCurrentColor(QColor(self._color))
 

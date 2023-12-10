@@ -1,7 +1,4 @@
 LoadEverything().then(() => {
-
-  let scoreboardNumber = 1;
-  
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap
@@ -31,14 +28,14 @@ LoadEverything().then(() => {
     let data = event.data;
     let oldData = event.oldData;
 
-    let isTeams = Object.keys(data.score[scoreboardNumber].team["1"].player).length > 1;
+    let isTeams = Object.keys(data.score[window.scoreboardNumber].team["1"].player).length > 1;
 
     if (
       oldData.score == null ||
-      Object.keys(oldData.score[scoreboardNumber].team["1"].player).length !=
-        Object.keys(data.score[scoreboardNumber].team["1"].player).length
+      Object.keys(oldData.score[window.scoreboardNumber].team["1"].player).length !=
+        Object.keys(data.score[window.scoreboardNumber].team["1"].player).length
     ) {
-      if (Object.keys(data.score[scoreboardNumber].team["1"].player).length == 1) {
+      if (Object.keys(data.score[window.scoreboardNumber].team["1"].player).length == 1) {
         gsap
           .timeline()
           .fromTo(
@@ -68,8 +65,8 @@ LoadEverything().then(() => {
     }
 
     for (const [t, team] of [
-      data.score[scoreboardNumber].team["1"],
-      data.score[scoreboardNumber].team["2"],
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
     ].entries()) {
       let teamName = "";
 
@@ -153,14 +150,14 @@ LoadEverything().then(() => {
     }
 
     let phaseTexts = [];
-    if (data.score[scoreboardNumber].phase) phaseTexts.push(data.score[scoreboardNumber].phase);
-    if (data.score[scoreboardNumber].best_of_text) phaseTexts.push(data.score[scoreboardNumber].best_of_text);
+    if (data.score[window.scoreboardNumber].phase) phaseTexts.push(data.score[window.scoreboardNumber].phase);
+    if (data.score[window.scoreboardNumber].best_of_text) phaseTexts.push(data.score[window.scoreboardNumber].best_of_text);
 
     SetInnerHtml($(".info.material_container .phase"), phaseTexts.join(" - "));
     SetInnerHtml(
       $(".info.material_container .tournament_name"),
       data.tournamentInfo.tournamentName
     );
-    SetInnerHtml($(".info.material_container .match"), data.score[scoreboardNumber].match);
+    SetInnerHtml($(".info.material_container .match"), data.score[window.scoreboardNumber].match);
   };
 });

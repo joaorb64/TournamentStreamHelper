@@ -606,6 +606,11 @@ body {
   width: 550px;
 }
 
+.fgc.thin.dbfz .player.container {
+  height: 47px;
+  width: 635px;
+}
+
 .nasb2 .player.container {
   top: 63px;
 }
@@ -618,6 +623,10 @@ body {
   left: 180px;
 }
 
+.fgc.thin.dbfz .p1.container {
+  left: 185px;
+}
+
 .nasb2 .p1.container {
   left: 350px;
 }
@@ -628,6 +637,10 @@ body {
 
 .fgc.thin.gbvsr .p2.container {
   right: 180px;
+}
+
+.fgc.thin.dbfz .p2.container {
+  right: 185px;
 }
 
 .nasb2 .p2.container {
@@ -643,6 +656,10 @@ body {
 .fgc.thin.gbvsr .logo {
   top: unset;
   bottom: 20px;
+}
+
+.fgc.thin.dbfz .logo {
+  top: 200px;
 }
 
 .fgc.thin.strive .logo {
@@ -888,6 +905,11 @@ body {
   transform: unset;
 }
 
+.dbfz .info.container.bottom {
+  top: 125px;
+  bottom: unset;
+}
+
 .uni2 .info.container.bottom {
   top: unset;
   bottom: 130px;
@@ -911,6 +933,11 @@ body {
   transform: unset;
   width: 280px;
   height: 64px;
+}
+
+.fgc.thin.dbfz .info.container.top {
+  top: unset;
+  bottom: 0px;
 }
 
 .icon,

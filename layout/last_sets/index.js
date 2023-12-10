@@ -3,8 +3,6 @@ LoadEverything().then(() => {
     window.PLAYER = 1;
   }
 
-  let scoreboardNumber = 1;
-
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
   let startingAnimation = gsap.timeline({ paused: true });
@@ -19,11 +17,11 @@ LoadEverything().then(() => {
 
     if (
       !oldData.score ||
-      JSON.stringify(data.score[scoreboardNumber].last_sets) !=
-        JSON.stringify(oldData.score[scoreboardNumber].last_sets)
+      JSON.stringify(data.score[window.scoreboardNumber].last_sets) !=
+        JSON.stringify(oldData.score[window.scoreboardNumber].last_sets)
     ) {
       sets_html = "";
-      Object.values(data.score[scoreboardNumber].last_sets[window.PLAYER])
+      Object.values(data.score[window.scoreboardNumber].last_sets[window.PLAYER])
         .slice(0, 3)
         .reverse()
         .forEach((sets, s) => {
@@ -48,13 +46,13 @@ LoadEverything().then(() => {
           </div>
         </div>`;
         });
-      if (Object.values(data.score[scoreboardNumber].last_sets[window.PLAYER]).length > 0) {
+      if (Object.values(data.score[window.scoreboardNumber].last_sets[window.PLAYER]).length > 0) {
         sets_html +=
           '<div class="bracket_line"><div class="line_arrow"></div></div>';
       }
       $(".player1_content").html(sets_html);
 
-      for (const [s, sets] of Object.values(data.score[scoreboardNumber].last_sets[window.PLAYER])
+      for (const [s, sets] of Object.values(data.score[window.scoreboardNumber].last_sets[window.PLAYER])
         .slice(0, 3)
         .reverse()
         .entries()) {

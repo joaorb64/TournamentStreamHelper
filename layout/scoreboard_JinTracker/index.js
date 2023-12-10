@@ -1,5 +1,3 @@
-let scoreboardNumber = 1;
-
 LoadEverything().then(() => {
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
@@ -23,12 +21,12 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
 
-    let isTeams = Object.keys(data.score[scoreboardNumber].team["1"].player).length > 1;
+    let isTeams = Object.keys(data.score[window.scoreboardNumber].team["1"].player).length > 1;
 
     if (!isTeams) {
       for (const [t, team] of [
-        data.score[scoreboardNumber].team["1"],
-        data.score[scoreboardNumber].team["2"],
+        data.score[window.scoreboardNumber].team["1"],
+        data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
@@ -57,7 +55,7 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let score = [data.score[scoreboardNumber].score_left, data.score[scoreboardNumber].score_right];
+            let score = [data.score[window.scoreboardNumber].score_left, data.score[window.scoreboardNumber].score_right];
 
             SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
 
@@ -101,7 +99,7 @@ LoadEverything().then(() => {
             await CharacterDisplay(
               $(`.p${t + 1}.character_container`),
               {
-                source: `score.${scoreboardNumber}.team.${t + 1}`,
+                source: `score.${window.scoreboardNumber}.team.${t + 1}`,
                 anim_out: {
                   autoAlpha: 0,
                   x: -20 * teamMultiplyier + "px",
@@ -123,15 +121,15 @@ LoadEverything().then(() => {
           }
         }
       }
-      SetInnerHtml($(".match"), data.score[scoreboardNumber].match ? data.score[scoreboardNumber].match : "");
+      SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match ? data.score[window.scoreboardNumber].match : "");
 
-      SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase ? data.score[scoreboardNumber].phase : "");
+      SetInnerHtml($(".phase"), data.score[window.scoreboardNumber].phase ? data.score[window.scoreboardNumber].phase : "");
       document.querySelector(".tournament_logo").classList.add("unhidden");
       checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
       for (const [t, team] of [
-        data.score[scoreboardNumber].team["1"],
-        data.score[scoreboardNumber].team["2"],
+        data.score[window.scoreboardNumber].team["1"],
+        data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
         let teamName = "";
         let names = [];
@@ -169,8 +167,8 @@ LoadEverything().then(() => {
           }
         }
       }
-      SetInnerHtml($(".match"), data.score[scoreboardNumber].match ? data.score[scoreboardNumber].match : "");
-      SetInnerHtml($(".phase"), data.score[scoreboardNumber].phase ? data.score[scoreboardNumber].phase : "");
+      SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match ? data.score[window.scoreboardNumber].match : "");
+      SetInnerHtml($(".phase"), data.score[window.scoreboardNumber].phase ? data.score[window.scoreboardNumber].phase : "");
       document.querySelector(".tournament_logo").classList.remove("unhidden");
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
@@ -211,7 +209,7 @@ LoadEverything().then(() => {
    * The result of game 1 is held in index 0, game 2 in index 1, and so on.
    */
   function colorInBoxes() {
-    for (let i = 0; i < data.score[scoreboardNumber].best_of; i++) {
+    for (let i = 0; i < data.score[window.scoreboardNumber].best_of; i++) {
       const redGameBox = document.querySelector(`.game${i + 1}.p1_won`);
       const blueGameBox = document.querySelector(`.game${i + 1}.p2_won`);
       const darkGameBox = document.querySelector(`.game${i + 1}.neither_won`);
@@ -235,7 +233,7 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwap() {
-    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+    [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -277,7 +275,7 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwapForTeam() {
-    [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+    [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -336,7 +334,7 @@ function updateGameArray(
   let gameArray = savedGameArray; // Array to hold game winner data
 
   // Do a run-through to get P1 score and P2 score to see which game we are at.
-  [data.score[scoreboardNumber].team["1"], data.score[scoreboardNumber].team["2"]].forEach((team, t) => {
+  [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
     [team.player["1"]].forEach((player, p) => {
       if (player) {
         // If we are looking at P1
@@ -378,7 +376,7 @@ function updateGameArray(
     if (p1Score < 100) {
       for (let i = 0; i < p1Score - newP1Score; i++) {
         let index = -1;
-        for (let j = 0; j < data.score[scoreboardNumber].best_of; j++) {
+        for (let j = 0; j < data.score[window.scoreboardNumber].best_of; j++) {
           if (gameArray[j] == 1) {
             index = j; // Locate the index of the most recent win
           }
@@ -395,7 +393,7 @@ function updateGameArray(
     if (p2Score < 100) {
       for (let i = 0; i < p2Score - newP2Score; i++) {
         let index = -1;
-        for (let j = 0; j < data.score[scoreboardNumber].best_of; j++) {
+        for (let j = 0; j < data.score[window.scoreboardNumber].best_of; j++) {
           if (gameArray[j] == 2) {
             index = j; // Locate the index of the most recent win
           }
@@ -418,7 +416,7 @@ function updateGameArray(
 function scoreBoxDisplayToggle() {
   const scoreBoxes = document.querySelector(`.score_boxes`);
 
-  if (data.score[scoreboardNumber].best_of > 0) {
+  if (data.score[window.scoreboardNumber].best_of > 0) {
     // Show the box(es) when Best Of is greater than 0
     scoreBoxes.classList.add("unhidden");
   } else {
@@ -439,9 +437,9 @@ function createGameBoxes(savedBestOf) {
   let darkGameDivText = "";
 
   // If Best Of is not 0 and Best Of has been updated
-  if (data.score[scoreboardNumber].best_of > 0 && data.score[scoreboardNumber].best_of != savedBestOf) {
+  if (data.score[window.scoreboardNumber].best_of > 0 && data.score[window.scoreboardNumber].best_of != savedBestOf) {
     // The number of boxes should equal Best Of
-    for (let i = 1; i <= data.score[scoreboardNumber].best_of; i++) {
+    for (let i = 1; i <= data.score[window.scoreboardNumber].best_of; i++) {
       gameDivText += `<div class="game${i} box">GAME ${i}</div>\n`;
       redGameDivText += `<div class="game${i} box p1_won hidden"></div>\n`;
       blueGameDivText += `<div class="game${i} box p2_won hidden"></div>\n`;
@@ -451,13 +449,13 @@ function createGameBoxes(savedBestOf) {
     SetInnerHtml($(".red.score_boxes"), redGameDivText); // Create the red game boxes
     SetInnerHtml($(".blue.score_boxes"), blueGameDivText); // Create the blue game boxes
     SetInnerHtml($(".dark.score_boxes"), darkGameDivText); // Create the dark game boxes
-  } else if (data.score[scoreboardNumber].best_of === 0) {
+  } else if (data.score[window.scoreboardNumber].best_of === 0) {
     SetInnerHtml($(".word.score_boxes"), ""); // The game boxes with words disappear
     SetInnerHtml($(".red.score_boxes"), ""); // The red game boxes disappear
     SetInnerHtml($(".blue.score_boxes"), ""); // The blue game boxes disappear
     SetInnerHtml($(".dark.score_boxes"), ""); // The dark game boxes disappear
   }
-  savedBestOf = data.score[scoreboardNumber].best_of; // The new Best Of is saved so it can be used to detect change later
+  savedBestOf = data.score[window.scoreboardNumber].best_of; // The new Best Of is saved so it can be used to detect change later
   return savedBestOf;
 }
 
