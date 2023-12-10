@@ -200,7 +200,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             StateManager.Set(
                 f"{self.path}.character", characters)
-            
+
             if includeMains:
                 StateManager.Set(
                     f"{self.path}.mains", characters)
@@ -506,7 +506,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             state.lineEdit().setFont(QFont(state.font().family(), 9))
 
         except Exception as e:
-            logger.error(traceback.format_exc()) 
+            logger.error(traceback.format_exc())
             exit()
 
     def LoadStates(self, index):
@@ -704,7 +704,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                         characterIndex = i
                                         break
                             if character_element.currentIndex() != characterIndex:
-                                character_element.setCurrentIndex(characterIndex)
+                                character_element.setCurrentIndex(
+                                    characterIndex)
                             if len(main) > 1:
                                 if color_element.currentIndex() != int(main[1]):
                                     color_element.setCurrentIndex(int(main[1]))
@@ -772,7 +773,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 pronouns_file.write(playerData["pronoun"] + "\n")
                 self.pronoun_list.append(playerData["pronoun"])
                 self.pronoun_model.setStringList(self.pronoun_list)
-        
+
         self.CharactersChanged(includeMains=True)
 
     def ManageSavePlayerToDBText(self):
