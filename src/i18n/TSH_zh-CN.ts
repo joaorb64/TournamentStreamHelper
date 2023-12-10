@@ -1257,7 +1257,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="213"/>
-        <source>Track station sets</source>
+        <source>Track sets from a stream or station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

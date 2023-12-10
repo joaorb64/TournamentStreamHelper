@@ -210,7 +210,7 @@ class TSHScoreboardWidget(QWidget):
         bottomOptions.layout().addLayout(hbox)
 
         self.btLoadStationSet = QPushButton(
-            QApplication.translate("app", "Track station sets"))
+            QApplication.translate("app", "Track sets from a stream or station"))
         self.btLoadStationSet.setIcon(QIcon("./assets/icons/station.svg"))
         hbox.addWidget(self.btLoadStationSet)
         self.btLoadStationSet.clicked.connect(

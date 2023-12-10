@@ -1439,6 +1439,11 @@ p, li { white-space: pre-wrap; }
         <translation>Carregar set</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="213"/>
+        <source>Track sets from a stream or station</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHScoreboardWidget.py" line="272"/>
         <location filename="../TSHScoreboardWidget.py" line="312"/>
         <source>TEAM {0}</source>
@@ -1467,11 +1472,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardWidget.py" line="140"/>
         <source>Generate Thumbnail</source>
         <translation>Gerar Thumbnail</translation>
-    </message>
-    <message>
-        <location filename="../TSHScoreboardWidget.py" line="213"/>
-        <source>Track station sets</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="765"/>

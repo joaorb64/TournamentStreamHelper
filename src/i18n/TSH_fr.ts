@@ -1291,7 +1291,6 @@ p, li { white-space: pre-wrap; }
         <translation>Charger le set actuel du stream</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="213"/>
         <source>Track station sets</source>
         <translation>Suivre les matchs d’un poste de jeu</translation>
     </message>
@@ -1310,6 +1309,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <source>Warning</source>
         <translation>Attention</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="213"/>
+        <source>Track sets from a stream or station</source>
+        <translation>Suivre les matchs en cours sur un stream ou un poste de jeu</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="495"/>
