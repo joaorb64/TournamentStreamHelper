@@ -94,7 +94,7 @@ class StateManager:
 
     def Unset(key: str):
         with StateManager.lock:
-            StateManager.lastSavedState = deep_clone(StateManager.state)
+            # StateManager.lastSavedState = deep_clone(StateManager.state)
             deep_unset(StateManager.state, key)
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
