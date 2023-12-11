@@ -85,7 +85,7 @@ class TSHPlayerDB:
                                 newMains.append(main)
                             dbMains[game] = newMains
 
-                        TSHPlayerDB.database[tag].update(player)
+                        TSHPlayerDB.database[tag] = player | TSHPlayerDB.database[tag]
                         TSHPlayerDB.database[tag]["mains"] = dbMains
                 else:
                     if TSHPlayerDB.database.get(tag) is not None and player.get("mains") is not None:
