@@ -147,10 +147,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
+        <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
         <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation>フォーム</translation>
@@ -772,7 +772,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="350"/>
-        <location filename="../TSHPlayerListWidget.py" line="32"/>
+        <location filename="../TSHPlayerListWidget.py" line="33"/>
         <source>Player List</source>
         <translation>プレイヤーリスト</translation>
     </message>
@@ -1147,28 +1147,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="72"/>
-        <location filename="../TSHPlayerListWidget.py" line="55"/>
+        <location filename="../TSHPlayerListWidget.py" line="56"/>
         <source>Number of slots</source>
         <translation>スロットの数</translation>
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="83"/>
-        <location filename="../TSHPlayerListWidget.py" line="64"/>
+        <location filename="../TSHPlayerListWidget.py" line="65"/>
         <source>Players per slot</source>
         <translation>各スロットのプレイヤー数</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="119"/>
-        <location filename="../TSHCommentaryWidget.py" line="47"/>
         <location filename="../TSHBracketWidget.py" line="92"/>
-        <location filename="../TSHPlayerListWidget.py" line="73"/>
+        <location filename="../TSHCommentaryWidget.py" line="47"/>
+        <location filename="../TSHPlayerListWidget.py" line="74"/>
+        <location filename="../TSHScoreboardWidget.py" line="119"/>
         <source>Characters per player</source>
         <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="84"/>
+        <location filename="../TSHPlayerListWidget.py" line="85"/>
         <source>Load tournament standings</source>
         <translation>トーナメントの順位表をロードする</translation>
+    </message>
+    <message>
+        <location filename="../TSHPlayerListWidget.py" line="90"/>
+        <source>Generate Descriptive Text for Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHPlayerListWidget.py" line="117"/>
+        <source>Descriptive Text for Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHPlayerListWidget.py" line="130"/>
+        <source>Copy text</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="69"/>
@@ -1285,8 +1300,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <location filename="../TSHSelectSetWindow.py" line="95"/>
+        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <source>Stream</source>
         <translation>配信</translation>
     </message>
@@ -1344,38 +1359,38 @@ p, li { white-space: pre-wrap; }
         <translation>各チームのプレイヤー数</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <location filename="../TSHCommentaryWidget.py" line="71"/>
+        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <source>Real Name</source>
         <translation>本名</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
+        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <source>Twitter</source>
         <translation>ツイッター</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
+        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <source>Location</source>
         <translation>本拠地</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <location filename="../TSHCommentaryWidget.py" line="74"/>
+        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <source>Characters</source>
         <translation>使用キャラクター</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <location filename="../TSHCommentaryWidget.py" line="75"/>
+        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <source>Pronouns</source>
         <translation>代名詞</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="203"/>
-        <location filename="../TSHScoreboardWidget.py" line="501"/>
+        <location filename="../TSHScoreboardWidget.py" line="502"/>
         <source>Load set</source>
         <translation>対戦データをロードする</translation>
     </message>
@@ -1395,13 +1410,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="160"/>
         <location filename="../TournamentStreamHelper.py" line="570"/>
         <location filename="../TournamentStreamHelper.py" line="794"/>
-        <location filename="../TSHScoreboardWidget.py" line="482"/>
+        <location filename="../TSHScoreboardWidget.py" line="483"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <source>Warning</source>
         <translation>注意</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="495"/>
+        <location filename="../TSHScoreboardWidget.py" line="496"/>
         <source>Load set from {0}</source>
         <translation>{0}から対戦データをロードする</translation>
     </message>
@@ -1415,12 +1430,12 @@ p, li { white-space: pre-wrap; }
         <translation>サムネイルを作成する</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="765"/>
+        <location filename="../TSHScoreboardWidget.py" line="766"/>
         <source>Load user set ({0})</source>
         <translation>ユーザーの対戦データ({0})をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="769"/>
+        <location filename="../TSHScoreboardWidget.py" line="770"/>
         <source>Load user set</source>
         <translation>ユーザーの対戦データをロードする</translation>
     </message>
@@ -1650,6 +1665,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardWidget.py" line="462"/>
         <source>The thumbnail has been generated here:</source>
         <translation>サムネイルはここに作成されました:</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="463"/>
+        <source>The video title and description have also been generated.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -460,9 +460,10 @@ class TSHScoreboardWidget(QWidget):
             thumbnailPath = thumbnail.generate(
                 settingsManager=SettingsManager, scoreboardNumber=self.scoreboardNumber)
             msgBox.setText(QApplication.translate(
-                "thumb_app", "The thumbnail has been generated here:") + " ")
+                "thumb_app", "The thumbnail has been generated here:") + " " + thumbnailPath + "\n\n" + QApplication.translate(
+                "thumb_app", "The video title and description have also been generated."))
             msgBox.setIcon(QMessageBox.NoIcon)
-            msgBox.setInformativeText(thumbnailPath)
+            # msgBox.setInformativeText(thumbnailPath)
 
             thumbnail_settings = SettingsManager.Get("thumbnail_config")
             if thumbnail_settings.get("open_explorer"):
