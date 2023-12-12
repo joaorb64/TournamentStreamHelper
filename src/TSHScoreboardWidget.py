@@ -17,6 +17,7 @@ from .StateManager import StateManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHStatsUtil import TSHStatsUtil
 from .TSHHotkeys import TSHHotkeys
+from .TSHPlayerDB import TSHPlayerDB
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .TSHThumbnailSettingsWidget import *
@@ -947,5 +948,10 @@ class TSHScoreboardWidget(QWidget):
         # Avoid loading data from the previous set
         if str(data.get("id")) != str(self.lastSetSelected):
             return
-
+        
+        if SettingsManager.Get("general.disable_overwrite", False):
+            for entrant in data.get("entrants"):
+                if(entrant[0].get("gamerTag") in TSHPlayerDB.database):
+                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get("gamerTag")]
+        
         self.ChangeSetData(data)
