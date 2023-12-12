@@ -166,13 +166,23 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
             current_player_data = player_data.get(player_id)
             player_name = current_player_data.get("mergedName")
             character_data = current_player_data.get("character")
+            if current_player_data.get("country"):
+                country_code = current_player_data.get("country").get("code")
+            else:
+                country_code = ""
             for character_id in character_data.keys():
                 current_character_data = character_data.get(character_id)
                 if current_character_data.get("name"):
                     character_names.append(current_character_data.get("name"))
             player_text = f"{player_name}"
-            if character_names:
-                player_text = player_text + f" ({', '.join(character_names)})"
+            characters_text = ' / '.join(character_names)
+            if country_code:
+                if characters_text:
+                    characters_text = country_code + ", " + characters_text
+                else:
+                    characters_text = country_code
+            if characters_text:
+                player_text = player_text + f" ({characters_text})"
             if player_name:
                 players_text.append(player_text)
         placement = CalculatePlacement(int(team_id), bracket_type)
