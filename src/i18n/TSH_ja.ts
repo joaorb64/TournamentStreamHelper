@@ -724,7 +724,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="195"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="205"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -734,7 +734,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="199"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="209"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
