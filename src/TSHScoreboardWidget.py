@@ -949,8 +949,9 @@ class TSHScoreboardWidget(QWidget):
         if str(data.get("id")) != str(self.lastSetSelected):
             return
         
-        for entrant in data.get("entrants"):
-            if(entrant[0].get("gamerTag") in TSHPlayerDB.database):
-                entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get("gamerTag")] 
+        if SettingsManager.Get("general.disable_overwrite", False):
+            for entrant in data.get("entrants"):
+                if(entrant[0].get("gamerTag") in TSHPlayerDB.database):
+                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get("gamerTag")]
         
         self.ChangeSetData(data)

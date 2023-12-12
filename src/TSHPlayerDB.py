@@ -11,7 +11,7 @@ from loguru import logger
 
 from .Helpers.TSHDictHelper import deep_clone
 from .TSHGameAssetManager import TSHGameAssetManager
-
+from .SettingsManager import SettingsManager
 
 class TSHPlayerDBSignals(QObject):
     db_updated = Signal()
@@ -85,7 +85,10 @@ class TSHPlayerDB:
                                 newMains.append(main)
                             dbMains[game] = newMains
 
-                        TSHPlayerDB.database[tag] = player | TSHPlayerDB.database[tag]
+                        if SettingsManager.Get("general.disable_overwrite", False):
+                            TSHPlayerDB.database[tag] = player | TSHPlayerDB.database[tag]
+                        else:
+                            TSHPlayerDB.database[tag].update(player)
                         TSHPlayerDB.database[tag]["mains"] = dbMains
                 else:
                     if TSHPlayerDB.database.get(tag) is not None and player.get("mains") is not None:
