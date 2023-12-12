@@ -141,10 +141,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
+        <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
         <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation></translation>
@@ -707,31 +707,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>altText</name>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="30"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="150"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="37"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="157"/>
         <source>Game:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="84"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="86"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="88"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="91"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="93"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="95"/>
         <source>VS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="205"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="106"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="212"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="102"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="109"/>
         <source>Stream powered by TournamentStreamHelper:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="209"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="216"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
@@ -740,47 +743,47 @@ p, li { white-space: pre-wrap; }
     <name>app</name>
     <message>
         <location filename="../TournamentStreamHelper.py" line="350"/>
-        <location filename="../TSHPlayerListWidget.py" line="33"/>
+        <location filename="../TSHPlayerListWidget.py" line="34"/>
         <source>Player List</source>
         <translation>Lista de Jugadores</translation>
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="72"/>
-        <location filename="../TSHPlayerListWidget.py" line="56"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>Número de grupos</translation>
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="83"/>
-        <location filename="../TSHPlayerListWidget.py" line="65"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <source>Players per slot</source>
         <translation>Jugadores por grupo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="119"/>
-        <location filename="../TSHCommentaryWidget.py" line="47"/>
         <location filename="../TSHBracketWidget.py" line="92"/>
-        <location filename="../TSHPlayerListWidget.py" line="74"/>
+        <location filename="../TSHCommentaryWidget.py" line="47"/>
+        <location filename="../TSHPlayerListWidget.py" line="75"/>
+        <location filename="../TSHScoreboardWidget.py" line="119"/>
         <source>Characters per player</source>
         <translation>Personajes por jugador</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="85"/>
+        <location filename="../TSHPlayerListWidget.py" line="86"/>
         <source>Load tournament standings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="90"/>
+        <location filename="../TSHPlayerListWidget.py" line="91"/>
         <source>Generate Descriptive Text for Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="117"/>
+        <location filename="../TSHPlayerListWidget.py" line="118"/>
         <source>Descriptive Text for Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="130"/>
+        <location filename="../TSHPlayerListWidget.py" line="132"/>
         <source>Copy text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1267,8 +1270,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <location filename="../TSHSelectSetWindow.py" line="95"/>
+        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <source>Stream</source>
         <translation></translation>
     </message>
@@ -1341,32 +1344,32 @@ p, li { white-space: pre-wrap; }
         <translation>Generar Miniatura</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <location filename="../TSHCommentaryWidget.py" line="71"/>
+        <location filename="../TSHScoreboardWidget.py" line="172"/>
         <source>Real Name</source>
         <translation>Nombre Real</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
+        <location filename="../TSHScoreboardWidget.py" line="173"/>
         <source>Twitter</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
+        <location filename="../TSHScoreboardWidget.py" line="174"/>
         <source>Location</source>
         <translation>Localidad</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <location filename="../TSHCommentaryWidget.py" line="74"/>
+        <location filename="../TSHScoreboardWidget.py" line="175"/>
         <source>Characters</source>
         <translation>Personajes</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <location filename="../TSHCommentaryWidget.py" line="75"/>
+        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <source>Pronouns</source>
         <translation>Pronombres</translation>
     </message>
@@ -1666,6 +1669,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="463"/>
         <source>The video title and description have also been generated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tips</name>
+    <message>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="9"/>
+        <source>Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

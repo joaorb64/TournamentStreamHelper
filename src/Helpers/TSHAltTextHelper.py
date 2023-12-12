@@ -1,8 +1,15 @@
 import json
 import math
+import textwrap
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+
+def add_alt_text_tooltip_to_button(push_button: QPushButton):
+    altTextTooltip = QApplication.translate(
+            "tips", "Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.")
+    push_button.setToolTip('\n'.join(textwrap.wrap(altTextTooltip, 40)))
+    return(push_button)
 
 
 def load_program_state():
