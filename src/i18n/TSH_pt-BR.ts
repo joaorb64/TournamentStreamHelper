@@ -141,10 +141,10 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation></translation>
@@ -722,8 +722,6 @@ p, li { white-space: pre-wrap; }
         <translation>VS</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="205"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="106"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="212"/>
         <source>Commentators:</source>
@@ -735,7 +733,6 @@ p, li { white-space: pre-wrap; }
         <translation>Transmissão utilizando TournamentStreamHelper</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="209"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="216"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation>Transmissão utilizando TournamentStreamHelper</translation>
@@ -1208,10 +1205,10 @@ p, li { white-space: pre-wrap; }
         <translation>Jogadores por grupo</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="92"/>
-        <location filename="../TSHCommentaryWidget.py" line="47"/>
-        <location filename="../TSHPlayerListWidget.py" line="75"/>
         <location filename="../TSHScoreboardWidget.py" line="119"/>
+        <location filename="../TSHCommentaryWidget.py" line="47"/>
+        <location filename="../TSHBracketWidget.py" line="92"/>
+        <location filename="../TSHPlayerListWidget.py" line="75"/>
         <source>Characters per player</source>
         <translation>Personagens por jogador</translation>
     </message>
@@ -1335,8 +1332,8 @@ p, li { white-space: pre-wrap; }
         <translation>Mostrar pares completos</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="95"/>
         <location filename="../TSHSelectStationWindow.py" line="85"/>
+        <location filename="../TSHSelectSetWindow.py" line="95"/>
         <source>Stream</source>
         <translation></translation>
     </message>
@@ -1421,32 +1418,32 @@ p, li { white-space: pre-wrap; }
         <translation>Gerar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="71"/>
         <location filename="../TSHScoreboardWidget.py" line="172"/>
+        <location filename="../TSHCommentaryWidget.py" line="71"/>
         <source>Real Name</source>
         <translation>Nome Real</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="72"/>
         <location filename="../TSHScoreboardWidget.py" line="173"/>
+        <location filename="../TSHCommentaryWidget.py" line="72"/>
         <source>Twitter</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="73"/>
         <location filename="../TSHScoreboardWidget.py" line="174"/>
+        <location filename="../TSHCommentaryWidget.py" line="73"/>
         <source>Location</source>
         <translation>Local</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="74"/>
         <location filename="../TSHScoreboardWidget.py" line="175"/>
+        <location filename="../TSHCommentaryWidget.py" line="74"/>
         <source>Characters</source>
         <translation>Personagens</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="75"/>
         <location filename="../TSHScoreboardWidget.py" line="176"/>
+        <location filename="../TSHCommentaryWidget.py" line="75"/>
         <source>Pronouns</source>
         <translation>Pronomes</translation>
     </message>
