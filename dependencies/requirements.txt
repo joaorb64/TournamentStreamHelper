@@ -4,7 +4,7 @@ qtpy
 requests
 py7zr
 deepdiff
-pyqtdarktheme
+git+https://github.com/woopelderly/PyQtDarkTheme@python3.12
 Pillow
 Flask
 flask-cors
