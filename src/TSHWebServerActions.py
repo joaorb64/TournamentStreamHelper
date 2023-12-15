@@ -333,3 +333,6 @@ class WebServerActions(QThread):
                 )
             )
         return "OK"
+    
+    def get_comms(self):
+        return StateManager.Get("commentary")
