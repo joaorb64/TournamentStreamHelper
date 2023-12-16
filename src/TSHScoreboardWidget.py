@@ -697,9 +697,31 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
+                # A new set was loaded
+                self.lastSetSelected = data.get("id")
+
+                # Clear stage strike data
                 StateManager.Unset(
                     f'score.{self.scoreboardNumber}.stage_strike')
-                self.lastSetSelected = data.get("id")
+
+                # Add general set data to object: id, auto update type, station/stream identifier, etc
+                StateManager.Set(
+                    f'score.{self.scoreboardNumber}.set_id', data.get("id"))
+
+                StateManager.Set(
+                    f'score.{self.scoreboardNumber}.auto_update', data.get("auto_update"))
+
+                if self.lastStationSelected:
+                    StateManager.Set(
+                        f'score.{self.scoreboardNumber}.station', self.lastStationSelected.get('identifier'))
+                else:
+                    StateManager.Set(
+                        f'score.{self.scoreboardNumber}.station', None)
+
+                # Clear previous scores
+                # Important because when we receive scores as 0 we don't update based on that
+                # Otherwise an offline set which is only updated after it's complete would reset the score
+                # all the time since it would be 0-0 until then
                 self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
                 self.ClearScore()
 
