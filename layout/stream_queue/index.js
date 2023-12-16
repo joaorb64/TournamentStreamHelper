@@ -182,14 +182,14 @@ LoadEverything().then(() => {
         let data = event.data;
         let oldData = event.oldData;
 
-        let stream = config.stream || data.currentStream || config.default_stream
+        let stream = config.stream || data.score[window.scoreboardNumber].station || config.default_stream
         if (stream == "all") stream = null;
 
         if (
             !oldData.streamQueue ||
             JSON.stringify(data.streamQueue) !=
             JSON.stringify(oldData.score.streamQueue) || 
-            ( !tsh_settings.stream && oldData.currentStream != data.currentStream)
+            ( !tsh_settings.stream && oldData.score[window.scoreboardNumber].station != data.score[window.scoreboardNumber].station)
         ) {
 
             /*

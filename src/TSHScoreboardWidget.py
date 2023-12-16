@@ -263,7 +263,8 @@ class TSHScoreboardWidget(QWidget):
         self.timerCancelBt = QPushButton()
         self.timerCancelBt.setIcon(QIcon('assets/icons/cancel.svg'))
         self.timerCancelBt.setIconSize(QSize(12, 12))
-        self.timerCancelBt.clicked.connect(self.StopAutoUpdate)
+        self.timerCancelBt.clicked.connect(
+            lambda: self.StopAutoUpdate(clear_variables=True))
         self.timerLayout.layout().addWidget(self.timerCancelBt)
         self.timerLayout.setVisible(False)
 
@@ -753,13 +754,23 @@ class TSHScoreboardWidget(QWidget):
                 p.dataLock.release()
             StateManager.ReleaseSaving()
 
-    def StopAutoUpdate(self):
+    def StopAutoUpdate(self, clear_variables=False):
         if self.autoUpdateTimer != None:
             self.autoUpdateTimer.stop()
             self.autoUpdateTimer = None
         if self.timeLeftTimer != None:
             self.timeLeftTimer.stop()
             self.timeLeftTimer = None
+
+        if clear_variables:
+            self.lastSetSelected = None
+            self.lastStationSelected = None
+
+            StateManager.Set(
+                f'score.{self.scoreboardNumber}.auto_update', None)
+            StateManager.Set(f'score.{self.scoreboardNumber}.set_id', None)
+            StateManager.Set(f'score.{self.scoreboardNumber}.station', None)
+
         self.timerLayout.setVisible(False)
 
     def UpdateTimeLeftTimer(self):
@@ -970,10 +981,11 @@ class TSHScoreboardWidget(QWidget):
         # Avoid loading data from the previous set
         if str(data.get("id")) != str(self.lastSetSelected):
             return
-        
+
         if SettingsManager.Get("general.disable_overwrite", False):
             for entrant in data.get("entrants"):
-                if(entrant[0].get("gamerTag") in TSHPlayerDB.database):
-                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get("gamerTag")]
-        
+                if (entrant[0].get("gamerTag") in TSHPlayerDB.database):
+                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get(
+                        "gamerTag")]
+
         self.ChangeSetData(data)

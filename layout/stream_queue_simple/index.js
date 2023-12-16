@@ -72,6 +72,7 @@ LoadEverything().then(() => {
 
     async function team_html(set, t, s, isTeams, resolver){
         let team = set.team[""+t];
+        if (!team) return `<div class = "p${t} tbd_container"><div class = "TBD">TBD</div></div>`;
         let player = team.player["1"];
 
         resolver.add(`.set${current_set_nb} .p${t} .tag`, 
@@ -111,7 +112,7 @@ LoadEverything().then(() => {
 
             if (config.station != -1 && config.station != set.station) continue;
 
-            let isTeams = Object.keys(set.team["1"].player).length > 1;
+            let isTeams = set.team["1"] && Object.keys(set.team["1"].player).length > 1;
             html += `
                 <div class="set${current_set_nb} set">
                     ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
@@ -142,13 +143,13 @@ LoadEverything().then(() => {
         let data = event.data;
         let oldData = event.oldData;
 
-        let stream = config.stream || data.currentStream || config.default_stream
+        let stream = config.stream || data.score[window.scoreboardNumber].station || config.default_stream
 
         if (
             !oldData.streamQueue ||
             JSON.stringify(data.streamQueue) !=
             JSON.stringify(oldData.score.streamQueue) || 
-            ( !tsh_settings.stream && oldData.currentStream != data.currentStream)
+            ( !tsh_settings.stream && oldData.score[window.scoreboardNumber].station != data.score[window.scoreboardNumber].station)
         ) {
 
             /*
