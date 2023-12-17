@@ -30,6 +30,7 @@ class TSHScoreboardWidgetSignals(QObject):
     StreamSetSelection = Signal()
     StationSelection = Signal()
     StationSelected = Signal(object)
+    StationSetsLoaded = Signal(object)
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
     CommandTeamColor = Signal(int, str)
@@ -52,8 +53,9 @@ class TSHScoreboardWidget(QWidget):
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
+        self.signals.StationSetsLoaded.connect(self.StationSetsLoaded)
         self.signals.SetSelection.connect(self.LoadSetClicked)
-        self.signals.StationSelected.connect(self.LoadStationSet)
+        self.signals.StationSelected.connect(self.LoadStationSets)
         self.signals.StationSelection.connect(self.LoadStationSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
         self.signals.ChangeSetData.connect(self.ChangeSetData)
@@ -666,6 +668,15 @@ class TSHScoreboardWidget(QWidget):
             self, data.get("id"), overwrite=False)
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
+    def StationSetsLoaded(self, data):
+        StateManager.BlockSaving()
+
+
+        logger.info("STATIONSETSLOADED =========")
+        logger.info(data)
+
+        StateManager.ReleaseSaving()
+
     def NewSetSelected(self, data):
         if not SettingsManager.Get("general.disable_autoupdate", False):
             self.StopAutoUpdate()
@@ -743,7 +754,7 @@ class TSHScoreboardWidget(QWidget):
 
                 if data.get("auto_update") in ("stream", "station"):
                     self.autoUpdateTimer.timeout.connect(
-                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSet(self))
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSets(self))
 
                 if data.get("auto_update") == "user":
                     self.autoUpdateTimer.timeout.connect(
@@ -782,10 +793,10 @@ class TSHScoreboardWidget(QWidget):
         self.selectSetWindow.LoadSets()
         self.selectSetWindow.show()
 
-    def LoadStationSet(self, station):
+    def LoadStationSets(self, station):
         self.lastSetSelected = None
         self.lastStationSelected = station
-        TSHTournamentDataProvider.instance.LoadStationSet(self)
+        TSHTournamentDataProvider.instance.LoadStationSets(self)
 
     def LoadStationSetClicked(self):
         self.selectStationWindow.LoadStations()

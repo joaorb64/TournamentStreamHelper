@@ -46,6 +46,7 @@ class StartGGDataProvider(TournamentDataProvider):
         self.name = "StartGG"
         self.getMatchThreadPool = QThreadPool()
         self.getRecentSetsThreadPool = QThreadPool()
+        self.getStationMatchesThreadPool = QThreadPool()
 
     # Queries the provided URL until a proper 200 status code has been provided back
     #
@@ -1094,8 +1095,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return streamSet
 
-    def GetStationMatchId(self, stationId):
-        stationSet = None
+    def GetStationMatchsId(self, stationId):
+        sets = None
 
         try:
             data = self.QueryRequests(
@@ -1123,13 +1124,15 @@ class StartGGDataProvider(TournamentDataProvider):
 
             print("SETS", sets)
 
-            if len(sets) > 0:
-                stationSet = sets[0]
-
         except Exception as e:
             logger.error(traceback.format_exc())
 
-        return stationSet
+        return sets
+
+    def GetStationMatchId(self, stationId):
+            sets = self.GetStationMatchsId(self, stationId)
+
+            return sets[0] if len(sets) > 0 else None
 
     def GetUserMatchId(self, user):
         matches = re.match(
@@ -1721,6 +1724,38 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             logger.error(traceback.format_exc())
 
+
+    def GetMatchAndInsertInListBecauseFuckPython(self, setId, list, i, progress_callback):
+        set = self.GetMatch(setId, None)
+        
+        if set:
+            list[i] = set
+
+    def GetMatchesFromList(self, setsId):
+        logger.info("LOADING SETS -----------------------------------")
+        logger.info(setsId)
+        sets = []
+        pool = self.getStationMatchesThreadPool
+        i = 0
+        for set in setsId:
+            sets.append(None)
+            worker = Worker(self.GetMatchAndInsertInListBecauseFuckPython, **{
+                "setId": set.get("id"),
+                "list": sets,
+                "i": i
+            })
+
+            pool.start(worker)
+
+            i += 1
+
+        pool.waitForDone(5000)
+        QCoreApplication.processEvents()
+
+        logger.info("SETS LOADED -----------------------------------")
+        logger.info(sets)
+
+        return sets
 
 f = open("src/TournamentDataProvider/StartGGSetsQuery.txt", 'r')
 StartGGDataProvider.SetsQuery = f.read()

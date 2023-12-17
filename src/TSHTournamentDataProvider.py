@@ -222,7 +222,7 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def LoadStationSet(self, mainWindow):
+    def LoadStationSets(self, mainWindow):
         if mainWindow.lastStationSelected:
             stationSet = None
 
@@ -230,14 +230,22 @@ class TSHTournamentDataProvider:
                 stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
                     mainWindow.lastStationSelected.get("identifier"))
             else:
-                stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
-                    mainWindow.lastStationSelected.get("id"))
+                stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
+                    mainWindow.lastStationSelected.get("id")
+                )
+
+                if len(stationSets) > 0:
+                    stationSet = stationSets[0]
+
+
+                mainWindow.signals.StationSetsLoaded.emit(stationSets)
 
             if not stationSet:
                 stationSet = {}
 
             stationSet["auto_update"] = mainWindow.lastStationSelected.get(
                 "type")
+            
 
             mainWindow.signals.NewSetSelected.emit(stationSet)
 

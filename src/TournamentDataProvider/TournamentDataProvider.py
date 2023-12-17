@@ -32,6 +32,12 @@ class TournamentDataProvider:
     def GetStreamMatchId(self, streamName):
         pass
 
+    def GetStationMatchId(self, stationId):
+        pass
+
+    def GetStationMatchsId(self, stationId):
+        pass
+
     def GetUserMatchId(self, user):
         pass
 
@@ -51,4 +57,8 @@ class TournamentDataProvider:
         pass
 
     def GetStandings(self, playerNumber):
+        pass
+
+    #give me a list of objects that contain a "id" property
+    def GetMatchesFromList(self, sets: object):
         pass
