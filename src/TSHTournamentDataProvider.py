@@ -258,6 +258,14 @@ class TSHTournamentDataProvider:
         _set["auto_update"] = "user"
         mainWindow.signals.NewSetSelected.emit(_set)
 
+    #omits the first one (loaded through NewSetSelected)
+    def GetStationMatches(self, matchesId):
+        sets = self.provider.GetMatchesFromList(matchesId)
+        
+
+        pass
+
+
     def GetMatch(self, mainWindow, setId, overwrite=True):
         worker = Worker(self.provider.GetMatch, **
                         {"setId": setId})

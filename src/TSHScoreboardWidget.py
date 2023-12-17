@@ -669,6 +669,8 @@ class TSHScoreboardWidget(QWidget):
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def StationSetsLoaded(self, data):
+        #Ici peut être lancer le chargement des sets voire même trigger un autre signal ?
+
         StateManager.BlockSaving()
 
 
