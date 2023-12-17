@@ -1398,12 +1398,12 @@ p, li { white-space: pre-wrap; }
         <translation>Set von {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="811"/>
+        <location filename="../TSHScoreboardWidget.py" line="813"/>
         <source>Load user set ({0})</source>
         <translation>User-Set {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="815"/>
+        <location filename="../TSHScoreboardWidget.py" line="817"/>
         <source>Load user set</source>
         <translation>User-Set laden</translation>
     </message>

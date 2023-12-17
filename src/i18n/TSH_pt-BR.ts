@@ -1489,12 +1489,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gerar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="811"/>
+        <location filename="../TSHScoreboardWidget.py" line="813"/>
         <source>Load user set ({0})</source>
         <translation>Carregar set do usuário ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="815"/>
+        <location filename="../TSHScoreboardWidget.py" line="817"/>
         <source>Load user set</source>
         <translation>Carregar set do usuário</translation>
     </message>
