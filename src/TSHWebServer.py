@@ -379,6 +379,12 @@ class WebServer(QThread):
         emit('load_set',
             WebServer.actions.load_set(info.get("scoreboardNumber"), info.get("set")))
 
+
+    # Loads a set remotely by providing a set ID to pull from the data provider
+    @app.route('/scoreboard<scoreboardNumber>-get-set')
+    def get_set(scoreboardNumber):
+        return WebServer.actions.get_set(scoreboardNumber)
+
     # Update bracket
     @app.route('/update-bracket')
     def update_bracket():

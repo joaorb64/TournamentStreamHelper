@@ -333,3 +333,9 @@ class WebServerActions(QThread):
                 )
             )
         return "OK"
+    
+    def get_set(self, scoreboard):
+        if self.scoreboard.GetScoreboard(scoreboard).lastSetSelected is None:
+            return "0"
+        else:
+            return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
