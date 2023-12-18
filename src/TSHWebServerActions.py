@@ -333,3 +333,10 @@ class WebServerActions(QThread):
                 )
             )
         return "OK"
+
+    def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
+        result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
+        if result == True:
+            return "OK"
+        else:
+            return "ERROR"

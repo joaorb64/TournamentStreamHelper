@@ -1,3 +1,4 @@
+import html
 import os
 import traceback
 from qtpy.QtGui import *
@@ -383,6 +384,16 @@ class WebServer(QThread):
     @app.route('/update-bracket')
     def update_bracket():
         return WebServer.actions.update_bracket()
+    
+    # Load player from tag
+    @app.route('/scoreboard<scoreboardNumber>-load-player-from-tag-<team>-<player>')
+    def load_player_from_tag(scoreboardNumber, team, player):
+        if request.args.get('tag') is None:
+            return "No tag provided"
+        no_mains = False
+        if request.args.get('no-mains') is not None:
+            no_mains = True
+        return WebServer.actions.load_player_from_tag(scoreboardNumber, html.unescape(request.args.get('tag')), team, player, no_mains)
 
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
