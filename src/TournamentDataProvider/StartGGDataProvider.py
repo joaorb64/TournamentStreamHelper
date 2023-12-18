@@ -38,6 +38,7 @@ class StartGGDataProvider(TournamentDataProvider):
     SeedsQuery = None
     StationsQuery = None
     StationSetsQuery = None
+    FutureSetQuery = None #request for a single set with only info relevant for a set that is yet to be played
 
     player_seeds = {}
 
@@ -1722,16 +1723,30 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             logger.error(traceback.format_exc())
 
+    def GetFutureMatch(self, matchId, progress_callback):
+        data = self.QueryRequests(
+            "https://www.start.gg/api/-/gql",
+            type=requests.post,
+            jsonParams={
+                "operationName": "FutureSetQuery",
+                "variables": {
+                    "id": matchId
+                },
+                "query": StartGGDataProvider.FutureSetQuery
+            }
+        )
+
+        # TODO format like GetStreamQueue does  
+        return data
 
     def GetMatchAndInsertInListBecauseFuckPython(self, setId, list, i, progress_callback):
-        set = self.GetMatch(setId, None)
+        set = self.GetFutureMatch(setId, None)
         
         if set:
             list[i] = set
 
-    def GetMatchesFromList(self, setsId, progress_callback):
-        logger.info("LOADING SETS -----------------------------------")
-        logger.info(setsId)
+
+    def GetFutureMatchesList(self, setsId, progress_callback):
         sets = []
         pool = self.getStationMatchesThreadPool
         i = 0
@@ -1753,9 +1768,6 @@ class StartGGDataProvider(TournamentDataProvider):
         sets_ = {}
         for index, set in enumerate(sets):
             sets_[str(index + 1)] = set
-
-        logger.info("SETS LOADED -----------------------------------")
-        logger.info(sets_)
 
         return sets_
 
@@ -1795,9 +1807,6 @@ StartGGDataProvider.TournamentPhasesQuery = f.read()
 f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
 StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
 
-f = open("src/TournamentDataProvider/StartGGStreamQueueQuery.txt", 'r')
-StartGGDataProvider.StreamQueueQuery = f.read()
-
 f = open("src/TournamentDataProvider/StartGGTournamentMainPhaseQuery.txt", 'r')
 StartGGDataProvider.MainPhaseQuery = f.read()
 
@@ -1809,3 +1818,9 @@ StartGGDataProvider.StationsQuery = f.read()
 
 f = open("src/TournamentDataProvider/StartGGStationSetsQuery.txt", 'r')
 StartGGDataProvider.StationSetsQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGStreamQueueQuery.txt", 'r')
+StartGGDataProvider.StreamQueueQuery = f.read()
+
+f = open("src/TournamentDataProvider/StartGGFutureSetQuery.txt", 'r')
+StartGGDataProvider.FutureSetQuery = f.read()

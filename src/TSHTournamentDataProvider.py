@@ -262,7 +262,7 @@ class TSHTournamentDataProvider:
     def GetStationMatches(self, matchesId, mainWindow):
         logger.info("EH REGARDE ICI ____________________________________________")
         print(matchesId)
-        worker = Worker(self.provider.GetMatchesFromList, **{
+        worker = Worker(self.provider.GetFutureMatchesList, **{
             "setsId": matchesId
         })
         worker.signals.result.connect(

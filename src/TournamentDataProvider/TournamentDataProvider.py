@@ -59,6 +59,9 @@ class TournamentDataProvider:
     def GetStandings(self, playerNumber):
         pass
 
+    def GetFutureMatch(self, progrss_callback=None):
+        pass
+
     #give me a list of objects that contain a "id" property
-    def GetMatchesFromList(self, sets: object):
+    def GetFutureMatchesList(self, sets: object, progress_callback=None):
         pass
