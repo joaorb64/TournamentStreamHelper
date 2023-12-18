@@ -1037,8 +1037,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 finalData[streamName] = queueData
 
-            logger.info(finalData)
-
             return finalData
 
             """
@@ -1731,7 +1729,7 @@ class StartGGDataProvider(TournamentDataProvider):
         if set:
             list[i] = set
 
-    def GetMatchesFromList(self, setsId):
+    def GetMatchesFromList(self, setsId, progress_callback):
         logger.info("LOADING SETS -----------------------------------")
         logger.info(setsId)
         sets = []
@@ -1752,10 +1750,14 @@ class StartGGDataProvider(TournamentDataProvider):
         pool.waitForDone(5000)
         QCoreApplication.processEvents()
 
-        logger.info("SETS LOADED -----------------------------------")
-        logger.info(sets)
+        sets_ = {}
+        for index, set in enumerate(sets):
+            sets_[str(index + 1)] = set
 
-        return sets
+        logger.info("SETS LOADED -----------------------------------")
+        logger.info(sets_)
+
+        return sets_
 
 f = open("src/TournamentDataProvider/StartGGSetsQuery.txt", 'r')
 StartGGDataProvider.SetsQuery = f.read()

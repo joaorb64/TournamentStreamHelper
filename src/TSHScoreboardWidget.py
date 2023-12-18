@@ -671,11 +671,11 @@ class TSHScoreboardWidget(QWidget):
     def StationSetsLoaded(self, data):
         #Ici peut être lancer le chargement des sets voire même trigger un autre signal ?
 
+        logger.info("SETS LOADED WOOOOOO -----------------------------")
+        logger.info(data)
         StateManager.BlockSaving()
 
-
-        logger.info("STATIONSETSLOADED =========")
-        logger.info(data)
+        StateManager.Set(f"score.{self.scoreboardNumber}.station_queue", data)
 
         StateManager.ReleaseSaving()
 

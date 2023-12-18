@@ -238,7 +238,7 @@ class TSHTournamentDataProvider:
                     stationSet = stationSets[0]
 
 
-                mainWindow.signals.StationSetsLoaded.emit(stationSets)
+                TSHTournamentDataProvider.instance.GetStationMatches(stationSets, mainWindow)
 
             if not stationSet:
                 stationSet = {}
@@ -259,11 +259,17 @@ class TSHTournamentDataProvider:
         mainWindow.signals.NewSetSelected.emit(_set)
 
     #omits the first one (loaded through NewSetSelected)
-    def GetStationMatches(self, matchesId):
-        sets = self.provider.GetMatchesFromList(matchesId)
-        
+    def GetStationMatches(self, matchesId, mainWindow):
+        logger.info("EH REGARDE ICI ____________________________________________")
+        print(matchesId)
+        worker = Worker(self.provider.GetMatchesFromList, **{
+            "setsId": matchesId
+        })
+        worker.signals.result.connect(
+            lambda sets: mainWindow.signals.StationSetsLoaded.emit(sets)
+        )
+        self.threadPool.start(worker)
 
-        pass
 
 
     def GetMatch(self, mainWindow, setId, overwrite=True):
