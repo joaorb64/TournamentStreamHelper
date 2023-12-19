@@ -923,6 +923,91 @@ class StartGGDataProvider(TournamentDataProvider):
             "loserProgression": respTasks.get("entities", {}).get("sets", {}).get("lProgressingName", None)
         })
 
+    def ProcessFutureSet(self, _set, eventSlug):
+        phase_name = deep_get(_set, "phaseGroup.phase.name")
+        if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
+            phase_name += " - " + TSHLocaleHelper.phaseNames.get(
+                "group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
+
+        frt = _set.get("fullRoundText", "")
+        total_games = _set.get("totalGames", 0)
+        seteventSlug = deep_get(_set, "event.slug", "")
+
+        setData = {
+            "id": _set.get("id"),
+            "match": StartGGDataProvider.TranslateRoundName(frt),
+            "phase": phase_name,
+            "best_of": total_games,
+            "best_of_text": TSHLocaleHelper.matchNames.get("best_of").format(total_games) if total_games > 0 else "",
+            "state": _set.get("state"),
+            "team": {},
+            "station": deep_get(_set, "station.number", -1),
+            "event": seteventSlug,
+            "isCurrentEvent": seteventSlug == eventSlug
+        }
+
+        for teamIndex, slot in enumerate(_set.get("slots", [])):
+            entrant = slot.get("entrant", None)
+            if entrant:
+
+                losers = False
+                if "Gran" in frt:
+                    if teamIndex == 1 or "Reset" in frt:
+                        losers = True
+
+                teamData = {
+                    "teamName": entrant.get("name", ""),
+                    "losers": losers,
+                    "seed": entrant.get("seeds", [])[0].get("seedNum", 889977666),
+                    "player": {}
+                }
+
+                # TODO : pull the state data
+
+                for playerIndex, participant in enumerate(entrant.get("participants", [])):
+                    playerData = StartGGDataProvider.ProcessEntrantData(
+                        participant)
+                    playerName = playerData.get("gamerTag", "")
+                    team = playerData.get("prefix", "")
+
+                    countryCode = playerData.get(
+                        "country_code", "")
+                    stateCode = playerData.get("state_code", "")
+                    countryData = TSHCountryHelper.countries.get(
+                        countryCode)
+                    stateData = {}
+                    if countryData:
+                        states = countryData.get("states")
+                        if stateCode:
+                            stateData = states[stateCode]
+
+                            path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
+                            if not os.path.exists(path):
+                                path = None
+
+                            stateData.update({
+                                "asset": path
+                            })
+
+                    playerData = {
+                        "country": TSHCountryHelper.GetBasicCountryInfo(countryCode),
+                        "state": stateData,
+                        "name": playerName,
+                        "team": team,
+                        "mergedName": team + "|" + playerName if isinstance(team, str) and team != "" else playerName,
+                        "pronoun": playerData.get("pronoun", ""),
+                        "real_name": playerData.get("name", ""),
+                        "online_avatar": playerData.get("avatar", ""),
+                        "twitter":  playerData.get("twitter", "")
+                    }
+
+                    teamData["player"][str(
+                        playerIndex + 1)] = playerData
+
+                setData["team"][str(teamIndex + 1)] = teamData
+        return setData
+
+
     def GetStreamQueue(self, progress_callback=None):
         try:
             data = self.QueryRequests(
@@ -952,87 +1037,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 queueData = {}
                 for setIndex, _set in enumerate(q.get("sets", [])):
 
-                    phase_name = deep_get(_set, "phaseGroup.phase.name")
-                    if deep_get(_set, "phaseGroup.phase.groupCount") > 1:
-                        phase_name += " - " + TSHLocaleHelper.phaseNames.get(
-                            "group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
-
-                    frt = _set.get("fullRoundText", "")
-                    total_games = _set.get("totalGames", 0)
-                    seteventSlug = deep_get(_set, "event.slug", "")
-
-                    setData = {
-                        "id": _set.get("id"),
-                        "match": StartGGDataProvider.TranslateRoundName(frt),
-                        "phase": phase_name,
-                        "best_of": total_games,
-                        "best_of_text": TSHLocaleHelper.matchNames.get("best_of").format(total_games) if total_games > 0 else "",
-                        "state": _set.get("state"),
-                        "team": {},
-                        "station": deep_get(_set, "station.number", -1),
-                        "event": seteventSlug,
-                        "isCurrentEvent": seteventSlug == eventSlug
-                    }
-
-                    for teamIndex, slot in enumerate(_set.get("slots", [])):
-                        entrant = slot.get("entrant", None)
-                        if entrant:
-
-                            losers = False
-                            if "Gran" in frt:
-                                if teamIndex == 1 or "Reset" in frt:
-                                    losers = True
-
-                            teamData = {
-                                "teamName": entrant.get("name", ""),
-                                "losers": losers,
-                                "seed": entrant.get("seeds", [])[0].get("seedNum", 889977666),
-                                "player": {}
-                            }
-
-                            # TODO : pull the state data
-
-                            for playerIndex, participant in enumerate(entrant.get("participants", [])):
-                                playerData = StartGGDataProvider.ProcessEntrantData(
-                                    participant)
-                                playerName = playerData.get("gamerTag", "")
-                                team = playerData.get("prefix", "")
-
-                                countryCode = playerData.get(
-                                    "country_code", "")
-                                stateCode = playerData.get("state_code", "")
-                                countryData = TSHCountryHelper.countries.get(
-                                    countryCode)
-                                stateData = {}
-                                if countryData:
-                                    states = countryData.get("states")
-                                    if stateCode:
-                                        stateData = states[stateCode]
-
-                                        path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
-                                        if not os.path.exists(path):
-                                            path = None
-
-                                        stateData.update({
-                                            "asset": path
-                                        })
-
-                                playerData = {
-                                    "country": TSHCountryHelper.GetBasicCountryInfo(countryCode),
-                                    "state": stateData,
-                                    "name": playerName,
-                                    "team": team,
-                                    "mergedName": team + "|" + playerName if isinstance(team, str) and team != "" else playerName,
-                                    "pronoun": playerData.get("pronoun", ""),
-                                    "real_name": playerData.get("name", ""),
-                                    "online_avatar": playerData.get("avatar", ""),
-                                    "twitter":  playerData.get("twitter", "")
-                                }
-
-                                teamData["player"][str(
-                                    playerIndex + 1)] = playerData
-
-                            setData["team"][str(teamIndex + 1)] = teamData
+                    setData = self.ProcessFutureSet(_set, eventSlug)
 
                     queueData[str(setIndex + 1)] = setData
 
@@ -1735,8 +1740,19 @@ class StartGGDataProvider(TournamentDataProvider):
                 "query": StartGGDataProvider.FutureSetQuery
             }
         )
+        logger.info("GET FUTURE MATCH =========================================================================")
+        logger.info(data)
+        data = deep_get(data, "data.set", None)
 
-        # TODO format like GetStreamQueue does  
+        logger.info(data)
+
+        if not data:
+            return {} 
+
+        data = self.ProcessFutureSet(data, self.url.split("start.gg/")[1])
+
+        logger.info(data)
+
         return data
 
     def GetMatchAndInsertInListBecauseFuckPython(self, setId, list, i, progress_callback):
