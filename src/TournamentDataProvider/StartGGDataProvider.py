@@ -895,6 +895,17 @@ class StartGGDataProvider(TournamentDataProvider):
                     "mains": [TSHGameAssetManager.instance.GetCharacterFromStartGGId(char)[0], 0]
                 })
 
+        for i in [0, 1]:
+            if len(entrants[i]) == 0:
+                characterIds = deep_get(
+                    respTasks, f"entities.sets.entrant{i+1}CharacterIds", [])
+
+                if characterIds is not None:
+                    for char in characterIds:
+                        entrants[i].append({
+                            "mains": [TSHGameAssetManager.instance.GetCharacterFromStartGGId(char)[0], 0]
+                        })
+
         team1losers = False
         team2losers = False
 
