@@ -320,7 +320,7 @@ class WebServerActions(QThread):
         TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
         return "OK"
 
-    def load_set(self, scoreboard, set=None):
+    def load_set(self, scoreboard, set=None, no_mains=False):
         if set is not None:
             if not isinstance(set, str):
                 set = '0'
@@ -328,7 +328,8 @@ class WebServerActions(QThread):
                 orjson.loads(
                     orjson.dumps({
                         'id': set,
-                        'auto_update': "set"
+                        'auto_update': "set",
+                        'no_mains': no_mains
                     })
                 )
             )
@@ -336,3 +337,16 @@ class WebServerActions(QThread):
     
     def get_comms(self):
         return StateManager.Get("commentary")
+
+    def get_set(self, scoreboard):
+        if self.scoreboard.GetScoreboard(scoreboard).lastSetSelected is None:
+            return "0"
+        else:
+            return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
+
+    def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
+        result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
+        if result == True:
+            return "OK"
+        else:
+            return "ERROR"

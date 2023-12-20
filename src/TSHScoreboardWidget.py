@@ -263,7 +263,8 @@ class TSHScoreboardWidget(QWidget):
         self.timerCancelBt = QPushButton()
         self.timerCancelBt.setIcon(QIcon('assets/icons/cancel.svg'))
         self.timerCancelBt.setIconSize(QSize(12, 12))
-        self.timerCancelBt.clicked.connect(self.StopAutoUpdate)
+        self.timerCancelBt.clicked.connect(
+            lambda: self.StopAutoUpdate(clear_variables=True))
         self.timerLayout.layout().addWidget(self.timerCancelBt)
         self.timerLayout.setVisible(False)
 
@@ -697,11 +698,33 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
+                # Clear previous scores
+                # Important because when we receive scores as 0 we don't update based on that
+                # Otherwise an offline set which is only updated after it's complete would reset the score
+                # all the time since it would be 0-0 until then
+                self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
+                self.ClearScore()
+                
+                # A new set was loaded
+                self.lastSetSelected = data.get("id")
+
+                # Clear stage strike data
                 StateManager.Unset(
                     f'score.{self.scoreboardNumber}.stage_strike')
-                self.lastSetSelected = data.get("id")
-                self.CommandClearAll()
-                self.ClearScore()
+
+                # Add general set data to object: id, auto update type, station/stream identifier, etc
+                StateManager.Set(
+                    f'score.{self.scoreboardNumber}.set_id', data.get("id"))
+
+                StateManager.Set(
+                    f'score.{self.scoreboardNumber}.auto_update', data.get("auto_update"))
+
+                if self.lastStationSelected:
+                    StateManager.Set(
+                        f'score.{self.scoreboardNumber}.station', self.lastStationSelected.get('identifier'))
+                else:
+                    StateManager.Set(
+                        f'score.{self.scoreboardNumber}.station', None)
 
                 # Force user to be P1 on set change
                 if data.get("auto_update") == "user":
@@ -712,7 +735,7 @@ class TSHScoreboardWidget(QWidget):
                             f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
 
                 TSHTournamentDataProvider.instance.GetMatch(
-                    self, data["id"], overwrite=True)
+                    self, data["id"], overwrite=True, no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
 
             if not SettingsManager.Get("general.disable_autoupdate", False):
                 self.autoUpdateTimer.timeout.connect(
@@ -731,13 +754,23 @@ class TSHScoreboardWidget(QWidget):
                 p.dataLock.release()
             StateManager.ReleaseSaving()
 
-    def StopAutoUpdate(self):
+    def StopAutoUpdate(self, clear_variables=False):
         if self.autoUpdateTimer != None:
             self.autoUpdateTimer.stop()
             self.autoUpdateTimer = None
         if self.timeLeftTimer != None:
             self.timeLeftTimer.stop()
             self.timeLeftTimer = None
+
+        if clear_variables:
+            self.lastSetSelected = None
+            self.lastStationSelected = None
+
+            StateManager.Set(
+                f'score.{self.scoreboardNumber}.auto_update', None)
+            StateManager.Set(f'score.{self.scoreboardNumber}.set_id', None)
+            StateManager.Set(f'score.{self.scoreboardNumber}.station', None)
+
         self.timerLayout.setVisible(False)
 
     def UpdateTimeLeftTimer(self):
@@ -794,10 +827,11 @@ class TSHScoreboardWidget(QWidget):
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
 
-    def CommandClearAll(self):
+    def CommandClearAll(self, no_mains=False):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
             for i, p in enumerate(team):
-                p.Clear()
+                p.Clear(no_mains)
+        self.lastSetSelected = None
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):
@@ -896,9 +930,8 @@ class TSHScoreboardWidget(QWidget):
 
                         for p, player in enumerate(team):
                             if data.get("overwrite"):
-                                teamInstance[p].SetData(player, False, True)
-
-                            if data.get("has_selection_data"):
+                                teamInstance[p].SetData(player, False, True, data.get("no_mains") if data.get("no_mains") != None else False)
+                            if data.get("has_selection_data") and data.get("no_mains") != True:
                                 player = {
                                     "mains": player.get("mains")
                                 }
@@ -949,10 +982,22 @@ class TSHScoreboardWidget(QWidget):
         # Avoid loading data from the previous set
         if str(data.get("id")) != str(self.lastSetSelected):
             return
-        
+
         if SettingsManager.Get("general.disable_overwrite", False):
             for entrant in data.get("entrants"):
-                if(entrant[0].get("gamerTag") in TSHPlayerDB.database):
-                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get("gamerTag")]
-        
+                if (entrant[0].get("gamerTag") in TSHPlayerDB.database):
+                    entrant[0] = entrant[0] | TSHPlayerDB.database[entrant[0].get(
+                        "gamerTag")]
+
         self.ChangeSetData(data)
+        
+    def LoadPlayerFromTag(self, tag, team, player, no_mains=False):
+        teamInstances = [self.team1playerWidgets, self.team2playerWidgets]
+        if self.teamsSwapped:
+            teamInstances.reverse()
+        for player_db in TSHPlayerDB.database.values():
+            if tag == player_db.get("gamerTag"):
+                teamInstances[team][player].SetData(player_db, False, True, no_mains)
+                return True
+        else:
+            return False
