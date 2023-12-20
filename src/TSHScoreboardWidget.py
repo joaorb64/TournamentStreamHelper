@@ -698,6 +698,13 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
+                # Clear previous scores
+                # Important because when we receive scores as 0 we don't update based on that
+                # Otherwise an offline set which is only updated after it's complete would reset the score
+                # all the time since it would be 0-0 until then
+                self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
+                self.ClearScore()
+                
                 # A new set was loaded
                 self.lastSetSelected = data.get("id")
 
@@ -718,13 +725,6 @@ class TSHScoreboardWidget(QWidget):
                 else:
                     StateManager.Set(
                         f'score.{self.scoreboardNumber}.station', None)
-
-                # Clear previous scores
-                # Important because when we receive scores as 0 we don't update based on that
-                # Otherwise an offline set which is only updated after it's complete would reset the score
-                # all the time since it would be 0-0 until then
-                self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
-                self.ClearScore()
 
                 # Force user to be P1 on set change
                 if data.get("auto_update") == "user":
@@ -831,6 +831,7 @@ class TSHScoreboardWidget(QWidget):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
             for i, p in enumerate(team):
                 p.Clear(no_mains)
+        self.lastSetSelected = None
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):

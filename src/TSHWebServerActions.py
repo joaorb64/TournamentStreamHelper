@@ -335,6 +335,12 @@ class WebServerActions(QThread):
             )
         return "OK"
 
+    def get_set(self, scoreboard):
+        if self.scoreboard.GetScoreboard(scoreboard).lastSetSelected is None:
+            return "0"
+        else:
+            return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
+
     def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
         result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
         if result == True:
