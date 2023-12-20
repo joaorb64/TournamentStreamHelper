@@ -697,31 +697,31 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>altText</name>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="30"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="150"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="37"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="157"/>
         <source>Game:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="84"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="86"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="88"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="91"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="93"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="95"/>
         <source>VS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="99"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="205"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="106"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="212"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="102"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="109"/>
         <source>Stream powered by TournamentStreamHelper:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="209"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="216"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
@@ -784,7 +784,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="350"/>
-        <location filename="../TSHPlayerListWidget.py" line="33"/>
+        <location filename="../TSHPlayerListWidget.py" line="34"/>
         <source>Player List</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1121,19 +1121,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="56"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <location filename="../TSHBracketWidget.py" line="72"/>
         <source>Number of slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="65"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <location filename="../TSHBracketWidget.py" line="83"/>
         <source>Players per slot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="74"/>
+        <location filename="../TSHPlayerListWidget.py" line="75"/>
         <location filename="../TSHBracketWidget.py" line="92"/>
         <location filename="../TSHScoreboardWidget.py" line="120"/>
         <location filename="../TSHCommentaryWidget.py" line="47"/>
@@ -1146,22 +1146,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="85"/>
+        <location filename="../TSHPlayerListWidget.py" line="86"/>
         <source>Load tournament standings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="90"/>
+        <location filename="../TSHPlayerListWidget.py" line="91"/>
         <source>Generate Descriptive Text for Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="117"/>
+        <location filename="../TSHPlayerListWidget.py" line="118"/>
         <source>Descriptive Text for Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="130"/>
+        <location filename="../TSHPlayerListWidget.py" line="132"/>
         <source>Copy text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1612,6 +1612,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1353"/>
         <source>Player {0} tag missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tips</name>
+    <message>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="9"/>
+        <source>Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
