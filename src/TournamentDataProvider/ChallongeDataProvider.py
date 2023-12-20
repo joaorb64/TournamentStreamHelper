@@ -550,11 +550,11 @@ class ChallongeDataProvider(TournamentDataProvider):
                         match["phase"] = "Round Robin"
                     else:
                         match["phase"] = "Bracket"
-                    if r == len(matches.values()) - 1:
-                        if m == 0:
-                            match["isGF"] = True
-                        elif m == 1:
-                            match["isGFR"] = True
+                        if r == len(matches.values()) - 1:
+                            if m == 0:
+                                match["isGF"] = True
+                            elif m == 1:
+                                match["isGFR"] = True
                     match["round_name"] = ChallongeDataProvider.TranslateRoundName(
                         match, rounds, CHALLONGE_BRACKET_TYPE(data.get("requested_plotter")))
                     all_matches.append(match)
