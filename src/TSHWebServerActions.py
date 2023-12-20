@@ -334,6 +334,9 @@ class WebServerActions(QThread):
                 )
             )
         return "OK"
+    
+    def get_comms(self):
+        return StateManager.Get("commentary")
 
     def get_set(self, scoreboard):
         if self.scoreboard.GetScoreboard(scoreboard).lastSetSelected is None:

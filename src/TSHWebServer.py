@@ -369,6 +369,11 @@ class WebServer(QThread):
             sets = provider.GetMatches(getFinished=False)
             return sets
 
+    # Get the commentators
+    @app.route('/get-comms')
+    def get_comms():
+        return WebServer.actions.get_comms()
+
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-load-set')
     def load_set(scoreboardNumber):
