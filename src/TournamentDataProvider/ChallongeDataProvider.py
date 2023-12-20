@@ -665,7 +665,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                 match, "queued_for_station.stream_url", None)
 
         if stream:
-            stream = stream.split("twitch.tv/")[1].replace("/", "")
+            if "twitch.tv" in stream:
+                stream = stream.split("twitch.tv/")[1].replace("/", "")
 
         team1losers = False
         team2losers = False
