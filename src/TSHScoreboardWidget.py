@@ -723,7 +723,7 @@ class TSHScoreboardWidget(QWidget):
                 # Important because when we receive scores as 0 we don't update based on that
                 # Otherwise an offline set which is only updated after it's complete would reset the score
                 # all the time since it would be 0-0 until then
-                self.CommandClearAll()
+                self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
                 self.ClearScore()
 
                 # Force user to be P1 on set change
@@ -735,7 +735,7 @@ class TSHScoreboardWidget(QWidget):
                             f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
 
                 TSHTournamentDataProvider.instance.GetMatch(
-                    self, data["id"], overwrite=True)
+                    self, data["id"], overwrite=True, no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
 
             if not SettingsManager.Get("general.disable_autoupdate", False):
                 self.autoUpdateTimer.timeout.connect(
@@ -827,10 +827,10 @@ class TSHScoreboardWidget(QWidget):
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
 
-    def CommandClearAll(self):
+    def CommandClearAll(self, no_mains=False):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
             for i, p in enumerate(team):
-                p.Clear()
+                p.Clear(no_mains)
 
     def ClearScore(self):
         for c in self.scoreColumn.findChildren(QComboBox):
@@ -929,9 +929,8 @@ class TSHScoreboardWidget(QWidget):
 
                         for p, player in enumerate(team):
                             if data.get("overwrite"):
-                                teamInstance[p].SetData(player, False, True)
-
-                            if data.get("has_selection_data"):
+                                teamInstance[p].SetData(player, False, True, data.get("no_mains") if data.get("no_mains") != None else False)
+                            if data.get("has_selection_data") and data.get("no_mains") != True:
                                 player = {
                                     "mains": player.get("mains")
                                 }

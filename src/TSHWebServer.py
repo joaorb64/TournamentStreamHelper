@@ -371,7 +371,10 @@ class WebServer(QThread):
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-load-set')
     def load_set(scoreboardNumber):
-        return WebServer.actions.load_set(scoreboardNumber, request.args.get("set"))
+        if request.args.get('no-mains') is not None:
+            return WebServer.actions.load_set(scoreboardNumber, request.args.get("set"), no_mains=True)
+        else:
+            return WebServer.actions.load_set(scoreboardNumber, request.args.get("set"))
 
     @socketio.on('load_set')
     def ws_load_set(message):

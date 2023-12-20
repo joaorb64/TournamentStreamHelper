@@ -320,7 +320,7 @@ class WebServerActions(QThread):
         TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
         return "OK"
 
-    def load_set(self, scoreboard, set=None):
+    def load_set(self, scoreboard, set=None, no_mains=False):
         if set is not None:
             if not isinstance(set, str):
                 set = '0'
@@ -328,7 +328,8 @@ class WebServerActions(QThread):
                 orjson.loads(
                     orjson.dumps({
                         'id': set,
-                        'auto_update': "set"
+                        'auto_update': "set",
+                        'no_mains': no_mains
                     })
                 )
             )
