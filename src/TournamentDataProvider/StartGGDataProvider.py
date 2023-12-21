@@ -1740,18 +1740,15 @@ class StartGGDataProvider(TournamentDataProvider):
                 "query": StartGGDataProvider.FutureSetQuery
             }
         )
-        logger.info("GET FUTURE MATCH =========================================================================")
-        logger.info(data)
+
         data = deep_get(data, "data.set", None)
 
-        logger.info(data)
 
         if not data:
             return {} 
 
         data = self.ProcessFutureSet(data, self.url.split("start.gg/")[1])
 
-        logger.info(data)
 
         return data
 
