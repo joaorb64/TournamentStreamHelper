@@ -996,7 +996,7 @@ class TSHScoreboardWidget(QWidget):
         if self.teamsSwapped:
             teamInstances.reverse()
         for player_db in TSHPlayerDB.database.values():
-            if tag == player_db.get("gamerTag"):
+            if tag.lower() == player_db.get("gamerTag").lower():
                 teamInstances[team][player].SetData(player_db, False, True, no_mains)
                 return True
         else:
