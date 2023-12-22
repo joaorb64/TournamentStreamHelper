@@ -49,6 +49,7 @@ class TSHScoreboardWidget(QWidget):
         StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.2", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
+        StateManager.Set(f"score.{self.scoreboardNumber}.station_queue", {})
 
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
