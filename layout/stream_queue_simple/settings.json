@@ -4,15 +4,16 @@
   },
   "stream": "",
   "default_stream" : "",
-  "force_multistream" : false,
-  "display_stream_name" : "multistream",
   "sets_displayed" : -1,
   "display_first_set": true,
   "station" : -1,
+  "currentEventOnly": false,
   "display" : {
-      "avatar" : true,
+      "station" : false,
       "country_flag" : true,
       "state_flag" : true,
-      "match" : false
-  }
+      "avatar" : true,
+      "stream_name": "multistream"
+  },
+  "minimum_determined_players": 1
 }

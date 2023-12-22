@@ -139,6 +139,7 @@ LoadEverything().then(() => {
     async function queue_html(queue, resolver, display_set_station, station = -1){
         let html = "";
 
+
         for (const [s, set] of Object.values(queue).slice(first_index).entries()){
             if (sets_nb && (current_set_nb >= sets_nb)) break;
             if (!set.team) continue;
@@ -203,7 +204,6 @@ LoadEverything().then(() => {
     async function display_stream(data, oldData, streamName){
         console.log("Display Stream", streamName)
 
-        console.log(previous_display)
         if (previous_display == streamName && oldData.streamQueue && (!data.streamQueue || JSON.stringify(data.streamQueue[streamName]) == JSON.stringify(oldData.streamQueue[streamName]))) return;
 
         previous_display = streamName
