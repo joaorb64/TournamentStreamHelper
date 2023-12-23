@@ -992,7 +992,11 @@ class TSHScoreboardWidget(QWidget):
         self.ChangeSetData(data)
         
     def LoadPlayerFromTag(self, tag, team, player, no_mains=False):
-        teamInstances = [self.team1playerWidgets, self.team2playerWidgets]
+        team = int(team)-1
+        player = int(player)-1
+        teamInstances = [self.team1playerWidgets,
+                            self.team2playerWidgets]
+        
         if self.teamsSwapped:
             teamInstances.reverse()
         for player_db in TSHPlayerDB.database.values():
