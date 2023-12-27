@@ -1126,7 +1126,7 @@ class StartGGDataProvider(TournamentDataProvider):
             sets = [s for s in sets if str(deep_get(
                 s, "station.id", "-1")) == str(stationId)]
 
-            print("SETS", sets)
+            print("SETS BASIC DATA", sets)
 
         except Exception as e:
             logger.error(traceback.format_exc())

@@ -20,7 +20,43 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerDB import TSHPlayerDB
 
 from .thumbnail import main_generate_thumbnail as thumbnail
-from .TSHThumbnailSettingsWidget import *
+from .TSHThumbnailSettingsWidget import * 
+
+
+empty = {}
+class QueueSetsCache:
+    queue = []
+
+    def UpdateQueue(self, q):
+        self.queue = q
+
+    def CheckQueue(self, q):
+        logger.info("----------------- CHECKING QUEUES -------------------")
+        if len(self.queue) != len(q):
+            return False
+        
+        for i in range(len(q)):
+            savedSet = self.queue[i]
+            incSet = q[i]
+
+            if savedSet.get("id") != incSet.get("id"):
+                return False
+            
+            if savedSet.get("state") != incSet.get("state"):
+                return False
+
+            savedSlots = savedSet.get("slots", [empty, empty])
+            incSlots = incSet.get("slots", [empty, empty])
+
+            
+            if deep_get(savedSlots[0], "entrant.id") != deep_get(incSlots[0], "entrant.id"):
+                return False
+            
+            if deep_get(savedSlots[1], "entrant.id") != deep_get(incSlots[1], "entrant.id"):
+                return False
+
+        logger.info("----------------- QUEUES CHECK OK -------------------")
+        return True
 
 
 class TSHScoreboardWidgetSignals(QObject):
@@ -39,6 +75,8 @@ class TSHScoreboardWidgetSignals(QObject):
 
 
 class TSHScoreboardWidget(QWidget):
+    stationQueueCache = QueueSetsCache()
+
     def __init__(self, scoreboardNumber=1, *args):
         super().__init__(*args)
 
