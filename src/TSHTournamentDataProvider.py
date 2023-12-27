@@ -237,11 +237,9 @@ class TSHTournamentDataProvider:
                     stationSet = stationSets[0]
 
                 queueCache = mainWindow.stationQueueCache
-                logger.info("--------------------- CURRENT QUEUE CACHE -----------------")
                 logger.info(queueCache.queue)
                 logger.info(stationSets)
                 if queueCache and not queueCache.CheckQueue(stationSets):
-                    logger.info("------------------ CHANGE IN THE QUEUE DETECTED ------------------")
                     queueCache.UpdateQueue(stationSets)
 
                     TSHTournamentDataProvider.instance.GetStationMatches(stationSets, mainWindow)
@@ -266,7 +264,6 @@ class TSHTournamentDataProvider:
 
     #omits the first one (loaded through NewSetSelected)
     def GetStationMatches(self, matchesId, mainWindow):
-        logger.info("------------------- GET STATION MATCHES ------------------")
 
         matchesId = matchesId[1:]
 
