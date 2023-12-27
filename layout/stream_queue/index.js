@@ -225,7 +225,7 @@ LoadEverything().then(() => {
         update_content(html, resolver);
     }
 
-    async function display_station(oldData, data){
+    async function display_station(data, oldData){
         console.log("Display Station")
         if (previous_display == 2 && oldData.score && oldData.score[window.scoreboardNumber].station_queue && JSON.stringify(data.score[window.scoreboardNumber].station_queue) == JSON.stringify(oldData.score[window.scoreboardNumber].station_queue)) return;
     
@@ -233,7 +233,6 @@ LoadEverything().then(() => {
 
         let html = ""
         let resolver = new ContentResolver();
-
         let queue = data.score[window.scoreboardNumber].station_queue;
         if (queue) {
             html += await queue_html(queue, resolver, false);
@@ -268,7 +267,7 @@ LoadEverything().then(() => {
 
 
         //let stream = config.stream || data.score[window.scoreboardNumber].station || config.default_stream
-
+        console.log("data", data, oldData)
 
         if (config.stream){
             
