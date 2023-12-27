@@ -275,13 +275,11 @@ class TSHTournamentDataProvider:
         )
         self.threadPool.start(worker)
 
-
-
-    def GetMatch(self, mainWindow, setId, overwrite=True):
+    def GetMatch(self, mainWindow, setId, overwrite=True, no_mains=False):
         worker = Worker(self.provider.GetMatch, **
                         {"setId": setId})
         worker.signals.result.connect(lambda data: [
-            data.update({"overwrite": overwrite}),
+            data.update({"overwrite": overwrite, "no_mains": no_mains}),
             mainWindow.signals.UpdateSetData.emit(data)
         ])
         self.threadPool.start(worker)

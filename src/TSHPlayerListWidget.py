@@ -14,7 +14,8 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHPlayerList import TSHPlayerList
-from src.Helpers.TSHAltTextHelper import generate_top_n_alt_text
+from src.Helpers.TSHAltTextHelper import generate_top_n_alt_text, add_alt_text_tooltip_to_button
+import textwrap
 
 
 class TSHPlayerListWidgetSignals(QObject):
@@ -86,10 +87,10 @@ class TSHPlayerListWidget(QDockWidget):
         self.loadFromStandingsBt.clicked.connect(self.LoadFromStandingsClicked)
         row.layout().addWidget(self.loadFromStandingsBt)
 
-        self.loadFromStandingsBt = QPushButton(
+        self.generateAltTextButton = QPushButton(
             QApplication.translate("app", "Generate Descriptive Text for Results"))
-        self.loadFromStandingsBt.clicked.connect(self.AltTextWindow)
-        row.layout().addWidget(self.loadFromStandingsBt)
+        self.generateAltTextButton = add_alt_text_tooltip_to_button(self.generateAltTextButton)
+        row.layout().addWidget(self.generateAltTextButton)
 
         self.widget.layout().addWidget(self.playerList)
 
@@ -107,14 +108,15 @@ class TSHPlayerListWidget(QDockWidget):
     def LoadFromStandingsClicked(self):
         TSHTournamentDataProvider.instance.GetStandings(
             self.slotNumber.value(), self.signals.UpdateData)
-    
+
     def AltTextWindow(self):
         def copy_text():
             textbox.selectAll()
             textbox.copy()
 
         messagebox = QDialog()
-        messagebox.setWindowTitle(QApplication.translate("app", "Descriptive Text for Results"))
+        messagebox.setWindowTitle(QApplication.translate(
+            "app", "Descriptive Text for Results"))
         vbox = QVBoxLayout()
         messagebox.setLayout(vbox)
         textbox = QTextEdit()
