@@ -1,0 +1,57 @@
+query FutureSetQuery($id: ID!) {
+    set(id: $id){
+        id
+        identifier
+        fullRoundText
+        totalGames
+        state
+        station {
+            number
+        }
+        event {
+            slug
+        }
+        slots {
+            entrant {
+                id
+                name
+                seeds {
+                    seedNum
+                }
+                participants {
+                    id
+                    user {
+                        id
+                        slug
+                        name
+                        genderPronoun
+                        location {
+                            city
+                            country
+                            state
+                        }
+                        images(type: "profile") {
+                            url
+                        }
+                        authorizations(types: [TWITTER]) {
+                            type
+                            externalUsername
+                        }
+                    }
+                    player {
+                        id
+                        gamerTag
+                        prefix
+                    }
+                }
+            }
+        }
+        phaseGroup {
+            displayIdentifier
+            phase {
+                name
+                groupCount
+            }
+        }
+    }
+}

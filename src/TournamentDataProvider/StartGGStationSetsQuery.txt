@@ -4,6 +4,11 @@ query StationSetsQuery($eventSlug: String!, $filters: SetFilters = {}) {
       nodes {
         id
         state
+        slots {
+          entrant {
+            id
+          }
+        }
         station {
           id
         }

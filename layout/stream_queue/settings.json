@@ -3,7 +3,7 @@
     "default": {}
   },
   "stream": "",
-  "default_stream" : "",
+  "default_stream" : "vgbootcamp",
   "force_multistream" : false,
   "display_stream_name" : "multistream",
   "sets_displayed" : -1,

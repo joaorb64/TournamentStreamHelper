@@ -20,7 +20,43 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerDB import TSHPlayerDB
 
 from .thumbnail import main_generate_thumbnail as thumbnail
-from .TSHThumbnailSettingsWidget import *
+from .TSHThumbnailSettingsWidget import * 
+
+
+empty = {}
+class QueueSetsCache:
+    queue = []
+
+    def UpdateQueue(self, q):
+        self.queue = q
+
+    def CheckQueue(self, q):
+        logger.info("----------------- CHECKING QUEUES -------------------")
+        if len(self.queue) != len(q):
+            return False
+        
+        for i in range(len(q)):
+            savedSet = self.queue[i]
+            incSet = q[i]
+
+            if savedSet.get("id") != incSet.get("id"):
+                return False
+            
+            if savedSet.get("state") != incSet.get("state"):
+                return False
+
+            savedSlots = savedSet.get("slots", [empty, empty])
+            incSlots = incSet.get("slots", [empty, empty])
+
+            
+            if deep_get(savedSlots[0], "entrant.id") != deep_get(incSlots[0], "entrant.id"):
+                return False
+            
+            if deep_get(savedSlots[1], "entrant.id") != deep_get(incSlots[1], "entrant.id"):
+                return False
+
+        logger.info("----------------- QUEUES CHECK OK -------------------")
+        return True
 
 
 class TSHScoreboardWidgetSignals(QObject):
@@ -30,6 +66,7 @@ class TSHScoreboardWidgetSignals(QObject):
     StreamSetSelection = Signal()
     StationSelection = Signal()
     StationSelected = Signal(object)
+    StationSetsLoaded = Signal(object)
     UserSetSelection = Signal()
     CommandScoreChange = Signal(int, int)
     CommandTeamColor = Signal(int, str)
@@ -38,6 +75,8 @@ class TSHScoreboardWidgetSignals(QObject):
 
 
 class TSHScoreboardWidget(QWidget):
+    stationQueueCache = QueueSetsCache()
+
     def __init__(self, scoreboardNumber=1, *args):
         super().__init__(*args)
 
@@ -48,12 +87,14 @@ class TSHScoreboardWidget(QWidget):
         StateManager.Set(f"score.{self.scoreboardNumber}.last_sets.2", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
         StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
+        StateManager.Set(f"score.{self.scoreboardNumber}.station_queue", {})
 
         self.signals = TSHScoreboardWidgetSignals()
         self.signals.UpdateSetData.connect(self.UpdateSetData)
         self.signals.NewSetSelected.connect(self.NewSetSelected)
+        self.signals.StationSetsLoaded.connect(self.StationSetsLoaded)
         self.signals.SetSelection.connect(self.LoadSetClicked)
-        self.signals.StationSelected.connect(self.LoadStationSet)
+        self.signals.StationSelected.connect(self.LoadStationSets)
         self.signals.StationSelection.connect(self.LoadStationSetClicked)
         self.signals.UserSetSelection.connect(self.LoadUserSetClicked)
         self.signals.ChangeSetData.connect(self.ChangeSetData)
@@ -666,6 +707,17 @@ class TSHScoreboardWidget(QWidget):
             self, data.get("id"), overwrite=False)
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
+    def StationSetsLoaded(self, data):
+        #Ici peut être lancer le chargement des sets voire même trigger un autre signal ?
+
+        logger.info("STATION SETS LOADED -----------------------------")
+        logger.info(data)
+        StateManager.BlockSaving()
+
+        StateManager.Set(f"score.{self.scoreboardNumber}.station_queue", data)
+
+        StateManager.ReleaseSaving()
+
     def NewSetSelected(self, data):
         if not SettingsManager.Get("general.disable_autoupdate", False):
             self.StopAutoUpdate()
@@ -743,7 +795,7 @@ class TSHScoreboardWidget(QWidget):
 
                 if data.get("auto_update") in ("stream", "station"):
                     self.autoUpdateTimer.timeout.connect(
-                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSet(self))
+                        lambda setId=data: TSHTournamentDataProvider.instance.LoadStationSets(self))
 
                 if data.get("auto_update") == "user":
                     self.autoUpdateTimer.timeout.connect(
@@ -782,10 +834,10 @@ class TSHScoreboardWidget(QWidget):
         self.selectSetWindow.LoadSets()
         self.selectSetWindow.show()
 
-    def LoadStationSet(self, station):
+    def LoadStationSets(self, station):
         self.lastSetSelected = None
         self.lastStationSelected = station
-        TSHTournamentDataProvider.instance.LoadStationSet(self)
+        TSHTournamentDataProvider.instance.LoadStationSets(self)
 
     def LoadStationSetClicked(self):
         self.selectStationWindow.LoadStations()

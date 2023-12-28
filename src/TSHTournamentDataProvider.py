@@ -16,7 +16,6 @@ from loguru import logger
 
 from .Workers import Worker
 
-
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = Signal()
     entrants_updated = Signal()
@@ -222,7 +221,7 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def LoadStationSet(self, mainWindow):
+    def LoadStationSets(self, mainWindow):
         if mainWindow.lastStationSelected:
             stationSet = None
 
@@ -230,14 +229,27 @@ class TSHTournamentDataProvider:
                 stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
                     mainWindow.lastStationSelected.get("identifier"))
             else:
-                stationSet = TSHTournamentDataProvider.instance.provider.GetStationMatchId(
-                    mainWindow.lastStationSelected.get("id"))
+                stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
+                    mainWindow.lastStationSelected.get("id")
+                )
+
+                if len(stationSets) > 0:
+                    stationSet = stationSets[0]
+
+                queueCache = mainWindow.stationQueueCache
+                logger.info(queueCache.queue)
+                logger.info(stationSets)
+                if queueCache and not queueCache.CheckQueue(stationSets):
+                    queueCache.UpdateQueue(stationSets)
+
+                    TSHTournamentDataProvider.instance.GetStationMatches(stationSets, mainWindow)
 
             if not stationSet:
                 stationSet = {}
 
             stationSet["auto_update"] = mainWindow.lastStationSelected.get(
                 "type")
+            
 
             mainWindow.signals.NewSetSelected.emit(stationSet)
 
@@ -249,6 +261,19 @@ class TSHTournamentDataProvider:
 
         _set["auto_update"] = "user"
         mainWindow.signals.NewSetSelected.emit(_set)
+
+    #omits the first one (loaded through NewSetSelected)
+    def GetStationMatches(self, matchesId, mainWindow):
+
+        matchesId = matchesId[1:]
+
+        worker = Worker(self.provider.GetFutureMatchesList, **{
+            "setsId": matchesId
+        })
+        worker.signals.result.connect(
+            lambda sets: mainWindow.signals.StationSetsLoaded.emit(sets)
+        )
+        self.threadPool.start(worker)
 
     def GetMatch(self, mainWindow, setId, overwrite=True, no_mains=False):
         worker = Worker(self.provider.GetMatch, **
