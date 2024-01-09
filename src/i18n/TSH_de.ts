@@ -770,12 +770,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="118"/>
+        <location filename="../TSHPlayerListWidget.py" line="119"/>
         <source>Descriptive Text for Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="132"/>
+        <location filename="../TSHPlayerListWidget.py" line="133"/>
         <source>Copy text</source>
         <translation type="unfinished"></translation>
     </message>
