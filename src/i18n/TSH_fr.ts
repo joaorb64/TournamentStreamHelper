@@ -1733,7 +1733,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="9"/>
         <source>Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.</source>
-        <translation type="unfinished"></translation>
+        <translation>L’Alternative textuelle décrit les images pour les personnes aveugles et malvoyantes, et donne du contexte supplémentaire autout des dites images. En conséquence, nous recommandons vivement l’ajout de l’Alternative textuelle aux images mises en ligne sur votre site web ou vos réseaux sociaux.</translation>
     </message>
 </context>
 <context>
