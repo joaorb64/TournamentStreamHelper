@@ -1725,7 +1725,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="506"/>
         <source>The video title and description have also been generated.</source>
-        <translation>Le titre et la description de la vivéo ont également été générés.</translation>
+        <translation>Le titre et la description de la vidéo ont également été générés.</translation>
     </message>
 </context>
 <context>
