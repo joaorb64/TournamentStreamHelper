@@ -90,6 +90,7 @@ class TSHPlayerListWidget(QDockWidget):
         self.generateAltTextButton = QPushButton(
             QApplication.translate("app", "Generate Descriptive Text for Results"))
         self.generateAltTextButton = add_alt_text_tooltip_to_button(self.generateAltTextButton)
+        self.generateAltTextButton.clicked.connect(self.AltTextWindow)
         row.layout().addWidget(self.generateAltTextButton)
 
         self.widget.layout().addWidget(self.playerList)
