@@ -22,7 +22,7 @@ iframe {
 	border: none;
 	width: 1920px;
 	height: 1080px;
-	background-image: url(https://i.ytimg.com/vi/4VsW-qRM8EI/maxresdefault.jpg);
+	/* background-image: url(https://i.ytimg.com/vi/4VsW-qRM8EI/maxresdefault.jpg); */
 	background-size: cover;
 	overflow: hidden;
 	transform-origin: top left;

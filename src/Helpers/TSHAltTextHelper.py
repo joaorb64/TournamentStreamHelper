@@ -1,8 +1,15 @@
 import json
 import math
+import textwrap
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+
+def add_alt_text_tooltip_to_button(push_button: QPushButton):
+    altTextTooltip = QApplication.translate(
+            "tips", "Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.")
+    push_button.setToolTip('\n'.join(textwrap.wrap(altTextTooltip, 40)))
+    return(push_button)
 
 
 def load_program_state():
@@ -166,13 +173,23 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
             current_player_data = player_data.get(player_id)
             player_name = current_player_data.get("mergedName")
             character_data = current_player_data.get("character")
+            if current_player_data.get("country"):
+                country_code = current_player_data.get("country").get("code")
+            else:
+                country_code = ""
             for character_id in character_data.keys():
                 current_character_data = character_data.get(character_id)
                 if current_character_data.get("name"):
                     character_names.append(current_character_data.get("name"))
             player_text = f"{player_name}"
-            if character_names:
-                player_text = player_text + f" ({', '.join(character_names)})"
+            characters_text = ' / '.join(character_names)
+            if country_code:
+                if characters_text:
+                    characters_text = country_code + ", " + characters_text
+                else:
+                    characters_text = country_code
+            if characters_text:
+                player_text = player_text + f" ({characters_text})"
             if player_name:
                 players_text.append(player_text)
         placement = CalculatePlacement(int(team_id), bracket_type)

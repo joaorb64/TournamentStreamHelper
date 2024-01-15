@@ -32,6 +32,12 @@ class TournamentDataProvider:
     def GetStreamMatchId(self, streamName):
         pass
 
+    def GetStationMatchId(self, stationId):
+        pass
+
+    def GetStationMatchsId(self, stationId):
+        pass
+
     def GetUserMatchId(self, user):
         pass
 
@@ -51,4 +57,11 @@ class TournamentDataProvider:
         pass
 
     def GetStandings(self, playerNumber):
+        pass
+
+    def GetFutureMatch(self, progrss_callback=None):
+        pass
+
+    #give me a list of objects that contain a "id" property
+    def GetFutureMatchesList(self, sets: object, progress_callback=None):
         pass

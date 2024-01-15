@@ -577,13 +577,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.ManageSavePlayerToDBText()
             self.ManageDeletePlayerFromDBActive()
 
-    def SetData(self, data, dontLoadFromDB=False, clear=True):
+    def SetData(self, data, dontLoadFromDB=False, clear=True, no_mains=False):
         self.dataLock.acquire()
         StateManager.BlockSaving()
 
         try:
             if clear:
-                self.Clear()
+                self.Clear(no_mains=no_mains)
 
             # Load player data from DB; will be overwriten by incoming data
             if not dontLoadFromDB:
@@ -598,7 +598,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
 
                     if tag == dbTag:
-                        self.SetData(item, dontLoadFromDB=True, clear=False)
+                        self.SetData(item, dontLoadFromDB=True, clear=False, no_mains=no_mains)
                         break
 
             name = self.findChild(QWidget, "name")
@@ -675,7 +675,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if stateElement.currentIndex() != stateIndex:
                     stateElement.setCurrentIndex(stateIndex)
 
-            if data.get("mains"):
+            if data.get("mains") and no_mains != True:
                 if type(data.get("mains")) == list:
                     for element in self.character_elements:
                         character_element = element[1]
@@ -797,7 +797,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         tag = self.GetCurrentPlayerTag()
         TSHPlayerDB.DeletePlayer(tag)
 
-    def Clear(self):
+    def Clear(self, no_mains=False):
         StateManager.BlockSaving()
         with self.dataLock:
             for c in self.findChildren(QLineEdit):
@@ -806,6 +806,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     c.editingFinished.emit()
 
             for c in self.findChildren(QComboBox):
-                c.setCurrentIndex(0)
+                if(no_mains):
+                    for charelem in self.character_elements:
+                        for i in range(len(charelem)):
+                            if charelem[i] == c:
+                                break
+                        else:
+                            c.setCurrentIndex(0)
+                        continue  # only executed if the inner loop DID break
+                else:
+                    c.setCurrentIndex(0)
         StateManager.Unset(f"{self.path}.seed")
         StateManager.ReleaseSaving()

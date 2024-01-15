@@ -5,17 +5,18 @@ LoadEverything().then(() => {
         },
         "stream": "",
         "default_stream" : "",
-        "force_multistream" : false,
-        "display_stream_name" : "multistream",
         "sets_displayed" : -1,
         "display_first_set": true,
         "station" : -1,
+        "currentEventOnly": false,
         "display" : {
-            "avatar" : true,
-            "country_flag" : false,
+            "station" : false,
+            "country_flag" : true,
             "state_flag" : true,
-            "match" : true
-        }
+            "avatar" : true,
+            "stream_name": "multistream"
+        },
+        "minimum_determined_players": 1
     }
     
     function isDefault(value){
@@ -23,15 +24,28 @@ LoadEverything().then(() => {
     }
 
     let window_config = window.config || {}
-    for (k in config){
-        if (!isDefault(window_config[k])){
-            config[k] = window_config[k]
-        } else if (!isDefault(tsh_settings[k])) {
-            config[k] = tsh_settings[k]
+
+    function assignDefault(target, source){
+        for (k in target){
+            let value = source[k]
+            if (typeof value === 'object' && value !== null){
+                let matchingObject = target[k];
+                if (typeof matchingObject != 'object'){
+                    matchingObject = value;
+                } else {
+                    assignDefault(matchingObject, value);
+                }
+            }
+            if (!isDefault(value)){
+                target[k] = value
+            }
         }
     }
 
-    if (!config.display) {
+    assignDefault(config, tsh_settings);
+    assignDefault(config, window_config);
+
+    if (!config.display){
         config.display = {};
     }
 
@@ -71,7 +85,11 @@ LoadEverything().then(() => {
     }
 
     async function team_html(set, t, s, isTeams, resolver){
+
         let team = set.team[""+t];
+
+        if (!team) return `<div class = "p${t} tbd_container"><div class = "TBD">TBD</div></div>`;
+
         let player = team.player["1"];
 
         resolver.add(`.set${current_set_nb} .p${t} .tag`, 
@@ -85,40 +103,61 @@ LoadEverything().then(() => {
                 `
         )
 
-        let flag_small = config.display.state_flag && config.display.country_flag ? "flag_small" : ""
+        resolver.add(`.set${s - 1} .p${t} .twitter`, 
+            (!isTeams) ?  `<span class="twitter_logo"></span>${String(player.twitter)}` : ""  
+        )
 
         return `
             <div class = "p${t} team">
                 ${isTeams && !config.display.avatar ? "" : online_avatar_html(player, t)}
                 <div class = "flags">
                     ${ isTeams ? "" : 
-                        (player.country.asset && config.display.country_flag ? `<div class='flag ${flag_small}' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
-                        (player.state.asset  && config.display.state_flag ? `<div class='flag ${flag_small}' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
+                        (player.country.asset && config.display.country_flag ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
+                        (player.state.asset && config.display.state_flag? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
                     }
                 </div>
                 <div class = "name">
                     <div class = "tag"></div>
+                    <div class = "extra">
+                        ${ player.twitter ?
+                            ` <div class = "twitter">  </div> ` : ''
+                        }
+                        ${ player.pronoun ?
+                            ` <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>` : ''
+                        }
+                        ${ team.seed ?
+                            `<div class = "seed"> ${wrap_text("Seed " + team.seed)} </div> ` : ''
+                        }
+                       
+                        
+                    </div>
                 </div>
             </div>
         `
     }
 
-    async function queue_html(queue, resolver){
+    async function queue_html(queue, resolver, display_set_station, station = -1){
         let html = "";
 
         for (const [s, set] of Object.values(queue).slice(first_index).entries()){
             if (sets_nb && (current_set_nb >= sets_nb)) break;
+            if (!set.team) continue;
+            if (config.minimum_determined_players > 0 && !set.team[""+config.minimum_determined_players]) continue;
 
-            if (config.station != -1 && config.station != set.station) continue;
+            if (config.currentEventOnly && !set.isCurrentEvent) continue;
+            if (station != -1 && station != set.station) continue;
 
-            let isTeams = Object.keys(set.team["1"].player).length > 1;
+            let isTeams = set.team["1"] && Object.keys(set.team["1"].player).length > 1;
+
             html += `
                 <div class="set${current_set_nb} set">
                     ${ await team_html(set, 1, s + 1 , isTeams, resolver) }
                     <div class = "vs_container">
-                        ${!config.display.match ? `<div class = "vs">VS</div>` : ""}
-                        ${config.display.match ? `<div class = "match"> </div>` : ""}
-                        
+                        <div class = "vs vs_${config.display.station ? 'small' : 'big'}">VS</div>
+                        ${display_set_station && set.station && set.station != -1 ? '<div class = "station"></div>' : ''}
+                        <div class = "phase"> </div>
+                        <div class = "match"> </div>
+
                     </div>
                     ${ await team_html(set, 2, s + 1, isTeams, resolver) }
                 </div>
@@ -138,53 +177,75 @@ LoadEverything().then(() => {
         return `<div class = "message"><img class = "twitch_logo" src = "./twitch.svg"></img>/${stream}</div>`
     }
 
-    Update = async (event) => {
-        let data = event.data;
-        let oldData = event.oldData;
+    let previous_display = null;
 
-        let stream = config.stream || data.currentStream || config.default_stream
+    async function display_allstream(data, oldData){
+        console.log("Display AllStream")
+        if (previous_display == 1 && oldData.streamQueue && JSON.stringify(data.streamQueue) != JSON.stringify(oldData.streamQueue)) return;
 
-        if (
-            !oldData.streamQueue ||
-            JSON.stringify(data.streamQueue) !=
-            JSON.stringify(oldData.score.streamQueue) || 
-            ( !tsh_settings.stream && oldData.currentStream != data.currentStream)
-        ) {
+        previous_display = 1
 
-            /*
-            if (!stream){
-                $(".stream_queue_content").html('<div class = "message">No stream (twitch username) selected. Enter one in TSH or set the "stream" or "default_stream" value in this layout\'s settings.json</div>');
-                return;
-            }*/
-    
-            let html = ""
-            let resolver = new ContentResolver();
+        let html = ""
+        let resolver = new ContentResolver();
 
-            if (stream){ //single-stream
-                let queue = data.streamQueue[stream];
-                if (!queue) return;
-                
-                if (config.display_stream_name == true){
-                    html += stream_name_html(stream)
-                }
+        resetSetsCount();
 
-                resetSetsCount();
-                html += await queue_html(queue, resolver);
-            } else { //multistream
-                resetSetsCount();
-
-                for (stream in data.streamQueue){
-                    if (config.display_stream_name){
-                        html += stream_name_html(stream)
-                    }
-                    console.log(stream, data.streamQueue[stream])
-                    html += await queue_html(data.streamQueue[stream], resolver)
-                }
+        for (stream in data.streamQueue){
+            if (config.display.stream_name){
+                html += stream_name_html(stream)
             }
+            html += await queue_html(data.streamQueue[stream], resolver, config.display.station, config.station)
+        }
 
+        update_content(html, resolver);
+    }
+
+    async function display_stream(data, oldData, streamName){
+        console.log("Display Stream", streamName)
+
+        console.log(previous_display)
+        if (previous_display == streamName && oldData.streamQueue && (!data.streamQueue || JSON.stringify(data.streamQueue[streamName]) == JSON.stringify(oldData.streamQueue[streamName]))) return;
+
+        previous_display = streamName
+
+        let html = ""
+        let resolver = new ContentResolver();
+
+        let queue = data.streamQueue[streamName];
+        if (queue)  {
+            if (config.display.stream_name == true){
+                html += stream_name_html(streamName)
+            }
+    
+            resetSetsCount();
+            html += await queue_html(queue, resolver, config.display.station, config.station);
+        }
+
+
+        update_content(html, resolver);
+    }
+
+    async function display_station(oldData, data){
+        console.log("Display Station")
+        if (previous_display == 2 && oldData.score && oldData.score[window.scoreboardNumber].station_queue && JSON.stringify(data.score[window.scoreboardNumber].station_queue) == JSON.stringify(oldData.score[window.scoreboardNumber].station_queue)) return;
+    
+        previous_display = 2
+
+        let html = ""
+        let resolver = new ContentResolver();
+
+        let queue = data.score[window.scoreboardNumber].station_queue;
+        if (queue) {
+            html += await queue_html(queue, resolver, false);
+        }
+
+        update_content(html, resolver)
+    }
+
+
+    function update_content(html, resolver){
             //console.log(html);
             $(".stream_queue_content").html(html);
-
             resolver.resolve()
 
             for (let i = 0; i <= current_set_nb; i++){
@@ -199,7 +260,55 @@ LoadEverything().then(() => {
                 {autoAlpha: 0, duration : 0.3},
                 0.3 + 0.2 * current_set_nb
             );
+    }
+
+    Update = async (event) => {
+        let data = event.data;
+        let oldData = event.oldData;
+
+
+        //let stream = config.stream || data.score[window.scoreboardNumber].station || config.default_stream
+
+
+        if (config.stream){
+            
+            if (config.stream == "all"){
+                display_allstream(data, oldData);
+            } else {
+                display_stream(data, oldData, config.stream)
+            }
+        } else {
+            let tsh_station = data.score[window.scoreboardNumber].station;
+            if (tsh_station){
+                if (data.score[window.scoreboardNumber].auto_update == "station"){
+                    display_station(data, oldData);
+                } else {
+                    display_stream(data, oldData, tsh_station)
+                }
+            } else if (config.default_stream) {
+                display_stream(data, oldData, config.default_stream);
+            } else {
+                display_allstream(data, oldData);
+            }
         }
+
+        /*
+        if (
+            !oldData.streamQueue ||
+            JSON.stringify(data.streamQueue) !=
+            JSON.stringify(oldData.score.streamQueue) || 
+            ( !tsh_settings.stream && oldData.score[window.scoreboardNumber].station != data.score[window.scoreboardNumber].station)
+        ) {
+
+
+            
+            if (!stream){
+                $(".stream_queue_content").html('<div class = "message">No stream (twitch username) selected. Enter one in TSH or set the "stream" or "default_stream" value in this layout\'s settings.json</div>');
+                return;
+            }
+        }
+        */
+        
 
     }
 })
