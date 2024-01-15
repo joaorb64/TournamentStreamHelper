@@ -1003,7 +1003,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="586"/>
         <source>Look for Help on the forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Demander de l&apos;aide sur le Forum</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="594"/>
@@ -1646,7 +1646,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="74"/>
         <source>Do not override existing values in local_players.csv (takes effect on next restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne pas remplacer les valeurs existantes dans la base de données locale des joueurs (Prend effet après le redémarrage de l&apos;application)</translation>
     </message>
 </context>
 <context>
