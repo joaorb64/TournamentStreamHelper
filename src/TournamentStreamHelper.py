@@ -583,6 +583,14 @@ class Window(QMainWindow):
         ])
 
         action = helpMenu.addAction(
+            QApplication.translate("app", "Look for Help on the forum"))
+        help_url = "https://github.com/joaorb64/TournamentStreamHelper/discussions/categories/q-a"
+        action.triggered.connect(lambda x=None: [
+            QDesktopServices.openUrl(QUrl(help_url)),
+            help_messagebox.exec()
+        ])
+
+        action = helpMenu.addAction(
             QApplication.translate("app", "Report a bug"))
         issues_url = "https://github.com/joaorb64/TournamentStreamHelper/issues"
         action.triggered.connect(lambda x=None: [
