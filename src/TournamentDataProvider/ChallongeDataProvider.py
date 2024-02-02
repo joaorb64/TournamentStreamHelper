@@ -594,7 +594,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                         if int(match.get("round")) in [maxRoundNumber, minRoundNumber]:
 
                             match["round_name"] = TSHLocaleHelper.matchNames.get("qualifier").format(
-                                CleanInputString(TSHLocaleHelper.phaseNames.get("final_stage")))
+                                self.CleanInputString(TSHLocaleHelper.phaseNames.get("final_stage")))
                             match["winnerProgression"] = TSHLocaleHelper.phaseNames.get(
                                 "final_stage")
 

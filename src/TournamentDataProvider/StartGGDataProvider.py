@@ -699,7 +699,7 @@ class StartGGDataProvider(TournamentDataProvider):
         lOverallPlacement = sets.get("lOverallPlacement", 0)
         topN = 0
         if lOverallPlacement > 0:
-            topN = TopNPlacement(lOverallPlacement)
+            topN = self.TopNPlacement(lOverallPlacement)
 
         selectedCharMap = {}
 
