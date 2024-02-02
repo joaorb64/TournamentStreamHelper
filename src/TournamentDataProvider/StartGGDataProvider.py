@@ -351,9 +351,11 @@ class StartGGDataProvider(TournamentDataProvider):
             finalResult.update(result.get("new", {}))
             finalResult.update(result.get("old", {}))
 
-            if result.get("old", {}).get("winnerProgression"):
+            winnerProgression = result.get("old", {}).get("winnerProgression")
+            if winnerProgression:
+                winnerProgression = re.sub(r"\s*[\(\{\[].*?[\)\}\]]", "", winnerProgression).strip()
                 finalResult["round_name"] = TSHLocaleHelper.matchNames.get(
-                    "qualifier").format(result.get("old", {}).get("winnerProgression"))
+                    "qualifier").format(winnerProgression)
 
             if result.get("new", {}).get("isOnline") == False:
                 finalResult["bestOf"] = None
@@ -679,8 +681,25 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return setData
 
+    def TopNPlacement(self, placement):
+        if placement == 5 or placement == 6:
+            return 6
+        else:
+            top_number = 1
+            while top_number < placement:
+                top_number *= 2
+
+            return top_number
+
     def ParseMatchDataOldApi(self, respTasks):
-        tasks = respTasks.get("entities", {}).get("setTask", [])
+        entities = respTasks.get("entities", {})
+        sets = entities.get("sets", {})
+        tasks = entities.get("setTask", [])
+
+        lOverallPlacement = sets.get("lOverallPlacement", 0)
+        topN = 0
+        if lOverallPlacement > 0:
+            topN = TopNPlacement(lOverallPlacement)
 
         selectedCharMap = {}
 
@@ -927,6 +946,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
             "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
             "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
+            "top_n": topN,
             "team1losers": team1losers,
             "team2losers": team2losers,
             "currPlayer": currPlayer,
