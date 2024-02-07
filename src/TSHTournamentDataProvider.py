@@ -292,9 +292,9 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def GetRecentSets(self, callback, id1, id2):
+    def GetRecentSets(self, callback, id1, id2, videogame):
         worker = Worker(self.provider.GetRecentSets, **{
-            "id1": id1, "id2": id2, "callback": callback, "requestTime": time.time_ns()
+            "id1": id1, "id2": id2, "callback": callback, "requestTime": time.time_ns(), "videogame": videogame
         })
         self.threadPool.start(worker)
 
