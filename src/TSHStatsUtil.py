@@ -127,7 +127,7 @@ class TSHStatsUtil:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    self.signals.history_sets_updated, p1id, "1", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p1id, "1", StateManager.Get(f"provider_videogame.id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
 
@@ -137,7 +137,7 @@ class TSHStatsUtil:
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    self.signals.history_sets_updated, p2id, "2", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p2id, "2", StateManager.Get(f"provider_videogame.id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
 
