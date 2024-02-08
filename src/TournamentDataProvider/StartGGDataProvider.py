@@ -1367,7 +1367,7 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             callback.emit({"playerNumber": playerNumber, "history_sets": []})
 
-    def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
+    def GetRecentSets(self, id1, id2, videogame, callback, requestTime, progress_callback):
         try:
             id1 = [str(id1[0]), str(id1[1])]
             id2 = [str(id2[0]), str(id2[1])]
@@ -1386,7 +1386,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         "id1": _id1,
                         "id2": _id2,
                         "page": (i+1),
-                        "inverted": inverted
+                        "inverted": inverted,
+                        "videogame": videogame
                     })
                     worker.signals.result.connect(lambda result: [
                         recentSets.extend(result)
@@ -1404,7 +1405,7 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             callback.emit({"sets": [], "request_time": requestTime})
 
-    def GetRecentSetsWorker(self, id1, id2, page, inverted, progress_callback):
+    def GetRecentSetsWorker(self, id1, id2, page, videogame, inverted, progress_callback):
         try:
             recentSets = []
 
@@ -1419,7 +1420,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         "pid2": id2[0],
                         "uid2": id2[1],
                         "page": page,
-                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                        "videogameId": videogame
                     },
                     "query": StartGGDataProvider.RecentSetsQuery
                 }

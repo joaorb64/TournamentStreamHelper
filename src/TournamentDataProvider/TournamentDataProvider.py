@@ -41,7 +41,7 @@ class TournamentDataProvider:
     def GetUserMatchId(self, user):
         pass
 
-    def GetRecentSets(self, id1, id2, callback):
+    def GetRecentSets(self, id1, id2, videogame, callback):
         pass
 
     def GetLastSets(self, playerId, playerNumber):
