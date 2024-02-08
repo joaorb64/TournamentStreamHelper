@@ -344,6 +344,16 @@ class WebServerActions(QThread):
         else:
             return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
 
+    def get_sets(self, args):
+        if args.get('getFinished') is not None:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=True)
+            return sets
+        else:
+            provider = TSHTournamentDataProvider.instance.GetProvider()
+            sets = provider.GetMatches(getFinished=False)
+            return sets
+
     def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
         result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
         if result == True:

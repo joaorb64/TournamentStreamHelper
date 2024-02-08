@@ -551,7 +551,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
         bracket_type = deep_get(_set, "phaseGroup.phase.bracketType", "")
 
-        if deep_get(_set, "phaseGroup.phase.groupCount", 0) > 1:
+        isPools = deep_get(_set, "phaseGroup.phase.groupCount", 0) > 1
+        if isPools:
             phase_name += " - " + TSHLocaleHelper.phaseNames.get(
                 "group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
@@ -565,6 +566,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else "",
             "station": _set.get("station", {}).get("number", "") if _set.get("station", {}) != None else "",
             "isOnline": deep_get(_set, "event.isOnline"),
+            "isPools": isPools,
         }
 
         players = [[], []]
