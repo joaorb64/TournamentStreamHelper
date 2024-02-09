@@ -16,7 +16,12 @@
     },
     "4": {
         "dateStart": null,
-        "dateEnd": null,
+        "dateEnd": 1707507578,
         "alert": "WARNING:\n\nA MAJOR OUTAGE IS CURRENTLY OCCURING ON THE ASSET REPOSITORY.\nAsset Downloads are currently no longer available in the Asset Downloader.\nPlease visit https://github.com/joaorb64/TournamentStreamHelper/issues/704 for more information and potential workarounds."
+    },
+    "5": {
+        "dateStart": null,
+        "dateEnd": 1707850800,
+        "alert": "UPDATE:\n\nWe are now fairly confident that the asset repository outage is now over, and asset packs should now once again be available from both the Asset Downloader and the Asset Portal. Thank you for your patience."
     }
 }
