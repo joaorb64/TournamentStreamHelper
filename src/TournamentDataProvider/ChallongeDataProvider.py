@@ -86,6 +86,9 @@ class ChallongeDataProvider(TournamentDataProvider):
             prefix = re.findall(r"//([^.]+)", self.url)[0]
             return prefix
 
+    def CleanInputString(self, txt):
+        return re.sub(r"\s*[\(\{\[].*?[\)\}\]]", "", txt).strip()
+
     def GetEnglishUrl(self):
         prefix = self.GetCommunityPrefix()
         if prefix:
@@ -589,8 +592,9 @@ class ChallongeDataProvider(TournamentDataProvider):
 
                         # For final rounds in group, use "Qualifier"
                         if int(match.get("round")) in [maxRoundNumber, minRoundNumber]:
+
                             match["round_name"] = TSHLocaleHelper.matchNames.get("qualifier").format(
-                                TSHLocaleHelper.phaseNames.get("final_stage"))
+                                self.CleanInputString(TSHLocaleHelper.phaseNames.get("final_stage")))
                             match["winnerProgression"] = TSHLocaleHelper.phaseNames.get(
                                 "final_stage")
 

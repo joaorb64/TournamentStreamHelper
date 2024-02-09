@@ -28,6 +28,7 @@
         "top_8": "Top 8",
         "top_16": "Top 16",
         "top_32": "Top 32",
+        "top_n": "Top {0}",
         "exhibition": "Exhibition Match",
         "freeplay": "Freeplay",
         "money_match": "Money Match"
