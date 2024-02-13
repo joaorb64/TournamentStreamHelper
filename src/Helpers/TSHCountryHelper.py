@@ -113,20 +113,26 @@ class TSHCountryHelper(QObject):
                     export_name = c["translations"][re.split(
                         "-|_", locale)[0]]
 
+                ccode = c.get("iso2") if not c.get("iso2").isdigit() else "".join([
+                    word[0] for word in re.split(r'\s+|-', c.get("name"))])
+
                 TSHCountryHelper.countries[c["iso2"]] = {
                     "name": export_name,
                     "display_name": display_name,
                     "en_name": c.get("name"),
-                    "code": c.get("iso2"),
+                    "code": ccode,
                     "latitude": c.get("latitude"),
                     "longitude": c.get("longitude"),
                     "states": {}
                 }
 
                 for s in c.get("states", []):
+                    scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
+                        word[0] for word in re.split(r'\s+|-', s.get("name"))])
+
                     TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
                         "name": s.get("name"),
-                        "code": s.get("state_code"),
+                        "code": scode,
                         "latitude": s.get("latitude"),
                         "longitude": s.get("longitude"),
                     }
@@ -169,13 +175,15 @@ class TSHCountryHelper(QObject):
             for flag in AdditionalFlags:
                 filename = os.path.basename(flag)
                 ext = filename.split(".")[-1]
-                if len(filename.removesuffix("."+ext)) >= 3: # Remove flags with less than 3 characters
+                #  Remove flags with less than 3 characters
+                if len(filename.removesuffix("."+ext)) >= 3:
                     AdditionalFlagsFiltered.append(flag)
             AdditionalFlags = AdditionalFlagsFiltered
 
             if AdditionalFlags:
                 separator = QStandardItem()
-                separator.setData("    " + QApplication.translate("app", "Custom Flags").upper() + "    ", Qt.ItemDataRole.EditRole)
+                separator.setData("    " + QApplication.translate("app",
+                                  "Custom Flags").upper() + "    ", Qt.ItemDataRole.EditRole)
                 separator.setEnabled(False)
                 separator.setSelectable(False)
                 TSHCountryHelper.countryModel.appendRow(separator)
@@ -184,12 +192,12 @@ class TSHCountryHelper(QObject):
                 item = QStandardItem()
                 item.setIcon(QIcon(f"./user_data/additional_flag/{flag}"))
                 item.setData({
-                                "name": flag[:-4],
-                                "display_name": flag[:-4],
-                                "en_name": flag[:-4],
-                                "code": flag[:-4],
-                                "asset": f'./user_data/additional_flag/{flag}'
-                             }, Qt.ItemDataRole.UserRole)
+                    "name": flag[:-4],
+                    "display_name": flag[:-4],
+                    "en_name": flag[:-4],
+                    "code": flag[:-4],
+                    "asset": f'./user_data/additional_flag/{flag}'
+                }, Qt.ItemDataRole.UserRole)
                 item.setData(flag[:-4], Qt.ItemDataRole.EditRole)
                 TSHCountryHelper.countryModel.appendRow(item)
         except:
@@ -227,8 +235,6 @@ class TSHCountryHelper(QObject):
 
             if state is not None:
                 return state
-
-        
 
         return None
 

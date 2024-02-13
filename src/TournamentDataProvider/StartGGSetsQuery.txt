@@ -11,10 +11,14 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
       nodes {
         id
         identifier
+        round
         fullRoundText
         state
         entrant1Score
         entrant2Score
+        event {
+          numEntrants
+        }
         slots {
             entrant {
                 name
@@ -31,6 +35,7 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
             phase {
               name
               groupCount
+              numSeeds
             }
         }
         stream {

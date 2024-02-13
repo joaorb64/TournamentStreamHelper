@@ -82,20 +82,27 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1} .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                  <div>${player.country.code}</div>
+                `
                 : ""
             );
 
             SetInnerHtml(
               $(`.p${t + 1} .flagstate`),
               player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                  <div>${player.state.code}</div>
+                `
                 : ""
             );
 
             await CharacterDisplay(
               $(`.p${t + 1}.container .character_container`),
               {
+                asset_key: "base_files/icon",
                 source: `score.${window.scoreboardNumber}.team.${t + 1}`,
               },
               event
