@@ -101855,7 +101855,7 @@
         "id": 2343,
         "name": "Infernal Host",
         "isCommon": true,
-        "videogameId": 50435,
+        "videogameId": 52555,
         "externalIdMap": null,
         "images": [
           {
@@ -101894,7 +101894,7 @@
         "id": 2344,
         "name": "Vanguard",
         "isCommon": true,
-        "videogameId": 50435,
+        "videogameId": 52555,
         "externalIdMap": null,
         "images": [
           {
@@ -105594,6 +105594,45 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2439,
+        "name": "Seven",
+        "isCommon": null,
+        "videogameId": 15,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 6451494,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2439/image-f5b3b74acee50ac3ee351753e5d4e2a7.png?ehk=ecwcPP9ytjDzs6O7IzhlBs%2BvBIsj37rnPDvDYm%2BseB0%3D&ehkOptimized=KH0%2Fx%2BQLbuzocpplInttuC8tGloMuoMd200DLZdRdBg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 6451495,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2439/image-4f2974f0f172a0ea4b8aebaadcc8105d.png?ehk=xuvgdh%2FK2TCEAEbAhw%2BKV%2BEbmK9RtOvPJ4Ttrow9GJ0%3D&ehkOptimized=vbv%2FyftZsqG%2BaNBLhM4WVBMWAr%2FHAj%2B9Q9U6zj%2BBEu4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -107798,7 +107837,8 @@
     2435,
     2436,
     2437,
-    2438
+    2438,
+    2439
   ],
   "resultEntity": "character",
   "actionRecords": []
