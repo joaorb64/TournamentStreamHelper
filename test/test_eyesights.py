@@ -6,23 +6,7 @@ import re
 from copy import deepcopy
 
 tested_assets = {
-    "abaa": ["full"],
-    "arms": ["full"],
-    "en1a": ["full"],
-    "jackie": ["full"],
-    "sdbz": ["base_files/icon","full"],
-    "sf6": ["base_files/icon", "full"],
-    "idols": ["base_files/icon", "full"],
-    "jojoasbr": ["full"],
-    "roa": ["base_files/icon", "full"],
-    "avg2": ["full"],
-    "umvc3": ["full"],
-    "bh": ["full"],
-    "opxdbz": ["full"],
-    "ssmack": ["full"],
-    "trotb": ["base_files/icon"],
-    "nasb2": ["render"],
-    "rbff2": ["full"]
+    "tekken8": ["vs_renders"]
 }
 
 main_out_path = "../out/test"
@@ -46,12 +30,14 @@ def draw_eyesight(game, asset_pack):
     Path(out_path).mkdir(parents=True, exist_ok=True)
 
     for codename in eyesight_data.keys():
-
-        image_regexp = f"{prefix}{codename}{postfix}([0-9]+)\.png"
+        print(codename)
+        image_regexp = f"{prefix}{codename}{postfix}([0-9]+|)\.png"
         list_png = [f for f in os.listdir(
             asset_folder) if re.search(image_regexp, f)]
+        print(asset_folder)
         for png_filename in list_png:
             try:
+                print(png_filename)
                 skin_index = re.search(image_regexp, png_filename).group(1)
                 png_path = f"{asset_folder}/{png_filename}"
                 new_png_path = f"{out_path}/{png_filename}"
@@ -73,20 +59,20 @@ def draw_eyesight(game, asset_pack):
                     draw.line([(eyesight_coordinates[0], 0), (eyesight_coordinates[0], png_size[1])], fill=(
                         255, 0, 0), width=5)
                     draw.line([(0, eyesight_coordinates[1]), (png_size[0],
-                            eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
-                    
+                                                              eyesight_coordinates[1])], fill=(255, 0, 0), width=5)
+
                     if "l" not in uncropped_edges:
                         draw.line([(0, 0), (0, png_size[1])], fill=(
                             0, 255, 0), width=5)
-                    
+
                     if "r" not in uncropped_edges:
                         draw.line([(png_size[0], 0), (png_size[0], png_size[1])], fill=(
                             0, 255, 0), width=5)
-                    
+
                     if "u" not in uncropped_edges:
                         draw.line([(0, 0), (png_size[0], 0)], fill=(
                             0, 255, 0), width=5)
-                    
+
                     if "d" not in uncropped_edges:
                         draw.line([(0, png_size[1]), (png_size[0], png_size[1])], fill=(
                             0, 255, 0), width=5)
