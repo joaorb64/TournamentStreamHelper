@@ -369,7 +369,7 @@ class WebServer(QThread):
 
     @socketio.on('get_sets')
     def ws_get_sets(message):
-        emit('get_stats', WebServer.actions.get_stats(orjson.loads('message')))
+        emit('get_sets', WebServer.actions.get_sets(orjson.loads(message)))
 
     # Get the commentators
     @app.route('/get-comms')
