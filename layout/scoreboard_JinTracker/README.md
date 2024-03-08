@@ -5,7 +5,6 @@
   - Therefore, it is best to set the players' info before changing the score, match, or phase.
   - Hopefully, this is not an issue since players have different sponsors, Twitter handles, etc. even if they have the same name. Also identical player info should not be a problem in a tournament singles setting due to different seedings.
   - For doubles, seeding is not checked to detect a swap.
-- The color of the boxes disappears when the overlay Browser source is refreshed, so it is best to keep it active.
 - Reset the score to 0-0 to have the boxes be colored from the game 1 box.
 - Change Best Of to either increase or decrease the number of boxes.
 - The topleft container that holds match info disappears when match info is not available. This works the same for the small phase container just below it.

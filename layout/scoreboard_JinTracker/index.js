@@ -278,9 +278,6 @@ LoadEverything().then(() => {
       data.score[window.scoreboardNumber].team["2"],
     ].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
-        console.log(player);
-        console.log(player1);
-        console.log(player2);
         if (player) {
           if (t == 0) {
             newPlayer1 = player;
@@ -560,8 +557,6 @@ function compareObjects(obj1, obj2) {
     if (key !== "character" && key !== "mains" && key !== "id" && key !== "") {
       // Check if the property exists in obj2
       if (!obj2.hasOwnProperty(key)) {
-        console.log("Returning false here");
-        console.log(key);
         return false;
       }
       // Check if the values of the properties are the same
@@ -602,8 +597,6 @@ function compareObjectsForTeam(obj1, obj2) {
       key !== "id" &&
       key !== ""
     ) {
-      console.log(key);
-      console.log(obj1);
       // Check if the property exists in obj2
       if (!obj2.hasOwnProperty(key)) {
         return false;
