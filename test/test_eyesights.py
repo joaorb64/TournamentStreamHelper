@@ -11,7 +11,7 @@ tested_assets = {
     "en1a": ["full"],
     "jackie": ["full"],
     "sdbz": ["base_files/icon","full"],
-    "sf6": ["base_files/icon", "full"],
+    "sf6": ["base_files/icon", "full", "art", "pixel_art", "hd_portrait", "pixel_art_restore"],
     "idols": ["base_files/icon", "full"],
     "jojoasbr": ["full"],
     "roa": ["base_files/icon", "full"],
@@ -22,7 +22,8 @@ tested_assets = {
     "ssmack": ["full"],
     "trotb": ["base_files/icon"],
     "nasb2": ["render"],
-    "rbff2": ["full"]
+    "rbff2": ["full"],
+    "tekken8": ["full"]
 }
 
 main_out_path = "../out/test"
