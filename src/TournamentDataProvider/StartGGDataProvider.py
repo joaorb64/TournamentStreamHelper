@@ -351,9 +351,11 @@ class StartGGDataProvider(TournamentDataProvider):
             finalResult.update(result.get("new", {}))
             finalResult.update(result.get("old", {}))
 
-            if result.get("old", {}).get("winnerProgression"):
+            winnerProgression = result.get("old", {}).get("winnerProgression")
+            if winnerProgression:
+                winnerProgression = re.sub(r"\s*[\(\{\[].*?[\)\}\]]", "", winnerProgression).strip()
                 finalResult["round_name"] = TSHLocaleHelper.matchNames.get(
-                    "qualifier").format(result.get("old", {}).get("winnerProgression"))
+                    "qualifier").format(winnerProgression)
 
             if result.get("new", {}).get("isOnline") == False:
                 finalResult["bestOf"] = None
@@ -549,7 +551,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
         bracket_type = deep_get(_set, "phaseGroup.phase.bracketType", "")
 
-        if deep_get(_set, "phaseGroup.phase.groupCount", 0) > 1:
+        isPools = deep_get(_set, "phaseGroup.phase.groupCount", 0) > 1
+        if isPools:
             phase_name += " - " + TSHLocaleHelper.phaseNames.get(
                 "group").format(deep_get(_set, "phaseGroup.displayIdentifier"))
 
@@ -563,6 +566,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else "",
             "station": _set.get("station", {}).get("number", "") if _set.get("station", {}) != None else "",
             "isOnline": deep_get(_set, "event.isOnline"),
+            "isPools": isPools,
         }
 
         players = [[], []]
@@ -679,8 +683,25 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return setData
 
+    def TopNPlacement(self, placement):
+        if placement == 5 or placement == 6:
+            return 6
+        else:
+            top_number = 1
+            while top_number < placement:
+                top_number *= 2
+
+            return top_number
+
     def ParseMatchDataOldApi(self, respTasks):
-        tasks = respTasks.get("entities", {}).get("setTask", [])
+        entities = respTasks.get("entities", {})
+        sets = entities.get("sets", {})
+        tasks = entities.get("setTask", [])
+
+        lOverallPlacement = sets.get("lOverallPlacement", 0)
+        topN = 0
+        if lOverallPlacement > 0:
+            topN = self.TopNPlacement(lOverallPlacement)
 
         selectedCharMap = {}
 
@@ -927,6 +948,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
             "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
             "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
+            "top_n": topN,
             "team1losers": team1losers,
             "team2losers": team2losers,
             "currPlayer": currPlayer,
@@ -1345,7 +1367,7 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             callback.emit({"playerNumber": playerNumber, "history_sets": []})
 
-    def GetRecentSets(self, id1, id2, callback, requestTime, progress_callback):
+    def GetRecentSets(self, id1, id2, videogame, callback, requestTime, progress_callback):
         try:
             id1 = [str(id1[0]), str(id1[1])]
             id2 = [str(id2[0]), str(id2[1])]
@@ -1364,7 +1386,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         "id1": _id1,
                         "id2": _id2,
                         "page": (i+1),
-                        "inverted": inverted
+                        "inverted": inverted,
+                        "videogame": videogame
                     })
                     worker.signals.result.connect(lambda result: [
                         recentSets.extend(result)
@@ -1382,7 +1405,7 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             callback.emit({"sets": [], "request_time": requestTime})
 
-    def GetRecentSetsWorker(self, id1, id2, page, inverted, progress_callback):
+    def GetRecentSetsWorker(self, id1, id2, page, videogame, inverted, progress_callback):
         try:
             recentSets = []
 
@@ -1397,7 +1420,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         "pid2": id2[0],
                         "uid2": id2[1],
                         "page": page,
-                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
+                        "videogameId": videogame
                     },
                     "query": StartGGDataProvider.RecentSetsQuery
                 }

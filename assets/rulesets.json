@@ -3161,7 +3161,7 @@
   {
     "id": 139,
     "videogameId": 1386,
-    "name": "The Box Ruleset",
+    "name": "The Coinbox Ruleset",
     "description": "",
     "isDefault": false,
     "type": "standard",
@@ -3173,19 +3173,20 @@
       "stages": {
         "neutral": [
           311,
-          328,
-          397,
           378,
-          387
+          484,
+          387,
+          397
         ],
         "counterpick": [
-          348,
-          407
+          328,
+          513,
+          348
         ]
       },
       "additionalFlags": {
         "banCount": 2,
-        "useDSR": true
+        "useDSR": false
       },
       "strikeOrder": [
         1,
@@ -4896,11 +4897,14 @@
     "type": "standard",
     "gameMode": 1,
     "settings": {
-      "gameSetup": true,
-      "additionalFlags": {
-        "selectFromAllStages": true,
-        "disableBans": true
-      },
+      "type": null,
+      "gameMode": null,
+      "strikeOrder": [
+        1,
+        2,
+        2,
+        1
+      ],
       "stages": {
         "neutral": [
           268,
@@ -4909,15 +4913,16 @@
           460,
           541,
           543,
-          556
+          556,
+          590,
+          591
         ]
       },
-      "strikeOrder": [
-        1,
-        2,
-        2,
-        1
-      ]
+      "gameSetup": true,
+      "additionalFlags": {
+        "selectFromAllStages": true,
+        "disableBans": true
+      }
     },
     "eventSettings": null,
     "expand": []

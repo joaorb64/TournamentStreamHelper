@@ -142,7 +142,7 @@ class WebServer(QThread):
     def ws_team_scoreup(message):
         info = orjson.loads(message)
         emit('team_scoreup',
-            WebServer.actions.team_scoreup(info.get("scoreboardNumber"), info.get("team")))
+            WebServer.actions.team_scoreup(info.get("scoreboardNumber","1"), info.get("team")))
 
     # Ticks score of Team specified down by 1 point
     @app.route('/scoreboard<scoreboardNumber>-team<team>-scoredown')
@@ -153,7 +153,7 @@ class WebServer(QThread):
     def ws_team_scoredown(message):
         info = orjson.loads(message)
         emit('team_scoredown',
-            WebServer.actions.team_scoredown(info.get("scoreboardNumber"), info.get("team")))
+            WebServer.actions.team_scoredown(info.get("scoreboardNumber","1"), info.get("team")))
 
     # Set color of team
     @app.route('/scoreboard<scoreboardNumber>-team<team>-color-<color>')
@@ -164,7 +164,7 @@ class WebServer(QThread):
     def ws_team_color(message):
         info = orjson.loads(message)
         emit('team_scoredown',
-            WebServer.actions.team_color(info.get("scoreboardNumber"), info.get("team"), info.get("team")))
+            WebServer.actions.team_color(info.get("scoreboardNumber","1"), info.get("team"), "#" + info.get("color")))
 
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
@@ -188,7 +188,7 @@ class WebServer(QThread):
     def ws_set_route(message):
         parsed = orjson.loads(message)
         emit('set', WebServer.actions.set_route(
-            parsed.get("scoreboardNumber"),
+            parsed.get("scoreboardNumber","1"),
             bestOf=parsed.get('best_of'),
             phase=parsed.get('phase'),
             match=parsed.get('match'),
@@ -209,7 +209,7 @@ class WebServer(QThread):
         data = orjson.loads(message)
         emit('update_team',
             WebServer.actions.set_team_data(
-                data.get("scoreboardNumber"),
+                data.get("scoreboardNumber","1"),
                 data.get("team"),
                 data.get("player"),
                 data
@@ -232,12 +232,17 @@ class WebServer(QThread):
     @socketio.on('swap_teams')
     def ws_swap_teams(message):
         info = orjson.loads(message)
-        emit('swap_teams', WebServer.actions.swap_teams(info.get("scoreboardNumber")))
+        emit('swap_teams', WebServer.actions.swap_teams(info.get("scoreboardNumber","1")))
         
     # Are the teams currently swapped?
     @app.route('/scoreboard<scoreboardNumber>-get-swap')
     def get_swap(scoreboardNumber):
         return WebServer.actions.get_swap(scoreboardNumber)
+
+    @socketio.on('get_swap')
+    def ws_get_swap(message):
+        info = orjson.loads(message)
+        emit('get_swap', WebServer.actions.get_swap(info.get("scoreboardNumber","1")))
 
     # Opens Set Selector Window
     @app.route('/scoreboard<scoreboardNumber>-open-set')
@@ -247,7 +252,7 @@ class WebServer(QThread):
     @socketio.on('open_set')
     def ws_open_sets(message):
         info = orjson.loads(message)
-        emit('open_set', WebServer.actions.open_sets(info.get("scoreboardNumber")))
+        emit('open_set', WebServer.actions.open_sets(info.get("scoreboardNumber","1")))
 
     # Pulls Current Stream Set
     @app.route('/scoreboard<scoreboardNumber>-pull-stream')
@@ -257,7 +262,7 @@ class WebServer(QThread):
     @socketio.on('pull_stream')
     def ws_pull_stream_set(message):
         info = orjson.loads(message)
-        emit('pull_stream', WebServer.actions.pull_stream_set(info.get("scoreboardNumber")))
+        emit('pull_stream', WebServer.actions.pull_stream_set(info.get("scoreboardNumber","1")))
 
     # Pulls Current User Set
     @app.route('/pull-user')
@@ -267,18 +272,18 @@ class WebServer(QThread):
     @socketio.on('pull_user')
     def ws_pull_user_set(message):
         info = orjson.loads(message)
-        emit('pull_user', WebServer.actions.pull_user_set(info.get("scoreboardNumber")))
+        emit('pull_user', WebServer.actions.pull_user_set(info.get("scoreboardNumber","1")))
 
     # Resubmits Call for Recent Sets
     @app.route('/scoreboard<scoreboardNumber>-stats-recent-sets')
     def stats_recent_sets(scoreboardNumber):
         return WebServer.actions.stats_recent_sets(scoreboardNumber)
-    
+
     @socketio.on('stats_recent_sets')
     def ws_stats_recent_sets(message):
         info = orjson.loads(message)
         emit('stats_recent_sets',
-            WebServer.actions.stats_recent_sets(info.get("scoreboardNumber"), info.get("player")))
+            WebServer.actions.stats_recent_sets(info.get("scoreboardNumber","1"), info.get("player")))
 
     # Resubmits Call for Upset Factor
     @app.route('/scoreboard<scoreboardNumber>-stats-upset-factor')
@@ -289,7 +294,7 @@ class WebServer(QThread):
     def ws_stats_upset_factor(message):
         info = orjson.loads(message)
         emit('stats_upset_factor',
-            WebServer.actions.stats_upset_factor(info.get("scoreboardNumber"), info.get("player")))
+            WebServer.actions.stats_upset_factor(info.get("scoreboardNumber","1"), info.get("player")))
 
     # Resubmits Call for Last Sets
     @app.route('/scoreboard<scoreboardNumber>-stats-last-sets-<player>')
@@ -300,7 +305,7 @@ class WebServer(QThread):
     def ws_stats_last_sets(message):
         info = orjson.loads(message)
         emit('stats_last_sets',
-            WebServer.actions.stats_last_sets(info.get("scoreboardNumber"), info.get("player")))
+            WebServer.actions.stats_last_sets(info.get("scoreboardNumber","1"), info.get("player")))
 
    # Resubmits Call for History Sets
     @app.route('/scoreboard<scoreboardNumber>-stats-history-sets-<player>')
@@ -311,7 +316,7 @@ class WebServer(QThread):
     def ws_stats_history_sets(message):
         info = orjson.loads(message)
         emit('stats_history_sets',
-            WebServer.actions.stats_history_sets(info.get("scoreboardNumber"), info.get("player")))
+            WebServer.actions.stats_history_sets(info.get("scoreboardNumber","1"), info.get("player")))
 
     # Resets scores
     @app.route('/scoreboard<scoreboardNumber>-reset-scores')
@@ -322,7 +327,7 @@ class WebServer(QThread):
     def ws_reset_scores(message):
         info = orjson.loads(message)
         emit('reset_scores',
-            WebServer.actions.reset_scores(info.get("scoreboardNumber")))
+            WebServer.actions.reset_scores(info.get("scoreboardNumber","1")))
 
     # Resets scores, match, phase, and losers status
     @app.route('/scoreboard<scoreboardNumber>-reset-match')
@@ -333,7 +338,7 @@ class WebServer(QThread):
     def ws_reset_match(message):
         info = orjson.loads(message)
         emit('reset_match',
-            WebServer.actions.reset_match(info.get("scoreboardNumber")))
+            WebServer.actions.reset_match(info.get("scoreboardNumber","1")))
 
     # Resets scores, match, phase, and losers status
     @app.route('/scoreboard<scoreboardNumber>-reset-players')
@@ -344,7 +349,7 @@ class WebServer(QThread):
     def ws_reset_players(message):
         info = orjson.loads(message)
         emit('reset_players',
-            WebServer.actions.reset_players(info.get("scoreboardNumber")))
+            WebServer.actions.reset_players(info.get("scoreboardNumber","1")))
 
     # Resets all values
     @app.route('/scoreboard<scoreboardNumber>-clear-all')
@@ -355,24 +360,25 @@ class WebServer(QThread):
     def ws_clear_all(message):
         info = orjson.loads(message)
         emit('clear_all',
-            WebServer.actions.clear_all(info.get("scoreboardNumber")))
+            WebServer.actions.clear_all(info.get("scoreboardNumber","1")))
         
     # Get the sets to be played
     @app.route('/get-sets')
-    def get_sets():
-        if request.args.get('getFinished') is not None:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
-            sets = provider.GetMatches(getFinished=True)
-            return sets
-        else:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
-            sets = provider.GetMatches(getFinished=False)
-            return sets
+    def get_sets(request):
+        return WebServer.actions.get_sets(request.args)
+
+    @socketio.on('get_sets')
+    def ws_get_sets(message):
+        emit('get_sets', WebServer.actions.get_sets(orjson.loads(message)))
 
     # Get the commentators
     @app.route('/get-comms')
     def get_comms():
         return WebServer.actions.get_comms()
+
+    @socketio.on('get_comms')
+    def ws_get_comms():
+        emit('get_comms', WebServer.actions.get_comms())
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-load-set')
@@ -386,28 +392,45 @@ class WebServer(QThread):
     def ws_load_set(message):
         info = orjson.loads(message)
         emit('load_set',
-            WebServer.actions.load_set(info.get("scoreboardNumber"), info.get("set")))
-
+            WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set")))
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-get-set')
     def get_set(scoreboardNumber):
         return WebServer.actions.get_set(scoreboardNumber)
 
+    @socketio.on('get_set')
+    def ws_get_set(message):
+        emit('get_set', WebServer.actions.get_set(orjson.loads(message).get('scoreboardNumber','1')))
+
     # Update bracket
     @app.route('/update-bracket')
     def update_bracket():
         return WebServer.actions.update_bracket()
-    
+
+    @socketio.on('update_bracket')
+    def ws_get_set():
+        emit('update_bracket', WebServer.actions.update_bracket())
+
     # Load player from tag
     @app.route('/scoreboard<scoreboardNumber>-load-player-from-tag-<team>-<player>')
     def load_player_from_tag(scoreboardNumber, team, player):
         if request.args.get('tag') is None:
             return "No tag provided"
-        no_mains = False
-        if request.args.get('no-mains') is not None:
-            no_mains = True
+        no_mains = request.args.get('no-mains') is not None
         return WebServer.actions.load_player_from_tag(scoreboardNumber, html.unescape(request.args.get('tag')), team, player, no_mains)
+
+    @socketio.on('load_player_from_tag')
+    def ws_load_player_from_tag(message):
+        args = orjson.loads(message)
+        if args.get('tag') is None:
+            emit('load_player_from_tag', 'No tag provided')
+            return
+        no_mains = request.args.get('no-mains') is not None
+        team = args.get('team')
+        player = args.get('player')
+        scoreboardNumber = args.get('scoreboardNumber','1')
+        emit('load_player_from_tag', WebServer.actions.load_player_from_tag(scoreboardNumber, html.unescape(request.args.get('tag')), team, player, no_mains))
 
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])

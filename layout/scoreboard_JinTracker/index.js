@@ -21,7 +21,9 @@ LoadEverything().then(() => {
   Update = async (event) => {
     let data = event.data;
 
-    let isTeams = Object.keys(data.score[window.scoreboardNumber].team["1"].player).length > 1;
+    let isTeams =
+      Object.keys(data.score[window.scoreboardNumber].team["1"].player).length >
+      1;
 
     if (!isTeams) {
       for (const [t, team] of [
@@ -30,10 +32,21 @@ LoadEverything().then(() => {
       ].entries()) {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
-            SetInnerHtml(
-              $(`.p${t + 1}.container .placeholder_container`),
-              (Object.keys(player.character).length > 0 && player.character[1].name) ? `<div class='placeholder'></div>` : ""
-            );
+            if (
+              Object.keys(player.character).length > 0 &&
+              player.character[1].name
+            ) {
+              SetInnerHtml(
+                $(`.p${t + 1}.container .placeholder_container`),
+                `<div class='placeholder'></div>`
+              );
+            } else {
+              SetInnerHtml($(`.p${t + 1} .placeholder`), "");
+              SetInnerHtml(
+                $(`.p${t + 1}.container .placeholder_container`),
+                ""
+              );
+            }
 
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
@@ -55,7 +68,10 @@ LoadEverything().then(() => {
                 : ""
             );
 
-            let score = [data.score[window.scoreboardNumber].score_left, data.score[window.scoreboardNumber].score_right];
+            let score = [
+              data.score[window.scoreboardNumber].score_left,
+              data.score[window.scoreboardNumber].score_right,
+            ];
 
             SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
 
@@ -116,14 +132,26 @@ LoadEverything().then(() => {
               event
             );
           }
-          if(team.color) {
-            document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+          if (team.color) {
+            document
+              .querySelector(":root")
+              .style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
           }
         }
       }
-      SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match ? data.score[window.scoreboardNumber].match : "");
+      SetInnerHtml(
+        $(".match"),
+        data.score[window.scoreboardNumber].match
+          ? data.score[window.scoreboardNumber].match
+          : ""
+      );
 
-      SetInnerHtml($(".phase"), data.score[window.scoreboardNumber].phase ? data.score[window.scoreboardNumber].phase : "");
+      SetInnerHtml(
+        $(".phase"),
+        data.score[window.scoreboardNumber].phase
+          ? data.score[window.scoreboardNumber].phase
+          : ""
+      );
       document.querySelector(".tournament_logo").classList.add("unhidden");
       checkSwap(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     } else {
@@ -162,13 +190,25 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .pronoun`), "");
           SetInnerHtml($(`.p${t + 1}.container .placeholder_container`), "");
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
-          if(team.color) {
-            document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+          if (team.color) {
+            document
+              .querySelector(":root")
+              .style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
           }
         }
       }
-      SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match ? data.score[window.scoreboardNumber].match : "");
-      SetInnerHtml($(".phase"), data.score[window.scoreboardNumber].phase ? data.score[window.scoreboardNumber].phase : "");
+      SetInnerHtml(
+        $(".match"),
+        data.score[window.scoreboardNumber].match
+          ? data.score[window.scoreboardNumber].match
+          : ""
+      );
+      SetInnerHtml(
+        $(".phase"),
+        data.score[window.scoreboardNumber].phase
+          ? data.score[window.scoreboardNumber].phase
+          : ""
+      );
       document.querySelector(".tournament_logo").classList.remove("unhidden");
       checkSwapForTeam(); // Check to see if a swap took place. If it did, then the colors of the boxes are flipped and swapDetected is set to true.
     }
@@ -233,7 +273,10 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwap() {
-    [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
+    [
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
+    ].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -262,6 +305,13 @@ LoadEverything().then(() => {
           savedGameArray[i] = 1;
         }
       }
+
+      // Convert the array to a JSON string
+      const jsonString = JSON.stringify(savedGameArray);
+
+      // Store the JSON string in local storage
+      localStorage.setItem("output", jsonString);
+
       // Swap score history as well
       [p1Score, p2Score] = [p2Score, p1Score];
     }
@@ -275,7 +325,10 @@ LoadEverything().then(() => {
    * Checks to see if a swap took place. If it did, then the colors of the boxes are flipped.
    */
   function checkSwapForTeam() {
-    [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
+    [
+      data.score[window.scoreboardNumber].team["1"],
+      data.score[window.scoreboardNumber].team["2"],
+    ].forEach((team, t) => {
       [team.player["1"]].forEach((player, p) => {
         if (player) {
           if (t == 0) {
@@ -304,6 +357,13 @@ LoadEverything().then(() => {
           savedGameArray[i] = 1;
         }
       }
+
+      // Convert the array to a JSON string
+      const jsonString = JSON.stringify(savedGameArray);
+
+      // Store the JSON string in local storage
+      localStorage.setItem("output", jsonString);
+
       // Swap score history as well
       [p1Score, p2Score] = [p2Score, p1Score];
     }
@@ -333,8 +393,21 @@ function updateGameArray(
   let gameNum = 0; // Variable to store which game we are at
   let gameArray = savedGameArray; // Array to hold game winner data
 
+  // Retrieve the JSON string from local storage
+  const retrievedJsonString = localStorage.getItem("output");
+
+  // Parse the JSON string back to an array
+  const retrievedArray = JSON.parse(retrievedJsonString);
+
+  if (retrievedArray) {
+    gameArray = retrievedArray;
+  }
+
   // Do a run-through to get P1 score and P2 score to see which game we are at.
-  [data.score[window.scoreboardNumber].team["1"], data.score[window.scoreboardNumber].team["2"]].forEach((team, t) => {
+  [
+    data.score[window.scoreboardNumber].team["1"],
+    data.score[window.scoreboardNumber].team["2"],
+  ].forEach((team, t) => {
     [team.player["1"]].forEach((player, p) => {
       if (player) {
         // If we are looking at P1
@@ -407,6 +480,12 @@ function updateGameArray(
 
   savedGameArray = gameArray; // Update the savedGameArray to hold the current results
 
+  // Convert the array to a JSON string
+  const jsonString = JSON.stringify(savedGameArray);
+
+  // Store the JSON string in local storage
+  localStorage.setItem("output", jsonString);
+
   return { savedGameArray, newP1Score, newP2Score, p1Score, p2Score }; // Return all the updated variables
 }
 
@@ -437,7 +516,10 @@ function createGameBoxes(savedBestOf) {
   let darkGameDivText = "";
 
   // If Best Of is not 0 and Best Of has been updated
-  if (data.score[window.scoreboardNumber].best_of > 0 && data.score[window.scoreboardNumber].best_of != savedBestOf) {
+  if (
+    data.score[window.scoreboardNumber].best_of > 0 &&
+    data.score[window.scoreboardNumber].best_of != savedBestOf
+  ) {
     // The number of boxes should equal Best Of
     for (let i = 1; i <= data.score[window.scoreboardNumber].best_of; i++) {
       gameDivText += `<div class="game${i} box">GAME ${i}</div>\n`;
@@ -472,18 +554,20 @@ function compareObjects(obj1, obj2) {
 
   // Loop through the properties of obj1
   for (let key of obj1Keys) {
-    // Check if the property exists in obj2
-    if (!obj2.hasOwnProperty(key)) {
-      return false;
-    }
-    // Check if the values of the properties are the same
-    // Check to see if there is an object inside the object
-    if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
-      // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
-      if (!compareObjects(obj1[key], obj2[key])) return false;
-      // If the primitive types are not equal to each other, then we return false here as well
-    } else if (obj1[key] !== obj2[key]) {
-      return false;
+    if (key !== "character" && key !== "mains" && key !== "id" && key !== "") {
+      // Check if the property exists in obj2
+      if (!obj2.hasOwnProperty(key)) {
+        return false;
+      }
+      // Check if the values of the properties are the same
+      // Check to see if there is an object inside the object
+      if (typeof obj1[key] == "object" && obj1[key] && obj2[key]) {
+        // If an inner object of obj1 is not equal to the inner object of obj2, then we return false to avoid any more comparisons
+        if (!compareObjects(obj1[key], obj2[key])) return false;
+        // If the primitive types are not equal to each other, then we return false here as well
+      } else if (obj1[key] !== obj2[key]) {
+        return false;
+      }
     }
   }
   // If all properties and their values are the same, return true
@@ -506,7 +590,13 @@ function compareObjectsForTeam(obj1, obj2) {
   // Loop through the properties of obj1
   for (let key of obj1Keys) {
     // Seedings can change for a player/team so do not check it
-    if (key !== "seed") {
+    if (
+      key !== "seed" &&
+      key !== "character" &&
+      key !== "mains" &&
+      key !== "id" &&
+      key !== ""
+    ) {
       // Check if the property exists in obj2
       if (!obj2.hasOwnProperty(key)) {
         return false;

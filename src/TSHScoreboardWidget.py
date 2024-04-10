@@ -919,8 +919,16 @@ class TSHScoreboardWidget(QWidget):
                     QComboBox, "match").lineEdit().editingFinished.emit()
 
             if data.get("tournament_phase"):
+                phase = data.get("tournament_phase")
+                top_n = data.get("top_n", 0)
+
+                # Is this Top 16 - Top ??? (even 128), if so...
+                # check if this isn't pools and isn't a qualifier
+                if top_n > 12 and data.get("isPools", False) is False and data.get("winnerProgression", None) is None:
+                    phase = TSHLocaleHelper.phaseNames.get("top_n","Top {0}").format(top_n)
+
                 self.scoreColumn.findChild(
-                    QComboBox, "phase").setCurrentText(data.get("tournament_phase"))
+                    QComboBox, "phase").setCurrentText(phase)
                 self.scoreColumn.findChild(
                     QComboBox, "phase").lineEdit().editingFinished.emit()
 
@@ -1022,6 +1030,9 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.bracket_type",
                                  data.get("bracket_type"))
                 self.stats.signals.UpsetFactorCalculation.emit()
+
+            if data.get("top_n"):
+                StateManager.Set(f"score.{self.scoreboardNumber}.top_n", data.get("top_n"))
         finally:
             StateManager.ReleaseSaving()
 

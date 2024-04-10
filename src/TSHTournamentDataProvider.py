@@ -7,6 +7,7 @@ from qtpy.QtCore import *
 import requests
 import threading
 from .SettingsManager import SettingsManager
+from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
@@ -39,12 +40,19 @@ class TSHTournamentDataProvider:
         self.entrantsModel: QStandardItemModel = None
         self.threadPool = QThreadPool()
 
-        self.signals.game_changed.connect(self.SetGameFromProvider)
+        self.signals.game_changed.connect(self.GameChanged)
 
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.SetGameFromProvider)
 
+    def GameChanged(self, videogame):
+        StateManager.Set(f"provider_videogame", {
+            "id": videogame
+        })
+        self.SetGameFromProvider()
+
     def SetGameFromProvider(self):
+
         if not self.provider or not self.provider.videogame:
             return
 
@@ -80,7 +88,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.provider.GetEntrants()
             TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
 
-            TSHTournamentDataProvider.instance.SetGameFromProvider()
+            #TSHTournamentDataProvider.instance.SetGameFromProvider()
         else:
             TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({
             })
@@ -284,9 +292,9 @@ class TSHTournamentDataProvider:
         ])
         self.threadPool.start(worker)
 
-    def GetRecentSets(self, callback, id1, id2):
+    def GetRecentSets(self, callback, id1, id2, videogame):
         worker = Worker(self.provider.GetRecentSets, **{
-            "id1": id1, "id2": id2, "callback": callback, "requestTime": time.time_ns()
+            "id1": id1, "id2": id2, "callback": callback, "requestTime": time.time_ns(), "videogame": videogame
         })
         self.threadPool.start(worker)
 

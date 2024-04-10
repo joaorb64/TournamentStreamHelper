@@ -59,12 +59,14 @@ class TSHStatsUtil:
         if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
-            if p1id and p2id and orjson.dumps(p1id) != orjson.dumps(p2id):
+            videogame = StateManager.Get("provider_videogame.id")
+
+            if p1id and p2id and orjson.dumps(p1id) != orjson.dumps(p2id) and videogame:
                 StateManager.Set(f"score.{self.scoreboardNumber}.recent_sets", {
                     "state": "loading",
                     "sets": []
                 })
-                TSHTournamentDataProvider.instance.GetRecentSets(self.signals.recent_sets_updated, p1id, p2id)
+                TSHTournamentDataProvider.instance.GetRecentSets(self.signals.recent_sets_updated, p1id, p2id, videogame)
                 updated = True
 
         if not updated:
@@ -127,7 +129,7 @@ class TSHStatsUtil:
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    self.signals.history_sets_updated, p1id, "1", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p1id, "1", StateManager.Get(f"provider_videogame.id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.1", {})
 
@@ -137,7 +139,7 @@ class TSHStatsUtil:
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
-                    self.signals.history_sets_updated, p2id, "2", StateManager.Get(f"game.smashgg_id"))
+                    self.signals.history_sets_updated, p2id, "2", StateManager.Get(f"provider_videogame.id"))
             else:
                 StateManager.Set(f"score.{self.scoreboardNumber}.history_sets.2", {})
 
