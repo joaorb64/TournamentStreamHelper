@@ -57,3 +57,4 @@ main.spec
 *.tmp
 logs/*
 Pipfile*
+env
