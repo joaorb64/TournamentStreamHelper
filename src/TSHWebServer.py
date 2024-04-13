@@ -424,7 +424,6 @@ class WebServer(QThread):
 
     @socketio.on('load_player_from_tag')
     def ws_load_player_from_tag(message):
-        print("here")
         args = orjson.loads(message)
         if args.get('tag') is None:
             emit('load_player_from_tag', 'No tag provided')
