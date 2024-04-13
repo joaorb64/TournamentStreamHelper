@@ -392,7 +392,7 @@ class WebServer(QThread):
     def ws_load_set(message):
         info = orjson.loads(message)
         if info.get('no-mains') is not None:
-            emit('load_set',WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set")), no_mains=True)
+            emit('load_set',WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set"), no_mains=True))
         else:
             emit('load_set',WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set")))
 
@@ -424,6 +424,7 @@ class WebServer(QThread):
 
     @socketio.on('load_player_from_tag')
     def ws_load_player_from_tag(message):
+        print("here")
         args = orjson.loads(message)
         if args.get('tag') is None:
             emit('load_player_from_tag', 'No tag provided')
