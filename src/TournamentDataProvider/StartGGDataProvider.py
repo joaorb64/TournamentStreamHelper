@@ -1040,7 +1040,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 setData["team"][str(teamIndex + 1)] = teamData
         return setData
 
-
     def GetStreamQueue(self, progress_callback=None):
         try:
             data = self.QueryRequests(
