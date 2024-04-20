@@ -364,7 +364,7 @@ class WebServer(QThread):
         
     # Get the sets to be played
     @app.route('/get-sets')
-    def get_sets(request):
+    def get_sets():
         return WebServer.actions.get_sets(request.args)
 
     @socketio.on('get_sets')
@@ -391,8 +391,10 @@ class WebServer(QThread):
     @socketio.on('load_set')
     def ws_load_set(message):
         info = orjson.loads(message)
-        emit('load_set',
-            WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set")))
+        if info.get('no-mains') is not None:
+            emit('load_set',WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set"), no_mains=True))
+        else:
+            emit('load_set',WebServer.actions.load_set(info.get("scoreboardNumber","1"), info.get("set")))
 
     # Loads a set remotely by providing a set ID to pull from the data provider
     @app.route('/scoreboard<scoreboardNumber>-get-set')
@@ -409,7 +411,7 @@ class WebServer(QThread):
         return WebServer.actions.update_bracket()
 
     @socketio.on('update_bracket')
-    def ws_get_set():
+    def ws_update_bracket(message):
         emit('update_bracket', WebServer.actions.update_bracket())
 
     # Load player from tag
@@ -426,11 +428,11 @@ class WebServer(QThread):
         if args.get('tag') is None:
             emit('load_player_from_tag', 'No tag provided')
             return
-        no_mains = request.args.get('no-mains') is not None
+        no_mains = args.get('no-mains') is not None
         team = args.get('team')
         player = args.get('player')
         scoreboardNumber = args.get('scoreboardNumber','1')
-        emit('load_player_from_tag', WebServer.actions.load_player_from_tag(scoreboardNumber, html.unescape(request.args.get('tag')), team, player, no_mains))
+        emit('load_player_from_tag', WebServer.actions.load_player_from_tag(scoreboardNumber, html.unescape(args.get('tag')), team, player, no_mains))
 
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
