@@ -1287,9 +1287,11 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 player1Info = set.get("slots", [{}])[0].get("entrant", {}).get(
                     "participants", [{}])[0].get("player", {})
+                player1Seed = set.get("slots", [{}])[0].get("seed", {})
 
                 player2Info = set.get("slots", [{}])[1].get("entrant", {}).get(
                     "participants", [{}])[0].get("player", {})
+                player2Seed = set.get("slots", [{}])[1].get("seed", {})
 
                 players = ["1", "2"]
 
@@ -1301,9 +1303,11 @@ class StartGGDataProvider(TournamentDataProvider):
                     "phase_name": phaseName,
                     "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
                     f"player{players[0]}_score": set.get("entrant1Score"),
+                    f"player{players[0]}_seed": player1Seed.get("seedNum"),
                     f"player{players[0]}_team": player1Info.get("prefix"),
                     f"player{players[0]}_name": player1Info.get("gamerTag"),
                     f"player{players[1]}_score": set.get("entrant2Score"),
+                    f"player{players[1]}_seed": player2Seed.get("seedNum"),
                     f"player{players[1]}_team": player2Info.get("prefix"),
                     f"player{players[1]}_name": player2Info.get("gamerTag")
                 }

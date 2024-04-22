@@ -4,6 +4,9 @@ query PlayerLastSetsQuery($eventSlug: String!, $playerID: ID!) {
       nodes {
         id
         slots {
+            seed {
+                seedNum
+            }
             entrant {
                 id
                 participants {
