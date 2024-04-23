@@ -109,7 +109,7 @@ LoadEverything().then(() => {
 
         return `
             <div class = "p${t} team">
-                ${isTeams && !config.display.avatar ? "" : online_avatar_html(player, t)}
+                ${isTeams || !config.display.avatar ? "" : online_avatar_html(player, t)}
                 <div class = "flags">
                     ${ isTeams ? "" : 
                         (player.country.asset && config.display.country_flag ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
