@@ -115,8 +115,8 @@ class TSHGameAssetManager(QObject):
                         for dir in assetDirs:
                             if os.path.isdir("./user_data/games/"+game+"/"+dir):
                                 if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
-                                    logger.info(
-                                        "Found asset config for ["+game+"]["+dir+"]")
+                                    #logger.info(
+                                    #    "Found asset config for ["+game+"]["+dir+"]")
                                     with open("./user_data/games/"+game+"/"+dir +
                                              "/config.json", "rb") as f:
                                         self.parent().games[game]["assets"][dir] = \

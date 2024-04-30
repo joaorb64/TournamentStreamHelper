@@ -205,7 +205,7 @@ class TSHBracketWidget(QDockWidget):
         TSHBracketWidget.instance = self
 
     def UpdatePhases(self, phases):
-        logger.info("Phases: " + str(phases))
+        #logger.debug("Phases: " + str(phases))
         self.phaseSelection.clear()
         self.phaseSelection.addItem("", {})
 
