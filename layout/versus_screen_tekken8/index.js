@@ -200,7 +200,12 @@ LoadEverything().then(() => {
               : ""
           );
 
-          SetInnerHtml($(`.p${t + 1} .seed`), player.seed ? `Seed ${player.seed}` : "");
+          SetInnerHtml(
+            $(`.p${t + 1} .seed`),
+            player.seed ? `
+              <div class="unskew">Seed ${player.seed}</div>
+            ` : ""
+          );
 
           SetInnerHtml($(`.p${t + 1} .real_name`), player.real_name);
 
@@ -219,28 +224,26 @@ LoadEverything().then(() => {
           );
 
           SetInnerHtml(
-            $(`.p${t + 1} .flagcountry`),
+            $(`.p${t + 1} .country`),
             player.country.asset
               ? `
-              <div>
-                <div class='flag'>
+                <div class="unskew">
                   <div class='flagimage' style='background-image: url(../../${player.country.asset});'></div>
-                  <div class="flagname">${player.country.code}</div>
+                  <div class="flagname">${player.country.name}</div>
                 </div>
-              </div>`
+              `
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1} .flagstate`),
+            $(`.p${t + 1} .state`),
             player.state.asset
               ? `
-              <div>
-                <div class='flag'>
+                <div class="unskew">
                   <div class='flagimage' style='background-image: url(../../${player.state.asset});'></div>
-                  <div class="flagname">${player.state.code}</div>
+                  <div class="flagname">${player.state.name}</div>
                 </div>
-              </div>`
+              `
               : ""
           );
 
@@ -344,9 +347,7 @@ LoadEverything().then(() => {
     } else {
       const teams = Object.values(data.score[window.scoreboardNumber].team);
       for (const [t, team] of teams.entries()) {
-        let hasTeamName = team.teamName != null && team.teamName != ""
-
-        let playerNames = "";
+        let teamName = team.teamName;
 
         let names = [];
         for (const [p, player] of Object.values(team.player).entries()) {
@@ -354,46 +355,39 @@ LoadEverything().then(() => {
             names.push(await Transcript(player.name));
           }
         }
-        playerNames = names.join(" / ");
+        let playerNames = names.join(" / ");
 
-        if(hasTeamName){
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${team.teamName}
-                  </div>
-              </span>
-            `
-          );
+        if (!team.teamName || team.teamName == "") {
+          teamName = playerNames;
+        }
+
+        SetInnerHtml(
+          $(`.p${t + 1} .name`),
+          `
+            <span>
+                <div>
+                  ${teamName}
+                </div>
+            </span>
+          `
+        );
+        if(teamName != playerNames){
           SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
         } else {
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${playerNames}
-                  </div>
-                  ${team.losers ? "<span class='losers'>L</span>" : ""}
-              </span>
-            `
-          );
-          SetInnerHtml($(`.p${t + 1} .real_name`), ``);
+          SetInnerHtml($(`.p${t + 1} .real_name`), "");
         }
 
         SetInnerHtml($(`.p${t + 1} .sponsor_logo`), "");
 
         SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
-        SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
+        SetInnerHtml($(`.p${t + 1} .country`), "");
 
-        SetInnerHtml($(`.p${t + 1} .flagstate`), "");
+        SetInnerHtml($(`.p${t + 1} .state`), "");
 
         SetInnerHtml($(`.p${t + 1} .pronoun`), "");
 
-        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `Seed ${team.seed}` : "");
+        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `<div class="unskew">Seed ${team.seed}</div>` : "");
 
         let characterNames = [];
 

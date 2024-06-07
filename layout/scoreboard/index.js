@@ -174,18 +174,18 @@ LoadEverything().then(() => {
         data.score[window.scoreboardNumber].team["1"],
         data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
-        let teamName = "";
+        let teamName = team.teamName;
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
+          }
+        }
+        let playerNames = names.join(" / ");
 
         if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
-          }
-          teamName = names.join(" / ");
-        } else {
-          teamName = team.teamName;
+          teamName = playerNames;
         }
 
         SetInnerHtml(
@@ -216,7 +216,9 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1}.container .online_avatar`), "");
 
-        SetInnerHtml($(`.p${t + 1} .twitter`), "");
+        SetInnerHtml($(`.p${t + 1} .twitter`), 
+          playerNames != team.teamName ? playerNames : ""
+        );
 
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 

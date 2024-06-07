@@ -1029,6 +1029,11 @@ body {
   height: 24px;
 }
 
+.fgc .flag {
+  width: 28px;
+  height: 18px;
+}
+
 .sponsor_icon > div > div {
   display: inline-block;
   background-size: contain;
@@ -1039,9 +1044,9 @@ body {
   border-radius: var(--border-radius);
 }
 
-.fgc.thin .sponsor_icon > div > div {
-  width: 38px;
-  height: 38px;
+.fgc .sponsor_icon > div > div {
+  width: 32px;
+  height: 32px;
 }
 
 .character_container {

@@ -86,14 +86,12 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .pronoun`),
-            `
-              ${player.pronoun}
-            `
+            player.pronoun ? `${player.pronoun}` : ""
           );
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .seed`),
-            `Seed ${player.seed}`
+            player.seed ? `Seed ${player.seed}` : ""
           );
 
           SetInnerHtml(
@@ -103,6 +101,7 @@ LoadEverything().then(() => {
               <div class='flag' style='background-image: url(../../${String(
                 player.country.asset
               ).toLowerCase()})'></div>
+              <div class='flagname'>${player.country.code}</div>
             `
               : ""
           );
@@ -112,6 +111,7 @@ LoadEverything().then(() => {
             player.state.asset
               ? `
               <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+              <div class='flagname'>${player.state.code}</div>
             `
               : ""
           );
@@ -121,6 +121,15 @@ LoadEverything().then(() => {
               $(`.${team_id} .p${p + 1}.container .character_container`),
               {
                 source: `score.${window.scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
+              },
+              event
+            );
+          } else {
+            await CharacterDisplay(
+              $(`.${team_id} .p${p + 1}.container .character_container`),
+              {
+                source: `score.${window.scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
+                asset_key: "base_files/icon"
               },
               event
             );
@@ -143,14 +152,15 @@ LoadEverything().then(() => {
       }
     }
 
-    SetInnerHtml($(".info.container.top"), data.tournamentInfo.tournamentName);
-
-    SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match);
+    let topInfo = []
+    topInfo.push(data.tournamentInfo.tournamentName)
+    topInfo.push(data.score[window.scoreboardNumber].phase)
+    SetInnerHtml($(".info.container.top"), topInfo.join(" | "));
 
     let phaseTexts = [];
-    if (data.score[window.scoreboardNumber].phase) phaseTexts.push(data.score[window.scoreboardNumber].phase);
+    if (data.score[window.scoreboardNumber].phase) phaseTexts.push(data.score[window.scoreboardNumber].match);
     if (data.score[window.scoreboardNumber].best_of_text) phaseTexts.push(data.score[window.scoreboardNumber].best_of_text);
 
-    SetInnerHtml($(".phase"), phaseTexts.join(" - "));
+    SetInnerHtml($(".match"), phaseTexts.join(" | "));
   };
 });

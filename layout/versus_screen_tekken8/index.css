@@ -12,7 +12,7 @@ body {
   margin: 0;
   width: 1920px;
   height: 1080px;
-  background-image: url(./test.png);
+  /* background-image: url(./test.png); */
   background-size: cover;
   background-position: center;
 }
@@ -56,6 +56,7 @@ body {
   font-size: 24px;
   font-style: italic;
   font-weight: bold;
+  text-shadow: 2px 0 black;
 }
 
 .stage_name .name {
@@ -129,7 +130,7 @@ body {
   flex-direction: column;
   padding-left: 20px;
   padding-right: 20px;
-  max-width: 430px;
+  max-width: 460px;
   overflow: hidden;
   align-items: flex-start;
 }
@@ -232,10 +233,6 @@ body {
   -webkit-background-clip: text;
   color: transparent;
   overflow: visible;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
-    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .p1 .sponsor {
@@ -281,7 +278,7 @@ body {
   flex-direction: column;
   padding: 20px 40px;
   z-index: 9;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .tournament {
@@ -333,17 +330,8 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 68px;
-  height: 40px;
-}
-
-.flagname {
-  text-align: center;
-  font-size: 20px;
-  line-height: 20px;
-  background-color: #000000ff;
-  color: white;
-  text-transform: uppercase;
+  width: 32px;
+  height: 20px;
 }
 
 .score {
@@ -497,26 +485,22 @@ body {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  width: 200px;
-  height: 200px;
+  width: 120px;
+  height: 120px;
 }
 
 .sponsor_logo {
   position: absolute;
-  bottom: 16px;
+  bottom: 305px;
   z-index: 9;
 }
 
 .p1.sponsor_logo {
-  left: 40px;
+  left: 560px;
 }
 
 .p2.sponsor_logo {
-  right: 40px;
-}
-
-.seed {
-  font-size: 24px;
+  right: 560px;
 }
 
 .pronoun {
@@ -536,12 +520,12 @@ body {
   justify-content: right;
 }
 
-.p1 .pronoun {
+.p1 .pronoun .text {
   background: linear-gradient(#ae92cd, var(--p1-sponsor-color), #9d9d9d);
   -webkit-background-clip: text;
 }
 
-.p2 .pronoun {
+.p2 .pronoun .text {
   background: linear-gradient(#ae92cd, var(--p2-sponsor-color), #9d9d9d);
   -webkit-background-clip: text;
 }
@@ -583,5 +567,38 @@ body {
     drop-shadow(2px 0px 2px rgba(0, 0, 0, 0.8))
     drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.8))
     drop-shadow(0px -2px 2px rgba(0, 0, 0, 0.8));
-  overflow-y: hidden;
+  overflow: hidden;
+}
+
+.table_info {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.table_info > div {
+  color: white;
+  height: 32px;
+  font-size: 22px;
+  transform: skew(-16deg);
+  background: #000000cc;
+  width: calc(50% - 16px);
+}
+
+.table_info .text_empty {
+  display: none;
+}
+
+.table_info .unskew {
+  transform: skew(16deg);
+  display: flex;
+  gap: 4px;
+}
+
+.table_info .text {
+  justify-content: left;
+  padding: 0 16px;
 }
