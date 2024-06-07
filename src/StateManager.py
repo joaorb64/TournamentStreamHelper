@@ -144,16 +144,22 @@ class StateManager:
         for key in addedKeys:
             try:
                 item = extract(StateManager.state, key)
+            try:
+                item = extract(StateManager.state, key)
 
+                # Remove "root[" from start and separate keys
+                path = "/".join(key[5:].replace(
+                    "'", "").replace("]", "").replace("/", "_").split("["))
                 # Remove "root[" from start and separate keys
                 path = "/".join(key[5:].replace(
                     "'", "").replace("]", "").replace("/", "_").split("["))
 
                 # logger.info("Added:", path, item)
+                # logger.info("Added:", path, item)
 
                 StateManager.CreateFilesDict(path, item)
             except Exception as e:
-                logger.error(e)
+                logger.error(traceback.format_exc())
 
     def CreateFilesDict(path, di):
         pathdirs = "/".join(path.split("/")[0:-1])
