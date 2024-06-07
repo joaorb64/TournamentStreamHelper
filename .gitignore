@@ -59,3 +59,4 @@ logs/*
 Pipfile*
 
 desktop.ini
+env/
