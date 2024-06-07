@@ -749,8 +749,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="299"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
+        <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Thumbnail Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1131,14 +1131,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <location filename="../TSHBracketWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <location filename="../TSHBracketWidget.py" line="83"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <source>Players per slot</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1192,10 +1192,10 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
         <location filename="../TSHSelectSetWindow.py" line="99"/>
         <location filename="../TSHSelectSetWindow.py" line="101"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1164"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1167"/>
         <source>Player {0}</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1389,13 +1389,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1165"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1168"/>
         <source>Sponsor {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1212"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1239"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1215"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1242"/>
         <source>Team {0}</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1445,7 +1445,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="178"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
         <source>Custom Flags</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1615,12 +1615,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1348"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1351"/>
         <source>Please select a game first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1353"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1356"/>
         <source>Player {0} tag missing</source>
         <translation type="unfinished"></translation>
     </message>

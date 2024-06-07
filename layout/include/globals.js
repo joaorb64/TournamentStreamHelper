@@ -199,7 +199,7 @@ async function InitAll() {
   } else {
     // Call program_state.json load just in case it takes
     // a bit to start the websocket
-    await UpdateData();
+    // await UpdateData();
     await UpdateData_SocketIO();
   }
 
@@ -630,9 +630,9 @@ async function CenterImageDo(element) {
               uncropped_edge.length == 0
             ) {
               if (zoom_x > zoom_y) {
-                minZoom = zoom_x;
+                minZoom = zoom_x * rescalingFactor;
               } else {
-                minZoom = zoom_y;
+                minZoom = zoom_y * rescalingFactor;
               }
             } else {
               if (
@@ -646,12 +646,12 @@ async function CenterImageDo(element) {
                 !uncropped_edge.includes("l") &&
                 !uncropped_edge.includes("r")
               ) {
-                minZoom = zoom_x;
+                minZoom = zoom_x * rescalingFactor;
               } else if (
                 !uncropped_edge.includes("u") &&
                 !uncropped_edge.includes("d")
               ) {
-                minZoom = zoom_y;
+                minZoom = zoom_y * rescalingFactor;
               } else {
                 minZoom = customZoom * proportional_zoom * rescalingFactor;
               }

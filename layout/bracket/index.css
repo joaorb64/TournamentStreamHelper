@@ -284,10 +284,19 @@ body {
   display: flex;
   overflow: hidden;
   height: 100%;
-  width: 40px;
+  width: 60%;
   flex-shrink: 0;
   margin-top: 0;
+  position: absolute;
   right: 0;
+  z-index: -999;
+  opacity: 0.5;
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 70%,
+    #ffffff00 100%
+  );
 }
 
 .character_container > div {
@@ -348,4 +357,9 @@ body {
   height: 100vh;
   position: absolute;
   top: 0;
+}
+
+.line {
+  stroke: "black";
+  stroke-width: "5";
 }

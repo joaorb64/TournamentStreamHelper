@@ -56,7 +56,8 @@ class TSHGameAssetManager(QObject):
                 try:
                     url = 'https://api.start.gg/characters'
                     r = requests.get(url, allow_redirects=True)
-                    r_json = orjson.dumps(orjson.loads(r.text), option=orjson.OPT_INDENT_2)
+                    r_json = orjson.dumps(orjson.loads(
+                        r.text), option=orjson.OPT_INDENT_2)
 
                     open('./assets/characters.json.tmp', 'wb').write(r_json)
 
@@ -75,7 +76,8 @@ class TSHGameAssetManager(QObject):
                     except:
                         logger.error("Characters file download failed")
                 except Exception as e:
-                    logger.error("Could not update /assets/characters.json: "+str(e))
+                    logger.error(
+                        "Could not update /assets/characters.json: "+str(e))
         thread = DownloaderThread(self)
         thread.start()
 
@@ -89,7 +91,7 @@ class TSHGameAssetManager(QObject):
                 for game in gameDirs:
                     if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
                         with open("./user_data/games/"+game +
-                                 "/base_files/config.json", "rb") as f:
+                                  "/base_files/config.json", "rb") as f:
                             self.parent().games[game] = orjson.loads(f.read())
 
                         if os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
@@ -118,11 +120,12 @@ class TSHGameAssetManager(QObject):
                                     logger.info(
                                         "Found asset config for ["+game+"]["+dir+"]")
                                     with open("./user_data/games/"+game+"/"+dir +
-                                             "/config.json", "rb") as f:
+                                              "/config.json", "rb") as f:
                                         self.parent().games[game]["assets"][dir] = \
                                             orjson.loads(f.read())
                                 else:
-                                    logger.error("No config file for "+game+" - "+dir)
+                                    logger.error(
+                                        "No config file for "+game+" - "+dir)
 
                         # Load translated names
                         # Translate game name
@@ -302,7 +305,7 @@ class TSHGameAssetManager(QObject):
                                         heights[assetsKey].append(
                                             size.height())
                             logger.info("Character "+c+" has " +
-                                  str(len(self.parent().skins[c]))+" skins")
+                                        str(len(self.parent().skins[c]))+" skins")
 
                         # Set average size
                         for assetsKey in list(gameObj.get("assets", {}).keys()):
@@ -436,7 +439,8 @@ class TSHGameAssetManager(QObject):
         self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
 
         # Setup startgg character id to character name
-        sggcharacters = orjson.loads(open('./assets/characters.json', 'rb').read())
+        sggcharacters = orjson.loads(
+            open('./assets/characters.json', 'rb').read())
         self.startgg_id_to_character = {}
 
         for c in sggcharacters.get("entities", {}).get("character", []):
@@ -557,6 +561,7 @@ class TSHGameAssetManager(QObject):
             for c in self.characters.keys():
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
+                print(c)
                 item.setIcon(
                     QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
                 )

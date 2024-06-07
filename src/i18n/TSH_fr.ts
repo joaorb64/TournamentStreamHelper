@@ -739,8 +739,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="299"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
+        <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Thumbnail Settings</source>
         <translation>Paramètres de la miniature</translation>
     </message>
@@ -1184,14 +1184,14 @@ p, li { white-space: pre-wrap; }
         <translation>Commentateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <location filename="../TSHBracketWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>Nombre d&apos;emplacements</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <location filename="../TSHBracketWidget.py" line="83"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <source>Players per slot</source>
         <translation>Nombre de joueurs par emplacement</translation>
     </message>
@@ -1240,10 +1240,10 @@ p, li { white-space: pre-wrap; }
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
         <location filename="../TSHSelectSetWindow.py" line="99"/>
         <location filename="../TSHSelectSetWindow.py" line="101"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1164"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1167"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
     </message>
@@ -1441,7 +1441,7 @@ p, li { white-space: pre-wrap; }
         <translation>Définir le joueur</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1165"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1168"/>
         <source>Sponsor {0}</source>
         <translation>Sponsor {0}</translation>
     </message>
@@ -1454,8 +1454,8 @@ p, li { white-space: pre-wrap; }
         <translation>Poule {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1212"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1239"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1215"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1242"/>
         <source>Team {0}</source>
         <translation>Équipe {0}</translation>
     </message>
@@ -1554,7 +1554,7 @@ p, li { white-space: pre-wrap; }
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="178"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
         <source>Custom Flags</source>
         <translation>Drapeaux additionnels</translation>
     </message>
@@ -1708,12 +1708,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1348"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1351"/>
         <source>Please select a game first</source>
         <translation>Veuillez sélectionner un jeu</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1353"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1356"/>
         <source>Player {0} tag missing</source>
         <translation>Le pseudo du joueur {0} est absent</translation>
     </message>

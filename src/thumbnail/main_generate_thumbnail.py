@@ -349,16 +349,16 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             if not uncropped_edge:
                 if zoom_x > zoom_y:
-                    min_zoom = zoom_x
+                    min_zoom = zoom_x * rescaling_factor
                 else:
-                    min_zoom = zoom_y
+                    min_zoom = zoom_y * rescaling_factor
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
                     min_zoom = customZoom * proportional_zoom * rescaling_factor
                 elif not 'l' in uncropped_edge and not 'r' in uncropped_edge:
-                    min_zoom = zoom_x
+                    min_zoom = zoom_x * rescaling_factor
                 elif not 'u' in uncropped_edge and not 'd' in uncropped_edge:
-                    min_zoom = zoom_y
+                    min_zoom = zoom_y * rescaling_factor
                 else:
                     min_zoom = customZoom * proportional_zoom * rescaling_factor
 
@@ -576,11 +576,12 @@ def paste_characters(thumbnail, data, all_eyesight, used_assets, flip_p1=False, 
         rescaling_matrix = []
 
         try:
-            current_team = find(f"score.{scoreboardNumber}.team.{team_index}.player", data)
+            current_team = find(
+                f"score.{scoreboardNumber}.team.{team_index}.player", data)
         except Exception as e:
-            logger.error(traceback.format_exc()) 
+            logger.error(traceback.format_exc())
             return
-        
+
         for player_key in current_team.keys():
             character_list = []
             eyesight_list = []
@@ -853,10 +854,12 @@ def paste_player_text(thumbnail, data, use_team_names=False, use_sponsors=True, 
         final_color_mask = []
 
         if use_team_names and find(f"score.{scoreboardNumber}.team.{team_index}.teamName", data):
-            player_name = find(f"score.{scoreboardNumber}.team.{team_index}.teamName", data)
+            player_name = find(
+                f"score.{scoreboardNumber}.team.{team_index}.teamName", data)
             final_color_mask = player_text_color["font_color"]
         else:
-            current_team = find(f"score.{scoreboardNumber}.team.{team_index}.player", data)
+            current_team = find(
+                f"score.{scoreboardNumber}.team.{team_index}.player", data)
             for key in current_team.keys():
                 current_data = ""
                 individual_color_mask = []
@@ -1478,15 +1481,19 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
     painter.drawPixmap(0, 0, composite_image)
     painter.end()
 
-    paste_player_text(thumbnail, data, use_team_names, use_sponsors, scoreboardNumber=scoreboardNumber)
-    paste_round_text(thumbnail, data, display_phase, scoreboardNumber=scoreboardNumber)
+    paste_player_text(thumbnail, data, use_team_names,
+                      use_sponsors, scoreboardNumber=scoreboardNumber)
+    paste_round_text(thumbnail, data, display_phase,
+                     scoreboardNumber=scoreboardNumber)
     thumbnail = paste_main_icon(thumbnail, main_icon_path)
     thumbnail = paste_side_icon(thumbnail, side_icon_list)
 
     # TODO get char name
     if not isPreview:
-        tag_player1 = find(f"score.{scoreboardNumber}.team.1.player.1.name", data)
-        tag_player2 = find(f"score.{scoreboardNumber}.team.2.player.1.name", data)
+        tag_player1 = find(
+            f"score.{scoreboardNumber}.team.1.player.1.name", data)
+        tag_player2 = find(
+            f"score.{scoreboardNumber}.team.2.player.1.name", data)
         thumbnail_filename = f"{remove_special_chars(tag_player1)}-vs-{remove_special_chars(tag_player2)}-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
         thumbnail.save(f"{out_path}/{thumbnail_filename}.png")
         thumbnail.save(f"{out_path}/{thumbnail_filename}.jpg")
@@ -1494,7 +1501,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
             shutil.rmtree(tmp_path)
         logger.info(
             f"Thumbnail successfully saved as {out_path}/{thumbnail_filename}.png and {out_path}/{thumbnail_filename}.jpg")
-        yt_title, yt_description = generate_youtube(scoreboardNumber, display_phase)
+        yt_title, yt_description = generate_youtube(
+            scoreboardNumber, display_phase)
         with open(f"{out_path}/{thumbnail_filename}_title.txt", "wt", encoding="utf-8") as txt_file:
             txt_file.write(yt_title)
         with open(f"{out_path}/{thumbnail_filename}_desc.txt", "wt", encoding="utf-8") as txt_file:
