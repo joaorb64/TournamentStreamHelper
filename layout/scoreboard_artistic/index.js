@@ -95,14 +95,24 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `
+                  <div class='flag_container'>
+                    <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                    <div class='flagname'>${player.country.code}</div>
+                  </div>
+                `
                 : ""
             );
 
             SetInnerHtml(
               $(`.p${t + 1}.container .flagstate`),
               player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `
+                  <div class='flag_container'>
+                    <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                    <div class='flagname'>${player.state.code}</div>
+                  </div>
+                `
                 : ""
             );
 
@@ -153,18 +163,18 @@ LoadEverything().then(() => {
         data.score[window.scoreboardNumber].team["1"],
         data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
-        let teamName = "";
+        let teamName = team.teamName;
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
+          }
+        }
+        let playerNames = names.join(" / ");
 
         if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
-          }
-          teamName = names.join(" / ");
-        } else {
-          teamName = team.teamName;
+          teamName = playerNames;
         }
 
         let teamMultiplyier = t == 0 ? 1 : -1;
@@ -189,11 +199,16 @@ LoadEverything().then(() => {
           event
         );
 
+        let nameElements = [];
+        nameElements.push(teamName);
+        if(playerNames != teamName) nameElements.push(`<span class='team_names'>${playerNames}</span>`)
+        if(team.losers) nameElements.push("<span class='losers'>L</span>")
+        if(t==1) nameElements.reverse();
+
         SetInnerHtml(
           $(`.p${t + 1}.container .name`),
           `
-            ${teamName}
-            ${team.losers ? "<span class='losers'>L</span>" : ""}
+            ${nameElements.join("")}
           `
         );
 

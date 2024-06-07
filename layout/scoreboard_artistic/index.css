@@ -329,7 +329,12 @@ body {
   background-position: center;
   width: 32px;
   height: 22px;
-  border-radius: 6px;
+  border-radius: 4px;
+}
+
+.flagname {
+  font-size: 14px;
+  text-align: center;
 }
 
 .sponsor_icon > div > div {
@@ -457,17 +462,18 @@ body {
 }
 
 .pronoun {
-  font-size: 12px;
+  font-size: 18px;
   text-transform: uppercase;
   margin-left: 6px;
   margin-right: 6px;
   letter-spacing: normal;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
   border-radius: 6px;
   color: var(--bg-color);
   place-self: flex-end;
   transform: translateY(-50%);
+  font-family: 'RobotoCondensed';
 }
 
 .p1 .score {
@@ -516,4 +522,9 @@ body {
 
 .p2 .losers {
   background: #308affff;
+}
+
+.team_names {
+  padding: 0 8px;
+  font-size: 16px;
 }

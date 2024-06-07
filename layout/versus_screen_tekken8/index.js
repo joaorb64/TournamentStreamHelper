@@ -3,43 +3,117 @@ LoadEverything().then(() => {
     .timeline({ paused: true })
     .to([".logo"], { duration: 0.8, top: 160 }, 0)
     .to([".logo"], { duration: 0.8, scale: 0.4 }, 0)
-    .from(
+    .fromTo(
       ".p1.character_name",
       {
-        duration: 2.3,
         x: "-100px",
         autoAlpha: 0,
       },
+      {
+        x: "-60px",
+        autoAlpha: 1,
+        duration: 2,
+        ease: "power2.out"
+      },
       0
     )
-    .from(
+    .to(
+      ".p1.character_name",
+      {
+        duration: 0.2,
+        x: "-20px",
+        scale: 1.1,
+        ease: "power2.out"
+      },
+      2
+    )
+    .to(
+      ".p1.character_name",
+      {
+        duration: 2,
+        x: "0px",
+        ease: "power2.out"
+      },
+      2.2
+    )
+    .fromTo(
       ".p2.character_name",
       {
-        duration: 2.3,
-        x: "+100px",
+        x: "100px",
         autoAlpha: 0,
+      },
+      {
+        x: "60px",
+        autoAlpha: 1,
+        duration: 2,
+        ease: "power2.out"
       },
       0
     )
-    .from(
+    .to(
+      ".p2.character_name",
+      {
+        duration: 0.2,
+        x: "+20px",
+        scale: 1.1,
+        ease: "power2.out"
+      },
+      2
+    )
+    .to(
+      ".p2.character_name",
+      {
+        duration: 2,
+        x: "0px",
+        ease: "power2.out"
+      },
+      2.2
+    )
+    .fromTo(
       ".p1.character",
       {
-        duration: 0.13,
-        x: "-800px",
+        x: "-1000px",
         autoAlpha: 0,
+      },
+      {
+        x: "-50px",
+        autoAlpha: 1,
+        duration: 0.2,
         ease: "power2.out",
       },
       2
     )
-    .from(
+    .to(
+      ".p1.character",
+      {
+        x: "0",
+        duration: 4,
+        ease: "power1.out"
+      },
+      2.2
+    )
+    .fromTo(
       ".p2.character",
       {
-        duration: 0.13,
-        x: "+800px",
+        x: "+1000px",
         autoAlpha: 0,
+      },
+      {
+        x: "+50px",
+        autoAlpha: 1,
+        duration: 0.2,
         ease: "power2.out",
       },
       2
+    )
+    .to(
+      ".p2.character",
+      {
+        x: "0",
+        duration: 4,
+        ease: "power1.out"
+      },
+      2.2
     )
     .from(
       [".tournament"],
@@ -84,9 +158,6 @@ LoadEverything().then(() => {
       },
       2.4
     )
-    .to("body", { x: "+20", y: "-10", duration: 0.1 }, 2.2)
-    .to("body", { x: "-5", y: "+2", duration: 0.1 }, 2.3)
-    .to("body", { x: 0, y: 0, duration: 0.1 }, 2.4);
 
   Start = async (event) => {
     startingAnimation.restart();
@@ -121,7 +192,7 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .pronoun`), player.pronoun);
 
           SetInnerHtml(
-            $(`.p${t + 1} .sponsor_logo`),
+            $(`.p${t + 1}.sponsor_logo`),
             player.sponsor_logo
               ? `
                 <div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>
@@ -129,7 +200,12 @@ LoadEverything().then(() => {
               : ""
           );
 
-          SetInnerHtml($(`.p${t + 1} .seed`), player.seed ? `Seed ${player.seed}` : "");
+          SetInnerHtml(
+            $(`.p${t + 1} .seed`),
+            player.seed ? `
+              <div class="unskew">Seed ${player.seed}</div>
+            ` : ""
+          );
 
           SetInnerHtml($(`.p${t + 1} .real_name`), player.real_name);
 
@@ -148,28 +224,26 @@ LoadEverything().then(() => {
           );
 
           SetInnerHtml(
-            $(`.p${t + 1} .flagcountry`),
+            $(`.p${t + 1} .country`),
             player.country.asset
               ? `
-              <div>
-                <div class='flag'>
+                <div class="unskew">
                   <div class='flagimage' style='background-image: url(../../${player.country.asset});'></div>
-                  <div class="flagname">${player.country.code}</div>
+                  <div class="flagname">${player.country.name}</div>
                 </div>
-              </div>`
+              `
               : ""
           );
 
           SetInnerHtml(
-            $(`.p${t + 1} .flagstate`),
+            $(`.p${t + 1} .state`),
             player.state.asset
               ? `
-              <div>
-                <div class='flag'>
+                <div class="unskew">
                   <div class='flagimage' style='background-image: url(../../${player.state.asset});'></div>
-                  <div class="flagname">${player.state.code}</div>
+                  <div class="flagname">${player.state.name}</div>
                 </div>
-              </div>`
+              `
               : ""
           );
 
@@ -213,6 +287,7 @@ LoadEverything().then(() => {
                   autoAlpha: 1,
                   stagger: 0.2,
                 },
+                custom_center: [0.4, 0.4]
               },
               event
             );
@@ -272,9 +347,7 @@ LoadEverything().then(() => {
     } else {
       const teams = Object.values(data.score[window.scoreboardNumber].team);
       for (const [t, team] of teams.entries()) {
-        let hasTeamName = team.teamName != null && team.teamName != ""
-
-        let playerNames = "";
+        let teamName = team.teamName;
 
         let names = [];
         for (const [p, player] of Object.values(team.player).entries()) {
@@ -282,46 +355,39 @@ LoadEverything().then(() => {
             names.push(await Transcript(player.name));
           }
         }
-        playerNames = names.join(" / ");
+        let playerNames = names.join(" / ");
 
-        if(hasTeamName){
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${team.teamName}
-                  </div>
-              </span>
-            `
-          );
-          SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
-        } else {
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${playerNames}
-                  </div>
-                  ${team.losers ? "<span class='losers'>L</span>" : ""}
-              </span>
-            `
-          );
-          SetInnerHtml($(`.p${t + 1} .real_name`), ``);
+        if (!team.teamName || team.teamName == "") {
+          teamName = playerNames;
         }
 
-        SetInnerHtml($(`.p${t + 1} > .sponsor_logo`), "");
+        SetInnerHtml(
+          $(`.p${t + 1} .name`),
+          `
+            <span>
+                <div>
+                  ${teamName}
+                </div>
+            </span>
+          `
+        );
+        if(teamName != playerNames){
+          SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
+        } else {
+          SetInnerHtml($(`.p${t + 1} .real_name`), "");
+        }
+
+        SetInnerHtml($(`.p${t + 1} .sponsor_logo`), "");
 
         SetInnerHtml($(`.p${t + 1} .twitter`), ``);
 
-        SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
+        SetInnerHtml($(`.p${t + 1} .country`), "");
 
-        SetInnerHtml($(`.p${t + 1} .flagstate`), "");
+        SetInnerHtml($(`.p${t + 1} .state`), "");
 
         SetInnerHtml($(`.p${t + 1} .pronoun`), "");
 
-        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `Seed ${team.seed}` : "");
+        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `<div class="unskew">Seed ${team.seed}</div>` : "");
 
         let characterNames = [];
 
@@ -367,6 +433,7 @@ LoadEverything().then(() => {
                 autoAlpha: 1,
                 stagger: 0.2,
               },
+              custom_center: [0.4, 0.4]
             },
             event
           );
@@ -432,8 +499,8 @@ LoadEverything().then(() => {
       }
     }
 
-    SetInnerHtml($(`.p1 .score`), String(data.score[window.scoreboardNumber].team["1"].score));
-    SetInnerHtml($(`.p2 .score`), String(data.score[window.scoreboardNumber].team["2"].score));
+    SetInnerHtml($(`.p1.score`), String(data.score[window.scoreboardNumber].team["1"].score));
+    SetInnerHtml($(`.p2.score`), String(data.score[window.scoreboardNumber].team["2"].score));
 
     SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
     SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match);
@@ -469,6 +536,20 @@ LoadEverything().then(() => {
         <div>
             <div class='' style='background-image: url(../../${stage.path});'>
             </div>
+        </div>`
+        : ""
+    );
+
+    SetInnerHtml(
+      $(`.stage_name`),
+      stage
+        ? `
+          <div class="title">
+            STAGE
+          </div>
+          <div class="name">
+            ${stage.name}
+          </div>
         </div>`
         : ""
     );
