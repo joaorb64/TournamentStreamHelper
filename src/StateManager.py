@@ -144,8 +144,6 @@ class StateManager:
         for key in addedKeys:
             try:
                 item = extract(StateManager.state, key)
-            try:
-                item = extract(StateManager.state, key)
 
                 # Remove "root[" from start and separate keys
                 path = "/".join(key[5:].replace(
