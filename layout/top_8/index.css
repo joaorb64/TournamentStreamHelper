@@ -189,6 +189,16 @@ body {
   flex-shrink: 0;
 }
 
+.flags > div {
+  background-color: var(--bg-color);
+  border-radius: 6px;
+  padding-right: 6px;
+}
+
+.flags_container > .text_empty {
+  display: none;
+}
+
 .flag {
   display: inline-block;
   background-size: cover;
@@ -197,7 +207,13 @@ body {
   width: 36px;
   height: 24px;
   border-radius: 6px;
-  border: 2px solid white;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.flagname {
+  font-size: 18px;
+  padding-left: 6px;
 }
 
 .sponsor_icon {
