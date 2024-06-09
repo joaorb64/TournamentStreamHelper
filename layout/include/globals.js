@@ -135,7 +135,7 @@ async function UpdateData_SocketIO() {
 async function LoadEverything() {
   let libPath = "../include/";
   let scripts = [
-    "jquery-3.6.0.min.js",
+    "jquery-3.7.1.min.js",
     "gsap.min.js",
     "he.js",
     "lodash.min.js",

@@ -1,8 +1,0 @@
-query TournamentMainPhaseQuery($eventSlug: String!) {
-  event(slug: $eventSlug) {
-    phases {
-      id
-      name
-    }
-  }
-}
