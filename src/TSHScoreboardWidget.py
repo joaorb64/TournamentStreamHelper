@@ -983,6 +983,8 @@ class TSHScoreboardWidget(QWidget):
                             teamColumns = [self.team1column, self.team2column]
                             teamNames = [
                                 data.get("p1_name"), data.get("p2_name")]
+                            if self.teamsSwapped:
+                                teamNames.reverse()
                             teamColumns[t].findChild(
                                 QLineEdit, "teamName").setText(teamNames[t])
                             teamColumns[t].findChild(

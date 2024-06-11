@@ -208,13 +208,15 @@ LoadEverything().then(() => {
             );
           }
         }
+
+        if(team.color) {
+          document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+        }
       }
     } else {
       const teams = Object.values(data.score[window.scoreboardNumber].team);
       for (const [t, team] of teams.entries()) {
-        let hasTeamName = team.teamName != null && team.teamName != ""
-
-        let playerNames = "";
+        let teamName = team.teamName;
 
         let names = [];
         for (const [p, player] of Object.values(team.player).entries()) {
@@ -222,32 +224,26 @@ LoadEverything().then(() => {
             names.push(await Transcript(player.name));
           }
         }
-        playerNames = names.join(" / ");
+        let playerNames = names.join(" / ");
 
-        if(hasTeamName){
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${team.teamName}
-                  </div>
-              </span>
-            `
-          );
+        if (!team.teamName || team.teamName == "") {
+          teamName = playerNames;
+        }
+
+        SetInnerHtml(
+          $(`.p${t + 1} .name`),
+          `
+            <span>
+                <div>
+                  ${teamName}
+                </div>
+            </span>
+          `
+        );
+        if(teamName != playerNames){
           SetInnerHtml($(`.p${t + 1} .real_name`), playerNames);
         } else {
-          SetInnerHtml(
-            $(`.p${t + 1} .name`),
-            `
-              <span>
-                  <div>
-                    ${playerNames}
-                  </div>
-              </span>
-            `
-          );
-          SetInnerHtml($(`.p${t + 1} .real_name`), ``);
+          SetInnerHtml($(`.p${t + 1} .real_name`), "");
         }
 
         gsap.to($(`.p${t + 1} .losers_badge`), {
@@ -368,6 +364,10 @@ LoadEverything().then(() => {
               },
             }
           );
+        }
+
+        if(team.color) {
+          document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
         }
       }
     }

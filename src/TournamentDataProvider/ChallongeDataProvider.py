@@ -1,3 +1,4 @@
+import dateutil.parser
 import requests
 import os
 import traceback
@@ -7,7 +8,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from datetime import datetime
-from dateutil.parser import parse
+import dateutil
 from ..Helpers.TSHDictHelper import deep_get
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
@@ -105,7 +106,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
 
             )
-
+            logger.debug(data.text)
             data = orjson.loads(data.text)
             collection = deep_get(data, "collection", [{}])[0]
             details = deep_get(collection, "details", [])
@@ -117,21 +118,17 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             finalData["tournamentName"] = deep_get(collection, "name")
 
-            # TODO necessary ?
-            if len(details) > 3:
-                startAtStr = deep_get(details[2], "text", "")
-                try:
-                    # test if date
-                    parse(startAtStr, fuzzy=False)
-                    # 'September 29, 2022'
-                    element = datetime.strptime(startAtStr, "%B %d, %Y")
-                    # to timestamp
-                    timestamp = datetime.timestamp(element)
-                    finalData["startAt"] = datetime.timestamp(element)
-                except ValueError:
-                    logger.error('ChallongeDataProvider: No date defined')
-
             details = collection.get("details", [])
+
+            try:
+                dateElement = next(
+                    (d for d in details if d.get("icon") == "fa fa-calendar"), None)
+                if dateElement:
+                    finalData["startAt"] = dateutil.parser.parse(
+                        dateElement.get("text"), fuzzy=True).timestamp()
+            except Exception as e:
+                logger.error(f"Could not get tournament date: {traceback.format_exc()}")
+
             participantsElement = next(
                 (d for d in details if d.get("icon") == "fa fa-users"), None)
             if participantsElement:

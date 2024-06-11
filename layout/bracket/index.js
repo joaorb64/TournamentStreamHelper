@@ -116,7 +116,7 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     if (
-      !oldData.bracket ||
+      !oldData.bracket || !oldData ||
       JSON.stringify(data.bracket.bracket) !=
         JSON.stringify(oldData.bracket.bracket)
     ) {
@@ -292,7 +292,7 @@ LoadEverything().then(() => {
                 );
 
                 if (winElement && winElement.offset()) {
-                  slotLines += `<path class="${
+                  slotLines += `<path class="line ${
                     this.baseClass
                   } line_r_${roundKey} s_${i + 1}" d="
                   M${[
@@ -337,7 +337,7 @@ LoadEverything().then(() => {
                       Math.abs(parseInt(roundKey)) == 1 &&
                       !winnersOnlyProgressions))
                 ) {
-                  slotLines += `<path class="${this.baseClass} line_in_r_${
+                  slotLines += `<path class="line ${this.baseClass} line_in_r_${
                     Math.sign(parseInt(roundKey)) * Math.abs(parseInt(roundKey))
                   } s_${i + 1}" d="
                   M${[
@@ -353,7 +353,7 @@ LoadEverything().then(() => {
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="5" />`;
+                  fill="none" />`;
                 }
 
                 // Lines for progressions out
@@ -365,7 +365,7 @@ LoadEverything().then(() => {
                       Math.abs(parseInt(roundKey)) ==
                         Object.keys(losersRounds).length))
                 ) {
-                  slotLines += `<path class="${
+                  slotLines += `<path class="line ${
                     this.baseClass
                   } line_out_r_${roundKey} s_${i + 1}" d="
                   M${[
@@ -402,7 +402,7 @@ LoadEverything().then(() => {
                     .map((point) => point.join(" "))
                     .map((point) => "L" + point)
                     .join(" ")}"
-                  stroke="black" fill="none" stroke-width="5"  />`;
+                  fill="none" />`;
                 }
               }
             },

@@ -93,7 +93,12 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.slot${t + 1} .p${p + 1}.container .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${String(
+                    player.country.asset
+                  ).toLowerCase()})'></div>
+                  <div class='flagname'>${player.country.code}</div>
+                ` 
                 : "",
               undefined,
               0
@@ -102,7 +107,10 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.slot${t + 1} .p${p + 1}.container .flagstate`),
               player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                  <div class='flagname'>${player.state.code}</div>
+                `
                 : "",
               undefined,
               0

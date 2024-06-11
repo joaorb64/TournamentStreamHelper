@@ -154,24 +154,25 @@ LoadEverything().then(() => {
         data.score[window.scoreboardNumber].team["1"],
         data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
-        let teamName = "";
+        let teamName = team.teamName;
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
+          }
+        }
+        let playerNames = names.join(" / ");
 
         if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
-          }
-          teamName = names.join(" / ");
-        } else {
-          teamName = team.teamName;
+          teamName = playerNames;
         }
 
         SetInnerHtml(
           $(`.p${t + 1}.container .name`),
           `
             ${teamName}
+            ${teamName != playerNames ? `(${playerNames})` : ""}
             ${team.losers ? "<span class='losers'>L</span>" : ""}
           `
         );
@@ -228,9 +229,10 @@ LoadEverything().then(() => {
           $(`.p${t + 1}.container .sponsor-container`),
           `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
         );
-      }
-      if(team.color) {
-        document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+
+        if(team.color) {
+          document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
+        }
       }
     }
 

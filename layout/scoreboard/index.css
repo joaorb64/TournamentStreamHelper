@@ -425,6 +425,34 @@ body {
   min-width: unset;
 }
 
+.flagstate .text,
+.flagcountry .text {
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.p2 .flagstate .text,
+.p2 .flagcountry .text {
+  flex-direction: row-reverse;
+}
+
+.ssbu .p2 .flagstate .text,
+.ssbu .p2 .flagcountry .text {
+  flex-direction: row;
+  padding-left: 0 !important;
+}
+
+.ssbu .p1 .flagstate .text,
+.ssbu .p1 .flagcountry .text {
+  padding-right: 0 !important;
+}
+
+.ssbu .p1 .flagstate .text,
+.ssbu .p1 .flagcountry .text {
+  flex-direction: row-reverse;
+}
+
 .sf6 .chip .text:not(.text_empty) {
   font-size: 20px;
   height: 100%;
@@ -940,9 +968,7 @@ body {
   bottom: 0px;
 }
 
-.icon,
-.flagcountry,
-.flagstate {
+.icon {
   display: flex;
   justify-content: center;
 }
@@ -999,14 +1025,13 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  width: 36px;
+  width: 32px;
   height: 24px;
-  border-radius: 4px;
 }
 
-.chips .flag {
-  margin-left: 4px;
-  margin-right: 4px;
+.fgc .flag {
+  width: 28px;
+  height: 18px;
 }
 
 .sponsor_icon > div > div {
@@ -1019,9 +1044,9 @@ body {
   border-radius: var(--border-radius);
 }
 
-.fgc.thin .sponsor_icon > div > div {
-  width: 38px;
-  height: 38px;
+.fgc .sponsor_icon > div > div {
+  width: 32px;
+  height: 32px;
 }
 
 .character_container {
