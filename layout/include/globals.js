@@ -392,7 +392,9 @@ async function SetInnerHtml(element, html, settings = {}) {
       if (!firstRun) {
         gsap.to(element.find(".text"), anim_out).then(() => callback());
       } else {
-        gsap.set(element.find(".text"), anim_out).then(() => callback());
+        let newAnimOut = Object.assign({}, anim_out);
+        newAnimOut.duration = 0;
+        gsap.to(element.find(".text"), anim_out).then(() => callback());
       }
     }
   });
