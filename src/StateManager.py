@@ -60,8 +60,6 @@ class StateManager:
                     StateManager.state,
                     include_paths=StateManager.changedKeys
                 )
-                print(StateManager.changedKeys)
-                print("DIFF", diff)
 
                 StateManager.changedKeys = []
 
