@@ -27,11 +27,11 @@ async function UpdateWrapper(event) {
   // If initialization wasn't done yet, call Start()
   // We use gsap.globalTimeline.timeScale as 0 for animation to not play before this
   if (gsap.globalTimeline.timeScale() == 0) {
+    gsap.globalTimeline.timeScale(1);
     window.requestAnimationFrame(() => {
       $(document).waitForImages(() => {
         $("body").fadeTo(1, 1, () => {
           Start();
-          gsap.globalTimeline.timeScale(1);
         });
       });
     });
@@ -199,9 +199,10 @@ async function InitAll() {
   } else {
     // Call program_state.json load just in case it takes
     // a bit to start the websocket
-    // await UpdateData();
     await UpdateData_SocketIO();
   }
+
+  // await UpdateData();
 
   console.log("== Init complete ==");
   document.dispatchEvent(new CustomEvent("tsh_init"));
@@ -329,76 +330,69 @@ async function Transcript(text) {
 // Sequence: runs anim_out > changes content > runs anim_in
 // Uses FitText to scale div contents to fit
 async function SetInnerHtml(element, html, settings = {}) {
-  let force = undefined;
-  let fadeTime = 0.5;
-  let middleFunction = undefined;
+  // Extract settings
+  let { force, fadeTime = 0.5, middleFunction } = settings;
 
   if (element == null) return;
-  if (force == false) return;
+  if (force === false) return;
 
   // Fade out/in animations
-  let anim_in = { autoAlpha: 1, duration: fadeTime, stagger: 0.1 };
+  let anim_in = { autoAlpha: 1, duration: fadeTime, stagger: 0.1, ...settings.anim_in };
+  let anim_out = { autoAlpha: 0, duration: fadeTime, stagger: 0.1, overwrite: true, ...settings.anim_out };
 
-  if (settings.anim_in) {
-    anim_in = settings.anim_in;
-  }
-
-  let anim_out = { autoAlpha: 0, duration: fadeTime, stagger: 0.1 };
-
-  if (settings.anim_out) {
-    anim_out = settings.anim_out;
-  }
-
-  anim_out.overwrite = true;
-
-  if (html == null || html == undefined) html = "";
+  if (html == null || html === undefined) html = "";
 
   html = String(html);
 
-  let firstRun = false;
+  let firstRun = element.find(".text").length === 0;
 
-  // First run, no need of smooth fade out
-  if (element.find(".text").length == 0) {
+  // First run, no need for smooth fade out
+  if (firstRun) {
     // Put any text inside the div just so the font loading is triggered
     element.html("<div class='text' style='opacity: 0;'>&nbsp;</div>");
-    firstRun = true;
   }
 
   // Wait for font to load before calculating sizes
-  document.fonts.ready.then(() => {
-    if (
-      force == true ||
-      he.decode(String(element.find(".text").html()).replace(/'/g, '"')) !=
-        he.decode(String(html).replace(/'/g, '"'))
-    ) {
-      const callback = () => {
-        element.find(".text").html(html);
-        if (html.trim().length == 0) {
-          element.find(".text").addClass("text_empty");
-          element.addClass("text_empty");
-        } else {
-          element.find(".text").removeClass("text_empty");
-          element.removeClass("text_empty");
-        }
-        FitText(element);
-        if (middleFunction != undefined) {
-          middleFunction();
-        }
-        $(element).ready((e) => {
-          gsap.fromTo(element.find(".text"), anim_out, anim_in);
-        });
-      };
+  await document.fonts.ready;
 
-      if (!firstRun) {
-        gsap.to(element.find(".text"), anim_out).then(() => callback());
+  // Decode the HTML content to compare
+  const currentText = he.decode(String(element.find(".text").html()).replace(/'/g, '"'));
+  const newText = he.decode(String(html).replace(/'/g, '"'));
+
+  if (force === true || currentText !== newText) {
+    const updateElement = () => {
+      element.find(".text").html(html);
+
+      if (html.trim().length === 0) {
+        element.find(".text").addClass("text_empty");
+        element.addClass("text_empty");
       } else {
-        let newAnimOut = Object.assign({}, anim_out);
-        newAnimOut.duration = 0;
-        gsap.to(element.find(".text"), anim_out).then(() => callback());
+        element.find(".text").removeClass("text_empty");
+        element.removeClass("text_empty");
       }
+
+      FitText(element);
+
+      if (middleFunction) {
+        middleFunction();
+      }
+
+      if (firstRun) {
+        gsap.set(element.find(".text"), anim_in);
+      } else {
+        gsap.fromTo(element.find(".text"), anim_out, anim_in);
+      }
+    };
+
+    if (!firstRun) {
+      await gsap.to(element.find(".text"), anim_out).then(updateElement);
+    } else {
+      anim_out.duration = 1;
+      await gsap.to(element.find(".text"), anim_out).then(updateElement);
     }
-  });
+  }
 }
+
 
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 

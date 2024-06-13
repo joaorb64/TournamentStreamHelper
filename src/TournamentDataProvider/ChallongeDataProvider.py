@@ -96,14 +96,15 @@ class ChallongeDataProvider(TournamentDataProvider):
             prefix = prefix+"."
         return f"https://{prefix}challonge.com/{self.GetSlug()}"
 
-    def GetTournamentData(self, progress_callback=None):
+    def GetTournamentData(self, progress_callback=None, cancel_event=None):
         finalData = {}
 
         try:
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
+                    slug}",
 
             )
             logger.debug(data.text)
@@ -127,7 +128,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                     finalData["startAt"] = dateutil.parser.parse(
                         dateElement.get("text"), fuzzy=True).timestamp()
             except Exception as e:
-                logger.error(f"Could not get tournament date: {traceback.format_exc()}")
+                logger.error(f"Could not get tournament date: {
+                             traceback.format_exc()}")
 
             participantsElement = next(
                 (d for d in details if d.get("icon") == "fa fa-users"), None)
@@ -149,7 +151,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
+                    slug}",
                 headers=HEADERS
             )
 
@@ -165,7 +168,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return url
 
-    def GetMatch(self, setId, progress_callback):
+    def GetMatch(self, setId, progress_callback, cancel_event):
         finalData = {}
 
         try:
@@ -187,7 +190,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetStations(self, progress_callback=None):
+    def GetStations(self, progress_callback=None, cancel_event=None):
         try:
             logger.info("Get stations")
 
@@ -242,7 +245,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
         return stationSet
 
-    def GetMatches(self, getFinished=False, progress_callback=None):
+    def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         final_data = []
 
         try:
@@ -269,12 +272,19 @@ class ChallongeDataProvider(TournamentDataProvider):
                 final_data.append(self.ParseMatchData(match))
 
             final_data.reverse()
+
+            if progress_callback:
+                progress_callback.emit({
+                    "progress": 1,
+                    "totalPages": 1,
+                    "sets": final_data
+                })
         except Exception as e:
             logger.error(traceback.format_exc())
 
         return final_data
 
-    def GetTournamentPhases(self, progress_callback=None):
+    def GetTournamentPhases(self, progress_callback=None, cancel_event=None):
         phases = []
 
         try:
@@ -316,7 +326,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return phases
 
-    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+    def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
         finalData = {}
         try:
             data = self.scraper.get(
@@ -733,7 +743,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         worker = Worker(self.GetEntrantsWorker)
         self.threadpool.start(worker)
 
-    def GetEntrantsWorker(self, progress_callback):
+    def GetEntrantsWorker(self, progress_callback, cancel_event):
         try:
             data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
@@ -797,7 +807,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return (final_data)
 
-    def GetStandings(self, playerNumber, progress_callback):
+    def GetStandings(self, playerNumber, progress_callback, cancel_event):
         final_data = []
 
         try:
@@ -843,7 +853,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         except Exception as e:
             logger.error(traceback.format_exc())
 
-    def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
+    def GetLastSets(self, playerID, playerNumber, callback, progress_callback, cancel_event):
         try:
             data = self.scraper.get(
                 self.GetEnglishUrl()+".json",

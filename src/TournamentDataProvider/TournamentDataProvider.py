@@ -14,19 +14,19 @@ class TournamentDataProvider:
     def GetEntrants(self):
         pass
 
-    def GetTournamentData(self, progress_callback=None):
+    def GetTournamentData(self, progress_callback=None, cancel_event=None):
         pass
 
-    def GetMatch(self, setId, progress_callback=None):
+    def GetMatch(self, setId, progress_callback=None, cancel_event=None):
         pass
 
-    def GetMatches(self, getFinished=False, progress_callback=None):
+    def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         pass
 
-    def GetStations(self, progress_callback=None):
+    def GetStations(self, progress_callback=None, cancel_event=None):
         pass
 
-    def GetStreamQueue(self, streamName, progress_callback=None):
+    def GetStreamQueue(self, streamName, progress_callback=None, cancel_event=None):
         pass
 
     def GetStreamMatchId(self, streamName):
@@ -50,10 +50,10 @@ class TournamentDataProvider:
     def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
         pass
 
-    def GetTournamentPhases(self, progress_callback=None):
+    def GetTournamentPhases(self, progress_callback=None, cancel_event=None):
         pass
 
-    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+    def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
         pass
 
     def GetStandings(self, playerNumber):
@@ -62,6 +62,6 @@ class TournamentDataProvider:
     def GetFutureMatch(self, progrss_callback=None):
         pass
 
-    #give me a list of objects that contain a "id" property
-    def GetFutureMatchesList(self, sets: object, progress_callback=None):
+    # give me a list of objects that contain a "id" property
+    def GetFutureMatchesList(self, sets: object, progress_callback=None, cancel_event=None):
         pass

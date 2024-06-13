@@ -387,7 +387,7 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1} .pronoun`), "");
 
-        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `<div class="unskew">Seed ${team.seed}</div>` : "");
+        SetInnerHtml($(`.p${t + 1} .seed`), _.get(team, "player.1.seed") ? `<div class="unskew">Seed ${_.get(team, "player.1.seed")}</div>` : "");
 
         let characterNames = [];
 
