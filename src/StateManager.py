@@ -55,6 +55,8 @@ class StateManager:
                     StateManager.lastSavedState = deep_clone(
                         StateManager.state)
 
+                logger.debug(StateManager.changedKeys)
+
                 diff = DeepDiff(
                     StateManager.lastSavedState,
                     StateManager.state,
@@ -97,6 +99,7 @@ class StateManager:
             final_key = "root"
             for k in key.split("."):
                 final_key += f"['{k}']"
+
             StateManager.changedKeys.append(final_key)
 
             if StateManager.saveBlocked == 0:

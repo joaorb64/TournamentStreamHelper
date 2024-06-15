@@ -247,35 +247,42 @@ class TSHTournamentDataProvider:
 
     def LoadStationSets(self, mainWindow):
         if mainWindow.lastStationSelected:
-            stationSet = None
+            worker = Worker(
+                TSHTournamentDataProvider.instance.LoadStationSetsDo,
+                **{"mainWindow": mainWindow}
+            )
+            self.threadPool.start(worker)
 
-            if mainWindow.lastStationSelected.get("type") == "stream":
-                stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
-                    mainWindow.lastStationSelected.get("identifier"))
-            else:
-                stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
-                    mainWindow.lastStationSelected.get("id")
-                )
+    def LoadStationSetsDo(self, mainWindow, progress_callback=None, cancel_event=None):
+        stationSet = None
 
-                if len(stationSets) > 0:
-                    stationSet = stationSets[0]
+        if mainWindow.lastStationSelected.get("type") == "stream":
+            stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
+                mainWindow.lastStationSelected.get("identifier"))
+        else:
+            stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
+                mainWindow.lastStationSelected.get("id")
+            )
 
-                queueCache = mainWindow.stationQueueCache
-                logger.info(queueCache.queue)
-                logger.info(stationSets)
-                if queueCache and not queueCache.CheckQueue(stationSets):
-                    queueCache.UpdateQueue(stationSets)
+            if len(stationSets) > 0:
+                stationSet = stationSets[0]
 
-                    TSHTournamentDataProvider.instance.GetStationMatches(
-                        stationSets, mainWindow)
+            queueCache = mainWindow.stationQueueCache
+            logger.info(queueCache.queue)
+            logger.info(stationSets)
+            if queueCache and not queueCache.CheckQueue(stationSets):
+                queueCache.UpdateQueue(stationSets)
 
-            if not stationSet:
-                stationSet = {}
+                TSHTournamentDataProvider.instance.GetStationMatches(
+                    stationSets, mainWindow)
 
-            stationSet["auto_update"] = mainWindow.lastStationSelected.get(
-                "type")
+        if not stationSet:
+            stationSet = {}
 
-            mainWindow.signals.NewSetSelected.emit(stationSet)
+        stationSet["auto_update"] = mainWindow.lastStationSelected.get(
+            "type")
+
+        mainWindow.signals.NewSetSelected.emit(stationSet)
 
     def LoadUserSet(self, mainWindow, user):
         _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)

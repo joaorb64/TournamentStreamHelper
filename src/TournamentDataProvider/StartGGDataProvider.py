@@ -368,8 +368,11 @@ class StartGGDataProvider(TournamentDataProvider):
                 for t, team in enumerate(result.get("old", {}).get("entrants", [])):
                     for p, player in enumerate(team):
                         if player["mains"]:
-                            finalResult["entrants"][t][p]["mains"] = player["mains"]
-                            finalResult["has_selection_data"] = True
+                            try:
+                                finalResult["entrants"][t][p]["mains"] = player["mains"]
+                                finalResult["has_selection_data"] = True
+                            except:
+                                logger.debug(traceback.format_exc())
 
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -573,10 +576,10 @@ class StartGGDataProvider(TournamentDataProvider):
             "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
             "tournament_phase": phase_name,
             "bracket_type": bracket_type,
-            "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant", {}) != None else "",
-            "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant", {}) != None else "",
-            "p1_seed": p1.get("entrant", {}).get("initialSeedNum", None),
-            "p2_seed": p2.get("entrant", {}).get("initialSeedNum", None),
+            "p1_name": p1.get("entrant", {}).get("name", "") if p1 and p1.get("entrant") != None else "",
+            "p2_name": p2.get("entrant", {}).get("name", "") if p2 and p2.get("entrant") != None else "",
+            "p1_seed": p1.get("entrant", {}).get("initialSeedNum", None) if p1 and p1.get("entrant") else None,
+            "p2_seed": p2.get("entrant", {}).get("initialSeedNum", None) if p2 and p2.get("entrant") else None,
             "stream": _set.get("stream", {}).get("streamName", "") if _set.get("stream", {}) != None else "",
             "station": _set.get("station", {}).get("number", "") if _set.get("station", {}) != None else "",
             "isOnline": deep_get(_set, "event.isOnline"),

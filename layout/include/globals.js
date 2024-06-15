@@ -384,16 +384,17 @@ async function SetInnerHtml(element, html, settings = {}) {
       if (firstRun) {
         gsap.set(element.find(".text"), anim_in);
       } else {
+        anim_out.onComplete = null;
         gsap.fromTo(element.find(".text"), anim_out, anim_in);
       }
     };
 
     if (!firstRun) {
       anim_out.onComplete = ()=>updateElement(element, html, firstRun)
-      await gsap.to(element.find(".text"), anim_out).then(()=>updateElement(element, html, firstRun));
+      await gsap.to(element.find(".text"), anim_out);
     } else {
       anim_out.onComplete = ()=>updateElement(element, html, firstRun)
-      await gsap.set(element.find(".text"), anim_out).then(()=>updateElement(element, html, firstRun));
+      await gsap.set(element.find(".text"), anim_out);
     }
   }
 }
