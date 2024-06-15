@@ -111,6 +111,11 @@ body {
   width: 480px;
 }
 
+.roa2 .player.container {
+  top: 0px;
+  height: 100px;
+  width: 750px;
+}
 
 .mk1 .player.container {
   top: 105px;
@@ -165,6 +170,11 @@ body {
   left: 248px;
 }
 
+.roa2 .p1.container {
+  left: 0px;
+  border-radius: 0px 0px var(--border-radius) 0px;
+}
+
 .mk1 .p1.container {
   left: 350px;
 }
@@ -211,6 +221,11 @@ body {
 
 .sf6 .p2.container {
   right: 248px;
+}
+
+.roa2 .p2.container {
+  right: 0px;
+  border-radius: 0px 0px 0px var(--border-radius);
 }
 
 .mk1 .p2.container {
@@ -262,6 +277,15 @@ body {
 }
 
 .sf6.offline .chips {
+  width: 450px;
+}
+
+.roa2 .chips {
+  top: 106px;
+  height: 32px;
+}
+
+.roa2.offline .chips {
   width: 450px;
 }
 
@@ -319,6 +343,11 @@ body {
   justify-content: left;
 }
 
+.roa2.offline .p1.chips {
+  left: 8px;
+  justify-content: left;
+}
+
 .mk1 .chip {
   height: 32px;
 }
@@ -371,6 +400,12 @@ body {
 }
 
 .sf6.offline .p2.chips {
+  left: unset;
+  right: 8px;
+  justify-content: right;
+}
+
+.roa2.offline .p2.chips {
   left: unset;
   right: 8px;
   justify-content: right;
@@ -458,6 +493,11 @@ body {
   height: 100%;
 }
 
+.roa2 .chip .text:not(.text_empty) {
+  font-size: 20px;
+  height: 100%;
+}
+
 .sf6.online .seed.chip .text:not(.text_empty) {
   margin: 0;
   border-radius: 0;
@@ -506,6 +546,11 @@ body {
 .sf6 .name_twitter .name {
   width: 100%;
   font-size: 30px;
+}
+
+.roa2 .name_twitter .name {
+  width: 100%;
+  font-size: 40px;
 }
 
 .mk1 .name_twitter .name {
@@ -704,6 +749,12 @@ body {
   top: 924px;
 }
 
+.roa2 .logo {
+  width: 80px;
+  height: 80px;
+  top: 130px;
+}
+
 .mk1 .logo {
   width: 80px;
   height: 80px;
@@ -792,6 +843,12 @@ body {
   height: 100%;
 }
 
+.roa2 .tournament_name {
+  font-size: 30px;
+  width: 100%;
+  height: 100%;
+}
+
 .fgc .info.container.top {
   top: 8px;
   height: 34px;
@@ -848,6 +905,20 @@ body {
   height: 30px;
 }
 
+
+.roa2 .info.container.top {
+  transform: unset;
+  top: unset;
+  left: unset;
+  right: 0px;
+  bottom: 0px;
+  width: 350px;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  height: 70px;
+}
+
 .info.container.bottom {
   top: 42px;
   left: 42px;
@@ -868,6 +939,11 @@ body {
 }
 
 .sf6 .phase {
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.roa2 .phase {
   font-size: 20px;
   letter-spacing: 2px;
 }
@@ -915,6 +991,15 @@ body {
   bottom: unset;
   transform: unset;
   left: 10px;
+}
+
+.roa2 .info.container.bottom {
+  bottom: unset;
+  top: 0px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  height: 40px;
+  width: 300px;
 }
 
 .arms .info.container.bottom {
@@ -1015,6 +1100,16 @@ body {
   width: 34px;
 }
 
+.roa2 .icon div:not(.text) {
+  height: 70px;
+  width: 70px;
+}
+
+.roa2 .character_container div:not(.text) {
+  height: 70px;
+  width: 70px;
+}
+
 .flags_container {
   display: flex;
   flex-direction: column;
@@ -1097,6 +1192,11 @@ body {
 
 .sf6 .score {
   font-size: 34px;
+}
+
+.roa2 .score {
+  height: 110px;
+  font-size: 50px;
 }
 
 .p1 .score {
