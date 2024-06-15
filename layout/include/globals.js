@@ -31,6 +31,7 @@ async function UpdateWrapper(event) {
     window.requestAnimationFrame(() => {
       $(document).waitForImages(() => {
         $("body").fadeTo(1, 1, () => {
+          console.log("Start()")
           Start();
         });
       });
@@ -204,11 +205,13 @@ async function InitAll() {
 
   // await UpdateData();
 
-  console.log("== Init complete ==");
-  document.dispatchEvent(new CustomEvent("tsh_init"));
-
-  document.addEventListener("tsh_update", UpdateWrapper);
-  gsap.globalTimeline.timeScale(0);
+  $(document).ready(()=>{
+    console.log("== Init complete ==");
+    document.dispatchEvent(new CustomEvent("tsh_init"));
+  
+    document.addEventListener("tsh_update", UpdateWrapper);
+    gsap.globalTimeline.timeScale(0);
+  })
 }
 
 // Read program_state.json
@@ -350,6 +353,7 @@ async function SetInnerHtml(element, html, settings = {}) {
   if (firstRun) {
     // Put any text inside the div just so the font loading is triggered
     element.html("<div class='text' style='opacity: 0;'>&nbsp;</div>");
+    force = true;
   }
 
   // Wait for font to load before calculating sizes
@@ -360,7 +364,7 @@ async function SetInnerHtml(element, html, settings = {}) {
   const newText = he.decode(String(html).replace(/'/g, '"'));
 
   if (force === true || currentText !== newText) {
-    const updateElement = () => {
+    const updateElement = (element, html, firstRun) => {
       element.find(".text").html(html);
 
       if (html.trim().length === 0) {
@@ -385,10 +389,11 @@ async function SetInnerHtml(element, html, settings = {}) {
     };
 
     if (!firstRun) {
-      await gsap.to(element.find(".text"), anim_out).then(updateElement);
+      anim_out.onComplete = ()=>updateElement(element, html, firstRun)
+      await gsap.to(element.find(".text"), anim_out).then(()=>updateElement(element, html, firstRun));
     } else {
-      anim_out.duration = 1;
-      await gsap.to(element.find(".text"), anim_out).then(updateElement);
+      anim_out.onComplete = ()=>updateElement(element, html, firstRun)
+      await gsap.set(element.find(".text"), anim_out).then(()=>updateElement(element, html, firstRun));
     }
   }
 }
