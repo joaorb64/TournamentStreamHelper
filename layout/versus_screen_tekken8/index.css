@@ -331,6 +331,7 @@ body {
   background-position: center;
   width: 32px;
   height: 20px;
+  align-self: center;
 }
 
 .score {
@@ -600,4 +601,6 @@ body {
 .table_info .text {
   justify-content: left;
   padding: 0 16px;
+  display: flex;
+  align-items: center;
 }
