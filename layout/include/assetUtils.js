@@ -252,7 +252,10 @@ async function updateCharacterContainer(e, event) {
       }
 
       await Promise.allSettled(loads);
-      gsap.fromTo($(e).children(".tsh_character"), anim_out, anim_in);
+
+      if($(e) && $(e).children(".tsh_character").length > 0){
+        gsap.fromTo($(e).children(".tsh_character"), anim_out, anim_in);
+      }
     };
 
     if (firstRun) {
@@ -260,7 +263,11 @@ async function updateCharacterContainer(e, event) {
       await callback();
     } else {
       // Fade out, then change data and fade in
-      gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
+      if($(e) && $(e).children(".tsh_character").length > 0){
+        gsap.to($(e).children(".tsh_character"), anim_out).then(callback);
+      } else {
+        await callback();
+      }
     }
   }
 }

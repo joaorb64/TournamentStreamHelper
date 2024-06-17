@@ -512,7 +512,7 @@ class TSHGameAssetManager(QObject):
         except:
             logger.error(traceback.format_exc())
 
-    def LoadStageImage(self, stage, item, progress_callback):
+    def LoadStageImage(self, stage, item, progress_callback, cancel_event):
         try:
             if stage.get("path") and os.path.exists(stage.get("path")):
                 img = Image.open(stage.get("path"))
@@ -664,7 +664,7 @@ class TSHGameAssetManager(QObject):
         for w in self.workers:
             self.threadpool.start(w)
 
-    def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback):
+    def LoadSkinImages(self, allAssetData, allItem, skinModel, progress_callback, cancel_event):
         try:
             icons = []
 

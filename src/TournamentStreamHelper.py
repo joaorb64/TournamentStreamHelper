@@ -851,7 +851,7 @@ class Window(QMainWindow):
                             Qt.WindowModality.WindowModal)
                         self.downloadDialogue.show()
 
-                        def worker(progress_callback):
+                        def worker(progress_callback, cancel_event):
                             with open("update.tar.gz", 'wb') as downloadFile:
                                 downloaded = 0
 

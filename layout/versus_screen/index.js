@@ -257,7 +257,7 @@ LoadEverything().then(() => {
         SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
         SetInnerHtml($(`.p${t + 1} .flagstate`), "");
         SetInnerHtml($(`.p${t + 1} .pronoun`), "");
-        SetInnerHtml($(`.p${t + 1} .seed`), team.seed ? `Seed ${team.seed}` : "");
+        SetInnerHtml($(`.p${t + 1} .seed`), _.get(team, "player.1.seed") ? `Seed ${_.get(team, "player.1.seed")}` : "");
 
         let characterNames = [];
 

@@ -107700,6 +107700,318 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2498,
+        "name": "Fleet",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053191,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2498/image-6c77d4a1b4b11249e5a05f01be561303.png?ehk=3IwgEjXNJsac9eIY6x7F%2BHTwwr0zCJmsxDAsR%2Br9krg%3D&ehkOptimized=jffIS%2BIS2YOJFNabW60U0HdrWA%2FcIWVq8JddRGQlQg4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053192,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2498/image-d9121cb162bf7c328baec40df5772ef1.png?ehk=LFOPz4Fke94u%2FytQsLSVLf8o7SuFA%2FSK9vEBCpTtsag%3D&ehkOptimized=89qAJCL5CHHkfurfYAnieOwkNX89QCQijjkHsLjVVvk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2499,
+        "name": "Zetterburn",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053194,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2499/image-bdaa96a259d1c4fc5aff55a6894686cf.png?ehk=HQySUOBAd%2Fya%2B6kI1g%2FmH%2F3Lq1K9I8c8Obvhwe6Bf8w%3D&ehkOptimized=J2JV%2BdiDWE%2B51btkkf4g38NC8GA0AN3MZNBOpi5nEyM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053195,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2499/image-6c9d26c53b87bf5b937a753b0240b2c7.png?ehk=lBBMprm7UVMSDpHPz0d2Xz5Xifytk%2FdE%2BeQ53%2FNKI6I%3D&ehkOptimized=LdeEfEvzD55dze0hdJiAQvL6vif7j1GbXg052RYa38c%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2500,
+        "name": "Wrastor",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053196,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2500/image-d1c6c8cdacc8701cc97f1d08e205d7db.png?ehk=rjxueTYkKKGRByFajo4rCU4KBRZpJ1WCCpBq9%2Bcrwhk%3D&ehkOptimized=O4TsHetyqmutDJxEz6ObJkU229mU05hSBWbanLNhz%2BI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053198,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2500/image-6db965ce27097ea1b76923d614577c39.png?ehk=A5RnR1pFW%2FqmLO1I4UjBzZaO5RbQ%2Fq4CU%2B1ZxUNVh%2FU%3D&ehkOptimized=O22mKqC2MinNwEnNoai9gmVZI94Iw2gSrJLKvyiI10M%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2501,
+        "name": "Ranno",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053200,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2501/image-8e3492848f8217bc08d351f8baaca25a.png?ehk=wyd9UhVX4OQZO58JjqM9HHxF%2F%2F7Bc68SX0F3WUDc6Dc%3D&ehkOptimized=cdx%2FHDNnnqqVJXhZrjatYw1%2FWaYiWaNuJaI%2BmJjXbYE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053202,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2501/image-257c3b597daf70ea71bdc844abac9fdd.png?ehk=bWfJiRWBAZFhn81yn7kwKgH6RW7qd10QShZalMsJjrI%3D&ehkOptimized=2OB1bnIG4YLimX8WSccNmi2n%2BAf7hIJnMFVXwJMazYI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2502,
+        "name": "Maypul",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053204,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2502/image-733afa6def1119bd144484d037dae4b8.png?ehk=3niOdSGR1ILYOn%2FDSiiUjtA0zY8GiRq0oGw2MiktR%2FM%3D&ehkOptimized=B%2FQyKqNdTcrTCS8tx56ML9Ac%2B%2FkTHcvoBdFgPJ0FHyg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053205,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2502/image-93e983c3468ce5f63366d5a7a850b7f6.png?ehk=Toe2G4IOpcv6NGEA4aIFhB7gwcpjb1cs7h3%2BnseDpeU%3D&ehkOptimized=0WKjx69M1b%2Fj8HPoAd1hgv1gVM9%2BtK1wRhhGokyD1Zo%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2503,
+        "name": "Clairen",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053207,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2503/image-ef2d3339eefe5f8dceb77068f7b7a5e9.png?ehk=YxhCcjdENniDmMrwDA8DVK6YS%2Bc0gfkijObTYf7nCOg%3D&ehkOptimized=zcAWUIDtQoNG8bGoBgZyP0VlY%2BWa0z1WWeu6jKmlvRI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053208,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2503/image-1d17ff97b8f033db3288a3bb22f45f28.png?ehk=E6HSGZnfkvlgejqejlmFkER0AzyYz9G83iaHoV0f3xc%3D&ehkOptimized=1jOEEwwy4HfIi0tFnR0t2oturVxszOJ9WTi703Nopyg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2504,
+        "name": "Kragg",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053209,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2504/image-6784dab717c31b5605755ed0b59d3dd6.png?ehk=5rvkm7F7OEXomRVB2Rov52KrwYspxeFEUVAleJ0JleU%3D&ehkOptimized=P42mpvi7d77zWIqH%2FikZTd5Lq8pWtRJHUxTzfyg8Llg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053210,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2504/image-25e2cf4053d30135dcc04beebbf08565.png?ehk=x6CDy6HonHIotPzYoZ7dIpjb0yjEFDl8Hw7ExIgI70M%3D&ehkOptimized=9Ztgmz7NergJzsh7QsECkUwX%2BkGwQpGDmcTyTkO29JE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2505,
+        "name": "Loxodont",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7053212,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2505/image-dbb7f941134770283231e5c4aa1af997.png?ehk=Pzso2BewEJFIJxWJqjwsVSEWKCl1JEJFTxE1z3rJkB8%3D&ehkOptimized=Ij9%2BOc5QheAEtZSSEfvDoSrqJKs02Oz0Xn61%2By187a8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7053213,
+            "width": 2160,
+            "height": 2160,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2505/image-b67ff7311fd56693e30f21c38ebd8cb2.png?ehk=HFDnOjmJnSHYQEAww0h7TPQ6bPLeNH2%2F3PGFfWT0uy0%3D&ehkOptimized=n1TWaN3RWvqFIC%2BFcIECaIjMpemR57Vemgpzm8JzvYE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -109958,7 +110270,15 @@
     2494,
     2495,
     2496,
-    2497
+    2497,
+    2498,
+    2499,
+    2500,
+    2501,
+    2502,
+    2503,
+    2504,
+    2505
   ],
   "resultEntity": "character",
   "actionRecords": []

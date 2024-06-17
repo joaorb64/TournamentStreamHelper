@@ -66,6 +66,9 @@ class TSHSelectSetWindow(QDialog):
             lambda x: self.LoadSelectedSet()
         )
 
+        self.labelStatus = QLabel()
+        layout.addWidget(self.labelStatus)
+
         self.resize(1200, 500)
 
         qr = self.frameGeometry()
@@ -73,8 +76,10 @@ class TSHSelectSetWindow(QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-        TSHTournamentDataProvider.instance.signals.get_sets_finished.connect(
-            self.SetSets)
+        TSHTournamentDataProvider.instance.signals.sets_data_updated.connect(
+            self.SetsUpdated)
+
+        self.model = QStandardItemModel()
 
     def eventFilter(self, obj, event):
         if obj is self.startggSetSelectionItemList and event.type() == QEvent.KeyPress:
@@ -86,10 +91,20 @@ class TSHSelectSetWindow(QDialog):
         self.proxyModel.setSourceModel(QStandardItemModel())
         TSHTournamentDataProvider.instance.LoadSets(
             showFinished=self.showFinished.isChecked())
+        self.model.clear()
+        self.labelStatus.setText(
+            QApplication.translate("app", "Fetching sets..."))
 
-    def SetSets(self, sets):
-        logger.info("Got sets" + str(len(sets)))
-        model = QStandardItemModel()
+    def SetsUpdated(self, data):
+        if data == None:
+            return
+
+        if data["progress"] >= data["totalPages"]:
+            self.labelStatus.setText("")
+        else:
+            self.labelStatus.setText(
+                f"Fetching sets...({data['progress']}/{data['totalPages']})")
+
         horizontal_labels = ["Stream", "Station",
                              "Wave", "Title", "Player 1", "Player 2"]
         horizontal_labels[0] = QApplication.translate("app", "Stream")
@@ -100,7 +115,9 @@ class TSHSelectSetWindow(QDialog):
             "app", "Player {0}").format(1)
         horizontal_labels[5] = QApplication.translate(
             "app", "Player {0}").format(2)
-        model.setHorizontalHeaderLabels(horizontal_labels)
+        self.model.setHorizontalHeaderLabels(horizontal_labels)
+
+        sets = data["sets"]
 
         if sets is not None:
             for s in sets:
@@ -124,7 +141,7 @@ class TSHSelectSetWindow(QDialog):
                 except Exception as e:
                     logger.error(traceback.format_exc())
 
-                model.appendRow([
+                self.model.appendRow([
                     QStandardItem(s.get("stream", "")),
                     QStandardItem(str(s.get("station", "")) if s.get(
                         "station", "") != None else ""),
@@ -135,7 +152,7 @@ class TSHSelectSetWindow(QDialog):
                     dataItem
                 ])
 
-        self.proxyModel.setSourceModel(model)
+        self.proxyModel.setSourceModel(self.model)
         self.startggSetSelectionItemList.setColumnHidden(6, True)
         self.startggSetSelectionItemList.resizeColumnsToContents()
         self.startggSetSelectionItemList.horizontalHeader(
@@ -156,3 +173,10 @@ class TSHSelectSetWindow(QDialog):
         if setId:
             setId["auto_update"] = "set"
             self.parent().signals.NewSetSelected.emit(setId)
+
+        if TSHTournamentDataProvider.instance.setLoadingWorker:
+            # If there was a previous set loading worker,
+            # block its signals
+            TSHTournamentDataProvider.instance.setLoadingWorker.cancel()
+            TSHTournamentDataProvider.instance.setLoadingWorker.signals.blockSignals(
+                True)

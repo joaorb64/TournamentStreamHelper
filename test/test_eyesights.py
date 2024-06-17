@@ -11,10 +11,10 @@ tested_assets = {
     "en1a": ["full"],
     "jackie": ["full"],
     "sdbz": ["base_files/icon","full"],
-    "sf6": ["base_files/icon", "full"],
-    "idols": ["base_files/icon", "full"],
+    "sf6": ["base_files/icon", "full", "art", "pixel_art", "hd_portrait", "pixel_art_restore", "cartoon", "chibi"],
+    "idols": ["base_files/icon", "full", "art"],
     "jojoasbr": ["full"],
-    "roa": ["base_files/icon", "full"],
+    "roa": ["full"],
     "avg2": ["full"],
     "umvc3": ["full"],
     "bh": ["full"],
@@ -22,7 +22,17 @@ tested_assets = {
     "ssmack": ["full"],
     "trotb": ["base_files/icon"],
     "nasb2": ["render"],
-    "rbff2": ["full"]
+    "rbff2": ["full"],
+    "tekken8": ["full"],
+    "vsav": ["full", "full_new"],
+    "doe": ["full"],
+    "rsubf": ["base_files/icon"],
+    "ffcotw": ["base_files/icon"],
+    "ostrikers": ["full", "art"],
+    "sfalpha2": ["base_files/icon"],
+    "sfalpha3": ["base_files/icon", "full"],
+    "cvs2": ["base_files/icon"],
+    "svc": ["base_files/icon"]
 }
 
 main_out_path = "../out/test"

@@ -174,7 +174,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 config["filename"] = t
                 self.templates.append(config)
             except Exception as e:
-                logger.error(traceback.format_exc()) 
+                logger.error(traceback.format_exc())
 
         for t in self.templates:
             self.templateSelect.addItem(
@@ -278,7 +278,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.zoom.valueChanged.connect(lambda:
                                        TSHThumbnailSettingsWidget.SaveSettings(
                                            self,
-                                           key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.zoom",
+                                           key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                                               'codename')}.zoom",
                                            val=self.zoom.value(),
                                            generatePreview=True
                                        )
@@ -287,7 +288,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.horizontalAlign.valueChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.align.horizontal",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.align.horizontal",
                 val=val,
                 generatePreview=True
             )]
@@ -296,7 +298,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.verticalAlign.valueChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.align.vertical",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.align.vertical",
                 val=val,
                 generatePreview=True
             )]
@@ -305,7 +308,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillX.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillX",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.scaleFillX",
                 val=self.scaleToFillX.isChecked(),
                 generatePreview=True
             )]
@@ -314,7 +318,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.scaleToFillY.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.scaleFillY",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.scaleFillY",
                 val=self.scaleToFillY.isChecked(),
                 generatePreview=True
             )]
@@ -323,7 +328,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.proportionalScaling.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.proportionalScaling",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.proportionalScaling",
                 val=self.proportionalScaling.isChecked(),
                 generatePreview=True
             )]
@@ -332,7 +338,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.hideSeparators.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.hideSeparators",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.hideSeparators",
                 val=self.hideSeparators.isChecked(),
                 generatePreview=True
             )]
@@ -341,7 +348,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.noSeparatorAngle.valueChanged.connect(lambda:
                                                    TSHThumbnailSettingsWidget.SaveSettings(
                                                        self,
-                                                       key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.noSeparatorAngle",
+                                                       key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                                                           'codename')}.noSeparatorAngle",
                                                        val=self.noSeparatorAngle.value(),
                                                        generatePreview=True
                                                    )
@@ -350,7 +358,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.noSeparatorDistance.valueChanged.connect(lambda:
                                                       TSHThumbnailSettingsWidget.SaveSettings(
                                                           self,
-                                                          key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.noSeparatorDistance",
+                                                          key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                                                              'codename')}.noSeparatorDistance",
                                                           val=self.noSeparatorDistance.value(),
                                                           generatePreview=True
                                                       )
@@ -359,7 +368,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.flipSeparators.stateChanged.connect(lambda val: [
             TSHThumbnailSettingsWidget.SaveSettings(
                 self,
-                key=f"game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.flipSeparators",
+                key=f"game.{TSHGameAssetManager.instance.selectedGame.get(
+                    'codename')}.flipSeparators",
                 val=self.flipSeparators.isChecked(),
                 generatePreview=True
             )]
@@ -507,7 +517,8 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.selectRenderType.currentIndexChanged.connect(lambda: [
             SettingsManager.Set(
-                f"thumbnail_config.game.{TSHGameAssetManager.instance.selectedGame.get('codename')}.asset_pack",
+                f"thumbnail_config.game.{
+                    TSHGameAssetManager.instance.selectedGame.get('codename')}.asset_pack",
                 self.selectRenderType.currentData()
             ),
             self.updateFromSettings(),
@@ -812,7 +823,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.GeneratePreview()
         except Exception as e:
             logger.error("Error saving font")
-            logger.error(traceback.format_exc()) 
+            logger.error(traceback.format_exc())
 
     def ColorPicker(self, button, key):
         try:
@@ -823,13 +834,13 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 self.SaveSettings(f"{key}", val=color)
                 self.updateFromSettings()
         except Exception as e:
-            logger.error(traceback.format_exc()) 
+            logger.error(traceback.format_exc())
 
     def SaveSettings(self, key, val, generatePreview=False):
         try:
             SettingsManager.Set(f"thumbnail_config.{key}", val)
         except Exception as e:
-            logger.error(traceback.format_exc()) 
+            logger.error(traceback.format_exc())
 
         if generatePreview:
             self.GeneratePreview()
@@ -908,7 +919,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
             except Exception as e:
                 self.DisplayErrorMessage(traceback.format_exc())
 
-    def GeneratePreviewDo(self, progress_callback):
+    def GeneratePreviewDo(self, progress_callback, cancel_event):
         with self.lock:
             try:
                 if self.thumbnailGenerationThread.activeThreadCount() > 1:
@@ -922,7 +933,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
                 pass
 
     def DisplayErrorMessage(self, e):
-        logger.error(traceback.format_exc()) 
+        logger.error(traceback.format_exc())
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle(QApplication.translate(

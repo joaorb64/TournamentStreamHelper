@@ -17,6 +17,7 @@ from loguru import logger
 
 from .Workers import Worker
 
+
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = Signal()
     entrants_updated = Signal()
@@ -29,6 +30,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_phasegroup_updated = Signal(dict)
     game_changed = Signal(int)
     stream_queue_loaded = Signal(dict)
+    sets_data_updated = Signal(dict)
 
 
 class TSHTournamentDataProvider:
@@ -44,6 +46,8 @@ class TSHTournamentDataProvider:
 
         TSHGameAssetManager.instance.signals.onLoadAssets.connect(
             self.SetGameFromProvider)
+
+        self.setLoadingWorker = None
 
     def GameChanged(self, videogame):
         StateManager.Set(f"provider_videogame", {
@@ -88,7 +92,7 @@ class TSHTournamentDataProvider:
             TSHTournamentDataProvider.instance.provider.GetEntrants()
             TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
 
-            #TSHTournamentDataProvider.instance.SetGameFromProvider()
+            # TSHTournamentDataProvider.instance.SetGameFromProvider()
         else:
             TSHTournamentDataProvider.instance.signals.tournament_data_updated.emit({
             })
@@ -213,12 +217,24 @@ class TSHTournamentDataProvider:
         self.threadPool.start(worker)
 
     def LoadSets(self, showFinished):
+        if self.setLoadingWorker:
+            # If there was a previous set loading worker,
+            # block its signals
+            self.setLoadingWorker.cancel()
+            self.setLoadingWorker.signals.blockSignals(True)
+
         worker = Worker(self.provider.GetMatches, **
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
             logger.info(data),
             self.signals.get_sets_finished.emit(data)
         ])
+        worker.signals.progress.connect(lambda data: [
+            logger.info(f"SetDataUpdated: {data}"),
+            self.signals.sets_data_updated.emit(data)
+        ])
+        self.setLoadingWorker = worker
+
         self.threadPool.start(worker)
 
     def LoadStations(self):
@@ -231,35 +247,42 @@ class TSHTournamentDataProvider:
 
     def LoadStationSets(self, mainWindow):
         if mainWindow.lastStationSelected:
-            stationSet = None
+            worker = Worker(
+                TSHTournamentDataProvider.instance.LoadStationSetsDo,
+                **{"mainWindow": mainWindow}
+            )
+            self.threadPool.start(worker)
 
-            if mainWindow.lastStationSelected.get("type") == "stream":
-                stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
-                    mainWindow.lastStationSelected.get("identifier"))
-            else:
-                stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
-                    mainWindow.lastStationSelected.get("id")
-                )
+    def LoadStationSetsDo(self, mainWindow, progress_callback=None, cancel_event=None):
+        stationSet = None
 
-                if len(stationSets) > 0:
-                    stationSet = stationSets[0]
+        if mainWindow.lastStationSelected.get("type") == "stream":
+            stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
+                mainWindow.lastStationSelected.get("identifier"))
+        else:
+            stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
+                mainWindow.lastStationSelected.get("id")
+            )
 
-                queueCache = mainWindow.stationQueueCache
-                logger.info(queueCache.queue)
-                logger.info(stationSets)
-                if queueCache and not queueCache.CheckQueue(stationSets):
-                    queueCache.UpdateQueue(stationSets)
+            if len(stationSets) > 0:
+                stationSet = stationSets[0]
 
-                    TSHTournamentDataProvider.instance.GetStationMatches(stationSets, mainWindow)
+            queueCache = mainWindow.stationQueueCache
+            logger.info(queueCache.queue)
+            logger.info(stationSets)
+            if queueCache and not queueCache.CheckQueue(stationSets):
+                queueCache.UpdateQueue(stationSets)
 
-            if not stationSet:
-                stationSet = {}
+                TSHTournamentDataProvider.instance.GetStationMatches(
+                    stationSets, mainWindow)
 
-            stationSet["auto_update"] = mainWindow.lastStationSelected.get(
-                "type")
-            
+        if not stationSet:
+            stationSet = {}
 
-            mainWindow.signals.NewSetSelected.emit(stationSet)
+        stationSet["auto_update"] = mainWindow.lastStationSelected.get(
+            "type")
+
+        mainWindow.signals.NewSetSelected.emit(stationSet)
 
     def LoadUserSet(self, mainWindow, user):
         _set = TSHTournamentDataProvider.instance.provider.GetUserMatchId(user)
@@ -270,7 +293,7 @@ class TSHTournamentDataProvider:
         _set["auto_update"] = "user"
         mainWindow.signals.NewSetSelected.emit(_set)
 
-    #omits the first one (loaded through NewSetSelected)
+    # omits the first one (loaded through NewSetSelected)
     def GetStationMatches(self, matchesId, mainWindow):
 
         matchesId = matchesId[1:]
