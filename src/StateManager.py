@@ -55,7 +55,7 @@ class StateManager:
                     StateManager.lastSavedState = deep_clone(
                         StateManager.state)
 
-                logger.debug(StateManager.changedKeys)
+                # logger.debug(StateManager.changedKeys)
 
                 diff = DeepDiff(
                     StateManager.lastSavedState,
