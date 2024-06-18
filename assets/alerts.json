@@ -26,7 +26,7 @@
     },
     "6": {
         "dateStart": null,
-        "dateEnd": null,
+        "dateEnd": 1718697216,
         "alert": "WARNING:\n\nDO NOT UPDATE TOURNAMENT STREAM HELPER TO 5.801\n\nWe have been able to identify a critical issue which prevents the program from being ran. We are currently investigating the root cause. Affected users can revert back to 5.8 through this link: https://github.com/joaorb64/TournamentStreamHelper/releases/tag/5.8\n\nWe apologize for the inconvenience."
     }
 }
