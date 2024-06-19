@@ -103,8 +103,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
-                    slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
 
             )
             logger.debug(data.text)
@@ -151,8 +150,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
-                    slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
                 headers=HEADERS
             )
 
