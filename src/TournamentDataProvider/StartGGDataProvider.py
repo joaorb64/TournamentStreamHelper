@@ -383,8 +383,7 @@ class StartGGDataProvider(TournamentDataProvider):
             return self.ParseMatchDataOldApi({})
 
         data = self.QueryRequests(
-            f'https://www.start.gg/api/-/gg_api./set/{
-                setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+            f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
             type=requests.get,
             params={
                 "extensions": {"cacheControl": {"version": 1, "noCache": True}},
@@ -1036,8 +1035,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         if stateCode:
                             stateData = states[stateCode]
 
-                            path = f'./assets/state_flag/{countryCode}/{
-                                "_CON" if stateCode == "CON" else stateCode}.png'
+                            path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
                             if not os.path.exists(path):
                                 path = None
 
@@ -1327,11 +1325,11 @@ class StartGGDataProvider(TournamentDataProvider):
                     "phase_name": phaseName,
                     "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
                     f"player{players[0]}_score": set.get("entrant1Score"),
-                    f"player{players[0]}_seed": player1Seed.get("seedNum"),
+                    f"player{players[0]}_seed": player1Seed,
                     f"player{players[0]}_team": player1Info.get("prefix"),
                     f"player{players[0]}_name": player1Info.get("gamerTag"),
                     f"player{players[1]}_score": set.get("entrant2Score"),
-                    f"player{players[1]}_seed": player2Seed.get("seedNum"),
+                    f"player{players[1]}_seed": player2Seed,
                     f"player{players[1]}_team": player2Info.get("prefix"),
                     f"player{players[1]}_name": player2Info.get("gamerTag")
                 }

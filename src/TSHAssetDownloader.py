@@ -449,10 +449,8 @@ class TSHAssetDownloader(QObject):
                 for asset in _assets:
                     filesToDownload = list(asset["files"].values())
                     for fileToDownload in filesToDownload:
-                        fileToDownload[
-                            "path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
-                        fileToDownload["extractpath"] = f'./user_data/games/{
-                            game}'
+                        fileToDownload["path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
+                        fileToDownload["extractpath"] = f'./user_data/games/{game}'
                     allFilesToDownload.append(filesToDownload)
 
             TSHAssetDownloader.instance.downloadDialogue = QProgressDialog(
