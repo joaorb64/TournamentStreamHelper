@@ -32,22 +32,6 @@ LoadEverything().then(() => {
       ].entries()) {
         for (const [p, player] of [team.player["1"]].entries()) {
           if (player) {
-            if (
-              Object.keys(player.character).length > 0 &&
-              player.character[1].name
-            ) {
-              SetInnerHtml(
-                $(`.p${t + 1}.container .placeholder_container`),
-                `<div class='placeholder'></div>`
-              );
-            } else {
-              SetInnerHtml($(`.p${t + 1} .placeholder`), "");
-              SetInnerHtml(
-                $(`.p${t + 1}.container .placeholder_container`),
-                ""
-              );
-            }
-
             SetInnerHtml(
               $(`.p${t + 1}.container .name`),
               `
@@ -85,33 +69,8 @@ LoadEverything().then(() => {
               player.pronoun ? player.pronoun : ""
             );
 
-            document
-              .querySelector(`.p${t + 1}.character_container`)
-              .classList.add("unhidden");
-
             document.querySelector(`.p${t + 1}.bg`).classList.add("unhidden");
 
-            let teamMultiplyier = t == 0 ? 1 : -1;
-
-            await CharacterDisplay(
-              $(`.p${t + 1}.character_container`),
-              {
-                source: `score.${window.scoreboardNumber}.team.${t + 1}`,
-                anim_out: {
-                  autoAlpha: 0,
-                  x: -20 * teamMultiplyier + "px",
-                  stagger: teamMultiplyier * 0.2,
-                  duration: 0.4,
-                },
-                anim_in: {
-                  autoAlpha: 1,
-                  x: "0px",
-                  stagger: teamMultiplyier * 0.2,
-                  duration: 0.4,
-                },
-              },
-              event
-            );
             UpdateColor(player, t);
           }
           if (team.color) {
@@ -159,10 +118,6 @@ LoadEverything().then(() => {
         `
         );
         for (const [p, player] of [team.player["1"]].entries()) {
-          document
-            .querySelector(`.p${t + 1}.character_container`)
-            .classList.remove("unhidden");
-
           document.querySelector(`.p${t + 1}.bg`).classList.remove("unhidden");
           document
             .querySelector(`.p${t + 1}.light`)
@@ -171,7 +126,6 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .seed`), "");
           SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
           SetInnerHtml($(`.p${t + 1} .pronoun`), "");
-          SetInnerHtml($(`.p${t + 1}.container .placeholder_container`), "");
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
           UpdateColorAlternate(player, t);
           if (team.color) {
