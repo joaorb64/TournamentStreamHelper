@@ -5,14 +5,12 @@ body {
   margin: 0;
   width: 1920px;
   height: 1080px;
-
-  letter-spacing: 1;
-  text-transform: uppercase;
-
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
     drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
     drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1;
+  text-transform: uppercase;
 }
 
 .container {
@@ -24,46 +22,21 @@ body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background-color: var(--bg-color);
+  background: var(--bg-color);
   border-radius: 8px;
   overflow: hidden;
-
-  border-style: solid;
-  border-width: 0px;
 }
 
 .p1.container {
   transform: skew(20deg);
   left: 410px;
   flex-direction: row;
-
-  border-color: var(--p1-score-bg-color);
-  border-right-width: 0px;
-}
-
-.p1 .border {
-  top: 0px;
-  background-color: transparent;
-  border-width: 3px;
-  border-style: solid;
-  border-color: var(--p1-score-bg-color);
 }
 
 .p2.container {
   transform: skew(-20deg);
   right: 410px;
   flex-direction: row-reverse;
-
-  border-color: var(--p2-score-bg-color);
-  border-left-width: 0px;
-}
-
-.p2 .border {
-  top: 0px;
-  background-color: transparent;
-  border-width: 3px;
-  border-style: solid;
-  border-color: var(--p2-score-bg-color);
 }
 
 .name {
@@ -91,16 +64,22 @@ body {
 }
 
 .symbol {
+  /* Color of the symbol */
+  background: white;
   width: 25px;
   height: 25px;
   margin-right: 3px;
 }
 
 .twitter_logo {
-  background-image: url("./X_twitter_white.png");
-  background-size: cover; /* Adjusts the image to cover the entire div */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repeating */
+  -webkit-mask-image: url(./icons8-twitterx.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+
+  /* Color of the bird */
+  /* Twitter Blue */
+  /* background: #1da1f2; */
 }
 
 .under_chips .twitter_logo {
@@ -108,10 +87,10 @@ body {
 }
 
 .location_logo {
-  background-image: url("./map_pin_white.png");
-  background-size: cover; /* Adjusts the image to cover the entire div */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repeating */
+  -webkit-mask-image: url(./location-sign-svgrepo-com.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
 }
 
 .under_chips .location_logo {
@@ -179,7 +158,6 @@ body {
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
-  text-shadow: 0em 0em 0.2em #000;
 }
 
 .score_container {
@@ -201,7 +179,7 @@ body {
   right: 0px;
   margin-left: 15px;
   color: var(--p1-score-color);
-  background-color: var(--p1-score-bg-color);
+  background: var(--p1-score-bg-color);
 }
 
 .p2 .score {
@@ -213,7 +191,7 @@ body {
   left: 0px;
   margin-right: 15px;
   color: var(--p2-score-color);
-  background-color: var(--p2-score-bg-color);
+  background: var(--p2-score-bg-color);
 }
 
 .p1 .sponsor {
@@ -317,7 +295,7 @@ body {
   padding-left: 12px;
   padding-right: 12px;
   min-width: unset;
-  /* color: var(--text-color); */
+  color: var(--text-color);
   background: rgba(0, 0, 0, 0);
 }
 
@@ -384,7 +362,6 @@ body {
   transform: skew(-20deg);
   background: var(--bg-color);
   border-radius: 8px;
-  filter: drop-shadow(0 0px 2px rgba(255, 255, 255, 0.85));
 }
 
 .match {
@@ -438,8 +415,6 @@ body {
   border-color: var(--text-color);
   border-style: solid;
   border-radius: 8px;
-
-  text-shadow: 0em 0em 0.2em #000;
 }
 
 .p1_won {
@@ -451,7 +426,7 @@ body {
 }
 
 .neither_won {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.75);
 }
 
 .bg {
@@ -469,26 +444,10 @@ body {
   background: var(--p1-score-bg-color);
 }
 
-.p1.light {
-  left: 0;
-  background-image: url("./P1CameraBorderLight.png");
-}
-
 .p2.bg {
   right: 0;
   -webkit-mask-image: url("./P2CameraBorder.png");
   background: var(--p2-score-bg-color);
-}
-
-.light {
-  position: absolute;
-  width: 960px;
-  height: 1080px;
-}
-
-.p2.light {
-  right: 0;
-  background-image: url("./P2CameraBorderLight.png");
 }
 
 .p1 .tsh-center-image {
@@ -521,7 +480,6 @@ body {
   transform: translateX(-50%);
   height: 100%;
   width: 140px;
-  /* z-index: 1; */
 }
 
 .p1 .tsh_character {

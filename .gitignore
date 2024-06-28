@@ -57,3 +57,5 @@ main.spec
 *.tmp
 logs/*
 Pipfile*
+env
+desktop.ini
