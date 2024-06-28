@@ -154,7 +154,6 @@ LoadEverything().then(() => {
             );
 
             if ($(".sf6.online").length > 0) {
-              console.log("hi");
               console.log(player.twitter);
               console.log(player.pronoun);
               if (!player.twitter && !player.pronoun) {

@@ -80,8 +80,20 @@ body {
 }
 
 .tekken8 .player.container {
-  width: 530px;
-  height: 61px;
+  top: 32px;
+  width: 540px;
+  height: 38px;
+  transform: skewX(45deg);
+  border-radius: calc(var(--border-radius) / 2);
+  padding: 0px 16px;
+}
+
+.tekken8 .p2.player.container > div:not(.score) {
+  transform: skewX(45deg);
+}
+
+.tekken8 .p1.player.container > div:not(.score) {
+  transform: skewX(-45deg);
 }
 
 .pbrave .player.container {
@@ -109,6 +121,17 @@ body {
   top: 10px;
   height: 48px;
   width: 480px;
+  transform: skewX(35deg);
+  border-radius: calc(var(--border-radius) / 2);
+  padding: 0px 16px;
+}
+
+.sf6 .p2.player.container > div:not(.score) {
+  transform: skewX(35deg);
+}
+
+.sf6 .p1.player.container > div:not(.score) {
+  transform: skewX(-35deg);
 }
 
 .roa2 .player.container {
@@ -151,7 +174,7 @@ body {
 }
 
 .tekken8 .p1.container {
-  left: 180px;
+  left: 160px;
 }
 
 .pbrave .p1.container {
@@ -204,7 +227,8 @@ body {
 }
 
 .tekken8 .p2.container {
-  right: 180px;
+  transform: skewX(-45deg);
+  right: 160px;
 }
 
 .pbrave .p2.container {
@@ -220,6 +244,7 @@ body {
 }
 
 .sf6 .p2.container {
+  transform: skewX(-35deg);
   right: 248px;
 }
 
@@ -292,7 +317,15 @@ body {
 .sf6.online .chips {
   width: 270px;
   background: var(--bg-color);
-  border-radius: calc(var(--border-radius) / 2);
+  border-radius: calc(var(--border-radius) / 4);
+}
+
+.sf6.online .p1.chips {
+  transform: skewX(35deg);
+}
+
+.sf6.online .p2.chips {
+  transform: skewX(-35deg);
 }
 
 .mk1 .chips {
@@ -314,6 +347,11 @@ body {
   width: 270px;
   background: var(--bg-color);
   border-radius: calc(var(--border-radius) / 2);
+}
+
+.tekken8 .chips {
+  top: 4px;
+  width: 530px;
 }
 
 .chip {
@@ -346,6 +384,12 @@ body {
 .roa2.offline .p1.chips {
   left: 8px;
   justify-content: left;
+}
+
+.tekken8 .p1.chips {
+  left: 142px;
+  justify-content: left;
+  flex-direction: row-reverse;
 }
 
 .mk1 .chip {
@@ -411,20 +455,27 @@ body {
   justify-content: right;
 }
 
+.tekken8 .p2.chips {
+  left: unset;
+  right: 142px;
+  justify-content: right;
+  flex-direction: row;
+}
+
 .sf6.online .seed {
   position: absolute;
   top: 106px;
 }
 
 .sf6.online .p1 .seed {
-  left: 0;
+  left: -16px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
 .sf6.online .p2 .seed {
   left: unset;
-  right: 0;
+  right: -16px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -456,8 +507,32 @@ body {
   padding-right: 12px;
   background: var(--bg-color);
   color: var(--text-color);
-  border-radius: calc(var(--border-radius) / 2);
+  border-radius: calc(var(--border-radius) / 4);
   min-width: unset;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.sf6 .chip .text {
+  background: none;
+  position: relative;
+}
+
+.sf6.offline .chip .text:not(.text_empty)::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + 4px);
+  height: 100%;
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 4);
+  transform: skewX(35deg);
+  content: " ";
+  z-index: -999;
+}
+
+.sf6.offline .p2 .chip .text:not(.text_empty)::before {
+  transform: skewX(-35deg);
 }
 
 .flagstate .text,
@@ -479,13 +554,30 @@ body {
 }
 
 .ssbu .p1 .flagstate .text,
-.ssbu .p1 .flagcountry .text {
+.ssbu .p1 .flagcountry .text,
+.tekken8 .p2 .flagstate .text,
+.tekken8 .p2 .flagcountry .text {
   padding-right: 0 !important;
+}
+
+.tekken8 .p1 .flagstate .text,
+.tekken8 .p1 .flagcountry .text {
+  padding-left: 0 !important;
 }
 
 .ssbu .p1 .flagstate .text,
 .ssbu .p1 .flagcountry .text {
   flex-direction: row-reverse;
+}
+
+.sf6 .p1 .flagcountry .text,
+.sf6 .p1 .flagstate .text,
+.sf6 .p2 .flagcountry .text,
+.sf6 .p2 .flagstate .text {
+  flex-direction: column;
+  gap: 0;
+  letter-spacing: 2px;
+  font-size: 18px;
 }
 
 .sf6 .chip .text:not(.text_empty) {
@@ -501,7 +593,35 @@ body {
 .sf6.online .seed.chip .text:not(.text_empty) {
   margin: 0;
   border-radius: 0;
-  width: 130px;
+  width: 140px;
+}
+
+.sf6.online .p1 .chip {
+  transform: skewX(-35deg);
+}
+
+.sf6.online .p2 .chip {
+  transform: skewX(35deg);
+}
+
+.sf6.online .p1 .seed.chip {
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 4);
+  transform: skewX(35deg);
+}
+
+.sf6.online .p2 .seed.chip {
+  background: var(--bg-color);
+  border-radius: calc(var(--border-radius) / 4);
+  transform: skewX(-35deg);
+}
+
+.sf6.online .p1 .seed.chip .text {
+  transform: skewX(-35deg);
+}
+
+.sf6.online .p2 .seed.chip .text {
+  transform: skewX(35deg);
 }
 
 .mk1 .chip .text:not(.text_empty) {
@@ -548,6 +668,11 @@ body {
   font-size: 30px;
 }
 
+.tekken8 .name_twitter .name {
+  font-size: 28px;
+  width: 100%;
+}
+
 .roa2 .name_twitter .name {
   width: 100%;
   font-size: 40px;
@@ -569,6 +694,22 @@ body {
 
 .fgc .p2 .name_twitter .name .text {
   justify-content: flex-end;
+}
+
+.tekken8 .p1 .name_twitter, .tekken8 .p1 .score > .text {
+  transform: skewX(-45deg);
+}
+
+.tekken8 .p2 .name_twitter, .tekken8 .p2 .score > .text {
+  transform: skewX(45deg);
+}
+
+.sf6 .p1 .name_twitter, .sf6 .p1 .score > .text {
+  transform: skewX(-35deg);
+}
+
+.sf6 .p2 .name_twitter, .sf6 .p2 .score > .text {
+  transform: skewX(35deg);
 }
 
 .name_twitter {
@@ -779,7 +920,7 @@ body {
 .tekken8 .logo {
   width: 80px;
   height: 80px;
-  bottom: 90px;
+  bottom: 72px;
   top: unset;
 }
 
@@ -849,6 +990,16 @@ body {
   height: 100%;
 }
 
+.tekken8 .tournament_name {
+  height: unset;
+  font-size: 24px;
+}
+
+.sf6 .tournament_name {
+  height: unset;
+  font-size: 24px;
+}
+
 .fgc .info.container.top {
   top: 8px;
   height: 34px;
@@ -881,8 +1032,14 @@ body {
 }
 
 .tekken8 .info.container.top {
-  height: 30px;
-  top: 5px;
+  height: 32px;
+  top: 0px;
+  width: 560px;
+  border-radius: calc(var(--border-radius) / 2);
+  background: unset;
+  overflow: visible;
+  padding: 0 42px;
+  justify-content: center;
 }
 
 .pbrave .info.container.top {
@@ -898,11 +1055,15 @@ body {
 }
 
 .sf6 .info.container.top {
-  width: 440px;
+  background: unset;
+  overflow: visible;
+  justify-content: center;
+  padding: 0 42px;
+  width: 470px;
   top: 0;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  height: 30px;
+  height: 28px;
 }
 
 
@@ -948,6 +1109,10 @@ body {
   letter-spacing: 2px;
 }
 
+.tekken8 .phase {
+  font-size: 20px;
+}
+
 .match {
   font-size: 24px;
   letter-spacing: 2px;
@@ -955,7 +1120,7 @@ body {
 }
 
 .sf6 .match {
-  font-size: 30px;
+  font-size: 26px;
   letter-spacing: 2px;
 }
 
@@ -972,13 +1137,17 @@ body {
 }
 
 .sf6 .info.container.bottom {
+  border-radius: calc(var(--border-radius) / 2);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   top: unset;
   bottom: 0;
   width: 400px;
   height: 64px;
-  padding: 0px 20px;
+  background: unset;
+  overflow: visible;
+  padding: 0 42px;
+  justify-content: center;
 }
 
 .bblue .info.container.bottom {
@@ -1026,6 +1195,16 @@ body {
 .uni2 .info.container.bottom {
   top: unset;
   bottom: 130px;
+}
+
+.tekken8 .info.container.bottom {
+  border-radius: calc(var(--border-radius) / 2);
+  background: unset;
+  overflow: visible;
+  padding: 0 70px;
+  justify-content: center;
+  bottom: 0;
+  width: 500px;
 }
 
 .fgc.thin.arms .info.container.top {
@@ -1124,6 +1303,11 @@ body {
   height: 24px;
 }
 
+.tekken8 .flag {
+  width: 36px !important;
+  height: 24px !important;
+}
+
 .fgc .flag {
   width: 28px;
   height: 18px;
@@ -1142,6 +1326,40 @@ body {
 .fgc .sponsor_icon > div > div {
   width: 32px;
   height: 32px;
+}
+
+.tekken8 .sponsor_icon {
+  position: absolute;
+  right: 100px;
+  z-index: -999;
+  opacity: 0.6;
+}
+
+.tekken8 .p2 .sponsor_icon {
+  right: unset;
+  left: 100px;
+}
+
+.tekken8 .sponsor_icon > div > div {
+  width: 80px;
+  height: 80px;
+}
+
+.sf6 .sponsor_icon {
+  position: absolute;
+  right: 90px;
+  z-index: -999;
+  opacity: 0.6;
+}
+
+.sf6 .p2 .sponsor_icon {
+  right: unset;
+  left: 90px;
+}
+
+.sf6 .sponsor_icon > div > div {
+  width: 100px;
+  height: 100px;
 }
 
 .character_container {
@@ -1199,6 +1417,11 @@ body {
   font-size: 50px;
 }
 
+.tekken8 .score {
+  font-size: 38px;
+  width: 80px;
+}
+
 .p1 .score {
   color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
@@ -1209,6 +1432,16 @@ body {
 .thin .p1 .score {
   margin-right: -2px;
   margin-left: 2px;
+}
+
+.tekken8 .p1 .score {
+  margin-right: -16px;
+  margin-left: 16px;
+}
+
+.sf6 .p1 .score {
+  margin-right: -16px;
+  margin-left: 16px;
 }
 
 .sponsor {
@@ -1229,6 +1462,16 @@ body {
 .thin .p2 .score {
   margin-left: -2px;
   margin-right: 2px;
+}
+
+.tekken8 .p2 .score {
+  margin-left: -16px;
+  margin-right: 16px;
+}
+
+.sf6 .p2 .score {
+  margin-left: -16px;
+  margin-right: 16px;
 }
 
 .p2 .sponsor {
@@ -1253,4 +1496,64 @@ body {
 
 .p2 .losers {
   background: #308affff;
+}
+
+.top_bg_1, .top_bg_2, .bottom_bg_1, .bottom_bg_2 {
+  background: var(--bg-color);
+  position: fixed;
+  width: 60%;
+  height: 100%;
+  top: 0;
+  z-index: -1;
+  border-radius: calc(var(--border-radius) / 2);
+  overflow: hidden;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.bottom_bg_1, .bottom_bg_2 {
+  bottom: 0;
+  border-radius: calc(var(--border-radius) / 2);
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.top_bg_1 {
+  transform: skewX(45deg);
+  transform-origin: top right;
+  left: 0;
+}
+
+.sf6 .top_bg_1 {
+  transform: skewX(35deg);
+}
+
+.top_bg_2 {
+  transform: skewX(-45deg);
+  transform-origin: top left;
+  right: 0;
+}
+
+.sf6 .top_bg_2 {
+  transform: skewX(-35deg);
+}
+
+.bottom_bg_1 {
+  transform: skewX(45deg);
+  transform-origin: bottom right;
+  right: 0;
+}
+
+.sf6 .bottom_bg_1 {
+  transform: skewX(35deg);
+}
+
+.bottom_bg_2 {
+  transform: skewX(-45deg);
+  transform-origin: bottom left;
+  left: 0;
+}
+
+.sf6 .bottom_bg_2 {
+  transform: skewX(-35deg);
 }

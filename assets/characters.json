@@ -72119,12 +72119,12 @@
             "updatedAt": null
           },
           {
-            "id": 4577247,
+            "id": 7082211,
             "width": 32,
             "height": 32,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/1587/image-41e0721d3945232d463e4ba5a9990bb2.png?ehk=CAoy1ApfgqKugjLZxVqNv8wce7HpumEvsfQ%2BiZ3UUfc%3D&ehkOptimized=TcGh%2BEyWVoxsqu1aqGfpLHoqfFROLXsA0fDVJrMHVTI%3D",
+            "url": "https://images.start.gg/images/character/1587/image-8df7e1564f7dbe8acf868ae1c67b705d.png?ehk=LOWaj9nqMEg7Ru59bkWTVzR6EnO5ns7T7suw4y2VQ7E%3D&ehkOptimized=83VK8LPpN%2BzZGLOcPsAcqggC5qL2GSyZokjU3%2FXGl1M%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -72596,12 +72596,12 @@
             "updatedAt": null
           },
           {
-            "id": 4577262,
+            "id": 7082213,
             "width": 32,
             "height": 32,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/1596/image-b3f01f718a2ae90e14a5b7075dff4161.png?ehk=CvulKiQMjSc6w5WU75RLEp6JYuUqsQxF8uy9k19ajmo%3D&ehkOptimized=4sFrxFX0z%2B7HFK2suebrMH7ZplW6do6haA1wOcABvuQ%3D",
+            "url": "https://images.start.gg/images/character/1596/image-95abbee1259c5c5c889593b5a84f5647.png?ehk=%2Bp9INXISz8A0z0E1b3a4vSpGyPMRpARWD1OyDKJkTdE%3D&ehkOptimized=kwnB1Ot3fWWB4dyl3K7LsCtsayoEZD559%2BHx6%2FfLry8%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -72967,12 +72967,12 @@
             "updatedAt": null
           },
           {
-            "id": 4577278,
+            "id": 7082214,
             "width": 32,
             "height": 32,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/1603/image-ee251e953e8456a4fbb4da022099685b.png?ehk=PUmV5xZIjHrvcrU3FtYVsrhRw5VAbKrERK%2FaaNnr5P4%3D&ehkOptimized=YIBtIhQMby%2B8wYVXliyjys%2FUOehGcHk9aXjOBd%2FayKI%3D",
+            "url": "https://images.start.gg/images/character/1603/image-83da1b21c9450e9e15a10dc5732eddc2.png?ehk=pUElSoXqiLyJX4RB8KitvTHyQi3lmc2yFZWAucAehqI%3D&ehkOptimized=ldMASjEiDos1Lxw19uvkWzEJH12hxYGgl5VgTbVwaiE%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -73179,12 +73179,12 @@
             "updatedAt": null
           },
           {
-            "id": 4577284,
+            "id": 7082210,
             "width": 32,
             "height": 32,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/1607/image-b49c965339a4d732674cedcceb05a991.png?ehk=%2BXuDDyaIH4%2FG5%2B%2BzCEkHarXfMSD45U2lIqO6PjN6aus%3D&ehkOptimized=%2BhgqmxL3UkPtGbNUEKgxrzpxUwNOj2vffWbFXJ0VUr8%3D",
+            "url": "https://images.start.gg/images/character/1607/image-89b8f0b0a52cc7128dbd8b72760f463a.png?ehk=ifiXtgyNfATx0ZTyBZPSFDrJWZAF0zwtDcH0zpzSRH4%3D&ehkOptimized=SewCW72Ct3Tb3A4g98fuBHecCCeJ6R%2BaZ8EOxRSCjms%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -74027,12 +74027,12 @@
             "updatedAt": null
           },
           {
-            "id": 4577223,
+            "id": 7082205,
             "width": 32,
             "height": 32,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/1623/image-68c9792063c41a4bc0bc0da37820082c.png?ehk=auwGpTdyE7TrxKD%2FSoBV5WdUzv5ntI2e9PnTO1ehy40%3D&ehkOptimized=rKzmk4il4JvN7asu%2Fn21CiHn1z4K5sLZEeIbWrHWEEY%3D",
+            "url": "https://images.start.gg/images/character/1623/image-cc715f924252ec8845d93ff7eafc94f1.png?ehk=VDP3HJppzH2128EgDdfuoA9O%2Fpanrr0X7jSoF5n49Ww%3D&ehkOptimized=DZ00QXH4jarts7%2FiuJdYcjR9kWyhtQImnkbhgkWGYgo%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -108012,6 +108012,45 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2506,
+        "name": "M. Bison",
+        "isCommon": null,
+        "videogameId": 43868,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7095354,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2506/image-f8563443d197e2f90682a0daa416483f.png?ehk=1LPX8PBVSlAILdd8X8Bv4%2F4FjKD1cgpsklqvkrfn3l4%3D&ehkOptimized=X4LWHAuj6z6Lfr6YPuwDGr11milOW5ConhNHV5RdGuA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7095356,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2506/image-f8563443d197e2f90682a0daa416483f.png?ehk=1LPX8PBVSlAILdd8X8Bv4%2F4FjKD1cgpsklqvkrfn3l4%3D&ehkOptimized=X4LWHAuj6z6Lfr6YPuwDGr11milOW5ConhNHV5RdGuA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -110278,7 +110317,8 @@
     2502,
     2503,
     2504,
-    2505
+    2505,
+    2506
   ],
   "resultEntity": "character",
   "actionRecords": []
