@@ -25,6 +25,7 @@ How the automatic font and shadow color switching works:
 - Move the scoreboard_JinTracker file into the /layout folder of TSH where all the other scoreboard files are located.
 - Go to OBS and add a new Browser source.
 - Select the /layout/scoreboard_JinTracker/index.html as the local file and set its width and height to 1920 and 1080 respectively.
+- To use the one without the character images, select the /layout/scoreboard_JinTracker/noCharacter.html as the local file and set its width and height to 1920 and 1080 respectively.
 - Run TSH and enter the players' information.
 
 # Player Cams:
