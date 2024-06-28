@@ -11,6 +11,13 @@
 - There are five types of player info chip displayed on top of the player container: seed, twitter, pronoun, the state the player is from, and the country flag the player is from.
 - The camera borders and player chips disappear for doubles.
 
+How the automatic font and shadow color switching works:
+
+- When the player's color is dark, the texts in the chips become white and have a dark shadow beneath it, the shadow surrounding the player's container becomes white, the color of the inner container becomes white, and the color of the player's name becomes black.
+- When the player's color has medium brightness, the texts in the chips become white and have dark shadow beneath it, the color of the inner container becomes black, and the color of the player's name becomes white.
+- When the player's color is bright, the texts in the chips become black and have no shadow beneath it, the color of the inner container becomes black, and the color of the player's name becomes white.
+
+
 # Setup Guide:
 
 - Download the zip file and open it.
