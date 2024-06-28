@@ -1,3 +1,4 @@
+import dateutil.parser
 import requests
 import os
 import traceback
@@ -7,7 +8,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from datetime import datetime
-from dateutil.parser import parse
+import dateutil
 from ..Helpers.TSHDictHelper import deep_get
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
@@ -95,7 +96,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             prefix = prefix+"."
         return f"https://{prefix}challonge.com/{self.GetSlug()}"
 
-    def GetTournamentData(self, progress_callback=None):
+    def GetTournamentData(self, progress_callback=None, cancel_event=None):
         finalData = {}
 
         try:
@@ -105,7 +106,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
 
             )
-
+            logger.debug(data.text)
             data = orjson.loads(data.text)
             collection = deep_get(data, "collection", [{}])[0]
             details = deep_get(collection, "details", [])
@@ -117,21 +118,17 @@ class ChallongeDataProvider(TournamentDataProvider):
 
             finalData["tournamentName"] = deep_get(collection, "name")
 
-            # TODO necessary ?
-            if len(details) > 3:
-                startAtStr = deep_get(details[2], "text", "")
-                try:
-                    # test if date
-                    parse(startAtStr, fuzzy=False)
-                    # 'September 29, 2022'
-                    element = datetime.strptime(startAtStr, "%B %d, %Y")
-                    # to timestamp
-                    timestamp = datetime.timestamp(element)
-                    finalData["startAt"] = datetime.timestamp(element)
-                except ValueError:
-                    logger.error('ChallongeDataProvider: No date defined')
-
             details = collection.get("details", [])
+
+            try:
+                dateElement = next(
+                    (d for d in details if d.get("icon") == "fa fa-calendar"), None)
+                if dateElement:
+                    finalData["startAt"] = dateutil.parser.parse(
+                        dateElement.get("text"), fuzzy=True).timestamp()
+            except Exception as e:
+                logger.error(f"Could not get tournament date: {traceback.format_exc()}")
+
             participantsElement = next(
                 (d for d in details if d.get("icon") == "fa fa-users"), None)
             if participantsElement:
@@ -168,7 +165,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return url
 
-    def GetMatch(self, setId, progress_callback):
+    def GetMatch(self, setId, progress_callback, cancel_event):
         finalData = {}
 
         try:
@@ -190,7 +187,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return finalData
 
-    def GetStations(self, progress_callback=None):
+    def GetStations(self, progress_callback=None, cancel_event=None):
         try:
             logger.info("Get stations")
 
@@ -245,7 +242,7 @@ class ChallongeDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
         return stationSet
 
-    def GetMatches(self, getFinished=False, progress_callback=None):
+    def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         final_data = []
 
         try:
@@ -272,12 +269,19 @@ class ChallongeDataProvider(TournamentDataProvider):
                 final_data.append(self.ParseMatchData(match))
 
             final_data.reverse()
+
+            if progress_callback:
+                progress_callback.emit({
+                    "progress": 1,
+                    "totalPages": 1,
+                    "sets": final_data
+                })
         except Exception as e:
             logger.error(traceback.format_exc())
 
         return final_data
 
-    def GetTournamentPhases(self, progress_callback=None):
+    def GetTournamentPhases(self, progress_callback=None, cancel_event=None):
         phases = []
 
         try:
@@ -319,7 +323,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return phases
 
-    def GetTournamentPhaseGroup(self, id, progress_callback=None):
+    def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
         finalData = {}
         try:
             data = self.scraper.get(
@@ -736,7 +740,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         worker = Worker(self.GetEntrantsWorker)
         self.threadpool.start(worker)
 
-    def GetEntrantsWorker(self, progress_callback):
+    def GetEntrantsWorker(self, progress_callback, cancel_event):
         try:
             data = self.scraper.get(
                 self.GetEnglishUrl()+".json",
@@ -800,7 +804,7 @@ class ChallongeDataProvider(TournamentDataProvider):
 
         return (final_data)
 
-    def GetStandings(self, playerNumber, progress_callback):
+    def GetStandings(self, playerNumber, progress_callback, cancel_event):
         final_data = []
 
         try:
@@ -846,7 +850,7 @@ class ChallongeDataProvider(TournamentDataProvider):
         except Exception as e:
             logger.error(traceback.format_exc())
 
-    def GetLastSets(self, playerID, playerNumber, callback, progress_callback):
+    def GetLastSets(self, playerID, playerNumber, callback, progress_callback, cancel_event):
         try:
             data = self.scraper.get(
                 self.GetEnglishUrl()+".json",

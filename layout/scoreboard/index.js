@@ -82,20 +82,27 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1} .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                  <div>${player.country.code}</div>
+                `
                 : ""
             );
 
             SetInnerHtml(
               $(`.p${t + 1} .flagstate`),
               player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `
+                  <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                  <div>${player.state.code}</div>
+                `
                 : ""
             );
 
             await CharacterDisplay(
               $(`.p${t + 1}.container .character_container`),
               {
+                asset_key: "base_files/icon",
                 source: `score.${window.scoreboardNumber}.team.${t + 1}`,
               },
               event
@@ -147,7 +154,6 @@ LoadEverything().then(() => {
             );
 
             if ($(".sf6.online").length > 0) {
-              console.log("hi");
               console.log(player.twitter);
               console.log(player.pronoun);
               if (!player.twitter && !player.pronoun) {
@@ -167,18 +173,18 @@ LoadEverything().then(() => {
         data.score[window.scoreboardNumber].team["1"],
         data.score[window.scoreboardNumber].team["2"],
       ].entries()) {
-        let teamName = "";
+        let teamName = team.teamName;
+
+        let names = [];
+        for (const [p, player] of Object.values(team.player).entries()) {
+          if (player && player.name) {
+            names.push(await Transcript(player.name));
+          }
+        }
+        let playerNames = names.join(" / ");
 
         if (!team.teamName || team.teamName == "") {
-          let names = [];
-          for (const [p, player] of Object.values(team.player).entries()) {
-            if (player && player.name) {
-              names.push(await Transcript(player.name));
-            }
-          }
-          teamName = names.join(" / ");
-        } else {
-          teamName = team.teamName;
+          teamName = playerNames;
         }
 
         SetInnerHtml(
@@ -209,7 +215,9 @@ LoadEverything().then(() => {
 
         SetInnerHtml($(`.p${t + 1}.container .online_avatar`), "");
 
-        SetInnerHtml($(`.p${t + 1} .twitter`), "");
+        SetInnerHtml($(`.p${t + 1} .twitter`), 
+          playerNames != team.teamName ? playerNames : ""
+        );
 
         SetInnerHtml($(`.p${t + 1}.container .score`), String(team.score));
 

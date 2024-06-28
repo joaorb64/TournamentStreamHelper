@@ -10,6 +10,7 @@ from qasync import run, QEventLoop
 from functools import partial
 os.environ["QT_API"] = "pyside6"
 
+
 async def main(event_loop):
     def close_future(future, loop):
         loop.call_later(10, future.cancel)
@@ -19,7 +20,8 @@ async def main(event_loop):
 
     window = src.Window(event_loop)
     if hasattr(src.App, "aboutToQuit"):
-        getattr(src.App, "aboutToQuit").connect(partial(close_future, future, event_loop))
+        getattr(src.App, "aboutToQuit").connect(
+            partial(close_future, future, event_loop))
 
     await future
     if isinstance(future.result(), int):

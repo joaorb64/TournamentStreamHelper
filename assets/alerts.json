@@ -23,5 +23,10 @@
         "dateStart": null,
         "dateEnd": 1707850800,
         "alert": "UPDATE:\n\nWe are now fairly confident that the asset repository outage is now over, and asset packs should now once again be available from both the Asset Downloader and the Asset Portal. Thank you for your patience."
+    },
+    "6": {
+        "dateStart": null,
+        "dateEnd": 1718697216,
+        "alert": "WARNING:\n\nDO NOT UPDATE TOURNAMENT STREAM HELPER TO 5.801\n\nWe have been able to identify a critical issue which prevents the program from being ran. We are currently investigating the root cause. Affected users can revert back to 5.8 through this link: https://github.com/joaorb64/TournamentStreamHelper/releases/tag/5.8\n\nWe apologize for the inconvenience."
     }
 }

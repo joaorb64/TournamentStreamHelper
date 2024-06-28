@@ -18,6 +18,7 @@ class StateManager:
     state = {}
     saveBlocked = 0
     webServer = None
+    changedKeys = []
 
     lock = threading.RLock()
     threads = []
@@ -54,8 +55,15 @@ class StateManager:
                     StateManager.lastSavedState = deep_clone(
                         StateManager.state)
 
-                diff = DeepDiff(StateManager.lastSavedState,
-                                StateManager.state)
+                # logger.debug(StateManager.changedKeys)
+
+                diff = DeepDiff(
+                    StateManager.lastSavedState,
+                    StateManager.state,
+                    include_paths=StateManager.changedKeys
+                )
+
+                StateManager.changedKeys = []
 
                 if len(diff) > 0:
                     try:
@@ -88,6 +96,12 @@ class StateManager:
 
             deep_set(StateManager.state, key, value)
 
+            final_key = "root"
+            for k in key.split("."):
+                final_key += f"['{k}']"
+
+            StateManager.changedKeys.append(final_key)
+
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
                 # StateManager.ExportText(oldState)
@@ -96,6 +110,12 @@ class StateManager:
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
             deep_unset(StateManager.state, key)
+
+            final_key = "root"
+            for k in key.split("."):
+                final_key += f"['{k}']"
+            StateManager.changedKeys.append(final_key)
+
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
                 # StateManager.ExportText(oldState)
@@ -142,15 +162,22 @@ class StateManager:
         addedKeys = diff.get("dictionary_item_added", {})
 
         for key in addedKeys:
-            item = extract(StateManager.state, key)
+            try:
+                item = extract(StateManager.state, key)
 
-            # Remove "root[" from start and separate keys
-            path = "/".join(key[5:].replace(
-                "'", "").replace("]", "").replace("/", "_").split("["))
+                # Remove "root[" from start and separate keys
+                path = "/".join(key[5:].replace(
+                    "'", "").replace("]", "").replace("/", "_").split("["))
+                # Remove "root[" from start and separate keys
+                path = "/".join(key[5:].replace(
+                    "'", "").replace("]", "").replace("/", "_").split("["))
 
-            # logger.info("Added:", path, item)
+                # logger.info("Added:", path, item)
+                # logger.info("Added:", path, item)
 
-            StateManager.CreateFilesDict(path, item)
+                StateManager.CreateFilesDict(path, item)
+            except Exception as e:
+                logger.error(traceback.format_exc())
 
     def CreateFilesDict(path, di):
         pathdirs = "/".join(path.split("/")[0:-1])

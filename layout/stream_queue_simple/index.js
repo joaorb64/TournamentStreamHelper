@@ -125,8 +125,8 @@ LoadEverything().then(() => {
                         ${ player.pronoun ?
                             ` <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>` : ''
                         }
-                        ${ team.seed ?
-                            `<div class = "seed"> ${wrap_text("Seed " + team.seed)} </div> ` : ''
+                        ${ player.seed ?
+                            `<div class = "seed"> ${wrap_text("Seed " + player.seed)} </div> ` : ''
                         }
                        
                         

@@ -109,7 +109,7 @@ LoadEverything().then(() => {
 
         return `
             <div class = "p${t} team">
-                ${isTeams && !config.display.avatar ? "" : online_avatar_html(player, t)}
+                ${isTeams || !config.display.avatar ? "" : online_avatar_html(player, t)}
                 <div class = "flags">
                     ${ isTeams ? "" : 
                         (player.country.asset && config.display.country_flag ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
@@ -125,8 +125,8 @@ LoadEverything().then(() => {
                         ${ player.pronoun ?
                             ` <div class = "pronoun"> ${ wrap_text((!isTeams && true) ?  String(player.pronoun) : "") } </div>` : ''
                         }
-                        ${ team.seed ?
-                            `<div class = "seed"> ${wrap_text("Seed " + team.seed)} </div> ` : ''
+                        ${ player.seed ?
+                            `<div class = "seed"> ${wrap_text("Seed " + player.seed)} </div> ` : ''
                         }
                        
                         

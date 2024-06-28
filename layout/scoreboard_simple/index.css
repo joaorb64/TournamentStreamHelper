@@ -344,12 +344,12 @@ body {
   padding-left: 2px;
   padding-right: 4px;
   border-radius: 4px;
-  color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .t1 .pronoun {
-  background-color: var(--p1-sponsor-color);
+  background-color: var(--p1-score-bg-color);
 }
 .t2 .pronoun {
-  background-color: var(--p2-sponsor-color);
+  background-color: var(--p2-score-bg-color);
 }

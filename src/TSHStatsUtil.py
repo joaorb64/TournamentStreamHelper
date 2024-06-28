@@ -114,9 +114,11 @@ class TSHStatsUtil:
                 "phase_name": set.get("phase_name"),
                 "round_name": set.get("round_name"),
                 "player_score": set.get("player1_score"),
+                "player_seed": set.get("player1_seed"),
                 "player_team": set.get("player1_team"),
                 "player_name": set.get("player1_name"),
                 "oponent_score": set.get("player2_score"),
+                "oponent_seed": set.get("player2_seed"),
                 "oponent_team": set.get("player2_team"),
                 "oponent_name": set.get("player2_name")
             })

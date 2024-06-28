@@ -323,3 +323,12 @@ class Bracket():
         if roundNumber < 0:
             roundNumber += losersCutout[0]
             return TSHLocaleHelper.matchNames.get("losers_round").format(abs(roundNumber))
+
+    @staticmethod
+    def GetTopN(round_number: int, bracket_size: int):
+        print("Input:", round_number, bracket_size)
+
+        if round_number >= 0:
+            return bracket_size // (2 ** (round_number-1))
+        else:
+            return math.ceil(bracket_size / (2 ** (abs(round_number-1)/2)))

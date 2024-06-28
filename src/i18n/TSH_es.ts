@@ -141,11 +141,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
         <source>Form</source>
         <translation></translation>
     </message>
@@ -627,14 +627,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupBox</name>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <location filename="../layout/TSHCommentary.ui" line="23"/>
+        <location filename="../layout/TSHCommentator.ui" line="29"/>
         <source>GroupBox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <location filename="../layout/TSHCommentary.ui" line="26"/>
+        <location filename="../layout/TSHCommentator.ui" line="32"/>
         <source>Commentator 1</source>
         <translation>Comentarista 1</translation>
     </message>
@@ -649,38 +649,38 @@ p, li { white-space: pre-wrap; }
         <translation>Organización</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="90"/>
         <location filename="../layout/TSHCommentary.ui" line="90"/>
+        <location filename="../layout/TSHCommentator.ui" line="90"/>
         <source>GamerTag</source>
         <translation>Tag del comentarista</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="108"/>
         <location filename="../layout/TSHCommentary.ui" line="108"/>
+        <location filename="../layout/TSHCommentator.ui" line="108"/>
         <source>REAL NAME</source>
         <translation>Nombre Real</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="124"/>
         <location filename="../layout/TSHCommentary.ui" line="124"/>
+        <location filename="../layout/TSHCommentator.ui" line="124"/>
         <source>Real Name</source>
         <translation>NOMBRE REAL</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="140"/>
         <location filename="../layout/TSHCommentary.ui" line="140"/>
+        <location filename="../layout/TSHCommentator.ui" line="140"/>
         <source>TWITTER</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="156"/>
         <location filename="../layout/TSHCommentary.ui" line="156"/>
+        <location filename="../layout/TSHCommentator.ui" line="156"/>
         <source>Handle Only</source>
         <translation>Usuario</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentator.ui" line="172"/>
         <location filename="../layout/TSHCommentary.ui" line="170"/>
+        <location filename="../layout/TSHCommentator.ui" line="172"/>
         <source>PRONOUNS</source>
         <translation>PRONOMBRES</translation>
     </message>
@@ -750,22 +750,22 @@ p, li { white-space: pre-wrap; }
         <translation>Lista de Jugadores</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <location filename="../TSHBracketWidget.py" line="72"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>Número de grupos</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <location filename="../TSHBracketWidget.py" line="83"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <source>Players per slot</source>
         <translation>Jugadores por grupo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="161"/>
-        <location filename="../TSHCommentaryWidget.py" line="47"/>
-        <location filename="../TSHPlayerListWidget.py" line="75"/>
         <location filename="../TSHBracketWidget.py" line="92"/>
+        <location filename="../TSHScoreboardWidget.py" line="161"/>
+        <location filename="../TSHPlayerListWidget.py" line="75"/>
+        <location filename="../TSHCommentaryWidget.py" line="47"/>
         <source>Characters per player</source>
         <translation>Personajes por jugador</translation>
     </message>
@@ -820,14 +820,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="237"/>
         <location filename="../TournamentStreamHelper.py" line="836"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="237"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="299"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
+        <location filename="../TournamentStreamHelper.py" line="299"/>
         <source>Thumbnail Settings</source>
         <translation>Configuración de Miniaturas</translation>
     </message>
@@ -888,8 +888,8 @@ p, li { white-space: pre-wrap; }
         <translation>Buscar actualizaciones</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="78"/>
         <location filename="../TournamentStreamHelper.py" line="441"/>
+        <location filename="../TSHAssetDownloader.py" line="78"/>
         <source>Download assets</source>
         <translation>Descargar archivos</translation>
     </message>
@@ -1088,10 +1088,10 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="305"/>
-        <location filename="../TSHAssetDownloader.py" line="458"/>
         <location filename="../TournamentStreamHelper.py" line="839"/>
         <location filename="../TournamentStreamHelper.py" line="849"/>
+        <location filename="../TSHAssetDownloader.py" line="306"/>
+        <location filename="../TSHAssetDownloader.py" line="458"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -1134,7 +1134,7 @@ p, li { white-space: pre-wrap; }
         <translation>Filtrar...</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="170"/>
+        <location filename="../TSHAssetDownloader.py" line="171"/>
         <source>Asset pack name</source>
         <translation>Nombre del paquete de archivos</translation>
     </message>
@@ -1152,68 +1152,68 @@ p, li { white-space: pre-wrap; }
         <translation>El idioma de exportación de archivos ha sido cambiado existosamente</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="178"/>
+        <location filename="../TSHAssetDownloader.py" line="179"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="179"/>
+        <location filename="../TSHAssetDownloader.py" line="180"/>
         <source>Credits</source>
         <translation>Créditos</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="172"/>
+        <location filename="../TSHAssetDownloader.py" line="173"/>
         <source>Installed version</source>
         <translation>Versión instalada</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="169"/>
+        <location filename="../TSHAssetDownloader.py" line="170"/>
         <source>State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="174"/>
+        <location filename="../TSHAssetDownloader.py" line="175"/>
         <source>Latest version</source>
         <translation>Ultima versión</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="175"/>
+        <location filename="../TSHAssetDownloader.py" line="176"/>
         <source>Size</source>
         <translation>Tamaño</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="176"/>
+        <location filename="../TSHAssetDownloader.py" line="177"/>
         <source>Stage data</source>
         <translation>Datos del escenario</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="177"/>
+        <location filename="../TSHAssetDownloader.py" line="178"/>
         <source>Eyesight data</source>
         <translation>Posición de los vista</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="278"/>
+        <location filename="../TSHAssetDownloader.py" line="279"/>
         <source>Download</source>
         <translation>Descargar</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="281"/>
+        <location filename="../TSHAssetDownloader.py" line="282"/>
         <source>Update all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="304"/>
+        <location filename="../TSHAssetDownloader.py" line="305"/>
         <location filename="../TSHAssetDownloader.py" line="457"/>
         <source>Downloading assets</source>
         <translation>Descargando archivos</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="329"/>
+        <location filename="../TSHAssetDownloader.py" line="330"/>
         <source>Failed to fetch assets from github:</source>
         <translation>Error al buscar los archivos en Github</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="368"/>
+        <location filename="../TSHAssetDownloader.py" line="369"/>
         <source>Downloading {0}... ({1}/{2})</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1222,47 +1222,47 @@ p, li { white-space: pre-wrap; }
         <translation>Descargando {0}...</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="107"/>
+        <location filename="../TSHTournamentDataProvider.py" line="111"/>
         <source>Paste the tournament URL.</source>
         <translation>Pega la URL del torneo.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="107"/>
+        <location filename="../TSHTournamentDataProvider.py" line="111"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation>Para pegar desde StartGG, el link debe contener la parte /evento/</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="134"/>
+        <location filename="../TSHTournamentDataProvider.py" line="138"/>
         <source>Set tournament URL</source>
         <translation>Establecer URL del torneo</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="162"/>
+        <location filename="../TSHTournamentDataProvider.py" line="166"/>
         <source>Set Twitch username</source>
         <translation>Establecer usuario de Twitch</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="162"/>
+        <location filename="../TSHTournamentDataProvider.py" line="166"/>
         <source>Twitch Username:</source>
         <translation>Usuario de Twitch:</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="172"/>
+        <location filename="../TSHTournamentDataProvider.py" line="176"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation>Pega la URL del perfil de StartGG del jugador</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="175"/>
+        <location filename="../TSHTournamentDataProvider.py" line="179"/>
         <source>Insert the player&apos;s name in bracket</source>
         <translation>Inserta el nombre del jugador en el bracket</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="179"/>
+        <location filename="../TSHTournamentDataProvider.py" line="183"/>
         <source>Invalid tournament data provider</source>
         <translation>Proveedor de datos de torneo no válido</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="184"/>
+        <location filename="../TSHTournamentDataProvider.py" line="188"/>
         <source>Set player</source>
         <translation>Establecer jugador</translation>
     </message>
@@ -1277,23 +1277,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="95"/>
+        <location filename="../TSHSelectSetWindow.py" line="96"/>
+        <source>Fetching sets...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../TSHSelectStationWindow.py" line="85"/>
+        <location filename="../TSHSelectSetWindow.py" line="110"/>
         <source>Stream</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="96"/>
+        <location filename="../TSHSelectSetWindow.py" line="111"/>
         <source>Station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="97"/>
+        <location filename="../TSHSelectSetWindow.py" line="112"/>
         <source>Phase</source>
         <translation>Fase</translation>
     </message>
     <message>
-        <location filename="../TSHSelectSetWindow.py" line="98"/>
+        <location filename="../TSHSelectSetWindow.py" line="113"/>
         <source>Match</source>
         <translation>Ronda</translation>
     </message>
@@ -1319,10 +1324,10 @@ p, li { white-space: pre-wrap; }
         <translation>Borrar</translation>
     </message>
     <message>
+        <location filename="../TSHSelectSetWindow.py" line="114"/>
+        <location filename="../TSHSelectSetWindow.py" line="116"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="347"/>
-        <location filename="../TSHSelectSetWindow.py" line="99"/>
-        <location filename="../TSHSelectSetWindow.py" line="101"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1164"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1167"/>
         <source>Player {0}</source>
         <translation>Jugador {0}</translation>
     </message>
@@ -1397,12 +1402,12 @@ p, li { white-space: pre-wrap; }
         <translation>EQUIPO {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="526"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <location filename="../TournamentStreamHelper.py" line="124"/>
         <location filename="../TournamentStreamHelper.py" line="160"/>
         <location filename="../TournamentStreamHelper.py" line="570"/>
         <location filename="../TournamentStreamHelper.py" line="802"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
+        <location filename="../TSHScoreboardWidget.py" line="526"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
@@ -1436,7 +1441,7 @@ p, li { white-space: pre-wrap; }
         <translation>Comentarista {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1165"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1168"/>
         <source>Sponsor {0}</source>
         <translation>Patrocinador {0}</translation>
     </message>
@@ -1445,8 +1450,8 @@ p, li { white-space: pre-wrap; }
         <translation>Grupo {0}</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1212"/>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1239"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1215"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1242"/>
         <source>Team {0}</source>
         <translation>Equipo {0}</translation>
     </message>
@@ -1507,7 +1512,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="178"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
         <source>Custom Flags</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1546,13 +1551,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="731"/>
-        <location filename="../TSHSelectSetWindow.py" line="122"/>
+        <location filename="../TSHSelectSetWindow.py" line="139"/>
         <source>(</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="731"/>
-        <location filename="../TSHSelectSetWindow.py" line="123"/>
+        <location filename="../TSHSelectSetWindow.py" line="140"/>
         <source>)</source>
         <translation></translation>
     </message>
@@ -1661,18 +1666,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1348"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1351"/>
         <source>Please select a game first</source>
         <translation>Seleccione un juego primero</translation>
     </message>
     <message>
-        <location filename="../thumbnail/main_generate_thumbnail.py" line="1353"/>
+        <location filename="../thumbnail/main_generate_thumbnail.py" line="1356"/>
         <source>Player {0} tag missing</source>
         <translation>Falta la tag del jugador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="500"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="928"/>
+        <location filename="../TSHScoreboardWidget.py" line="500"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>

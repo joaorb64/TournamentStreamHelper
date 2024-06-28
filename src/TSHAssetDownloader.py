@@ -92,7 +92,8 @@ class TSHAssetDownloader(QObject):
         self.select.setEditable(True)
         self.select.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.select.completer().setCompletionMode(QCompleter.PopupCompletion)
-        self.font_small = QFont("./assets/font/RobotoCondensed.ttf", pointSize=8)
+        self.font_small = QFont(
+            "./assets/font/RobotoCondensed.ttf", pointSize=8)
         self.select.setFont(self.font_small)
         self.select.setModel(QStandardItemModel())
         self.preDownloadDialogue.layout().addWidget(self.select)
@@ -331,7 +332,7 @@ class TSHAssetDownloader(QObject):
             messagebox.exec()
         return assets
 
-    def DownloadGameIcon(self, game_code, index, progress_callback):
+    def DownloadGameIcon(self, game_code, index, progress_callback, cancel_event):
         try:
             response = urllib.request.urlopen(
                 f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo.png")
@@ -355,7 +356,7 @@ class TSHAssetDownloader(QObject):
             logger.error(traceback.format_exc())
             return (None)
 
-    def DownloadAssetsWorker(self, files, progress_callback):
+    def DownloadAssetsWorker(self, files, progress_callback, cancel_event):
         totalSize = sum(sum(f["size"] for f in fileList) for fileList in files)
         downloaded = 0
 
@@ -448,8 +449,7 @@ class TSHAssetDownloader(QObject):
                 for asset in _assets:
                     filesToDownload = list(asset["files"].values())
                     for fileToDownload in filesToDownload:
-                        fileToDownload[
-                            "path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
+                        fileToDownload["path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
                         fileToDownload["extractpath"] = f'./user_data/games/{game}'
                     allFilesToDownload.append(filesToDownload)
 
