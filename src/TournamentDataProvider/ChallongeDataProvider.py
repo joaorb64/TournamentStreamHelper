@@ -216,7 +216,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                     "id": station.get("id"),
                     "type": "station",
                     "identifier": station.get("name"),
-                    "stream": station.get("stream_url")
+                    "stream": self.ConvertStreamUrl(station.get("stream_url"))
                 })
 
             return final_data
@@ -679,8 +679,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 match, "queued_for_station.stream_url", None)
 
         if stream:
-            if "twitch.tv" in stream:
-                stream = stream.split("twitch.tv/")[1].replace("/", "")
+            stream=self.ConvertStreamUrl(stream)
 
         team1losers = False
         team2losers = False
@@ -727,7 +726,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.ParseEntrant(deep_get(match, "player1")).get("players"),
                 self.ParseEntrant(deep_get(match, "player2")).get("players"),
             ],
-            "stream": deep_get(match, "station.stream_url", None),
+            "stream": stream,
             "station": deep_get(match, "station.name", None),
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
             "team1score": scores[0],
