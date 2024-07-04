@@ -4,6 +4,7 @@ import os
 import traceback
 import re
 import orjson
+import time
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -48,7 +49,7 @@ class ChallongeDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, parent) -> None:
         super().__init__(url, threadpool, parent)
         self.name = "Challonge"
-        max_iter = 10
+        max_iter = 150 # Empyrical limit to cover for a low probability of actually initializing the scraper
         i, initialized = 0, False
         while not initialized and i < max_iter:
             if i > 0:
@@ -60,13 +61,18 @@ class ChallongeDataProvider(TournamentDataProvider):
                     'platform': 'windows',
                     'mobile': False
                 })
-                self.scraper.get(f"https://challonge.com/")
-                initialized = True
+                data = self.scraper.get(f"https://challonge.com/games.json")
+                if data.status_code == 200 and "application/json" in data.headers.get("content-type"):
+                    initialized = True
+                else:
+                    i += 1
             except cloudscraper.exceptions.CloudflareException as e:
                 i += 1
                 if i >= max_iter:
                     raise e
                     # TODO: Find a way to open a warning box and unload tournament if failed
+            if not initialized:
+                time.sleep(0.2)
 
     def GetSlug(self):
         # URL with language
@@ -210,7 +216,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                     "id": station.get("id"),
                     "type": "station",
                     "identifier": station.get("name"),
-                    "stream": station.get("stream_url")
+                    "stream": self.ConvertStreamUrl(station.get("stream_url"))
                 })
 
             return final_data
@@ -673,8 +679,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 match, "queued_for_station.stream_url", None)
 
         if stream:
-            if "twitch.tv" in stream:
-                stream = stream.split("twitch.tv/")[1].replace("/", "")
+            stream=self.ConvertStreamUrl(stream)
 
         team1losers = False
         team2losers = False
@@ -721,7 +726,7 @@ class ChallongeDataProvider(TournamentDataProvider):
                 self.ParseEntrant(deep_get(match, "player1")).get("players"),
                 self.ParseEntrant(deep_get(match, "player2")).get("players"),
             ],
-            "stream": deep_get(match, "station.stream_url", None),
+            "stream": stream,
             "station": deep_get(match, "station.name", None),
             "is_current_stream_game": True if deep_get(match, "station.stream_url", None) else False,
             "team1score": scores[0],
