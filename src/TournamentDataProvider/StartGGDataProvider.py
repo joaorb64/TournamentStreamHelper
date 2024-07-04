@@ -572,6 +572,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
         setData = {
             "id": _set.get("id"),
+            "team1score": _set.get("entrant1Score"),
+            "team2score": _set.get("entrant2Score"),
             "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
             "tournament_phase": phase_name,
             "bracket_type": bracket_type,
@@ -700,8 +702,6 @@ class StartGGDataProvider(TournamentDataProvider):
 
         setData["entrants"] = players
 
-        print("setData", setData)
-
         return setData
 
     def TopNPlacement(self, placement):
@@ -721,7 +721,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
         lOverallPlacement = sets.get("lOverallPlacement", 0)
         topN = 0
-        if lOverallPlacement > 0:
+        if lOverallPlacement and lOverallPlacement > 0:
             topN = self.TopNPlacement(lOverallPlacement)
 
         selectedCharMap = {}
@@ -946,9 +946,13 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 if characterIds is not None:
                     for char in characterIds:
-                        entrants[i].append({
-                            "mains": [TSHGameAssetManager.instance.GetCharacterFromStartGGId(char)[0], 0]
-                        })
+                        try:
+                            entrants[i].append({
+                                "mains": [TSHGameAssetManager.instance.GetCharacterFromStartGGId(char)[0], 0]
+                            })
+                        except:
+                            continue
+
 
         team1losers = False
         team2losers = False
@@ -960,6 +964,9 @@ class StartGGDataProvider(TournamentDataProvider):
             else:
                 team1losers = True
                 team2losers = True
+        
+        logger.info("Team 1 Score - OLD API: " + str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None)))
+        logger.info("Team 2 Score - OLD API: " + str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None)))
 
         return ({
             "stage_strike": stageStrikeState,
@@ -1375,7 +1382,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     tournamentPicture = tournament.get("images")[0].get("url")
                 except:
                     tournamentPicture = None
-                    logger.error(traceback.format_exc())
+                    logger.error("Failed to get Event Logo for: " + tournament.get("name") + " - " + event.get("name"))
 
                 player_history = {
                     "placement": set.get("placement"),

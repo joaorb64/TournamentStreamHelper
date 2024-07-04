@@ -11,6 +11,8 @@ query SetQuery($id: ID!) {
         fullRoundText
         state
         totalGames
+        entrant1Score
+        entrant2Score
         slots {
             entrant {
                 id
