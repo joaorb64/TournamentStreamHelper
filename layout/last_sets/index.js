@@ -93,17 +93,18 @@ LoadEverything().then(() => {
           $(`.player1_content .set${s + 1} .p2 .score`),
           sets.oponent_score
         );
-        gsap.from(
+        startingAnimation.from(
           $(`.set${s + 1}`),
           { x: -100, autoAlpha: 0, duration: 0.4 },
           0.2 + 0.2 * s
         );
       }
 
-      gsap.fromTo(
+      startingAnimation.fromTo(
         $(".bracket_line"),
         { width: 0 },
-        { width: "calc(100% + 240px)", duration: 1, ease: "Power2.easeOut" }
+        { width: "calc(100% + 240px)", duration: 1, ease: "Power2.easeOut" },
+        0
       );
     }
   };

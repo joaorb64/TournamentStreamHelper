@@ -29,7 +29,7 @@ LoadEverything().then(() => {
       tournament_html = "";
       Object.values(data.score[window.scoreboardNumber].history_sets[window.PLAYER])
         .slice(0, 6)
-        .forEach((sets, s) => {
+        .forEach(async(sets, s) => {
           tournament_html += `
           <div class="tournament${s + 1} tournament_container">
             <div class="info">
@@ -78,7 +78,7 @@ LoadEverything().then(() => {
               tournament.placement
             )}</span><span class="num_entrants">/${tournament.entrants}</span>`
         );
-        gsap.from(
+        startingAnimation.from(
           $(`.tournament${s + 1}`),
           { x: -100, autoAlpha: 0, duration: 0.3 },
           0.2 + 0.2 * s
