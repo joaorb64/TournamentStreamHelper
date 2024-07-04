@@ -12,12 +12,20 @@
 - You can change the type of character image by going to settings.json and changing the asset key.
 - The camera borders, character images, and player chips disappear for doubles.
 
+How the automatic font and shadow color switching works:
+
+- When the player's color is dark, the texts in the chips become white and have a dark shadow beneath it, the shadow surrounding the player's container becomes white, the color of the inner container becomes white, and the color of the player's name becomes black.
+- When the player's color has medium brightness, the texts in the chips become white and have dark shadow beneath it, the color of the inner container becomes black, and the color of the player's name becomes white.
+- When the player's color is bright, the texts in the chips become black and have no shadow beneath it, the color of the inner container becomes black, and the color of the player's name becomes white.
+
+
 # Setup Guide:
 
 - Download the zip file and open it.
 - Move the scoreboard_JinTracker file into the /layout folder of TSH where all the other scoreboard files are located.
 - Go to OBS and add a new Browser source.
 - Select the /layout/scoreboard_JinTracker/index.html as the local file and set its width and height to 1920 and 1080 respectively.
+- To use the one without the character images, select the /layout/scoreboard_JinTracker/noCharacter.html as the local file and set its width and height to 1920 and 1080 respectively.
 - Run TSH and enter the players' information.
 
 # Player Cams:
