@@ -110,6 +110,7 @@ LoadEverything().then(() => {
             $(`.t${t + 1}.p${p + 1} .flagcountry`),
             player.country.asset
               ? `
+                <div class='flagname'>${player.country.code}</div>
                 <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
               `
               : ""
@@ -119,6 +120,7 @@ LoadEverything().then(() => {
             $(`.t${t + 1}.p${p + 1} .flagstate`),
             player.state.asset
               ? `
+                <div class='flagname'>${player.state.code}</div>
                 <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
               `
               : ""

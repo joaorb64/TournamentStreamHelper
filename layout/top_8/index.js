@@ -98,10 +98,10 @@ LoadEverything().then(() => {
                 $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagcountry`),
                 player.country.asset
                   ? `
+                    <div class='flagname'>${player.country.code}</div>
                     <div class='flag' style='background-image: url(../../${String(
                       player.country.asset
                     ).toLowerCase()})'></div>
-                    <div class='flagname'>${player.country.code}</div>
                   ` 
                   : "",
                 undefined,
@@ -112,8 +112,8 @@ LoadEverything().then(() => {
                 $(`.slot${parseInt(t)} .p${parseInt(p)}.container .flagstate`),
                 player.state.asset
                   ? `
-                    <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
                     <div class='flagname'>${player.state.code}</div>
+                    <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
                   `
                   : "",
                 undefined,

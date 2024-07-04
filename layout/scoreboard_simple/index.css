@@ -98,6 +98,7 @@ body {
   padding-right: 2px;
   justify-content: left;
   text-transform: uppercase;
+  z-index: 999;
 }
 
 .twitter-container {
@@ -163,20 +164,35 @@ body {
   background-position: center;
   width: 38px;
   height: 26px;
-  border: 2px solid white;
   border-radius: 6px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .flagcountry {
   position: absolute;
-  top: 6px;
-  left: -80px;
+  top: 8px;
+  left: -36px;
+  transform: translateX(-100%); // align right
 }
 
 .flagstate {
   position: absolute;
-  top: 38px;
-  left: -62px;
+  top: 40px;
+  left: -20px;
+  transform: translateX(-100%); // align right
+}
+
+.flagcountry .text:not(.text_empty), .flagstate .text:not(.text_empty) {
+  background-color: var(--bg-color);
+  border-radius: 6px;
+  padding-left: 6px;
+  box-sizing: border-box;
+}
+
+.flagname {
+  font-size: 18px;
+  padding-right: 6px;
 }
 
 .score {
@@ -194,19 +210,19 @@ body {
 
 .sponsor-container {
   position: absolute;
-  top: 3px;
+  top: 4px;
   height: 30px;
-  width: 30px;
-  left: 254px;
+  width: 50px;
+  left: 233px;
   overflow: hidden;
   display: flex;
 }
 
 .sponsor-logo {
   position: relative;
-  width: 32px;
-  height: 32px;
-  opacity: 1;
+  width: 50px;
+  height: 50px;
+  opacity: 0.6;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

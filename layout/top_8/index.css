@@ -192,7 +192,7 @@ body {
 .flags > div {
   background-color: var(--bg-color);
   border-radius: 6px;
-  padding-right: 6px;
+  padding-left: 6px;
 }
 
 .flags_container > .text_empty {
@@ -207,13 +207,13 @@ body {
   width: 36px;
   height: 24px;
   border-radius: 6px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .flagname {
   font-size: 18px;
-  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .sponsor_icon {
