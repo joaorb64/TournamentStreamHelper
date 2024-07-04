@@ -4,52 +4,148 @@ LoadEverything().then(() => {
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .from([".logo"], { duration: 0.5, autoAlpha: 0, ease: "power2.inOut" }, 0.5)
     .from(
-      [".anim_container_outer"],
+      [".fade"],
       {
-        duration: 1,
-        width: "0",
-        ease: "power2.inOut",
-      },
-      1
-    )
-    .from(
-      [".info.bottom"],
-      {
-        duration: 1,
+        duration: 0.2,
         autoAlpha: 0,
-        ease: "power2.inOut",
-      },
-      1
-    )
-    .from(
-      [".fgc .top", ".fgc .player"],
-      {
-        duration: 1,
-        y: "-100px",
-        ease: "power2.inOut",
+        ease: "power2.out",
       },
       0
     )
     .from(
-      [".fgc:not(.bblue) .bottom"],
+      [".fade_down_left_stagger:not(.text_empty)"],
       {
-        duration: 1,
-        y: "+100px",
-        ease: "power2.inOut",
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'end',
+          opacity: 0,
+          y: "-20px",
+        },
+        duration: 0.2,
       },
       0
     )
     .from(
-      [".fgc.bblue .bottom"],
+      [".fade_down_right_stagger:not(.text_empty)"],
       {
-        duration: 1,
         autoAlpha: 0,
-        ease: "power2.inOut",
+        stagger: {
+          each: 0.05,
+          from: 'end',
+          opacity: 0,
+          y: "-20px",
+        },
+        duration: 0.2,
       },
-      0.2
-    );
+      0
+    )
+    .from(
+      [".p1 .fade_stagger:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'end',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p2 .fade_stagger:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'end',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p1 .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p2 .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".fade_right_stagger:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'end',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".fade_down"],
+      {
+        duration: 0.2,
+        y: "-20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_right"],
+      {
+        duration: 0.2,
+        x: "-20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_left"],
+      {
+        duration: 0.2,
+        x: "+20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_up"],
+      {
+        duration: 0.2,
+        y: "+20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
 
   Start = async () => {
     startingAnimation.restart();
