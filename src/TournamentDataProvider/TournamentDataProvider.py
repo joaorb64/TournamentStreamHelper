@@ -79,7 +79,7 @@ class TournamentDataProvider:
         if "youtube.com" in stream or "youtu.be" in stream:
             if "youtu.be" in stream: # Convert stream URL if shortened
                 stream = stream.split("?")[0]
-                stream = f"https://youtube.com/watch?v={stream.split("/")[-1]}"
+                stream = f"https://youtube.com/watch?v={stream.split('/')[-1]}"
 
             data_server_search = requests.get("https://api.invidious.io/instances.json?pretty=1&sort_by=health") # Use 3rd Party Client to get YouTube info
             if int(data_server_search.status_code) == 200:
