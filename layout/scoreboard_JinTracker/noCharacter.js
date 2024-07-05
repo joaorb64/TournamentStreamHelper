@@ -12,7 +12,108 @@ LoadEverything().then(() => {
   let newPlayer1; // P1 object after an update takes place
   let newPlayer2; // P2 object after an update takes place
   let swapDetected = false; // Variable that holds a boolean of whether a swap took place, initially set to false
-  let startingAnimation = gsap.timeline({ paused: true });
+  let startingAnimation = gsap.timeline({ paused: true })
+    .from(
+      [".fade"],
+      {
+        duration: 0.2,
+        autoAlpha: 0,
+        ease: "power2.out",
+      },
+      0
+    )
+    .from(
+      [".p1.under_chips .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p1.chips .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p2.under_chips .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".p2.chips .fade_stagger_reverse:not(.text_empty)"],
+      {
+        autoAlpha: 0,
+        stagger: {
+          each: 0.05,
+          from: 'start',
+          opacity: 0,
+        },
+        duration: 0.2,
+      },
+      0
+    )
+    .from(
+      [".fade_down"],
+      {
+        duration: 0.2,
+        y: "-20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_right"],
+      {
+        duration: 0.2,
+        x: "-20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_left"],
+      {
+        duration: 0.2,
+        x: "+20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    )
+    .from(
+      [".fade_up"],
+      {
+        duration: 0.2,
+        y: "+20px",
+        ease: "power2.out",
+        autoAlpha: 0,
+      },
+      0
+    );
 
   Start = async () => {
     startingAnimation.restart();
@@ -43,6 +144,13 @@ LoadEverything().then(() => {
               ${team.losers ? "(L)" : ""}
             </span>
             `
+            );
+
+            SetInnerHtml(
+              $(`.p${t + 1}.container .sponsor_icon`),
+              player.sponsor_logo
+                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                : ""
             );
 
             SetInnerHtml(
@@ -126,6 +234,7 @@ LoadEverything().then(() => {
           SetInnerHtml($(`.p${t + 1} .seed`), "");
           SetInnerHtml($(`.p${t + 1} .flagcountry`), "");
           SetInnerHtml($(`.p${t + 1} .pronoun`), "");
+          SetInnerHtml($(`.p${t + 1}.container .sponsor_icon`), "");
           SetInnerHtml($(`.p${t + 1} .score`), String(team.score));
           UpdateColorAlternate(player, t);
           if (team.color) {

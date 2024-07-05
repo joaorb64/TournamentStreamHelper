@@ -90,6 +90,31 @@ body {
   margin-right: 15px;
 }
 
+.sponsor_icon {
+  z-index: -999;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  opacity: 0.6;
+}
+
+.p1 .sponsor_icon {
+  transform: skew(-20deg);
+  right: 52px;
+}
+
+.p2 .sponsor_icon {
+  transform: skew(20deg);
+  left: 52px;
+}
+
+.sponsor_icon .text > div {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .symbol {
   width: 25px;
   height: 25px;
@@ -105,6 +130,11 @@ body {
 
 .under_chips .twitter_logo {
   background: rgba(0, 0, 0, 0);
+}
+
+.under_chips .text {
+  color: transparent !important;
+  text-shadow: none !important;
 }
 
 .location_logo {
