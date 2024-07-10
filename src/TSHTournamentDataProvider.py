@@ -264,17 +264,17 @@ class TSHTournamentDataProvider:
                 mainWindow.lastStationSelected.get("id")
             )
 
-            if len(stationSets) > 0:
+            if stationSets is not None and len(stationSets) > 0:
                 stationSet = stationSets[0]
 
-            queueCache = mainWindow.stationQueueCache
-            logger.info(queueCache.queue)
-            logger.info(stationSets)
-            if queueCache and not queueCache.CheckQueue(stationSets):
-                queueCache.UpdateQueue(stationSets)
+                queueCache = mainWindow.stationQueueCache
+                logger.info(queueCache.queue)
+                logger.info(stationSets)
+                if queueCache and not queueCache.CheckQueue(stationSets):
+                    queueCache.UpdateQueue(stationSets)
 
-                TSHTournamentDataProvider.instance.GetStationMatches(
-                    stationSets, mainWindow)
+                    TSHTournamentDataProvider.instance.GetStationMatches(
+                        stationSets, mainWindow)
 
         if not stationSet:
             stationSet = {}
@@ -295,7 +295,6 @@ class TSHTournamentDataProvider:
 
     # omits the first one (loaded through NewSetSelected)
     def GetStationMatches(self, matchesId, mainWindow):
-
         matchesId = matchesId[1:]
 
         worker = Worker(self.provider.GetFutureMatchesList, **{

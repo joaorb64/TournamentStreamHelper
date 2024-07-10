@@ -20,10 +20,12 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerDB import TSHPlayerDB
 
 from .thumbnail import main_generate_thumbnail as thumbnail
-from .TSHThumbnailSettingsWidget import * 
+from .TSHThumbnailSettingsWidget import *
 
 
 empty = {}
+
+
 class QueueSetsCache:
     queue = []
 
@@ -32,26 +34,28 @@ class QueueSetsCache:
 
     def CheckQueue(self, q):
         logger.info("----------------- CHECKING QUEUES -------------------")
+        if q is None:
+            return False
+
         if len(self.queue) != len(q):
             return False
-        
+
         for i in range(len(q)):
             savedSet = self.queue[i]
             incSet = q[i]
 
             if savedSet.get("id") != incSet.get("id"):
                 return False
-            
+
             if savedSet.get("state") != incSet.get("state"):
                 return False
 
             savedSlots = savedSet.get("slots", [empty, empty])
             incSlots = incSet.get("slots", [empty, empty])
 
-            
             if deep_get(savedSlots[0], "entrant.id") != deep_get(incSlots[0], "entrant.id"):
                 return False
-            
+
             if deep_get(savedSlots[1], "entrant.id") != deep_get(incSlots[1], "entrant.id"):
                 return False
 
@@ -554,7 +558,8 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1,
                 teamNumber=1,
-                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}',
+                path=f'score.{self.scoreboardNumber}.team.{
+                    1}.player.{len(self.team1playerWidgets)+1}',
                 scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
 
@@ -583,7 +588,8 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team2playerWidgets)+1,
                 teamNumber=2,
-                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
+                path=f'score.{self.scoreboardNumber}.team.{
+                    2}.player.{len(self.team2playerWidgets)+1}',
                 scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
 
@@ -708,7 +714,7 @@ class TSHScoreboardWidget(QWidget):
         TSHTournamentDataProvider.instance.GetStreamQueue()
 
     def StationSetsLoaded(self, data):
-        #Ici peut être lancer le chargement des sets voire même trigger un autre signal ?
+        # Ici peut être lancer le chargement des sets voire même trigger un autre signal ?
 
         logger.info("STATION SETS LOADED -----------------------------")
         logger.info(data)
@@ -754,9 +760,10 @@ class TSHScoreboardWidget(QWidget):
                 # Important because when we receive scores as 0 we don't update based on that
                 # Otherwise an offline set which is only updated after it's complete would reset the score
                 # all the time since it would be 0-0 until then
-                self.CommandClearAll(no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
+                self.CommandClearAll(no_mains=data.get(
+                    "no_mains") if data.get("no_mains") != None else False)
                 self.ClearScore()
-                
+
                 # A new set was loaded
                 self.lastSetSelected = data.get("id")
 
@@ -925,7 +932,8 @@ class TSHScoreboardWidget(QWidget):
                 # Is this Top 16 - Top ??? (even 128), if so...
                 # check if this isn't pools and isn't a qualifier
                 if top_n > 12 and data.get("isPools", False) is False and data.get("winnerProgression", None) is None:
-                    phase = TSHLocaleHelper.phaseNames.get("top_n","Top {0}").format(top_n)
+                    phase = TSHLocaleHelper.phaseNames.get(
+                        "top_n", "Top {0}").format(top_n)
 
                 self.scoreColumn.findChild(
                     QComboBox, "phase").setCurrentText(phase)
@@ -992,7 +1000,8 @@ class TSHScoreboardWidget(QWidget):
 
                         for p, player in enumerate(team):
                             if data.get("overwrite"):
-                                teamInstance[p].SetData(player, False, True, data.get("no_mains") if data.get("no_mains") != None else False)
+                                teamInstance[p].SetData(player, False, True, data.get(
+                                    "no_mains") if data.get("no_mains") != None else False)
                             if data.get("has_selection_data") and data.get("no_mains") != True:
                                 player = {
                                     "mains": player.get("mains")
@@ -1034,7 +1043,8 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.UpsetFactorCalculation.emit()
 
             if data.get("top_n"):
-                StateManager.Set(f"score.{self.scoreboardNumber}.top_n", data.get("top_n"))
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.top_n", data.get("top_n"))
         finally:
             StateManager.ReleaseSaving()
 
@@ -1055,18 +1065,19 @@ class TSHScoreboardWidget(QWidget):
                         "gamerTag")]
 
         self.ChangeSetData(data)
-        
+
     def LoadPlayerFromTag(self, tag, team, player, no_mains=False):
         team = int(team)-1
         player = int(player)-1
         teamInstances = [self.team1playerWidgets,
-                            self.team2playerWidgets]
-        
+                         self.team2playerWidgets]
+
         if self.teamsSwapped:
             teamInstances.reverse()
         for player_db in TSHPlayerDB.database.values():
             if tag.lower() == player_db.get("gamerTag").lower():
-                teamInstances[team][player].SetData(player_db, False, True, no_mains)
+                teamInstances[team][player].SetData(
+                    player_db, False, True, no_mains)
                 return True
         else:
             return False
