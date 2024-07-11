@@ -1446,7 +1446,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 "https://www.start.gg/api/-/gql",
                 type=requests.post,
                 jsonParams={
-                    "operationName": "RecentSetsQuery",
+                    # "operationName": "RecentSetsQuery",
                     "variables": {
                         "pid1": id1[0],
                         "uid1": id1[1],
