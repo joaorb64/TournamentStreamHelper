@@ -1413,12 +1413,12 @@ p, li { white-space: pre-wrap; }
         <translation>Set von {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="859"/>
+        <location filename="../TSHScoreboardWidget.py" line="857"/>
         <source>Load user set ({0})</source>
         <translation>User-Set {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="863"/>
+        <location filename="../TSHScoreboardWidget.py" line="861"/>
         <source>Load user set</source>
         <translation>User-Set laden</translation>
     </message>

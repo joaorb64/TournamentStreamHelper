@@ -1211,12 +1211,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="859"/>
+        <location filename="../TSHScoreboardWidget.py" line="857"/>
         <source>Load user set ({0})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="863"/>
+        <location filename="../TSHScoreboardWidget.py" line="861"/>
         <source>Load user set</source>
         <translation type="unfinished"></translation>
     </message>

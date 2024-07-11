@@ -1346,12 +1346,12 @@ p, li { white-space: pre-wrap; }
         <translation>Charger un set depuis {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="859"/>
+        <location filename="../TSHScoreboardWidget.py" line="857"/>
         <source>Load user set ({0})</source>
         <translation>Charger le set de l&apos;utilisateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="863"/>
+        <location filename="../TSHScoreboardWidget.py" line="861"/>
         <source>Load user set</source>
         <translation>Charger un set utilisateur</translation>
     </message>
