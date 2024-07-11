@@ -109,8 +109,7 @@ class TournamentDataProvider:
                             logger.info(
                                 f"Youtube Video Info request: {info.text}")
                             if int(info.status_code) == 200:
-                                stream = f'"{orjson.loads(
-                                    info.text).get("title")}"'
+                                stream = f'"{orjson.loads(info.text).get("title")}"'
                                 stream = f"YouTube: {stream}"
                                 break
                         elif orjson.loads(info.text).get("ucid"):
