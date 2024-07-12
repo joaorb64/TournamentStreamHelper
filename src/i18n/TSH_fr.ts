@@ -1398,7 +1398,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="96"/>
         <source>Fetching sets...</source>
-        <translation type="unfinished"></translation>
+        <translation>Chargement de la liste des matchs…</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="110"/>
