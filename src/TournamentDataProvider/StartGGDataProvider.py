@@ -424,7 +424,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
             logger.info("Fetching sets")
 
-            while page <= totalPages and not cancel_event.is_set():
+            while page <= totalPages and (cancel_event is None or not cancel_event.is_set()):
                 data = self.QueryRequests(
                     "https://www.start.gg/api/-/gql",
                     type=requests.post,
