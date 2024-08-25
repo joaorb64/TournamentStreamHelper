@@ -33,7 +33,7 @@ LoadEverything().then(() => {
                 ${player.team ? player.team.toUpperCase() : ""}
               </span>
               ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
-              ${team.losers ? "(L)" : ""}
+              ${team.losers ? "<span class='losers'>L</span>" : ""}
             </span>
             `
             );
@@ -57,7 +57,7 @@ LoadEverything().then(() => {
               `
               <span>
                 ${teamName.toUpperCase()}
-                ${team.losers ? "(L)" : ""}
+                ${team.losers ? "<span class='losers'>L</span>" : ""}
               </span>
               `
             );
