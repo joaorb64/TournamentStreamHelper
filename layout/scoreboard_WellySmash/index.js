@@ -167,7 +167,9 @@ LoadEverything().then(() => {
       }
     } else {
       const scoreBubblesContainer = document.querySelector('.score-bubbles-container');
-      scoreBubblesContainer.removeChild(scoreBubblesContainer.lastChild);
+      if (scoreBubblesContainer.lastChild) {
+          scoreBubblesContainer.removeChild(scoreBubblesContainer.lastChild);
+      }
       document.querySelector('.middle_container').style.justifyContent = 'center';
       document.querySelector('.middle_container').style.top = '0';
     }
