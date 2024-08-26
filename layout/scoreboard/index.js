@@ -260,7 +260,7 @@ LoadEverything().then(() => {
             }
           }
         }
-        if(team.color) {
+        if(team.color && !tsh_settings["forceDefaultScoreColors"]) {
           document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);
         }
       }
