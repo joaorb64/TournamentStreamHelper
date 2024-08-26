@@ -380,6 +380,16 @@ class WebServer(QThread):
     @socketio.on('get_sets')
     def ws_get_sets(message):
         emit('get_sets', WebServer.actions.get_sets(orjson.loads(message)))
+        
+    # Loads info on a match
+    @app.route('/get-match-<setId>')
+    def get_match(setId):
+        return WebServer.actions.get_match(setId)
+
+    @socketio.on('get_match')
+    def ws_get_match(message):
+        info = orjson.loads(message)
+        emit('get_match', WebServer.actions.get_match(info.get("setId")))
 
     # Get the commentators
     @app.route('/get-comms')
