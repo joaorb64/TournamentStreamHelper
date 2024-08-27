@@ -61,6 +61,8 @@
 
   --p1-sponsor-color: #ff7a6d;
   --p2-sponsor-color: #29b6f6;
+  --p1-score-bg-color: rgb(254, 54, 54);
+  --p2-score-bg-color: rgb(46, 137, 255);
   --p1-score-color: white;
   --p2-score-color: white;
 }
