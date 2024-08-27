@@ -11,6 +11,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .Workers import Worker
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -22,6 +23,7 @@ class WebServerActions(QThread):
         super().__init__(parent)
         self.scoreboard = scoreboard
         self.stageWidget = stageWidget
+        self.threadPool = QThreadPool()
 
     def program_state(self):
         return StateManager.state
@@ -353,6 +355,22 @@ class WebServerActions(QThread):
             provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=False)
             return sets
+        
+    def get_match(self, setId=None):
+        setId = int(setId)
+        provider = TSHTournamentDataProvider.instance.GetProvider()
+        loop, result = QEventLoop(), None
+
+        def handle_result(data):
+            nonlocal result
+            result = data
+            loop.quit()
+
+        worker = Worker(provider.GetMatch, setId=setId)
+        worker.signals.result.connect(handle_result)
+        self.threadPool.start(worker)
+        loop.exec_()
+        return result
 
     def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
         result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
