@@ -206,7 +206,7 @@ class WebServerActions(QThread):
         if losers is not None:
             self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
                 orjson.loads(
-                    orjson.dumps({'team' + str(team) + 'losers': bool(losers)})
+                    orjson.dumps({'team' + str(team) + 'losers': False if losers.lower() == 'false' else True})
                 )
             )
         return "OK"
