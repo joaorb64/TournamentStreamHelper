@@ -492,3 +492,47 @@ body {
   color: var(--text-color);
   align-self: center;
 }
+
+.score-bubbles-container {
+  display: flex;
+  justify-content: center;
+}
+
+.score-bubble.p1 {
+  background-color: var(--p1-score-bg-color);
+}
+
+.score-bubble.p2 {
+  background-color: var(--p2-score-bg-color);
+}
+
+.score-bubble {
+  transition: background-color 1s;
+  width: 31px;
+  height: 31px;
+  margin: 2px;
+  border-radius: 100%;
+  background-color: #707070;
+}
+
+.losers {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  font-size: 25px;
+  border-radius: 100%;
+  text-align: center;
+  align-items: center;
+  top: 24px;
+  justify-content: center;
+  margin: 0px 6px;
+}
+
+.t1 .losers {
+  background: var(--p1-score-bg-color);
+}
+
+.t2 .losers {
+  background: var(--p2-score-bg-color);
+}

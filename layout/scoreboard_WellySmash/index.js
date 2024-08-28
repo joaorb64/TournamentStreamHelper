@@ -33,7 +33,7 @@ LoadEverything().then(() => {
                 ${player.team ? player.team.toUpperCase() : ""}
               </span>
               ${player.name ? await Transcript(player.name.toUpperCase()) : ""}
-              ${team.losers ? "(L)" : ""}
+              ${team.losers ? "<span class='losers'>L</span>" : ""}
             </span>
             `
             );
@@ -57,7 +57,7 @@ LoadEverything().then(() => {
               `
               <span>
                 ${teamName.toUpperCase()}
-                ${team.losers ? "(L)" : ""}
+                ${team.losers ? "<span class='losers'>L</span>" : ""}
               </span>
               `
             );
@@ -128,7 +128,51 @@ LoadEverything().then(() => {
     );
 
     SetInnerHtml($(".singles .match"), data.score[window.scoreboardNumber].match);
-    SetInnerHtml($(".singles .best_of"), data.score[window.scoreboardNumber].best_of_text);
+
+    if (data.score[window.scoreboardNumber].best_of !== 0) {
+      document.querySelector('.middle_container').style.justifyContent = 'unset';
+      document.querySelector('.middle_container').style.top = '10px';
+
+      const bestOf = data.score[window.scoreboardNumber].best_of;
+      const scoreBubblesContainer = document.querySelector('.score-bubbles-container');
+      const currentBubbles = scoreBubblesContainer.children.length;
+  
+      if (currentBubbles < bestOf) {
+        for (let i = currentBubbles; i < bestOf; i++) {
+          const bubble = document.createElement('div');
+          bubble.className = 'score-bubble';
+          scoreBubblesContainer.appendChild(bubble);
+        }
+      } else if (currentBubbles > bestOf) {
+        for (let i = currentBubbles; i > bestOf; i--) {
+          scoreBubblesContainer.removeChild(scoreBubblesContainer.lastChild);
+        }
+      }
+
+      // Remove existing p1 and p2 classes
+      for (let i = 0; i < bestOf; i++) {
+        scoreBubblesContainer.children[i].classList.remove('p1', 'p2');
+      }
+
+      // Add p1 class to the score bubbles from the top down
+      const team1Score = data.score[window.scoreboardNumber].team["1"].score;
+      for (let i = 0; i < team1Score; i++) {
+        scoreBubblesContainer.children[i].classList.add('p1');
+      }
+
+      // Add p2 class to the score bubbles from the bottom up
+      const team2Score = data.score[window.scoreboardNumber].team["2"].score;
+      for (let i = 0; i < team2Score; i++) {
+        scoreBubblesContainer.children[bestOf - 1 - i].classList.add('p2');
+      }
+    } else {
+      const scoreBubblesContainer = document.querySelector('.score-bubbles-container');
+      if (scoreBubblesContainer.lastChild) {
+          scoreBubblesContainer.removeChild(scoreBubblesContainer.lastChild);
+      }
+      document.querySelector('.middle_container').style.justifyContent = 'center';
+      document.querySelector('.middle_container').style.top = '0';
+    }
 
     if (
       Object.keys(oldData).length == 0 ||
