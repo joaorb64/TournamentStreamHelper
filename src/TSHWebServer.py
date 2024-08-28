@@ -41,6 +41,10 @@ class WebServer(QThread):
         )
         self.host_name = "0.0.0.0"
         self.port = 5000
+        
+    @app.route('/program-state')
+    def program_state():
+        return WebServer.actions.program_state()
 
     @socketio.on('connect')
     def ws_connect(message):
