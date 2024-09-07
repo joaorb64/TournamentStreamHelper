@@ -273,7 +273,7 @@ LoadEverything().then(() => {
 
         if (!data.score) return;
 
-        if (config.stream){
+        if (config.stream && !config.force_multistream){
             
             if (config.stream == "all"){
                 display_allstream(data, oldData);
