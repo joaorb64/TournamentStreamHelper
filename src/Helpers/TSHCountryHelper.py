@@ -128,7 +128,7 @@ class TSHCountryHelper(QObject):
 
                 for s in c.get("states", []):
                     scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
-                        word[0] for word in re.split(r'\s+|-', s.get("name"))])
+                        word[0] for word in re.split(r'\s+|-', s.get("name")) if len(word) > 0])
 
                     TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
                         "name": s.get("name"),

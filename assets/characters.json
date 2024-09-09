@@ -109026,6 +109026,1917 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2532,
+        "name": "Jason",
+        "isCommon": null,
+        "videogameId": 40849,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7145377,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2532/image-524ec47ccebddb8f1ee0cea9c822ef0b.png?ehk=ZEfF6dOovmwi5CT0o%2FOOS1zaFSwH%2F2GDkq5el1CN6F8%3D&ehkOptimized=g1vppcDqu%2BBTdVM73yLAu%2FVeWeByEva5SnR6DGps2T8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7145378,
+            "width": 30,
+            "height": 30,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2532/image-c7847640d5f9756adbadf446e038245e.png?ehk=%2F9FXN%2B3pSNVZExAILSjh07a43eO%2FwT7lEOUOoRafy7Q%3D&ehkOptimized=QKpgHEmwi0W%2Fkyb%2FJLHwIhpnY6nlk%2BAE3CVj0RQ2Vtk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2533,
+        "name": "Marvin the Martian",
+        "isCommon": null,
+        "videogameId": 40849,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7145380,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2533/image-f7520789d98678798fe0665ab519ab72.png?ehk=YcNAffeoung5jQzBfZCu7AQoEPYV3PV0thqWoIib0d4%3D&ehkOptimized=9Sq%2BlIG%2F4pkgv1Abq7qfY3OF6k1fgQ9PSvgcD2WPnlw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7145381,
+            "width": 30,
+            "height": 30,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2533/image-463c096f59637365ac334d12869488c8.png?ehk=ZCyqtCyRi8OGdHoH48tf8njg1qqvccgN1SKRb6j78S0%3D&ehkOptimized=8QkvKGSoGqbEruf0t1QGs81LqbZtRe5xCYIxbYtuYN8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2534,
+        "name": "The Joker",
+        "isCommon": null,
+        "videogameId": 40849,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7145383,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2534/image-9fcc4905b692768ac3825217e58ea574.png?ehk=eAyx00ab8jCn298r0srSNQyMIjxfCP0%2FlVDAUT0GCXM%3D&ehkOptimized=mygJTa9gNdw9emE5Q%2BLX5oQ1zOBcNISCbOnhI8NFGTI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7145384,
+            "width": 30,
+            "height": 30,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2534/image-a4797f882b09efa675684ef4db240d2d.png?ehk=d%2B%2F2eJRDQ6Y5uhplrOv%2BjTKCNlPR7pEH19VmBtqEBJE%3D&ehkOptimized=bxWkLDnIaq68re8Gg92SNZG57BTQtadvH%2BPKv22ETGI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2535,
+        "name": "Banana Guard",
+        "isCommon": null,
+        "videogameId": 40849,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7145386,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2535/image-f26c2aea7bcf4f4f22bb686989ddb1e3.png?ehk=biee6PNQ4rVAIpTrqGWbMfniNSOvgK0BgfBYAcaALSw%3D&ehkOptimized=dbXqIh3wgsuMD80iFX8IBkWc6XG13pZe%2B3PGikefcX4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7145387,
+            "width": 30,
+            "height": 30,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2535/image-2b6f5dd27e22181acc4b999fcdfca8e4.png?ehk=OFRh83HKXJP0vcI0Fc87yCk3SkHzRftxlcEsdMN6S3k%3D&ehkOptimized=I5ZBFPQGy1uxuPw4YL7A8MvHULjdzXxKi4ctYpDg29U%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2536,
+        "name": "Agent Smith",
+        "isCommon": null,
+        "videogameId": 40849,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7145388,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2536/image-81432969d42cf05e0d213d18ede9040b.png?ehk=vaXGFdbibtGP1rz%2B8ufc%2FUnylKjBrmCLfl4uK1wVVek%3D&ehkOptimized=3edYkT4HakjgplZFOOQchjdcWcdgPd%2BANuUgNG9jy5I%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7145389,
+            "width": 30,
+            "height": 30,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2536/image-b336989bc52e53fc2ca2610547454914.png?ehk=hzYHaV6aG9fVlvb9688hsQK86YLx%2FClC%2FeqlwiYzcuQ%3D&ehkOptimized=P11B46ybPi3akAjDC8HuTJziotPG%2BmgEoN6WcoHaqAI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2537,
+        "name": "Imugi",
+        "isCommon": null,
+        "videogameId": 15,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7202362,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2537/image-2a1388f5e71d5f858640484ad61e1f6f.png?ehk=Iz30vwmjG65%2FDqSdnW4yyoWhyKRlz3woMZ7fthe%2BxY0%3D&ehkOptimized=RbOrX9KspLXsFPSNCg6MoTr9qUO8zYL5H235N8h1%2BZQ%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7202363,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2537/image-2a1388f5e71d5f858640484ad61e1f6f.png?ehk=Iz30vwmjG65%2FDqSdnW4yyoWhyKRlz3woMZ7fthe%2BxY0%3D&ehkOptimized=RbOrX9KspLXsFPSNCg6MoTr9qUO8zYL5H235N8h1%2BZQ%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2538,
+        "name": "Lidia Sobieska",
+        "isCommon": null,
+        "videogameId": 49783,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7206076,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2538/image-93ae260f7163c3817f2a391219cb4dd1.png?ehk=SWYdqGfpxOa6ArfgNVHw%2FH2svvnOtExHFQHCEaGZSJk%3D&ehkOptimized=G7OIEUNpbv3hVDC8I%2BHDhxjzmUVVi5%2FnrrYTBRpLPy8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7206077,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2538/image-a33f2ab763a16adb564588f8cfece87f.png?ehk=XGjn7RyFT%2BuVsxJuqx9ryYFDwd1lWXVCGQqdqMsbxyY%3D&ehkOptimized=GqLftNZ6ykTWuutVqcC5FnFIMKi2XJWZ3HVXUHpgZBU%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2539,
+        "name": "Takeda",
+        "isCommon": null,
+        "videogameId": 48599,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7217667,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2539/image-ec7a4a36eb9a893846dc589eb2a87cf8.png?ehk=cenWUifEO6q1v9YHMt1TEsE%2BkNc%2Fp6CHsGKwrHgnRIg%3D&ehkOptimized=ZuVfd9WazSjRGuf6VgQ31E8xXV4e05y3BSKVdTczxRU%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7217668,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2539/image-43ce52bc30fc747dadbbf5e8c8370273.png?ehk=n%2FI1LnuNR1Ztd7X%2FdFOUUvG5XBT6870QRhyIeHUar8I%3D&ehkOptimized=9iCuHwWl2RCN6QE4yTBGbXnx9gSOx%2FARk%2F0Lc%2F0XsZw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2540,
+        "name": "Jubei",
+        "isCommon": null,
+        "videogameId": 37,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7276422,
+            "width": 256,
+            "height": 256,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2540/image-c3905ed388090363ecf8ee1df3cc0c63.png?ehk=6YeLXzyr6dc37xxZm1JKW2h272J1PErlL8hvvP%2B9Y54%3D&ehkOptimized=H82SxlIwPsIDmh1sA5bRwUTLa%2BgEWJCqkF4iVIl8btA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7276423,
+            "width": 96,
+            "height": 96,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2540/image-c96653533a606eecd3eb54c55c558e04.png?ehk=W7nfkpaiqJYFeMCJUPTrs7RCuYyxVze9onITQVjV1Jk%3D&ehkOptimized=mPkEILtX2iV%2F0pgEozWKPVYjJfrHeLbIc1BE0pMWeAM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2541,
+        "name": "Baby Luigi",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288132,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2541/image-9dd13118f050695bdaa3c3d179aea2e4.png?ehk=dRpeZ1JWCShY1o9N8OUJ2ezOstNQGq22i5rnVWP08XY%3D&ehkOptimized=BuCZWPvw5t7%2FL4pPtcbrQh%2F2ZcMuckQG6fvBHRclRVs%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288133,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2541/image-9dd13118f050695bdaa3c3d179aea2e4.png?ehk=dRpeZ1JWCShY1o9N8OUJ2ezOstNQGq22i5rnVWP08XY%3D&ehkOptimized=BuCZWPvw5t7%2FL4pPtcbrQh%2F2ZcMuckQG6fvBHRclRVs%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2542,
+        "name": "Baby Mario",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288138,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2542/image-618c4b5cd392d8df66c5e7a24dd0c3f7.png?ehk=kdy0aZ%2BoD3hazvd%2FM%2FIDT1LUAMKM2XAwk1KrGcO7KPc%3D&ehkOptimized=pj%2BXqhts9P%2FEoHnbI5PBTahZF2uGXk4AAdvq1yEMPsk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288139,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2542/image-618c4b5cd392d8df66c5e7a24dd0c3f7.png?ehk=kdy0aZ%2BoD3hazvd%2FM%2FIDT1LUAMKM2XAwk1KrGcO7KPc%3D&ehkOptimized=pj%2BXqhts9P%2FEoHnbI5PBTahZF2uGXk4AAdvq1yEMPsk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2543,
+        "name": "Barrel Train",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288142,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2543/image-6547c3f651667b2de1081dbb083f95dc.png?ehk=RELK%2Fpj5FknOwdMC8SNt7hfe35RaF8JFZjiAG2sZRDE%3D&ehkOptimized=V5b0HU4UjKDahXsfeklqaInadyEleQUdh%2B0GniPvsko%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288143,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2543/image-6547c3f651667b2de1081dbb083f95dc.png?ehk=RELK%2Fpj5FknOwdMC8SNt7hfe35RaF8JFZjiAG2sZRDE%3D&ehkOptimized=V5b0HU4UjKDahXsfeklqaInadyEleQUdh%2B0GniPvsko%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2544,
+        "name": "Birdo",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288145,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2544/image-5f623d947e88537c260adbb88f8960bc.png?ehk=uSctC0umn7s%2FMipBMg2GbGdCTB9JahdDTyDsu%2FAlYnE%3D&ehkOptimized=tCMoHx%2F5n%2Bo%2FaP%2BxoIKri%2Fh5j06gF873a0cfPrUHIaw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288146,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2544/image-61430bf98f00a2e93546c15acdb1bc7f.png?ehk=PRsTezk2GAU4J9D83%2FfldeAb6PvV6oHYkuVYG6NbGbg%3D&ehkOptimized=5iQv9PdDtONoOXit42gzpIIbe8kOEV5rvxBL3igfVYw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2545,
+        "name": "Bloom Coach",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288147,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2545/image-127b1647aa9126b7d0492aa03c5e5d27.png?ehk=gkYD%2FRmIpnHxgWtuEun3Ld9LP2xaBcDSI5TkwfOCob4%3D&ehkOptimized=He5pL2jhjkh4hqyXUpXb8Gk%2FJ%2BpWy8caku9O%2BFaO%2F8o%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288148,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2545/image-127b1647aa9126b7d0492aa03c5e5d27.png?ehk=gkYD%2FRmIpnHxgWtuEun3Ld9LP2xaBcDSI5TkwfOCob4%3D&ehkOptimized=He5pL2jhjkh4hqyXUpXb8Gk%2FJ%2BpWy8caku9O%2BFaO%2F8o%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2546,
+        "name": "Boo Pipes",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288149,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2546/image-4ccee33e36085ab17b4336f2da5824c3.png?ehk=zoCQPqJDgmksNyKude05zGeQmlJ1NGvI3z3mJEXopOs%3D&ehkOptimized=K6YXAUtx%2FdFVtIYUWUS24z3w8rjv5GIXBtdnFYzzG%2FI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288150,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2546/image-4ccee33e36085ab17b4336f2da5824c3.png?ehk=zoCQPqJDgmksNyKude05zGeQmlJ1NGvI3z3mJEXopOs%3D&ehkOptimized=K6YXAUtx%2FdFVtIYUWUS24z3w8rjv5GIXBtdnFYzzG%2FI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2547,
+        "name": "Bowser",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288152,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2547/image-f521fa6b639947d15b8872316a57bf25.png?ehk=aoyAOEi81BjilDQDE3ono2IIGKBnv%2FE5VApMAOq%2BBIE%3D&ehkOptimized=8YE5Fq096z0lbXOZ5Cn%2FabioZnBEfD48pLbg%2BJYOBmA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288153,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2547/image-feb97bef93df032b4cf194fe8d391271.png?ehk=x6aqJBr%2FMnnXENkJMD3Zc5nVQ6MSjiBFBfrxSmD%2BsU4%3D&ehkOptimized=wTdlUmf%2B9B%2F%2BvmMbEQxWLhJUvGLqvzD3PjR9TtauxX0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2548,
+        "name": "Bowser Jr.",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288154,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2548/image-771fa5911f7c2ef7f5d585d93359cfc3.png?ehk=RlP0%2FtPeOF1yhgCn5wZz4ah8%2F6xmAVYguGQGUrfDlB4%3D&ehkOptimized=dXjdnWK%2BVUVR4jYLnme87KJjcehwWQ1Vt9KqiJHffFw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288155,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2548/image-771fa5911f7c2ef7f5d585d93359cfc3.png?ehk=RlP0%2FtPeOF1yhgCn5wZz4ah8%2F6xmAVYguGQGUrfDlB4%3D&ehkOptimized=dXjdnWK%2BVUVR4jYLnme87KJjcehwWQ1Vt9KqiJHffFw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2549,
+        "name": "Bullet Blaster",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288156,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2549/image-1560b0ddbeb1dbee56e119016762113d.png?ehk=9rOllWmrozSAdXjGZY0RnYpP94Io0BaBkAyMjHbJcX0%3D&ehkOptimized=Sw5sVqDRwo7Glo%2Ba4OvtxizWMUYkqoj4F3O%2B2pjrO00%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288157,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2549/image-aac358eeb1ec080eac9c924b2910f5fa.png?ehk=W5munR88fDeagQQJEgShq902%2Byq2Q%2BDXSvRpJhJSNN4%3D&ehkOptimized=M42OVEmyAbW5sgxts%2BZfeqpfghG5VdYe34uQVC5DUuM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2550,
+        "name": "Daisy",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288160,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2550/image-fbb262d158bfa17dc18faec427637414.png?ehk=PTPHNJb7ZaIbhNuxpkUKlMXfeEQoe6Ie%2BFs2d%2FM9rnA%3D&ehkOptimized=3Gg85kQMjeYVKIJYlLErKAEE%2BVPIc43YTrfKCLLY%2B0g%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288161,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2550/image-e0b32d79f7a684583a97f0ce1271827a.png?ehk=lTNG5MVx2f8UmW9xoRH4LZ9LsvUqdZphlgRoWo2jvZc%3D&ehkOptimized=6zNdCi0GUW7ue63GFe%2BSevnYh2ljO1mqCJGt4XfX4tw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2551,
+        "name": "Diddy Kong",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288163,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2551/image-ec014a3de5f241abae38358a1082be0b.png?ehk=8jVN%2Bs6K3VqEUjynH7LD2htGhlA3QIyo3jfXXDQcigk%3D&ehkOptimized=UY7f8kpOvmlUm45yG3RrwnJ6Gv6yqaNLEbu5FOClio0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288164,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2551/image-ec014a3de5f241abae38358a1082be0b.png?ehk=8jVN%2Bs6K3VqEUjynH7LD2htGhlA3QIyo3jfXXDQcigk%3D&ehkOptimized=UY7f8kpOvmlUm45yG3RrwnJ6Gv6yqaNLEbu5FOClio0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2552,
+        "name": "DK Jumbo",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288166,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2552/image-133afb6758c3d2229645f2c8bf858247.png?ehk=9wDdSzlZxgQ%2F%2FfPsJU%2B5SeQFp%2FPT%2FFv6citLdinOgts%3D&ehkOptimized=Jus5K6EwZSk3yeannVBLatFVuslwCxap2I3OM6agGQY%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288167,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2552/image-133afb6758c3d2229645f2c8bf858247.png?ehk=9wDdSzlZxgQ%2F%2FfPsJU%2B5SeQFp%2FPT%2FFv6citLdinOgts%3D&ehkOptimized=Jus5K6EwZSk3yeannVBLatFVuslwCxap2I3OM6agGQY%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2553,
+        "name": "Donkey Kong",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288171,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2553/image-66d7f37c445d4485d8d238bc1ea21a91.png?ehk=HiTKFjj7UIKVbYoU6MvUXpoe2ys%2FHlQtpJ87aI9bJA4%3D&ehkOptimized=PGPsCIPlROlX3X2ZbAHoOeQJ3%2BCm%2BapCMlOp%2BVib01k%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288172,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2553/image-911a7065cb0911157b43a476d619e8bb.png?ehk=NuhkjL%2B%2F3T%2B8UDRJEeS%2BlWPEPoVxZ4amQkIhi30ecp4%3D&ehkOptimized=q3MoVaMfxaiydC35afPtDsD0QuLyymc1%2Fom0kYy54M8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2554,
+        "name": "Goo Goo Buggy",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288174,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2554/image-c96c07095b4df48b7eda7dcbe1397a1d.png?ehk=x09juMxnnRVsppQdYj5RvxHkfxM1ScSFAwgbIl%2FkHK8%3D&ehkOptimized=iZlwXKTwXIF86up5DVD%2BY%2ByOnrH62CdbXymHuNudPMw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288175,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2554/image-c96c07095b4df48b7eda7dcbe1397a1d.png?ehk=x09juMxnnRVsppQdYj5RvxHkfxM1ScSFAwgbIl%2FkHK8%3D&ehkOptimized=iZlwXKTwXIF86up5DVD%2BY%2ByOnrH62CdbXymHuNudPMw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2555,
+        "name": "Green Fire",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288177,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2555/image-8f72bd0a2c69381a269426bb0d1bd5d7.png?ehk=oQilvVMniEoB8WNQJ91Pq%2ButgizVnAC1mfDwKzeeRhM%3D&ehkOptimized=HvDLOjNraiVw3U9pvxwIe4ZbVi4ECTnTDWDPgqha2jQ%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288178,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2555/image-64cd420b8f25cac69b0690eac3d080c4.png?ehk=%2BzoFv1FFdeQg6UOzxLGFmMbaQcQLOY3Xup09wuEeGTw%3D&ehkOptimized=%2F14guQI4obIBjY%2FfWdMFuhfqOGHRQ4IyA6C5r0z%2FD%2BI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2556,
+        "name": "Heart Coach",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288179,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2556/image-c2b295a1daf6655d04bce9395de1c8ba.png?ehk=j6BjdpmaxRcv3DYV0D3F0AJP1UxDPyqDPvtsUhpRmMs%3D&ehkOptimized=4McMn7FLJZxK8zUVb1IHP9vmSrk3DDrABOj0ika5ClE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288180,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2556/image-fe6560b05cad330eb43923fadfbc3700.png?ehk=9yZpJLLSHFyQ%2BsGPS09Q3klqHpmIsnfsjraEDIvn4N4%3D&ehkOptimized=WeaYJwtXKVI2rAjHD4ps3ZQmPfKxCkfdp65bZ%2FbyeAc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2557,
+        "name": "King Boo",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288183,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2557/image-bea02cb5cb541345c800fbd714d257a0.png?ehk=e1rqcoTeKlGwIo0hYjvSP5vTGf%2BPKV2jI066rZxXtT8%3D&ehkOptimized=uNgksUYYHVpbtpbF%2BnN%2F2s5H4so5db6NMylNqr3WyqE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288184,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2557/image-bea02cb5cb541345c800fbd714d257a0.png?ehk=e1rqcoTeKlGwIo0hYjvSP5vTGf%2BPKV2jI066rZxXtT8%3D&ehkOptimized=uNgksUYYHVpbtpbF%2BnN%2F2s5H4so5db6NMylNqr3WyqE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2558,
+        "name": "Koopa",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288186,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2558/image-c8dd1bb7402d95c97529e6f743b4341b.png?ehk=xYE00mmpDPewQvmgRgQmPY2elvCLdnUL9uETWS%2FhJKA%3D&ehkOptimized=gBKTIN4reczvjYwi5YyHe%2BYiQHYQPXh%2BacDgCPW4Gvc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288187,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2558/image-c8dd1bb7402d95c97529e6f743b4341b.png?ehk=xYE00mmpDPewQvmgRgQmPY2elvCLdnUL9uETWS%2FhJKA%3D&ehkOptimized=gBKTIN4reczvjYwi5YyHe%2BYiQHYQPXh%2BacDgCPW4Gvc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2559,
+        "name": "Koopa Dasher",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288189,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2559/image-180c1eb66e7aa910902f07de004b97ec.png?ehk=uV%2FuamPqq%2B7DuNEo23vV3Gt5jJuveH9%2F69FvoyyekYs%3D&ehkOptimized=J3c5dJXa73cC8q6nxKj8471OxaO1lJDvOuq8xuiJVB4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288190,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2559/image-384bffbf130c61e067edb1361a263028.png?ehk=ERTchLnRih4n1OItisL6dgpIoDOxV5YywY7yeAKBNhw%3D&ehkOptimized=Voj%2BOFXHdj2hOjwsAAYc%2BcXr3HJN6Kr0GBTQQhT3jBI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2560,
+        "name": "Koopa King",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288195,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2560/image-5a302040de658ef7b0d08b246b5ff9f8.png?ehk=qS%2BhnklP3zVKewYxbmiJVcSXjuqdBHsRwCXH1Dw6TlU%3D&ehkOptimized=UeORn2%2Fl7M1Lp%2B5%2FRq6CAoyxb60H2z6FGDKv9BRhlK8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288196,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2560/image-66d5424dde252741510ae252d12d60ef.png?ehk=6QenSsl6Da2JaadpSZeMxnud0DSjhCrMMvAtV3RG%2FY8%3D&ehkOptimized=oa6RpGyWHt1iPaBS7blzrOdsWUD9dMp6q9pFm944paI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2561,
+        "name": "Luigi",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288199,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2561/image-e89b6e6029aa8630ce0ae805bb9d5061.png?ehk=H0MfmQzPQtw%2Bz45O8uaC3pf3L1ZgdHXEXjiirc5aqjg%3D&ehkOptimized=CXuuepO1w8fcwpBnv1j5smLWmAtxZ7zvVReTJuk%2FaxA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288200,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2561/image-e89b6e6029aa8630ce0ae805bb9d5061.png?ehk=H0MfmQzPQtw%2Bz45O8uaC3pf3L1ZgdHXEXjiirc5aqjg%3D&ehkOptimized=CXuuepO1w8fcwpBnv1j5smLWmAtxZ7zvVReTJuk%2FaxA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2562,
+        "name": "Mario",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288202,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2562/image-4c52c6038ff35895178cc80b78c22c5e.png?ehk=MPbJQ50JY7%2FYNK5EYvam%2BBzBG4t8iWbjpLD6grzfQow%3D&ehkOptimized=gPJTMR%2FwBkw9SYhPk0LK9J4SHJRvmteN%2BR%2Bkd%2BkXAMk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288203,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2562/image-4c52c6038ff35895178cc80b78c22c5e.png?ehk=MPbJQ50JY7%2FYNK5EYvam%2BBzBG4t8iWbjpLD6grzfQow%3D&ehkOptimized=gPJTMR%2FwBkw9SYhPk0LK9J4SHJRvmteN%2BR%2Bkd%2BkXAMk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2563,
+        "name": "Parade Kart",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288206,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2563/image-ee41e55e44b944b5c5d672694188f3cd.png?ehk=p5wm%2BQFGAPr%2BTJZjc1IzrXgG5NQ26eO1agxIhsDQL3M%3D&ehkOptimized=QX75IzT0Qa%2BHUDV3EE4AMxyltHYpp67pobon83f%2FpCI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288207,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2563/image-ee41e55e44b944b5c5d672694188f3cd.png?ehk=p5wm%2BQFGAPr%2BTJZjc1IzrXgG5NQ26eO1agxIhsDQL3M%3D&ehkOptimized=QX75IzT0Qa%2BHUDV3EE4AMxyltHYpp67pobon83f%2FpCI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2564,
+        "name": "Paratroopa",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288210,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2564/image-f2640dfc353a35a29e52574e02042a43.png?ehk=8%2FLUTAkwaM7kxKUJS8pnOL681WVyOVm9Mmwsmk%2BKGC8%3D&ehkOptimized=drK7BdoLlfoFOzn0ebCrJbEfyvWR2T4m8lpV3DoziM8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288211,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2564/image-262c0e31c00818fd7db15323c33b8a96.png?ehk=Lzi8oacc6lwYQF4hOBahJHy2q%2FYtGRyl0Mchfenq4ZM%3D&ehkOptimized=gQDtbBHzAGfWhc7x0bYwb4fIAow158na7SSnLPzgTjg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2565,
+        "name": "Peach",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288213,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2565/image-8e028bd43d6fbe661faffa00c94713d3.png?ehk=cqbb1rw9ShZ1UNi8Y9NjWAnYQiz6vzahS7eUbnxClgE%3D&ehkOptimized=eEJIejFQJWyUiEHtcFOp8FVBg8N2o%2FrYJl0DsFSijCs%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288214,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2565/image-248420c4292b37a612259c2348e9dee4.png?ehk=C437GJssi7tkYdvkTVPhgUfw5JbClnMjwvi0A3JcJkA%3D&ehkOptimized=g8g8mQqdge2hRF%2FojvGeuen%2Fr2VnyYY4MWCzhT81Rzk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2566,
+        "name": "Petey Piranha",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288215,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2566/image-319134e0f18cc5c494a2dfdf61bd3d4c.png?ehk=%2FnzSyRy14e6pucy8jXQIlpNZzA7sxeERpnLRxV494T8%3D&ehkOptimized=AEEGHhlpPfzK1whyOOKh9Up0vErKSNKfblTiVGxQ4Ao%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288216,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2566/image-319134e0f18cc5c494a2dfdf61bd3d4c.png?ehk=%2FnzSyRy14e6pucy8jXQIlpNZzA7sxeERpnLRxV494T8%3D&ehkOptimized=AEEGHhlpPfzK1whyOOKh9Up0vErKSNKfblTiVGxQ4Ao%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2567,
+        "name": "Piranha Pipes",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288220,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2567/image-22c0ec0b622ead481bdb6571c5b0d544.png?ehk=wG7XvCXfVmvY13Z%2FoKPghFuGM3CNHtsEmIZjmlSFfwo%3D&ehkOptimized=PDGcFtBY80Dr9naBnSl6oHj8%2BWtz2O7TNNemw91QXbM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288221,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2567/image-22c0ec0b622ead481bdb6571c5b0d544.png?ehk=wG7XvCXfVmvY13Z%2FoKPghFuGM3CNHtsEmIZjmlSFfwo%3D&ehkOptimized=PDGcFtBY80Dr9naBnSl6oHj8%2BWtz2O7TNNemw91QXbM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2568,
+        "name": "Rattle Buggy",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288222,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2568/image-9ef5c611262d028f50a2c356f44ea605.png?ehk=M5d1%2FCVH3qnojOyGGDmuLn7694lz%2Fjn9fItDW4Bpb7o%3D&ehkOptimized=nyrKG6h8FgLI16ZgAaKxnq8eVWRU7pXi9U6zx3w5P38%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288223,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2568/image-4a618d3b1320eaf89b294a99fad5a8ce.png?ehk=8IMzkv5u58fobtbHOfCETwLrQ8jWvhE8XnjJRUQTa9k%3D&ehkOptimized=mE6tZ6LqIwZs1lRw1vy%2BOw6p2GmGWn3ILO48gxJydFo%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2569,
+        "name": "Red Fire",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288225,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2569/image-aadb441b85addad470cf38066e18b52f.png?ehk=z2TG0NcSvuhji%2F0hZLyAJkcfAH5S7aer7yH2ql5gLTE%3D&ehkOptimized=DgdjrSAsm3ifeY%2FcuONPmvMHohQfyjgrXiYLUmbApsk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288226,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2569/image-aadb441b85addad470cf38066e18b52f.png?ehk=z2TG0NcSvuhji%2F0hZLyAJkcfAH5S7aer7yH2ql5gLTE%3D&ehkOptimized=DgdjrSAsm3ifeY%2FcuONPmvMHohQfyjgrXiYLUmbApsk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2570,
+        "name": "Toad",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288227,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2570/image-a400e6218ed4fab731460319402cf03d.png?ehk=4uv6yIcphgOqrP5ux3dG4yy6pS6mc8G7k1gRXxxLQcE%3D&ehkOptimized=tBidVg15JjnLKrtC4fHbDchOkereCOUzk2R%2Bua7wObo%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288228,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2570/image-26672e94ddc6ae18e9e75dca817a9200.png?ehk=iipN9IMKbQcyYmBoDgr3DySXNiByUmifeutYf45%2FiQ4%3D&ehkOptimized=l8hHdiU%2B5fVkX4RsSyLOj6PWiEDNJfphXEjyLiz72yc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2571,
+        "name": "Toad Kart",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288230,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2571/image-ba9235da28fe1a5e5ae076ed55515b31.png?ehk=bFHLNOlv6XEK8awoFKOMsyKhn7oYwcSlOpdajKj2%2BE8%3D&ehkOptimized=k2DytxkqO6rRbMJxKEykovEbsfo05mNP48mE3Grb1ic%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288231,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2571/image-5580f9997024b7922f5c672e63c6de01.png?ehk=PmTBOFjtB27aChcrnoVu4x5JFpQfhT6vP3GDLA9yakA%3D&ehkOptimized=XRTR8KJObde092fW6CKjTXUYDVLgrakf69LtENjiDTQ%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2572,
+        "name": "Toadette",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288233,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2572/image-a5e87c31b41c02c9ebe71ffba5083954.png?ehk=3d1Xn263fcBqJ3QDd99WpsSpYF%2FuWdBzxssN3xUCbZQ%3D&ehkOptimized=Q2CLLdS5FFzH8f4jmxH4vpx3ouHNGkrub6ztUJOgFrE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288234,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2572/image-a5e87c31b41c02c9ebe71ffba5083954.png?ehk=3d1Xn263fcBqJ3QDd99WpsSpYF%2FuWdBzxssN3xUCbZQ%3D&ehkOptimized=Q2CLLdS5FFzH8f4jmxH4vpx3ouHNGkrub6ztUJOgFrE%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2573,
+        "name": "Toadette Kart",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288237,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2573/image-31e566dc1ecd40a83f18a6226b208a6b.png?ehk=rTIUq34j9IbRg9%2FRC4rF17s0Wc25nzq%2FQjWi7u2alSY%3D&ehkOptimized=cZxR%2BHl9v%2Fbz4GRXgIR9z8Dx7V4syFRTA5aT%2BhV7zog%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288238,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2573/image-84c8fd25355fec3e1d76ed1a9cc0cb01.png?ehk=kpS0QrYQ6zfogKoRjPerOaJSkaOZiuh1gbPHltasEW4%3D&ehkOptimized=JtnxZ%2FwEbV%2FhEXtgUYA%2FHrprrh2Rrzqbp3c8XLRFSvw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2574,
+        "name": "Turbo Birdo",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288239,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2574/image-6bb41ba7a8f14b45ea6169b5672a22c4.png?ehk=EKyROWW0YdGhhPH73A6P3cnQaFT05FnEnSSB6xIMfqY%3D&ehkOptimized=AfI55aJSDydi1T6%2Fx2nRRTPninQu1Dz7PJBVthC%2F5K0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288240,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2574/image-6bb41ba7a8f14b45ea6169b5672a22c4.png?ehk=EKyROWW0YdGhhPH73A6P3cnQaFT05FnEnSSB6xIMfqY%3D&ehkOptimized=AfI55aJSDydi1T6%2Fx2nRRTPninQu1Dz7PJBVthC%2F5K0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2575,
+        "name": "Turbo Yoshi",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288242,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2575/image-6931395a91e4f428aa58d50a337bfb59.png?ehk=WLCRGMms88sQmR1Do81cz8phbo4UFgABR1Z1j4STpv8%3D&ehkOptimized=2cMjcJdJtLGb84tO6BdTxrNP%2FoM%2BHlLpJVmqC2f3vNM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288243,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2575/image-6931395a91e4f428aa58d50a337bfb59.png?ehk=WLCRGMms88sQmR1Do81cz8phbo4UFgABR1Z1j4STpv8%3D&ehkOptimized=2cMjcJdJtLGb84tO6BdTxrNP%2FoM%2BHlLpJVmqC2f3vNM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2576,
+        "name": "Waluigi",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288244,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2576/image-ecfc7a7aae31211b978f08eec4441712.png?ehk=K%2BRMKY7rh6XdCOS4zyeIxWbXLiEa6TmSn73ewBwhcsw%3D&ehkOptimized=IPNTY3iK849uP7G1Oi9KRyJiWHSvjiRFileRB%2FBg0Cg%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288245,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2576/image-cf6dfb05ffe9df3921f67cfa59c8ecfd.png?ehk=iuOQNAgGox3qFdDfp8PrYfWDVwBWdtLCWfGI4cW5W74%3D&ehkOptimized=fUZ1zdI6i7VwXpzhpof3xL0O1ZFR9HAu5MZ%2F6fefWf4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2577,
+        "name": "Waluigi Racer",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288247,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2577/image-50aebbe5e92b296b2012d04a1087d82c.png?ehk=6K7thH%2BPe2wihfnzi354NPL3naJsSZgrIu5sryXY6o4%3D&ehkOptimized=07fXs0z8jWNrF8Z3UcT8BAaVbNKhK4tCYSG11PN%2FKVw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288248,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2577/image-50aebbe5e92b296b2012d04a1087d82c.png?ehk=6K7thH%2BPe2wihfnzi354NPL3naJsSZgrIu5sryXY6o4%3D&ehkOptimized=07fXs0z8jWNrF8Z3UcT8BAaVbNKhK4tCYSG11PN%2FKVw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2578,
+        "name": "Wario",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288251,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2578/image-a6dbd8a9caa0ae66dd44e0609b4226cb.png?ehk=DUxsD8NkC8Vh5ANg6EpR3CeF7mbytDkjtgEpOKkIA3U%3D&ehkOptimized=Oinhhy0Ng5vYkNi6ksDX8JfIc%2BEQb96LWrS8fA2o12s%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288252,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2578/image-c32cfd8a1a87a9bd6555525914181891.png?ehk=d1cDLWUWgpU9R9FYwNyRgmRJ6LHc00hx53hoR42ktwM%3D&ehkOptimized=XrSx3KbcF%2FCHBdM42TASWwhmcQ15spDWM2X6FKeQQFY%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2579,
+        "name": "Wario Car",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288253,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2579/image-c3d45497f7ac9407cb4e794a3347082f.png?ehk=%2BihD%2FIed12AQ9GIcD0kBU7XLZkvPhqudds4F9CncMW8%3D&ehkOptimized=rPjL288ynJQtHn1IlpsjEA9%2B3KLilh0SLgKhnOKHLBQ%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288254,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2579/image-68930393ba51b61cc3ea39251ed6101b.png?ehk=l6t9NHgP9nBl6WgRHYc8XcXxR5HmuE2qYlDbpcb7g5o%3D&ehkOptimized=Zr50kaUhfnDoV8VK%2F0e7Vr%2Bb2swHoXiBKGhYdHgSJG0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2580,
+        "name": "Yoshi",
+        "isCommon": null,
+        "videogameId": 3314,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7288255,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2580/image-4ba4455b32939965202b75e05c291523.png?ehk=XP0MDORfqJydXiNlQzS1SWuQ9U6zcWPn74kzMhEWwbo%3D&ehkOptimized=KBR%2BYO%2BbzHXP0gxQgYeAWTwdBDfgh452nPMTXhPeLXA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7288256,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2580/image-5d5790d1c5d23a7617bb795ed183f0d9.png?ehk=BTCcZbHmzSpEZk%2FIQIiv64xc776vd3CRQ9h1bmuFSLI%3D&ehkOptimized=YR3K3wKc5Xme4slk5X2MWFoFnJoRa9lEpeWQqPkHXbw%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -111318,7 +113229,56 @@
     2528,
     2529,
     2530,
-    2531
+    2531,
+    2532,
+    2533,
+    2534,
+    2535,
+    2536,
+    2537,
+    2538,
+    2539,
+    2540,
+    2541,
+    2542,
+    2543,
+    2544,
+    2545,
+    2546,
+    2547,
+    2548,
+    2549,
+    2550,
+    2551,
+    2552,
+    2553,
+    2554,
+    2555,
+    2556,
+    2557,
+    2558,
+    2559,
+    2560,
+    2561,
+    2562,
+    2563,
+    2564,
+    2565,
+    2566,
+    2567,
+    2568,
+    2569,
+    2570,
+    2571,
+    2572,
+    2573,
+    2574,
+    2575,
+    2576,
+    2577,
+    2578,
+    2579,
+    2580
   ],
   "resultEntity": "character",
   "actionRecords": []
