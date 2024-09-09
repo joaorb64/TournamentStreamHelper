@@ -55,10 +55,10 @@ LoadEverything().then(() => {
 
     gsap.config({ nullTargetWarn: false, trialWarn: false });
 
-    let startingAnimation = gsap.timeline({ paused: true });
+    //let startingAnimation = gsap.timeline({ paused: true });
 
     Start = async (event) => {
-        startingAnimation.restart();
+        //startingAnimation.restart();
     };
 
     /**
@@ -247,18 +247,20 @@ LoadEverything().then(() => {
             $(".stream_queue_content").html(html);
             resolver.resolve()
 
+            let tl = gsap.timeline();
             for (let i = 0; i <= current_set_nb; i++){
-                gsap.from(
+                tl.from(
                     $(`.set${i}`),
-                    { x: -100, autoAlpha: 0, duration: 0.3 },
-                    0.2 + 0.2 * i
+                    { x: -100, autoAlpha: 0, duration: 0.3, onComplete: () => {console.log("COMPLETED")} },
+                    0.2 + 0.2 * i,
                 );
             }
-            gsap.from(
+            tl.from(
                 $(`.message`),
                 {autoAlpha: 0, duration : 0.3},
                 0.3 + 0.2 * current_set_nb
             );
+            tl.resume();
     }
 
     Update = async (event) => {
@@ -267,9 +269,11 @@ LoadEverything().then(() => {
 
 
         //let stream = config.stream || data.score[window.scoreboardNumber].station || config.default_stream
-        console.log("data", data, oldData)
+        console.log("---- data : ", data, oldData)
 
-        if (config.stream){
+        if (!data.score) return;
+
+        if (config.stream && !config.force_multistream){
             
             if (config.stream == "all"){
                 display_allstream(data, oldData);
