@@ -530,7 +530,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 item = QStandardItem()
                 # Windows has some weird thing with files named CON.png. In case a state code is CON,
                 # we try to load _CON.png instead
-                path = f'./assets/state_flag/{countryData.get("code")}/{"_CON" if state_code == "CON" else state_code}.png'
+                path = f'./assets/state_flag/{countryData.get(
+                    "code")}/{"_CON" if state_code == "CON" else state_code}.png'
 
                 if not os.path.exists(path):
                     path = None
@@ -599,7 +600,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         "prefix")+" "+item.get("gamerTag") if item.get("prefix") else item.get("gamerTag")
 
                     if tag == dbTag:
-                        self.SetData(item, dontLoadFromDB=True, clear=False, no_mains=no_mains)
+                        self.SetData(item, dontLoadFromDB=True,
+                                     clear=False, no_mains=no_mains)
                         break
 
             name = self.findChild(QWidget, "name")
@@ -670,7 +672,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 for i in range(stateElement.model().rowCount()):
                     item = stateElement.model().item(i).data(Qt.ItemDataRole.UserRole)
                     if item:
-                        if data.get("state_code") == item.get("code"):
+                        if data.get("state_code") == item.get("original_code"):
                             stateIndex = i
                             break
                 if stateElement.currentIndex() != stateIndex:
@@ -807,7 +809,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     c.editingFinished.emit()
 
             for c in self.findChildren(QComboBox):
-                if(no_mains):
+                if (no_mains):
                     for charelem in self.character_elements:
                         for i in range(len(charelem)):
                             if charelem[i] == c:

@@ -110937,6 +110937,84 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2581,
+        "name": "Perilla",
+        "isCommon": null,
+        "videogameId": 48268,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7349959,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2581/image-f9458e5c35dbb7db88ec55e31c42f006.png?ehk=RJjYUbaEETmf3lw1UbgduN7PyvzPVPylAPEsZUhFhvI%3D&ehkOptimized=KMvtKwC86WJzgTEvpxFSjqsy7hMhaXqjPoh4g7Rcx4Q%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7349960,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2581/image-0c49091c1ec2cc340a584bfa1d835150.png?ehk=fkdEUu1ILcaJbP%2FQ4DG6jt0kJ4v%2FRKDTovyUvSiSfEk%3D&ehkOptimized=qIzc5GHNCDDweKCN379BSIzi784Unieji65Na6qF%2Fvk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2582,
+        "name": "Terrable",
+        "isCommon": null,
+        "videogameId": 48268,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7349962,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2582/image-60e9b88b9235c9b93a55b015134b5f3e.png?ehk=cC5fOPgQ7dC7Rcau8I0Vq%2FJ9P0UKHjlyVBq%2FugdjO40%3D&ehkOptimized=a5rWHbPZEfWJt%2BoNODYOzjx34XcUOZfXFAI8BP5IiZ4%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7349963,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2582/image-51d68859a4150c3bc281d44ef91e4d9a.png?ehk=5lWccokqSHoFftnN9Zo%2F%2Bk%2FWFeqQz8XAIEFwsowEaO0%3D&ehkOptimized=G2bw%2BHH%2BjZDNFRluFMTl4kYunmOvIQAaK2L52dyJ8I0%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -113278,7 +113356,9 @@
     2577,
     2578,
     2579,
-    2580
+    2580,
+    2581,
+    2582
   ],
   "resultEntity": "character",
   "actionRecords": []

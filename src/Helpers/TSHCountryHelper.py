@@ -128,11 +128,12 @@ class TSHCountryHelper(QObject):
 
                 for s in c.get("states", []):
                     scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
-                        word[0] for word in re.split(r'\s+|-', s.get("name")) if len(word) > 0])
+                        word[0] for word in re.split(r'\s+|-', s.get("name").strip()) if len(word) > 0])
 
                     TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
                         "name": s.get("name"),
                         "code": scode,
+                        "original_code": s.get("state_code"),
                         "latitude": s.get("latitude"),
                         "longitude": s.get("longitude"),
                     }
@@ -209,6 +210,8 @@ class TSHCountryHelper(QObject):
         # Normalize parts of city string
         split = city.replace(" - ", ",").split(",")
 
+        logger.debug(f"Finding State from city string [{city}]")
+
         for part in split[::-1]:
             part = part.strip()
 
@@ -224,7 +227,9 @@ class TSHCountryHelper(QObject):
                     None
                 )
             if state is not None:
-                return state["code"]
+                logger.debug(f"State was explicit: [{
+                             city}] -> [{part}] = {state}")
+                return state["original_code"]
 
         # No, so get by City
         for part in split[::-1]:
@@ -234,6 +239,8 @@ class TSHCountryHelper(QObject):
                 TSHCountryHelper.remove_accents_lower(part), None)
 
             if state is not None:
+                logger.debug(f"Got state from city name: [{
+                             city}] -> [{part}] = {state}")
                 return state
 
         return None
