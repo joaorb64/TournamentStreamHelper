@@ -193,6 +193,7 @@ def UpdateProcedure():
 
 def ExtractUpdate():
     try:
+        updateLog = []
         tar = tarfile.open("update.tar.gz")
 
         # backup exe
@@ -201,7 +202,18 @@ def ExtractUpdate():
         for m in tar.getmembers():
             if "/" in m.name:
                 m.name = m.name.split("/", 1)[1]
-                tar.extract(m)
+                try:
+                    tar.extract(m)
+                    updateLog.append(f"Extract {m}")
+                except Exception:
+                    updateLog.append(f"Failed to extract {
+                                     m} - {traceback.format_exc()}")
+
+        try:
+            with open("assets/update_log.txt", "w") as f:
+                f.writelines(updateLog)
+        except:
+            logger.error(traceback.format_exc())
 
         tar.close()
         os.remove("update.tar.gz")
