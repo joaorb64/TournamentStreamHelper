@@ -1308,7 +1308,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="69"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="787"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="789"/>
         <source>Save new player</source>
         <translation>Neuen Spieler speichern</translation>
     </message>
@@ -1323,7 +1323,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="784"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="786"/>
         <source>Update player</source>
         <translation>Spielereintrag aktualisieren</translation>
     </message>
@@ -1499,7 +1499,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="186"/>
         <source>Custom Flags</source>
         <translation type="unfinished"></translation>
     </message>

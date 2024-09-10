@@ -1244,7 +1244,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="69"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="787"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="789"/>
         <source>Save new player</source>
         <translation>Salvar novo jogador</translation>
     </message>
@@ -1267,7 +1267,7 @@ p, li { white-space: pre-wrap; }
         <translation>Jogador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="784"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="786"/>
         <source>Update player</source>
         <translation>Atualizar jogador</translation>
     </message>
@@ -1578,7 +1578,7 @@ p, li { white-space: pre-wrap; }
         <translation>Certifique-se de que a URL está no formato correto e que o evento existe.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="186"/>
         <source>Custom Flags</source>
         <translation>Bandeiras customizadas</translation>
     </message>

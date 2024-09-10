@@ -1225,7 +1225,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="69"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="787"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="789"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1248,7 +1248,7 @@ p, li { white-space: pre-wrap; }
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="784"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="786"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
@@ -1559,7 +1559,7 @@ p, li { white-space: pre-wrap; }
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="185"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="186"/>
         <source>Custom Flags</source>
         <translation>Drapeaux additionnels</translation>
     </message>
