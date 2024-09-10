@@ -12,7 +12,9 @@
     "losers_round": "敗者側{0}回戦",
     "round": "{0}回戦",
     "best_of": "{0}本先取",
-    "qualifier": "{0}進出決定戦{1}"
+    "qualifier": "{0}進出決定戦{1}",
+    "qualifier_winners_indicator": "(W)",
+    "qualifier_losers_indicator": "(L)"
   },
   "phase": {
     "group_stage": "予選プール",

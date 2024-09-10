@@ -12,7 +12,9 @@
         "losers_round": "Repescagem Rodada {0}",
         "round": "Rodada {0}",
         "best_of": "Melhor de {0}",
-        "qualifier": "Classificatória para {0} {1}"
+        "qualifier": "Classificatória - {0} {1}",
+        "qualifier_winners_indicator": "(W)",
+        "qualifier_losers_indicator": "(L)"
     },
     "phase": {
         "group_stage": "Fase de Grupos",
