@@ -12,7 +12,9 @@
         "losers_round": "Losers Round {0}",
         "round": "Round {0}",
         "best_of": "Best of {0}",
-        "qualifier": "{0} Qualifier"
+        "qualifier": "{0} Qualifier {1}",
+        "qualifier_winners_indicator": "(W)",
+        "qualifier_losers_indicator": "(L)"
     },
     "phase": {
         "group_stage": "Pools",

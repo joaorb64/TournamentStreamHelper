@@ -109,7 +109,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
+                    slug}",
 
             )
             logger.debug(data.text)
@@ -133,7 +134,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                     finalData["startAt"] = dateutil.parser.parse(
                         dateElement.get("text"), fuzzy=True).timestamp()
             except Exception as e:
-                logger.error(f"Could not get tournament date: {traceback.format_exc()}")
+                logger.error(f"Could not get tournament date: {
+                             traceback.format_exc()}")
 
             participantsElement = next(
                 (d for d in details if d.get("icon") == "fa fa-users"), None)
@@ -155,7 +157,8 @@ class ChallongeDataProvider(TournamentDataProvider):
             slug = self.GetSlug()
 
             data = self.scraper.get(
-                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={slug}",
+                f"https://challonge.com/en/search/tournaments.json?filters%5B&page=1&per=1&q={
+                    slug}",
                 headers=HEADERS
             )
 
@@ -601,10 +604,16 @@ class ChallongeDataProvider(TournamentDataProvider):
                                 "losers_round").format(abs(match.get("round")))
 
                         # For final rounds in group, use "Qualifier"
-                        if int(match.get("round")) in [maxRoundNumber, minRoundNumber]:
+                        indicator = "qualifier_winners_indicator"
 
+                        if int(match.get("round")) < 0:
+                            indicator = "qualifier_losers_indicator"
+
+                        indicator = TSHLocaleHelper.matchNames.get(indicator)
+
+                        if int(match.get("round")) in [maxRoundNumber, minRoundNumber]:
                             match["round_name"] = TSHLocaleHelper.matchNames.get("qualifier").format(
-                                self.CleanInputString(TSHLocaleHelper.phaseNames.get("final_stage")))
+                                self.CleanInputString(TSHLocaleHelper.phaseNames.get("final_stage")), indicator)
                             match["winnerProgression"] = TSHLocaleHelper.phaseNames.get(
                                 "final_stage")
 

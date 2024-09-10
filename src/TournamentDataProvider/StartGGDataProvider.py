@@ -352,12 +352,21 @@ class StartGGDataProvider(TournamentDataProvider):
             finalResult.update(result.get("new", {}))
             finalResult.update(result.get("old", {}))
 
+            logger.debug(finalResult)
+
             winnerProgression = result.get("old", {}).get("winnerProgression")
             if winnerProgression:
+                indicator = "qualifier_winners_indicator"
+
+                if int(finalResult.get("round") or 0) < 0:
+                    indicator = "qualifier_losers_indicator"
+
+                indicator = TSHLocaleHelper.matchNames.get(indicator)
+
                 winnerProgression = re.sub(
                     r"\s*[\(\{\[].*?[\)\}\]]", "", winnerProgression).strip()
                 finalResult["round_name"] = TSHLocaleHelper.matchNames.get(
-                    "qualifier").format(winnerProgression)
+                    "qualifier").format(winnerProgression, indicator)
 
             if result.get("new", {}).get("isOnline") == False:
                 finalResult["bestOf"] = None
@@ -383,7 +392,8 @@ class StartGGDataProvider(TournamentDataProvider):
             return self.ParseMatchDataOldApi({})
 
         data = self.QueryRequests(
-            f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+            f'https://www.start.gg/api/-/gg_api./set/{
+                setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
             type=requests.get,
             params={
                 "extensions": {"cacheControl": {"version": 1, "noCache": True}},
@@ -585,6 +595,7 @@ class StartGGDataProvider(TournamentDataProvider):
             "station": _set.get("station", {}).get("number", "") if _set.get("station", {}) != None else "",
             "isOnline": deep_get(_set, "event.isOnline"),
             "isPools": isPools,
+            "round": _set.get("round")
         }
 
         players = [[], []]
@@ -953,7 +964,6 @@ class StartGGDataProvider(TournamentDataProvider):
                         except:
                             continue
 
-
         team1losers = False
         team2losers = False
 
@@ -964,9 +974,11 @@ class StartGGDataProvider(TournamentDataProvider):
             else:
                 team1losers = True
                 team2losers = True
-        
-        logger.info("Team 1 Score - OLD API: " + str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None)))
-        logger.info("Team 2 Score - OLD API: " + str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None)))
+
+        logger.info("Team 1 Score - OLD API: " + str(respTasks.get("entities",
+                    {}).get("sets", {}).get("entrant1Score", None)))
+        logger.info("Team 2 Score - OLD API: " + str(respTasks.get("entities",
+                    {}).get("sets", {}).get("entrant2Score", None)))
 
         return ({
             "stage_strike": stageStrikeState,
@@ -1042,7 +1054,8 @@ class StartGGDataProvider(TournamentDataProvider):
                         if stateCode:
                             stateData = states[stateCode]
 
-                            path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
+                            path = f'./assets/state_flag/{countryCode}/{
+                                "_CON" if stateCode == "CON" else stateCode}.png'
                             if not os.path.exists(path):
                                 path = None
 
@@ -1382,7 +1395,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     tournamentPicture = tournament.get("images")[0].get("url")
                 except:
                     tournamentPicture = None
-                    logger.error("Failed to get Event Logo for: " + tournament.get("name") + " - " + event.get("name"))
+                    logger.error("Failed to get Event Logo for: " +
+                                 tournament.get("name") + " - " + event.get("name"))
 
                 player_history = {
                     "placement": set.get("placement"),

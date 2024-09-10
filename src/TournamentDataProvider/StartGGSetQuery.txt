@@ -9,6 +9,7 @@ query SetQuery($id: ID!) {
             isOnline
         }
         fullRoundText
+        round
         state
         totalGames
         entrant1Score

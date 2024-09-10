@@ -475,20 +475,25 @@ class TSHScoreboardWidget(QWidget):
 
         for key in TSHLocaleHelper.matchNames.keys():
             matchString = TSHLocaleHelper.matchNames[key]
-            if "{0}" in matchString:
-                for number in range(5):
-                    if key == "best_of":
-                        if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
-                            self.scoreColumn.findChild(QComboBox, "match").addItem(
-                                matchString.format(str(2*number+1)))
-                    else:
-                        if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(number+1))) < 0:
-                            self.scoreColumn.findChild(QComboBox, "match").addItem(
-                                matchString.format(str(number+1)))
-            else:
-                if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
-                    self.scoreColumn.findChild(
-                        QComboBox, "match").addItem(matchString)
+
+            try:
+                if "{0}" in matchString:
+                    for number in range(5):
+                        if key == "best_of":
+                            if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
+                                self.scoreColumn.findChild(QComboBox, "match").addItem(
+                                    matchString.format(str(2*number+1)))
+                        else:
+                            if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(number+1))) < 0:
+                                self.scoreColumn.findChild(QComboBox, "match").addItem(
+                                    matchString.format(str(number+1)))
+                else:
+                    if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
+                        self.scoreColumn.findChild(
+                            QComboBox, "match").addItem(matchString)
+            except:
+                logger.error(
+                    f"Unable to generate match strings for {matchString}")
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -558,7 +563,8 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1,
                 teamNumber=1,
-                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}',
+                path=f'score.{self.scoreboardNumber}.team.{
+                    1}.player.{len(self.team1playerWidgets)+1}',
                 scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
 
@@ -587,7 +593,8 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team2playerWidgets)+1,
                 teamNumber=2,
-                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
+                path=f'score.{self.scoreboardNumber}.team.{
+                    2}.player.{len(self.team2playerWidgets)+1}',
                 scoreboardNumber=self.scoreboardNumber)
             self.playerWidgets.append(p)
 
