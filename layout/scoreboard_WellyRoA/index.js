@@ -130,14 +130,6 @@ LoadEverything().then(() => {
             event
           );
 
-          // SetInnerHtml(
-          //   $(`#p${t + 1}charaMask.div`), `
-          //   <img src='../../out/score/1/team/1/player/1/character/1/assets/base_files_icon/asset.png'
-          //   style='transform: ;
-          //   `
-          // );
-          // CharacterDisplay($(`.p${p + 1}Character`), )
-
 
 
 
@@ -219,25 +211,4 @@ LoadEverything().then(() => {
   };
 });
 
-// async function getState(pNum) {
-//   let stateFile;
-//   stateFile = await fetch("http://192.168.1.17:8111/RoAState.json")
-//   const stateJSON = await stateFile.json();
-//   updateState(stateJSON, pNum);
-//   console.log(stateJSON);
-// }
 
-// // Read scores from JSON and update
-// async function updateState(roaState, pNumScore) {
-//   let arrayPos = 0;
-//   const tscore = [];
-//   for (let i = 0; i < 4; i++) { 
-//       if (roaState.Characters[i].SlotState != "OFF" && roaState.Characters[i].SlotState != "" ) {
-//           if (pNumScore < roaState.Characters[i].GameCount) {
-//               tscore[arrayPos] = roaState.Characters[i].GameCount;
-//           }
-//           arrayPos++;
-//       }
-      
-//   }
-// }

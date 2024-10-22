@@ -95,11 +95,11 @@ body {
   align-content: center;
   justify-content: center;
   position: absolute;
-  width: 200px;
-  top: 840px;
+  width: 230px;
+  top: 870px;
   color: white;
   left: 50%;
-  height: 60px;
+  height: 70px;
   background-repeat: no-repeat;
   clip-path: polygon(0 0, 100% 0, calc(100% - 25px) 100%, calc(0% + 25px) 100%);
   background-color: rgba(0,0,0,0.65);
@@ -113,7 +113,7 @@ body {
 .singles .match {
   position: relative;
   top: 2px;
-  font-size: 30px;
+  font-size: 34px;
   padding-top: 2px;
   padding-left: 20px;
   padding-right: 20px;
@@ -122,8 +122,8 @@ body {
 
 .singles .best_of {
   position: relative;
-  top: -2px;
-  font-size: 18px;
+  top: 2px;
+  font-size: 20px;
   height: 20px;
 }
 
