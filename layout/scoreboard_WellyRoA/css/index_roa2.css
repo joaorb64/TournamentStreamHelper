@@ -1,26 +1,26 @@
 @font-face {
   font-family: "Deansgate";
-  src: url('./Fonts/DeansgateCondensed-Bold.ttf');
+  src: url('../Fonts/DeansgateCondensed-Bold.ttf');
 }
 
 @font-face {
   font-family: "Roboto";
-  src: url('./Fonts/Roboto-Bold.ttf');
+  src: url('../Fonts/Roboto-Bold.ttf');
 }
 
 @font-face {
   font-family: "LemonMilk";
-  src: url('./Fonts/LEMONMILK-Medium.otf');
+  src: url('../Fonts/LEMONMILK-Medium.otf');
 }
 
 @font-face {
   font-family: "BebasNeue";
-  src: url('./Fonts/BebasNeue-Regular.ttf');
+  src: url('../Fonts/BebasNeue-Regular.ttf');
 }
 
 @font-face {
   font-family: "Bahnschrift";
-  src: url('./Fonts/BAHNSCHRIFT\ 7.TTF');
+  src: url('../Fonts/BAHNSCHRIFT\ 7.TTF');
 }
 
 
@@ -63,14 +63,14 @@ body {
 
 .t1 .bg {
   top: 14px;
-  -webkit-mask-image: url("./p1.png");
+  -webkit-mask-image: url("../Assets/p1.png");
   background: var(--p1-score-bg-color);
   filter: drop-shadow(0px 4px 1px rgba(0, 0, 0, 0.45));
 }
 
 .t2 .bg {
   top: 14px;
-  -webkit-mask-image: url("./p2.png");
+  -webkit-mask-image: url("../Assets/p2.png");
   background: var(--p2-score-bg-color);
   filter: drop-shadow(0px 4px 1px rgba(0, 0, 0, 0.45));
 }
@@ -85,7 +85,7 @@ body {
   right: 0;
   top: 0;
   height: 90px;
-  background-image: url("./base_solid.png");
+  background-image: url("../Assets/base.png");
 }
 
 .singles .middle_container {
@@ -255,7 +255,7 @@ body {
 
 
 .twitter_logo {
-  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-image: url(../Assets/twitter.svg);
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
@@ -270,7 +270,7 @@ body {
   width: 80px;
   height: 80px;
   margin: 8px;
-  background-image: url("../logo.png");
+  background-image: url("../../logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -352,7 +352,7 @@ body {
 
 .maskOverlayBO3 {
   display: block;
-  -webkit-mask-image: url('./Score/Bo3 0.png');
+  -webkit-mask-image: url('../Score/Bo3 0.png');
   /* mask-image: url('../Overlay/Scoreboard/Score/1/Bo3 0.png'); */
   width: 98px;
   height: 55px;
@@ -362,7 +362,7 @@ body {
 
 .maskOverlayBO5 {
   display: block;
-  -webkit-mask-image: url('./Score/Bo5 0.png');
+  -webkit-mask-image: url('../Score/Bo5 0.png');
   /* mask-image: url('../Overlay/Scoreboard/Score/1/Bo5 0.png'); */
   width: 98px;
   height: 55px;
@@ -633,7 +633,7 @@ body {
   display: inline-block;
   width: 30px;
   height: 30px;
-  -webkit-mask-image: url(./icon_mic.svg);
+  -webkit-mask-image: url(../Assets/icon_mic.svg);
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
