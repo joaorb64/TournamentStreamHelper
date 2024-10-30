@@ -5,7 +5,7 @@ requests==2.28.1
 py7zr==0.19.0
 deepdiff==7.0.1
 git+https://github.com/woopelderly/PyQtDarkTheme@python3.12
-Pillow==9.2.0
+Pillow
 Flask
 flask-cors
 asyncio
