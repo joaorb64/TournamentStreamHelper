@@ -141,11 +141,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <location filename="../layout/TSHScoreboardScore.ui" line="21"/>
+        <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
@@ -734,11 +734,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <location filename="../TournamentStreamHelper.py" line="124"/>
         <location filename="../TournamentStreamHelper.py" line="160"/>
         <location filename="../TournamentStreamHelper.py" line="581"/>
         <location filename="../TournamentStreamHelper.py" line="813"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <location filename="../TSHScoreboardWidget.py" line="535"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
@@ -749,8 +749,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="310"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="76"/>
+        <location filename="../TournamentStreamHelper.py" line="310"/>
         <source>Thumbnail Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -788,8 +788,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="361"/>
         <location filename="../TSHPlayerListWidget.py" line="34"/>
+        <location filename="../TournamentStreamHelper.py" line="361"/>
         <source>Player List</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1327,8 +1327,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <location filename="../TSHSelectSetWindow.py" line="110"/>
+        <location filename="../TSHSelectStationWindow.py" line="85"/>
         <source>Stream</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1478,14 +1478,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>punctuation</name>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="742"/>
         <location filename="../TSHSelectSetWindow.py" line="139"/>
+        <location filename="../TournamentStreamHelper.py" line="742"/>
         <source>(</source>
         <translation>（</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="742"/>
         <location filename="../TSHSelectSetWindow.py" line="140"/>
+        <location filename="../TournamentStreamHelper.py" line="742"/>
         <source>)</source>
         <translation>）</translation>
     </message>
