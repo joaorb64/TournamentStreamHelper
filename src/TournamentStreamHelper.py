@@ -206,8 +206,7 @@ def ExtractUpdate():
                     tar.extract(m)
                     updateLog.append(f"Extract {m}")
                 except Exception:
-                    updateLog.append(f"Failed to extract {
-                                     m} - {traceback.format_exc()}")
+                    updateLog.append(f"Failed to extract {m} - {traceback.format_exc()}")
 
         try:
             with open("assets/update_log.txt", "w") as f:

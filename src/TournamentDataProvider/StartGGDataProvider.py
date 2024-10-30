@@ -392,8 +392,7 @@ class StartGGDataProvider(TournamentDataProvider):
             return self.ParseMatchDataOldApi({})
 
         data = self.QueryRequests(
-            f'https://www.start.gg/api/-/gg_api./set/{
-                setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
+            f'https://www.start.gg/api/-/gg_api./set/{setId};bustCache=true;expand=["setTask"];fetchMostRecentCached=true',
             type=requests.get,
             params={
                 "extensions": {"cacheControl": {"version": 1, "noCache": True}},
@@ -1054,8 +1053,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         if stateCode:
                             stateData = states[stateCode]
 
-                            path = f'./assets/state_flag/{countryCode}/{
-                                "_CON" if stateCode == "CON" else stateCode}.png'
+                            path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'
                             if not os.path.exists(path):
                                 path = None
 

@@ -227,8 +227,7 @@ class TSHCountryHelper(QObject):
                     None
                 )
             if state is not None:
-                logger.debug(f"State was explicit: [{
-                             city}] -> [{part}] = {state}")
+                logger.debug(f"State was explicit: [{city}] -> [{part}] = {state}")
                 return state["original_code"]
 
         # No, so get by City
@@ -239,8 +238,7 @@ class TSHCountryHelper(QObject):
                 TSHCountryHelper.remove_accents_lower(part), None)
 
             if state is not None:
-                logger.debug(f"Got state from city name: [{
-                             city}] -> [{part}] = {state}")
+                logger.debug(f"Got state from city name: [{city}] -> [{part}] = {state}")
                 return state
 
         return None
