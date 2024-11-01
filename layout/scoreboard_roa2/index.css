@@ -1,0 +1,466 @@
+@font-face {
+  font-family: "NotoSans";
+  src: url("../include/NotoSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "RobotoCondensed";
+  src: url("../include/RobotoCondensed.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../include/Roboto-Regular.ttf") format("truetype");
+}
+
+body {
+  font-family: var(--font);
+  font-weight: bold;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 3px 1px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 1px 5px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
+  letter-spacing: 1;
+  background-size: cover;
+  background-image: url("https://cdn.discordapp.com/attachments/1016678165764120666/1299114778681282660/Sample_RoA2_1.png?ex=6725e9ab&is=6724982b&hm=04b8e06bfc5faf1b7e2aa9c51f3cfaae59e7debaf16d4710181d93b93f221443&");
+}
+
+.container {
+  position: absolute;
+  color: var(--text-color);
+  overflow: hidden;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: var(--border-radius);
+  background: var(--bg-color);
+  align-items: center;
+}
+
+.player.container {
+  width: 600px;
+  height: 100px;
+  top: 0px;
+  padding: 0px 6px;
+}
+
+.player.container > div:not(.score) > .text:not(.text_empty) {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.p1.player.container {
+  background-position: 100% 0;
+  left: 0;
+  flex-direction: row;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.p2.player.container {
+  background-position: 0 0;
+  right: 0;
+  flex-direction: row-reverse;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.name {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  max-width: 100%;
+  font-size: 36px;
+}
+
+.chips {
+  display: flex;
+  position: absolute;
+  top: 108px;
+  width: 568px;
+  height: 24px;
+  justify-content: left;
+  align-content: center;
+  overflow: hidden;
+}
+
+.chip {
+  overflow: hidden;
+  border-radius: calc(var(--border-radius) / 2);
+}
+
+.p1.chips {
+  left: 16px;
+}
+
+.p2.chips {
+  flex-direction: row-reverse;
+  right: 16px;
+  justify-content: right;
+}
+
+.chip .text:not(.text_empty) {
+  margin-left: 4px;
+  margin-right: 4px;
+  height: 26px;
+  font-size: 22px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: calc(var(--border-radius) / 4);
+  min-width: unset;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.flagcountry, .flagstate {
+  display: flex;
+  justify-content: center;
+}
+
+.flagstate .text,
+.flagcountry .text {
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.p2 .flagstate .text,
+.p2 .flagcountry .text {
+  flex-direction: row-reverse;
+}
+
+.p2 .flagstate .text,
+.p2 .flagcountry .text {
+  flex-direction: row;
+  padding-left: 0 !important;
+}
+
+.p1 .flagstate .text,
+.p1 .flagcountry .text  {
+  padding-right: 0 !important;
+}
+
+.p1 .flagstate .text,
+.p1 .flagcountry .text {
+  flex-direction: row-reverse;
+}
+
+.twitter_logo {
+  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--text-color);
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.chips .twitter_logo {
+  margin-left: -4px;
+}
+
+.light .twitter_logo {
+  filter: invert(1);
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  background-image: url("../logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--border-radius);
+  z-index: 9;
+}
+
+.info.container {
+  left: 50%;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-position: center;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  font-size: 20px;
+}
+
+.info.container_inner {
+  display: flex;
+  width: 100%;
+  font-size: inherit;
+  justify-content: space-around;
+}
+
+.info.container_inner > div {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.info.container.top {
+  bottom: 0;
+  left: 0;
+  width: 400px;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+  flex-direction: row;
+  height: 90px;
+  padding: 8px 16px;
+  border-top-left-radius: 0;
+}
+
+.info.container.top > .col {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.info.container.top > .col .text {
+  justify-content: left;
+}
+
+.container.top {
+  bottom: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tournament_name {
+  font-size: 24px;
+  width: 100%;
+  height: 100%;
+}
+
+.event_name {
+  font-size: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.info.container.bottom {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  height: unset;
+  flex-direction: column;
+  width: 400px;
+  height: 50px;
+  font-size: 20px;
+  padding: 4px 16px;
+  border-radius: 0;
+}
+
+.phase {
+  font-size: 18px;
+  letter-spacing: 3px;
+  width: 100%;
+}
+
+.match {
+  font-size: 24px;
+  letter-spacing: 2px;
+  width: 100%;
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+}
+
+.icon .text:not(.text_empty) {
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.thin .icon {
+  border-radius: 8px;
+}
+
+.icon div:not(.text) {
+  width: 48px;
+  height: 48px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #3f3f46;
+  border-radius: var(--border-radius);
+}
+
+.tsh_character {
+  overflow: hidden;
+}
+
+.tsh_character > div {
+  opacity: 0.4;
+}
+
+.tsh_character::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--bg-color) 0,
+    transparent 40%,
+    transparent 60%,
+    var(--bg-color) 100%
+  );
+  top: 0;
+  left: 0;
+}
+
+.icon div:not(.text) {
+  border-radius: calc(var(--border-radius) * 2 / 3);
+}
+
+.flags_container {
+  display: flex;
+  flex-direction: column;
+}
+
+.flag {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 32px;
+  height: 26px;
+}
+
+.sponsor_icon > div > div {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius);
+}
+
+.character_container {
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  width: 100%;
+  z-index: -999;
+}
+
+.p2 .character_container {
+  transform: scaleX(-1);
+}
+
+.score {
+  width: 72px;
+  height: 100%;
+  font-size: 40px;
+  color: var(--bg-color);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.p1 .score {
+  color: var(--p1-score-color);
+  background: var(--p1-score-bg-color);
+  margin-right: -6px;
+  margin-left: 6px;
+}
+
+.sponsor {
+  margin-right: 6px;
+}
+
+.p1 .sponsor {
+  color: var(--p1-sponsor-color);
+}
+
+.p2 .score {
+  color: var(--p2-score-color);
+  background: var(--p2-score-bg-color);
+  margin-left: -6px;
+  margin-right: 6px;
+}
+
+.p2 .sponsor {
+  color: var(--p2-sponsor-color);
+}
+
+.losers_container {
+  position: absolute;
+  top: 8px;
+  width: 32px;
+  height: 32px;
+}
+
+.losers {
+  font-size: 24px;
+  -webkit-text-stroke: medium;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--border-radius) / 2);
+  justify-content: center;
+}
+
+.p1.losers_container {
+  left: 645px;
+}
+
+.p2.losers_container {
+  right: 645px;
+}
+
+.floating_score {
+  position: absolute;
+  top: 0;
+  width: 96px;
+  height: 50px;
+  font-size: 40px;
+  color: var(--bg-color);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.p1.floating_score {
+  color: var(--p1-score-color);
+  background: var(--p1-score-bg-color);
+  margin-right: -6px;
+  margin-left: 6px;
+  left: 660px;
+  border-bottom-right-radius: 0;
+}
+.p2.floating_score {
+  color: var(--p2-score-color);
+  background: var(--p2-score-bg-color);
+  margin-left: -6px;
+  margin-right: 6px;
+  right: 660px;
+  border-bottom-left-radius: 0;
+}

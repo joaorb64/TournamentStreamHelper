@@ -111492,12 +111492,12 @@
         "externalIdMap": null,
         "images": [
           {
-            "id": 7411987,
+            "id": 7535838,
             "width": 512,
             "height": 512,
             "ratio": 1,
             "type": "icon",
-            "url": "https://images.start.gg/images/character/2595/image-32aa9ae0f71d2cdac2702fde9ae02f9f.png?ehk=wh77e6fZ8ZSasuu3amneKK0bVjBm2W9LFJwycMNcrwc%3D&ehkOptimized=14EtmQYUGkXlNZXzwhzuMvQ2PjaPxs2ieHKfZDMNU%2Fg%3D",
+            "url": "https://images.start.gg/images/character/2595/image-bba84dfa694012f732acd879aec41660.png?ehk=jUcpZyYsGC3WNXWy9fxPvNCpmTFL3a8O29vK40zDEO0%3D&ehkOptimized=69NDM8DKFfGh7d958ztP2gD3QEsIlV7lnrVue4H2S24%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -111506,12 +111506,12 @@
             "updatedAt": null
           },
           {
-            "id": 7411988,
+            "id": 7535839,
             "width": 512,
             "height": 512,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/2595/image-6a2515b9fc55ac708ab8cad1624eb679.png?ehk=nFJ9WsK%2BfEYbmQC4IlyL3pXul42XoVwJ9ETS%2Bv82390%3D&ehkOptimized=0QUlSVOVnSNVZ6bXQBhPNQcqpor2rtEEfkeq%2FL%2BmBQI%3D",
+            "url": "https://images.start.gg/images/character/2595/image-eb46d84f395c0b918c76cc315c4df999.png?ehk=oitJsXcgbHpHvFbWpkT5Y6Ow1nZWUhQNeYKKQfP%2Bi18%3D&ehkOptimized=Y6D1eHFFBGYKUBbfcdAII5f2hpnyyXru6xhjysYOK3U%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -111668,6 +111668,45 @@
             "ratio": 1,
             "type": "stockIcon",
             "url": "https://images.start.gg/images/character/2599/image-4ead31d59ca5565904f6cf8c1d6c873d.png?ehk=CTeQR9jYls5FRzcHY5kxu9ScpG2Tl%2BzzEuoiAGunaWs%3D&ehkOptimized=c8gQq%2BqaOGq1XtbYoCvZ94NgGd9PlwXE%2BocZLw8FPLA%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2600,
+        "name": "King Zuva",
+        "isCommon": null,
+        "videogameId": 15,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7536667,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2600/image-f67e53b558dcd4f59086204a50cd8708.png?ehk=7daRB8JpMxm%2BVg2INaDukqY4PJK8kfalgn220Lvj11Q%3D&ehkOptimized=EZscTkRV3FxrFyTvGNLPG61J69O1dAu6Uk%2BSk42chUk%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7536668,
+            "width": 128,
+            "height": 128,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2600/image-9666b760d99a9f0b398b034a15c17dcf.png?ehk=FY6xn%2BlUhi6YlQYasy9EkP%2B0GmBXOv%2Fpv0vBMAl%2FdsE%3D&ehkOptimized=L7w70K4SvGUtdq6mFefSYeEHVECVxj0Q2ju0nPiaJ0E%3D",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -114038,7 +114077,8 @@
     2596,
     2597,
     2598,
-    2599
+    2599,
+    2600
   ],
   "resultEntity": "character",
   "actionRecords": []

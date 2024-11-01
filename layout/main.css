@@ -45,7 +45,7 @@
   --font: "RobotoCondensed";
   --border-radius: 16px;
   --text-color: white;
-  --bg-color: #18181b;
+  --bg-color: #121212;
   /* see DEFAULT_TEAM1_COLOR and DEFAULT_TEAM2_COLOR in src/TSHScoreboardWidget.py */
 
   /* --p1-score-bg-color: linear-gradient(
