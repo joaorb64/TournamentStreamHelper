@@ -28,5 +28,10 @@
         "dateStart": null,
         "dateEnd": 1718697216,
         "alert": "WARNING:\n\nDO NOT UPDATE TOURNAMENT STREAM HELPER TO 5.801\n\nWe have been able to identify a critical issue which prevents the program from being ran. We are currently investigating the root cause. Affected users can revert back to 5.8 through this link: https://github.com/joaorb64/TournamentStreamHelper/releases/tag/5.8\n\nWe apologize for the inconvenience."
+    },
+    "7": {
+        "dateStart": null,
+        "dateEnd": null,
+        "alert": "WARNING:\n\nREGARDING STARTGG\nStartGG is currently exhibiting new things on its API TSH was not prepared to handle, which may cause extra crashes when loading sets from there. :thanks_startgg:  We will be pinging back once the fix for this is released.\n\nREGARDING CHALLONGE\nIf you are trying to load a tournament from Challonge, the program may hang for a bit (should be less than 5 min, depending on your connection) when first inputting the bracket, or when you open the program with a Challonge bracket already loaded in. If this happens, DO NOT PANIC AND LET THE PROGRAM WORK, at least for the said 5 min timeframe. This is because we have to try to bypass the Cloudfare protection which is present on both Challonge as a website and its API :thanks_challonge:  We will try to move those retries in the background at some point, but given the API situation, as well as the lack of trackable stats data, we recommend against the use of Challonge for your tournaments if you can help it, even though we know that StartGG is sluggish and you should definitely never enable timed checkins on this webste if your playerbase isn’t used to checking in before matches.\n\nOn a side note, if someone is willing to make a contribution to add support for a different website, such at Tonamel, Battlefy or RoundOne, we’re definitely interested\n\nPS: We’re also still looking for a backend team for the TSH rewrite, if you know anybody feel free to pass the word around"
     }
 }
