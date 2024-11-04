@@ -922,24 +922,28 @@ class TSHScoreboardWidget(QWidget):
         StateManager.BlockSaving()
 
         try:
-            if data.get("round_name"):
+            round_name = data.get("round_name")
+            if round_name:
                 self.scoreColumn.findChild(
-                    QComboBox, "match").setCurrentText(data.get("round_name"))
+                    QComboBox, "match").setCurrentText(round_name)
                 self.scoreColumn.findChild(
                     QComboBox, "match").lineEdit().editingFinished.emit()
 
-            if data.get("tournament_phase"):
-                phase = data.get("tournament_phase")
-                top_n = data.get("top_n", 0)
-
+            tournament_phase = data.get("tournament_phase")
+            if tournament_phase:
                 # Is this Top 16 - Top ??? (even 128), if so...
                 # check if this isn't pools and isn't a qualifier
-                if top_n > 12 and data.get("isPools", False) is False and data.get("winnerProgression", None) is None:
-                    phase = TSHLocaleHelper.phaseNames.get(
-                        "top_n", "Top {0}").format(top_n)
+                round_division = data.get("roundDivision", 0)
+                if data.get("isPools", False) is False and round_division > 6:
+                    original_str = tournament_phase.split(" - ")
+                    tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(round_division)
+
+                    # Include "Bracket - XYZ" similar to if it's Pools
+                    if len(original_str) > 1:
+                        tournament_phase = f"{original_str[0]} - {tournament_phase}"
 
                 self.scoreColumn.findChild(
-                    QComboBox, "phase").setCurrentText(phase)
+                    QComboBox, "phase").setCurrentText(tournament_phase)
                 self.scoreColumn.findChild(
                     QComboBox, "phase").lineEdit().editingFinished.emit()
 

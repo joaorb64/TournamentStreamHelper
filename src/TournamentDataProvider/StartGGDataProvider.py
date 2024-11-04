@@ -714,27 +714,14 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return setData
 
-    def TopNPlacement(self, placement):
-        if placement == 5 or placement == 6:
-            return 6
-        else:
-            top_number = 1
-            while top_number < placement:
-                top_number *= 2
-
-            return top_number
-
     def ParseMatchDataOldApi(self, respTasks):
         entities = respTasks.get("entities", {})
         sets = entities.get("sets", {})
         tasks = entities.get("setTask", [])
 
-        lOverallPlacement = sets.get("lOverallPlacement", 0)
-        topN = 0
-        if lOverallPlacement and lOverallPlacement > 0:
-            topN = self.TopNPlacement(lOverallPlacement)
-
         selectedCharMap = {}
+        entrant1Id = str(sets.get("entrant1Id"))
+        entrant2Id = str(sets.get("entrant2Id"))
 
         for task in reversed(tasks):
             if task.get("action") in ["setup_character", "setup_strike", "setup_ban"]:
@@ -758,9 +745,9 @@ class StartGGDataProvider(TournamentDataProvider):
         selectedChars = [[], []]
 
         for char in selectedCharMap.items():
-            if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+            if str(char[0]) == entrant1Id:
                 selectedChars[0] = char[1]
-            if str(char[0]) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+            if str(char[0]) == entrant2Id:
                 selectedChars[1] = char[1]
 
         latestWinner = None
@@ -778,9 +765,9 @@ class StartGGDataProvider(TournamentDataProvider):
         lastWinnerSlot = None
 
         if latestWinner:
-            if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+            if str(latestWinner) == entrant1Id:
                 lastWinnerSlot = 0
-            if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+            if str(latestWinner) == entrant2Id:
                 lastWinnerSlot = 1
 
         allStages = None
@@ -828,9 +815,9 @@ class StartGGDataProvider(TournamentDataProvider):
                             stages.append(TSHGameAssetManager.instance.GetStageFromStartGGId(
                                 int(stageCode))[1].get("codename"))
 
-                        if str(entrantId) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                        if str(entrantId) == entrant1Id:
                             stageWins[0] = stages
-                        if str(entrantId) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                        if str(entrantId) == entrant2Id:
                             stageWins[1] = stages
 
                 if base.get("useMDSR"):
@@ -846,16 +833,16 @@ class StartGGDataProvider(TournamentDataProvider):
                         if stage:
                             codename = stage[1].get("codename")
 
-                            if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                            if str(entrant) == entrant1Id:
                                 strikedBy[0].append(codename)
-                            if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                            if str(entrant) == entrant2Id:
                                 strikedBy[1].append(codename)
                 else:
                     banPlayer = 0
 
-                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                    if str(latestWinner) == entrant1Id:
                         banPlayer = 0
-                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                    if str(latestWinner) == entrant2Id:
                         banPlayer = 1
 
                     if base.get("banList", None) is not None:
@@ -871,17 +858,17 @@ class StartGGDataProvider(TournamentDataProvider):
                 if latestWinner:
                     lastLoserSlot = 0
 
-                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")):
+                    if str(latestWinner) == entrant1Id:
                         lastLoserSlot = 1
-                    if str(latestWinner) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")):
+                    if str(latestWinner) == entrant2Id:
                         lastLoserSlot = 0
 
                     currPlayer = lastLoserSlot
                 elif base.get("turn"):
                     for entrant, value in base.get("turn").items():
-                        if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant1Id")) and value == True:
+                        if str(entrant) == entrant1Id and value == True:
                             currPlayer = 1
-                        if str(entrant) == str(respTasks.get("entities", {}).get("sets", {}).get("entrant2Id")) and value == True:
+                        if str(entrant) == entrant2Id and value == True:
                             currPlayer = 0
 
                 if allStages == None and strikedStages == None and selectedStage == None:
@@ -922,7 +909,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 "selectedStage": selected,
                 "currPlayer": currPlayer,
                 "lastWinner": lastWinnerSlot,
-                "currGame": respTasks.get("sets", {}).get("entrant1Score", 0) + respTasks.get("sets", {}).get("entrant2Score", 0)
+                "currGame": sets.get("entrant1Score", 0) + sets.get("entrant2Score", 0)
             }
 
             rulesetState = {
@@ -952,7 +939,7 @@ class StartGGDataProvider(TournamentDataProvider):
         for i in [0, 1]:
             if len(entrants[i]) == 0:
                 characterIds = deep_get(
-                    respTasks, f"entities.sets.entrant{i+1}CharacterIds", [])
+                    sets, f"entrant{i+1}CharacterIds", [])
 
                 if characterIds is not None:
                     for char in characterIds:
@@ -966,33 +953,31 @@ class StartGGDataProvider(TournamentDataProvider):
         team1losers = False
         team2losers = False
 
-        if respTasks.get("entities", {}).get("sets", {}).get("isGF", False):
-            if "Reset" not in respTasks.get("entities", {}).get("sets", {}).get("fullRoundText", ""):
+        if sets.get("isGF", False):
+            if "Reset" not in sets.get("fullRoundText", ""):
                 team1losers = False
                 team2losers = True
             else:
                 team1losers = True
                 team2losers = True
 
-        logger.info("Team 1 Score - OLD API: " + str(respTasks.get("entities",
-                    {}).get("sets", {}).get("entrant1Score", None)))
-        logger.info("Team 2 Score - OLD API: " + str(respTasks.get("entities",
-                    {}).get("sets", {}).get("entrant2Score", None)))
+        logger.info("Team 1 Score - OLD API: " + str(sets.get("entrant1Score", None)))
+        logger.info("Team 2 Score - OLD API: " + str(sets.get("entrant2Score", None)))
 
         return ({
             "stage_strike": stageStrikeState,
             "ruleset": rulesetState,
             "strikedBy": strikedBy,
             "entrants": entrants,
-            "team1score": respTasks.get("entities", {}).get("sets", {}).get("entrant1Score", None),
-            "team2score": respTasks.get("entities", {}).get("sets", {}).get("entrant2Score", None),
-            "bestOf": respTasks.get("entities", {}).get("sets", {}).get("bestOf", None),
-            "top_n": topN,
+            "team1score": sets.get("entrant1Score", None),
+            "team2score": sets.get("entrant2Score", None),
+            "bestOf": sets.get("bestOf", None),
+            "roundDivision": sets.get("roundDivision", None),
             "team1losers": team1losers,
             "team2losers": team2losers,
             "currPlayer": currPlayer,
-            "winnerProgression": respTasks.get("entities", {}).get("sets", {}).get("wProgressingName", None),
-            "loserProgression": respTasks.get("entities", {}).get("sets", {}).get("lProgressingName", None)
+            "winnerProgression": sets.get("wProgressingName", None),
+            "loserProgression": sets.get("lProgressingName", None)
         })
 
     def ProcessFutureSet(self, _set, eventSlug):
