@@ -17,6 +17,11 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
                      QtWebEngineCore.QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls):
             settings.setAttribute(attr, True)
 
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        self.setStyleSheet("background: transparent;")
+
+        self.page().setBackgroundColor(QtCore.Qt.transparent)
+
         self.loadFinished.connect(self.save)
         self.setAttribute(QtCore.Qt.WA_DontShowOnScreen, True)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
@@ -49,9 +54,35 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
         print(u"width: %d,hight: %d" % (size.width(), size.height()))
         img = QtGui.QImage(size.width(), size.height(),
                            QtGui.QImage.Format_ARGB32)
+        img.fill(QtGui.QColor(255, 192, 203))
         painter = QtGui.QPainter(img)
+
+        # Check for a background image
+        bg_image = None
+
+        game_screenshot = self.current[1].rsplit("_preview")[0]+".png"
+        if os.path.isfile(game_screenshot):
+            bg_image = game_screenshot
+            print("Found background image")
+        else:
+            default_game_screenshot = os.path.join(
+                os.path.dirname(self.current[1]), "default.png")
+
+            if os.path.isfile(default_game_screenshot):
+                bg_image = default_game_screenshot
+                print("Found default background image")
+
+        if bg_image:
+            bg = QtGui.QImage(bg_image)
+            painter.drawImage(
+                QtCore.QRect(0, 0, 1920, 1080),
+                bg
+            )
+
+        # Render html
         self.render(painter, QtCore.QPoint(0, 0),
                     QtCore.QRect(0, 0, 1920, 1080))
+
         painter.end()
         filename = self.current[1]
         if img.save(filename):
@@ -73,16 +104,13 @@ if __name__ == '__main__':
     in_out = []
 
     for path, subdirs, files in os.walk(os.path.abspath("../layout/")):
-        if not os.path.isdir("renders"):
-            os.mkdir("renders")
         for name in files:
             if name.endswith(".html"):
                 print(os.path.join(path, name))
-                in_out.append([
-                    f"file:///{os.path.join(path, name).replace(os.path.sep, '/')}",
-                    path.replace(os.path.sep, '/')+"/" +
-                    name.split(".")[0]+"_preview.png"
-                ])
+                in_out.append([f"file:///{os.path.join(path, name).replace(os.path.sep, '/')}",
+                               path.replace(os.path.sep, '/')+"/" +
+                               name.split(".")[0]+"_preview.png"
+                               ])
     print(in_out)
 
     shotter = PageShotter()

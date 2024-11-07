@@ -27,7 +27,6 @@ body {
     drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.1));
   letter-spacing: 1;
   background-size: cover;
-  background-image: url("https://cdn.discordapp.com/attachments/1016678165764120666/1299114778681282660/Sample_RoA2_1.png?ex=6725e9ab&is=6724982b&hm=04b8e06bfc5faf1b7e2aa9c51f3cfaae59e7debaf16d4710181d93b93f221443&");
 }
 
 .container {
