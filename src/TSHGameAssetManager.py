@@ -644,8 +644,9 @@ class TSHGameAssetManager(QObject):
                 except:
                     logger.error(traceback.format_exc())
 
-                assetData["name"] = skin_name
-                assetData["en_name"] = skin_name_en
+                if skinNameData.get(skinIndex, {}).get("is_different_character", False):
+                    assetData["name"] = skin_name
+                    assetData["en_name"] = skin_name_en
 
                 item.setData(skin_name if skin_name else skinIndex,
                              Qt.ItemDataRole.EditRole)
