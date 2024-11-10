@@ -4,11 +4,13 @@ from qtpy.QtCore import *
 from qtpy.QtGui import *
 import os
 import traceback
+import sys
 from loguru import logger
 
 from src.SettingsManager import SettingsManager
 from src.StateManager import StateManager
 from .TSHDictHelper import deep_clone
+from .TSHDirHelper import TSHResolve
 
 
 class TSHLocaleHelperSignals(QObject):
@@ -40,6 +42,7 @@ class TSHLocaleHelper(QObject):
         logger.info("OS locale: " + str(current_locale))
 
         oldTranslator = TSHLocaleHelper.translator
+        i18n_dir = TSHResolve('src/i18n')
 
         if oldTranslator:
             QGuiApplication.instance().removeTranslator(oldTranslator)
@@ -49,18 +52,18 @@ class TSHLocaleHelper(QObject):
         for locale in current_locale:
             if localeFound:
                 break
-            for f in os.listdir("./src/i18n/"):
+            for f in os.listdir(f"{i18n_dir}/"):
                 if f.endswith(".qm"):
                     lang = f.split("_", 1)[1].split(".")[0]
                     if lang == locale:
                         TSHLocaleHelper.translator.load(
-                            QLocale(lang), "./src/i18n/"+f)
+                            QLocale(lang), f"{i18n_dir}/{f}")
                         TSHLocaleHelper.programLocale = locale
                         localeFound = True
                         break
                     elif lang == locale.split("-")[0]:
                         TSHLocaleHelper.translator.load(
-                            QLocale(lang), "./src/i18n/"+f)
+                            QLocale(lang), f"{i18n_dir}/{f}")
                         TSHLocaleHelper.programLocale = locale
                         localeFound = True
                         break
@@ -79,8 +82,9 @@ class TSHLocaleHelper(QObject):
 
     def LoadLanguages():
         try:
+            i18n_dir = TSHResolve('src/i18n')
             languages_json = json.load(
-                open("./src/i18n/mapping.json", 'rt', encoding='utf-8'))
+                open(f"{i18n_dir}/mapping.json", 'rt', encoding='utf-8'))
             TSHLocaleHelper.languages = languages_json.get("languages")
             TSHLocaleHelper.remapping = languages_json.get("remapping")
         except Exception as e:
@@ -106,18 +110,19 @@ class TSHLocaleHelper(QObject):
     def LoadRoundNames():
         # Load default round names and translation
         try:
+            tterm_dir = TSHResolve('./src/i18n/tournament_term')
             original_term_names: dict = json.load(
-                open("./src/i18n/tournament_term/en.json", 'rt', encoding='utf-8'))
+                open(f"{tterm_dir}/en.json", 'rt', encoding='utf-8'))
             term_names = deep_clone(original_term_names)
 
-            for f in os.listdir("./src/i18n/tournament_term/"):
+            for f in os.listdir(f"{tterm_dir}/"):
                 if f.endswith(".json"):
                     lang = f.split(".")[0]
 
                     if lang == TSHLocaleHelper.fgTermLocale:
                         # We found the exact language file
                         translatedRoundNames = json.load(
-                            open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                            open(f"{tterm_dir}/{f}", 'rt', encoding='utf-8'))
                         term_names = original_term_names.copy()
                         term_names.update(translatedRoundNames)
                         break
@@ -125,7 +130,7 @@ class TSHLocaleHelper(QObject):
                         # We found a more generic language file
                         # Good enough if we don't find a specific one
                         translatedRoundNames = json.load(
-                            open(f"./src/i18n/tournament_term/{f}", 'rt', encoding='utf-8'))
+                            open(f"{tterm_dir}/{f}", 'rt', encoding='utf-8'))
                         term_names = original_term_names.copy()
                         term_names.update(translatedRoundNames)
 

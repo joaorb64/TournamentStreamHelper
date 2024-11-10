@@ -4,6 +4,7 @@ from qtpy.QtCore import *
 from qtpy import uic
 import json
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHDirHelper import TSHResolve
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
@@ -32,7 +33,7 @@ class TSHBracketWidget(QDockWidget):
         StateManager.BlockSaving()
         super().__init__(*args)
 
-        uic.loadUi("src/layout/TSHBracket.ui", self)
+        uic.loadUi(TSHResolve("src/layout/TSHBracket.ui"), self)
 
         StateManager.Set("bracket", {})
 
