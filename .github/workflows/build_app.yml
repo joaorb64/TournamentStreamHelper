@@ -85,8 +85,8 @@ jobs:
           chcp 65001
           set PYTHONIOENCODING=utf-8
           python scripts/gen_contributors.py
-          pyinstaller dependencies/tsh.spec
-          copy dist/TSH.exe TSH.exe
+          pyinstaller --noconfirm dependencies/tsh.spec
+          copy dist\TSH.exe TSH.exe
 
       - run: git pull
       - name: commit files

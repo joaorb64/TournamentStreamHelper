@@ -4,7 +4,6 @@ from qtpy.QtCore import *
 from qtpy.QtGui import *
 import os
 import traceback
-import sys
 from loguru import logger
 
 from src.SettingsManager import SettingsManager
