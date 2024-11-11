@@ -9,6 +9,7 @@ import requests
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.TSHStageStrikeLogic import TSHStageStrikeLogic
+from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHDictHelper import deep_get
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
@@ -52,7 +53,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.signals = TSHScoreboardStageWidgetSignals()
 
-        uic.loadUi("src/layout/TSHScoreboardStage.ui", self.innerWidget)
+        uic.loadUi(TSHResolve("src/layout/TSHScoreboardStage.ui"), self.innerWidget)
 
         self.userRulesets = []
         self.startggRulesets = []

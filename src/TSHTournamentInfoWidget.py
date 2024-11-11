@@ -11,6 +11,7 @@ from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .SettingsManager import SettingsManager
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Helpers.TSHDirHelper import TSHResolve
 import traceback
 import os
 import shutil
@@ -22,7 +23,7 @@ class TSHTournamentInfoWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
 
-        uic.loadUi("src/layout/TSHTournamentInfo.ui", self)
+        uic.loadUi(TSHResolve("src/layout/TSHTournamentInfo.ui"), self)
 
         TSHTournamentDataProvider.instance.signals.tournament_data_updated.connect(
             self.UpdateData)
