@@ -11,6 +11,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Helpers.TSHDirHelper import TSHResolve
 from .Workers import Worker
 import threading
 import copy
@@ -51,7 +52,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.losers = False
 
-        uic.loadUi("src/layout/TSHScoreboardPlayer.ui", self)
+        uic.loadUi(TSHResolve("src/layout/TSHScoreboardPlayer.ui"), self)
 
         self.character_container = self.findChild(QWidget, "characters")
 

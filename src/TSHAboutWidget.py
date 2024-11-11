@@ -4,6 +4,7 @@ from qtpy.QtCore import *
 from qtpy import uic
 import json
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHDirHelper import TSHResolve
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
@@ -13,11 +14,11 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 class TSHAboutWidget(QDialog):
     def __init__(self, *args):
         super().__init__(*args)
-        uic.loadUi("src/layout/TSHAbout.ui", self)
+        uic.loadUi(TSHResolve('src/layout/TSHAbout.ui'), self)
 
         try:
             version = json.load(
-                open('./assets/versions.json', encoding='utf-8')).get("program", "?")
+                open(TSHResolve('assets/versions.json'), encoding='utf-8')).get("program", "?")
         except Exception as e:
             version = "?"
 
@@ -32,7 +33,7 @@ class TSHAboutWidget(QDialog):
         self.findChild(QLabel, "icon").setPixmap(icon)
 
         try:
-            contributors = open('./assets/contributors.txt',
+            contributors = open(TSHResolve('assets/contributors.txt'),
                                 encoding='utf-8').readlines()
         except Exception as e:
             contributors = ["?"]

@@ -15,6 +15,7 @@ from .SettingsManager import *
 from .TSHGameAssetManager import *
 from .Workers import Worker
 from .Helpers.TSHDictHelper import deep_get, deep_set
+from .Helpers.TSHDirHelper import TSHResolve
 
 
 class PreviewWidget(QWidget):
@@ -81,7 +82,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
 
-        self.settings = uic.loadUi("src/layout/TSHThumbnailSettings.ui")
+        self.settings = uic.loadUi(TSHResolve("src/layout/TSHThumbnailSettings.ui"))
         self.widget.layout().addWidget(self.settings)
 
         # SET DEFAULTS
@@ -516,7 +517,7 @@ class TSHThumbnailSettingsWidget(QDockWidget):
 
         self.GeneratePreview()
 
-        tmp_path = "./tmp/thumbnail"
+        tmp_path = TSHResolve("tmp/thumbnail")
         tmp_file = f"{tmp_path}/template.jpg"
         Path(tmp_path).mkdir(parents=True, exist_ok=True)
 

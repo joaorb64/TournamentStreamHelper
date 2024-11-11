@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Helpers.TSHDirHelper import TSHResolve
 import shutil
 import tarfile
 import qdarktheme
@@ -283,7 +284,7 @@ class Window(QMainWindow):
 
         try:
             version = json.load(
-                open('./assets/versions.json', encoding='utf-8')).get("program", "?")
+                open(TSHResolve('./assets/versions.json'), encoding='utf-8')).get("program", "?")
         except Exception as e:
             version = "?"
 
@@ -764,8 +765,9 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
-        if os.path.isdir("./tmp"):
-            shutil.rmtree("./tmp")
+        tmpDir = TSHResolve("tmp")
+        if os.path.isdir(tmpDir):
+            shutil.rmtree(tmpDir)
 
     def ReloadGames(self):
         logger.info("Reload games")
@@ -817,7 +819,7 @@ class Window(QMainWindow):
 
         try:
             versions = json.load(
-                open('./assets/versions.json', encoding='utf-8'))
+                open(TSHResolve('./assets/versions.json'), encoding='utf-8'))
         except Exception as e:
             logger.error("Local version file not found")
 
