@@ -7,6 +7,7 @@ from qtpy.QtCore import *
 from qtpy import uic
 from typing import List
 from src.TSHColorButton import TSHColorButton
+from .Helpers.TSHDirHelper import TSHResolve
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 from src.TSHSelectStationWindow import TSHSelectStationWindow
@@ -313,7 +314,7 @@ class TSHScoreboardWidget(QWidget):
         self.timerLayout.layout().addWidget(self.timerCancelBt)
         self.timerLayout.setVisible(False)
 
-        self.team1column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
+        self.team1column = uic.loadUi(TSHResolve("src/layout/TSHScoreboardTeam.ui"))
         self.columns.layout().addWidget(self.team1column)
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
@@ -350,10 +351,10 @@ class TSHScoreboardWidget(QWidget):
                 ])
             c.toggled.emit(False)
 
-        self.scoreColumn = uic.loadUi("src/layout/TSHScoreboardScore.ui")
+        self.scoreColumn = uic.loadUi(TSHResolve("src/layout/TSHScoreboardScore.ui"))
         self.columns.layout().addWidget(self.scoreColumn)
 
-        self.team2column = uic.loadUi("src/layout/TSHScoreboardTeam.ui")
+        self.team2column = uic.loadUi(TSHResolve("src/layout/TSHScoreboardTeam.ui"))
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))

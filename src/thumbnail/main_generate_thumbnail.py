@@ -20,6 +20,7 @@ from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.Helpers.TSHDictHelper import *
 from src.Helpers.TSHAltTextHelper import generate_youtube
+from src.Helpers.TSHDirHelper import TSHResolve
 
 is_preview = False
 
@@ -1273,8 +1274,8 @@ def generate(settingsManager, isPreview=False, gameAssetManager=None, scoreboard
     is_preview = isPreview
 
     data_path = "./out/program_state.json"
-    out_path = "./out/thumbnails" if not isPreview else "./tmp/thumbnail"
-    tmp_path = "./tmp"
+    out_path = "./out/thumbnails" if not isPreview else TSHResolve("tmp/thumbnail")
+    tmp_path = TSHResolve("tmp")
 
     # IMG PATH
     foreground_path = settings.get("foreground_path")

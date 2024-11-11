@@ -3,11 +3,24 @@
 block_cipher = None
 
 a = Analysis(
-    ['main.py'],
+    ['../main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=[],
+    hiddenimports=[
+        'loguru',
+        'engineio.async_drivers.threading'
+    ],
+    datas=[
+        ('../assets/contributors.txt', 'assets'),
+        ('../assets/versions.json', 'assets'),
+        ('../src/i18n/tournament_term/*.json', 'src/i18n/tournament_term'),
+ #       ('../src/i18n/round_names/*.json', 'src/i18n/round_names'),
+        ('../src/i18n/*.json', 'src/i18n'),
+        ('../src/i18n/*.qm', 'src/i18n'),
+        ('../src/layout/*', 'src/layout'),
+        ('../src/TournamentDataProvider/*.txt', 'src/TournamentDataProvider'),
+        ('../stage_strike_app/build/*', 'stage_strike_app/build')
+    ],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
@@ -24,12 +37,23 @@ pyz = PYZ(
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
+    [],
     name='TSH',
-    exclude_binaries=True,
-    icon='assets/icons/icon.ico',
-    noconsole=True,
-    hiddenimports=[],
-    windowed=True
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon=['../assets/icons/icon.ico'],
 )
 coll = COLLECT(
     exe,

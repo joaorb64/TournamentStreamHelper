@@ -9,6 +9,7 @@ import traceback
 from loguru import logger
 from ..Helpers.TSHCountryHelper import TSHCountryHelper
 from ..Helpers.TSHDictHelper import deep_get
+from ..Helpers.TSHDirHelper import TSHResolve
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
@@ -1793,51 +1794,25 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return sets_
 
+sggTdpDir = TSHResolve('src/TournamentDataProvider')
 
-f = open("src/TournamentDataProvider/StartGGSetsQuery.txt", 'r')
-StartGGDataProvider.SetsQuery = f.read()
+def readQueryFile(tdpdir, filename):
+    with open(f"{tdpdir}/StartGG{filename}Query.txt", "r") as f:
+        return f.read()
 
-f = open("src/TournamentDataProvider/StartGGSetQuery.txt", 'r')
-StartGGDataProvider.SetQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGUserSetQuery.txt", 'r')
-StartGGDataProvider.UserSetQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGStreamSetsQuery.txt", 'r')
-StartGGDataProvider.StreamSetsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGEntrantsQuery.txt", 'r')
-StartGGDataProvider.EntrantsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGTournamentDataQuery.txt", 'r')
-StartGGDataProvider.TournamentDataQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGRecentSetsQuery.txt", 'r')
-StartGGDataProvider.RecentSetsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGPlayerLastSetsQuery.txt", 'r')
-StartGGDataProvider.LastSetsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGPlayerTournamentHistoryQuery.txt", 'r')
-StartGGDataProvider.HistorySetsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGTournamentStandingsQuery.txt", 'r')
-StartGGDataProvider.TournamentStandingsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGTournamentPhasesQuery.txt", 'r')
-StartGGDataProvider.TournamentPhasesQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGTournamentPhaseGroupQuery.txt", 'r')
-StartGGDataProvider.TournamentPhaseGroupQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGStationsQuery.txt", 'r')
-StartGGDataProvider.StationsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGStationSetsQuery.txt", 'r')
-StartGGDataProvider.StationSetsQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGStreamQueueQuery.txt", 'r')
-StartGGDataProvider.StreamQueueQuery = f.read()
-
-f = open("src/TournamentDataProvider/StartGGFutureSetQuery.txt", 'r')
-StartGGDataProvider.FutureSetQuery = f.read()
+StartGGDataProvider.SetsQuery = readQueryFile(sggTdpDir, "Sets")
+StartGGDataProvider.SetQuery = readQueryFile(sggTdpDir, "Set")
+StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
+StartGGDataProvider.StreamSetsQuery = readQueryFile(sggTdpDir, "StreamSets")
+StartGGDataProvider.EntrantsQuery = readQueryFile(sggTdpDir, "Entrants")
+StartGGDataProvider.FutureSetQuery = readQueryFile(sggTdpDir, "FutureSet")
+StartGGDataProvider.TournamentDataQuery = readQueryFile(sggTdpDir, "TournamentData")
+StartGGDataProvider.RecentSetsQuery = readQueryFile(sggTdpDir, "RecentSets")
+StartGGDataProvider.LastSetsQuery = readQueryFile(sggTdpDir, "PlayerLastSets")
+StartGGDataProvider.HistorySetsQuery = readQueryFile(sggTdpDir, "PlayerTournamentHistory")
+StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
+StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "TournamentPhases")
+StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
+StartGGDataProvider.StationsQuery = readQueryFile(sggTdpDir, "Stations")
+StartGGDataProvider.StationSetsQuery = readQueryFile(sggTdpDir, "StationSets")
+StartGGDataProvider.StreamQueueQuery = readQueryFile(sggTdpDir, "StreamQueue")
