@@ -1249,7 +1249,7 @@ def createFalseData(gameAssetManager: TSHGameAssetManager = None, used_assets: s
 
 
 def remove_special_chars(input_str: str):
-    invalid = '<>:"/\|?* '
+    invalid = '<>:"/\\|?* '
     for char in invalid:
         input_str = input_str.replace(char, "")
     return input_str
