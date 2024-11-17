@@ -34,25 +34,20 @@ class TSHCountryHelper(QObject):
         class DownloaderThread(QThread):
             def run(self):
                 try:
-                    url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json'
+                    url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries%2Bstates%2Bcities.json'
                     r = requests.get(url, allow_redirects=True)
+                    tmp_file = TSHResolve('./tmp/countries+states+cities.json.tmp')
 
-                    open(
-                        './assets/countries+states+cities.json.tmp',
-                        'wb'
-                    ).write(r.content)
+                    open(tmp_file).write(r.content)
 
                     try:
                         # Test if downloaded JSON is valid
-                        json.load(
-                            open('./assets/countries+states+cities.json.tmp'))
+                        json.load(open(tmp_file))
 
                         # Remove old file, overwrite with new one
                         os.remove('./assets/countries+states+cities.json')
-                        os.rename(
-                            './assets/countries+states+cities.json.tmp',
-                            './assets/countries+states+cities.json'
-                        )
+                        os.rename(tmp_file,
+                            './assets/countries+states+cities.json')
 
                         logger.info("Countries file updated")
                         TSHCountryHelper.LoadCountries()
