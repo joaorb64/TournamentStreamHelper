@@ -742,7 +742,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     if len(selectedCharMap) > 0:
                         break
 
-        logger.info(selectedCharMap)
+        logger.debug(f"selectedCharMap: {selectedCharMap}")
         selectedChars = [[], []]
 
         for char in selectedCharMap.items():
@@ -1478,9 +1478,9 @@ class StartGGDataProvider(TournamentDataProvider):
                             _set, "phaseGroup.displayIdentifier")
                     phaseName = deep_get(_set, "phaseGroup.phase.name")
 
-                    p1id = _set.get("slots", [{}])[0].get("entrant", {}).get(
+                    p1id = _set.get("slots", [{}, {}])[0].get("entrant", {}).get(
                         "participants", [{}])[0].get("player", {}).get("id")
-                    p2id = _set.get("slots", [{}])[1].get("entrant", {}).get(
+                    p2id = _set.get("slots", [{}, {}])[1].get("entrant", {}).get(
                         "participants", [{}])[0].get("player", {}).get("id")
 
                     p1id = str(p1id)

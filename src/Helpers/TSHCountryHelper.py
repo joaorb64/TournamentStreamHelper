@@ -55,7 +55,7 @@ class TSHCountryHelper(QObject):
                         logger.error("Countries files download failed")
                 except Exception as e:
                     logger.error(
-                        "Could not update /assets/countries+states+cities.json: "+str(e))
+                        "Could not update countries+states+cities.json: "+str(e))
         downloaderThread = DownloaderThread(self)
         downloaderThread.start()
 

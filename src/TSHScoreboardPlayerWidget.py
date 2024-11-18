@@ -158,8 +158,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         processed_line = l.replace("\n", "").strip()
                         if processed_line and processed_line not in self.pronoun_list:
                             self.pronoun_list.append(processed_line)
+            except FileNotFoundError:
+                with open('./user_data/pronouns_list.txt', 'w') as f:
+                    logger.info('creating ./user_data/pronouns_list.txt')
             except Exception as e:
-                logger.error(f"ERROR: Did not find {file}")
                 logger.error(traceback.format_exc())
         self.pronoun_model = QStringListModel()
         self.pronoun_completer.setModel(self.pronoun_model)
