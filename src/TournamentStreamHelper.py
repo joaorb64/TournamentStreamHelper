@@ -874,11 +874,13 @@ class Window(QMainWindow):
                                 downloaded = 0
 
                                 dl_url = release["zipball_url"]
-                                assets = release["assets"] if "assets" in release else []
-                                for i in range(len(assets)):
-                                    if assets[i]["name"] == "release.zip":
-                                        dl_url = assets[i]["url"]
-                                        break
+
+                                if os.name == 'nt':
+                                    assets = release["assets"] if "assets" in release else []
+                                    for i in range(len(assets)):
+                                        if assets[i]["name"] == "release.zip":
+                                            dl_url = assets[i]["url"]
+                                            break
 
                                 response = urllib.request.urlopen(dl_url)
 
