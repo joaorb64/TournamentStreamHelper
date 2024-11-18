@@ -26,12 +26,12 @@ class StateManager:
 
     def BlockSaving():
         StateManager.saveBlocked += 1
-        logger.critical(
+        logger.warning(
             "Initial Block - Current Blocking Status: " + str(StateManager.saveBlocked))
 
     def ReleaseSaving():
         StateManager.saveBlocked -= 1
-        logger.critical(
+        logger.warning(
             "Release Block - Current Blocking Status: " + str(StateManager.saveBlocked))
         if StateManager.saveBlocked == 0:
             StateManager.SaveState()
@@ -85,6 +85,8 @@ class StateManager:
         try:
             with open("./out/program_state.json", 'rb') as file:
                 StateManager.state = orjson.loads(file.read())
+        except FileNotFoundError:
+            pass
         except Exception as e:
             logger.error(traceback.format_exc())
             StateManager.state = {}

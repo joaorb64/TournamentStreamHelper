@@ -53,6 +53,7 @@ src/layout/*_ui.py
 layout_*/*
 build/main/*
 TSH_old.exe
+release.zip
 main.spec
 *.tmp
 logs/*

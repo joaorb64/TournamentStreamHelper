@@ -271,6 +271,8 @@ class TSHScoreboardStageWidget(QDockWidget):
         try:
             with open("./user_data/rulesets.json", 'w', encoding="utf-8") as outfile:
                 json.dump(self.userRulesets, outfile, indent=4, sort_keys=True)
+        except FileNotFoundError:
+            logger.debug("./user_data/rulesets.json not found")
         except Exception as e:
             logger.error(traceback.format_exc())
 
@@ -322,6 +324,9 @@ class TSHScoreboardStageWidget(QDockWidget):
                     item.setData(myRuleset, Qt.ItemDataRole.UserRole)
                     item.setIcon(QIcon("./assets/icons/db.svg"))
                     rulesetsModel.appendRow(item)
+        except FileNotFoundError:
+            logger.warning("./user_data/rulesets.json not found, skipping import")
+            self.userRulesets = []
         except:
             self.userRulesets = []
             logger.error(traceback.format_exc())

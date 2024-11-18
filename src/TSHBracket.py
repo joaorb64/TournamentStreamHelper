@@ -151,8 +151,10 @@ class Bracket():
                         if int(k) < 0 and abs(int(k)) % 2 == 1:
                             targetIdW = 1
                         _set.winNextSlot = targetIdW
-                    except Exception as e:
-                        logger.error(e)
+                    except KeyError as e:
+                        logger.warning(f"Bracket KeyError: {e}")
+                    except:
+                        logger.error(traceback.format_exc())
                     try:
                         if abs(roundNum) % 4 == 0:
                             _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(
@@ -173,8 +175,10 @@ class Bracket():
                             targetIdL = j % 2
 
                         _set.loseNextSlot = targetIdL
-                    except Exception as e:
-                        logger.error(e)
+                    except KeyError as e:
+                        logger.warning(f"Bracket KeyError: {e}")
+                    except:
+                        logger.error(traceback.format_exc())
             else:
                 for j, _set in enumerate(round):
                     try:
@@ -187,6 +191,8 @@ class Bracket():
                         if int(k) < 0 and abs(int(k)) % 2 == 1:
                             targetIdW = 1
                         _set.winNextSlot = targetIdW
+                    except KeyError as e:
+                        logger.warning(f"Bracket KeyError: {e}")
                     except Exception as e:
                         logger.error(e)
 

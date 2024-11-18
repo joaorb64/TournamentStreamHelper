@@ -151,7 +151,7 @@ class TSHLocaleHelper(QObject):
             TSHLocaleHelper.phaseNames.update(term_names["phase"])
             TSHLocaleHelper.matchNames.update(term_names["match"])
         except:
-            logger.error("Custom Tournament Terms were not found and/or loaded.")
+            logger.warning("Custom Tournament Terms were not found and/or loaded.")
 
     def GetRemaps(language: str):
         for remap, langs in TSHLocaleHelper.remapping.items():

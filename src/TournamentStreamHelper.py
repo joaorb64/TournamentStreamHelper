@@ -4,7 +4,7 @@
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
 import shutil
-import tarfile
+import zipfile
 import qdarktheme
 import requests
 import urllib
@@ -195,28 +195,33 @@ def UpdateProcedure():
 def ExtractUpdate():
     try:
         updateLog = []
-        tar = tarfile.open("update.tar.gz")
+        with zipfile.ZipFile("update.zip", "r") as z:
+            # backup exe
+            os.rename("./TSH.exe", "./TSH_old.exe")
 
-        # backup exe
-        os.rename("./TSH.exe", "./TSH_old.exe")
+            for filename in z.namelist():
+                if "/" in filename:
+                    fullname = filename.split("/", 1)[1]
+                    if fullname.endswith("/"):
+                        updateLog.append(f"Create directory {fullname}")
+                        try:
+                            os.makedirs(os.path.dirname(fullname), exist_ok=True)
+                        except Exception:
+                            updateLog.append(f"Failed to create {filename} - {traceback.format_exc()}")
+                    else:
+                        updateLog.append(f"Extract {filename} -> {fullname}")
+                        try:
+                            z.extract(filename, path=os.path.dirname(fullname))
+                        except Exception:
+                            updateLog.append(f"Failed to extract {filename} - {traceback.format_exc()}")
 
-        for m in tar.getmembers():
-            if "/" in m.name:
-                m.name = m.name.split("/", 1)[1]
-                try:
-                    tar.extract(m)
-                    updateLog.append(f"Extract {m}")
-                except Exception:
-                    updateLog.append(f"Failed to extract {m} - {traceback.format_exc()}")
+            try:
+                with open("assets/update_log.txt", "w") as f:
+                    f.writelines(updateLog)
+            except:
+                logger.error(traceback.format_exc())
 
-        try:
-            with open("assets/update_log.txt", "w") as f:
-                f.writelines(updateLog)
-        except:
-            logger.error(traceback.format_exc())
-
-        tar.close()
-        os.remove("update.tar.gz")
+        os.remove("update.zip")
     except Exception as e:
         logger.error(traceback.format_exc())
 
@@ -865,11 +870,19 @@ class Window(QMainWindow):
                         self.downloadDialogue.show()
 
                         def worker(progress_callback, cancel_event):
-                            with open("update.tar.gz", 'wb') as downloadFile:
+                            with open("./update.zip", 'wb') as downloadFile:
                                 downloaded = 0
 
-                                response = urllib.request.urlopen(
-                                    release["tarball_url"])
+                                dl_url = release["zipball_url"]
+
+                                if os.name == 'nt':
+                                    assets = release["assets"] if "assets" in release else []
+                                    for i in range(len(assets)):
+                                        if assets[i]["name"] == "release.zip":
+                                            dl_url = assets[i]["url"]
+                                            break
+
+                                response = urllib.request.urlopen(dl_url)
 
                                 while (True):
                                     chunk = response.read(1024*1024)
