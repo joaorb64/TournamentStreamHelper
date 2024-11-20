@@ -38,7 +38,7 @@ class TSHCountryHelper(QObject):
                     r = requests.get(url, allow_redirects=True)
                     tmp_file = TSHResolve('./tmp/countries+states+cities.json.tmp')
 
-                    open(tmp_file).write(r.content)
+                    open(tmp_file, 'wb').write(r.content)
 
                     try:
                         # Test if downloaded JSON is valid
@@ -53,6 +53,7 @@ class TSHCountryHelper(QObject):
                         TSHCountryHelper.LoadCountries()
                     except:
                         logger.error("Countries files download failed")
+                        os.remove(tmp_file)
                 except Exception as e:
                     logger.error(
                         "Could not update countries+states+cities.json: "+str(e))
