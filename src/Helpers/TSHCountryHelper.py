@@ -6,6 +6,8 @@ from qtpy.QtWidgets import *
 import requests
 import os
 import traceback
+
+from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
@@ -38,7 +40,8 @@ class TSHCountryHelper(QObject):
                     r = requests.get(url, allow_redirects=True)
                     tmp_file = TSHResolve('./tmp/countries+states+cities.json.tmp')
 
-                    open(tmp_file, 'wb').write(r.content)
+                    with open(tmp_file, 'wb') as f:
+                        f.write(r.content)
 
                     try:
                         # Test if downloaded JSON is valid
@@ -53,7 +56,6 @@ class TSHCountryHelper(QObject):
                         TSHCountryHelper.LoadCountries()
                     except:
                         logger.error("Countries files download failed")
-                        os.remove(tmp_file)
                 except Exception as e:
                     logger.error(
                         "Could not update countries+states+cities.json: "+str(e))
