@@ -1,4 +1,5 @@
 import os
+import re
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -378,3 +379,38 @@ class WebServerActions(QThread):
             return "OK"
         else:
             return "ERROR"
+
+    def load_tournament(self, url=None):
+        logger.error(f"URL PROVIDED: {url}")
+        if url is None or  url == "":
+            TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(None)
+            return "OK"
+        else:
+            validators = [
+                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
+                QRegularExpression("challonge.com/.+")
+            ]
+
+            for validator in validators:
+                    match = validator.match(url).capturedTexts()
+                    if len(match) > 0:
+                        continue
+            
+            if "start.gg" in url:
+                matches = re.match(
+                    "(.*start.gg/tournament/[^/]*/event[s]?/[^/]*)", url)
+                if matches:
+                    url = matches.group(0)
+
+                    # Some URLs in startgg have eventS but the API doesn't work with that format
+                    url = url.replace("/events/", "/event/")
+            if "challonge" in url:
+                matches = re.match(
+                    "(.*challonge.com/[^/]*/[^/]*)", url)
+                if matches:
+                    url = matches.group(0)
+
+            SettingsManager.Set("TOURNAMENT_URL", url)
+            TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
+            
+            return "OK"

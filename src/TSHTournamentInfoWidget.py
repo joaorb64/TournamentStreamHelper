@@ -182,6 +182,17 @@ class TSHTournamentInfoWidget(QDockWidget):
                         # Convert date into QDate object
                         d = QDate.fromString(local_date, "yyyy-MM-dd")
                         widget.setDate(d)
+                else:
+                    exceptions = ["endAt", "eventStartAt", "eventEndAt"]
+                    info = data.get(key)
+
+                    if key in exceptions and data.get(key) != "":
+                        unix_timestamp = float(data[key])
+                        local_datetime = time.strftime("%x", time.localtime(
+                            unix_timestamp))
+                        info = local_datetime
+                    
+                    StateManager.Set(f"tournamentInfo.{key}", info)
             except:
                 logger.error(traceback.format_exc())
                 SettingsManager.Set("TOURNAMENT_URL", '')

@@ -463,6 +463,15 @@ class WebServer(QThread):
         emit('load_player_from_tag', WebServer.actions.load_player_from_tag(
             scoreboardNumber, html.unescape(args.get('tag')), team, player, no_mains))
 
+    # Update bracket
+    @app.route('/set-tournament')
+    def set_tournament():
+        return WebServer.actions.load_tournament(request.args.get('url'))
+
+    @socketio.on('set_tournament')
+    def ws_set_tournament(message):
+        emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
+
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
