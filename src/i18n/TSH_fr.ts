@@ -1559,7 +1559,7 @@ p, li { white-space: pre-wrap; }
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="182"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="184"/>
         <source>Custom Flags</source>
         <translation>Drapeaux additionnels</translation>
     </message>
