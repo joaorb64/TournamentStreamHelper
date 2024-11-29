@@ -103,6 +103,12 @@ class StartGGDataProvider(TournamentDataProvider):
                 data, "data.event.tournament.shortSlug", "")
             finalData["startAt"] = deep_get(
                 data, "data.event.tournament.startAt", "")
+            finalData["endAt"] = deep_get(
+                data, "data.event.tournament.endAt", "")
+            finalData["eventStartAt"] = deep_get(
+                data, "data.event.startAt", "")
+            finalData["eventEndAt"] = deep_get(
+                data, "data.event.endAt", "")
         except:
             logger.error(traceback.format_exc())
 

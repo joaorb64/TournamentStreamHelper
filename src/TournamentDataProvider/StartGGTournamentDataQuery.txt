@@ -8,6 +8,8 @@ query TournamentDataQuery($eventSlug: String!) {
     isOnline
     name
     numEntrants
+    startAt
+    endAt
     tournament {
         name
         shortSlug

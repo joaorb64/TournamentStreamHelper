@@ -674,6 +674,8 @@ class Window(QMainWindow):
         )
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.SetGame)
+        TSHTournamentDataProvider.instance.signals.tournament_url_update.connect(
+            self.Signal_GameChange)
 
         pre_base_layout.addLayout(base_layout)
         hbox.addWidget(self.gameSelect)
@@ -741,6 +743,11 @@ class Window(QMainWindow):
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
         if index is not None:
             self.gameSelect.setCurrentIndex(index)
+    
+    def Signal_GameChange(self, url):
+        if url == "":
+            self.gameSelect.setCurrentIndex(0)
+            TSHGameAssetManager.instance.selectedGame = {}
 
     def UpdateUserSetButton(self):
         if SettingsManager.Get("StartGG_user"):
