@@ -151,20 +151,42 @@ class TSHGameAssetManager(QObject):
         gameLoaderThread.start()
 
     def SetGameFromStartGGId(self, gameid):
+        def detect_smashgg_id_match(game, id):
+            result = str(game.get("smashgg_game_id", "")) == str(id)
+            if not result:
+                alternates = game.get("alternate_versions", [])
+                alternates_ids = []
+                for alternate in alternates:
+                    if alternate.get("smashgg_game_id"):
+                        alternates_ids.append(str(alternate.get("smashgg_game_id")))
+                result = str(id) in alternates_ids
+            return(result)
+    
         if len(self.games.keys()) == 0:
             return
 
         for i, game in enumerate(self.games.values()):
-            if str(game.get("smashgg_game_id")) == str(gameid):
+            if detect_smashgg_id_match(game,gameid):
                 self.LoadGameAssets(i+1)
                 break
 
     def SetGameFromChallongeId(self, gameid):
+        def detect_challonge_id_match(game, id):
+            result = str(game.get("challonge_game_id", "")) == str(id)
+            if not result:
+                alternates = game.get("alternate_versions", [])
+                alternates_ids = []
+                for alternate in alternates:
+                    if alternate.get("challonge_game_id"):
+                        alternates_ids.append(str(alternate.get("smashgg_game_id")))
+                result = str(id) in alternates_ids
+            return(result)
+        
         if len(self.games.keys()) == 0:
             return
 
         for i, game in enumerate(self.games.values()):
-            if str(game.get("challonge_game_id")) == str(gameid):
+            if detect_challonge_id_match(game,gameid):
                 self.LoadGameAssets(i+1)
                 break
 

@@ -802,9 +802,20 @@ class Window(QMainWindow):
         self.SetGame()
 
     def DetectGameFromId(self, id):
+        def detect_smashgg_id_match(games, game, id):
+            result = str(games[game].get("smashgg_game_id", "")) == str(id)
+            if not result:
+                alternates = games[game].get("alternate_versions")
+                alternates_ids = []
+                for alternate in alternates:
+                    if alternate.get("smashgg_game_id"):
+                        alternates_ids.append(str(alternate.get("smashgg_game_id")))
+                result = str(id) in alternates_ids
+            return(result)
+
         game = next(
             (i+1 for i, game in enumerate(self.games)
-             if str(self.games[game].get("smashgg_game_id", "")) == str(id)),
+             if detect_smashgg_id_match(self.games,game,id)),
             None
         )
 
