@@ -18,13 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-24.04"]
+        os: ["ubuntu-latest"]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Extract branch name
         shell: bash
@@ -33,11 +33,11 @@ jobs:
 
       - run: |
           sudo apt-get update
-          sudo apt-get install -y libgstreamer-plugins-base1.0-dev
-          sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qttools5-dev-tools
-          lrelease -version
+          sudo apt-get remove -y libunwind-*
+          sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev qt6-base-dev qt6-base-dev-tools qt6-tools-dev qmake6 qt6-tools-dev-tools
       - run: pip install -r dependencies/requirements.txt pyinstaller
       - run: |
+          pyside6-lrelease -version
           python3 src/i18n/gen_translation_files.py
           python3 src/i18n/gen_translation_binaries.py
 
@@ -69,23 +69,23 @@ jobs:
       - locale_build
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Extract branch name
         shell: bash
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - run: pip install -r dependencies/requirements.txt pyinstaller
+      - run: pip install -r .\dependencies\requirements.txt pyinstaller
       - run: |
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
-          python scripts/gen_contributors.py
-          pyinstaller --noconfirm dependencies/tsh.spec
+          python .\scripts\gen_contributors.py
+          pyinstaller --noconfirm .\dependencies\tsh.spec
           copy dist\TSH.exe TSH.exe
 
       - run: git pull

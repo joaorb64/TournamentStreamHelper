@@ -29,7 +29,7 @@ languages = [
 output = [f'src/i18n/TSH_{lang}.ts' for lang in languages]
 
 os.system(
-    f"lupdate {' '.join(file_list)} -ts {' '.join(output)}")
+    f"pyside6-lupdate {' '.join(file_list)} -ts {' '.join(output)}")
 
 # Force vanished strings to be included
 for out_path in output:
