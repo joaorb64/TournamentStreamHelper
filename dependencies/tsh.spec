@@ -14,12 +14,12 @@ a = Analysis(
         ('../assets/contributors.txt', 'assets'),
         ('../assets/versions.json', 'assets'),
         ('../src/i18n/tournament_term/*.json', 'src/i18n/tournament_term'),
- #       ('../src/i18n/round_names/*.json', 'src/i18n/round_names'),
+#       ('../src/i18n/round_names/*.json', 'src/i18n/round_names'),
         ('../src/i18n/*.json', 'src/i18n'),
         ('../src/i18n/*.qm', 'src/i18n'),
         ('../src/layout/*', 'src/layout'),
-        ('../src/TournamentDataProvider/*.txt', 'src/TournamentDataProvider'),
-        ('../stage_strike_app/build/*', 'stage_strike_app/build')
+#       ('../stage_strike_app/build/*', 'stage_strike_app/build'),
+        ('../src/TournamentDataProvider/*.txt', 'src/TournamentDataProvider')
     ],
     hookspath=[],
     runtime_hooks=[],

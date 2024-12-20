@@ -1,8 +1,10 @@
 #!/bin/bash
 
-pushd ..
+pushd .. > /dev/null
 
-mkdir TournamentStreamHelper
+# Create TSH dir and its stage_strike_app folders
+mkdir -p TournamentStreamHelper/stage_strike_app/build
+
 cp -R assets \
 	layout \
 	user_data \
@@ -10,12 +12,17 @@ cp -R assets \
 	TSH.exe \
 	TournamentStreamHelper/
 
-zip -rv \
-    release.zip \
-    	TournamentStreamHelper \
-    -x \
-    	"TournamentStreamHelper/assets/versions.json" \
-    	"TournamentStreamHelper/assets/contributors.txt" \
+cp -R stage_strike_app/build \
+	TournamentStreamHelper/stage_strike_app/
+
+rm -rf \
+	TournamentStreamHelper/assets/versions.json \
+	TournamentStreamHelper/assets/contributors.txt \
+	TournamentStreamHelper/layout/game_images \
+	TournamentStreamHelper/layout/game_screenshots
+
+zip -rv release-windows.zip TournamentStreamHelper
 
 rm -rf TournamentStreamHelper
-popd
+
+popd > /dev/null
