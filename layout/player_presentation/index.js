@@ -325,7 +325,7 @@ LoadEverything().then(() => {
           );
           tl.from(
             $(`.tournament${s + 1}`),
-            { x: -100, autoAlpha: 0, duration: 0.3 },
+            { x: window.PLAYER == 1? 100 : -100, autoAlpha: 0, duration: 0.3 },
             0.2 + 0.2 * s
           );
         }
@@ -349,7 +349,6 @@ LoadEverything().then(() => {
                   <div class = "phase_match"></div>
   
                   <div class = "set_score"></div>
-                  <div class = "versus">VS</div>
                   <div class = "name"></div>
                 </div>
 
@@ -386,9 +385,8 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.sets .set${s + 1} .name`),
             `
-              <span class="sponsor">
-                ${set.oponent_team ? set.oponent_team : ""}
-              </span>
+              <div class = "versus">VS</div>
+              ${set.oponent_team ? `<span class="sponsor">${set.oponent_team}</span>` : ""} 
               ${await Transcript(set.oponent_name)}
             `
           );
@@ -399,7 +397,7 @@ LoadEverything().then(() => {
           );
           tl.from(
             $(`.set${s + 1}`),
-            { x: -100, autoAlpha: 0, duration: 0.4 },
+            { x: window.PLAYER == 1? 100 : -100, autoAlpha: 0, duration: 0.4 },
             0.2 + 0.2 * s
           );
         }

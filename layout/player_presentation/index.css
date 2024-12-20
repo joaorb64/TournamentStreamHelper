@@ -591,7 +591,6 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
-  overflow: hidden;
 }
 
 .p1.results {
@@ -695,6 +694,15 @@ body {
   );
 }
 
+.p1 .tournament_logo {
+  -webkit-mask-image: -webkit-linear-gradient(
+    right,
+    #ffffff 0%,
+    #ffffff 80%,
+    #ffffff00 100%
+  );
+}
+
 .logo {
   width: 160px;
   height: 160px;
@@ -768,6 +776,8 @@ body {
   width: 50px;
   height: 100%;
   font-size: 35px;
+
+  flex-shrink: 0;
 }
 
 .result_tag.winner {
@@ -785,28 +795,31 @@ body {
   */
 
 .sets .phase_match {
-  width: 300px;
-  padding-left: 10px;
+  width: 400px;
+  padding-left: 16px;
+  padding-right: 16px;
+  max-width: 400px;
+  overflow: hidden;
 }  
 
 .sets .versus {
   width: 50px;
+  font-size: 20px;
   text-align: center;
 }
 
 .set_score {
-  margin-left: 10px;
   height: 100%;
-  background-color: #b36800;
-  padding-left: 15px;
-  padding-right: 15px;
+  background-color: #595959;
+  padding-left: 16px;
+  padding-right: 16px;
   border-radius: 50px;
 }
 
 .sets .name {
-  padding-right: 10px;
-
-  width: 330px;
+  padding-right: 16px;
+  padding-left: 16px;
+  flex-grow: 1;
 }
 
 .sets .sponsor {

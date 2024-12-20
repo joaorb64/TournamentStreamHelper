@@ -38,7 +38,8 @@ class TSHCountryHelper(QObject):
                 try:
                     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries%2Bstates%2Bcities.json'
                     r = requests.get(url, allow_redirects=True)
-                    tmp_file = TSHResolve('./tmp/countries+states+cities.json.tmp')
+                    tmp_file = TSHResolve(
+                        './tmp/countries+states+cities.json.tmp')
 
                     with open(tmp_file, 'wb') as f:
                         f.write(r.content)
@@ -50,7 +51,7 @@ class TSHCountryHelper(QObject):
                         # Remove old file, overwrite with new one
                         os.remove('./assets/countries+states+cities.json')
                         os.rename(tmp_file,
-                            './assets/countries+states+cities.json')
+                                  './assets/countries+states+cities.json')
 
                         logger.info("Countries file updated")
                         TSHCountryHelper.LoadCountries()
@@ -125,6 +126,9 @@ class TSHCountryHelper(QObject):
                 }
 
                 for s in c.get("states", []):
+                    if s.get("state_code") is None:
+                        continue
+
                     scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
                         word[0] for word in re.split(r'\s+|-', s.get("name").strip()) if len(word) > 0])
 
@@ -225,7 +229,8 @@ class TSHCountryHelper(QObject):
                     None
                 )
             if state is not None:
-                logger.debug(f"State was explicit: [{city}] -> [{part}] = {state}")
+                logger.debug(
+                    f"State was explicit: [{city}] -> [{part}] = {state}")
                 return state["original_code"]
 
         # No, so get by City
@@ -236,7 +241,8 @@ class TSHCountryHelper(QObject):
                 TSHCountryHelper.remove_accents_lower(part), None)
 
             if state is not None:
-                logger.debug(f"Got state from city name: [{city}] -> [{part}] = {state}")
+                logger.debug(f"Got state from city name: [{
+                             city}] -> [{part}] = {state}")
                 return state
 
         return None

@@ -56,6 +56,11 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
                            QtGui.QImage.Format_ARGB32)
         img.fill(QtGui.QColor(255, 192, 203))
         painter = QtGui.QPainter(img)
+        # Generate a light diagonal stripes background
+        stripe_color = QtGui.QColor(240, 240, 240)
+        painter.setPen(QtGui.QPen(stripe_color, 2))
+        for i in range(0, size.width() + size.height(), 20):
+            painter.drawLine(i, 0, 0, i)
 
         # Check for a background image
         bg_image = None
@@ -74,10 +79,12 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
 
         if bg_image:
             bg = QtGui.QImage(bg_image)
-            painter.drawImage(
-                QtCore.QRect(0, 0, 1920, 1080),
-                bg
-            )
+            scaled_bg = bg.scaled(
+                1920, 1080, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            x_offset = (1920 - scaled_bg.width()) // 2
+            y_offset = (1080 - scaled_bg.height()) // 2
+            painter.drawImage(QtCore.QRect(x_offset, y_offset,
+                              scaled_bg.width(), scaled_bg.height()), scaled_bg)
 
         # Render html
         self.render(painter, QtCore.QPoint(0, 0),
