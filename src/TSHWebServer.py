@@ -9,7 +9,6 @@ from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
-from .Helpers.TSHDirHelper import TSHResolve
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
@@ -478,9 +477,6 @@ class WebServer(QThread):
     def test(filename):
         try:
             filename = filename or 'stage_strike_app/build/index.html'
-            if filename.startswith('stage_strike_app/build/'):
-                return send_from_directory(TSHResolve('.'), filename, as_attachment=filename.endswith('.gz'))
-
             return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'))
         except Exception as e:
             logger.error(f"File not found: {e}")
