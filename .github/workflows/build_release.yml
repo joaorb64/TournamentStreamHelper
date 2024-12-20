@@ -15,7 +15,9 @@ jobs:
 
             - name: Run gen_release.ps1
               shell: pwsh
-              run: ./scripts/gen_release.ps1
+              run: |
+                cd scripts
+                ./gen_release.ps1
 
             - name: Upload build artifact
               uses: actions/upload-artifact@v3
