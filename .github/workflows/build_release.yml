@@ -11,7 +11,7 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Run gen_release.ps1
               shell: pwsh
@@ -20,7 +20,8 @@ jobs:
                 ./gen_release.ps1
 
             - name: Upload build artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: release-windows
                   path: TournamentStreamHelper/**
+                  compression-level: 9

@@ -21,6 +21,7 @@ Get-ChildItem -Path "layout" -Recurse | Where-Object {
 }
 
 Copy-Item -Recurse -Force "user_data" "TournamentStreamHelper\user_data"
+Copy-Item -Recurse -Force "stage_strike_app" "TournamentStreamHelper\stage_strike_app"
 Copy-Item -Force "LICENSE" "TournamentStreamHelper\LICENSE"
 Copy-Item -Force "TSH.exe" "TournamentStreamHelper\TSH.exe"
 
