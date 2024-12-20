@@ -10,7 +10,9 @@ Remove-Item -Path "TournamentStreamHelper\assets\contributors.txt" -Force
 
 # Copy layout excluding game_images and symlinks
 Get-ChildItem -Path "layout" -Recurse | Where-Object {
-    $_.FullName -notmatch "layout\\game_images" -and -not $_.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)
+    $_.FullName -notmatch "layout\\game_images" -and 
+    $_.FullName -notmatch "layout\\game_screenshots" -and 
+    -not $_.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)
 } | ForEach-Object {
     $destination = $_.FullName.Replace("layout", "TournamentStreamHelper\layout")
     if ($_.PSIsContainer) {
@@ -21,7 +23,7 @@ Get-ChildItem -Path "layout" -Recurse | Where-Object {
 }
 
 Copy-Item -Recurse -Force "user_data" "TournamentStreamHelper\user_data"
-Copy-Item -Recurse -Force "stage_strike_app" "TournamentStreamHelper\stage_strike_app"
+Copy-Item -Recurse -Force "stage_strike_app\build" "TournamentStreamHelper\stage_strike_app\build"
 Copy-Item -Force "LICENSE" "TournamentStreamHelper\LICENSE"
 Copy-Item -Force "TSH.exe" "TournamentStreamHelper\TSH.exe"
 
