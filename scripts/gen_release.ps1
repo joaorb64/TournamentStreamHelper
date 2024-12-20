@@ -24,8 +24,4 @@ Copy-Item -Recurse -Force "user_data" "TournamentStreamHelper\user_data"
 Copy-Item -Force "LICENSE" "TournamentStreamHelper\LICENSE"
 Copy-Item -Force "TSH.exe" "TournamentStreamHelper\TSH.exe"
 
-Compress-Archive -Path "TournamentStreamHelper" -DestinationPath "release.zip" -Update
-
-Remove-Item -Recurse -Force "TournamentStreamHelper"
-
 Pop-Location

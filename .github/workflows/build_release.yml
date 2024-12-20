@@ -19,8 +19,12 @@ jobs:
                 cd scripts
                 ./gen_release.ps1
 
+            - name: Unzip release.zip
+              shell: pwsh
+              run: Expand-Archive -Path release.zip -DestinationPath release
+
             - name: Upload build artifact
               uses: actions/upload-artifact@v3
               with:
                   name: release-windows
-                  path: release.zip
+                  path: TournamentStreamHelper/**
