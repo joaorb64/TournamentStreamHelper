@@ -25,6 +25,6 @@ Copy-Item -Recurse -Force "stage_strike_app" "TournamentStreamHelper\stage_strik
 Copy-Item -Force "LICENSE" "TournamentStreamHelper\LICENSE"
 Copy-Item -Force "TSH.exe" "TournamentStreamHelper\TSH.exe"
 
-Compress-Archive -Path "TournamentStreamHelper" -DestinationPath "release.zip" -Update
+Compress-Archive -Path "TournamentStreamHelper" -DestinationPath "release-windows.zip" -Update
 
 Pop-Location

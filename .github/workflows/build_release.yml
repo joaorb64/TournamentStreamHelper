@@ -23,5 +23,5 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: release-windows
-                  path: TournamentStreamHelper/**
-                  compression-level: 9
+                  path: release-windows.zip
+                  compression-level: 0
