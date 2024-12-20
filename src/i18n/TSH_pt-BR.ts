@@ -1578,7 +1578,7 @@ p, li { white-space: pre-wrap; }
         <translation>Certifique-se de que a URL está no formato correto e que o evento existe.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="184"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="188"/>
         <source>Custom Flags</source>
         <translation>Bandeiras customizadas</translation>
     </message>
