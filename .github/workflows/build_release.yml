@@ -1,0 +1,24 @@
+name: Build Release
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+jobs:
+    build:
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout repository
+                uses: actions/checkout@v2
+
+            - name: Run gen_release.ps1
+                shell: pwsh
+                run: ./scripts/gen_release.ps1
+
+            - name: Upload build artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: release-windows
+                    path: release.zip
