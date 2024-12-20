@@ -92,7 +92,14 @@ class PageShotter(QtWebEngineWidgets.QWebEngineView):
 
         painter.end()
         filename = self.current[1]
-        if img.save(filename):
+
+        # Resize the image to 720p
+        img_720p = img.scaled(
+            1280, 720,
+            QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation
+        )
+
+        if img_720p.save(filename):
             filepath = os.path.join(os.path.dirname(__file__), filename)
             print(u"success:%s" % filepath)
         else:
