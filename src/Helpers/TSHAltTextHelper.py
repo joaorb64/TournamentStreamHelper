@@ -4,6 +4,7 @@ import textwrap
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
+from atproto import client_utils
 
 def add_alt_text_tooltip_to_button(push_button: QPushButton):
     altTextTooltip = QApplication.translate(
@@ -19,7 +20,28 @@ def load_program_state():
     return (data_json)
 
 
-def generate_youtube(scoreboard_id=1, use_phase_name=True):
+def generate_bsky_text(scoreboard_id=1, use_phase_name=True):
+    def transform_yt_into_bsky(description):
+        text = "\n".join(description.split("\n")[:-2])
+        text = QApplication.translate("altText", "LIVE NOW") + "\n\n" + text
+        text += "\n\n"
+
+        link_text = QApplication.translate("altText", "Click here to watch")
+        result = client_utils.TextBuilder().text(text).link(link_text, "https://example.com")
+        raw_text = text + link_text
+        return(raw_text, result)
+
+    post_length_limit = 300
+    data = load_program_state()
+    title, description = generate_youtube(scoreboard_id, use_phase_name)
+    raw_text, builder = transform_yt_into_bsky(description)
+    if len(raw_text) > post_length_limit:
+        title, description = generate_youtube(scoreboard_id, use_phase_name, use_characters=False)
+        raw_text, builder = transform_yt_into_bsky(description)
+    return(raw_text, builder)
+
+
+def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
     title_length_limit = 100    # Character limit for video titles
     data = load_program_state()
     tournament_name = data.get("tournamentInfo").get("tournamentName")
@@ -83,8 +105,12 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True):
             title_long = f'{title_long}' + \
                 " / ".join(player_names_with_characters)
             title_short = f'{title_short}' + " / ".join(player_names)
-            description = description + \
-                " / ".join(player_names_with_characters)
+            if use_characters:
+                description = description + \
+                    " / ".join(player_names_with_characters)
+            else:
+                description = description + \
+                    " / ".join(player_names)
 
         if team_id == "1":
             title_long = f'{title_long} ' + \
@@ -110,7 +136,7 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True):
         " " + "https://github.com/joaorb64/TournamentStreamHelper/releases"
     description = description.strip()
 
-    if len(title_long) <= title_length_limit:
+    if len(title_long) <= title_length_limit and use_characters:
         return (title_long, description)
     else:
         if len(title_short) > title_length_limit:
@@ -226,6 +252,8 @@ if __name__ == "__main__":
     print(colored("TEST MODE - TSHAltTextHelper.py", "red"))
     print("====")
     title, description = generate_youtube(1)
+    raw_bsky, builder = generate_bsky_text(1)
     print(colored("YouTube title: ", "yellow") + f"{title}")
     print(colored(f"\nDescription: \n", "yellow") + f"{description}")
     print(colored(f"\nTop 8 alt text: \n", "yellow")+f"{generate_top_n_alt_text()}")
+    print(colored(f"\nBluesky post: \n", "yellow")+f"{raw_bsky}")
