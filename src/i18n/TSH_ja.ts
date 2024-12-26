@@ -1181,7 +1181,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHPlayerListWidget.py" line="75"/>
         <location filename="../TSHCommentaryWidget.py" line="47"/>
         <location filename="../TSHBracketWidget.py" line="93"/>
-        <location filename="../TSHScoreboardWidget.py" line="166"/>
+        <location filename="../TSHScoreboardWidget.py" line="167"/>
         <source>Characters per player</source>
         <translation>各プレイヤーの使用キャラクター数</translation>
     </message>
@@ -1379,54 +1379,54 @@ p, li { white-space: pre-wrap; }
         <translation>ステージ</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="175"/>
+        <location filename="../TSHScoreboardWidget.py" line="176"/>
         <source>Players per team</source>
         <translation>各チームのプレイヤー数</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="71"/>
-        <location filename="../TSHScoreboardWidget.py" line="219"/>
+        <location filename="../TSHScoreboardWidget.py" line="227"/>
         <source>Real Name</source>
         <translation>本名</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
-        <location filename="../TSHScoreboardWidget.py" line="220"/>
+        <location filename="../TSHScoreboardWidget.py" line="228"/>
         <source>Twitter</source>
         <translation>ツイッター</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
-        <location filename="../TSHScoreboardWidget.py" line="221"/>
+        <location filename="../TSHScoreboardWidget.py" line="229"/>
         <source>Location</source>
         <translation>本拠地</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="74"/>
-        <location filename="../TSHScoreboardWidget.py" line="222"/>
+        <location filename="../TSHScoreboardWidget.py" line="230"/>
         <source>Characters</source>
         <translation>使用キャラクター</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="75"/>
-        <location filename="../TSHScoreboardWidget.py" line="223"/>
+        <location filename="../TSHScoreboardWidget.py" line="231"/>
         <source>Pronouns</source>
         <translation>代名詞</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="250"/>
-        <location filename="../TSHScoreboardWidget.py" line="555"/>
+        <location filename="../TSHScoreboardWidget.py" line="258"/>
+        <location filename="../TSHScoreboardWidget.py" line="586"/>
         <source>Load set</source>
         <translation>対戦データをロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="260"/>
+        <location filename="../TSHScoreboardWidget.py" line="268"/>
         <source>Track sets from a stream or station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="320"/>
-        <location filename="../TSHScoreboardWidget.py" line="360"/>
+        <location filename="../TSHScoreboardWidget.py" line="328"/>
+        <location filename="../TSHScoreboardWidget.py" line="368"/>
         <source>TEAM {0}</source>
         <translation>チーム{0}</translation>
     </message>
@@ -1436,12 +1436,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="161"/>
         <location filename="../TournamentStreamHelper.py" line="587"/>
         <location filename="../TournamentStreamHelper.py" line="838"/>
-        <location filename="../TSHScoreboardWidget.py" line="536"/>
+        <location filename="../TSHScoreboardWidget.py" line="547"/>
+        <location filename="../TSHScoreboardWidget.py" line="567"/>
         <source>Warning</source>
         <translation>注意</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="549"/>
+        <location filename="../TSHScoreboardWidget.py" line="580"/>
         <source>Load set from {0}</source>
         <translation>{0}から対戦データをロードする</translation>
     </message>
@@ -1450,17 +1451,32 @@ p, li { white-space: pre-wrap; }
         <translation>配信中の対戦データをロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="187"/>
+        <location filename="../TSHScoreboardWidget.py" line="188"/>
         <source>Generate Thumbnail</source>
         <translation>サムネイルを作成する</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="863"/>
+        <location filename="../TSHScoreboardWidget.py" line="196"/>
+        <source>Post to Bluesky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="557"/>
+        <source>TSH - Bluesky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="563"/>
+        <source>The post has successfully been sent to account {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="894"/>
         <source>Load user set ({0})</source>
         <translation>ユーザーの対戦データ({0})をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="867"/>
+        <location filename="../TSHScoreboardWidget.py" line="898"/>
         <source>Load user set</source>
         <translation>ユーザーの対戦データをロードする</translation>
     </message>
@@ -1549,6 +1565,11 @@ p, li { white-space: pre-wrap; }
         <source>Identifier</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../Helpers/TSHBskyHelper.py" line="16"/>
+        <source>Bluesky account not correctly set</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>punctuation</name>
@@ -1588,8 +1609,46 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/SettingsWidget.py" line="28"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="147"/>
+        <source>Bluesky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/SettingsWidget.py" line="29"/>
         <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>settings.bsky</name>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="119"/>
+        <source>Host server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="126"/>
+        <source>Bluesky Handle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="133"/>
+        <source>Application Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="139"/>
+        <source>You can get an app password by going into your Bluesky settings -&gt; Privacy &amp; Security</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="141"/>
+        <source>Please note that said app password will be stored in plain text on your computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="143"/>
+        <source>Do not use your regular account password!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1690,17 +1749,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="929"/>
-        <location filename="../TSHScoreboardWidget.py" line="510"/>
+        <location filename="../TSHScoreboardWidget.py" line="518"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH - サムネイル</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="515"/>
+        <location filename="../TSHScoreboardWidget.py" line="523"/>
         <source>The thumbnail has been generated here:</source>
         <translation>サムネイルはここに作成されました:</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="516"/>
+        <location filename="../TSHScoreboardWidget.py" line="524"/>
         <source>The video title and description have also been generated.</source>
         <translation type="unfinished"></translation>
     </message>
