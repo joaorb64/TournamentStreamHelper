@@ -704,7 +704,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="26"/>
         <source>LIVE NOW</source>
-        <translation>EN DIRECT</translation>
+        <translation>ACTUELLEMENT EN DIRECT</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
