@@ -194,7 +194,7 @@ class TSHScoreboardWidget(QWidget):
         
         self.bskyBtn = QPushButton(
             QApplication.translate("app", "Post to Bluesky") + " ")
-        self.bskyBtn.setIcon(QIcon('assets/icons/png_file.svg'))
+        self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
         self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
         self.bskyBtn.clicked.connect(self.PostToBsky)
