@@ -8,6 +8,7 @@ from qtpy import uic
 from typing import List
 from src.TSHColorButton import TSHColorButton
 from .Helpers.TSHDirHelper import TSHResolve
+from .Helpers.TSHBskyHelper import post_to_bsky
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
 from src.TSHSelectStationWindow import TSHSelectStationWindow
@@ -190,6 +191,13 @@ class TSHScoreboardWidget(QWidget):
         col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
         # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
+        
+        self.bskyBtn = QPushButton(
+            QApplication.translate("app", "Post to Bluesky") + " ")
+        self.bskyBtn.setIcon(QIcon('assets/icons/png_file.svg'))
+        self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
+        self.bskyBtn.clicked.connect(self.PostToBsky)
 
         # VISIBILITY
         col = QWidget()
@@ -504,7 +512,7 @@ class TSHScoreboardWidget(QWidget):
             StateManager.Set(
                 f"score.{self.scoreboardNumber}.team.{team}.logo", None)
 
-    def GenerateThumbnail(self):
+    def GenerateThumbnail(self, quiet_mode=False):
         msgBox = QMessageBox()
         msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
         msgBox.setWindowTitle(QApplication.translate(
@@ -519,25 +527,48 @@ class TSHScoreboardWidget(QWidget):
             # msgBox.setInformativeText(thumbnailPath)
 
             thumbnail_settings = SettingsManager.Get("thumbnail_config")
-            if thumbnail_settings.get("open_explorer"):
-                outThumbDir = f"{os.getcwd()}/out/thumbnails/"
-                if platform.system() == "Windows":
-                    thumbnailPath = thumbnailPath[2:].replace("/", "\\")
-                    outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
-                    # os.startfile(outThumbDir)
-                    subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
-                elif platform.system() == "Darwin":
-                    subprocess.Popen(["open", outThumbDir])
+            if not quiet_mode:
+                if thumbnail_settings.get("open_explorer"):
+                    outThumbDir = f"{os.getcwd()}/out/thumbnails/"
+                    if platform.system() == "Windows":
+                        thumbnailPath = thumbnailPath[2:].replace("/", "\\")
+                        outThumbDir = f"{os.getcwd()}\\{thumbnailPath}"
+                        # os.startfile(outThumbDir)
+                        subprocess.Popen(r'explorer /select,"'+outThumbDir+'"')
+                    elif platform.system() == "Darwin":
+                        subprocess.Popen(["open", outThumbDir])
+                    else:
+                        subprocess.Popen(["xdg-open", outThumbDir])
                 else:
-                    subprocess.Popen(["xdg-open", outThumbDir])
+                    msgBox.exec()
             else:
-                msgBox.exec()
+                return(thumbnailPath)
         except Exception as e:
             msgBox.setText(QApplication.translate("app", "Warning"))
             msgBox.setInformativeText(str(e))
             msgBox.setIcon(QMessageBox.Warning)
             msgBox.exec()
+    
+    def PostToBsky(self):
+        thumbnailPath = self.GenerateThumbnail(quiet_mode=True)
+        if thumbnailPath:
+            msgBox = QMessageBox()
+            msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+            msgBox.setWindowTitle(QApplication.translate(
+                "app", "TSH - Bluesky"))
 
+            try:
+                post_to_bsky(scoreboardNumber=self.scoreboardNumber, image_path=thumbnailPath.replace(".png", ".jpg"))
+                username = SettingsManager.Get("bsky_account", {}).get("username")
+                msgBox.setText(QApplication.translate("app", "The post has successfully been sent to account {0}").format(username))
+                msgBox.setIcon(QMessageBox.NoIcon)
+                msgBox.exec()
+            except Exception as e:
+                msgBox.setText(QApplication.translate("app", "Warning"))
+                msgBox.setInformativeText(str(e))
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.exec()
+    
     def ToggleElements(self, action: QAction, elements):
         for pw in self.playerWidgets:
             for element in elements:

@@ -22,7 +22,7 @@ def load_program_state():
 
 def generate_bsky_text(scoreboard_id=1, use_phase_name=True):
     def transform_yt_into_bsky(description):
-        text = "\n".join(description.split("\n")[:-2])
+        text = "\n".join(description.split("\n")[:-1]).strip("\n")
         text = QApplication.translate("altText", "LIVE NOW") + "\n\n" + text
         text += "\n\n"
 
