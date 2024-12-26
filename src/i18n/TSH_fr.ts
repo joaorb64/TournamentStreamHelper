@@ -704,12 +704,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="26"/>
         <source>LIVE NOW</source>
-        <translation type="unfinished"></translation>
+        <translation>EN DIRECT</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
         <source>Click here to watch</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez ici pour regarder</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="59"/>
@@ -1318,7 +1318,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="196"/>
         <source>Post to Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer un post sur Bluesky</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="258"/>
@@ -1359,12 +1359,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="557"/>
         <source>TSH - Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation>TSH - Bluesky</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="563"/>
         <source>The post has successfully been sent to account {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Le post a été envoyé sur le compte {0}</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="580"/>
@@ -1612,7 +1612,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHBskyHelper.py" line="16"/>
         <source>Bluesky account not correctly set</source>
-        <translation type="unfinished"></translation>
+        <translation>Le compte Bluesky n’a pas été correctement configuré</translation>
     </message>
 </context>
 <context>
@@ -1655,7 +1655,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="147"/>
         <source>Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluesky</translation>
     </message>
     <message>
         <location filename="../Settings/SettingsWidget.py" line="29"/>
@@ -1668,32 +1668,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="119"/>
         <source>Host server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur hôte</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="126"/>
         <source>Bluesky Handle</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d’utilisateur Bluesky</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="133"/>
         <source>Application Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe d’application</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="139"/>
         <source>You can get an app password by going into your Bluesky settings -&gt; Privacy &amp; Security</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous pouvez obtenir un mot de passe d’application sur Bluesky via les Paramètres -&gt; Confidentialité et sécurité</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="141"/>
         <source>Please note that said app password will be stored in plain text on your computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Veuillez noter que ce mot de passe sera stocké en clair sur votre ordinateur</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="143"/>
         <source>Do not use your regular account password!</source>
-        <translation type="unfinished"></translation>
+        <translation>N’utilisez pas le mot de passe principal de votre compte !</translation>
     </message>
 </context>
 <context>
