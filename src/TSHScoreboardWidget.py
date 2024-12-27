@@ -254,6 +254,13 @@ class TSHScoreboardWidget(QWidget):
 
         self.innerWidget.layout().addWidget(bottomOptions)
 
+        self.streamUrl = QHBoxLayout()
+        self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
+        self.streamUrl.layout().addWidget(self.streamUrlLabel)
+        self.streamUrlTextBox = QLineEdit()
+        self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+        bottomOptions.layout().addLayout(self.streamUrl)
+
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
         self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
