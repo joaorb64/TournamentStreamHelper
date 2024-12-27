@@ -1,6 +1,7 @@
 from qtpy.QtWidgets import *
 from ..TSHHotkeys import TSHHotkeys
 from ..SettingsManager import SettingsManager
+import textwrap
 
 
 class SettingsWidget(QWidget):
@@ -19,7 +20,7 @@ class SettingsWidget(QWidget):
         for setting in settings:
             self.AddSetting(*setting)
 
-    def AddSetting(self, name: str, setting: str, type: str, defaultValue, callback=lambda: None):
+    def AddSetting(self, name: str, setting: str, type: str, defaultValue, callback=lambda: None, tooltip=None):
         lastRow = self.layout().rowCount()
 
         self.layout().addWidget(QLabel(name), lastRow, 0)
@@ -59,6 +60,23 @@ class SettingsWidget(QWidget):
                     callback()
                 ]
             )
+        elif type == "textbox" or type == "password":
+            settingWidget = QLineEdit()
+            if type == "password":
+                settingWidget.setEchoMode(QLineEdit.Password)
+            settingWidget.textChanged.connect(
+                lambda val=None: SettingsManager.Set(self.settingsBase+"."+setting, settingWidget.text()))
+            settingWidget.setText(SettingsManager.Get(
+                self.settingsBase+"."+setting, defaultValue))
+            resetButton.clicked.connect(
+                lambda bt=None, setting=setting, settingWidget=settingWidget: [
+                    settingWidget.setText(defaultValue),
+                    callback()
+                ]
+            )
+        
+        if tooltip:
+            settingWidget.setToolTip('\n'.join(textwrap.wrap(tooltip, 40)))
 
         self.layout().addWidget(settingWidget, lastRow, 1)
         self.layout().addWidget(resetButton, lastRow, 2)
