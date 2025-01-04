@@ -1323,7 +1323,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="258"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL du stream</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="265"/>
