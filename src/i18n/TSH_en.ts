@@ -702,41 +702,41 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="28"/>
         <source>Click here to watch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="59"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="183"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="61"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="185"/>
         <source>Game:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="117"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="119"/>
         <location filename="../Helpers/TSHAltTextHelper.py" line="121"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="123"/>
         <source>VS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="132"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="239"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="134"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="241"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="135"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="137"/>
         <source>Stream powered by TournamentStreamHelper:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="184"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="186"/>
         <source>Standings:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="243"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="245"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
@@ -831,8 +831,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="161"/>
         <location filename="../TournamentStreamHelper.py" line="587"/>
         <location filename="../TournamentStreamHelper.py" line="838"/>
-        <location filename="../TSHScoreboardWidget.py" line="554"/>
-        <location filename="../TSHScoreboardWidget.py" line="574"/>
+        <location filename="../TSHScoreboardWidget.py" line="557"/>
+        <location filename="../TSHScoreboardWidget.py" line="577"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1210,44 +1210,44 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="265"/>
-        <location filename="../TSHScoreboardWidget.py" line="593"/>
+        <location filename="../TSHScoreboardWidget.py" line="268"/>
+        <location filename="../TSHScoreboardWidget.py" line="596"/>
         <source>Load set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="275"/>
+        <location filename="../TSHScoreboardWidget.py" line="278"/>
         <source>Track sets from a stream or station</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="335"/>
-        <location filename="../TSHScoreboardWidget.py" line="375"/>
+        <location filename="../TSHScoreboardWidget.py" line="338"/>
+        <location filename="../TSHScoreboardWidget.py" line="378"/>
         <source>TEAM {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="564"/>
+        <location filename="../TSHScoreboardWidget.py" line="567"/>
         <source>TSH - Bluesky</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="570"/>
+        <location filename="../TSHScoreboardWidget.py" line="573"/>
         <source>The post has successfully been sent to account {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="587"/>
+        <location filename="../TSHScoreboardWidget.py" line="590"/>
         <source>Load set from {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="901"/>
+        <location filename="../TSHScoreboardWidget.py" line="904"/>
         <source>Load user set ({0})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="905"/>
+        <location filename="../TSHScoreboardWidget.py" line="908"/>
         <source>Load user set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1506,7 +1506,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHBskyHelper.py" line="16"/>
+        <location filename="../Helpers/TSHBskyHelper.py" line="17"/>
         <source>Bluesky account not correctly set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1711,17 +1711,17 @@ p, li { white-space: pre-wrap; }
     <name>thumb_app</name>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="929"/>
-        <location filename="../TSHScoreboardWidget.py" line="525"/>
+        <location filename="../TSHScoreboardWidget.py" line="528"/>
         <source>TSH - Thumbnail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="530"/>
+        <location filename="../TSHScoreboardWidget.py" line="533"/>
         <source>The thumbnail has been generated here:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="531"/>
+        <location filename="../TSHScoreboardWidget.py" line="534"/>
         <source>The video title and description have also been generated.</source>
         <translation type="unfinished"></translation>
     </message>
