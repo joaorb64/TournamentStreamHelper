@@ -31,6 +31,9 @@ def generate_bsky_text(scoreboard_id=1, use_phase_name=True):
             text += "\n\n"
             result = client_utils.TextBuilder().text(text).link(link_text, link_url)
             raw_text = text + link_text
+        else:
+            result = client_utils.TextBuilder().text(text)
+            raw_text = text
         return(raw_text, result)
 
     post_length_limit = 300

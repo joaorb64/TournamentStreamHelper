@@ -260,7 +260,7 @@ class TSHScoreboardWidget(QWidget):
         self.streamUrlTextBox = QLineEdit()
         self.streamUrl.layout().addWidget(self.streamUrlTextBox)
         self.streamUrlTextBox.textChanged.connect(
-            lambda value: StateManager.Set(
+            lambda value=None: StateManager.Set(
                 f"score.{self.scoreboardNumber}.stream_url", value))
         bottomOptions.layout().addLayout(self.streamUrl)
 
