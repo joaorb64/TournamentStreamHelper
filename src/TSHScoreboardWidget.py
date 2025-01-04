@@ -259,6 +259,9 @@ class TSHScoreboardWidget(QWidget):
         self.streamUrl.layout().addWidget(self.streamUrlLabel)
         self.streamUrlTextBox = QLineEdit()
         self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+        self.streamUrlTextBox.textChanged.connect(
+            lambda value: StateManager.Set(
+                f"score.{self.scoreboardNumber}.stream_url", value))
         bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
