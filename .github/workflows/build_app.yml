@@ -12,60 +12,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  locale_build:
-    name: Build locale files
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-latest"]
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-        id: extract_branch
-
-      - run: pip install -r dependencies/requirements.txt pyinstaller
-      - run: |
-          pyside6-lrelease -version
-          python3 src/i18n/gen_translation_files.py
-          python3 src/i18n/gen_translation_binaries.py
-
-      - run: git pull
-      - name: commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add *
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "Update locale files" -a
-          fi
-
-      - name: push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.extract_branch.outputs.branch }}
-
   build:
-    name: Generate Windows Release
+    name: Generate Windows Release with Locale Files
     runs-on: ${{ matrix.os }}
     if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) || startsWith( github.ref, 'refs/heads/fix/' ) }}
     strategy:
       fail-fast: false
       matrix:
         os: ["windows-latest"]
-    needs:
-      - locale_build
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -75,8 +34,17 @@ jobs:
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - run: pip install -r .\dependencies\requirements.txt pyinstaller
-      - run: |
+      - name: Install Python dependencies
+        run: pip install -r .\dependencies\requirements.txt pyinstaller
+
+      - name: Generate locale files
+        run: |
+          pyside6-lrelease -version
+          python3 .\src\i18n\gen_translation_files.py
+          python3 .\src\i18n\gen_translation_binaries.py
+
+      - name: Generate TSH Windows executable
+        run: |
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
@@ -84,15 +52,15 @@ jobs:
           pyinstaller --noconfirm .\dependencies\tsh.spec
           copy dist\TSH.exe TSH.exe
 
-      - run: git pull
-      - name: commit files
+      - name: Commit files
         run: |
+          git pull
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add TSH.exe
-          git commit -m "Update exe" -a
+          git add TSH.exe .\src\i18n\*.ts
+          git commit -m "Update exe and locale files" -a
 
-      - name: push changes
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
