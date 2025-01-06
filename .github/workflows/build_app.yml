@@ -54,7 +54,6 @@ jobs:
 
       - name: Commit files
         run: |
-          git pull
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add TSH.exe .\src\i18n\*.ts
