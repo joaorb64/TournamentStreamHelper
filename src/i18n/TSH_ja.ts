@@ -943,7 +943,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="875"/>
         <location filename="../TournamentStreamHelper.py" line="885"/>
         <location filename="../TSHAssetDownloader.py" line="306"/>
-        <location filename="../TSHAssetDownloader.py" line="470"/>
+        <location filename="../TSHAssetDownloader.py" line="468"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -1138,7 +1138,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="305"/>
-        <location filename="../TSHAssetDownloader.py" line="469"/>
+        <location filename="../TSHAssetDownloader.py" line="467"/>
         <source>Downloading assets</source>
         <translation>アセットをダウンロードしています</translation>
     </message>
