@@ -861,7 +861,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="875"/>
         <location filename="../TournamentStreamHelper.py" line="885"/>
         <location filename="../TSHAssetDownloader.py" line="306"/>
-        <location filename="../TSHAssetDownloader.py" line="458"/>
+        <location filename="../TSHAssetDownloader.py" line="470"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
@@ -1166,7 +1166,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="305"/>
-        <location filename="../TSHAssetDownloader.py" line="457"/>
+        <location filename="../TSHAssetDownloader.py" line="469"/>
         <source>Downloading assets</source>
         <translation>Téléchargement des ressources</translation>
     </message>
@@ -1176,7 +1176,7 @@ p, li { white-space: pre-wrap; }
         <translation>Échec de la récupération des ressources depuis Github :</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="370"/>
+        <location filename="../TSHAssetDownloader.py" line="380"/>
         <source>Downloading {0}... ({1}/{2})</source>
         <translation>Téléchargement de {0}... ({1}/{2})</translation>
     </message>
