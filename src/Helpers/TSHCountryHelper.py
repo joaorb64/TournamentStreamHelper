@@ -241,8 +241,7 @@ class TSHCountryHelper(QObject):
                 TSHCountryHelper.remove_accents_lower(part), None)
 
             if state is not None:
-                logger.debug(f"Got state from city name: [{
-                             city}] -> [{part}] = {state}")
+                logger.debug(f"Got state from city name: [{city}] -> [{part}] = {state}")
                 return state
 
         return None
