@@ -39,7 +39,7 @@ class TSHCountryHelper(QObject):
                     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries%2Bstates%2Bcities.json'
                     r = requests.get(url, allow_redirects=True)
                     tmp_file = TSHResolve(
-                        './tmp/countries+states+cities.json.tmp')
+                        './assets/countries+states+cities.json.tmp')
 
                     with open(tmp_file, 'wb') as f:
                         f.write(r.content)
