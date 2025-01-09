@@ -16,6 +16,7 @@ cloudscraper==1.2.71
 loguru==0.7.3
 flask-socketio
 simple_websocket
+atproto==0.0.56
 termcolor==2.5.0
 orjson==3.10.13
 msgpack==1.1.0
