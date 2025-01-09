@@ -976,10 +976,8 @@ class TSHGameAssetManager(QObject):
                             else:
                                 metadata_title_locale = asset.get("metadata", {})[
                                     key].get("title", '')
-                            charFiles[assetKey]['metadata'][f"{
-                                key}"]["title"] = metadata_title_locale
-                            charFiles[assetKey]['metadata'][f"{
-                                key}"][f"value_en"] = metadata[key]
+                            charFiles[assetKey]['metadata'][f"{key}"]["title"] = metadata_title_locale
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value_en"] = metadata[key]
                             if TSHLocaleHelper.exportLocale in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys() or TSHLocaleHelper.exportLocale.split('-')[0] in asset.get("metadata", {})[key]["values"].get(characterCodename, {}).get("locale", {}).keys():
                                 try:
                                     metadata[key] = asset.get("metadata", {})[key]["values"].get(
@@ -987,8 +985,7 @@ class TSHGameAssetManager(QObject):
                                 except KeyError:
                                     metadata[key] = asset.get("metadata", {})[key]["values"].get(
                                         characterCodename, {}).get("locale", {})[TSHLocaleHelper.exportLocale.split('-')[0]]
-                            charFiles[assetKey]['metadata'][f"{
-                                key}"][f"value"] = metadata[key]
+                            charFiles[assetKey]['metadata'][f"{key}"][f"value"] = metadata[key]
 
                         # if len(metadata.keys()) > 0:
                         #     if str(skin) in metadata:
