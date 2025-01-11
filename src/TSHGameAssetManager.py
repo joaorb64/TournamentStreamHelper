@@ -192,7 +192,7 @@ class TSHGameAssetManager(QObject):
                 for alternate in alternates:
                     if alternate.get("challonge_game_id"):
                         alternates_ids.append(
-                            str(alternate.get("smashgg_game_id")))
+                            str(alternate.get("challonge_game_id")))
                 result = str(id) in alternates_ids
             return (result)
 
