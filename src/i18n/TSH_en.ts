@@ -1211,7 +1211,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="268"/>
-        <location filename="../TSHScoreboardWidget.py" line="596"/>
+        <location filename="../TSHScoreboardWidget.py" line="599"/>
         <source>Load set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1237,17 +1237,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="590"/>
+        <location filename="../TSHScoreboardWidget.py" line="593"/>
         <source>Load set from {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="904"/>
+        <location filename="../TSHScoreboardWidget.py" line="907"/>
         <source>Load user set ({0})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="908"/>
+        <location filename="../TSHScoreboardWidget.py" line="911"/>
         <source>Load user set</source>
         <translation type="unfinished"></translation>
     </message>
