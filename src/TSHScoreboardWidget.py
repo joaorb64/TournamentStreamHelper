@@ -496,7 +496,7 @@ class TSHScoreboardWidget(QWidget):
             matchString = TSHLocaleHelper.matchNames[key]
 
             try:
-                if "{0}" in matchString:
+                if "{0}" in matchString and ("qualifier" not in key):
                     for number in range(5):
                         if key == "best_of":
                             if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
