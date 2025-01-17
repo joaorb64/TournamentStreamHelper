@@ -578,6 +578,9 @@ class TSHScoreboardWidget(QWidget):
                 msgBox.setInformativeText(str(e))
                 msgBox.setIcon(QMessageBox.Warning)
                 msgBox.exec()
+            for rm_path in [thumbnailPath, thumbnailPath.replace(".png", ".jpg"), thumbnailPath.replace(".png", "_desc.txt"), thumbnailPath.replace(".png", "_title.txt")]:
+                if os.path.exists(rm_path):
+                    os.remove(rm_path)
     
     def ToggleElements(self, action: QAction, elements):
         for pw in self.playerWidgets:
