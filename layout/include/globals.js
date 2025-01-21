@@ -632,9 +632,9 @@ async function CenterImageDo(element) {
               uncropped_edge.length == 0
             ) {
               if (zoom_x > zoom_y) {
-                minZoom = zoom_x * rescalingFactor;
+                minZoom = zoom_x * proportional_zoom * rescalingFactor;
               } else {
-                minZoom = zoom_y * rescalingFactor;
+                minZoom = zoom_y * proportional_zoom * rescalingFactor;
               }
             } else {
               if (
@@ -648,26 +648,69 @@ async function CenterImageDo(element) {
                 !uncropped_edge.includes("l") &&
                 !uncropped_edge.includes("r")
               ) {
-                minZoom = zoom_x * rescalingFactor;
+                minZoom = zoom_x * proportional_zoom * rescalingFactor;
               } else if (
                 !uncropped_edge.includes("u") &&
                 !uncropped_edge.includes("d")
               ) {
-                minZoom = zoom_y * rescalingFactor;
+                minZoom = zoom_y * proportional_zoom * rescalingFactor;
               } else {
                 minZoom = customZoom * proportional_zoom * rescalingFactor;
               }
             }
 
             if (scale_fill_x && !scale_fill_y) {
-              minZoom = zoom_x;
+              minZoom = zoom_x * proportional_zoom * rescalingFactor;
             } else if (scale_fill_y && !scale_fill_x) {
-              minZoom = zoom_y;
+              minZoom = zoom_y * proportional_zoom * rescalingFactor;
             } else if (scale_fill_x && scale_fill_y) {
               minZoom = Math.max(zoom_x, zoom_y);
             }
 
             zoom = Math.max(minZoom, customZoom * minZoom);
+
+            if (
+              !(!uncropped_edge ||
+              uncropped_edge == "undefined" ||
+              uncropped_edge.length == 0)
+            ) {
+              if (
+                (!uncropped_edge.includes("u") && !uncropped_edge.includes("d")) ||
+                (!uncropped_edge.includes("l") && !uncropped_edge.includes("r"))
+              ) {
+                let minZoomWidth = min_zoom*img.naturalWidth;
+                let minZoomHeight = min_zoom*img.naturalHeight;
+                let correctionRatio = 1.0;
+
+                if (
+                  (!uncropped_edge.includes("l") && !uncropped_edge.includes("r")) && (minZoomWidth != $(customElement).innerWidth())
+                ) {
+                  correctionRatio = $(customElement).innerWidth() / minZoomWidth;
+                  minZoomWidth = correctionRatio * minZoomWidth;
+                  minZoomHeight = correctionRatio * minZoomHeight;
+                  if (
+                    !(!uncropped_edge.includes("u") && !uncropped_edge.includes("d")) ||
+                    (!uncropped_edge.includes("u") && !uncropped_edge.includes("d") && minZoomHeight >= $(customElement).innerHeight())
+                  ) {
+                    zoom = zoom * correctionRatio
+                  }
+                }
+                
+                if (
+                  (!uncropped_edge.includes("u") && !uncropped_edge.includes("d")) && (minZoomHeight != $(customElement).innerHeight())
+                ) {
+                  correctionRatio = $(customElement).innerHeight() / minZoomHeight;
+                  minZoomWidth = correctionRatio * minZoomWidth;
+                  minZoomHeight = correctionRatio * minZoomHeight;
+                  if (
+                    !(!uncropped_edge.includes("l") && !uncropped_edge.includes("r")) ||
+                    (!uncropped_edge.includes("l") && !uncropped_edge.includes("r") && minZoomWidth >= $(customElement).innerWidth())
+                  ) {
+                    zoom = zoom * correctionRatio
+                  }
+                }
+              }
+            }
 
             // Cetering
             let xx = 0;
