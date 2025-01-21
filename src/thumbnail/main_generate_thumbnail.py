@@ -380,13 +380,13 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
                     correction_ratio = max_size[0] / minZoomWidth
                     minZoomWidth = minZoomWidth * correction_ratio
                     minZoomHeight = minZoomHeight * correction_ratio
-                    if (not (not 'u' in uncropped_edge and not 'd' in uncropped_edge)) or ((not 'u' in uncropped_edge and not 'd' in uncropped_edge) and minZoomHeight > max_size[1]):
+                    if (not (not 'u' in uncropped_edge and not 'd' in uncropped_edge)) or ((not 'u' in uncropped_edge and not 'd' in uncropped_edge) and minZoomHeight >= max_size[1]):
                         zoom = zoom * correction_ratio
                 if (not 'u' in uncropped_edge and not 'd' in uncropped_edge) and minZoomHeight != max_size[1]:
                     correction_ratio = max_size[1] / minZoomHeight
                     minZoomWidth = minZoomWidth * correction_ratio
                     minZoomHeight = minZoomHeight * correction_ratio
-                    if (not (not 'l' in uncropped_edge and not 'r' in uncropped_edge)) or ((not 'l' in uncropped_edge and not 'r' in uncropped_edge) and minZoomWidth > max_size[0]):
+                    if (not (not 'l' in uncropped_edge and not 'r' in uncropped_edge)) or ((not 'l' in uncropped_edge and not 'r' in uncropped_edge) and minZoomWidth >= max_size[0]):
                         zoom = zoom * correction_ratio
             # print("zoom", zoom)
 
