@@ -322,24 +322,6 @@ class TSHGameAssetManager(QObject):
 
                                     packSkinMask[c][assetsKey].add(number)
 
-                                    # Get image dimensions
-                                    imgfile = QImageReader(
-                                        './user_data/games/'+game+'/'+assetsKey+'/'+f)
-
-                                    size = imgfile.size()
-
-                                    if not assetsKey in widths:
-                                        widths[assetsKey] = []
-
-                                    if size.width() != -1:
-                                        widths[assetsKey].append(size.width())
-
-                                    if not assetsKey in heights:
-                                        heights[assetsKey] = []
-
-                                    if size.height() != -1:
-                                        heights[assetsKey].append(
-                                            size.height())
                             logger.info("Character "+c+" has " +
                                         str(len(self.parent().skins[c]))+" skins")
 
@@ -348,10 +330,7 @@ class TSHGameAssetManager(QObject):
                             if assetsKey != "base_files" and assetsKey != "stage_icon":
                                 try:
                                     if len(widths.get(assetsKey, [])) > 0 and len(heights.get(assetsKey, [])) > 0:
-                                        gameObj["assets"][assetsKey]["average_size"] = {
-                                            "x": sum(widths[assetsKey])/len(widths[assetsKey]),
-                                            "y": sum(heights[assetsKey])/len(heights[assetsKey])
-                                        }
+                                        gameObj["assets"][assetsKey]["average_size"] = assetsObj.get("average_size")
                                 except:
                                     logger.error(traceback.format_exc())
 

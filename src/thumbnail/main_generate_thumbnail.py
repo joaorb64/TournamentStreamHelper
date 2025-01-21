@@ -350,29 +350,44 @@ def paste_image_matrix(thumbnail, path_matrix, max_size, paste_coordinates, eyes
 
             if not uncropped_edge:
                 if zoom_x > zoom_y:
-                    min_zoom = zoom_x * rescaling_factor
+                    min_zoom = zoom_x * proportional_zoom * rescaling_factor
                 else:
-                    min_zoom = zoom_y * rescaling_factor
+                    min_zoom = zoom_y * proportional_zoom * rescaling_factor
             else:
                 if 'u' in uncropped_edge and 'd' in uncropped_edge and 'l' in uncropped_edge and 'r' in uncropped_edge:
                     min_zoom = customZoom * proportional_zoom * rescaling_factor
                 elif not 'l' in uncropped_edge and not 'r' in uncropped_edge:
-                    min_zoom = zoom_x * rescaling_factor
+                    min_zoom = zoom_x * proportional_zoom * rescaling_factor
                 elif not 'u' in uncropped_edge and not 'd' in uncropped_edge:
-                    min_zoom = zoom_y * rescaling_factor
+                    min_zoom = zoom_y * proportional_zoom * rescaling_factor
                 else:
                     min_zoom = customZoom * proportional_zoom * rescaling_factor
 
             global scale_fill_x, scale_fill_y
             # print("scale_fill", scale_fill_x, scale_fill_y)
             if scale_fill_x and not scale_fill_y:
-                min_zoom = zoom_x
+                min_zoom = zoom_x  * proportional_zoom * rescaling_factor
             elif scale_fill_y and not scale_fill_x:
-                min_zoom = zoom_y
+                min_zoom = zoom_y  * proportional_zoom * rescaling_factor
             elif scale_fill_x and scale_fill_y:
-                min_zoom = max(zoom_x, zoom_y)
+                min_zoom = max(zoom_x, zoom_y) * rescaling_factor
 
             zoom = max(min_zoom, customZoom * min_zoom)
+            if (not 'l' in uncropped_edge and not 'r' in uncropped_edge) or (not 'u' in uncropped_edge and not 'd' in uncropped_edge):
+                minZoomWidth = min_zoom*tmpWidth
+                minZoomHeight = min_zoom*tmpHeight
+                if (not 'l' in uncropped_edge and not 'r' in uncropped_edge) and minZoomWidth != max_size[0]:
+                    correction_ratio = max_size[0] / minZoomWidth
+                    minZoomWidth = minZoomWidth * correction_ratio
+                    minZoomHeight = minZoomHeight * correction_ratio
+                    if (not (not 'u' in uncropped_edge and not 'd' in uncropped_edge)) or ((not 'u' in uncropped_edge and not 'd' in uncropped_edge) and minZoomHeight >= max_size[1]):
+                        zoom = zoom * correction_ratio
+                if (not 'u' in uncropped_edge and not 'd' in uncropped_edge) and minZoomHeight != max_size[1]:
+                    correction_ratio = max_size[1] / minZoomHeight
+                    minZoomWidth = minZoomWidth * correction_ratio
+                    minZoomHeight = minZoomHeight * correction_ratio
+                    if (not (not 'l' in uncropped_edge and not 'r' in uncropped_edge)) or ((not 'l' in uncropped_edge and not 'r' in uncropped_edge) and minZoomWidth >= max_size[0]):
+                        zoom = zoom * correction_ratio
             # print("zoom", zoom)
 
             xx = 0

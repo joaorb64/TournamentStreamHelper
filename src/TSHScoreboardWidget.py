@@ -496,7 +496,7 @@ class TSHScoreboardWidget(QWidget):
             matchString = TSHLocaleHelper.matchNames[key]
 
             try:
-                if "{0}" in matchString:
+                if "{0}" in matchString and ("qualifier" not in key):
                     for number in range(5):
                         if key == "best_of":
                             if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
@@ -578,6 +578,9 @@ class TSHScoreboardWidget(QWidget):
                 msgBox.setInformativeText(str(e))
                 msgBox.setIcon(QMessageBox.Warning)
                 msgBox.exec()
+            for rm_path in [thumbnailPath, thumbnailPath.replace(".png", ".jpg"), thumbnailPath.replace(".png", "_desc.txt"), thumbnailPath.replace(".png", "_title.txt")]:
+                if os.path.exists(rm_path):
+                    os.remove(rm_path)
     
     def ToggleElements(self, action: QAction, elements):
         for pw in self.playerWidgets:
