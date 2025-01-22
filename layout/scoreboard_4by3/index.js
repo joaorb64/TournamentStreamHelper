@@ -129,7 +129,8 @@ LoadEverything().then(() => {
               $(`.${team_id} .p${p + 1}.container .character_container`),
               {
                 source: `score.${window.scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
-                asset_key: "base_files/icon"
+                asset_key: "base_files/icon",
+				custom_zoom: 0.8
               },
               event
             );
