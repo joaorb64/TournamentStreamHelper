@@ -165,7 +165,7 @@ def UpdateProcedure():
         buttonReply.layout().addWidget(
             QLabel(QApplication.translate(
                 "updater",
-                "Error while backing up the layout folder:")
+                "TSH_legacy_00324")
             )
         )
         buttonReply.layout().addWidget(QLabel(str(e)))
