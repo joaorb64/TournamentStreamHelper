@@ -26,7 +26,7 @@ class SettingsWidget(QWidget):
         self.layout().addWidget(QLabel(name), lastRow, 0)
 
         resetButton = QPushButton(
-            QApplication.translate("settings", "Default"))
+            QApplication.translate("settings", "TSH_legacy_00290"))
 
         if type == "checkbox":
             settingWidget = QCheckBox()
