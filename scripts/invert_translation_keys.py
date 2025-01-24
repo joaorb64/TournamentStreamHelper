@@ -29,7 +29,7 @@ for tag in english_soup.find_all("message"):
     source = tag.find_all("source")
     translation = tag.find_all("translation")
     old_source_text = source[0].text
-    if "<html>" not in old_source_text:
+    if "<html>" not in old_source_text and len(old_source_text)!=1:
         parent = tag.parent
         new_source_text = f"TSH_legacy_{index:05}"
         detect_formats = re.findall(r"({[0-9]*})", old_source_text)
