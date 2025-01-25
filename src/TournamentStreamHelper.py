@@ -3,6 +3,7 @@
 
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
+import faulthandler
 import shutil
 import zipfile
 import qdarktheme
@@ -23,6 +24,10 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from packaging.version import parse
 from loguru import logger
+from pathlib import Path
+
+crashlog = open("./logs/tsh-crash.log", "w")
+faulthandler.enable(crashlog)
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
@@ -242,7 +247,7 @@ class WindowSignals(QObject):
 class Window(QMainWindow):
     signals = WindowSignals()
 
-    def __init__(self, loop):
+    def __init__(self, loop=None):
         super().__init__()
 
         StateManager.loop = loop
@@ -777,9 +782,18 @@ class Window(QMainWindow):
     def closeEvent(self, event):
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
+
         tmpDir = TSHResolve("tmp")
         if os.path.isdir(tmpDir):
             shutil.rmtree(tmpDir)
+
+        try:
+            crashlog.close()
+            crashpath = Path('./logs/tsh-crash.log')
+            if crashpath.stat().st_size == 0:
+                crashpath.unlink()
+        except:
+            pass
 
     def ReloadGames(self):
         logger.info("Reload games")
