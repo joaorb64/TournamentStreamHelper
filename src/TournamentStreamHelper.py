@@ -247,9 +247,10 @@ class WindowSignals(QObject):
 class Window(QMainWindow):
     signals = WindowSignals()
 
-    def __init__(self):
+    def __init__(self, loop=None):
         super().__init__()
 
+        StateManager.loop = loop
         StateManager.BlockSaving()
 
         TSHLocaleHelper.LoadLocale()
