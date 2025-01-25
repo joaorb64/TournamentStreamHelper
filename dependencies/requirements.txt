@@ -1,7 +1,7 @@
 chardet
 charset-normalizer==3.4.1
 qtpy
-requests==2.32.3
+requests==2.29.0
 py7zr==0.22.0
 deepdiff==8.1.1
 pyqtdarktheme-fork
