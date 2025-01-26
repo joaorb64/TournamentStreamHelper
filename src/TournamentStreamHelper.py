@@ -26,7 +26,9 @@ from packaging.version import parse
 from loguru import logger
 from pathlib import Path
 
-crashlog = open("./logs/tsh-crash.log", "w")
+crashpath = Path('./logs/tsh-crash.log').resolve()
+Path.mkdir(crashpath.parent, exist_ok=True)
+crashlog = crashpath.open(mode='w')
 faulthandler.enable(crashlog)
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
@@ -789,7 +791,6 @@ class Window(QMainWindow):
 
         try:
             crashlog.close()
-            crashpath = Path('./logs/tsh-crash.log')
             if crashpath.stat().st_size == 0:
                 crashpath.unlink()
         except:
