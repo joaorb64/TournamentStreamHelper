@@ -129,7 +129,10 @@ LoadEverything().then(() => {
               $(`.${team_id} .p${p + 1}.container .character_container`),
               {
                 source: `score.${window.scoreboardNumber}.team.${t + 1}.player.${p + 1}`,
-                asset_key: "base_files/icon"
+                asset_key: ["base_files/icon"],
+                scale_fill_x: true,
+                scale_fill_y: true,
+                custom_zoom: 1.0
               },
               event
             );
@@ -154,7 +157,7 @@ LoadEverything().then(() => {
 
     let topInfo = []
     topInfo.push(data.tournamentInfo.tournamentName)
-    topInfo.push(data.score[window.scoreboardNumber].phase)
+    if(data.score[window.scoreboardNumber].phase) topInfo.push(data.score[window.scoreboardNumber].phase)
     SetInnerHtml($(".info.container.top"), topInfo.join(" | "));
 
     let phaseTexts = [];

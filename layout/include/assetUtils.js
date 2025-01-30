@@ -26,9 +26,20 @@ function GetBiggestAsset(character) {
 
 // Gets character asset using key "asset". If not found, return biggest asset
 function GetCharacterAsset(asset, character) {
-  if (character.assets.hasOwnProperty(asset)) {
-    return character.assets[asset];
-  } else return GetBiggestAsset(character);
+  if (Array.isArray(asset)) {
+    for (let i = 0; i < asset.length; i++) {
+      if (character.assets.hasOwnProperty(asset[i])) {
+        return character.assets[asset[i]];
+      }
+    }
+    return GetBiggestAsset(character);
+  } else {
+    if (character.assets.hasOwnProperty(asset)) {
+      return character.assets[asset];
+    } else {
+      return GetBiggestAsset(character);
+    }
+  }
 }
 
 // Gets recommended zoom
