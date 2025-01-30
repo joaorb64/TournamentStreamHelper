@@ -88,5 +88,9 @@ query SetQuery($id: ID!) {
             }
             displayIdentifier
         }
+        stream {
+            streamName
+            streamSource
+        }
     }
 }

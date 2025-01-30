@@ -259,9 +259,10 @@ class TSHScoreboardWidget(QWidget):
         self.streamUrl.layout().addWidget(self.streamUrlLabel)
         self.streamUrlTextBox = QLineEdit()
         self.streamUrl.layout().addWidget(self.streamUrlTextBox)
-        self.streamUrlTextBox.textChanged.connect(
+        self.streamUrlTextBox.editingFinished.connect(
             lambda value=None: StateManager.Set(
                 f"score.{self.scoreboardNumber}.stream_url", value))
+        self.streamUrlTextBox.editingFinished.emit()
         bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
@@ -1018,6 +1019,9 @@ class TSHScoreboardWidget(QWidget):
             ]
             if self.teamsSwapped:
                 losersContainers.reverse()
+
+            if data.get("stream"):
+                self.streamUrlTextBox.setText(data.get("stream"))
 
             if data.get("team1losers") is not None:
                 losersContainers[0].setChecked(data.get("team1losers"))
