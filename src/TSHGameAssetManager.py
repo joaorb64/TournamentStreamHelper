@@ -276,11 +276,14 @@ class TSHGameAssetManager(QObject):
                                 except:
                                     logger.error(f)
                                     pass
-                                self.parent().stockIcons[c][number] = QImage(
-                                    './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
-                                        32,
-                                        Qt.TransformationMode.SmoothTransformation
-                                )
+                                try:
+                                    self.parent().stockIcons[c][number] = QImage(
+                                        './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
+                                            32,
+                                            Qt.TransformationMode.SmoothTransformation
+                                    )
+                                except:
+                                    logger.error(traceback.format_exc())
 
                         logger.info("Loaded stock icons")
 
