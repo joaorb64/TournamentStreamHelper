@@ -856,25 +856,61 @@ div.info {
     text-align: left;
 }
 
+/* Ensure the name hugs left */
+.p1 .name {
+    place-content: start;
+}
+
+/* Align the phase match to hug towards score */
 .p1 .set_container_inner .phase_match .text {
     place-content: end;
 }
 
-.p1 .set_container_inner .versus .text {
+/* Align the VS text to hug score  */
+.p1 .set_container_inner .versus {
+    place-content: start;
+}
+/* Align player tag to hug vs */
+.p1 .set_container_inner .name {
     place-content: start;
 }
 
-.p1 .set_container_inner .name .text {
-    place-content: start;
-}
-
+/* Aligh sponsor to hug right */
 .p1 .set_container_inner .sponsor {
-    width: 225px;
+    flex-grow: 1;
+    place-content: start;
+    text-align: left;
+    font-size: 20px;
+}
+
+/* Ensure the name hugs right */
+.p2 .text {
+    place-content: start;
+}
+
+.p2 .set_container_inner .phase_match .text {
+    place-content: start;
+}
+
+.p2 .set_container_inner .versus {
+    place-content: start;
+}
+
+/* Align Name to Hug */
+.p2 .set_container_inner .name {
+    place-content: start;
+    flex-direction: row-reverse;
+}
+
+/* Align sponsor to hug score */
+.p2 .set_container_inner .sponsor {
+    flex-grow: 1;
     place-content: end;
+    /* text-align: right; */
 }
 
 .sets .versus {
-    width: 50px;
+    padding-right: 10px;
     font-size: 25px;
     text-align: left;
 }
@@ -905,7 +941,7 @@ div.info {
 .sets .sponsor {
     /* display: none; */
     padding-left: 10px;
-    padding-right: 10px;
+    /* padding-right: 10px; */
     font-size: 22px;
 }
 

@@ -44,16 +44,16 @@ LoadEverything().then(() => {
 
   let startingAnimation = gsap
     .timeline({ paused: true })
-    .to([".logo"], { duration: 0.4, top: 160 }, 0)
-    .to([".logo"], { duration: 0.4, scale: 0.4 }, 0)
+    .to([".logo"], { duration: 0.8, top: 160 }, 0)
+    .to([".logo"], { duration: 0.8, scale: 0.4 }, 0)
     .from(
       [".tournament"],
-      { duration: 0.3, opacity: "0", ease: "power2.inOut" },
+      { duration: 0.6, opacity: "0", ease: "power2.inOut" },
       0.2,
     )
     .from(
       [".match"],
-      { duration: 0.3, opacity: "0", ease: "power2.inOut" },
+      { duration: 0.6, opacity: "0", ease: "power2.inOut" },
       0.4,
     )
     /*.from(
@@ -63,23 +63,19 @@ LoadEverything().then(() => {
     )*/
     .from(
       [".score_container"],
-      { duration: 0.4, opacity: "0", ease: "power2.inOut" },
+      { duration: 0.8, opacity: "0", ease: "power2.inOut" },
       0,
     )
     .from(
       [".best_of.container"],
-      { duration: 0.4, opacity: "0", ease: "power2.inOut" },
+      { duration: 0.8, opacity: "0", ease: "power2.inOut" },
       0,
     )
-    .from(
-      [".vs1"],
-      { duration: 0.05, opacity: "0", scale: 10, ease: "in" },
-      1.2,
-    )
-    .from([".vs2"], { duration: 0.005, opacity: "0" }, 1.3)
+    .from([".vs1"], { duration: 0.1, opacity: "0", scale: 10, ease: "in" }, 1.2)
+    .from([".vs2"], { duration: 0.01, opacity: "0" }, 1.3)
     .to([".vs2"], { opacity: 0, scale: 2, ease: "power2.out" }, 1.31)
-    .from([".p1.container"], { duration: 0.5, x: "-200px", ease: "out" }, 0)
-    .from([".p2.container"], { duration: 0.5, x: "200px", ease: "out" }, 0);
+    .from([".p1.container"], { duration: 1, x: "-200px", ease: "out" }, 0)
+    .from([".p2.container"], { duration: 1, x: "200px", ease: "out" }, 0);
 
   Start = async (event) => {
     startingAnimation.restart();
@@ -276,7 +272,7 @@ LoadEverything().then(() => {
       let history =
         data.score[window.scoreboardNumber].history_sets[window.PLAYER];
       if (history) {
-        let results_html = `<div class ="info title">${config.display_titles ? "Recent Results" : " "}</div>`;
+        let results_html = `<div class ="info title">${config.display_titles ? "Fun Facts" : " "}</div>`;
         let className = `.results`;
         let tl = gsap.timeline();
         Object.values(
