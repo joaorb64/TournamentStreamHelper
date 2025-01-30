@@ -1,54 +1,56 @@
 @font-face {
-  font-family: "NotoSans";
-  src: url("./include/NotoSans-Regular.ttf") format("truetype");
+    font-family: "NotoSans";
+    src: url("./include/NotoSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "RobotoCondensed";
-  src: url("./include/RobotoCondensed.ttf") format("truetype");
+    font-family: "RobotoCondensed";
+    src: url("./include/RobotoCondensed.ttf") format("truetype");
 }
 
 /* Class used for transcriptions, example: Kana -> Romaji (Japanese to Roman alphabet) */
 .tsh_transcript {
-  font-size: 60%;
-  text-transform: uppercase;
-  align-self: end;
+    font-size: 60%;
+    text-transform: uppercase;
+    align-self: end;
 }
 
 .tsh_character_container {
-  display: flex;
-  width: 100%;
-  height: 100%;
+    display: flex;
+    width: 100%;
+    height: 100%;
 }
 
 .tsh_character,
 .tsh_character > div {
-  position: relative;
-  width: 100%;
-  height: 100%;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .text {
-  white-space: nowrap;
-  display: flex;
-  min-width: 100%;
-  width: fit-content;
-  place-items: center;
-  place-content: center;
-  height: 100%;
-  gap: inherit;
-  transform-origin: left;
+    white-space: nowrap;
+    display: flex;
+    min-width: 100%;
+    width: fit-content;
+    place-items: center;
+    place-content: center;
+    height: 100%;
+    gap: inherit;
+    transform-origin: left;
 }
 
 /* Main theme -- Dark Gradient */
 :root {
-  --font: "RobotoCondensed";
-  --border-radius: 16px;
-  --text-color: white;
-  --bg-color: #121212;
-  /* see DEFAULT_TEAM1_COLOR and DEFAULT_TEAM2_COLOR in src/TSHScoreboardWidget.py */
+    --font: "Rounded Mplus 1c";
+    --border-radius: 16px;
+    --text-color: white;
+    --bg-color: #ff8200;
+    --accent-color: #4b4b4b;
 
-  /* --p1-score-bg-color: linear-gradient(
+    /* see DEFAULT_TEAM1_COLOR and DEFAULT_TEAM2_COLOR in src/TSHScoreboardWidget.py */
+
+    /* --p1-score-bg-color: linear-gradient(
     135deg,
     rgba(189, 63, 50, 1) 0%,
     rgba(203, 53, 107, 1) 100%
@@ -59,12 +61,12 @@
     rgba(60, 139, 166, 1) 100%
   ); */
 
-  --p1-sponsor-color: #ff7a6d;
-  --p2-sponsor-color: #29b6f6;
-  --p1-score-bg-color: rgb(254, 54, 54);
-  --p2-score-bg-color: rgb(46, 137, 255);
-  --p1-score-color: white;
-  --p2-score-color: white;
+    --p1-sponsor-color: #4b4b4b;
+    --p2-sponsor-color: #ff8200;
+    --p1-score-bg-color: #ff8200;
+    --p2-score-bg-color: #4b4b4b;
+    --p1-score-color: white;
+    --p2-score-color: white;
 }
 
 /* Uncomment for themes */

@@ -60,3 +60,5 @@ logs/*
 Pipfile*
 env
 desktop.ini
+
+venv

@@ -36,7 +36,7 @@ LoadEverything().then(() => {
           },
           onUpdateParams: ["{self}"],
         },
-        0
+        0,
       );
     }
 
@@ -51,7 +51,7 @@ LoadEverything().then(() => {
     if (progressionsOut == 0) {
       GfResetRoundNum = Math.max.apply(
         null,
-        Object.keys(bracket).map((r) => parseInt(r))
+        Object.keys(bracket).map((r) => parseInt(r)),
       );
 
       isGf = parseInt(roundKey) == GfResetRoundNum - 1;
@@ -116,7 +116,8 @@ LoadEverything().then(() => {
     let oldData = event.oldData;
 
     if (
-      !oldData.bracket || !oldData ||
+      !oldData.bracket ||
+      !oldData ||
       JSON.stringify(data.bracket.bracket) !=
         JSON.stringify(oldData.bracket.bracket)
     ) {
@@ -137,7 +138,7 @@ LoadEverything().then(() => {
           return setMap.reduce(function (result, item) {
             return result + item;
           }, 0);
-        })
+        }),
       );
 
       let size = 32;
@@ -173,7 +174,7 @@ LoadEverything().then(() => {
         let html = "";
 
         let winnersRounds = Object.fromEntries(
-          Object.entries(bracket).filter(([round]) => parseInt(round) > 0)
+          Object.entries(bracket).filter(([round]) => parseInt(round) > 0),
         );
 
         Object.entries(winnersRounds).forEach(([roundKey, round], r) => {
@@ -207,7 +208,7 @@ LoadEverything().then(() => {
         $(".winners_container").html(html);
 
         let losersRounds = Object.fromEntries(
-          Object.entries(bracket).filter(([round]) => parseInt(round) < 0)
+          Object.entries(bracket).filter(([round]) => parseInt(round) < 0),
         );
 
         // LOSERS SIDE
@@ -264,7 +265,7 @@ LoadEverything().then(() => {
                 parseInt(roundKey) ==
                 Math.min.apply(
                   null,
-                  Object.keys(bracket).map((r) => parseInt(r))
+                  Object.keys(bracket).map((r) => parseInt(r)),
                 );
 
               if (
@@ -280,7 +281,7 @@ LoadEverything().then(() => {
                 if (window.LOSERS_ONLY && parseInt(roundKey) > 0) return;
 
                 let slotElement = $(
-                  `.${this.baseClass} .round_${roundKey} .slot_${i + 1}`
+                  `.${this.baseClass} .round_${roundKey} .slot_${i + 1}`,
                 );
 
                 if (!slotElement || !slotElement.offset()) return;
@@ -288,7 +289,7 @@ LoadEverything().then(() => {
                 let winElement = $(
                   `.${this.baseClass} .round_${slot.nextWin[0]} .slot_${
                     slot.nextWin[1] + 1
-                  }`
+                  }`,
                 );
 
                 if (winElement && winElement.offset()) {
@@ -406,7 +407,7 @@ LoadEverything().then(() => {
                 }
               }
             },
-            { baseClass: baseClass }
+            { baseClass: baseClass },
           );
         });
 
@@ -419,7 +420,7 @@ LoadEverything().then(() => {
 
         let GfResetRoundNum = Math.max.apply(
           null,
-          Object.keys(bracket).map((r) => parseInt(r))
+          Object.keys(bracket).map((r) => parseInt(r)),
         );
 
         Object.entries(bracket).forEach(function ([roundKey, round], r) {
@@ -433,32 +434,32 @@ LoadEverything().then(() => {
 
             anim.add(
               AnimateLine($(`.line_in_r_${roundKey}.s_${setIndex + 1}`)),
-              0
+              0,
             );
 
             if (isGfR && progressionsOut == 0) {
               anim.from(
                 $(`.round_${roundKey} .round_name`),
                 { autoAlpha: 0, duration: 0.4 },
-                0.5
+                0.5,
               );
             }
 
             anim.from(
               $(`.round_${roundKey} .slot_${setIndex + 1}`),
               { x: -50, autoAlpha: 0, duration: 0.4 },
-              0.5
+              0.5,
             );
 
             anim.addLabel("displayed");
 
             anim.add(
               AnimateLine($(`.line_r_${roundKey}.s_${setIndex + 1}`)),
-              0.9
+              0.9,
             );
             anim.add(
               AnimateLine($(`.line_out_r_${roundKey}.s_${setIndex + 1}`)),
-              1.4
+              1.4,
             );
 
             anim.addLabel("over");
@@ -468,7 +469,7 @@ LoadEverything().then(() => {
 
             entryAnim.add(
               AnimateElement(roundKey, setIndex, set, bracket, progressionsOut),
-              Math.abs(parseInt(roundKey)) * 0.6
+              Math.abs(parseInt(roundKey)) * 0.6,
             );
           });
         });
@@ -495,7 +496,7 @@ LoadEverything().then(() => {
 
         SetInnerHtml(
           $(`.${baseClass} .round_${parseInt(roundKey)} .round_name`),
-          round.name
+          round.name,
         );
 
         Object.values(round.sets).forEach(function (slot, i) {
@@ -505,48 +506,48 @@ LoadEverything().then(() => {
                 $(
                   `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                     i + 1
-                  } .slot_p_${p}.container .score`
+                  } .slot_p_${p}.container .score`,
                 ),
                 `
                   ${slot.completed ? (score == -1 ? "DQ" : score) : ""}
-                `
+                `,
               );
             },
-            { baseClass: baseClass }
+            { baseClass: baseClass },
           );
           if (slot.score[0] > slot.score[1] && slot.completed) {
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${0}.container`
-            ).css("filter", "brightness(1)");
+              } .slot_p_${0}.container`,
+            ).addClass("winner");
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${1}.container`
-            ).css("filter", "brightness(0.6)");
+              } .slot_p_${1}.container`,
+            ).addClass("loser");
           } else if (slot.score[1] > slot.score[0] && slot.completed) {
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${0}.container`
-            ).css("filter", "brightness(0.6)");
+              } .slot_p_${0}.container`,
+            ).addClass("loser");
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${1}.container`
-            ).css("filter", "brightness(1)");
+              } .slot_p_${1}.container`,
+            ).addClass("winner");
           } else {
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${0}.container`
-            ).css("filter", "brightness(1)");
+              } .slot_p_${0}.container`,
+            ).addClass("winner");
             $(
               `.${this.baseClass} .round_${parseInt(roundKey)} .slot_${
                 i + 1
-              } .slot_p_${1}.container`
-            ).css("filter", "brightness(1)");
+              } .slot_p_${1}.container`,
+            ).addClass("winner");
           }
         });
       });
@@ -558,7 +559,7 @@ LoadEverything().then(() => {
             let element = $(
               `.round_${roundKey} .slot_${
                 parseInt(setIndex) + 1
-              } .slot_p_${index}`
+              } .slot_p_${index}`,
             ).get(0);
 
             if (!element) continue;
@@ -594,21 +595,21 @@ LoadEverything().then(() => {
                     </span>
                     ${player ? await Transcript(player.name) : ""}
                   </span>
-                `
+                `,
               );
 
               SetInnerHtml(
                 $(element).find(`.flagcountry`),
                 player && player.country.asset
                   ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
-                  : ""
+                  : "",
               );
 
               SetInnerHtml(
                 $(element).find(`.flagstate`),
                 player && player.state.asset
                   ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
-                  : ""
+                  : "",
               );
 
               await CharacterDisplay(
@@ -616,44 +617,44 @@ LoadEverything().then(() => {
                 {
                   source: `bracket.players.slot.${pid}`,
                 },
-                event
+                event,
               );
 
               SetInnerHtml(
                 $(element).find(`.sponsor_icon`),
                 player && player.sponsor_logo
                   ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
-                  : ""
+                  : "",
               );
 
               SetInnerHtml(
                 $(element).find(`.avatar`),
                 player && player.avatar
                   ? `<div style="background-image: url('../../${player.avatar}')"></div>`
-                  : ""
+                  : "",
               );
 
               SetInnerHtml(
                 $(element).find(`.online_avatar`),
                 player && player.online_avatar
                   ? `<div style="background-image: url('${player.online_avatar}')"></div>`
-                  : '<div style="background: gray)"></div>'
+                  : '<div style="background: gray)"></div>',
               );
 
               SetInnerHtml(
                 $(element).find(`.twitter`),
                 player && player.twitter
                   ? `<span class="twitter_logo"></span>${String(
-                      player.twitter
+                      player.twitter,
                     )}`
-                  : ""
+                  : "",
               );
 
               SetInnerHtml(
                 $(element).find(`.sponsor-container`),
                 `<div class='sponsor-logo' style='background-image: url(../../${
                   player ? player.sponsor_logo : ""
-                })'></div>`
+                })'></div>`,
               );
             } else {
               // Doubles/Teams
@@ -662,7 +663,7 @@ LoadEverything().then(() => {
               if (!teamName || teamName == "") {
                 let names = [];
                 for (const [p, player] of Object.values(
-                  team.player
+                  team.player,
                 ).entries()) {
                   if (player) {
                     names.push(await Transcript(player.name));
@@ -677,7 +678,7 @@ LoadEverything().then(() => {
                   <span>
                     ${teamName}
                   </span>
-                `
+                `,
               );
 
               SetInnerHtml($(element).find(`.flagcountry`), "");
@@ -689,7 +690,7 @@ LoadEverything().then(() => {
                   slice_character: [0, 1],
                   source: `bracket.players.slot.${pid}`,
                 },
-                event
+                event,
               );
 
               SetInnerHtml($(element).find(`.sponsor_icon`), "");
