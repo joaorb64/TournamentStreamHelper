@@ -1060,6 +1060,8 @@ class TSHScoreboardWidget(QWidget):
                                     "mains": player.get("mains")
                                 }
                                 teamInstance[p].SetData(player, True, False)
+                except Exception as e:
+                    logger.error(f"Error while setting entrants: {e}")
                 finally:
                     for p in self.playerWidgets:
                         p.dataLock.release()
@@ -1081,6 +1083,8 @@ class TSHScoreboardWidget(QWidget):
 
                     teamInstance[player].SetData(
                         data.get("data"), False, False)
+                except Exception as e:
+                    logger.error(f"Error while setting entrants: {e}")
                 finally:
                     for p in self.playerWidgets:
                         p.dataLock.release()
