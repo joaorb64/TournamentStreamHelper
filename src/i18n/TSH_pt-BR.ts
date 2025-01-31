@@ -848,8 +848,8 @@ p, li { white-space: pre-wrap; }
    <translation>Atualizador</translation>
   </message>
   <message>
-   <source>New update available:</source>
-   <translation>Nova atualização disponível:</translation>
+   <source>New update available: </source>
+   <translation>Nova atualização disponível: </translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="866"/>
