@@ -64,7 +64,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHBracket.ui" line="141"/>
    <source>TSH_legacy_00010</source>
-   <translation>players</translation>
+   <translation> players</translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="144"/>
