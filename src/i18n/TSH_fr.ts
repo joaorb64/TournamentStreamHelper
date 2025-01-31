@@ -279,7 +279,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="244"/>
         <source>TSH_legacy_00052</source>
-        <translation></translation>
+        <translation>TWITTER</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="140"/>
@@ -429,7 +429,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
         <source>TSH_legacy_00090</source>
-        <translation></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="940"/>
