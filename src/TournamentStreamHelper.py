@@ -643,13 +643,13 @@ class Window(QMainWindow):
         self.settingsWindow = TSHSettingsWindow(self)
 
         action = self.optionsBt.menu().addAction(
-            QApplication.translate("TSH_legacy_00129", "TSH_legacy_00129"))
+            QApplication.translate("Settings", "TSH_legacy_00129"))
         action.setIcon(QIcon('assets/icons/settings.svg'))
         action.triggered.connect(lambda: self.settingsWindow.show())
 
         self.aboutWidget = TSHAboutWidget()
         action = self.optionsBt.menu().addAction(
-            QApplication.translate("TSH_legacy_00000", "TSH_legacy_00000"))
+            QApplication.translate("About", "TSH_legacy_00000"))
         action.setIcon(QIcon('assets/icons/info.svg'))
         action.triggered.connect(lambda: self.aboutWidget.show())
 
