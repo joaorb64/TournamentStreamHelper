@@ -854,8 +854,8 @@ p, li { white-space: pre-wrap; }
    <translation>Mettre à jour</translation>
   </message>
   <message>
-   <source>Downloading update...</source>
-   <translation>Téléchargement de la mise à jour...</translation>
+   <source>Downloading update... </source>
+   <translation>Téléchargement de la mise à jour... </translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="875"/>

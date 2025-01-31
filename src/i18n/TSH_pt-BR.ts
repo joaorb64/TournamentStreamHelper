@@ -867,8 +867,8 @@ p, li { white-space: pre-wrap; }
    <translation>Atualizar</translation>
   </message>
   <message>
-   <source>Downloading update...</source>
-   <translation>Baixando atualização...</translation>
+   <source>Downloading update... </source>
+   <translation>Baixando atualização... </translation>
   </message>
   <message>
    <source>New update available</source>

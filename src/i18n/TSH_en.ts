@@ -1103,7 +1103,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TournamentStreamHelper.py" line="885"/>
    <location filename="../TournamentStreamHelper.py" line="922"/>
    <source>TSH_legacy_00204</source>
-   <translation>Downloading update...</translation>
+   <translation>Downloading update... </translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="148"/>
