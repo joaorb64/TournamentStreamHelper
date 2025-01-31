@@ -10,7 +10,7 @@ class TSHSettingsWindow(QDialog):
         super().__init__(parent=parent)
 
     def UiMounted(self):
-        self.setWindowTitle(QApplication.translate("TSH_legacy_00129", "TSH_legacy_00129"))
+        self.setWindowTitle(QApplication.translate("Settings", "TSH_legacy_00129"))
 
         # Create a list widget for the selection
         self.selection_list = QListWidget()
