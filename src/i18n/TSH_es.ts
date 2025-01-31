@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -149,14 +149,12 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
    <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
    <source>TSH_legacy_00025</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="58"/>
    <source>TSH_legacy_00026</source>
-   <translatorcomment>
-    We usually use "Sponso" or "Org" in Spanish, "equipo" it is not a common term in Latam esports. This cell is for the team initials/acronym
-   </translatorcomment>
+   <translatorcomment>We usually use "Sponso" or "Org" in Spanish, "equipo" it is not a common term in Latam esports. This cell is for the team initials/acronym</translatorcomment>
    <translation>EQUIPO</translation>
   </message>
   <message>
@@ -167,22 +165,18 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="102"/>
    <source>TSH_legacy_00028</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="45"/>
    <source>TSH_legacy_00029</source>
-   <translatorcomment>
-    At least in Argentina and other SA spanish speaking countries we call it ruleset, not the translation which is "Reglamento"
-   </translatorcomment>
+   <translatorcomment>At least in Argentina and other SA spanish speaking countries we call it ruleset, not the translation which is "Reglamento"</translatorcomment>
    <translation>Nombre del ruleset</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="55"/>
    <source>TSH_legacy_00030</source>
-   <translatorcomment>
-    In Argentina we use stagelist, but we know not everyone calls it by its name in English so Lista de escenarios is understandable
-   </translatorcomment>
+   <translatorcomment>In Argentina we use stagelist, but we know not everyone calls it by its name in English so Lista de escenarios is understandable</translatorcomment>
    <translation>Lista de escenarios</translation>
   </message>
   <message>
@@ -193,24 +187,20 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="164"/>
    <source>TSH_legacy_00032</source>
-   <translatorcomment>
-    Usually we do not call this stages "neutral" we call them initial stages
-   </translatorcomment>
+   <translatorcomment>Usually we do not call this stages "neutral" we call them initial stages</translatorcomment>
    <translation>Escenarios iniciales</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="250"/>
    <source>TSH_legacy_00033</source>
-   <translatorcomment>
-    We do not have a word for counterpick and since the term was invented and learned in English we use it in that language
-   </translatorcomment>
+   <translatorcomment>We do not have a word for counterpick and since the term was invented and learned in English we use it in that language</translatorcomment>
    <translation>Escenarios de counterpick</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="271"/>
    <location filename="../layout/TSHScoreboardStage.ui" line="290"/>
    <source>TSH_legacy_00034</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="277"/>
@@ -220,7 +210,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="300"/>
    <source>TSH_legacy_00036</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="313"/>
@@ -235,7 +225,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
    <source>TSH_legacy_00039</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
@@ -250,7 +240,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
    <source>TSH_legacy_00042</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="396"/>
@@ -270,7 +260,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="419"/>
    <source>TSH_legacy_00046</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
@@ -290,12 +280,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="74"/>
    <source>TSH_legacy_00051</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="244"/>
    <source>TSH_legacy_00052</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="140"/>
@@ -410,9 +400,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="466"/>
    <source>TSH_legacy_00075</source>
-   <translatorcomment>
-    You could also use "Nombre de la dupla"
-   </translatorcomment>
+   <translatorcomment>You could also use "Nombre de la dupla"</translatorcomment>
    <translation>Nombre de los equipos?</translation>
   </message>
   <message>
@@ -448,7 +436,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
    <source>TSH_legacy_00090</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="940"/>
@@ -456,7 +444,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHThumbnailSettings.ui" line="1032"/>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1075"/>
    <source>%</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1049"/>
@@ -531,7 +519,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="847"/>
    <source>TSH_legacy_00085</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
@@ -601,7 +589,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="80"/>
    <source>TSH_legacy_00109</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="97"/>
@@ -611,7 +599,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="119"/>
    <source>TSH_legacy_00111</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="139"/>
@@ -645,7 +633,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="23"/>
    <location filename="../layout/TSHCommentator.ui" line="29"/>
    <source>TSH_legacy_00117</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="26"/>
@@ -656,7 +644,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHCommentator.ui" line="47"/>
    <source>TSH_legacy_00119</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentator.ui" line="74"/>
@@ -685,7 +673,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="140"/>
    <location filename="../layout/TSHCommentator.ui" line="140"/>
    <source>TSH_legacy_00124</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="156"/>
@@ -702,7 +690,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHCommentary.ui" line="47"/>
    <source>TSH_legacy_00127</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="74"/>
@@ -1310,7 +1298,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHSelectSetWindow.py" line="111"/>
    <location filename="../TSHSelectStationWindow.py" line="86"/>
    <source>TSH_legacy_00257</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="112"/>
@@ -1368,7 +1356,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="349"/>
    <source>TSH_legacy_00160</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="176"/>
@@ -1390,7 +1378,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHCommentaryWidget.py" line="73"/>
    <location filename="../TSHScoreboardWidget.py" line="229"/>
    <source>TSH_legacy_00218</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHCommentaryWidget.py" line="74"/>
@@ -1593,24 +1581,24 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>[</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>]</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="755"/>
    <location filename="../TSHSelectSetWindow.py" line="140"/>
    <source>(</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="755"/>
    <location filename="../TSHSelectSetWindow.py" line="141"/>
    <source>)</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -1769,7 +1757,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHScoreboardWidget.py" line="529"/>
    <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
    <source>TSH_legacy_00318</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="534"/>

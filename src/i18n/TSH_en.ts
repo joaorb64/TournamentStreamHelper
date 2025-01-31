@@ -1113,7 +1113,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="151"/>
    <source>TSH_legacy_00206</source>
-   <translation>Please ensure the layout folder or its contents aren't open in another application before closing this window.</translation>
+   <translation>Please ensure the layout folder or its contents aren&apos;t open in another application before closing this window.</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="940"/>
@@ -1123,7 +1123,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="942"/>
    <source>TSH_legacy_00208</source>
-   <translation>You're already using the latest version</translation>
+   <translation>You&apos;re already using the latest version</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
@@ -1463,12 +1463,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="209"/>
    <source>TSH_legacy_00273</source>
-   <translation>Paste the URL to the player's StartGG profile</translation>
+   <translation>Paste the URL to the player&apos;s StartGG profile</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="212"/>
    <source>TSH_legacy_00274</source>
-   <translation>Insert the player's name in bracket</translation>
+   <translation>Insert the player&apos;s name in bracket</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="215"/>

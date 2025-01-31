@@ -21,13 +21,11 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-   <translatorcomment>
-    そのままにしました。Left as it is
-   </translatorcomment>
+   <translatorcomment>そのままにしました。Left as it is</translatorcomment>
    <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;"&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
   </message>
  </context>
@@ -47,9 +45,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="73"/>
    <source>TSH_legacy_00015</source>
-   <translatorcomment>
-    シングルス、ダブルス、その他など
-   </translatorcomment>
+   <translatorcomment>シングルス、ダブルス、その他など</translatorcomment>
    <translation>種目</translation>
   </message>
   <message>
@@ -299,9 +295,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="257"/>
    <source>TSH_legacy_00059</source>
-   <translatorcomment>
-    he/him、she/her、they/themなど
-   </translatorcomment>
+   <translatorcomment>he/him、she/her、they/themなど</translatorcomment>
    <translation>代名詞</translation>
   </message>
   <message>
@@ -609,9 +603,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="139"/>
    <source>TSH_legacy_00112</source>
-   <translatorcomment>
-    最大で何試合すれば勝敗が決まるか
-   </translatorcomment>
+   <translatorcomment>最大で何試合すれば勝敗が決まるか</translatorcomment>
    <translation>BEST OF</translation>
   </message>
   <message>
@@ -703,9 +695,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="170"/>
    <location filename="../layout/TSHCommentator.ui" line="172"/>
    <source>TSH_legacy_00126</source>
-   <translatorcomment>
-    he/him、she/her、they/themなど
-   </translatorcomment>
+   <translatorcomment>he/him、she/her、they/themなど</translatorcomment>
    <translation>代名詞</translation>
   </message>
  </context>
@@ -1509,33 +1499,25 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHThumbnailSettingsWidget.py" line="847"/>
    <source>TSH_legacy_00236</source>
-   <translatorcomment>
-    そのまま
-   </translatorcomment>
+   <translatorcomment>そのまま</translatorcomment>
    <translation>Bold Italic</translation>
   </message>
   <message>
    <location filename="../TSHThumbnailSettingsWidget.py" line="844"/>
    <source>TSH_legacy_00234</source>
-   <translatorcomment>
-    そのまま
-   </translatorcomment>
+   <translatorcomment>そのまま</translatorcomment>
    <translation>Bold</translation>
   </message>
   <message>
    <location filename="../TSHThumbnailSettingsWidget.py" line="843"/>
    <source>TSH_legacy_00233</source>
-   <translatorcomment>
-    そのまま
-   </translatorcomment>
+   <translatorcomment>そのまま</translatorcomment>
    <translation>Regular</translation>
   </message>
   <message>
    <location filename="../TSHThumbnailSettingsWidget.py" line="845"/>
    <source>TSH_legacy_00235</source>
-   <translatorcomment>
-    そのまま
-   </translatorcomment>
+   <translatorcomment>そのまま</translatorcomment>
    <translation>Italic</translation>
   </message>
   <message>

@@ -7,7 +7,7 @@
    <location filename="../TournamentStreamHelper.py" line="645"/>
    <location filename="../layout/TSHAbout.ui" line="23"/>
    <source>TSH_legacy_00000</source>
-   <translation>A proposito dell'applicazione</translation>
+   <translation>A proposito dell&apos;applicazione</translation>
   </message>
   <message>
    <location filename="../layout/TSHAbout.ui" line="64"/>
@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="244"/>
    <source>TSH_legacy_00052</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="140"/>
@@ -238,7 +238,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="119"/>
    <source>TSH_legacy_00111</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="139"/>
@@ -591,7 +591,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1157"/>
    <source>TSH_legacy_00104</source>
-   <translation>Aggiornare l'anteprima</translation>
+   <translation>Aggiornare l&apos;anteprima</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1164"/>
@@ -859,7 +859,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="490"/>
    <source>TSH_legacy_00170</source>
-   <translation>Lingua dell'applicazione</translation>
+   <translation>Lingua dell&apos;applicazione</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="497"/>
@@ -885,7 +885,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TournamentStreamHelper.py" line="531"/>
    <location filename="../TournamentStreamHelper.py" line="562"/>
    <source>TSH_legacy_00175</source>
-   <translation>Identica alla lingua dell'applicazione</translation>
+   <translation>Identica alla lingua dell&apos;applicazione</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="552"/>
@@ -1040,7 +1040,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TournamentStreamHelper.py" line="885"/>
    <location filename="../TournamentStreamHelper.py" line="922"/>
    <source>TSH_legacy_00204</source>
-   <translation>Scaricamento dell'aggiornamento...</translation>
+   <translation>Scaricamento dell&apos;aggiornamento...</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="148"/>

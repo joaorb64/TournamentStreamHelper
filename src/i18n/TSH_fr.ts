@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -40,7 +40,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="73"/>
    <source>TSH_legacy_00015</source>
-   <translation>Nom de l'Événement</translation>
+   <translation>Nom de l&apos;Événement</translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="100"/>
@@ -75,7 +75,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="190"/>
    <source>TSH_legacy_00023</source>
-   <translation>Télécharger l'icône</translation>
+   <translation>Télécharger l&apos;icône</translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="197"/>
@@ -125,14 +125,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHBracket.ui" line="51"/>
    <source>TSH_legacy_00005</source>
-   <translation>Limiter l'arbre exporté</translation>
+   <translation>Limiter l&apos;arbre exporté</translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="141"/>
    <source>TSH_legacy_00010</source>
-   <translatorcomment>
-    Emptied for clearer view
-   </translatorcomment>
+   <translatorcomment>Emptied for clearer view</translatorcomment>
    <translation>‎</translation>
   </message>
   <message>
@@ -160,7 +158,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="74"/>
    <source>TSH_legacy_00027</source>
-   <translation>Nom de l'Équipe</translation>
+   <translation>Nom de l&apos;Équipe</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="102"/>
@@ -196,7 +194,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHScoreboardStage.ui" line="271"/>
    <location filename="../layout/TSHScoreboardStage.ui" line="290"/>
    <source>TSH_legacy_00034</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="277"/>
@@ -206,7 +204,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="300"/>
    <source>TSH_legacy_00036</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="313"/>
@@ -221,7 +219,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
    <source>TSH_legacy_00039</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
@@ -236,7 +234,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
    <source>TSH_legacy_00042</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="396"/>
@@ -281,12 +279,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="244"/>
    <source>TSH_legacy_00052</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="140"/>
    <source>TSH_legacy_00053</source>
-   <translation>Nom d'utilisateur seulement</translation>
+   <translation>Nom d&apos;utilisateur seulement</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="257"/>
@@ -411,7 +409,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
    <source>TSH_legacy_00087</source>
-   <translation>Mise à l'échelle lisse</translation>
+   <translation>Mise à l&apos;échelle lisse</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="889"/>
@@ -431,7 +429,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
    <source>TSH_legacy_00090</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="940"/>
@@ -439,12 +437,12 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHThumbnailSettings.ui" line="1032"/>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1075"/>
    <source>%</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="504"/>
    <source>TSH_legacy_00077</source>
-   <translation>Police d'écriture des pseudos</translation>
+   <translation>Police d&apos;écriture des pseudos</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="59"/>
@@ -478,7 +476,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="684"/>
    <source>TSH_legacy_00083</source>
-   <translation>Police d'écriture des phases</translation>
+   <translation>Police d&apos;écriture des phases</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="861"/>
@@ -493,17 +491,17 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
    <source>TSH_legacy_00092</source>
-   <translation>Mise à l'échelle proportionnelle des personnages</translation>
+   <translation>Mise à l&apos;échelle proportionnelle des personnages</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="967"/>
    <source>TSH_legacy_00093</source>
-   <translation>Contraindre la mise à l'échelle horizontalement</translation>
+   <translation>Contraindre la mise à l&apos;échelle horizontalement</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="974"/>
    <source>TSH_legacy_00094</source>
-   <translation>Contraindre la mise à l'échelle verticalement</translation>
+   <translation>Contraindre la mise à l&apos;échelle verticalement</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="994"/>
@@ -518,7 +516,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1049"/>
    <source>TSH_legacy_00097</source>
-   <translation>Inverser l'orientation des séparateurs</translation>
+   <translation>Inverser l&apos;orientation des séparateurs</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1056"/>
@@ -527,7 +525,7 @@ p, li { white-space: pre-wrap; }
   </message>
   <message>
    <source>UI Options</source>
-   <translation>Options d'Interface</translation>
+   <translation>Options d&apos;Interface</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1139"/>
@@ -542,7 +540,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1171"/>
    <source>TSH_legacy_00106</source>
-   <translation>Ouvrir l'Explorateur de Fichiers après la génération ?</translation>
+   <translation>Ouvrir l&apos;Explorateur de Fichiers après la génération ?</translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1118"/>
@@ -567,7 +565,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1157"/>
    <source>TSH_legacy_00104</source>
-   <translation>Mettre à jour l'Aperçu</translation>
+   <translation>Mettre à jour l&apos;Aperçu</translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="41"/>
@@ -627,7 +625,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="23"/>
    <location filename="../layout/TSHCommentator.ui" line="29"/>
    <source>TSH_legacy_00117</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="26"/>
@@ -677,7 +675,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="140"/>
    <location filename="../layout/TSHCommentator.ui" line="140"/>
    <source>TSH_legacy_00124</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="156"/>
@@ -791,7 +789,7 @@ p, li { white-space: pre-wrap; }
   </message>
   <message>
    <source>Load StartGG user set</source>
-   <translation>Charger le set d'un utilisateur Start.gg</translation>
+   <translation>Charger le set d&apos;un utilisateur Start.gg</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="449"/>
@@ -911,11 +909,11 @@ p, li { white-space: pre-wrap; }
   </message>
   <message>
    <source>Export Language</source>
-   <translation>Langue d'export</translation>
+   <translation>Langue d&apos;export</translation>
   </message>
   <message>
    <source>Export language changed succsssfully.</source>
-   <translation>La langue d'export a été changée.</translation>
+   <translation>La langue d&apos;export a été changée.</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="531"/>
@@ -972,7 +970,7 @@ p, li { white-space: pre-wrap; }
   </message>
   <message>
    <source>Export language changed successfully.</source>
-   <translation>La langue d'export a été modifiée.</translation>
+   <translation>La langue d&apos;export a été modifiée.</translation>
   </message>
   <message>
    <source>Default Phase Name Language</source>
@@ -1020,7 +1018,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="603"/>
    <source>TSH_legacy_00181</source>
-   <translation>Demander de l'aide sur le Forum</translation>
+   <translation>Demander de l&apos;aide sur le Forum</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="611"/>
@@ -1030,7 +1028,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="619"/>
    <source>TSH_legacy_00183</source>
-   <translation>Demander de l'aide sur Discord</translation>
+   <translation>Demander de l&apos;aide sur Discord</translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="629"/>
@@ -1199,7 +1197,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHBracketWidget.py" line="73"/>
    <location filename="../TSHPlayerListWidget.py" line="57"/>
    <source>TSH_legacy_00139</source>
-   <translation>Nombre d'emplacements</translation>
+   <translation>Nombre d&apos;emplacements</translation>
   </message>
   <message>
    <location filename="../TSHBracketWidget.py" line="84"/>
@@ -1381,7 +1379,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHScoreboardWidget.py" line="907"/>
    <source>TSH_legacy_00230_{0}</source>
-   <translation>Charger le set de l'utilisateur {0}</translation>
+   <translation>Charger le set de l&apos;utilisateur {0}</translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="911"/>
@@ -1391,7 +1389,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="142"/>
    <source>TSH_legacy_00268</source>
-   <translation>Entrez l'URL du tournoi.</translation>
+   <translation>Entrez l&apos;URL du tournoi.</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="144"/>
@@ -1401,22 +1399,22 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="169"/>
    <source>TSH_legacy_00270</source>
-   <translation>Définir l'URL du tournoi</translation>
+   <translation>Définir l&apos;URL du tournoi</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="197"/>
    <source>TSH_legacy_00271</source>
-   <translation>Définir le nom d'utilisateur Twitch</translation>
+   <translation>Définir le nom d&apos;utilisateur Twitch</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="197"/>
    <source>TSH_legacy_00272</source>
-   <translation>Nom d'utilisateur Twitch :</translation>
+   <translation>Nom d&apos;utilisateur Twitch :</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="209"/>
    <source>TSH_legacy_00273</source>
-   <translation>Entrez l'URL du profil joueur StartGG</translation>
+   <translation>Entrez l&apos;URL du profil joueur StartGG</translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="37"/>
@@ -1461,12 +1459,12 @@ p, li { white-space: pre-wrap; }
   </message>
   <message>
    <source>Twitch Username:</source>
-   <translation>Nom d'utilisateur Twitch :</translation>
+   <translation>Nom d&apos;utilisateur Twitch :</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="212"/>
    <source>TSH_legacy_00274</source>
-   <translation>Entrez le nom du joueur tel qu'affiché dans l'arbre de tournoi</translation>
+   <translation>Entrez le nom du joueur tel qu&apos;affiché dans l&apos;arbre de tournoi</translation>
   </message>
   <message>
    <location filename="../TSHTournamentDataProvider.py" line="215"/>
@@ -1584,7 +1582,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="199"/>
    <source>TSH_legacy_00264</source>
-   <translation>L'URL du tournoi n'a pas pu être chargée.</translation>
+   <translation>L&apos;URL du tournoi n&apos;a pas pu être chargée.</translation>
   </message>
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="201"/>
@@ -1732,7 +1730,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="75"/>
    <source>TSH_legacy_00300</source>
-   <translation>Ne pas remplacer les valeurs existantes dans la base de données locale des joueurs (Prend effet après le redémarrage de l'application)</translation>
+   <translation>Ne pas remplacer les valeurs existantes dans la base de données locale des joueurs (Prend effet après le redémarrage de l&apos;application)</translation>
   </message>
  </context>
  <context>
@@ -1811,7 +1809,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHScoreboardWidget.py" line="534"/>
    <source>TSH_legacy_00319</source>
-   <translation>La miniature a été enregistrée à l'emplacement suivant :</translation>
+   <translation>La miniature a été enregistrée à l&apos;emplacement suivant :</translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="535"/>

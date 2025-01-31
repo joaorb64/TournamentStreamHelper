@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -149,12 +149,12 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
    <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
    <source>TSH_legacy_00025</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="58"/>
    <source>TSH_legacy_00026</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="74"/>
@@ -164,7 +164,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardTeam.ui" line="102"/>
    <source>TSH_legacy_00028</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="45"/>
@@ -220,7 +220,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
    <source>TSH_legacy_00039</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
@@ -235,7 +235,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
    <source>TSH_legacy_00042</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="396"/>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="419"/>
    <source>TSH_legacy_00046</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardStage.ui" line="432"/>
@@ -275,12 +275,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="74"/>
    <source>TSH_legacy_00051</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="244"/>
    <source>TSH_legacy_00052</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="140"/>
@@ -310,7 +310,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="202"/>
    <source>TSH_legacy_00057</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="214"/>
@@ -320,12 +320,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="100"/>
    <source>TSH_legacy_00049</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="124"/>
    <source>TSH_legacy_00050</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="235"/>
@@ -390,10 +390,8 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="456"/>
    <source>TSH_legacy_00074</source>
-   <translatorcomment>
-    Turnierphase?
-   </translatorcomment>
-   <translation/>
+   <translatorcomment>Turnierphase?</translatorcomment>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="466"/>
@@ -433,7 +431,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
    <source>TSH_legacy_00090</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="940"/>
@@ -441,7 +439,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHThumbnailSettings.ui" line="1032"/>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1075"/>
    <source>%</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1049"/>
@@ -586,7 +584,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="80"/>
    <source>TSH_legacy_00109</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="97"/>
@@ -596,12 +594,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="119"/>
    <source>TSH_legacy_00111</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="139"/>
    <source>TSH_legacy_00112</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardScore.ui" line="208"/>
@@ -630,7 +628,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="23"/>
    <location filename="../layout/TSHCommentator.ui" line="29"/>
    <source>TSH_legacy_00117</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="26"/>
@@ -641,12 +639,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHCommentator.ui" line="47"/>
    <source>TSH_legacy_00119</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentator.ui" line="74"/>
    <source>TSH_legacy_00120</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="90"/>
@@ -670,7 +668,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../layout/TSHCommentary.ui" line="140"/>
    <location filename="../layout/TSHCommentator.ui" line="140"/>
    <source>TSH_legacy_00124</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="156"/>
@@ -687,12 +685,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHCommentary.ui" line="47"/>
    <source>TSH_legacy_00127</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../layout/TSHCommentary.ui" line="74"/>
    <source>TSH_legacy_00128</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -828,7 +826,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TournamentStreamHelper.py" line="872"/>
    <location filename="../TSHScoreboardStageWidget.py" line="238"/>
    <source>TSH_legacy_00148</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardStageWidget.py" line="241"/>
@@ -866,7 +864,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHScoreboardManager.py" line="59"/>
    <location filename="../TSHScoreboardManager.py" line="88"/>
    <source>TSH_legacy_00159</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="361"/>
@@ -1020,12 +1018,12 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="840"/>
    <source>TSH_legacy_00187</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="857"/>
    <source>TSH_legacy_00188</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="863"/>
@@ -1200,7 +1198,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHAssetDownloader.py" line="279"/>
    <source>TSH_legacy_00248</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="282"/>
@@ -1291,7 +1289,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHSelectSetWindow.py" line="111"/>
    <location filename="../TSHSelectStationWindow.py" line="86"/>
    <source>TSH_legacy_00257</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="112"/>
@@ -1306,7 +1304,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHSelectSetWindow.py" line="114"/>
    <source>TSH_legacy_00260</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardPlayerWidget.py" line="350"/>
@@ -1349,7 +1347,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TournamentStreamHelper.py" line="349"/>
    <source>TSH_legacy_00160</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="176"/>
@@ -1470,7 +1468,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../TSHAlertNotification.py" line="72"/>
    <source>TSH_legacy_00237_{0}_{1}</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHAlertNotification.py" line="80"/>
@@ -1480,13 +1478,13 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../thumbnail/main_generate_thumbnail.py" line="1184"/>
    <source>TSH_legacy_00266_{0}</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../thumbnail/main_generate_thumbnail.py" line="1231"/>
    <location filename="../thumbnail/main_generate_thumbnail.py" line="1258"/>
    <source>TSH_legacy_00267_{0}</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHThumbnailSettingsWidget.py" line="847"/>
@@ -1571,23 +1569,23 @@ p, li { white-space: pre-wrap; }
    <location filename="../TournamentStreamHelper.py" line="755"/>
    <location filename="../TSHSelectSetWindow.py" line="140"/>
    <source>(</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="755"/>
    <location filename="../TSHSelectSetWindow.py" line="141"/>
    <source>)</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>[</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>]</source>
-   <translation/>
+   <translation></translation>
   </message>
  </context>
  <context>
@@ -1736,7 +1734,7 @@ p, li { white-space: pre-wrap; }
    <location filename="../TSHScoreboardWidget.py" line="529"/>
    <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
    <source>TSH_legacy_00318</source>
-   <translation/>
+   <translation></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="534"/>
