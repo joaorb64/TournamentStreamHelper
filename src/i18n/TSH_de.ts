@@ -73,21 +73,21 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00017
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="124"/>
    <source>
     TSH_legacy_00018
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="133"/>
    <source>
     TSH_legacy_00019
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
@@ -103,28 +103,28 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00021
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="183"/>
    <source>
     TSH_legacy_00022
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="190"/>
    <source>
     TSH_legacy_00023
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="197"/>
    <source>
     TSH_legacy_00024
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHTournamentInfo.ui" line="53"/>
@@ -149,7 +149,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00003
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="64"/>
@@ -165,49 +165,49 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00004
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="87"/>
    <source>
     TSH_legacy_00008
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="71"/>
    <source>
     TSH_legacy_00007
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="100"/>
    <source>
     TSH_legacy_00009
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="51"/>
    <source>
     TSH_legacy_00005
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="141"/>
    <source>
     TSH_legacy_00010
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHBracket.ui" line="144"/>
    <source>
     TSH_legacy_00011
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -410,7 +410,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00047
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHScoreboardPlayer.ui" line="167"/>
@@ -560,7 +560,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00061
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="101"/>
@@ -658,14 +658,14 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00084
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="882"/>
    <source>
     TSH_legacy_00087
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="889"/>
@@ -690,7 +690,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00082
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="924"/>
@@ -714,28 +714,28 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00097
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1068"/>
    <source>
     TSH_legacy_00099
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1089"/>
    <source>
     TSH_legacy_00100
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1096"/>
    <source>
     º
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1164"/>
@@ -760,7 +760,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00062
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="525"/>
@@ -834,42 +834,42 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00092
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="967"/>
    <source>
     TSH_legacy_00093
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="974"/>
    <source>
     TSH_legacy_00094
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="994"/>
    <source>
     TSH_legacy_00095
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1025"/>
    <source>
     TSH_legacy_00096
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1056"/>
    <source>
     TSH_legacy_00098
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <source>
@@ -987,14 +987,14 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00115_{0}
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../thumbnail/main_generate_thumbnail.py" line="501"/>
    <source>
     TSH_legacy_00116_{0}_{1}
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -1116,7 +1116,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00129
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -1128,14 +1128,14 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00130
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
    <source>
     TSH_legacy_00131
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="65"/>
@@ -1143,7 +1143,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00132
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="122"/>
@@ -1152,7 +1152,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00133
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="138"/>
@@ -1160,28 +1160,28 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00134
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="141"/>
    <source>
     TSH_legacy_00135
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
    <source>
     TSH_legacy_00136
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHAltTextHelper.py" line="251"/>
    <source>
     TSH_legacy_00137
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -1235,35 +1235,35 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00142
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHPlayerListWidget.py" line="91"/>
    <source>
     TSH_legacy_00143
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHPlayerListWidget.py" line="120"/>
    <source>
     TSH_legacy_00144
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHPlayerListWidget.py" line="133"/>
    <source>
     TSH_legacy_00145
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardStageWidget.py" line="43"/>
    <source>
     TSH_legacy_00146
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardStageWidget.py" line="127"/>
@@ -1279,21 +1279,21 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00150_{0}
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardStageWidget.py" line="459"/>
    <source>
     TSH_legacy_00151
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardStageWidget.py" line="511"/>
    <source>
     TSH_legacy_00152
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="872"/>
@@ -1336,7 +1336,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00156
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="332"/>
@@ -1353,7 +1353,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00158
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardManager.py" line="59"/>
@@ -1446,7 +1446,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00169
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="490"/>
@@ -1471,7 +1471,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00205
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <source>
@@ -1512,91 +1512,91 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00173
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="528"/>
    <source>
     TSH_legacy_00174
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="552"/>
    <source>
     TSH_legacy_00176
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="559"/>
    <source>
     TSH_legacy_00177
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="589"/>
    <source>
     TSH_legacy_00178
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="592"/>
    <source>
     TSH_legacy_00179
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="595"/>
    <source>
     TSH_legacy_00180
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="603"/>
    <source>
     TSH_legacy_00181
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="611"/>
    <source>
     TSH_legacy_00182
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="619"/>
    <source>
     TSH_legacy_00183
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="629"/>
    <source>
     TSH_legacy_00184
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="697"/>
    <source>
     TSH_legacy_00185
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="702"/>
    <source>
     TSH_legacy_00186
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="840"/>
@@ -1644,77 +1644,77 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00192
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1012"/>
    <source>
     TSH_legacy_00193
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1023"/>
    <source>
     TSH_legacy_00194
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1039"/>
    <source>
     TSH_legacy_00195
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1044"/>
    <source>
     TSH_legacy_00196
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1047"/>
    <source>
     TSH_legacy_00197
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1059"/>
    <source>
     TSH_legacy_00198
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1061"/>
    <source>
     TSH_legacy_00199
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1091"/>
    <source>
     TSH_legacy_00200
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1096"/>
    <source>
     TSH_legacy_00201
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="1099"/>
    <source>
     TSH_legacy_00202
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="875"/>
@@ -1743,7 +1743,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00206
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <source>
@@ -1845,7 +1845,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00239
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="176"/>
@@ -1870,21 +1870,21 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00244
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="179"/>
    <source>
     TSH_legacy_00245
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="182"/>
    <source>
     TSH_legacy_00247
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="279"/>
@@ -1898,7 +1898,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00249
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHAssetDownloader.py" line="305"/>
@@ -1924,7 +1924,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00252_{0}_{1}_{2}
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <source>
@@ -2020,21 +2020,21 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00254
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="41"/>
    <source>
     TSH_legacy_00255
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="96"/>
    <source>
     TSH_legacy_00256
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="111"/>
@@ -2049,7 +2049,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00258
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectSetWindow.py" line="113"/>
@@ -2256,35 +2256,35 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00222
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="258"/>
    <source>
     TSH_legacy_00223
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="278"/>
    <source>
     TSH_legacy_00225
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="568"/>
    <source>
     TSH_legacy_00227
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="573"/>
    <source>
     TSH_legacy_00228_{0}
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHScoreboardWidget.py" line="593"/>
@@ -2402,14 +2402,14 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00261
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="106"/>
    <source>
     TSH_legacy_00262
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="144"/>
@@ -2417,63 +2417,63 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00263
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="199"/>
    <source>
     TSH_legacy_00264
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHTournamentInfoWidget.py" line="201"/>
    <source>
     TSH_legacy_00265
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHCountryHelper.py" line="189"/>
    <source>
     TSH_legacy_00277
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectStationWindow.py" line="15"/>
    <source>
     TSH_legacy_00278
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectStationWindow.py" line="84"/>
    <source>
     TSH_legacy_00279
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectStationWindow.py" line="85"/>
    <source>
     TSH_legacy_00280
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TSHSelectStationWindow.py" line="87"/>
    <source>
     TSH_legacy_00281
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Helpers/TSHBskyHelper.py" line="17"/>
    <source>
     TSH_legacy_00282
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2520,28 +2520,28 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00287
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="114"/>
    <source>
     TSH_legacy_00288
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="148"/>
    <source>
     TSH_legacy_00289
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/SettingsWidget.py" line="29"/>
    <source>
     TSH_legacy_00290
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2553,42 +2553,42 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00291
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="127"/>
    <source>
     TSH_legacy_00292
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="134"/>
    <source>
     TSH_legacy_00293
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="140"/>
    <source>
     TSH_legacy_00294
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="142"/>
    <source>
     TSH_legacy_00295
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="144"/>
    <source>
     TSH_legacy_00296
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2600,7 +2600,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00297
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2612,7 +2612,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00298
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2624,7 +2624,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00299
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2636,7 +2636,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00300
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2648,7 +2648,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00301
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2669,49 +2669,49 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00311
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="97"/>
    <source>
     TSH_legacy_00312
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
    <source>
     TSH_legacy_00313
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="99"/>
    <source>
     TSH_legacy_00314
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="100"/>
    <source>
     TSH_legacy_00315
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="101"/>
    <source>
     TSH_legacy_00316
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../Settings/TSHSettingsWindow.py" line="88"/>
    <source>
     TSH_legacy_00317
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2740,7 +2740,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00320
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../thumbnail/main_generate_thumbnail.py" line="1368"/>
@@ -2770,7 +2770,7 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00323
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -2782,14 +2782,14 @@ p, li { white-space: pre-wrap; }
    <source>
     TSH_legacy_00324
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="177"/>
    <source>
     TSH_legacy_00325
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="180"/>

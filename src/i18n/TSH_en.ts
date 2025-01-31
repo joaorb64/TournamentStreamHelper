@@ -33,7 +33,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
@@ -855,7 +855,7 @@ p, li { white-space: pre-wrap; }
    <source>
     %
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
@@ -943,7 +943,7 @@ p, li { white-space: pre-wrap; }
    <source>
     º
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../layout/TSHThumbnailSettings.ui" line="1118"/>
@@ -2661,7 +2661,7 @@ p, li { white-space: pre-wrap; }
    <source>
     (
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="755"/>
@@ -2669,21 +2669,21 @@ p, li { white-space: pre-wrap; }
    <source>
     )
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>
     [
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
   <message>
    <location filename="../TournamentStreamHelper.py" line="955"/>
    <source>
     ]
    </source>
-   <translation type="unfinished"/>
+   <translation type="unfinished"></translation>
   </message>
  </context>
  <context>
