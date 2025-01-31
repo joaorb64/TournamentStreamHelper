@@ -136,7 +136,7 @@ p, li { white-space: pre-wrap; }
   <message>
    <location filename="../layout/TSHBracket.ui" line="144"/>
    <source>TSH_legacy_00011</source>
-   <translation>Top</translation>
+   <translation>Top </translation>
   </message>
  </context>
  <context>
