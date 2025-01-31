@@ -112185,6 +112185,123 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2613,
+        "name": "Dizzy",
+        "isCommon": null,
+        "videogameId": 33945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7781868,
+            "width": 800,
+            "height": 800,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2613/image-4cca928d9dc9822c7c2d6b21e73073a6.png?ehk=Wb1qTE1XEITObavc56tAN6wIZAjo36L5aTgvPq2FsJo%3D&ehkOptimized=Z3b4mtpsB33V67VXP37YlBledfbJ7oVJUK8I7104dYY%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7781869,
+            "width": 800,
+            "height": 800,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2613/image-87dde15ea74b6bb667ac939d55418760.png?ehk=ac560zTIFWPnVNDby6g6GRk1jXrptkMnMcsS1BrToXs%3D&ehkOptimized=U9CbMWVVkZIDNtaa45GYAPvMx8rt6pWQBJjwG%2BheyRc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2614,
+        "name": "Conan",
+        "isCommon": null,
+        "videogameId": 48599,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7789521,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2614/image-3a9df1cf200d5fe1d4deb75e01cb0e20.png?ehk=4Jjp4bZ6Zph0rOEaY4XTLNGEu893wOQev%2BE6xCIHjBU%3D&ehkOptimized=GOZcdL7w96PeHbp8AXtyesAO%2FZ9%2FcWOi6P%2FXRkR1v%2B8%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7789522,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2614/image-adc1961c24ecf224b6eac00f3a3de7ec.png?ehk=2IPrWit83Tha5fO5DklpZbB1LYxWRhxr2yC6eoRAGKw%3D&ehkOptimized=qGZU4fb%2FtmiflWYue2CaThCV8TshWIL659w9Dt2B2Yc%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2615,
+        "name": "Etalus",
+        "isCommon": null,
+        "videogameId": 53945,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 7808412,
+            "width": 266,
+            "height": 266,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2615/image-051db68e1173aa648eee91239556aad9.png?ehk=BOWZxGwEaS%2FLs9pnltbkx8Wu9A0ZY9yi0WDURuarCZ4%3D&ehkOptimized=N4fbthZLMBJAbkq%2BAXElNyJ2cLqADR%2FvqIKmMR8h%2FLI%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 7808414,
+            "width": 266,
+            "height": 266,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2615/image-db56b1fb5afb0835a82409923fc2e80a.png?ehk=box6L95k6Xh%2F25d1rJEwG3gUFkN%2By9ZrclipbBB9gMg%3D&ehkOptimized=XhauWr2w1YV9bn6J0%2Be8jRLoN78ioJtYv6fOqoEweRM%3D",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -114558,7 +114675,10 @@
     2609,
     2610,
     2611,
-    2612
+    2612,
+    2613,
+    2614,
+    2615
   ],
   "resultEntity": "character",
   "actionRecords": []

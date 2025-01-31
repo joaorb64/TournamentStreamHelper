@@ -11,7 +11,7 @@ flask-cors
 asyncio
 python-dateutil==2.9.0
 pynput==1.7.7
-pyside6==6.8.1
+pyside6==6.7.0
 cloudscraper==1.2.71
 loguru==0.7.3
 flask-socketio

@@ -585,6 +585,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.dataLock.acquire()
         StateManager.BlockSaving()
 
+        logger.debug(f"Setting data for {self.path}: {data}")
+
         try:
             if clear:
                 self.Clear(no_mains=no_mains)

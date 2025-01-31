@@ -1251,6 +1251,9 @@ LoadEverything().then(() => {
                 load_settings_path: "icon",
                 slice_character: [0, 1],
                 source: `bracket.players.slot.${teamId}`,
+                scale_fill_x: true,
+                scale_fill_y: true,
+                custom_zoom: 1.0
               },
               event
             );
@@ -1498,6 +1501,9 @@ LoadEverything().then(() => {
                       load_settings_path: "icon",
                       slice_character: [0, 1],
                       source: `bracket.players.slot.${teamId}`,
+                      scale_fill_x: true,
+                      scale_fill_y: true,
+                      custom_zoom: 1.0
                     },
                     event
                   );
