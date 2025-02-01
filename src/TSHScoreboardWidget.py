@@ -260,8 +260,8 @@ class TSHScoreboardWidget(QWidget):
         self.streamUrlTextBox = QLineEdit()
         self.streamUrl.layout().addWidget(self.streamUrlTextBox)
         self.streamUrlTextBox.editingFinished.connect(
-            lambda value=None: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stream_url", value))
+            lambda element=self.streamUrlTextBox: StateManager.Set(
+                f"score.{self.scoreboardNumber}.stream_url", element.text()))
         self.streamUrlTextBox.editingFinished.emit()
         bottomOptions.layout().addLayout(self.streamUrl)
 
@@ -1022,6 +1022,7 @@ class TSHScoreboardWidget(QWidget):
 
             if data.get("stream"):
                 self.streamUrlTextBox.setText(data.get("stream"))
+                self.streamUrlTextBox.editingFinished.emit()
 
             if data.get("team1losers") is not None:
                 losersContainers[0].setChecked(data.get("team1losers"))
