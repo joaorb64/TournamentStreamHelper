@@ -711,12 +711,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="26"/>
         <source>TSH_legacy_00130</source>
-        <translation type="unfinished"></translation>
+        <translation>AO VIVO</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
         <source>TSH_legacy_00131</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique aqui para assistir</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="65"/>
@@ -745,7 +745,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
         <source>TSH_legacy_00136</source>
-        <translation type="unfinished"></translation>
+        <translation>Colocações:</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="251"/>
@@ -1027,7 +1027,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="610"/>
         <source>TSH_legacy_00181</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurar por ajuda no fórum</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="618"/>
@@ -1240,17 +1240,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHPlayerListWidget.py" line="91"/>
         <source>TSH_legacy_00143</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerar texto de resultados</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="120"/>
         <source>TSH_legacy_00144</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto de resultados</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="133"/>
         <source>TSH_legacy_00145</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar texto</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="70"/>
@@ -1369,7 +1369,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="96"/>
         <source>TSH_legacy_00256</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo partidas...</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="111"/>
@@ -1530,24 +1530,24 @@ p, li { white-space: pre-wrap; }
         <translation>Gerar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="196"/>
-        <source>TSH_legacy_00222</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TSHScoreboardWidget.py" line="258"/>
-        <source>TSH_legacy_00223</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../TSHScoreboardWidget.py" line="569"/>
         <source>TSH_legacy_00227</source>
-        <translation type="unfinished"></translation>
+        <translation>TSH - Bluesky</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="574"/>
         <source>TSH_legacy_00228_{0}</source>
-        <translation type="unfinished"></translation>
+        <translation>O post foi enviado com sucesso para a conta {0}</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="196"/>
+        <source>TSH_legacy_00222</source>
+        <translation>Postar no Bluesky</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="258"/>
+        <source>TSH_legacy_00223</source>
+        <translation>URL da transmissão</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="908"/>
@@ -1651,7 +1651,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHBskyHelper.py" line="17"/>
         <source>TSH_legacy_00282</source>
-        <translation type="unfinished"></translation>
+        <translation>A conta do Bluesky não foi configurada corretamente</translation>
     </message>
 </context>
 <context>
@@ -1698,7 +1698,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="148"/>
         <source>TSH_legacy_00289</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluesky</translation>
     </message>
     <message>
         <location filename="../Settings/SettingsWidget.py" line="29"/>
@@ -1711,32 +1711,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="120"/>
         <source>TSH_legacy_00291</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="127"/>
         <source>TSH_legacy_00292</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuário Bluesky</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="134"/>
         <source>TSH_legacy_00293</source>
-        <translation type="unfinished"></translation>
+        <translation>Senha de Aplicativo</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="140"/>
         <source>TSH_legacy_00294</source>
-        <translation type="unfinished"></translation>
+        <translation>Você pode obter a Senha de Aplicativo no Bluesky em Configurações -&gt; Privacidade e Segurança</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="142"/>
         <source>TSH_legacy_00295</source>
-        <translation type="unfinished"></translation>
+        <translation>Note que a Senha de Aplicativo será salva no seu computador em forma de texto</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="144"/>
         <source>TSH_legacy_00296</source>
-        <translation type="unfinished"></translation>
+        <translation>Não utilize a sua senha pessoal de login!</translation>
     </message>
 </context>
 <context>
@@ -1768,7 +1768,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="75"/>
         <source>TSH_legacy_00300</source>
-        <translation type="unfinished"></translation>
+        <translation>Não sobrescrever entradas existentes em local_players.csv (reinicialização necessária)</translation>
     </message>
 </context>
 <context>
@@ -1880,7 +1880,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="536"/>
         <source>TSH_legacy_00320</source>
-        <translation type="unfinished"></translation>
+        <translation>O título e a descrição para o vídeo também foram gerados.</translation>
     </message>
 </context>
 <context>
@@ -1888,7 +1888,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="12"/>
         <source>TSH_legacy_00323</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto alternativo (Alt text) descreve imagens para usuários com deficiência visual, e ajuda a dar contexto para imagens para todos. Assim, recomendamos fortemente o seu uso para uploads de imagens em sites e posts em redes sociais.</translation>
     </message>
 </context>
 <context>
