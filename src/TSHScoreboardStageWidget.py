@@ -40,7 +40,7 @@ class TSHScoreboardStageWidget(QDockWidget):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.setWindowTitle(QApplication.translate("app", "Ruleset"))
+        self.setWindowTitle(QApplication.translate("app", "TSH_legacy_00146"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.setFloating(True)
@@ -124,7 +124,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
-            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
+            QApplication.translate("app", "TSH_legacy_00147_{0}").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
         self.labelValidation = self.findChild(QLabel, "labelValidation")
@@ -235,10 +235,10 @@ class TSHScoreboardStageWidget(QDockWidget):
                     "codename") and ruleset.get("name") == self.rulesetName.text()), None)
 
         if found:
-            self.btSave.setText(QApplication.translate("app", "Update"))
+            self.btSave.setText(QApplication.translate("app", "TSH_legacy_00148"))
             self.btDelete.setEnabled(True)
         else:
-            self.btSave.setText(QApplication.translate("app", "Save new"))
+            self.btSave.setText(QApplication.translate("app", "TSH_legacy_00149"))
             self.btDelete.setEnabled(False)
 
     def SaveRuleset(self):
@@ -447,7 +447,7 @@ class TSHScoreboardStageWidget(QDockWidget):
                 remaining = (len(ruleset.neutralStages) - 1) - \
                     sum(ruleset.strikeOrder)
                 issues.append(QApplication.translate(
-                    "app", "Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).").format(remaining))
+                    "app", "TSH_legacy_00150_{0}").format(remaining))
 
         # Add errors
         for error in ruleset.errors:
@@ -455,7 +455,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         if len(issues) == 0:
             validText = QApplication.translate(
-                "app", "The current ruleset is valid!")
+                "app", "TSH_legacy_00151")
             self.labelValidation.setText(
                 f"<span style='color: green'>{validText}</span>")
         else:
@@ -508,7 +508,7 @@ class TSHScoreboardStageWidget(QDockWidget):
             except:
                 ruleset.banByMaxGames = {}
                 ruleset.errors.append(QApplication.translate(
-                    "app", "The text for banByMaxGames is invalid."))
+                    "app", "TSH_legacy_00152"))
                 logger.error(traceback.format_exc())
 
         ruleset.strikeOrder = [
