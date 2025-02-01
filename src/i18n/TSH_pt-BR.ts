@@ -711,12 +711,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="26"/>
         <source>LIVE NOW</source>
-        <translation type="unfinished"></translation>
+        <translation>AO VIVO</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="29"/>
         <source>Click here to watch</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique aqui para assistir</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="65"/>
@@ -745,7 +745,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
         <source>Standings:</source>
-        <translation type="unfinished"></translation>
+        <translation>Colocações:</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="251"/>
@@ -1027,7 +1027,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="610"/>
         <source>Look for Help on the forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurar por ajuda no fórum</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="618"/>
@@ -1240,17 +1240,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHPlayerListWidget.py" line="91"/>
         <source>Generate Descriptive Text for Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerar texto de resultados</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="120"/>
         <source>Descriptive Text for Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto de resultados</translation>
     </message>
     <message>
         <location filename="../TSHPlayerListWidget.py" line="133"/>
         <source>Copy text</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar texto</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="70"/>
@@ -1354,7 +1354,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHSelectSetWindow.py" line="96"/>
         <source>Fetching sets...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obtendo partidas...</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="111"/>
@@ -1517,22 +1517,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="196"/>
         <source>Post to Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation>Postar no Bluesky</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="258"/>
         <source>Stream URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL da transmissão</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="569"/>
         <source>TSH - Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="574"/>
         <source>The post has successfully been sent to account {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>O post foi enviado com sucesso para a conta {0}</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="908"/>
@@ -1636,7 +1636,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHBskyHelper.py" line="17"/>
         <source>Bluesky account not correctly set</source>
-        <translation type="unfinished"></translation>
+        <translation>A conta do Bluesky não foi configurada corretamente</translation>
     </message>
 </context>
 <context>
@@ -1683,7 +1683,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="148"/>
         <source>Bluesky</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../Settings/SettingsWidget.py" line="29"/>
@@ -1696,32 +1696,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="120"/>
         <source>Host server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="127"/>
         <source>Bluesky Handle</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuário Bluesky</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="134"/>
         <source>Application Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Senha de Aplicativo</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="140"/>
         <source>You can get an app password by going into your Bluesky settings -&gt; Privacy &amp; Security</source>
-        <translation type="unfinished"></translation>
+        <translation>Você pode obter a Senha de Aplicativo no Bluesky em Configurações -&gt; Privacidade e Segurança</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="142"/>
         <source>Please note that said app password will be stored in plain text on your computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Note que a Senha de Aplicativo será salva no seu computador em forma de texto</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="144"/>
         <source>Do not use your regular account password!</source>
-        <translation type="unfinished"></translation>
+        <translation>Não utilize a sua senha pessoal de login!</translation>
     </message>
 </context>
 <context>
@@ -1753,7 +1753,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="75"/>
         <source>Do not override existing values in local_players.csv (takes effect on next restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Não sobrescrever entradas existentes em local_players.csv (reinicialização necessária)</translation>
     </message>
 </context>
 <context>
@@ -1865,7 +1865,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="536"/>
         <source>The video title and description have also been generated.</source>
-        <translation type="unfinished"></translation>
+        <translation>O título e a descrição para o vídeo também foram gerados.</translation>
     </message>
 </context>
 <context>
@@ -1873,7 +1873,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="12"/>
         <source>Descriptive text (also known as Alt text) describes images for blind and low-vision users, and helps give context around images to everyone. As such, we highly recommend adding it to your image uploads on your websites and social media posts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto alternativo (Alt text) descreve imagens para usuários com deficiência visual, e ajuda a dar contexto para imagens para todos. Assim, recomendamos fortemente o seu uso para uploads de imagens em sites e posts em redes sociais.</translation>
     </message>
 </context>
 <context>
