@@ -61,10 +61,10 @@ LoadEverything().then(() => {
       let rules = [];
 
       if (data.score.ruleset.useDSR) {
-        rules.push("DSR: You cannot counterpick to a stage you previously won on during the set.");
+        rules.push("DSR: You cannot counterpick to any stage you previously won on during the set.");
       }
       if (data.score.ruleset.useMDSR) {
-        rules.push("MDSR: You cannot counterpick to your last winning stage.");
+        rules.push("MDSR: You cannot counterpick to the last stage you won on during the set.");
       }
 
       if (data.score.ruleset.strikeOrder) {
