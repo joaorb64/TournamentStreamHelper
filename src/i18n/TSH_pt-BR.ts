@@ -862,7 +862,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="242"/>
         <source>TSH_legacy_00148</source>
         <translation>Atualizar</translation>
     </message>
@@ -1282,47 +1282,47 @@ p, li { white-space: pre-wrap; }
         <translation>Atualizar jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="43"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="44"/>
         <source>TSH_legacy_00146</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="105"/>
         <source>no_dsr_tooltip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="108"/>
         <source>dsr_tooltip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="111"/>
         <source>mdsr_tooltip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="131"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>Abra {0} em um navegador de internet para realizar o stage strike.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="245"/>
         <source>TSH_legacy_00149</source>
         <translation>Salvar como novo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="454"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation>Número de stages banidos não bate com o número de stages neutros. Devem ser banidos mais {0} stage(s).</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="463"/>
         <source>TSH_legacy_00151</source>
         <translation>As regras atuais são válidas!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="515"/>
         <source>TSH_legacy_00152</source>
         <translation>O texto para bans por número de partidas é inválido.</translation>
     </message>

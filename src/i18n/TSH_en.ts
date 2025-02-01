@@ -790,53 +790,53 @@ p, li { white-space: pre-wrap; }
         <translation>Copy text</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="43"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="44"/>
         <source>TSH_legacy_00146</source>
         <translation>Ruleset</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="105"/>
         <source>no_dsr_tooltip</source>
         <translation>No restrictions on picking stages which were picked earlier in the set</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="108"/>
         <source>dsr_tooltip</source>
         <translation>Dave’s Stupid Rule:&#x202f;Players are not allowed to counterpick any stage they previously won on</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="111"/>
         <source>mdsr_tooltip</source>
         <translation>Modified Dave’s Stupid Rule: Players are not allowed to counterpick the last stage they won on</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="131"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>Open {0} in a browser to stage strike.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="242"/>
         <source>TSH_legacy_00148</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="245"/>
         <source>TSH_legacy_00149</source>
         <translation>Save new</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="454"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="463"/>
         <source>TSH_legacy_00151</source>
         <translation>The current ruleset is valid!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="515"/>
         <source>TSH_legacy_00152</source>
         <translation>The text for banByMaxGames is invalid.</translation>
     </message>
