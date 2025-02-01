@@ -936,7 +936,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="238"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
         <source>TSH_legacy_00148</source>
         <translation>アップデート</translation>
     </message>
@@ -1241,27 +1241,42 @@ p, li { white-space: pre-wrap; }
         <translation>ルールセット</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="127"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <source>no_dsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <source>dsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <source>mdsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>ステージのBAN/PICKブラウザ{0}を開く</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
         <source>TSH_legacy_00149</source>
         <translation>新しく保存</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="450"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation>拒否ステージの数とニュートラルのステージの数が合いません。もう{0}つステージを拒否して下さい。</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="459"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
         <source>TSH_legacy_00151</source>
         <translation>このルールセットは有効です!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="511"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
         <source>TSH_legacy_00152</source>
         <translation>banByMaxGamesのテキストが無効です。</translation>
     </message>

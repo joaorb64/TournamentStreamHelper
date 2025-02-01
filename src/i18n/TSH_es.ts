@@ -808,33 +808,48 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="127"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <source>no_dsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <source>dsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <source>mdsr_tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>Abre {0} en un navegador para realizar el baneo de escenarios</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
         <source>TSH_legacy_00149</source>
         <translation>Guardar nuevo</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="450"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="459"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
         <source>TSH_legacy_00151</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="511"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
         <source>TSH_legacy_00152</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="238"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
         <source>TSH_legacy_00148</source>
         <translation>Actualizar</translation>
     </message>

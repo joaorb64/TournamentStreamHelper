@@ -6,6 +6,7 @@ from qtpy import uic
 import json
 import orjson
 import requests
+import textwrap
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from src.TSHStageStrikeLogic import TSHStageStrikeLogic
@@ -101,10 +102,13 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.noDSR = self.findChild(QRadioButton, "noDSR")
         self.noDSR.clicked.connect(self.ExportCurrentRuleset)
+        self.noDSR.setToolTip('\n'.join(textwrap.wrap(QApplication.translate("app", "no_dsr_tooltip"), 40)))
         self.DSR = self.findChild(QRadioButton, "DSR")
         self.DSR.clicked.connect(self.ExportCurrentRuleset)
+        self.DSR.setToolTip('\n'.join(textwrap.wrap(QApplication.translate("app", "dsr_tooltip"), 40)))
         self.MDSR = self.findChild(QRadioButton, "MDSR")
         self.MDSR.clicked.connect(self.ExportCurrentRuleset)
+        self.MDSR.setToolTip('\n'.join(textwrap.wrap(QApplication.translate("app", "mdsr_tooltip"), 40)))
 
         self.strikeOrder = self.findChild(QLineEdit, "strikeOrder")
         self.strikeOrder.textEdited.connect(self.ExportCurrentRuleset)

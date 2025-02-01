@@ -21,7 +21,7 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -485,7 +485,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHThumbnailSettings.ui" line="1032"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1075"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="960"/>
@@ -535,7 +535,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1096"/>
         <source>º</source>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1118"/>
@@ -795,33 +795,48 @@ p, li { white-space: pre-wrap; }
         <translation>Ruleset</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="127"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <source>no_dsr_tooltip</source>
+        <translation>No restrictions on picking stages which were picked earlier in the set</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <source>dsr_tooltip</source>
+        <translation>Dave’s Stupid Rule:&#x202f;Players are not allowed to counterpick any stage they previously won on</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <source>mdsr_tooltip</source>
+        <translation>Modified Dave’s Stupid Rule: Players are not allowed to counterpick the last stage they won on</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>Open {0} in a browser to stage strike.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="238"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
         <source>TSH_legacy_00148</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
         <source>TSH_legacy_00149</source>
         <translation>Save new</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="450"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation>Number striked stages does not match the number of neutral stages. Should strike {0} more stage(s).</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="459"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
         <source>TSH_legacy_00151</source>
         <translation>The current ruleset is valid!</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="511"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
         <source>TSH_legacy_00152</source>
         <translation>The text for banByMaxGames is invalid.</translation>
     </message>
@@ -1517,23 +1532,23 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="762"/>
         <location filename="../TSHSelectSetWindow.py" line="140"/>
         <source>(</source>
-        <translation type="unfinished"></translation>
+        <translation>(</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="762"/>
         <location filename="../TSHSelectSetWindow.py" line="141"/>
         <source>)</source>
-        <translation type="unfinished"></translation>
+        <translation>)</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="970"/>
         <source>[</source>
-        <translation type="unfinished"></translation>
+        <translation>[</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="970"/>
         <source>]</source>
-        <translation type="unfinished"></translation>
+        <translation>]</translation>
     </message>
 </context>
 <context>

@@ -194,7 +194,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHScoreboardStage.ui" line="271"/>
         <location filename="../layout/TSHScoreboardStage.ui" line="290"/>
         <source>TSH_legacy_00034</source>
-        <translation></translation>
+        <translation>DSR</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="277"/>
@@ -204,7 +204,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="300"/>
         <source>TSH_legacy_00036</source>
-        <translation></translation>
+        <translation>MDSR</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="313"/>
@@ -219,7 +219,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="334"/>
         <source>TSH_legacy_00039</source>
-        <translation></translation>
+        <translation>1,2,1</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="345"/>
@@ -234,7 +234,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="378"/>
         <source>TSH_legacy_00042</source>
-        <translation></translation>
+        <translation>3:3,5:2</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="396"/>
@@ -437,7 +437,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHThumbnailSettings.ui" line="1032"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="1075"/>
         <source>%</source>
-        <translation></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../layout/TSHThumbnailSettings.ui" line="504"/>
@@ -675,7 +675,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../layout/TSHCommentary.ui" line="140"/>
         <location filename="../layout/TSHCommentator.ui" line="140"/>
         <source>TSH_legacy_00124</source>
-        <translation></translation>
+        <translation>TWITTER</translation>
     </message>
     <message>
         <location filename="../layout/TSHCommentary.ui" line="156"/>
@@ -733,7 +733,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="141"/>
         <source>TSH_legacy_00135</source>
-        <translation>Stream produit avec Tournament Stream Helper :</translation>
+        <translation>Stream produit avec TournamentStreamHelper :</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
@@ -743,7 +743,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="251"/>
         <source>TSH_legacy_00137</source>
-        <translation>Stream produit avec Tournament Stream Helper</translation>
+        <translation>Stream produit avec TournamentStreamHelper</translation>
     </message>
 </context>
 <context>
@@ -849,7 +849,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="887"/>
-        <location filename="../TSHScoreboardStageWidget.py" line="238"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
         <source>TSH_legacy_00148</source>
         <translation>Mettre à jour</translation>
     </message>
@@ -1268,27 +1268,42 @@ p, li { white-space: pre-wrap; }
         <translation>Règles</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="127"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="104"/>
+        <source>no_dsr_tooltip</source>
+        <translation>Aucune restriction sur la possibilité de choisir un stage sur lequel une partie précédente a été jouée</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="107"/>
+        <source>dsr_tooltip</source>
+        <translation>Dave’s Stupid Rule : Les joueurs ne peuvent pas sélectionner un stage sur lequel ils ont gagné précédemment</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="110"/>
+        <source>mdsr_tooltip</source>
+        <translation>Modified Dave’s Stupid Rule : Les joueurs n’ont pas le droit de choisir le dernier stage sur lequel ils ont gagné</translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardStageWidget.py" line="130"/>
         <source>TSH_legacy_00147_{0}</source>
         <translation>Ouvrez {0} dans un navigateur web pour effectuer le ban des stages.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="241"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="244"/>
         <source>TSH_legacy_00149</source>
         <translation>Sauvegarder le règlement</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="450"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="453"/>
         <source>TSH_legacy_00150_{0}</source>
         <translation>Le nombre total de bans ne correspond pas au nombre de stages neutres. Veuillez bannir {0} stages supplémentaires.</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="459"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="462"/>
         <source>TSH_legacy_00151</source>
         <translation>Le règlement actuel est valide !</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardStageWidget.py" line="511"/>
+        <location filename="../TSHScoreboardStageWidget.py" line="514"/>
         <source>TSH_legacy_00152</source>
         <translation>La valeur pour les bans maximums par match est invalide.</translation>
     </message>
