@@ -359,7 +359,7 @@ class TSHGameAssetManager(QObject):
                         biggestAverage = 0
 
                         for asset in list(gameObj.get("assets", {}).keys()):
-                            if gameObj["assets"][asset].get("complete") and gameObj["assets"][asset].get("average_size"):
+                            if gameObj["assets"][asset].get("complete") and gameObj["assets"][asset].get("average_size") and asset not in ["stage_icon", "variant_icon"]:
                                 size = sum(gameObj["assets"][asset].get(
                                     "average_size").values())
 
