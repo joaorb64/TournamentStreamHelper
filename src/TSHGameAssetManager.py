@@ -330,7 +330,7 @@ class TSHGameAssetManager(QObject):
 
                         # Set average size
                         for assetsKey in list(gameObj.get("assets", {}).keys()):
-                            if assetsKey != "base_files" and assetsKey != "stage_icon":
+                            if assetsKey != "base_files" and assetsKey not in ["stage_icon", "variant_icon"]:
                                 try:
                                     if len(widths.get(assetsKey, [])) > 0 and len(heights.get(assetsKey, [])) > 0:
                                         gameObj["assets"][assetsKey]["average_size"] = assetsObj.get("average_size")
@@ -855,10 +855,10 @@ class TSHGameAssetManager(QObject):
                 try:
                     # Skip stage icon asset packs
                     if type(asset.get("type")) == list:
-                        if "stage_icon" in asset.get("type"):
+                        if "stage_icon" in asset.get("type") or "variant_icon" in asset.get("type"):
                             continue
                     elif type(asset.get("type")) == str:
-                        if asset.get("type") == "stage_icon":
+                        if asset.get("type") in ["stage_icon", "variant_icon"]:
                             continue
 
                     assetPath = f'{self.selectedGame.get("path")}/{assetKey}/'
