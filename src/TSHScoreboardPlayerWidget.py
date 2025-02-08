@@ -398,16 +398,16 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             # Add variant
             player_variant = QComboBox()
             character_element.layout().addWidget(player_variant)
-            player_variant.setIconSize(QSize(48, 48))
+            player_variant.setIconSize(QSize(24, 24))
             player_variant.setFixedHeight(32)
-            player_variant.setMinimumWidth(64)
+            player_variant.setMinimumWidth(60)
             player_variant.setMaximumWidth(120)
             player_variant.setFont(
                 QFont(player_variant.font().family(), 9))
             player_variant.setModel(
                 TSHGameAssetManager.instance.variantModel)
             view = QListView()
-            view.setIconSize(QSize(24, 24))
+            view.setIconSize(QSize(48, 48))
             player_variant.setView(view)
 
             # Move up/down
