@@ -407,7 +407,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_variant.setModel(
                 TSHGameAssetManager.instance.variantModel)
             view = QListView()
-            view.setIconSize(QSize(48, 48))
+            view.setIconSize(QSize(24, 24))
             player_variant.setView(view)
 
             # Move up/down
