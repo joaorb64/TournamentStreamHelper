@@ -721,35 +721,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="65"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="189"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="200"/>
         <source>Game:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="122"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="124"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="126"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="133"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="135"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="137"/>
         <source>VS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="138"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="245"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="149"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="269"/>
         <source>Commentators:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="141"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="152"/>
         <source>Stream powered by TournamentStreamHelper:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="190"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="201"/>
         <source>Standings:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="251"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="275"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation type="unfinished"></translation>
     </message>
