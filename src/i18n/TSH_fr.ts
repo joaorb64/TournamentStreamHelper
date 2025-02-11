@@ -1237,7 +1237,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
         <source>Additional information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informations supplémentaires</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="83"/>
