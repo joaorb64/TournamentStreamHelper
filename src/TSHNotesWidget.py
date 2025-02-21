@@ -27,7 +27,7 @@ class TSHNotesWidget(QDockWidget):
 
             notes_title = QLineEdit()
             widget.layout().addWidget(notes_title)
-            notes_title.setPlaceholderText(QApplication.translate("app", "Title"))
+            notes_title.setPlaceholderText(QApplication.translate("notes", "Title"))
             notes_title.editingFinished.connect(
                 lambda element=notes_title: StateManager.Set(
                         f"notes.{widget.objectName()}.title", element.text()))
