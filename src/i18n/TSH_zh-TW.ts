@@ -1190,16 +1190,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
         <source>Additional information</source>
-    </message>
-    <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="70"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="845"/>
-        <source>Save new player</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="83"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="814"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="866"/>
         <source>Save new player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1214,8 +1209,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="363"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="354"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="367"/>
         <location filename="../TSHSelectSetWindow.py" line="115"/>
         <location filename="../TSHSelectSetWindow.py" line="117"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
@@ -1223,8 +1217,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="811"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="842"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="863"/>
         <source>Update player</source>
         <translation type="unfinished"></translation>
     </message>
