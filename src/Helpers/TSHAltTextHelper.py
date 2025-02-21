@@ -46,7 +46,7 @@ def generate_bsky_text(scoreboard_id=1, use_phase_name=True):
     return(raw_text, builder)
 
 
-def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
+def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True, replace_characters=[]):
     title_length_limit = 100    # Character limit for video titles
     data = load_program_state()
     tournament_name = data.get("tournamentInfo").get("tournamentName")
@@ -151,6 +151,11 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
     description = description + QApplication.translate("altText", "Stream powered by TournamentStreamHelper:") + \
         " " + "https://github.com/joaorb64/TournamentStreamHelper/releases"
     description = description.strip()
+
+    for character_set in replace_characters:
+        title_long = title_long.replace(character_set[0], character_set[1])
+        title_short = title_short.replace(character_set[0], character_set[1])
+        description = description.replace(character_set[0], character_set[1])
 
     if len(title_long) <= title_length_limit and use_characters:
         return (title_long, description)
