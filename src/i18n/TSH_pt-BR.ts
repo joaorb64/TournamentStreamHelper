@@ -720,7 +720,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="65"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="200"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="205"/>
         <source>Game:</source>
         <translation>Jogo:</translation>
     </message>
@@ -733,7 +733,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="149"/>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="269"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="274"/>
         <source>Commentators:</source>
         <translation>Comentaristas:</translation>
     </message>
@@ -743,12 +743,12 @@ p, li { white-space: pre-wrap; }
         <translation>Transmissão utilizando TournamentStreamHelper</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="201"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="206"/>
         <source>Standings:</source>
         <translation>Colocações:</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHAltTextHelper.py" line="275"/>
+        <location filename="../Helpers/TSHAltTextHelper.py" line="280"/>
         <source>Stream powered by TournamentStreamHelper</source>
         <translation>Transmissão utilizando TournamentStreamHelper</translation>
     </message>
