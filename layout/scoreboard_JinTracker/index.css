@@ -27,9 +27,6 @@ body {
   background-color: var(--bg-color);
   border-radius: 8px;
   overflow: hidden;
-
-  border-style: solid;
-  border-width: 0px;
 }
 
 .p1.container {
@@ -82,12 +79,12 @@ body {
 
 .p1 .name {
   transform: skew(-20deg);
-  margin-left: 15px;
+  margin-left: 18px;
 }
 
 .p2 .name {
   transform: skew(20deg);
-  margin-right: 15px;
+  margin-right: 18px;
 }
 
 .sponsor_icon {
@@ -195,10 +192,12 @@ body {
 
 .p1 .placeholder {
   background: var(--p1-score-bg-color);
+  margin-right: -3px;
 }
 
 .p2 .placeholder {
   background: var(--p2-score-bg-color);
+  margin-left: -3px;
 }
 
 .score {
