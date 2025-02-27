@@ -104,6 +104,11 @@ class TSHPlayerListWidget(QDockWidget):
         self.slotNumber.setValue(8)
 
         self.signals.UpdateData.connect(self.LoadFromStandings)
+        
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetDefaultsFromAssets
+        )
+
         StateManager.ReleaseSaving()
 
     def LoadFromStandingsClicked(self):
@@ -149,3 +154,11 @@ class TSHPlayerListWidget(QDockWidget):
                     slot.Clear()
                     logger.error(traceback.format_exc())
         StateManager.ReleaseSaving()
+
+    def SetDefaultsFromAssets(self):
+        if StateManager.Get(f'game.defaults'):
+            players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
+        else:
+            players, characters = 1, 1
+        self.playerPerTeam.setValue(players)
+        self.charNumber.setValue(characters)
