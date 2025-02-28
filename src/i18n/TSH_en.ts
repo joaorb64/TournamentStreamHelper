@@ -830,12 +830,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="169"/>
         <location filename="../TournamentStreamHelper.py" line="602"/>
         <location filename="../TournamentStreamHelper.py" line="861"/>
-        <location filename="../TSHScoreboardWidget.py" line="558"/>
-        <location filename="../TSHScoreboardWidget.py" line="578"/>
-        <location filename="../TournamentStreamHelper.py" line="132"/>
-        <location filename="../TournamentStreamHelper.py" line="168"/>
-        <location filename="../TournamentStreamHelper.py" line="594"/>
-        <location filename="../TournamentStreamHelper.py" line="853"/>
         <location filename="../TSHScoreboardWidget.py" line="562"/>
         <location filename="../TSHScoreboardWidget.py" line="582"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="931"/>
@@ -882,8 +876,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="369"/>
-        <location filename="../TSHCommentaryWidget.py" line="17"/>
-        <location filename="../TournamentStreamHelper.py" line="368"/>
         <location filename="../TSHCommentaryWidget.py" line="18"/>
         <source>Commentary</source>
         <translation type="unfinished"></translation>
