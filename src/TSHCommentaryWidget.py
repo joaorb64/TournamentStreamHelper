@@ -9,6 +9,7 @@ from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 from .TSHPlayerDB import TSHPlayerDB
 from .StateManager import StateManager
+from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHCommentaryWidget(QDockWidget):
@@ -43,12 +44,12 @@ class TSHCommentaryWidget(QDockWidget):
         self.commentatorNumber.valueChanged.connect(
             lambda val: self.SetCommentatorNumber(val))
         
-        characterNumber = QSpinBox()
+        self.characterNumber = QSpinBox()
         charNumber = QLabel(QApplication.translate("app", "Characters per player"))
         charNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         row.layout().addWidget(charNumber)
-        row.layout().addWidget(characterNumber)
-        characterNumber.valueChanged.connect(self.SetCharacterNumber)
+        row.layout().addWidget(self.characterNumber)
+        self.characterNumber.valueChanged.connect(self.SetCharacterNumber)
         
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
@@ -100,7 +101,12 @@ class TSHCommentaryWidget(QDockWidget):
 
         StateManager.Set("commentary", {})
         self.commentatorNumber.setValue(2)
-        characterNumber.setValue(1)
+        self.characterNumber.setValue(1)
+        
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetDefaultsFromAssets
+        )
+
 
     def SetCommentatorNumber(self, number):
         while len(self.commentaryWidgets) < number:
@@ -149,3 +155,10 @@ class TSHCommentaryWidget(QDockWidget):
     def SetCharacterNumber(self, value):
         for pw in self.commentaryWidgets:
             pw.SetCharactersPerPlayer(value)
+    
+    def SetDefaultsFromAssets(self):
+        if StateManager.Get(f'game.defaults'):
+            characters = StateManager.Get(f'game.defaults.characters_per_player', 1)
+        else:
+            characters = 1
+        self.characterNumber.setValue(characters)
