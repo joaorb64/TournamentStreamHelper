@@ -480,6 +480,7 @@ class TSHGameAssetManager(QObject):
                         "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
                         "codename": self.parent().selectedGame.get("codename"),
                         "logo": self.parent().selectedGame.get("path", "")+"/base_files/logo.png",
+                        "defaults": self.parent().selectedGame.get("defaults"),
                     })
 
                     self.parent().UpdateCharacterModel()
