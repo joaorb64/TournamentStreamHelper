@@ -515,6 +515,10 @@ class TSHScoreboardWidget(QWidget):
                 logger.error(
                     f"Unable to generate match strings for {matchString}")
 
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetDefaultsFromAssets
+        )
+
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo",
@@ -1143,3 +1147,12 @@ class TSHScoreboardWidget(QWidget):
                 return True
         else:
             return False
+
+    def SetDefaultsFromAssets(self):
+        if StateManager.Get(f'game.defaults'):
+            players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
+        else:
+            players, characters = 1, 1
+        print(players, "players", characters, "characters")
+        self.playerNumber.setValue(players)
+        self.charNumber.setValue(characters)
