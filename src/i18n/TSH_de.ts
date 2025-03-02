@@ -871,7 +871,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="380"/>
-        <location filename="../TSHNotesWidget.py" line="47"/>
+        <location filename="../TSHNotesWidget.py" line="48"/>
         <source>Additional Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1569,7 +1569,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>notes</name>
     <message>
-        <location filename="../TSHNotesWidget.py" line="30"/>
+        <location filename="../TSHNotesWidget.py" line="31"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
