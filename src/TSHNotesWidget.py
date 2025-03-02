@@ -16,13 +16,14 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHPlayerList import TSHPlayerList
 from src.Helpers.TSHAltTextHelper import generate_top_n_alt_text, add_alt_text_tooltip_to_button
 import textwrap
+import re
 
 
 class TSHNotesWidget(QDockWidget):
     def __init__(self, *args, base="notes"):
         def create_individual_notes_widget(index):
             widget = QWidget()
-            widget.setObjectName(f"notes_widget_{i+1}")
+            widget.setObjectName(f"notes_widget_{index+1}")
             widget.setLayout(QVBoxLayout())
 
             notes_title = QLineEdit()
