@@ -267,7 +267,8 @@ LoadEverything().then(() => {
 
       // ------- LAST RESULTS -------------
       let history = data.score[window.scoreboardNumber].history_sets[window.PLAYER];
-      if (history){
+      let oldHistory = _.get(oldData, `score[${window.scoreboardNumber}].history_sets[${window.PLAYER}]`);
+      if (JSON.stringify(history) != JSON.stringify(oldHistory)){
         let results_html = `<div class ="info title">${config.display_titles ? "Recent Results" : " "}</div>`
         let className = `.results`;
         let tl = gsap.timeline();
@@ -334,8 +335,9 @@ LoadEverything().then(() => {
       //------ BRACKET RUN --------
 
       let last_sets = data.score[window.scoreboardNumber].last_sets[window.PLAYER];
+      let oldLastSets = _.get(oldData, `score[${window.scoreboardNumber}].last_sets[${window.PLAYER}]`);
       console.log("SETS", last_sets);
-      if (last_sets){
+      if (JSON.stringify(last_sets) != JSON.stringify(oldLastSets)){
         let sets_html = `<div class ="info title">${config.display_titles ? "Current Run" : " "}</div>` ;
         Object.values(last_sets)
           .slice(0, SETS)
