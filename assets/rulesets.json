@@ -4899,30 +4899,8 @@
     "settings": {
       "type": null,
       "gameMode": null,
-      "strikeOrder": [
-        1,
-        2,
-        2,
-        1
-      ],
-      "stages": {
-        "neutral": [
-          268,
-          279,
-          415,
-          460,
-          541,
-          543,
-          556,
-          590,
-          591
-        ]
-      },
       "gameSetup": true,
-      "additionalFlags": {
-        "selectFromAllStages": true,
-        "disableBans": true
-      }
+      "additionalFlags": []
     },
     "eventSettings": null,
     "expand": []
@@ -4937,27 +4915,7 @@
     "gameMode": 1,
     "settings": {
       "gameSetup": true,
-      "additionalFlags": {
-        "selectFromAllStages": true,
-        "disableBans": true
-      },
-      "stages": {
-        "neutral": [
-          268,
-          415,
-          460,
-          541,
-          543,
-          556,
-          557
-        ]
-      },
-      "strikeOrder": [
-        1,
-        2,
-        2,
-        1
-      ]
+      "additionalFlags": []
     },
     "eventSettings": null,
     "expand": []
