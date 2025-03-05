@@ -202,8 +202,9 @@ class StateManager:
                         logger.error(traceback.format_exc())
                 if os.path.exists(di):
                     try:
-                        os.link(os.path.abspath(di),
-                                f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
+                        shutil.copyfile(
+                            os.path.abspath(di),
+                            f"./out/{path}" + "." + di.rsplit(".", 1)[-1])
                     except Exception as e:
                         logger.error(traceback.format_exc())
             elif type(di) == str and di.startswith("http") and (di.endswith(".png") or di.endswith(".jpg")):
