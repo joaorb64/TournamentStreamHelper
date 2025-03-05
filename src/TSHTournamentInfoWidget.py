@@ -118,7 +118,16 @@ class TSHTournamentInfoWidget(QDockWidget):
         try:
             url = TSHTournamentDataProvider.instance.provider.GetIconURL()
 
-            response = urllib.request.urlopen(url, timeout=5)
+            logger.info(f"Icon URL: {url}")
+
+            headers = {
+                "client-version": "20",
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+            }
+
+            request = urllib.request.Request(url, headers=headers)
+            response = urllib.request.urlopen(request, timeout=5)
             data = response.read()
 
             pix = QPixmap()
