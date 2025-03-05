@@ -1362,8 +1362,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="169"/>
         <location filename="../TournamentStreamHelper.py" line="602"/>
         <location filename="../TournamentStreamHelper.py" line="861"/>
-        <location filename="../TSHScoreboardWidget.py" line="562"/>
-        <location filename="../TSHScoreboardWidget.py" line="582"/>
+        <location filename="../TSHScoreboardWidget.py" line="564"/>
+        <location filename="../TSHScoreboardWidget.py" line="584"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="931"/>
         <source>Warning</source>
         <translation>Attention</translation>
@@ -1586,18 +1586,18 @@ p, li { white-space: pre-wrap; }
         <translation>Fichiers Image</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="144"/>
-        <location filename="../TSHTournamentInfoWidget.py" line="145"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="153"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="154"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="199"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="208"/>
         <source>The tournament URL could not be loaded.</source>
         <translation>L&apos;URL du tournoi n&apos;a pas pu être chargée.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentInfoWidget.py" line="201"/>
+        <location filename="../TSHTournamentInfoWidget.py" line="210"/>
         <source>Make sure that your tournament URL is correctly formatted and points to an existing event, and try again.</source>
         <translation>Veuillez vérifier que votre URL de tournoi est correctement formatée et pointe vers un évènement existant, puis réessayer.</translation>
     </message>
