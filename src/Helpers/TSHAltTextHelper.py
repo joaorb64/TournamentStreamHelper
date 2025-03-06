@@ -213,7 +213,7 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
     team_list = data.get("player_list").get("slot")
     for team_id in team_list.keys():
         current_team_data = team_list.get(team_id)
-        team_name = current_team_data.get("teamName")
+        team_name = current_team_data.get("name")
         players_text = []
         players_text_with_variants = []
         player_data = current_team_data.get("player")
