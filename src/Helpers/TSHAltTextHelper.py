@@ -254,12 +254,12 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
                 players_text_with_variants.append(player_text_with_variants)
         placement = CalculatePlacement(int(team_id), bracket_type)
         players_text = " / ".join(players_text)
-        player_text_with_variants = " / ".join(player_text_with_variants)
+        players_text_with_variants = " / ".join(players_text_with_variants)
         if team_name:
             alt_text = alt_text + \
-                f"{placement}/ {team_name} [{player_text_with_variants}]\n"
+                f"{placement}/ {team_name} [{players_text_with_variants}]\n"
         else:
-            alt_text = alt_text + f"{placement}/ {player_text_with_variants}\n"
+            alt_text = alt_text + f"{placement}/ {players_text_with_variants}\n"
 
     alt_text = f"{alt_text}\n\n"
     commentator_data = data.get("commentary")
