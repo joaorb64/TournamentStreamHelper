@@ -247,8 +247,7 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
                     characters_text = country_code
                     characters_text_with_variants = country_code
             if characters_text:
-                player_text = player_text + f" ({characters_text})"
-                player_text_with_variants = player_text + f" ({characters_text_with_variants})"
+                player_text, player_text_with_variants = player_text + f" ({characters_text})", player_text + f" ({characters_text_with_variants})"
             if player_name:
                 players_text.append(player_text)
                 players_text_with_variants.append(player_text_with_variants)
