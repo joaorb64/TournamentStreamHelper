@@ -46,7 +46,7 @@ def generate_bsky_text(scoreboard_id=1, use_phase_name=True):
     return(raw_text, builder)
 
 
-def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
+def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True, replace_characters=[]):
     title_length_limit = 100    # Character limit for video titles
     data = load_program_state()
     tournament_name = data.get("tournamentInfo").get("tournamentName")
@@ -83,6 +83,7 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
         team_name = current_team_data.get("teamName")
         player_names = []
         player_names_with_characters = []
+        player_names_with_variants = []
         if team_name:
             title_long = f'{title_long}' + team_name
             title_short = f'{title_short}' + team_name
@@ -91,28 +92,38 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
             player_data = current_team_data.get("player")
             for player_id in player_data.keys():
                 character_names = []
+                character_names_with_variants = []
                 current_player_data = player_data.get(player_id)
                 player_name = current_player_data.get("mergedName")
                 character_data = current_player_data.get("character")
                 for character_id in character_data.keys():
                     current_character_data = character_data.get(character_id)
                     if current_character_data.get("name"):
-                        character_names.append(current_character_data.get("name"))
+                        current_character_name = current_character_data.get("name")
+                        current_character_name_with_variants = current_character_data.get("name")
+                        if current_character_data.get("variant", {}).get("name"):
+                            current_character_name_with_variants = f'{current_character_name} - {current_character_data.get("variant", {}).get("name")}'
+                        character_names.append(current_character_name)
+                        character_names_with_variants.append(current_character_name_with_variants)
                 if player_name:
                     if player_name.replace(' [L]', ''):
                         player_names.append(player_name.replace(" [L]", ""))
                         if character_names:
                             player_names_with_characters.append(
                                 f"{player_name.replace(' [L]', '')} ({', '.join(character_names)})")
+                            player_names_with_variants.append(
+                                f"{player_name.replace(' [L]', '')} ({', '.join(character_names_with_variants)})")
                         else:
                             player_names_with_characters.append(
+                                player_name.replace(" [L]", ""))
+                            player_names_with_variants.append(
                                 player_name.replace(" [L]", ""))
             title_long = f'{title_long}' + \
                 " / ".join(player_names_with_characters)
             title_short = f'{title_short}' + " / ".join(player_names)
             if use_characters:
                 description = description + \
-                    " / ".join(player_names_with_characters)
+                    " / ".join(player_names_with_variants)
             else:
                 description = description + \
                     " / ".join(player_names)
@@ -140,6 +151,11 @@ def generate_youtube(scoreboard_id=1, use_phase_name=True, use_characters=True):
     description = description + QApplication.translate("altText", "Stream powered by TournamentStreamHelper:") + \
         " " + "https://github.com/joaorb64/TournamentStreamHelper/releases"
     description = description.strip()
+
+    for character_set in replace_characters:
+        title_long = title_long.replace(character_set[0], character_set[1])
+        title_short = title_short.replace(character_set[0], character_set[1])
+        description = description.replace(character_set[0], character_set[1])
 
     if len(title_long) <= title_length_limit and use_characters:
         return (title_long, description)
@@ -197,11 +213,13 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
     team_list = data.get("player_list").get("slot")
     for team_id in team_list.keys():
         current_team_data = team_list.get(team_id)
-        team_name = current_team_data.get("teamName")
+        team_name = current_team_data.get("name")
         players_text = []
+        players_text_with_variants = []
         player_data = current_team_data.get("player")
         for player_id in player_data.keys():
             character_names = []
+            character_names_with_variants = []
             current_player_data = player_data.get(player_id)
             player_name = current_player_data.get("mergedName")
             character_data = current_player_data.get("character")
@@ -212,25 +230,35 @@ def generate_top_n_alt_text(bracket_type="DOUBLE_ELIMINATION"):
             for character_id in character_data.keys():
                 current_character_data = character_data.get(character_id)
                 if current_character_data.get("name"):
-                    character_names.append(current_character_data.get("name"))
+                    current_character_name = current_character_data.get("name")
+                    current_character_name_with_variants = current_character_data.get("name")
+                    if current_character_data.get("variant", {}).get("name"):
+                        current_character_name_with_variants = f'{current_character_name} - {current_character_data.get("variant", {}).get("name")}'
+                    character_names.append(current_character_name)
+                    character_names_with_variants.append(current_character_name_with_variants)
             player_text = f"{player_name}"
             characters_text = ' / '.join(character_names)
+            characters_text_with_variants = ' / '.join(character_names_with_variants)
             if country_code:
                 if characters_text:
                     characters_text = country_code + ", " + characters_text
+                    characters_text_with_variants = country_code + ", " + characters_text_with_variants
                 else:
                     characters_text = country_code
+                    characters_text_with_variants = country_code
             if characters_text:
-                player_text = player_text + f" ({characters_text})"
+                player_text, player_text_with_variants = player_text + f" ({characters_text})", player_text + f" ({characters_text_with_variants})"
             if player_name:
                 players_text.append(player_text)
+                players_text_with_variants.append(player_text_with_variants)
         placement = CalculatePlacement(int(team_id), bracket_type)
         players_text = " / ".join(players_text)
+        players_text_with_variants = " / ".join(players_text_with_variants)
         if team_name:
             alt_text = alt_text + \
-                f"{placement}/ {team_name} [{players_text}]\n"
+                f"{placement}/ {team_name} [{players_text_with_variants}]\n"
         else:
-            alt_text = alt_text + f"{placement}/ {players_text}\n"
+            alt_text = alt_text + f"{placement}/ {players_text_with_variants}\n"
 
     alt_text = f"{alt_text}\n\n"
     commentator_data = data.get("commentary")

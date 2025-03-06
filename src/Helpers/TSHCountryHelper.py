@@ -6,6 +6,8 @@ from qtpy.QtWidgets import *
 import requests
 import os
 import traceback
+import time
+from pathlib import Path
 
 from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
@@ -35,23 +37,32 @@ class TSHCountryHelper(QObject):
     def UpdateCountriesFile(self):
         class DownloaderThread(QThread):
             def run(self):
+                out_file = Path('./assets/countries+states+cities.json')
+
+                if out_file.exists():
+                    modtime = out_file.stat().st_mtime
+                    # Less than 12 hours since file was written to?
+                    # Skip so there aren't redundant downloads
+                    if time.time() - modtime <= (12 * 60 * 60):
+                        logger.debug("Skipping countries file download")
+                        TSHCountryHelper.LoadCountries()
+                        return
+
                 try:
                     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries%2Bstates%2Bcities.json'
                     r = requests.get(url, allow_redirects=True)
-                    tmp_file = TSHResolve(
-                        './assets/countries+states+cities.json.tmp')
+                    tmp_file = Path('./assets/countries+states+cities.json.tmp')
 
-                    with open(tmp_file, 'wb') as f:
+                    with tmp_file.open(mode='wb') as f:
                         f.write(r.content)
 
                     try:
                         # Test if downloaded JSON is valid
-                        json.load(open(tmp_file))
+                        with tmp_file.open(mode='r', encoding='utf-8') as f:
+                            json.load(f)
 
                         # Remove old file, overwrite with new one
-                        os.remove('./assets/countries+states+cities.json')
-                        os.rename(tmp_file,
-                                  './assets/countries+states+cities.json')
+                        tmp_file.replace(out_file)
 
                         logger.info("Countries file updated")
                         TSHCountryHelper.LoadCountries()

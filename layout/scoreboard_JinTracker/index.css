@@ -16,6 +16,7 @@ body {
 }
 
 .container {
+
     position: absolute;
     top: 38px;
     width: 488px;
@@ -30,6 +31,7 @@ body {
 
     border-style: solid;
     border-width: 0px;
+
 }
 
 .p1.container {
@@ -81,6 +83,7 @@ body {
 }
 
 .p1 .name {
+
     transform: skew(-20deg);
     margin-left: 15px;
 }
@@ -88,6 +91,7 @@ body {
 .p2 .name {
     transform: skew(20deg);
     margin-right: 15px;
+
 }
 
 .sponsor_icon {
@@ -199,6 +203,7 @@ body {
 
 .p2 .placeholder {
     background: var(--p2-score-bg-color);
+
 }
 
 .score {

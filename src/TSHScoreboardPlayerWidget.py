@@ -53,6 +53,19 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.losers = False
 
         uic.loadUi(TSHResolve("src/layout/TSHScoreboardPlayer.ui"), self)
+        
+        custom_textbox_layout = QHBoxLayout()
+        self.custom_textbox = QPlainTextEdit()
+        custom_textbox_layout.addWidget(self.custom_textbox)
+        self.layout().addLayout(custom_textbox_layout, 98, 0, 1, 3)
+        self.custom_textbox.setObjectName("custom_textbox")
+        self.custom_textbox.setPlaceholderText(QApplication.translate("app", "Additional information"))
+        self.custom_textbox.textChanged.connect(
+                lambda element=self.custom_textbox: [
+                    StateManager.Set(
+                        f"{self.path}.{element.objectName()}", element.toPlainText()),
+                    self.instanceSignals.dataChanged.emit()
+                ])
 
         self.character_container = self.findChild(QWidget, "characters")
 
@@ -176,7 +189,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         with self.dataLock:
             characters = {}
 
-            for i, (element, character, color) in enumerate(self.character_elements):
+            for i, (element, character, color, variant) in enumerate(self.character_elements):
                 data = character.currentData()
 
                 if data == None:
@@ -198,6 +211,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     data["assets"] = {}
 
                 data["skin"] = color.currentIndex()
+                if variant.currentData():
+                    data["variant"] = variant.currentData()
+                else:
+                    data["variant"] = {}
 
                 characters[i+1] = data
 
@@ -391,6 +408,21 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
 
+            # Add variant
+            player_variant = QComboBox()
+            character_element.layout().addWidget(player_variant)
+            player_variant.setIconSize(QSize(24, 24))
+            player_variant.setFixedHeight(32)
+            player_variant.setMinimumWidth(60)
+            player_variant.setMaximumWidth(120)
+            player_variant.setFont(
+                QFont(player_variant.font().family(), 9))
+            player_variant.setModel(
+                TSHGameAssetManager.instance.variantModel)
+            view = QListView()
+            view.setIconSize(QSize(24, 24))
+            player_variant.setView(view)
+
             # Move up/down
             btMoveUp = QPushButton()
             btMoveUp.setFixedSize(24, 24)
@@ -409,7 +441,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.character_container.layout().addWidget(character_element)
 
             self.character_elements.append(
-                [character_element, player_character, player_character_color])
+                [character_element, player_character, player_character_color, player_variant])
 
             player_character.currentIndexChanged.connect(
                 lambda x, element=player_character, target=player_character_color: [
@@ -423,14 +455,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     self.CharactersChanged()
                 ]
             )
+            
+            player_variant.currentIndexChanged.connect(
+                lambda index, element=player_character: [
+                    self.CharactersChanged()
+                ]
+            )
 
             player_character.setCurrentIndex(0)
             player_character_color.setCurrentIndex(0)
+            player_variant.setCurrentIndex(0)
 
             player_character.setObjectName(
                 f"character_{len(self.character_elements)}")
             player_character_color.setObjectName(
                 f"character_color_{len(self.character_elements)}")
+            player_variant.setObjectName(
+                f"variant_{len(self.character_elements)}")
 
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
@@ -565,6 +606,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c[1].setModel(TSHGameAssetManager.instance.characterModel)
             c[1].setIconSize(QSize(24, 24))
             c[1].setFixedHeight(32)
+            c[3].setModel(TSHGameAssetManager.instance.variantModel)
 
     def SetupAutocomplete(self):
         if TSHPlayerDB.model:
@@ -645,6 +687,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 twitter.setText(
                     f'{data.get("twitter")}')
                 twitter.editingFinished.emit()
+            
+            if data.get("custom_textbox") and data.get("custom_textbox") != self.custom_textbox.toPlainText():
+                data["custom_textbox"] = TSHBadWordFilter.Censor(
+                    data["custom_textbox"], data.get("country_code"))
+                self.custom_textbox.setPlainText(
+                    f'{data.get("custom_textbox")}'.replace("\\n", "\n"))
+                self.custom_textbox.textChanged.emit()
 
             pronoun = self.findChild(QWidget, "pronoun")
             if data.get("pronoun") and data.get("pronoun") != pronoun.text():
@@ -702,6 +751,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         if i < len(self.character_elements):
                             character_element = self.character_elements[i][1]
                             color_element = self.character_elements[i][2]
+                            variant_element = self.character_elements[i][3]
                             characterIndex = 0
                             for i in range(character_element.model().rowCount()):
                                 item = character_element.model().item(i).data(Qt.ItemDataRole.UserRole)
@@ -718,6 +768,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             else:
                                 if color_element.currentIndex() != 0:
                                     color_element.setCurrentIndex(0)
+                            
+                            variantIndex = 0
+                            if variant_element:
+                                for i in range(variant_element.model().rowCount()):
+                                    item = variant_element.model().item(i).data(Qt.ItemDataRole.UserRole)
+                                    if item:
+                                        if len(main) >= 3 :
+                                            if item.get("en_name") == main[2]:
+                                                variantIndex = i
+                                                break
+                                        else:
+                                            variantIndex = 0
+                                            break
+                            else:
+                                variantIndex = 0
+                            if variant_element.currentIndex() != variantIndex:
+                                variant_element.setCurrentIndex(variantIndex)
 
             if data.get("seed"):
                 StateManager.Set(f"{self.path}.seed", data.get("seed"))
@@ -738,13 +805,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             "gamerTag": self.findChild(QWidget, "name").text(),
             "name": self.findChild(QWidget, "real_name").text(),
             "twitter": self.findChild(QWidget, "twitter").text(),
-            "pronoun": self.findChild(QWidget, "pronoun").text()
+            "pronoun": self.findChild(QWidget, "pronoun").text(),
+            "custom_textbox": "\\n".join(self.custom_textbox.toPlainText().splitlines())
         }
 
         if TSHGameAssetManager.instance.selectedGame.get("codename"):
             mains = []
 
-            for i, (element, character, color) in enumerate(self.character_elements):
+            for i, (element, character, color, variant) in enumerate(self.character_elements):
                 data = {}
 
                 if character.currentData() is not None:
@@ -756,9 +824,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
                 if data["skin"] == None:
                     data["skin"] = 0
+                    
+                if variant.currentData():
+                    data["variant"] = variant.currentData().get("en_name", "")
+                else:
+                    data["variant"] = ""
 
                 if data["name"] != "":
-                    mains.append([data.get("name"), data.get("skin")])
+                    mains.append([data.get("name"), data.get("skin"), data.get("variant")])
 
             playerData["mains"] = {
                 TSHGameAssetManager.instance.selectedGame.get("codename"): mains
@@ -811,6 +884,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if c.text() != "":
                     c.setText("")
                     c.editingFinished.emit()
+
+            for c in self.findChildren(QPlainTextEdit):
+                if c.toPlainText() != "":
+                    c.clear()
+                    c.textChanged.emit()
 
             for c in self.findChildren(QComboBox):
                 if (no_mains):

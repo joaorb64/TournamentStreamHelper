@@ -57,6 +57,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add TSH.exe .\src\i18n\*.ts
+          git add TSH.exe .\src\i18n\*.qm
           git commit -m "Update exe and locale files" -a
 
       - name: Push changes

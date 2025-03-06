@@ -201,6 +201,10 @@ class TSHBracketWidget(QDockWidget):
 
         self.bracketView.Update()
 
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetDefaultsFromAssets
+        )
+
         StateManager.ReleaseSaving()
         
         TSHBracketWidget.instance = self
@@ -345,3 +349,11 @@ class TSHBracketWidget(QDockWidget):
             StateManager.ReleaseSaving()
             self.playerList.signals.DataChanged.connect(
                 self.bracketView.Update)
+
+    def SetDefaultsFromAssets(self):
+        if StateManager.Get(f'game.defaults'):
+            players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
+        else:
+            players, characters = 1, 1
+        self.playerPerTeam.setValue(players)
+        self.charNumber.setValue(characters)

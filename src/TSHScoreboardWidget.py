@@ -223,12 +223,14 @@ class TSHScoreboardWidget(QWidget):
             ["Location", ["locationLabel", "state", "country"]],
             ["Characters", ["characters"]],
             ["Pronouns", ["pronoun", "pronounLabel"]],
+            ["Additional information", ["custom_textbox"]],
         ]
         self.elements[0][0] = QApplication.translate("app", "Real Name")
         self.elements[1][0] = QApplication.translate("app", "Twitter")
         self.elements[2][0] = QApplication.translate("app", "Location")
         self.elements[3][0] = QApplication.translate("app", "Characters")
         self.elements[4][0] = QApplication.translate("app", "Pronouns")
+        self.elements[5][0] = QApplication.translate("app", "Additional information")
         for element in self.elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
             action.setCheckable(True)
@@ -259,9 +261,10 @@ class TSHScoreboardWidget(QWidget):
         self.streamUrl.layout().addWidget(self.streamUrlLabel)
         self.streamUrlTextBox = QLineEdit()
         self.streamUrl.layout().addWidget(self.streamUrlTextBox)
-        self.streamUrlTextBox.textChanged.connect(
-            lambda value=None: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stream_url", value))
+        self.streamUrlTextBox.editingFinished.connect(
+            lambda element=self.streamUrlTextBox: StateManager.Set(
+                f"score.{self.scoreboardNumber}.stream_url", element.text()))
+        self.streamUrlTextBox.editingFinished.emit()
         bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
@@ -513,6 +516,10 @@ class TSHScoreboardWidget(QWidget):
             except:
                 logger.error(
                     f"Unable to generate match strings for {matchString}")
+
+        TSHGameAssetManager.instance.signals.onLoad.connect(
+            self.SetDefaultsFromAssets
+        )
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -1019,6 +1026,10 @@ class TSHScoreboardWidget(QWidget):
             if self.teamsSwapped:
                 losersContainers.reverse()
 
+            if data.get("stream"):
+                self.streamUrlTextBox.setText(data.get("stream"))
+                self.streamUrlTextBox.editingFinished.emit()
+
             if data.get("team1losers") is not None:
                 losersContainers[0].setChecked(data.get("team1losers"))
             if data.get("team2losers") is not None:
@@ -1138,3 +1149,12 @@ class TSHScoreboardWidget(QWidget):
                 return True
         else:
             return False
+
+    def SetDefaultsFromAssets(self):
+        if StateManager.Get(f'game.defaults'):
+            players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
+        else:
+            players, characters = 1, 1
+        print(players, "players", characters, "characters")
+        self.playerNumber.setValue(players)
+        self.charNumber.setValue(characters)

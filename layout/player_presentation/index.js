@@ -269,10 +269,12 @@ LoadEverything().then(() => {
       }
 
       // ------- LAST RESULTS -------------
+
       let history =
         data.score[window.scoreboardNumber].history_sets[window.PLAYER];
       if (history) {
         let results_html = `<div class ="info title">${config.display_titles ? "Fun Facts" : " "}</div>`;
+
         let className = `.results`;
         let tl = gsap.timeline();
         Object.values(
@@ -342,13 +344,12 @@ LoadEverything().then(() => {
       }
       //------ BRACKET RUN --------
 
-      let last_sets =
-        data.score[window.scoreboardNumber].last_sets[window.PLAYER];
-      console.log("SETS", last_sets);
 
-      // Modified to only show current run when there are sets to show
-      if (last_sets && Object.keys(last_sets).length > 0) {
-        let sets_html = `<div class ="info title">${config.display_titles ? "Current Run" : " "}</div>`;
+      let last_sets = data.score[window.scoreboardNumber].last_sets[window.PLAYER];
+      let oldLastSets = _.get(oldData, `score[${window.scoreboardNumber}].last_sets[${window.PLAYER}]`);
+      console.log("SETS", last_sets);
+      if (JSON.stringify(last_sets) != JSON.stringify(oldLastSets)){
+        let sets_html = `<div class ="info title">${config.display_titles ? "Current Run" : " "}</div>` ;
         Object.values(last_sets)
           .slice(0, SETS)
           .reverse()
@@ -587,6 +588,7 @@ LoadEverything().then(() => {
     //SetInnerHtml($(".tournament"), data.tournamentInfo.tournamentName);
     //SetInnerHtml($(".match"), data.score[window.scoreboardNumber].match);
 
+
     let stage = null;
 
     if (
@@ -632,6 +634,7 @@ LoadEverything().then(() => {
         </div>`
         : "",
     );
+
 
     /*SetInnerHtml(
       $(".phase_best_of"),
