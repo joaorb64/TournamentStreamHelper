@@ -79,7 +79,7 @@ LoadEverything().then(() => {
             $(`.t${t + 1}.p${p + 1} .flagcountry`),
             player.country.asset && Object.keys(team.player).length == 1
               ? `
-                <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                <div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>
               `
               : ""
           );
@@ -88,7 +88,7 @@ LoadEverything().then(() => {
             $(`.t${t + 1}.p${p + 1} .flagstate`),
             player.state.asset && Object.keys(team.player).length == 1
               ? `
-                <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                <div class='flag' style="background-image: url('../../${player.state.asset}')"></div>
               `
               : ""
           );
@@ -138,7 +138,7 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .sponsor-container`),
             player.sponsor_logo && Object.keys(team.player).length == 1
-              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              ? `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
               : ""
           );
 

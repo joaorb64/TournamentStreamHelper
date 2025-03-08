@@ -112,8 +112,8 @@ LoadEverything().then(() => {
                 ${isTeams || !config.display.avatar ? "" : online_avatar_html(player, t)}
                 <div class = "flags">
                     ${ isTeams ? "" : 
-                        (player.country.asset && config.display.country_flag ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>` : "") + 
-                        (player.state.asset && config.display.state_flag? `<div class='flag' style='background-image: url(../../${player.state.asset.toLowerCase()})'></div>` : "")
+                        (player.country.asset && config.display.country_flag ? `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>` : "") + 
+                        (player.state.asset && config.display.state_flag? `<div class='flag' style="background-image: url('../../${player.state.asset.toLowerCase()}')"></div>` : "")
                     }
                 </div>
                 <div class = "name">

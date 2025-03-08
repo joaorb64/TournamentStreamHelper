@@ -99,14 +99,14 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
                 : ""
             );
 
             SetInnerHtml(
               $(`.p${t + 1}.container .flagstate`),
               player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `<div class='flag' style="background-image: url('../../${player.state.asset}')"></div>`
                 : ""
             );
 
@@ -121,7 +121,7 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
               player.sponsor_logo
-                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                ? `<div style="background-image: url('../../${player.sponsor_logo}')"></div>`
                 : ""
             );
 
@@ -152,7 +152,7 @@ LoadEverything().then(() => {
 
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor-container`),
-              `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
             );
           }
           if(team.color && !tsh_settings["forceDefaultScoreColors"]) {
@@ -235,7 +235,7 @@ LoadEverything().then(() => {
 
         SetInnerHtml(
           $(`.p${t + 1}.container .sponsor-container`),
-          `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+          `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
         );
         if(team.color && !tsh_settings["forceDefaultScoreColors"]) {
           document.querySelector(':root').style.setProperty(`--p${t + 1}-score-bg-color`, team.color);

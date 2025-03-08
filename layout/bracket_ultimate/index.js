@@ -1170,14 +1170,14 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(element).find(`.flagcountry`),
               player && player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
                 : ""
             );
 
             SetInnerHtml(
               $(element).find(`.flagstate`),
               player && player.state.asset
-                ? `<div class='flag' style='background-image: url(../../${player.state.asset})'></div>`
+                ? `<div class='flag' style="background-image: url('../../${player.state.asset}')"></div>`
                 : ""
             );
 
@@ -1192,7 +1192,7 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(element).find(`.sponsor_icon`),
               player && player.sponsor_logo
-                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                ? `<div style="background-image: url('../../${player.sponsor_logo}')"></div>`
                 : "<div></div>"
             );
 
@@ -1219,9 +1219,7 @@ LoadEverything().then(() => {
 
             SetInnerHtml(
               $(element).find(`.sponsor-container`),
-              `<div class='sponsor-logo' style='background-image: url(../../${
-                player ? player.sponsor_logo : ""
-              })'></div>`
+              `<div class='sponsor-logo' style="background-image: url('../../${player ? player.sponsor_logo : ""}')"></div>`
             );
           }
         }

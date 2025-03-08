@@ -162,7 +162,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.p${t + 1} .sponsor_container`),
-            `<div class='sponsor_logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            `<div class='sponsor_logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
           );
         }
         if(team.color && !tsh_settings["forceDefaultScoreColors"]) {
@@ -187,21 +187,21 @@ LoadEverything().then(() => {
           } else if (player.country.asset && player.sponsor_logo) {
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
-              `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+              `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
             );
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
-              `<div class='flag' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              `<div class='flag' style="background-image: url('../../${player.sponsor_logo}')"></div>`
             );
           } else if (player.country.asset && !player.sponsor_logo) {
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
-              `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+              `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
             );
           } else if (!player.country.asset && player.sponsor_logo) {
             SetInnerHtml(
               $(`.p${t + 1}.container .flagcountry`),
-              `<div class='flag' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              `<div class='flag' style="background-image: url('../../${player.sponsor_logo}')"></div>`
             );
           }
         }

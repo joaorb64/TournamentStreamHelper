@@ -102,7 +102,7 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.p${t + 1}.container .flagcountry`),
             player.country.asset && Object.keys(team.player).length == 1
-              ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+              ? `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
               : `<div class='flag' style=''></div>`
           );
 
@@ -136,7 +136,7 @@ LoadEverything().then(() => {
           SetInnerHtml(
             $(`.p${t + 1} .sponsor-container`),
             player.sponsor_logo && Object.keys(team.player).length == 1
-              ? `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+              ? `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
               : `<div class='sponsor-logo' style=''></div>`
           );
         }
