@@ -195,7 +195,7 @@ LoadEverything().then(() => {
             $(`.p${t + 1}.sponsor_logo`),
             player.sponsor_logo
               ? `
-                <div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>
+                <div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>
                 `
               : ""
           );
@@ -228,7 +228,7 @@ LoadEverything().then(() => {
             player.country.asset
               ? `
                 <div class="unskew">
-                  <div class='flagimage' style='background-image: url(../../${player.country.asset});'></div>
+                  <div class='flagimage' style="background-image: url('../../${player.country.asset}');"></div>
                   <div class="flagname">${player.country.name}</div>
                 </div>
               `
@@ -240,7 +240,7 @@ LoadEverything().then(() => {
             player.state.asset
               ? `
                 <div class="unskew">
-                  <div class='flagimage' style='background-image: url(../../${player.state.asset});'></div>
+                  <div class='flagimage' style="background-image: url('../../${player.state.asset}');"></div>
                   <div class="flagname">${player.state.name}</div>
                 </div>
               `
@@ -534,7 +534,7 @@ LoadEverything().then(() => {
       stage
         ? `
         <div>
-            <div class='' style='background-image: url(../../${stage.path});'>
+            <div class='' style="background-image: url('../../${stage.path}');">
             </div>
         </div>`
         : ""

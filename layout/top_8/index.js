@@ -99,9 +99,7 @@ LoadEverything().then(() => {
                 player.country.asset
                   ? `
                     <div class='flagname'>${player.country.code}</div>
-                    <div class='flag' style='background-image: url(../../${String(
-                      player.country.asset
-                    ).toLowerCase()})'></div>
+                    <div class='flag' style="background-image: url('../../${String(player.country.asset).toLowerCase()}')"></div>
                   ` 
                   : "",
                 undefined,
@@ -113,7 +111,7 @@ LoadEverything().then(() => {
                 player.state.asset
                   ? `
                     <div class='flagname'>${player.state.code}</div>
-                    <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                    <div class='flag' style="background-image: url('../../${player.state.asset}')"></div>
                   `
                   : "",
                 undefined,
@@ -144,7 +142,7 @@ LoadEverything().then(() => {
               SetInnerHtml(
                 $(`.slot${parseInt(t)} .p${parseInt(p)}.container .sponsor_icon`),
                 player.sponsor_logo
-                  ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                  ? `<div style="background-image: url('../../${player.sponsor_logo}')"></div>`
                   : "<div></div>",
                 undefined,
                 0
@@ -185,7 +183,7 @@ LoadEverything().then(() => {
                     p
                   )}.container .sponsor-container`
                 ),
-                `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`,
+                `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`,
                 undefined,
                 0
               );

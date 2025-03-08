@@ -152,7 +152,7 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1}.container .sponsor_icon`),
               player.sponsor_logo
-                ? `<div style='background-image: url(../../${player.sponsor_logo})'></div>`
+                ? `<div style="background-image: url('../../${player.sponsor_logo}')"></div>`
                 : ""
             );
 
@@ -172,7 +172,7 @@ LoadEverything().then(() => {
             SetInnerHtml(
               $(`.p${t + 1} .flagcountry`),
               player.country.asset
-                ? `<div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>`
+                ? `<div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>`
                 : ""
             );
 

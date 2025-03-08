@@ -98,9 +98,7 @@ LoadEverything().then(() => {
             $(`.${team_id} .p${p + 1} .flagcountry`),
             player.country.asset
               ? `
-              <div class='flag' style='background-image: url(../../${String(
-                player.country.asset
-              ).toLowerCase()})'></div>
+              <div class='flag' style="background-image: url('../../${String(player.country.asset).toLowerCase()}')"></div>
               <div class='flagname'>${player.country.code}</div>
             `
               : ""
@@ -110,7 +108,7 @@ LoadEverything().then(() => {
             $(`.${team_id} .p${p + 1} .flagstate`),
             player.state.asset
               ? `
-              <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+              <div class='flag' style="background-image: url('../../${player.state.asset}')"></div>
               <div class='flagname'>${player.state.code}</div>
             `
               : ""
@@ -147,9 +145,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.${team_id} .p${p + 1} .sponsor_logo`),
-            `<div class='sponsor_logo' style='background-image: url(../../${String(
-              player.sponsor_logo
-            )})'></div>`
+            `<div class='sponsor_logo' style="background-image: url('../../${String(player.sponsor_logo)}')"></div>`
           );
         }
       }

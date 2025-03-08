@@ -111,7 +111,7 @@ LoadEverything().then(() => {
             player.country.asset
               ? `
                 <div class='flagname'>${player.country.code}</div>
-                <div class='flag' style='background-image: url(../../${player.country.asset.toLowerCase()})'></div>
+                <div class='flag' style="background-image: url('../../${player.country.asset.toLowerCase()}')"></div>
               `
               : ""
           );
@@ -121,7 +121,7 @@ LoadEverything().then(() => {
             player.state.asset
               ? `
                 <div class='flagname'>${player.state.code}</div>
-                <div class='flag' style='background-image: url(../../${player.state.asset})'></div>
+                <div class='flag' style="background-image: url('../../${player.state.asset}')"></div>
               `
               : ""
           );
@@ -142,7 +142,7 @@ LoadEverything().then(() => {
 
           SetInnerHtml(
             $(`.t${t + 1}.p${p + 1} .sponsor-container`),
-            `<div class='sponsor-logo' style='background-image: url(../../${player.sponsor_logo})'></div>`
+            `<div class='sponsor-logo' style="background-image: url('../../${player.sponsor_logo}')"></div>`
           );
         }
         if(team.color && !tsh_settings["forceDefaultScoreColors"]) {
