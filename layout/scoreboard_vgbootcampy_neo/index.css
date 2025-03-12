@@ -1,6 +1,6 @@
 body {
-  font-family: "Figtree", "M Plus 1p", sans-serif;
-  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
   opacity: 0;
   overflow: hidden;
   margin: 0;
@@ -18,7 +18,7 @@ body {
   overflow: hidden;
   left: 50%;
   transform: translateX(-50%);
-  width: 1920px;
+  width: 1160px;
   height: 1080px;
 }
 
@@ -33,154 +33,216 @@ body {
 
 .container {
   position: absolute;
-  display: flex;
   box-sizing: border-box;
-  flex-direction: column;
-  align-items: center;
+  top: 14px;
   width: 496px;
   height: 61px;
-  top: 14px;
   border-radius: 12px;
-  padding-top: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .p1.container {
-  background: white;
-  background-position: 100% 0;
   left: 380px;
+  background-color: var(--p1-score-bg-color);
+  padding-left: 4px;
+  flex-direction: row;
 }
 
 .p2.container {
-  background: white;
-  background-position: 0 0;
   right: 380px;
+  background-color: var(--p2-score-bg-color);
+  padding-right: 4px;
+  flex-direction: row-reverse;
 }
 
 .tournament_container {
   position: absolute;
-  border-radius: 8px;
-  left: 66px;
   top: 51px;
+  left: 66px;
   width: 248px;
   height: 54px;
-  padding-top: 0px;
+  border-radius: 8px;
+  padding: 0 12px;
+
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  background-color: var(--bg-color);
+}
+
+.match {
+  font-size: 20px;
+  color: var(--text-color);
   overflow: hidden;
-  background: linear-gradient(
-    4deg,
-    var(--text-color) -100%,
-    var(--bg-color) 40%
-  );
 }
 
 .inner_container {
-  position: static;
-  width: 488px;
+  width: 427px;
   height: 53px;
-  border-radius: 8px;
+
   display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(18, 18, 18, 0.8);
   box-sizing: border-box;
   overflow: hidden;
-  background: var(--bg-color);
 }
 
 .p1 .inner_container {
-  flex-direction: row;
-  background: linear-gradient(
-    4deg,
-    var(--p1-sponsor-color) 0%,
-    var(--bg-color) 40%
-  );
+  padding-right: 12px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  flex-direction: row-reverse;
 }
 
 .p2 .inner_container {
-  flex-direction: row-reverse;
-  background: linear-gradient(
-    356deg,
-    var(--p2-sponsor-color) 0%,
-    var(--bg-color) 40%
-  );
+  padding-left: 12px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  flex-direction: row;
 }
 
-.name {
-  display: flex;
+.name_container {
   width: 100%;
   height: 53px;
-  font-size: 26px;
+  display: flex;
   justify-content: center;
-  box-sizing: border-box;
-  width: 100%;
-  flex-direction: column;
   overflow: hidden;
-  color: var(--text-color);
-  word-spacing: 2px;
 }
 
-.p1 .name {
+.p1 .name_container {
   margin-left: 12px;
 }
 
-.p2 .name {
+.p2 .name_container {
   margin-right: 12px;
 }
 
-.twitter {
-  position: absolute;
+.name {
+  font-size: 25px;
+  color: var(--text-color);
+  word-spacing: 2px;
+  overflow: hidden;
+}
+
+.score_container {
+  width: 65px;
+  height: 61px;
+}
+
+.score {
+  font-size: 35px;
+}
+
+.p1 .score_container {
+  color: var(--p1-score-color);
+}
+
+.p2 .score_container {
+  color: var(--p2-score-color);
+}
+
+.p1 .sponsor {
+  background: var(--p1-score-bg-color);
+
+  /* For gradient color */
+  /* background: linear-gradient(
+    90deg,
+    var(--p1-score-bg-color) 0%,
+    var(--text-color) 200%
+  ); */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.p2 .sponsor {
+  background: var(--p2-score-bg-color);
+
+  /* For gradient color */
+  /* background: linear-gradient(
+    90deg,
+    var(--p2-score-bg-color) 0%,
+    var(--text-color) 200%
+  ); */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.p1 .flagcountry .text_empty {
+  margin-left: 0px;
+}
+
+.p2 .flagcountry .text_empty {
+  margin-right: 0px;
+}
+
+.p1 .flagcountry:not(.text_empty) {
+  margin-left: 12px;
+}
+
+.p2 .flagcountry:not(.text_empty) {
+  margin-right: 12px;
+}
+
+.flags_container {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  justify-content: center;
+}
+
+.flag {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 44px;
+  height: 44px;
+}
+
+.twitter_container {
+  position: absolute;
+  top: 821px;
   width: 348px;
   height: 43px;
   border-radius: 8px;
-  color: white;
-  font-size: 22px;
-  text-align: center;
-  justify-content: center;
+  padding: 0 15px;
   box-sizing: border-box;
-  top: 821px;
-  padding-left: 15px;
-  padding-right: 15px;
+
+  display: flex;
+  justify-content: center;
 }
 
-.p1.twitter {
+.p1.twitter_container {
   left: 25px;
-  color: var(--p1-score-color);
   background: var(--p1-score-bg-color);
 }
 
-.p2.twitter {
+.p2.twitter_container {
   right: 25px;
-  color: var(--p2-score-color);
   background: var(--p2-score-bg-color);
 }
 
+.twitter {
+  color: var(--text-color);
+  font-size: 22px;
+  overflow: hidden;
+}
+
 .twitter_logo {
-  -webkit-mask-image: url(./twitter.svg);
+  -webkit-mask-image: url(./x_twitter.png);
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
 
-  /* Color of the bird logo */
   background: white;
-  /* Twitter Blue */
-  /* background: #1da1f2; */
-  width: 25px;
-  height: 25px;
-  margin-right: 3px;
+  width: 30px;
+  height: 30px;
 }
 
 .p1 .twitter_logo {
-  background: var(--p1-score-color);
+  background: white;
 }
 
 .p2 .twitter_logo {
-  background: var(--p2-score-color);
+  background: white;
 }
 
 .logo {
@@ -206,7 +268,7 @@ body {
   transform: translateX(-50%);
   width: 268px;
   height: 162px;
-  /* background-image: url("./tournament_logo.png"); */
+  background-image: url("./tournament_logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -214,97 +276,27 @@ body {
   z-index: 9;
 }
 
-.match {
-  position: absolute;
-  text-align: center;
-  width: 95%;
-  color: var(--text-color);
-  font-size: 20px;
-  padding-left: 3px;
-}
-
-.flags_container {
+.sponsor_container {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.flag {
+.sponsor_logo {
   display: inline-block;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  width: 44px;
-  height: 31px;
-}
-
-.p1 .flag {
-  margin-left: 12px;
-}
-
-.p2 .flag {
-  margin-right: 12px;
-}
-
-.score {
-  text-align: center;
-  width: 62px;
-  height: 53px;
-  font-size: 38px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.p1 .score {
-  margin-left: 12px;
-  color: var(--p1-score-color);
-  background: var(--p1-score-bg-color);
-}
-
-.p2 .score {
-  margin-right: 12px;
-  color: var(--p2-score-color);
-  background: var(--p2-score-bg-color);
-}
-
-.p1 .sponsor {
-  /* For gradient color */
-  background: linear-gradient(
-    90deg,
-    var(--p1-sponsor-color) 0%,
-    var(--text-color) 200%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.p2 .sponsor {
-  /* For gradient color */
-  background: linear-gradient(
-    90deg,
-    var(--p2-sponsor-color) 0%,
-    var(--text-color) 200%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.sponsor-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.sponsor-logo {
-  display: inline-block;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
   width: 48px;
   height: 48px;
-  margin-right: 4px;
-  margin-left: 4px;
+}
+
+.p1 .sponsor_logo {
+  margin-left: 12px;
+}
+
+.p2 .sponsor_logo {
+  margin-right: 12px;
 }
 
 .hidden {
