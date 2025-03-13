@@ -53,7 +53,7 @@ LoadEverything().then(() => {
       ".tournament_container",
       {
         duration: 0.75,
-        x: "-373px",
+        x: "-326px",
         ease: "power4.Out",
       },
       "<"
@@ -597,7 +597,7 @@ LoadEverything().then(() => {
         `
       );
 
-      if (t == 1) {
+      if (t == 1 && player2.name) {
         const jsonString = JSON.stringify(player2);
         localStorage.setItem("playerInWinners", jsonString);
       }
@@ -636,7 +636,7 @@ LoadEverything().then(() => {
         `
       );
 
-      if (t == 1) {
+      if (t == 1 && player1.name) {
         const jsonString = JSON.stringify(player1);
         localStorage.setItem("playerInWinners", jsonString);
       }
