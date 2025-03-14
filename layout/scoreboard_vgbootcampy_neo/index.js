@@ -792,7 +792,7 @@ LoadEverything().then(() => {
         `
       );
 
-      if (t == 1) {
+      if (t == 1 && team2Name) {
         localStorage.setItem("teamNameInWinners", team2Name);
       }
 
@@ -820,7 +820,7 @@ LoadEverything().then(() => {
         `
       );
 
-      if (t == 1) {
+      if (t == 1 && team1Name) {
         localStorage.setItem("teamNameInWinners", team1Name);
       }
 
