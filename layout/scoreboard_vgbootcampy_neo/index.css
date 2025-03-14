@@ -59,9 +59,10 @@ body {
 .tournament_container {
   position: absolute;
   top: 51px;
-  left: 66px;
-  width: 248px;
+  left: 54px;
+  width: 272px;
   height: 54px;
+  box-sizing: border-box;
   border-radius: 8px;
   padding: 0 12px;
 
