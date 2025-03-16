@@ -95,15 +95,6 @@ LoadEverything().then(() => {
       0
     )
     .from(
-      [".right"],
-      {
-        duration: 0.2,
-        x: "-20px",
-        ease: "power2.out",
-      },
-      0
-    )
-    .from(
       [".fade_left"],
       {
         duration: 0.2,
@@ -1232,11 +1223,9 @@ async function DisplayMatch(data) {
   const topLeftContainer = document.querySelector(".topleft_container");
 
   if (!data.score[window.scoreboardNumber].match) {
-    topLeftContainer.classList.add("hidden");
-    topLeftContainer.classList.remove("unhidden");
+    gsap.to(topLeftContainer, { duration: 0.5, opacity: 0 });
   } else {
-    topLeftContainer.classList.add("unhidden");
-    topLeftContainer.classList.remove("hidden");
+    gsap.to(topLeftContainer, { duration: 0.5, opacity: 1 });
   }
 }
 
@@ -1244,10 +1233,8 @@ async function DisplayPhase(data) {
   const topLeftContainerSmall = document.querySelector(".topleft_container_small");
 
   if (!data.score[window.scoreboardNumber].phase) {
-    topLeftContainerSmall.classList.add("hidden");
-    topLeftContainerSmall.classList.remove("unhidden");
+    gsap.to(topLeftContainerSmall, { duration: 0.5, opacity: 0 });
   } else {
-    topLeftContainerSmall.classList.add("unhidden");
-    topLeftContainerSmall.classList.remove("hidden");
+    gsap.to(topLeftContainerSmall, { duration: 0.5, opacity: 1 });
   }
 }
