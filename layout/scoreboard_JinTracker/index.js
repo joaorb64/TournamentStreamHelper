@@ -95,6 +95,15 @@ LoadEverything().then(() => {
       0
     )
     .from(
+      [".right"],
+      {
+        duration: 0.2,
+        x: "-20px",
+        ease: "power2.out",
+      },
+      0
+    )
+    .from(
       [".fade_left"],
       {
         duration: 0.2,
@@ -229,6 +238,8 @@ LoadEverything().then(() => {
           }
         }
       }
+      DisplayMatch(data);
+      DisplayPhase(data);
       SetInnerHtml(
         $(".match"),
         data.score[window.scoreboardNumber].match
@@ -290,6 +301,8 @@ LoadEverything().then(() => {
           }
         }
       }
+      DisplayMatch(data);
+      DisplayPhase(data);
       SetInnerHtml(
         $(".match"),
         data.score[window.scoreboardNumber].match
@@ -1214,3 +1227,27 @@ function changeStylesheetRule(stylesheet, selector, property, value) {
 }
 // Used like so:
 // changeStylesheetRule(s, "body", "color", "rebeccapurple");
+
+async function DisplayMatch(data) {
+  const topLeftContainer = document.querySelector(".topleft_container");
+
+  if (!data.score[window.scoreboardNumber].match) {
+    topLeftContainer.classList.add("hidden");
+    topLeftContainer.classList.remove("unhidden");
+  } else {
+    topLeftContainer.classList.add("unhidden");
+    topLeftContainer.classList.remove("hidden");
+  }
+}
+
+async function DisplayPhase(data) {
+  const topLeftContainerSmall = document.querySelector(".topleft_container_small");
+
+  if (!data.score[window.scoreboardNumber].phase) {
+    topLeftContainerSmall.classList.add("hidden");
+    topLeftContainerSmall.classList.remove("unhidden");
+  } else {
+    topLeftContainerSmall.classList.add("unhidden");
+    topLeftContainerSmall.classList.remove("hidden");
+  }
+}
