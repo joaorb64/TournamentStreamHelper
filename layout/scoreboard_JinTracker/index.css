@@ -346,7 +346,6 @@ body {
   padding-left: 12px;
   padding-right: 12px;
   min-width: unset;
-  /* color: var(--text-color); */
   background: rgba(0, 0, 0, 0);
 }
 
@@ -385,18 +384,26 @@ body {
   top: 38px;
   height: 53px;
   display: flex;
-  align-items: center;
   left: -15px;
   width: 360px;
-  align-content: center;
-  justify-content: left;
-  background: rgba(0, 0, 0, 0);
+}
+
+.topleft_container_small {
+  position: absolute;
+  display: flex;
+  top: 95px;
+  left: -15px;
+  width: 360px;
+  height: 30px;
 }
 
 .phase_container {
   transform: skew(-20deg);
   background: var(--text-color);
   border-radius: 8px;
+  overflow: hidden;
+  padding-left: 26px;
+  padding-right: 15px;
 }
 
 .phase {
@@ -404,7 +411,7 @@ body {
 }
 
 .phase .text:not(.text_empty) {
-  padding-left: 26px;
+  font-size: 20px;
   min-width: unset;
   color: var(--bg-color);
 }
@@ -414,6 +421,10 @@ body {
   background: var(--bg-color);
   border-radius: 8px;
   filter: drop-shadow(0 0px 2px rgba(255, 255, 255, 0.85));
+
+  overflow: hidden;
+  padding-left: 26px;
+  padding-right: 15px;
 }
 
 .match {
@@ -422,19 +433,15 @@ body {
 
 .match .text:not(.text_empty) {
   font-size: 25px;
-  padding-left: 26px;
-  padding-right: 12px;
-  padding-right: 15px;
   min-width: unset;
   color: var(--text-color);
 }
 
-.info.chips {
+.topleft_container_small {
   top: 95px;
-  left: 0px;
   left: -15px;
-  width: 350px;
-  width: 362px;
+  width: 360px;
+
 }
 
 .score_boxes {
@@ -469,6 +476,7 @@ body {
   border-radius: 8px;
 
   text-shadow: 0em 0em 0.2em #000;
+  overflow: hidden;
 }
 
 .p1_won {

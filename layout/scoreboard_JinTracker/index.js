@@ -229,6 +229,8 @@ LoadEverything().then(() => {
           }
         }
       }
+      DisplayMatch(data);
+      DisplayPhase(data);
       SetInnerHtml(
         $(".match"),
         data.score[window.scoreboardNumber].match
@@ -290,6 +292,8 @@ LoadEverything().then(() => {
           }
         }
       }
+      DisplayMatch(data);
+      DisplayPhase(data);
       SetInnerHtml(
         $(".match"),
         data.score[window.scoreboardNumber].match
@@ -1214,3 +1218,23 @@ function changeStylesheetRule(stylesheet, selector, property, value) {
 }
 // Used like so:
 // changeStylesheetRule(s, "body", "color", "rebeccapurple");
+
+async function DisplayMatch(data) {
+  const topLeftContainer = document.querySelector(".topleft_container");
+
+  if (!data.score[window.scoreboardNumber].match) {
+    gsap.to(topLeftContainer, { duration: 0.5, opacity: 0 });
+  } else {
+    gsap.to(topLeftContainer, { duration: 0.5, opacity: 1 });
+  }
+}
+
+async function DisplayPhase(data) {
+  const topLeftContainerSmall = document.querySelector(".topleft_container_small");
+
+  if (!data.score[window.scoreboardNumber].phase) {
+    gsap.to(topLeftContainerSmall, { duration: 0.5, opacity: 0 });
+  } else {
+    gsap.to(topLeftContainerSmall, { duration: 0.5, opacity: 1 });
+  }
+}
