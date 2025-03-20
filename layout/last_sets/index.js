@@ -5,10 +5,10 @@ LoadEverything().then(() => {
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
-  let startingAnimation = gsap.timeline({ paused: true });
+  let startingAnimation;// = gsap.timeline({ paused: true });
 
   Start = async (event) => {
-    startingAnimation.restart();
+    //startingAnimation.restart();
   };
 
   Update = async (event) => {
@@ -51,6 +51,7 @@ LoadEverything().then(() => {
           '<div class="bracket_line"><div class="line_arrow"></div></div>';
       }
       $(".player1_content").html(sets_html);
+      startingAnimation = gsap.timeline({paused: true});
 
       for (const [s, sets] of Object.values(data.score[window.scoreboardNumber].last_sets[window.PLAYER])
         .slice(0, 3)
@@ -106,6 +107,7 @@ LoadEverything().then(() => {
         { width: "calc(100% + 240px)", duration: 1, ease: "Power2.easeOut" },
         0
       );
+      startingAnimation.restart();
     }
   };
 });
