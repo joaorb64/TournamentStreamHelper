@@ -5,10 +5,10 @@ LoadEverything().then(() => {
 
   gsap.config({ nullTargetWarn: false, trialWarn: false });
 
-  let startingAnimation = gsap.timeline({ paused: true });
+  let startingAnimation;// = gsap.timeline({ paused: true });
 
   Start = async (event) => {
-    startingAnimation.restart();
+    //startingAnimation.restart();
   };
 
   function getNumberOrdinal(n) {
@@ -78,11 +78,13 @@ LoadEverything().then(() => {
               tournament.placement
             )}</span><span class="num_entrants">/${tournament.entrants}</span>`
         );
+        startingAnimation = gsap.timeline({paused: false})
         startingAnimation.from(
           $(`.tournament${s + 1}`),
           { x: -100, autoAlpha: 0, duration: 0.3 },
           0.2 + 0.2 * s
         );
+        startingAnimation.restart();
       }
     }
   };
