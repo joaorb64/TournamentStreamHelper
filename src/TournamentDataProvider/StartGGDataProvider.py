@@ -1365,11 +1365,11 @@ class StartGGDataProvider(TournamentDataProvider):
                     "phase_id": phaseIdentifier,
                     "phase_name": phaseName,
                     "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
-                    f"player{players[0]}_score": set.get("entrant1Score"),
+                    f"player{players[0]}_score": set.get("entrant1Score") if set.get("entrant1Score") is not None else "0",
                     f"player{players[0]}_seed": player1Seed,
                     f"player{players[0]}_team": player1Info.get("prefix"),
                     f"player{players[0]}_name": player1Info.get("gamerTag"),
-                    f"player{players[1]}_score": set.get("entrant2Score"),
+                    f"player{players[1]}_score": set.get("entrant2Score") if set.get("entrant2Score") is not None else "0",
                     f"player{players[1]}_seed": player2Seed,
                     f"player{players[1]}_team": player2Info.get("prefix"),
                     f"player{players[1]}_name": player2Info.get("gamerTag")
@@ -1545,11 +1545,11 @@ class StartGGDataProvider(TournamentDataProvider):
 
                     if _set.get("entrant1Score") != None and _set.get("entrant2Score") != None:
                         if p1id == id1[0]:
-                            score = [_set.get("entrant1Score"),
-                                     _set.get("entrant2Score")]
+                            score = [_set.get("entrant1Score") if _set.get("entrant1Score") is not None else "0",
+                                     _set.get("entrant2Score") if _set.get("entrant2Score") is not None else "0"]
                         else:
-                            score = [_set.get("entrant2Score"),
-                                     _set.get("entrant1Score")]
+                            score = [_set.get("entrant2Score") if _set.get("entrant2Score") is not None else "0",
+                                     _set.get("entrant1Score") if _set.get("entrant1Score") is not None else "0"]
                     else:
                         if (p1id == id1[0] and winner == 0) or (p1id == id1[1] and winner == 1):
                             score = ["W", "L"]
