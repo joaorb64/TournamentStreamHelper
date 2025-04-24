@@ -478,6 +478,23 @@ class WebServer(QThread):
         emit('load_player_from_tag', WebServer.actions.load_player_from_tag(
             scoreboardNumber, html.unescape(args.get('tag')), team, player, no_mains))
 
+    @app.route('/load-commentator-from-tag-<caster>')
+    def load_commentator_from_tag(caster):
+        if request.args.get('tag') is None:
+            return "No tag provided"
+        no_mains = request.args.get('no-mains') is not None
+        return WebServer.actions.load_commentator_from_tag(caster, html.unescape(request.args.get('tag')), no_mains)
+
+    @socketio.on('load_commentator_from_tag')
+    def ws_load_commentator_from_tag(message):
+        args = orjson.loads(message)
+        if args.get('tag') is None:
+            emit('load_commentator_from_tag', 'No tag provided')
+            return
+        no_mains = args.get('no-mains') is not None
+        caster = args.get('commentator')
+        emit('load_commentator_from_tag', WebServer.actions.load_commentator_from_tag(caster, html.unescape(args.get('tag')), no_mains))
+
     # Update bracket
     @app.route('/set-tournament')
     def set_tournament():

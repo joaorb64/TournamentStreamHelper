@@ -391,6 +391,12 @@ class WebServerActions(QThread):
         else:
             return "ERROR"
 
+    def load_commentator_from_tag(self, index, tag, no_mains=False):
+        index = int(index) - 1
+        if index < 0:
+            return "ERROR : index can't be lower than 1" 
+        result = self.commentaryWidget.LoadCommFromTagSignal.emit(index, tag, no_mains)
+
     def load_tournament(self, url=None):
         logger.error(f"URL PROVIDED: {url}")
         if url is None or  url == "":
