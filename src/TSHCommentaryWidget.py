@@ -13,6 +13,8 @@ from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHCommentaryWidget(QDockWidget):
+    ChangeCommDataSignal = Signal(int, object)
+
     def __init__(self, *args):
         super().__init__(*args)
         self.setWindowTitle(QApplication.translate("app", "Commentary"))
@@ -30,6 +32,8 @@ class TSHCommentaryWidget(QDockWidget):
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.widget.layout().addWidget(topOptions)
+        
+        self.ChangeCommDataSignal.connect(self.SetData)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
@@ -106,6 +110,17 @@ class TSHCommentaryWidget(QDockWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.SetDefaultsFromAssets
         )
+
+    def SetData(self, index, data):
+        if index > len(self.commentaryWidgets):
+            self.SetCommentatorNumber(index+1)
+            self.commentatorNumber.setValue(index+1)
+
+        logger.info(index)
+
+        commentatorWidget = self.commentaryWidgets[index]
+        logger.info(commentatorWidget)
+        commentatorWidget.SetData(data, False, False)
 
 
     def SetCommentatorNumber(self, number):
