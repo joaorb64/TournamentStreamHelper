@@ -1142,13 +1142,13 @@ class TSHScoreboardWidget(QWidget):
 
         if self.teamsSwapped:
             teamInstances.reverse()
-        for player_db in TSHPlayerDB.database.values():
-            if tag.lower() == player_db.get("gamerTag").lower():
-                teamInstances[team][player].SetData(
-                    player_db, False, True, no_mains)
-                return True
-        else:
-            return False
+
+        playerData = TSHPlayerDB.GetPlayerFromTag(tag)
+        if playerData:
+            teamInstances[team][player].SetData(
+                    playerData, False, True, no_mains)
+            return True
+        return False
 
     def SetDefaultsFromAssets(self):
         if StateManager.Get(f'game.defaults'):
