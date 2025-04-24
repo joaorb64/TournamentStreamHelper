@@ -12,6 +12,7 @@ from loguru import logger
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHCommentaryWidget import TSHCommentaryWidget
 import traceback
 
 import logging
@@ -32,12 +33,13 @@ class WebServer(QThread):
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
 
-    def __init__(self, parent=None, stageWidget=None) -> None:
+    def __init__(self, parent=None, stageWidget=None, commentaryWidget: TSHCommentaryWidget=None) -> None:
         super().__init__(parent)
         WebServer.actions = WebServerActions(
             parent=parent,
             scoreboard=TSHScoreboardManager.instance,
-            stageWidget=stageWidget
+            stageWidget=stageWidget,
+            commentaryWidget=commentaryWidget
         )
         self.host_name = "0.0.0.0"
         self.port = 5000
@@ -222,7 +224,21 @@ class WebServer(QThread):
                  data.get("team"),
                  data.get("player"),
                  data
-             ))
+            ))
+
+    @app.post('/update-commentary-<caster>')
+    def set_commentary_data(caster):
+        data = request.get_json()
+        return WebServer.actions.set_commentary_data(caster, data)
+    
+    @socketio.on('update_commentary')
+    def ws_set_commentary_data(message):
+        data = orjson.loads(message)
+        emit('update_commentary', 
+            WebServer.actions.set_commentary_data(
+                data.get("commentator"),
+                data
+            ))
 
     # Get characters
     @app.route('/characters')
