@@ -318,6 +318,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 StateManager.Set(
                     f"{self.path}.seed", seed)
 
+    def ExportPlayerCity(self, city=None):
+        with self.dataLock:
+            if StateManager.Get(f"{self.path}.city") != city:
+                StateManager.Set(
+                    f"{self.path}.city", city)
+
     def SwapWith(self, other: "TSHScoreboardPlayerWidget"):
         if self == other:
             logger.info("Swapping player with themselves")
@@ -342,6 +348,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             f"{w.path}.id")
                         data["seed"] = StateManager.Get(
                             f"{w.path}.seed")
+                        data["city"] = StateManager.Get(
+                            f"{w.path}.city")
                         tmpData.append(data)
 
                     # Load state
@@ -358,6 +366,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         w.ExportPlayerImages(tmpData[i]["online_avatar"])
                         w.ExportPlayerId(tmpData[i]["id"])
                         StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
+                        StateManager.Set(f"{w.path}.city", tmpData[i]["city"])
         finally:
             StateManager.ReleaseSaving()
 
@@ -680,6 +689,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             if data.get("seed"):
                 self.ExportPlayerSeed(data.get("seed"))
 
+            if data.get("city"):
+                self.ExportPlayerCity(data.get("city"))
+
             twitter = self.findChild(QWidget, "twitter")
             if data.get("twitter") and data.get("twitter") != twitter.text():
                 data["twitter"] = TSHBadWordFilter.Censor(
@@ -788,6 +800,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             if data.get("seed"):
                 StateManager.Set(f"{self.path}.seed", data.get("seed"))
+            if data.get("city"):
+                StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:
             StateManager.ReleaseSaving()
             self.dataLock.release()

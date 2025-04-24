@@ -721,6 +721,7 @@ class StartGGDataProvider(TournamentDataProvider):
                                     playerData["country_code"], user.get("location").get("city"))
                                 if stateCode:
                                     playerData["state_code"] = stateCode
+                            if user.get("location").get("city"): playerData["city"] = user.get("location").get("city")
 
                         if playerData.get("startggMain"):
                             main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
