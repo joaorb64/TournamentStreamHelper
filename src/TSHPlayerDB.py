@@ -123,6 +123,12 @@ class TSHPlayerDB:
         TSHPlayerDB.SaveDB()
         TSHPlayerDB.SetupModel()
 
+    def GetPlayerFromTag(tag):
+        for player_db in TSHPlayerDB.database.values():
+            if tag.lower() == player_db.get("gamerTag").lower():
+                return player_db
+        return None
+
     def SetupModel():
         with TSHPlayerDB.modelLock:
             TSHPlayerDB.model = QStandardItemModel()

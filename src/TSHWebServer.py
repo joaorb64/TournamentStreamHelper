@@ -12,6 +12,7 @@ from loguru import logger
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHCommentaryWidget import TSHCommentaryWidget
 import traceback
 
 import logging
@@ -32,12 +33,13 @@ class WebServer(QThread):
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
 
-    def __init__(self, parent=None, stageWidget=None) -> None:
+    def __init__(self, parent=None, stageWidget=None, commentaryWidget: TSHCommentaryWidget=None) -> None:
         super().__init__(parent)
         WebServer.actions = WebServerActions(
             parent=parent,
             scoreboard=TSHScoreboardManager.instance,
-            stageWidget=stageWidget
+            stageWidget=stageWidget,
+            commentaryWidget=commentaryWidget
         )
         self.host_name = "0.0.0.0"
         self.port = 5000
@@ -222,7 +224,21 @@ class WebServer(QThread):
                  data.get("team"),
                  data.get("player"),
                  data
-             ))
+            ))
+
+    @app.post('/update-commentary-<caster>')
+    def set_commentary_data(caster):
+        data = request.get_json()
+        return WebServer.actions.set_commentary_data(caster, data)
+    
+    @socketio.on('update_commentary')
+    def ws_set_commentary_data(message):
+        data = orjson.loads(message)
+        emit('update_commentary', 
+            WebServer.actions.set_commentary_data(
+                data.get("commentator"),
+                data
+            ))
 
     # Get characters
     @app.route('/characters')
@@ -461,6 +477,23 @@ class WebServer(QThread):
         scoreboardNumber = args.get('scoreboardNumber', '1')
         emit('load_player_from_tag', WebServer.actions.load_player_from_tag(
             scoreboardNumber, html.unescape(args.get('tag')), team, player, no_mains))
+
+    @app.route('/load-commentator-from-tag-<caster>')
+    def load_commentator_from_tag(caster):
+        if request.args.get('tag') is None:
+            return "No tag provided"
+        no_mains = request.args.get('no-mains') is not None
+        return WebServer.actions.load_commentator_from_tag(caster, html.unescape(request.args.get('tag')), no_mains)
+
+    @socketio.on('load_commentator_from_tag')
+    def ws_load_commentator_from_tag(message):
+        args = orjson.loads(message)
+        if args.get('tag') is None:
+            emit('load_commentator_from_tag', 'No tag provided')
+            return
+        no_mains = args.get('no-mains') is not None
+        caster = args.get('commentator')
+        emit('load_commentator_from_tag', WebServer.actions.load_commentator_from_tag(caster, html.unescape(args.get('tag')), no_mains))
 
     # Update bracket
     @app.route('/set-tournament')

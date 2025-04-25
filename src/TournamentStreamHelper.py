@@ -359,16 +359,16 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, self.stageWidget)
         self.dockWidgets.append(self.stageWidget)
 
-        self.webserver = WebServer(
-            parent=None, stageWidget=self.stageWidget)
-        StateManager.webServer = self.webserver
-        self.webserver.start()
-
         commentary = TSHCommentaryWidget()
         commentary.setWindowIcon(QIcon('assets/icons/mic.svg'))
         commentary.setObjectName(QApplication.translate("app", "Commentary"))
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, commentary)
         self.dockWidgets.append(commentary)
+
+        self.webserver = WebServer(
+            parent=None, stageWidget=self.stageWidget, commentaryWidget=commentary)
+        StateManager.webServer = self.webserver
+        self.webserver.start()
 
         playerList = TSHPlayerListWidget()
         playerList.setWindowIcon(QIcon('assets/icons/list.svg'))

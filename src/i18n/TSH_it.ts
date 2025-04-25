@@ -793,8 +793,8 @@ p, li { white-space: pre-wrap; }
         <translation>Scenario</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="369"/>
-        <location filename="../TSHCommentaryWidget.py" line="18"/>
+        <location filename="../TournamentStreamHelper.py" line="364"/>
+        <location filename="../TSHCommentaryWidget.py" line="21"/>
         <source>Commentary</source>
         <translation>Commentatori</translation>
     </message>
@@ -1161,14 +1161,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHBracketWidget.py" line="93"/>
-        <location filename="../TSHCommentaryWidget.py" line="48"/>
+        <location filename="../TSHCommentaryWidget.py" line="54"/>
         <location filename="../TSHPlayerListWidget.py" line="75"/>
         <location filename="../TSHScoreboardWidget.py" line="167"/>
         <source>Characters per player</source>
         <translation>Personaggi per giocatore</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="40"/>
+        <location filename="../TSHCommentaryWidget.py" line="46"/>
         <source>Number of commentators</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1268,31 +1268,31 @@ p, li { white-space: pre-wrap; }
         <translation>Generare la miniatura</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="73"/>
+        <location filename="../TSHCommentaryWidget.py" line="79"/>
         <location filename="../TSHScoreboardWidget.py" line="229"/>
         <source>Real Name</source>
         <translation type="unfinished">Nome legale</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="74"/>
+        <location filename="../TSHCommentaryWidget.py" line="80"/>
         <location filename="../TSHScoreboardWidget.py" line="230"/>
         <source>Twitter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="75"/>
+        <location filename="../TSHCommentaryWidget.py" line="81"/>
         <location filename="../TSHScoreboardWidget.py" line="231"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="76"/>
+        <location filename="../TSHCommentaryWidget.py" line="82"/>
         <location filename="../TSHScoreboardWidget.py" line="232"/>
         <source>Characters</source>
         <translation>Personaggi</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="77"/>
+        <location filename="../TSHCommentaryWidget.py" line="83"/>
         <location filename="../TSHScoreboardWidget.py" line="233"/>
         <source>Pronouns</source>
         <translation type="unfinished"></translation>

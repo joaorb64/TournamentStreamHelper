@@ -12,6 +12,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .TSHCommentaryWidget import TSHCommentaryWidget
 from .Workers import Worker
 
 import logging
@@ -20,10 +21,11 @@ log.setLevel(logging.ERROR)
 
 
 class WebServerActions(QThread):
-    def __init__(self, parent=None, scoreboard=None, stageWidget=None) -> None:
+    def __init__(self, parent=None, scoreboard=None, stageWidget=None, commentaryWidget: TSHCommentaryWidget=None) -> None:
         super().__init__(parent)
         self.scoreboard = scoreboard
         self.stageWidget = stageWidget
+        self.commentaryWidget = commentaryWidget
         self.threadPool = QThreadPool()
 
     def program_state(self):
@@ -222,6 +224,15 @@ class WebServerActions(QThread):
         })
         return "OK"
 
+    def set_commentary_data(self, index, data):
+        logger.info(self.commentaryWidget)
+        index = int(index) - 1
+        if index < 0:
+            return "ERROR : index can't be lower than 1"
+        self.commentaryWidget.ChangeCommDataSignal.emit(index, data)
+
+        return "OK"
+
     def get_characters(self):
         data = {}
         for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
@@ -379,6 +390,12 @@ class WebServerActions(QThread):
             return "OK"
         else:
             return "ERROR"
+
+    def load_commentator_from_tag(self, index, tag, no_mains=False):
+        index = int(index) - 1
+        if index < 0:
+            return "ERROR : index can't be lower than 1" 
+        result = self.commentaryWidget.LoadCommFromTagSignal.emit(index, tag, no_mains)
 
     def load_tournament(self, url=None):
         logger.error(f"URL PROVIDED: {url}")

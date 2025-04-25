@@ -13,6 +13,9 @@ from .TSHGameAssetManager import TSHGameAssetManager
 
 
 class TSHCommentaryWidget(QDockWidget):
+    ChangeCommDataSignal = Signal(int, object)
+    LoadCommFromTagSignal = Signal(int, str, bool)
+
     def __init__(self, *args):
         super().__init__(*args)
         self.setWindowTitle(QApplication.translate("app", "Commentary"))
@@ -30,6 +33,9 @@ class TSHCommentaryWidget(QDockWidget):
         topOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
 
         self.widget.layout().addWidget(topOptions)
+        
+        self.ChangeCommDataSignal.connect(self.SetData)
+        self.LoadCommFromTagSignal.connect(self.LoadCommentatorFromTag)
 
         col = QWidget()
         col.setLayout(QVBoxLayout())
@@ -97,7 +103,7 @@ class TSHCommentaryWidget(QDockWidget):
 
         self.widget.layout().addWidget(scrollArea)
 
-        self.commentaryWidgets = []
+        self.commentaryWidgets: list[TSHScoreboardPlayerWidget] = []
 
         StateManager.Set("commentary", {})
         self.commentatorNumber.setValue(2)
@@ -107,6 +113,28 @@ class TSHCommentaryWidget(QDockWidget):
             self.SetDefaultsFromAssets
         )
 
+    def SetData(self, index, data):
+        if index > len(self.commentaryWidgets):
+            self.SetCommentatorNumber(index+1)
+            self.commentatorNumber.setValue(index+1)
+
+        logger.info(index)
+
+        commentatorWidget = self.commentaryWidgets[index]
+        logger.info(commentatorWidget)
+        commentatorWidget.SetData(data, False, False)
+
+    def LoadCommentatorFromTag(self, index: int, tag: str, no_mains: bool):
+        if index > len(self.commentaryWidgets) - 1:
+            self.SetCommentatorNumber(index+1)
+            self.commentatorNumber.setValue(index+1)
+
+        playerData = TSHPlayerDB.GetPlayerFromTag(tag)
+        if playerData:
+            widget = self.commentaryWidgets[index]
+            widget.SetData(playerData, False, True, no_mains)
+            return True
+        return False
 
     def SetCommentatorNumber(self, number):
         while len(self.commentaryWidgets) < number:
