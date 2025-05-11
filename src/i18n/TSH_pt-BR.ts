@@ -1259,29 +1259,29 @@ p, li { white-space: pre-wrap; }
         <translation>Copiar texto</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="65"/>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
         <source>Additional information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="83"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="880"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="86"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="921"/>
         <source>Save new player</source>
         <translation>Salvar novo jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="96"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="99"/>
         <source>Delete player entry</source>
         <translation>Deletar jogador</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="109"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="112"/>
         <source>Clear</source>
         <translation>Limpar</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="376"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="379"/>
         <location filename="../TSHSelectSetWindow.py" line="115"/>
         <location filename="../TSHSelectSetWindow.py" line="117"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
@@ -1289,7 +1289,7 @@ p, li { white-space: pre-wrap; }
         <translation>Jogador {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="877"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="918"/>
         <source>Update player</source>
         <translation>Atualizar jogador</translation>
     </message>
