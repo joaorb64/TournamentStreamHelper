@@ -543,6 +543,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.layout().addLayout(controller_layout, 97, 0, 1, 3)
 
             self.controller.setObjectName("controller")
+            self.controller.setEditable(True)
+            self.controller.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+            self.controller.completer().setCompletionMode(QCompleter.PopupCompletion)
+            self.controller.completer().popup().setMinimumWidth(250)
             self.controller.setIconSize(QSize(24, 24))
             self.controller.setFixedHeight(32)
             self.controller.setMinimumWidth(60)
