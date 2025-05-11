@@ -1335,7 +1335,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="235"/>
         <source>Controller</source>
-        <translation type="unfinished"></translation>
+        <translation>Manette</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="262"/>
