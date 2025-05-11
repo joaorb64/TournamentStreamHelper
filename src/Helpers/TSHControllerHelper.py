@@ -61,7 +61,6 @@ class TSHControllerHelper(QObject):
                         )
 
                         logger.info("Controller files updated")
-                        TSHControllerHelper.LoadControllers()
                     except:
                         logger.error("Controller files download failed")
                 except Exception as e:
