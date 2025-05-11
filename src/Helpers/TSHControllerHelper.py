@@ -13,6 +13,7 @@ from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
 import json
 from loguru import logger
+import glob
 
 
 class TSHControllerHelperSignals(QObject):
@@ -24,7 +25,12 @@ class TSHControllerHelper(QObject):
 
     def __init__(self) -> None:
         super().__init__()
+        self.controller_list = {}
+        self.controllerModel = QStandardItemModel()
+
         self.UpdateControllerFile()
+        self.BuildControllerTree()
+    
 
     def UpdateControllerFile(self):
         class DownloaderThread(QThread):
@@ -64,5 +70,75 @@ class TSHControllerHelper(QObject):
         downloaderThread = DownloaderThread(self)
         downloaderThread.start()
 
+    def BuildControllerTree(self):
+        controller_list = {}
+        list_controller_directories = glob.glob("./assets/controller/ControllerDatabase-main/*/*/*/")
+        for controller_directory in list_controller_directories:
+            if os.path.exists(f"{controller_directory}/config.json"):
+                split = controller_directory.split("/")
+                controller_id = f"{split[-4]}/{split[-3]}/{split[-2]}"
+                print(f"Loading: {controller_id}")
+                with open(f"{controller_directory}/config.json", "rt", encoding="utf-8") as config_file:
+                    config_json = json.loads(config_file.read())
+                    if os.path.exists(f"{"/".join(split[:-2])}/config.json"):
+                        with open(f"{"/".join(split[:-2])}/config.json", "rt", encoding="utf-8") as manufacturer_file:
+                            manufacturer = json.loads(manufacturer_file.read()).get("name")
+                            print(f"Manufacturer: {manufacturer}")
+                    else:
+                        manufacturer = None
+
+                    if os.path.exists(f"{"/".join(split[:-3])}/config.json"):
+                        with open(f"{"/".join(split[:-3])}/config.json", "rt", encoding="utf-8") as controller_type_file:
+                            controller_type = json.loads(controller_type_file.read()).get("name")
+                            print(f"Type: {controller_type}")
+                    else:
+                        controller_type = None
+
+                    controller_json = {
+                        "name": config_json.get("name"),
+                        "manufacturer": manufacturer,
+                        "type": controller_type,
+                        "icon_path": f"{controller_directory}/image.png",
+                        "config_path": f"{controller_directory}/config.json"
+                    }
+                    controller_list[controller_id] = controller_json
+        self.controller_list = controller_list
+
+
+    def UpdateControllerModel(self):
+        try:
+            self.controllerModel = QStandardItemModel()
+
+            # Add one empty
+            item = QStandardItem("")
+            self.controllerModel.appendRow(item)
+
+            for c in self.controller_list.keys():
+                item = QStandardItem()
+                item.setData(c, Qt.ItemDataRole.EditRole)
+                print(c)
+
+                data = {
+                    "name": self.controller_list[c].get("name"),
+                    "manufacturer": self.controller_list[c].get("manufacturer"),
+                    "type": self.controller_list[c].get("type"),
+                    "codename": c
+                }
+
+                
+                data["icon_path"] = self.controller_list[c].get("icon_path"),
+                if data["icon_path"]:
+                    item.setIcon(QIcon(QPixmap.fromImage(QImage(data["icon_path"])))
+                    )
+                else:
+                    item.setIcon(QIcon(QPixmap.fromImage(QImage('./assets/icons/cancel.svg')))
+                    )
+
+                item.setData(data, Qt.ItemDataRole.UserRole)
+                self.controllerModel.appendRow(item)
+
+            self.controllerModel.sort(0)
+        except:
+            logger.error(traceback.format_exc())
 
 TSHControllerHelper.instance = TSHControllerHelper()
