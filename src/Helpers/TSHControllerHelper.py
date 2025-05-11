@@ -17,11 +17,13 @@ import glob
 
 
 class TSHControllerHelperSignals(QObject):
-    countriesUpdated = Signal()
+    controllersUpdated = Signal()
 
 
 class TSHControllerHelper(QObject):
     instance: "TSHControllerHelper" = None
+
+    signals = TSHControllerHelperSignals()
 
     def __init__(self) -> None:
         super().__init__()
@@ -94,11 +96,16 @@ class TSHControllerHelper(QObject):
                     else:
                         controller_type = None
 
+                    if os.path.exists(f"{controller_directory}/image.png"):
+                        icon_path = f"{controller_directory}/image.png"
+                    else:
+                        icon_path = None
+
                     controller_json = {
                         "name": config_json.get("name"),
                         "manufacturer": manufacturer,
                         "type": controller_type,
-                        "icon_path": f"{controller_directory}/image.png",
+                        "icon_path": icon_path,
                         "config_path": f"{controller_directory}/config.json"
                     }
                     controller_list[controller_id] = controller_json
@@ -126,13 +133,17 @@ class TSHControllerHelper(QObject):
                 }
 
                 
-                data["icon_path"] = self.controller_list[c].get("icon_path"),
+                data["icon_path"] = self.controller_list[c].get("icon_path")
                 if data["icon_path"]:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage(data["icon_path"])))
                     )
                 else:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage('./assets/icons/cancel.svg')))
                     )
+                
+                if self.controller_list[c].get("name") != c:
+                    item.setData(
+                        f'{self.controller_list[c].get("name")}', Qt.ItemDataRole.EditRole)
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
                 self.controllerModel.appendRow(item)
