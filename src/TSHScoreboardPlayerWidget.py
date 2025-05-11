@@ -780,6 +780,19 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 if stateElement.currentIndex() != stateIndex:
                     stateElement.setCurrentIndex(stateIndex)
 
+            if data.get("controller"):
+                controllerElement: QComboBox = self.findChild(
+                    QComboBox, "controller")
+                controllerIndex = 0
+                for i in range(controllerElement.model().rowCount()):
+                    item = controllerElement.model().item(i).data(Qt.ItemDataRole.UserRole)
+                    if item:
+                        if data.get("controller") == item.get("codename"):
+                            controllerIndex = i
+                            break
+                if controllerElement.currentIndex() != controllerIndex:
+                    controllerElement.setCurrentIndex(controllerIndex)
+
             if data.get("mains") and no_mains != True:
                 if type(data.get("mains")) == list:
                     for element in self.character_elements:
