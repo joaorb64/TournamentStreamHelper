@@ -30,6 +30,7 @@ class TSHControllerHelper(QObject):
 
         self.UpdateControllerFile()
         self.BuildControllerTree()
+        self.UpdateControllerModel()
     
 
     def UpdateControllerFile(self):
