@@ -223,7 +223,7 @@ class TSHScoreboardWidget(QWidget):
             ["Location", ["locationLabel", "state", "country"]],
             ["Characters", ["characters"]],
             ["Pronouns", ["pronoun", "pronounLabel"]],
-            ["Controller", ["controller"]],
+            ["Controller", ["controller", "controllerLabel"]],
             ["Additional information", ["custom_textbox"]],
         ]
         self.elements[0][0] = QApplication.translate("app", "Real Name")

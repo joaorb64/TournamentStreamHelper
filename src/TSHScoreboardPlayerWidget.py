@@ -535,7 +535,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 TSHControllerHelper.BuildControllerTree()
                 TSHControllerHelper.UpdateControllerModel()
             
-            controller_layout = QHBoxLayout()
+            controller_layout = QVBoxLayout()
+
+            controller_label = QLabel()
+            controller_layout.addWidget(controller_label)
+            controller_label.setText(QApplication.translate("app", "Controller").upper())
+            controller_label.setStyleSheet("QLabel{font-weight: bold; font-size: 8pt;}")
+            controller_label.setObjectName("controllerLabel")
 
             self.controller = QComboBox()
 
