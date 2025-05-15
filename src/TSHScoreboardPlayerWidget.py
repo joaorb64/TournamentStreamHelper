@@ -60,7 +60,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         custom_textbox_layout = QHBoxLayout()
         self.custom_textbox = QPlainTextEdit()
         custom_textbox_layout.addWidget(self.custom_textbox)
-        self.layout().addLayout(custom_textbox_layout, 98, 0, 1, 3)
+        self.layout().addLayout(custom_textbox_layout, 98, 2, 1, 1)
         self.custom_textbox.setObjectName("custom_textbox")
         self.custom_textbox.setPlaceholderText(QApplication.translate("app", "Additional information"))
         self.custom_textbox.textChanged.connect(
@@ -546,7 +546,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             self.controller = QComboBox()
 
             controller_layout.addWidget(self.controller)
-            self.layout().addLayout(controller_layout, 97, 0, 1, 3)
+            self.layout().addLayout(controller_layout, 97, 2, 1, 1)
 
             self.controller.setObjectName("controller")
             self.controller.setEditable(True)
