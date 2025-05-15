@@ -1247,7 +1247,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="86"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="934"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="940"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1270,7 +1270,7 @@ p, li { white-space: pre-wrap; }
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="931"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="937"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
@@ -1333,6 +1333,7 @@ p, li { white-space: pre-wrap; }
         <translation>Envoyer un post sur Bluesky</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="542"/>
         <location filename="../TSHScoreboardWidget.py" line="235"/>
         <source>Controller</source>
         <translation>Manette</translation>
