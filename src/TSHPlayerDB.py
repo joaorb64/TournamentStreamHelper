@@ -22,7 +22,7 @@ class TSHPlayerDB:
     database = {}
     model: QStandardItemModel = None
     fieldnames = ["prefix", "gamerTag", "name", "twitter",
-                  "country_code", "state_code", "mains", "pronoun", "custom_textbox"] # Please always add the new fields at the end of the list
+                  "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"] # Please always add the new fields at the end of the list
     modelLock = Lock()
 
     def LoadDB():
