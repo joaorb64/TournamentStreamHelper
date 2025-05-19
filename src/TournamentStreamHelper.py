@@ -138,6 +138,9 @@ def DownloadLayoutsOnBoot():
         if not os.listdir(layouts_path) or len(os.listdir(layouts_path)) <= 2:
             has_layouts = False
     else:
+        if os.path.isfile(layouts_path):
+            os.remove(layouts_path)
+        os.mkdir(layouts_path)
         has_layouts = False
     if not has_layouts:
         logger.info("Layouts were not detected, downloading from Github...")
