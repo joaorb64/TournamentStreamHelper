@@ -60,3 +60,4 @@ logs/*
 Pipfile*
 env
 desktop.ini
+assets/controller/*
