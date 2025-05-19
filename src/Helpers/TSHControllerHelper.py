@@ -50,6 +50,7 @@ class TSHControllerHelper(QObject):
                         if os.path.exists("./assets/controller_tmp"):
                             shutil.rmtree("./assets/controller_tmp")
                         with zipfile.ZipFile('./assets/controller.zip.tmp', 'r') as zip_file:
+                            os.mkdir('./assets/controller_tmp')
                             zip_file.extractall('./assets/controller_tmp')
 
                         # Remove ZIP
