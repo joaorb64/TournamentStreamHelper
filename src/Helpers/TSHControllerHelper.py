@@ -36,42 +36,38 @@ class TSHControllerHelper(QObject):
     
 
     def UpdateControllerFile(self):
-        class DownloaderThread(QThread):
-            def run(self):
-                try:
-                    url = 'https://github.com/Wolfy76700/ControllerDatabase/archive/refs/heads/main.zip'
-                    r = requests.get(url, allow_redirects=True)
+        try:
+            url = 'https://github.com/Wolfy76700/ControllerDatabase/archive/refs/heads/main.zip'
+            r = requests.get(url, allow_redirects=True)
 
-                    with open('./assets/controller.zip.tmp', 'wb') as zip_file:
-                        zip_file.write(r.content)
+            with open('./assets/controller.zip.tmp', 'wb') as zip_file:
+                zip_file.write(r.content)
 
-                    try:
-                        # Extract ZIP
-                        if os.path.exists("./assets/controller_tmp"):
-                            shutil.rmtree("./assets/controller_tmp")
-                        with zipfile.ZipFile('./assets/controller.zip.tmp', 'r') as zip_file:
-                            os.mkdir('./assets/controller_tmp')
-                            zip_file.extractall('./assets/controller_tmp')
+            try:
+                # Extract ZIP
+                if os.path.exists("./assets/controller_tmp"):
+                    shutil.rmtree("./assets/controller_tmp")
+                with zipfile.ZipFile('./assets/controller.zip.tmp', 'r') as zip_file:
+                    os.mkdir('./assets/controller_tmp')
+                    zip_file.extractall('./assets/controller_tmp')
 
-                        # Remove ZIP
-                        os.remove('./assets/controller.zip.tmp')
+                # Remove ZIP
+                os.remove('./assets/controller.zip.tmp')
 
-                        # Move directory
-                        if os.path.exists("./assets/controller"):
-                            shutil.rmtree("./assets/controller")
-                        os.rename(
-                            './assets/controller_tmp',
-                            './assets/controller'
-                        )
+                # Move directory
+                if os.path.exists("./assets/controller"):
+                    shutil.rmtree("./assets/controller")
+                os.rename(
+                    './assets/controller_tmp',
+                    './assets/controller'
+                )
 
-                        logger.info("Controller files updated")
-                    except:
-                        logger.error("Controller files download failed")
-                except Exception as e:
-                    logger.error(
-                        "Could not update /assets/controller: "+str(e))
-        downloaderThread = DownloaderThread(self)
-        downloaderThread.start()
+                logger.info("Controller files updated")
+            except:
+                logger.error("Controller files download failed")
+        except Exception as e:
+            logger.error(
+                "Could not update /assets/controller: "+str(e))
 
     def BuildControllerTree(self):
         controller_list = {}
