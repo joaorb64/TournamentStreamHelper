@@ -120,8 +120,6 @@ class TSHControllerHelper(QObject):
             for c in self.controller_list.keys():
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
-                print(c)
-
                 data = {
                     "name": self.controller_list[c].get("name"),
                     "manufacturer": self.controller_list[c].get("manufacturer"),

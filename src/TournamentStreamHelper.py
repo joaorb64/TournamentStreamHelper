@@ -25,6 +25,7 @@ from qtpy.QtCore import *
 from packaging.version import parse
 from loguru import logger
 from pathlib import Path
+from glob import glob
 
 crashpath = Path('./logs/tsh-crash.log').resolve()
 Path.mkdir(crashpath.parent, exist_ok=True)
@@ -128,6 +129,43 @@ from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 from src.TSHWebServer import WebServer
 # autopep8: on
 
+def DownloadLayoutsOnBoot():
+    """
+    Downloads latest layouts from Github if the folder is empty
+    """
+    layouts_path = "./layout"
+    has_layouts = True
+    if os.path.isdir(layouts_path):
+        if not os.listdir(layouts_path) or len(os.listdir(layouts_path)) <= 2:
+            has_layouts = False
+    else:
+        if os.path.isfile(layouts_path):
+            os.remove(layouts_path)
+        os.mkdir(layouts_path)
+        has_layouts = False
+    if not has_layouts:
+        logger.info("Layouts were not detected, downloading from Github...")
+        try:
+            url = "https://github.com/TournamentStreamHelper/TournamentStreamHelper-layouts/archive/refs/heads/main.zip"
+            r = requests.get(url, allow_redirects=True)
+            zip_path = './layout/layout.zip.tmp'
+            with open(zip_path, 'wb') as zip_file:
+                zip_file.write(r.content)
+            try:
+                with zipfile.ZipFile(zip_path, 'r') as zip_file:
+                    zip_file.extractall('./layout')
+                list_files = glob(f"./layout/TournamentStreamHelper-layouts-main/*")
+                for file_path in list_files:
+                    new_file_path = file_path.replace("TournamentStreamHelper-layouts-main/", "")
+                    os.rename(file_path, new_file_path)
+                os.rmdir(f"./layout/TournamentStreamHelper-layouts-main")
+                os.remove(zip_path)
+            except Exception as e:
+                logger.error(f"Layouts could not be extracted\nError: {str(e)}")
+        except Exception as e:
+            logger.error(f"Layouts could not be downloaded\nError: {str(e)}")
+
+DownloadLayoutsOnBoot()
 
 def generate_restart_messagebox(main_txt):
     messagebox = QMessageBox()

@@ -43,7 +43,11 @@ class TSHPlayerDB:
                             lines[i] = lines[i].rstrip() + ","
             
             with open('./user_data/local_players.csv', 'w', encoding='utf-8') as outfile:
-                outfile.write("\n".join(lines))
+                out_lines = []
+                for line in lines:
+                    if line.rstrip("\n"):
+                        out_lines.append(line.rstrip("\n"))
+                outfile.write("\n".join(out_lines))
 
             with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile, quotechar='\'')
