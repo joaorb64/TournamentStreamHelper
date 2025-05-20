@@ -168,7 +168,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="2" colspan="2">
+   <item row="5" column="2" colspan="1">
     <widget class="QLineEdit" name="real_name">
      <property name="font">
       <font>

@@ -120,6 +120,7 @@ from .Workers import *
 from .StateManager import StateManager
 from .SettingsManager import SettingsManager
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
