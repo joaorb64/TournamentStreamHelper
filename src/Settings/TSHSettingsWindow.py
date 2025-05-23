@@ -78,6 +78,14 @@ class TSHSettingsWindow(QDialog):
             False
         ))
 
+        generalSettings.append((
+            QApplication.translate(
+                "settings.hide_track_player", "Hide the StartGG player tracking functionality from TSH (takes effect on next restart)"),
+            "hide_track_player",
+            "checkbox",
+            False
+        ))
+
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))
 
@@ -113,6 +121,68 @@ class TSHSettingsWindow(QDialog):
         self.add_setting_widget(QApplication.translate(
             "settings", "Hotkeys"), SettingsWidget("hotkeys", hotkeySettings))
             
+        # Add Display Options settings
+        displaySettings = []
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_name", "Show Real Name"),
+            "show_name",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_social", "Show Social Media"),
+            "show_social",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_location", "Show Location"),
+            "show_location",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_characters", "Show Characters"),
+            "show_characters",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_pronouns", "Show Pronouns"),
+            "show_pronouns",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_controller", "Show Controller"),
+            "show_controller",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_additional", "Show Additional Info"),
+            "show_additional",
+            "checkbox",
+            True
+        ))
+        
+        self.add_setting_widget(QApplication.translate(
+            "settings", "Default Display Options"), SettingsWidget("display_options", displaySettings))
+
         # Add Bluesky settings
         bskySettings = []
         bskySettings.append((

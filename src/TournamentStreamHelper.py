@@ -458,31 +458,55 @@ class Window(QMainWindow):
         hbox.addWidget(self.unsetTournamentBt)
 
         # Follow startgg user
+        if not SettingsManager.Get("general.hide_track_player", False):
+            hbox = QHBoxLayout()
+            group_box.layout().addLayout(hbox)
+
+            self.btLoadPlayerSet = QPushButton(
+                QApplication.translate("app", "Load tournament and sets from StartGG user"))
+            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
+            self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
+            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
+            hbox.addWidget(self.btLoadPlayerSet)
+
+            TSHTournamentDataProvider.instance.signals.user_updated.connect(
+                self.UpdateUserSetButton)
+            TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+                self.UpdateUserSetButton)
+
+            self.btLoadPlayerSetOptions = QPushButton()
+            self.btLoadPlayerSetOptions.setSizePolicy(
+                QSizePolicy.Maximum, QSizePolicy.Maximum)
+            self.btLoadPlayerSetOptions.setIcon(
+                QIcon("./assets/icons/settings.svg"))
+            self.btLoadPlayerSetOptions.clicked.connect(
+                self.LoadUserSetOptionsClicked)
+            hbox.addWidget(self.btLoadPlayerSetOptions)
+
+            self.UpdateUserSetButton()
+        
+        # Completed Sets Feature
         hbox = QHBoxLayout()
         group_box.layout().addLayout(hbox)
-
-        self.btLoadPlayerSet = QPushButton(
-            QApplication.translate("app", "Load tournament and sets from StartGG user"))
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
-        self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-        hbox.addWidget(self.btLoadPlayerSet)
-
-        TSHTournamentDataProvider.instance.signals.user_updated.connect(
-            self.UpdateUserSetButton)
-        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-            self.UpdateUserSetButton)
-
-        self.btLoadPlayerSetOptions = QPushButton()
-        self.btLoadPlayerSetOptions.setSizePolicy(
+        self.btPullCompletedSets = QPushButton(
+            QApplication.translate("app", "Pull Latest Completed Sets from StartGG"))
+        self.btPullCompletedSets.setIcon(QIcon("./assets/icons/startgg.svg"))
+        hbox.addWidget(self.btPullCompletedSets)
+        label_margin = " "*18
+        label = QLabel(
+            label_margin + QApplication.translate("app", "Time until Completed Sets refresh:") + " ")
+        label.setSizePolicy(QSizePolicy.Policy.Fixed,
+                            QSizePolicy.Policy.Minimum)
+        hbox.addWidget(label)
+        self.labelSetsTimer = QLabel(QApplication.translate("app", "Disabled"))
+        self.labelSetsTimer.setSizePolicy(QSizePolicy.Policy.Fixed,
+                            QSizePolicy.Policy.Minimum)
+        hbox.addWidget(self.labelSetsTimer)
+        self.btStopSetsPull = QPushButton()
+        self.btStopSetsPull.setSizePolicy(
             QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btLoadPlayerSetOptions.setIcon(
-            QIcon("./assets/icons/settings.svg"))
-        self.btLoadPlayerSetOptions.clicked.connect(
-            self.LoadUserSetOptionsClicked)
-        hbox.addWidget(self.btLoadPlayerSetOptions)
-
-        self.UpdateUserSetButton()
+        self.btStopSetsPull.setIcon(QIcon("./assets/icons/cancel.svg"))
+        hbox.addWidget(self.btStopSetsPull)
 
         # Settings
         menu_margin = " "*6
@@ -823,6 +847,9 @@ class Window(QMainWindow):
             )
             TSHTournamentDataProvider.instance.LoadUserSet(
                 self.scoreboard.GetScoreboard(1), SettingsManager.Get("StartGG_user"))
+    
+    def LoadCompletedSetsClicked(self):
+        logger.info("PUSHED!")
 
     def LoadUserSetOptionsClicked(self):
         TSHTournamentDataProvider.instance.SetUserAccount(

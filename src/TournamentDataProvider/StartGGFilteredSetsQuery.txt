@@ -1,95 +1,95 @@
 query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}) {
-  event(slug: $eventSlug) {
-    id
-    videogame {
-        id
-        name
-    }
-    sets(page: $page, perPage: 50, sortType: MAGIC, filters: $filters) {
-      pageInfo {
-        page
-        total
-        perPage
-        totalPages
-        sortBy
-      }
-      nodes {
-        id
-        identifier
-        fullRoundText
-        state
-        setLink
-        filledSlots
-        stationNumber
-        paginatedSlots(query: {page: 1, perPage: 16}, includeByes: true) {
-            nodes {
-                id
-                slotIndex
-                entrant {
-                    id
-                    name
-                    networkIdDisplayName
-                    participants {
-                        player {
-                            id
-                            gamerTag
-                            prefix
-                            name
-                            sets(page: 1, perPage: 1, filters: {hideEmpty: true}){
-                                nodes {
-                                    games {
-                                        selections {
-                                            entrant{
-                                                participants {
-                                                    player {
-                                                        id
-                                                    }
-                                                }
-                                            }
-                                            selectionValue
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        user {
-                            id
-                            prefix
-                            name
-                            location {
-                                country
-                                state
-                                city
-                            }
-                            authorizations(types: [TWITTER]) {
-                                externalUsername
-                            }
-                            images(type: \"profile\") {
-                                url
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        phaseGroup {
-            id
-            bracketType
-            displayIdentifier
-            phase {
-                id
-                name
-            }
-        }
-        stream {
-            id
-            streamName
-            streamSource
-            streamUrl(streamUrlType: PAGE)
-            enabled
-            isOnline
-        }
-      }
-    }
-  }
+	event(slug: $eventSlug) {
+		id
+		videogame {
+			id
+			name
+		}
+		sets(page: $page, perPage: 50, sortType: MAGIC, filters: $filters) {
+			pageInfo {
+				page
+				total
+				perPage
+				totalPages
+				sortBy
+			}
+			nodes {
+				id
+				identifier
+				fullRoundText
+				state
+				setLink
+				filledSlots
+				stationNumber
+				paginatedSlots(query: {page: 1, perPage: 16}, includeByes: true) {
+					nodes {
+						id
+						slotIndex
+						entrant {
+							id
+							name
+							networkIdDisplayName
+							participants {
+								player {
+									id
+									gamerTag
+									prefix
+									name
+									sets(page: 1, perPage: 1, filters: {hideEmpty: true}){
+										nodes {
+											games {
+												selections {
+													entrant{
+														participants {
+															player {
+																id
+															}
+														}
+													}
+													selectionValue
+												}
+											}
+										}
+									}
+								}
+								user {
+									id
+									prefix
+									name
+									location {
+										country
+										state
+										city
+									}
+									authorizations(types: [TWITTER]) {
+										externalUsername
+									}
+									images(type: \"profile\") {
+										url
+									}
+								}
+							}
+						}
+					}
+				}
+				phaseGroup {
+					id
+					bracketType
+					displayIdentifier
+					phase {
+							id
+							name
+					}
+				}
+				stream {
+					id
+					streamName
+					streamSource
+					streamUrl(streamUrlType: PAGE)
+					enabled
+					isOnline
+				}
+			}
+		}
+	}
 }

@@ -1,27 +1,27 @@
 query UserSetQuery($userSlug: String!, $filters: SetFilters = {}) {
-    user(slug: $userSlug) {
-        player {
-            id
-            sets(page: 1, perPage: 1, filters: $filters) {
-                nodes {
-                    id
-                    slots {
-                        entrant {
-                            participants {
-                                player {
-                                    id
-                                }
-                            }
-                        }
-                    }
-                    event {
-                        slug
-                        videogame {
-                            id
-                        }
-                    }
-                }
-            }
-        }
-    }
+	user(slug: $userSlug) {
+		player {
+			id
+			sets(page: 1, perPage: 1, filters: $filters) {
+				nodes {
+					id
+					slots {
+						entrant {
+							participants {
+								player {
+									id
+								}
+							}
+						}
+					}
+					event {
+						slug
+						videogame {
+							id
+						}
+					}
+				}
+			}
+		}
+	}
 }
