@@ -1,181 +1,181 @@
 query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilters = {}) {
-  event(slug: $eventSlug) {
-    id
-    sets(page: $page, perPage: 50, sortType: MAGIC, filters: $filters) {
-      pageInfo {
-        page
-        total
-        perPage
-        totalPages
-        sortBy
-      }
-      nodes {
-        id
-        isReportable
-        identifier
-        fullRoundText
-        winnerId
-        startAt
-        createdAt
-        state
-        setLink
-        filledSlots
-        stationNumber
-        vodUrl
-        identifier
-        updatedAtMicro
-        userTasks(ctaMode: PAGE_LINK, allowFallbackTasks: true) {
-            id
-            type
-            title
-            description
-            cta
-            state
-            meta
-            priority
-            timer {
-            endAt
-            title
-            description
-            __typename
-            }
-            __typename
-        }
-        paginatedSlots(query: {page: 1, perPage: 3}, includeByes: true) {
-            pageInfo {
-            total
-            __typename
-            }
-            nodes {
-            id
-            slotIndex
-            seedId
-            prereqType
-            prereqPlacement
-            entrant {
-                id
-                name
-                networkIdDisplayName
-                participants {
-                    player {
-                        id
-                        prefix
-                        name
-                        sets(page: 1, perPage: 3, filters: {hideEmpty: true}){
-                            nodes {
-                                games {
-                                    selections {
-                                        entrant
-                                        selectionValue
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    user {
-                        id
-                        prefix
-                        name
-                        authorizations(types: [TWITTER]) {
-                            externalUsername
-                        }
-                    }
-                }
-                __typename
-            }
-            seed {
-                id
-                isBye
-                __typename
-            }
-            set {
-                id
-                event {
-                id
-                videogame {
-                    id
-                    name
-                    __typename
-                }
-                __typename
-                }
-                __typename
-            }
-            originSet {
-                id
-                identifier
-                __typename
-            }
-            originProgression {
-                id
-                originPlacement
-                originPhase {
-                id
-                name
-                groupCount
-                __typename
-                }
-                originPhaseGroup {
-                id
-                displayIdentifier
-                __typename
-                }
-                __typename
-            }
-            __typename
-            standing {
-                id
-                stats {
-                score {
-                    label
-                    value
-                    displayValue
-                    __typename
-                }
-                __typename
-                }
-                __typename
-            }
-            __typename
-            }
-            __typename
-        }
-        phaseGroup {
-            id
-            bracketType
-            displayIdentifier
-            phase {
-            id
-            name
-            __typename
-            }
-            __typename
-        }
-        stream {
-            id
-            streamName
-            streamSource
-            streamUrl(streamUrlType: PAGE)
-            enabled
-            isOnline
-            __typename
-        }
-        tournament {
-            id
-            timezone
-            __typename
-        }
-        event {
-            id
-            slug
-            isOnline
-            isSingleBracket
-            __typename
-        }
-        __typename
-      }
-      __typename
-    }
-    __typename
-  }
+	event(slug: $eventSlug) {
+		id
+		sets(page: $page, perPage: 50, sortType: MAGIC, filters: $filters) {
+			pageInfo {
+				page
+				total
+				perPage
+				totalPages
+				sortBy
+			}
+			nodes {
+				id
+				isReportable
+				identifier
+				fullRoundText
+				winnerId
+				startAt
+				createdAt
+				state
+				setLink
+				filledSlots
+				stationNumber
+				vodUrl
+				identifier
+				updatedAtMicro
+				userTasks(ctaMode: PAGE_LINK, allowFallbackTasks: true) {
+					id
+					type
+					title
+					description
+					cta
+					state
+					meta
+					priority
+					timer {
+						endAt
+						title
+						description
+						__typename
+					}
+					__typename
+				}
+				paginatedSlots(query: {page: 1, perPage: 3}, includeByes: true) {
+						pageInfo {
+							total
+							__typename
+						}
+						nodes {
+							id
+							slotIndex
+							seedId
+							prereqType
+							prereqPlacement
+							seed {
+								id
+								isBye
+								__typename
+							}
+							entrant {
+								id
+								name
+								networkIdDisplayName
+								participants {
+									player {
+										id
+										prefix
+										name
+										sets(page: 1, perPage: 3, filters: {hideEmpty: true}){
+											nodes {
+												games {
+													selections {
+														entrant
+														selectionValue
+													}
+												}
+											}
+										}
+									}
+									user {
+										id
+										prefix
+										name
+										authorizations(types: [TWITTER]) {
+											externalUsername
+										}
+									}
+								}
+								__typename
+							}
+							set {
+								id
+								event {
+									id
+									videogame {
+										id
+										name
+										__typename
+									}
+									__typename
+								}
+								__typename
+							}
+							originSet {
+								id
+								identifier
+								__typename
+							}
+							originProgression {
+								id
+								originPlacement
+								originPhase {
+									id
+									name
+									groupCount
+									__typename
+								}
+								originPhaseGroup {
+									id
+									displayIdentifier
+									__typename
+								}
+								__typename
+							}
+							__typename
+							standing {
+								id
+								stats {
+									score {
+										label
+										value
+										displayValue
+										__typename
+									}
+									__typename
+								}
+								__typename
+							}
+							__typename
+						}
+						__typename
+				}
+				phaseGroup {
+					id
+					bracketType
+					displayIdentifier
+					phase {
+						id
+						name
+						__typename
+					}
+					__typename
+				}
+				stream {
+					id
+					streamName
+					streamSource
+					streamUrl(streamUrlType: PAGE)
+					enabled
+					isOnline
+					__typename
+				}
+				tournament {
+					id
+					timezone
+					__typename
+				}
+				event {
+					id
+					slug
+					isOnline
+					isSingleBracket
+					__typename
+				}
+				__typename
+			}
+			__typename
+		}
+		__typename
+	}
 }

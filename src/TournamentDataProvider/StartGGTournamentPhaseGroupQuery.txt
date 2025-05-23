@@ -1,76 +1,76 @@
 query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
-  phaseGroup(id: $id) {
-    seedMap
-    seeds(query: {page: 1, perPage: 500}) {
-      nodes {
-        seedNum
-        progressionSource {
-          originPhaseGroup {
-            id
-          }
-        }
-        entrant {
-          id
-          name
-          participants {
-            player {
-              id
-              gamerTag
-              prefix
-              name
-              sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
-                nodes {
-                  games {
-                    selections {
-                      entrant {
-                        participants {
-                          player {
-                            id
-                          }
-                        }
-                      }
-                      selectionValue
-                    }
-                  }
-                }
-              }
-            }
-            user {
-              id
-              prefix
-              name
-              genderPronoun
-              location {
-                country
-                state
-                city
-              }
-              authorizations(types: [TWITTER]) {
-                externalUsername
-              }
-              images(type: "profile") {
-                url
-              }
-            }
-          }
-        }
-      }
-    }
-    sets(page: 1, perPage: 9999, filters: {showByes: true, hideEmpty: false}, sortType: CALL_ORDER){
-      nodes {
-        id
-        round
-        identifier
-        entrant1Score
-        entrant2Score
-        state
-        slots {
-          prereqType
-        }
-      }
-    }
-    progressionsOut {
-      id
-    }
-  }
+	phaseGroup(id: $id) {
+		seedMap
+		seeds(query: {page: 1, perPage: 500}) {
+			nodes {
+				seedNum
+				progressionSource {
+					originPhaseGroup {
+						id
+					}
+				}
+				entrant {
+					id
+					name
+					participants {
+						player {
+							id
+							gamerTag
+							prefix
+							name
+							sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
+								nodes {
+									games {
+										selections {
+											entrant {
+												participants {
+													player {
+														id
+													}
+												}
+											}
+											selectionValue
+										}
+									}
+								}
+							}
+						}
+						user {
+							id
+							prefix
+							name
+							genderPronoun
+							location {
+								country
+								state
+								city
+							}
+							authorizations(types: [TWITTER]) {
+								externalUsername
+							}
+							images(type: "profile") {
+								url
+							}
+						}
+					}
+				}
+			}
+		}
+		sets(page: 1, perPage: 9999, filters: {showByes: true, hideEmpty: false}, sortType: CALL_ORDER){
+			nodes {
+				id
+				round
+				identifier
+				entrant1Score
+				entrant2Score
+				state
+				slots {
+					prereqType
+				}
+			}
+		}
+		progressionsOut {
+			id
+		}
+	}
 }

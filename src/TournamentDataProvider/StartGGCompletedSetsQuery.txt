@@ -1,14 +1,12 @@
-query PlayerLastSetsQuery($eventSlug: String!, $playerID: ID!) {
+query CompletedSetsQuery($eventSlug: String!) {
 	event(slug: $eventSlug) {
-		sets(page: 1, perPage: 10, sortType: RECENT, filters: {playerIds: [$playerID]}) {
+		sets(page: 1, perPage: 10, sortType: RECENT, filters: {state: 3}) {
 			nodes {
 				id
 				slots {
-					seed {
-						seedNum
-					}
 					entrant {
 						id
+						name
 						initialSeedNum
 						participants {
 							id

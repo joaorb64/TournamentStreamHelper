@@ -76,20 +76,20 @@ class TSHControllerHelper(QObject):
             if os.path.exists(f"{controller_directory}/config.json"):
                 split = controller_directory.split("/")
                 controller_id = f"{split[-4]}/{split[-3]}/{split[-2]}"
-                print(f"Loading: {controller_id}")
+                # print(f"Loading: {controller_id}")
                 with open(f"{controller_directory}/config.json", "rt", encoding="utf-8") as config_file:
                     config_json = json.loads(config_file.read())
-                    if os.path.exists(f"{"/".join(split[:-2])}/config.json"):
-                        with open(f"{"/".join(split[:-2])}/config.json", "rt", encoding="utf-8") as manufacturer_file:
+                    if os.path.exists(f'{"/".join(split[:-2])}/config.json'):
+                        with open(f'{"/".join(split[:-2])}/config.json', "rt", encoding="utf-8") as manufacturer_file:
                             manufacturer = json.loads(manufacturer_file.read()).get("name")
-                            print(f"Manufacturer: {manufacturer}")
+                            # print(f"Manufacturer: {manufacturer}")
                     else:
                         manufacturer = None
 
-                    if os.path.exists(f"{"/".join(split[:-3])}/config.json"):
-                        with open(f"{"/".join(split[:-3])}/config.json", "rt", encoding="utf-8") as controller_type_file:
+                    if os.path.exists(f'{"/".join(split[:-3])}/config.json'):
+                        with open(f'{"/".join(split[:-3])}/config.json', "rt", encoding="utf-8") as controller_type_file:
                             controller_type = json.loads(controller_type_file.read()).get("name")
-                            print(f"Type: {controller_type}")
+                            # print(f"Type: {controller_type}")
                     else:
                         controller_type = None
 

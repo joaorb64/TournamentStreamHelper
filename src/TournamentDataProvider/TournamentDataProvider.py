@@ -54,6 +54,9 @@ class TournamentDataProvider:
     def GetLastSets(self, playerId, playerNumber):
         pass
 
+    def GetCompletedSets(self, progress_callback=None, cancel_event=None):
+        pass
+
     def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
         pass
 

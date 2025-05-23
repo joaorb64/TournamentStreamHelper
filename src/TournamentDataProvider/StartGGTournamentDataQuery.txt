@@ -1,21 +1,21 @@
 query TournamentDataQuery($eventSlug: String!) {
-  event(slug: $eventSlug) {
-    id
-    videogame {
-      id
-      name
-    }
-    isOnline
-    name
-    numEntrants
-    startAt
-    endAt
-    tournament {
-        name
-        shortSlug
-        venueAddress
-        startAt
-        endAt
-    }
-  }
+	event(slug: $eventSlug) {
+		id
+		videogame {
+			id
+			name
+		}
+		isOnline
+		name
+		numEntrants
+		startAt
+		endAt
+		tournament {
+			name
+			shortSlug
+			venueAddress
+			startAt
+			endAt
+		}
+	}
 }

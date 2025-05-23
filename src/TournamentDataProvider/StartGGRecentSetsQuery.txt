@@ -1,40 +1,40 @@
 query RecentSetsQuery($pid1: ID!, $pid2: ID!, $uid1: ID!, $uid2: ID! $page: Int!, $videogameId: ID!) {
-    user(id: $uid1) {
-        events(query: {page: $page, perPage: 10, filter: {videogameId: [$videogameId]}}) {
-            nodes {
-                isOnline
-                name
-                tournament {
-                    name
-                }
-                startAt
-                sets(page: 1, perPage: 100, filters: {playerIds: [$pid1, $uid1, $pid2, $uid2], hideEmpty: true, showByes: false}, sortType: RECENT) {
-                    nodes {
-                        id
-                        slots {
-                            entrant {
-                                id
-                                participants {
-                                    id
-                                    player {
-                                        id
-                                    }
-                                }
-                            }
-                        }
-                        entrant1Score
-                        entrant2Score
-                        winnerId
-                        fullRoundText
-                        phaseGroup {
-                            displayIdentifier
-                            phase {
-                                name
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+	user(id: $uid1) {
+		events(query: {page: $page, perPage: 10, filter: {videogameId: [$videogameId]}}) {
+			nodes {
+				isOnline
+				name
+				tournament {
+					name
+				}
+				startAt
+				sets(page: 1, perPage: 100, filters: {playerIds: [$pid1, $uid1, $pid2, $uid2], hideEmpty: true, showByes: false}, sortType: RECENT) {
+					nodes {
+						id
+						slots {
+							entrant {
+								id
+								participants {
+									id
+									player {
+										id
+									}
+								}
+							}
+						}
+						entrant1Score
+						entrant2Score
+						winnerId
+						fullRoundText
+						phaseGroup {
+							displayIdentifier
+							phase {
+								name
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

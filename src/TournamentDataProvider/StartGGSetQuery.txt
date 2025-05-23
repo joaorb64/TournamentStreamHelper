@@ -1,96 +1,96 @@
 query SetQuery($id: ID!) {
-    set(id: $id) {
-        id
-        event {
-            hasTasks
-            videogame {
-                id
-            }
-            isOnline
-        }
-        fullRoundText
-        round
-        state
-        totalGames
-        entrant1Score
-        entrant2Score
-        slots {
-            entrant {
-                id
-                name
-                initialSeedNum
-                participants {
-                    id
-                    user {
-                        id
-                        slug
-                        name
-                        genderPronoun
-                        authorizations(types: [TWITTER]) {
-                            type
-                            externalUsername
-                        }
-                        location {
-                            city
-                            country
-                            state
-                        }
-                        images(type: "profile") {
-                            url
-                        }
-                    }
-                    player {
-                        id
-                        gamerTag
-                        prefix
-                        sets(page: 1, perPage: 1) {
-                            nodes {
-                                games {
-                                    selections {
-                                        entrant {
-                                            participants {
-                                                player {
-                                                    id
-                                                }
-                                            }
-                                        }
-                                        selectionValue
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        games {
-            selections {
-                entrant {
-                    id
-                    participants {
-                        player {
-                            id
-                        }
-                    }
-                }
-                selectionValue
-            }
-            winnerId
-        }
-        phaseGroup {
-            phase {
-                name
-                groupCount
-                bracketType
-                progressionsOut {
-                    id
-                }
-            }
-            displayIdentifier
-        }
-        stream {
-            streamName
-            streamSource
-        }
-    }
+	set(id: $id) {
+		id
+		event {
+			hasTasks
+			videogame {
+				id
+			}
+			isOnline
+		}
+		fullRoundText
+		round
+		state
+		totalGames
+		entrant1Score
+		entrant2Score
+		slots {
+			entrant {
+				id
+				name
+				initialSeedNum
+				participants {
+					id
+					user {
+						id
+						slug
+						name
+						genderPronoun
+						authorizations(types: [TWITTER]) {
+							type
+							externalUsername
+						}
+						location {
+							city
+							country
+							state
+						}
+						images(type: "profile") {
+							url
+						}
+					}
+					player {
+						id
+						gamerTag
+						prefix
+						sets(page: 1, perPage: 1) {
+							nodes {
+								games {
+									selections {
+										entrant {
+											participants {
+												player {
+													id
+												}
+											}
+										}
+										selectionValue
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		games {
+			selections {
+				entrant {
+					id
+					participants {
+						player {
+							id
+						}
+					}
+				}
+				selectionValue
+			}
+			winnerId
+		}
+		phaseGroup {
+			phase {
+				name
+				groupCount
+				bracketType
+				progressionsOut {
+					id
+				}
+			}
+			displayIdentifier
+		}
+		stream {
+			streamName
+			streamSource
+		}
+	}
 }

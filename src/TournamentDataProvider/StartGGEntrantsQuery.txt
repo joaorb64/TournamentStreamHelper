@@ -1,64 +1,64 @@
 query EventEntrantsListQuery($eventSlug: String!, $videogameId: Int, $page: Int!) {
-  event(slug: $eventSlug) {
-    id
-    videogame {
-      id
-      name
-    }
-    entrants(query: {page: $page, perPage: 64}) {
-      pageInfo {
-        page
-        total
-        perPage
-        totalPages
-        sortBy
-      }
-      nodes {
-        id
-        name
-        initialSeedNum
-        participants {
-          player {
-            id
-            gamerTag
-            prefix
-            name
-            sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
-              nodes {
-                games {
-                  selections {
-                    entrant {
-                      participants {
-                        player {
-                          id
-                        }
-                      }
-                    }
-                    selectionValue
-                  }
-                }
-              }
-            }
-          }
-          user {
-            id
-            prefix
-            name
-            genderPronoun
-            location {
-              country
-              state
-              city
-            }
-            authorizations(types: [TWITTER]) {
-              externalUsername
-            }
-            images(type: "profile") {
-              url
-            }
-          }
-        }
-      }
-    }
-  }
+	event(slug: $eventSlug) {
+		id
+		videogame {
+			id
+			name
+		}
+		entrants(query: {page: $page, perPage: 64}) {
+			pageInfo {
+				page
+				total
+				perPage
+				totalPages
+				sortBy
+			}
+			nodes {
+				id
+				name
+				initialSeedNum
+				participants {
+					player {
+						id
+						gamerTag
+						prefix
+						name
+						sets(page: 1, perPage: 1, filters: { hideEmpty: true, videogameId: $videogameId, videogameIds: [$videogameId] }) {
+							nodes {
+								games {
+									selections {
+										entrant {
+											participants {
+												player {
+													id
+												}
+											}
+										}
+										selectionValue
+									}
+								}
+							}
+						}
+					}
+					user {
+						id
+						prefix
+						name
+						genderPronoun
+						location {
+							country
+							state
+							city
+						}
+						authorizations(types: [TWITTER]) {
+							externalUsername
+						}
+						images(type: "profile") {
+							url
+						}
+					}
+				}
+			}
+		}
+	}
 }
