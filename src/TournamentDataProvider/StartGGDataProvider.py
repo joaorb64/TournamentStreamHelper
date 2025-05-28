@@ -22,23 +22,24 @@ import sys
 
 
 class StartGGDataProvider(TournamentDataProvider):
-    SetsQuery = None
-    SetQuery = None
-    UserSetQuery = None
-    StreamSetsQuery = None
+    CompletedSetsQuery = None
     EntrantsQuery = None
-    TournamentDataQuery = None
-    RecentSetsQuery = None
-    LastSetsQuery = None
-    HistorySetsQuery = None
-    TournamentStandingsQuery = None
-    TournamentPhasesQuery = None
-    TournamentPhaseGroupQuery = None
-    StreamQueueQuery = None
-    StationsQuery = None
-    StationSetsQuery = None
     # request for a single set with only info relevant for a set that is yet to be played
     FutureSetQuery = None
+    HistorySetsQuery = None
+    LastSetsQuery = None
+    RecentSetsQuery = None
+    SetQuery = None
+    SetsQuery = None
+    StationsQuery = None
+    StationSetsQuery = None
+    StreamSetsQuery = None
+    StreamQueueQuery = None
+    TournamentDataQuery = None
+    TournamentPhasesQuery = None
+    TournamentPhaseGroupQuery = None
+    TournamentStandingsQuery = None
+    UserSetQuery = None
 
     player_seeds = {}
 
@@ -1384,6 +1385,110 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             callback.emit({"playerNumber": playerNumber, "last_sets": []})
 
+    def GetCompletedSets(self, progress_callback, cancel_event):
+        try:
+            data = self.QueryRequests(
+                "https://www.start.gg/api/-/gql",
+                type=requests.post,
+                jsonParams={
+                    "operationName": "CompletedSetsQuery",
+                    "variables": {
+                        "eventSlug": self.url.split("start.gg/")[1]
+                    },
+                    "query": StartGGDataProvider.CompletedSetsQuery
+                }
+            )
+
+            sets = deep_get(
+                data, "data.event.sets.nodes", [])
+
+            set_data = []
+
+            for set in sets:
+                if not set:
+                    continue
+                if not set.get("winnerId"):
+                    continue
+                if len(set.get("slots", [])) < 2:
+                    continue
+
+                phaseName = ""
+                phaseIdentifier = ""
+
+                # This is because a display identifier at a major (Ex. Pools C12) will return C12,
+                # otherwise startgg will just return a string containing "1"
+                if deep_get(set, "phaseGroup.displayIdentifier") != "1":
+                    phaseIdentifier = deep_get(
+                        set, "phaseGroup.displayIdentifier")
+                phaseName = deep_get(set, "phaseGroup.phase.name")
+
+                slots = deep_get(set, "slots", [])
+                p1 = slots[0] if len(slots) > 0 else {}
+                p2 = slots[1] if len(slots) > 1 else {}
+
+                # Pulls "Team" names, only useful if more than 1 player on a team
+                # Else it'll display as "ABC | TestPlayer"
+                t1Name = deep_get(p1, "entrant.name", "")
+                t2Name = deep_get(p2, "entrant.name", "")
+
+                # Seed Info for Team/Player
+                team1Seed = deep_get(p1, "entrant.initialSeedNum", 0)
+                team2Seed = deep_get(p2, "entrant.initialSeedNum", 0)
+
+                winnerId = deep_get(p1, "entrant.id", 0)
+                
+                team1Info = set.get("slots", [{}])[0].get("entrant", {}).get(
+                    "participants", [{}])
+                team2Info = set.get("slots", [{}])[1].get("entrant", {}).get(
+                    "participants", [{}])
+                
+                # Pull Team Info and Store it
+                team1 = []
+                for players in team1Info:
+                    player = players.get("player")
+                    playerInfo = {
+                        "sponsor": player.get("prefix", ""),
+                        "gamertag": player.get("gamerTag")
+                    }
+                    team1.append(playerInfo)
+                
+                team2 = []
+                for players in team2Info:
+                    player = players.get("player")
+                    playerInfo = {
+                        "sponsor": player.get("prefix", ""),
+                        "gamertag": player.get("gamerTag")
+                    }
+                    team2.append(playerInfo)
+
+                # Setting Correct Winner Info
+                players = ["winner", "loser"]
+
+                if winnerId != set.get("winnerId"):
+                    players.reverse()
+
+                # Compiling Set Data for display
+                set = {
+                    "phase_id": phaseIdentifier,
+                    "phase_name": phaseName,
+                    "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
+                    f"{players[0]}_score": set.get("entrant1Score") if set.get("entrant1Score") is not None else "0",
+                    f"{players[0]}_seed": team1Seed,
+                    f"{players[0]}_team": {index+1: player for index, player in enumerate(team1)},
+                    f"{players[0]}_team_name": t1Name,
+                    f"{players[1]}_score": set.get("entrant2Score") if set.get("entrant2Score") is not None else "0",
+                    f"{players[1]}_seed": team2Seed,
+                    f"{players[1]}_team": {index+1: player for index, player in enumerate(team2)},
+                    f"{players[1]}_team_name": t2Name,
+                }
+
+                set_data.append(set)
+
+            return set_data
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return []
+
     def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback, cancel_event):
         try:
             data = self.QueryRequests(
@@ -1838,19 +1943,20 @@ def readQueryFile(tdpdir, filename):
     with open(f"{tdpdir}/StartGG{filename}Query.txt", "r") as f:
         return f.read()
 
-StartGGDataProvider.SetsQuery = readQueryFile(sggTdpDir, "Sets")
-StartGGDataProvider.SetQuery = readQueryFile(sggTdpDir, "Set")
-StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
-StartGGDataProvider.StreamSetsQuery = readQueryFile(sggTdpDir, "StreamSets")
+StartGGDataProvider.CompletedSetsQuery = readQueryFile(sggTdpDir, "CompletedSets")
 StartGGDataProvider.EntrantsQuery = readQueryFile(sggTdpDir, "Entrants")
 StartGGDataProvider.FutureSetQuery = readQueryFile(sggTdpDir, "FutureSet")
-StartGGDataProvider.TournamentDataQuery = readQueryFile(sggTdpDir, "TournamentData")
-StartGGDataProvider.RecentSetsQuery = readQueryFile(sggTdpDir, "RecentSets")
-StartGGDataProvider.LastSetsQuery = readQueryFile(sggTdpDir, "PlayerLastSets")
 StartGGDataProvider.HistorySetsQuery = readQueryFile(sggTdpDir, "PlayerTournamentHistory")
-StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
-StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "TournamentPhases")
-StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
+StartGGDataProvider.LastSetsQuery = readQueryFile(sggTdpDir, "PlayerLastSets")
+StartGGDataProvider.RecentSetsQuery = readQueryFile(sggTdpDir, "RecentSets")
+StartGGDataProvider.SetQuery = readQueryFile(sggTdpDir, "Set")
+StartGGDataProvider.SetsQuery = readQueryFile(sggTdpDir, "Sets")
 StartGGDataProvider.StationsQuery = readQueryFile(sggTdpDir, "Stations")
 StartGGDataProvider.StationSetsQuery = readQueryFile(sggTdpDir, "StationSets")
 StartGGDataProvider.StreamQueueQuery = readQueryFile(sggTdpDir, "StreamQueue")
+StartGGDataProvider.StreamSetsQuery = readQueryFile(sggTdpDir, "StreamSets")
+StartGGDataProvider.TournamentDataQuery = readQueryFile(sggTdpDir, "TournamentData")
+StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "TournamentPhases")
+StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
+StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
+StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
