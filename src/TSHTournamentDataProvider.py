@@ -22,6 +22,7 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = Signal()
     entrants_updated = Signal()
     tournament_data_updated = Signal(dict)
+    completed_sets_updated = Signal(list)
     twitch_username_updated = Signal()
     user_updated = Signal()
     get_sets_finished = Signal(list)
@@ -375,6 +376,14 @@ class TSHTournamentDataProvider:
             "gameType": gameType,
             "callback": callback
         })
+        self.threadPool.start(worker)
+
+    def GetCompletedSets(self):
+        worker = Worker(self.provider.GetCompletedSets)
+        worker.signals.result.connect(lambda completedSets: [
+            TSHTournamentDataProvider.instance.signals.completed_sets_updated.emit(
+                completedSets)
+        ])
         self.threadPool.start(worker)
 
     def GetStreamQueue(self):

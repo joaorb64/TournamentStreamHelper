@@ -1385,17 +1385,17 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             callback.emit({"playerNumber": playerNumber, "last_sets": []})
 
-    def GetCompletedSets(self, callback, progress_callback, cancel_event):
+    def GetCompletedSets(self, progress_callback, cancel_event):
         try:
             data = self.QueryRequests(
                 "https://www.start.gg/api/-/gql",
                 type=requests.post,
                 jsonParams={
-                    "operationName": "PlayerLastSetsQuery",
+                    "operationName": "CompletedSetsQuery",
                     "variables": {
                         "eventSlug": self.url.split("start.gg/")[1]
                     },
-                    "query": StartGGDataProvider.LastSetsQuery
+                    "query": StartGGDataProvider.CompletedSetsQuery
                 }
             )
 
@@ -1426,47 +1426,68 @@ class StartGGDataProvider(TournamentDataProvider):
                 p1 = slots[0] if len(slots) > 0 else {}
                 p2 = slots[1] if len(slots) > 1 else {}
 
-                player1Info = set.get("slots", [{}])[0].get("entrant", {}).get(
-                    "participants", [{}])[0].get("player", {})
+                # Pulls "Team" names, only useful if more than 1 player on a team
+                # Else it'll display as "ABC | TestPlayer"
+                t1Name = deep_get(p1, "entrant.name", "")
+                t2Name = deep_get(p2, "entrant.name", "")
+
+                # Seed Info for Team/Player
+                team1Seed = deep_get(p1, "entrant.initialSeedNum", 0)
+                team2Seed = deep_get(p2, "entrant.initialSeedNum", 0)
+
+                winnerId = deep_get(p1, "entrant.id", 0)
+                
                 team1Info = set.get("slots", [{}])[0].get("entrant", {}).get(
                     "participants", [{}])
+                team2Info = set.get("slots", [{}])[1].get("entrant", {}).get(
+                    "participants", [{}])
                 
+                # Pull Team Info and Store it
+                team1 = []
                 for players in team1Info:
                     player = players.get("player")
-                    logger.info(f"Player: {player}")
-                team1Seed = set.get("slots", [{}])[0].get("initialSeedNum", 0)
+                    playerInfo = {
+                        "sponsor": player.get("prefix", ""),
+                        "gamertag": player.get("gamerTag")
+                    }
+                    team1.append(playerInfo)
+                
+                team2 = []
+                for players in team2Info:
+                    player = players.get("player")
+                    playerInfo = {
+                        "sponsor": player.get("prefix", ""),
+                        "gamertag": player.get("gamerTag")
+                    }
+                    team2.append(playerInfo)
 
-                player2Info = set.get("slots", [{}, {}])[1].get("entrant", {}).get(
-                    "participants", [{}])[0].get("player", {})
-                team2Seed = set.get(
-                    "slots", [{}])[1].get("initialSeedNum", 0)
-
+                # Setting Correct Winner Info
                 players = ["winner", "loser"]
 
-                if player1Info.get("id") != set.get("winnerId"):
+                if winnerId != set.get("winnerId"):
                     players.reverse()
 
+                # Compiling Set Data for display
                 set = {
                     "phase_id": phaseIdentifier,
                     "phase_name": phaseName,
                     "round_name": StartGGDataProvider.TranslateRoundName(set.get("fullRoundText")),
                     f"{players[0]}_score": set.get("entrant1Score") if set.get("entrant1Score") is not None else "0",
                     f"{players[0]}_seed": team1Seed,
-                    f"{players[0]}_team": player1Info.get("prefix"),
-                    f"{players[0]}_name": player1Info.get("gamerTag"),
+                    f"{players[0]}_team": {index+1: player for index, player in enumerate(team1)},
+                    f"{players[0]}_team_name": t1Name,
                     f"{players[1]}_score": set.get("entrant2Score") if set.get("entrant2Score") is not None else "0",
                     f"{players[1]}_seed": team2Seed,
-                    f"{players[1]}_team": player2Info.get("prefix"),
-                    f"{players[1]}_name": player2Info.get("gamerTag")
+                    f"{players[1]}_team": {index+1: player for index, player in enumerate(team2)},
+                    f"{players[1]}_team_name": t2Name,
                 }
 
                 set_data.append(set)
 
-            callback.emit(
-                {"completed_sets": set_data})
+            return set_data
         except Exception as e:
             logger.error(traceback.format_exc())
-            callback.emit({"completed_sets": []})
+            return []
 
     def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback, cancel_event):
         try:

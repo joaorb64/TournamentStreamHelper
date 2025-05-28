@@ -491,22 +491,31 @@ class Window(QMainWindow):
         self.btPullCompletedSets = QPushButton(
             QApplication.translate("app", "Pull Latest Completed Sets from StartGG"))
         self.btPullCompletedSets.setIcon(QIcon("./assets/icons/startgg.svg"))
+        self.btPullCompletedSets.clicked.connect(TSHTournamentDataProvider.instance.GetCompletedSets)
         hbox.addWidget(self.btPullCompletedSets)
-        label_margin = " "*18
-        label = QLabel(
-            label_margin + QApplication.translate("app", "Time until Completed Sets refresh:") + " ")
-        label.setSizePolicy(QSizePolicy.Policy.Fixed,
-                            QSizePolicy.Policy.Minimum)
-        hbox.addWidget(label)
-        self.labelSetsTimer = QLabel(QApplication.translate("app", "Disabled"))
-        self.labelSetsTimer.setSizePolicy(QSizePolicy.Policy.Fixed,
-                            QSizePolicy.Policy.Minimum)
-        hbox.addWidget(self.labelSetsTimer)
-        self.btStopSetsPull = QPushButton()
-        self.btStopSetsPull.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Maximum)
-        self.btStopSetsPull.setIcon(QIcon("./assets/icons/cancel.svg"))
-        hbox.addWidget(self.btStopSetsPull)
+        # label_margin = " "*18
+        # label = QLabel(
+        #     label_margin + QApplication.translate("app", "Time until Completed Sets refresh:") + " ")
+        # label.setSizePolicy(QSizePolicy.Policy.Fixed,
+        #                     QSizePolicy.Policy.Minimum)
+        # hbox.addWidget(label)
+        # self.labelSetsTimer = QLabel(QApplication.translate("app", "Disabled"))
+        # self.labelSetsTimer.setSizePolicy(QSizePolicy.Policy.Fixed,
+        #                     QSizePolicy.Policy.Minimum)
+        # hbox.addWidget(self.labelSetsTimer)
+        # self.btStopSetsPull = QPushButton()
+        # self.btStopSetsPull.setSizePolicy(
+        #     QSizePolicy.Maximum, QSizePolicy.Maximum)
+        # self.btStopSetsPull.setIcon(QIcon("./assets/icons/cancel.svg"))
+        # hbox.addWidget(self.btStopSetsPull)
+
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateLastSetsButton)
+        TSHTournamentDataProvider.instance.signals.completed_sets_updated.connect(
+            self.LoadCompletedSetsClicked
+        )
+
+        self.UpdateLastSetsButton()
 
         # Settings
         menu_margin = " "*6
@@ -815,6 +824,7 @@ class Window(QMainWindow):
 
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
+        StateManager.Unset("completed_sets")
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
@@ -836,6 +846,12 @@ class Window(QMainWindow):
             self.btLoadPlayerSet.setText(
                 QApplication.translate("app", "Load tournament and sets from StartGG user"))
             self.btLoadPlayerSet.setEnabled(False)
+    
+    def UpdateLastSetsButton(self):
+        if TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+            self.btPullCompletedSets.setEnabled(True)
+        else:
+            self.btPullCompletedSets.setEnabled(False)
 
     def LoadUserSetClicked(self):
         self.scoreboard.lastSetSelected = None
@@ -848,8 +864,8 @@ class Window(QMainWindow):
             TSHTournamentDataProvider.instance.LoadUserSet(
                 self.scoreboard.GetScoreboard(1), SettingsManager.Get("StartGG_user"))
     
-    def LoadCompletedSetsClicked(self):
-        logger.info("PUSHED!")
+    def LoadCompletedSetsClicked(self, data):
+        StateManager.Set("completed_sets", {index+1: set for index, set in enumerate(data)})
 
     def LoadUserSetOptionsClicked(self):
         TSHTournamentDataProvider.instance.SetUserAccount(

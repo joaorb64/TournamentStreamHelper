@@ -601,7 +601,7 @@ class TSHScoreboardWidget(QWidget):
             self.btSelectSet.setText(
                 QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
             self.btSelectSet.setEnabled(True)
-            if self.scoreboardNumber <= 1:
+            if self.scoreboardNumber <= 1 and not SettingsManager.Get("general.hide_track_player", False):
                 self.btLoadPlayerSet.setEnabled(True)
         else:
             self.btSelectSet.setText(
