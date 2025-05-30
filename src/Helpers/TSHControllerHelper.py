@@ -72,6 +72,10 @@ class TSHControllerHelper(QObject):
     def BuildControllerTree(self):
         controller_list = {}
         list_controller_directories = glob.glob("./assets/controller/ControllerDatabase-main/*/*/*/")
+        if os.name == "nt":
+            for i in range(len(list_controller_directories)):
+                list_controller_directories[i] = list_controller_directories[i].replace("\\\\", "/")
+                list_controller_directories[i] = list_controller_directories[i].replace("\\", "/")
         for controller_directory in list_controller_directories:
             if os.path.exists(f"{controller_directory}/config.json"):
                 split = controller_directory.split("/")
