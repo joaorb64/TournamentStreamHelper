@@ -669,6 +669,7 @@ class TSHGameAssetManager(QObject):
 
                 
                 data["icon_path"] = self.GetVariantIconPath(data["codename"])
+                data["image_size"] = self.GetVariantIconSize(data["codename"])
                 if data["icon_path"]:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage(data["icon_path"])))
                     )
@@ -698,6 +699,18 @@ class TSHGameAssetManager(QObject):
             if os.path.isfile(icon_filename):
                 icon_path = icon_filename
         return(icon_path)
+    
+    def GetVariantIconSize(self, variant_codename):
+        game_codename = self.selectedGame.get("codename")
+        icon_size, asset_root_path = None, "./user_data/games"
+        icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
+        if os.path.isfile(icon_config_path):
+            with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
+                icon_config = json.loads(icon_config_file.read())
+            icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.png"
+            if os.path.isfile(icon_filename):
+                icon_size = icon_config.get("image_sizes", {}).get(variant_codename, {}).get("null")
+        return(icon_size)
 
     def UpdateSkinModel(self):
         self.skinModels = {}
@@ -1009,6 +1022,19 @@ class TSHGameAssetManager(QObject):
                             else:
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
+                    
+                    if asset.get("image_sizes"):
+                        image_sizes = asset.get("image_sizes", {}).get(
+                            characterCodename, {})
+
+                        if len(image_sizes.keys()) > 0:
+                            if str(skin) in image_sizes:
+                                if assetKey in charFiles:
+                                    charFiles[assetKey]["image_size"] = image_sizes.get(
+                                        str(skin))
+                            else:
+                                charFiles[assetKey]["image_size"] = list(
+                                    image_sizes.values())[0]
 
                     if asset.get("rescaling_factor"):
                         rescaling_factor = asset.get("rescaling_factor", {}).get(
