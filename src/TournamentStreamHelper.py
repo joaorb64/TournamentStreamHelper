@@ -156,7 +156,10 @@ def DownloadLayoutsOnBoot():
                     zip_file.extractall('./layout')
                 list_files = glob(f"./layout/TournamentStreamHelper-layouts-main/*")
                 for file_path in list_files:
-                    new_file_path = file_path.replace("TournamentStreamHelper-layouts-main/", "")
+                    if os.name == 'nt':
+                        new_file_path = file_path.replace("TournamentStreamHelper-layouts-main\\", "")
+                    else:
+                        new_file_path = file_path.replace("TournamentStreamHelper-layouts-main/", "")
                     os.rename(file_path, new_file_path)
                 os.rmdir(f"./layout/TournamentStreamHelper-layouts-main")
                 os.remove(zip_path)
