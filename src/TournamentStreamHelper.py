@@ -168,8 +168,6 @@ def DownloadLayoutsOnBoot():
         except Exception as e:
             logger.error(f"Layouts could not be downloaded\nError: {str(e)}")
 
-DownloadLayoutsOnBoot()
-
 def generate_restart_messagebox(main_txt):
     messagebox = QMessageBox()
     messagebox.setWindowTitle(QApplication.translate("app", "Warning"))
@@ -828,6 +826,8 @@ class Window(QMainWindow):
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
         StateManager.Unset("completed_sets")
+
+        DownloadLayoutsOnBoot()
 
     def SetGame(self):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

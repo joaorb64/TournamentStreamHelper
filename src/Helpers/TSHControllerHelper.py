@@ -1,5 +1,3 @@
-import re
-import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -8,9 +6,6 @@ import os
 import shutil
 import traceback
 import zipfile
-from .TSHDictHelper import deep_get
-from ..TournamentDataProvider import TournamentDataProvider
-from .TSHLocaleHelper import TSHLocaleHelper
 import json
 from loguru import logger
 import glob
