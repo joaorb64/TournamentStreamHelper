@@ -615,8 +615,8 @@ class StartGGDataProvider(TournamentDataProvider):
 
             setData = {
                 "id": _set.get("id"),
-                "team1score": _set.get("entrant1Score"),
-                "team2score": _set.get("entrant2Score"),
+                "team1score": _set.get("entrant1Score", 0),
+                "team2score": _set.get("entrant2Score", 0),
                 "round_name": StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText")),
                 "tournament_phase": phase_name,
                 "bracket_type": bracket_type,
@@ -999,16 +999,16 @@ class StartGGDataProvider(TournamentDataProvider):
                 team1losers = True
                 team2losers = True
 
-        logger.info("Team 1 Score - OLD API: " + str(sets.get("entrant1Score", None)))
-        logger.info("Team 2 Score - OLD API: " + str(sets.get("entrant2Score", None)))
+        logger.info("Team 1 Score - OLD API: " + str(sets.get("entrant1Score", 0)))
+        logger.info("Team 2 Score - OLD API: " + str(sets.get("entrant2Score", 0)))
 
         return ({
             "stage_strike": stageStrikeState,
             "ruleset": rulesetState,
             "strikedBy": strikedBy,
             "entrants": entrants,
-            "team1score": sets.get("entrant1Score", None),
-            "team2score": sets.get("entrant2Score", None),
+            "team1score": sets.get("entrant1Score",  0),
+            "team2score": sets.get("entrant2Score", 0),
             "bestOf": sets.get("bestOf", None),
             "roundDivision": sets.get("roundDivision", None),
             "team1losers": team1losers,
