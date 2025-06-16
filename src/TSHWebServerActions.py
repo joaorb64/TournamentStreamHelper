@@ -14,6 +14,7 @@ from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .Workers import Worker
+import os
 
 import logging
 log = logging.getLogger('werkzeug')
@@ -327,6 +328,15 @@ class WebServerActions(QThread):
         self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(1)
         self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
         return "OK"
+    
+    def get_thumbnail(self, scoreboard, file_format):
+        thumbnailPath = self.scoreboard.GetScoreboard(scoreboard).GenerateThumbnail(quiet_mode=True, disable_msgbox=True)
+        if thumbnailPath:
+            if file_format == "jpg":
+                thumbnailPath = thumbnailPath.replace(".png", ".jpg")
+            return os.path.abspath(thumbnailPath)
+        else:
+            return None
     
     def update_bracket(self):
         id = TSHTournamentDataProvider.instance.provider.GetTournamentPhases()[0].get("groups")[0].get("id")

@@ -531,19 +531,21 @@ class TSHScoreboardWidget(QWidget):
             StateManager.Set(
                 f"score.{self.scoreboardNumber}.team.{team}.logo", None)
 
-    def GenerateThumbnail(self, quiet_mode=False):
-        msgBox = QMessageBox()
-        msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
-        msgBox.setWindowTitle(QApplication.translate(
-            "thumb_app", "TSH - Thumbnail"))
+    def GenerateThumbnail(self, quiet_mode=False, disable_msgbox=False):
+        if not disable_msgbox:
+            msgBox = QMessageBox()
+            msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+            msgBox.setWindowTitle(QApplication.translate(
+                "thumb_app", "TSH - Thumbnail"))
         try:
             thumbnailPath = thumbnail.generate(
                 settingsManager=SettingsManager, scoreboardNumber=self.scoreboardNumber)
-            msgBox.setText(QApplication.translate(
-                "thumb_app", "The thumbnail has been generated here:") + " " + thumbnailPath + "\n\n" + QApplication.translate(
-                "thumb_app", "The video title and description have also been generated."))
-            msgBox.setIcon(QMessageBox.NoIcon)
-            # msgBox.setInformativeText(thumbnailPath)
+            if not disable_msgbox:
+                msgBox.setText(QApplication.translate(
+                    "thumb_app", "The thumbnail has been generated here:") + " " + thumbnailPath + "\n\n" + QApplication.translate(
+                    "thumb_app", "The video title and description have also been generated."))
+                msgBox.setIcon(QMessageBox.NoIcon)
+                # msgBox.setInformativeText(thumbnailPath)
 
             thumbnail_settings = SettingsManager.Get("thumbnail_config")
             if not quiet_mode:
@@ -559,14 +561,18 @@ class TSHScoreboardWidget(QWidget):
                     else:
                         subprocess.Popen(["xdg-open", outThumbDir])
                 else:
-                    msgBox.exec()
+                    if not disable_msgbox:
+                        msgBox.exec()
             else:
                 return(thumbnailPath)
         except Exception as e:
-            msgBox.setText(QApplication.translate("app", "Warning"))
-            msgBox.setInformativeText(str(e))
-            msgBox.setIcon(QMessageBox.Warning)
-            msgBox.exec()
+            if not disable_msgbox:
+                msgBox.setText(QApplication.translate("app", "Warning"))
+                msgBox.setInformativeText(str(e))
+                msgBox.setIcon(QMessageBox.Warning)
+                msgBox.exec()
+            else:
+                raise e
     
     def PostToBsky(self):
         thumbnailPath = self.GenerateThumbnail(quiet_mode=True)
