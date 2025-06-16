@@ -4,7 +4,7 @@ import traceback
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, send_file
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
@@ -391,6 +391,18 @@ class WebServer(QThread):
         info = orjson.loads(message)
         emit('clear_all',
              WebServer.actions.clear_all(info.get("scoreboardNumber", "1")))
+        
+    # Get thumbnail
+    @app.route('/scoreboard<scoreboardNumber>-get-thumbnail-<fileFormat>')
+    def get_thumbnail(scoreboardNumber, fileFormat):
+        if fileFormat.lower() in ["png", "jpg"]:
+            result = WebServer.actions.get_thumbnail(scoreboardNumber, fileFormat.lower())
+            if result:
+                return send_file(result, mimetype=f"image/{fileFormat.lower()}")
+            else:
+                return "An error has occured, please check TSH logs for more information"
+        else:
+            return f"File format {fileFormat} not recognized"
 
     # Get the sets to be played
     @app.route('/get-sets')
