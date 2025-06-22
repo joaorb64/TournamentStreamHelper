@@ -12,6 +12,8 @@ from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Workers import Worker
 from PIL import Image
 from loguru import logger
+import glob
+import shutil
 
 import requests
 
@@ -206,6 +208,27 @@ class TSHGameAssetManager(QObject):
                 self.LoadGameAssets(i+1)
                 break
 
+    def CopyCSS(self, game):
+        # Make dir if doesn't exists
+        css_dir_path = "./out/css"
+        if not os.path.isdir(css_dir_path):
+            os.mkdir(css_dir_path)
+
+        # Empty dir and remove all CSS
+        list_current_files = glob.glob(f"{css_dir_path}/*.css")
+        for file_path in list_current_files:
+            os.remove(file_path)
+        
+        # Copy game CSS files
+        game_css_path = f"./user_data/games/{game}/base_files/css"
+        if os.path.isdir(game_css_path):
+            list_game_css_files = glob.glob(f"{game_css_path}/*.css")
+            for file_path in list_game_css_files:
+                logger.info("Copying CSS file: "+file_path)
+                shutil.copy(file_path, css_dir_path)
+
+        logger.info("Game CSS file copy complete")
+
     def LoadGameAssets(self, game: int = 0):
         class AssetsLoaderThread(QThread):
             def __init__(self, parent=...) -> None:
@@ -232,6 +255,8 @@ class TSHGameAssetManager(QObject):
                         return
 
                     logger.info("Changed to game: "+game)
+
+                    self.parent().CopyCSS(game)
 
                     gameObj = self.parent().games.get(game, {})
                     self.parent().selectedGame = gameObj
