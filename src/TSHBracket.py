@@ -322,6 +322,8 @@ class Bracket():
                     return TSHLocaleHelper.matchNames.get("losers_semi_final")
                 if roundNumber == lastLosers + 2:
                     return TSHLocaleHelper.matchNames.get("losers_quarter_final")
+                if roundNumber == lastLosers + 3:
+                    return TSHLocaleHelper.matchNames.get("losers_top8")
 
         if roundNumber > 0:
             roundNumber -= winnersCutout[0]
