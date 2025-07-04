@@ -13,6 +13,7 @@ from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
+from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .Workers import Worker
 import os
 
@@ -243,6 +244,23 @@ class WebServerActions(QThread):
 
             if item_data is not None:
                 data[item_data.get("name")] = item_data
+        return data
+    
+    def get_variants(self):
+        data = {}
+        for row in range(TSHGameAssetManager.instance.variantModel.rowCount()):
+            item: QStandardItem = TSHGameAssetManager.instance.variantModel.index(
+                row, 0)
+            item_data = item.data(Qt.ItemDataRole.UserRole)
+
+            if item_data is not None:
+                data[item_data.get("name")] = item_data
+        return data
+    
+    def get_controllers(self):
+        data = TSHControllerHelper.instance.controller_list
+        for key in data.keys():
+            data[key]["codename"] = key
         return data
 
     def swap_teams(self, scoreboard):
