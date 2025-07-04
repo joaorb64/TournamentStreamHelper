@@ -22,7 +22,7 @@ log.setLevel(logging.ERROR)
 
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
-    cors = CORS(app, resources={r"*": {"origins": ["http://localhost:3000", "*"]}})
+    cors = CORS(app)
     socketio = SocketIO(
         app,
         cors_allowed_origins='*',
