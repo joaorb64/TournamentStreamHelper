@@ -4,6 +4,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import orjson
+
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -11,6 +12,7 @@ from loguru import logger
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
+from .TSHScoreboardWidget import TSHScoreboardWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .Helpers.TSHControllerHelper import TSHControllerHelper
@@ -161,6 +163,10 @@ class WebServerActions(QThread):
         else:
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(1, color)
         return "OK"
+
+    def get_scoreboard(self, scoreboard):
+        sb_widget: TSHScoreboardWidget = self.scoreboard.GetScoreboard(scoreboard)
+        return StateManager.Get(f'score.{sb_widget.scoreboardNumber}')
 
     def set_route(self,
                   scoreboard,
