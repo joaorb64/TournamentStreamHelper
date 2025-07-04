@@ -22,7 +22,7 @@ log.setLevel(logging.ERROR)
 
 class WebServer(QThread):
     app = Flask(__name__, static_folder=os.path.curdir)
-    cors = CORS(app)
+    cors = CORS(app, resources={r"*": {"origins": ["http://localhost:3000", "*"]}})
     socketio = SocketIO(
         app,
         cors_allowed_origins='*',
@@ -176,6 +176,11 @@ class WebServer(QThread):
         info = orjson.loads(message)
         emit('team_scoredown',
              WebServer.actions.team_color(info.get("scoreboardNumber", "1"), info.get("team"), "#" + info.get("color")))
+
+
+    @app.route('/scoreboard<scoreboardNumber>-get')
+    def get_route(scoreboardNumber):
+        return WebServer.actions.get_scoreboard(scoreboardNumber)
 
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
