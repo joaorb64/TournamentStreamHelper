@@ -13,7 +13,7 @@ from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
-import json
+import orjson
 from loguru import logger
 
 
@@ -59,7 +59,7 @@ class TSHCountryHelper(QObject):
                     try:
                         # Test if downloaded JSON is valid
                         with tmp_file.open(mode='r', encoding='utf-8') as f:
-                            json.load(f)
+                            orjson.loads(f.read())
 
                         # Remove old file, overwrite with new one
                         tmp_file.replace(out_file)
@@ -96,7 +96,7 @@ class TSHCountryHelper(QObject):
         try:
             f = open("./assets/countries+states+cities.json",
                      'r', encoding='utf-8')
-            countries_json = json.loads(f.read())
+            countries_json = orjson.loads(f.read())
             TSHCountryHelper.countries_json = countries_json
 
             # Setup countries - states
