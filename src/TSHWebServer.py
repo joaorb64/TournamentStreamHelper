@@ -177,6 +177,11 @@ class WebServer(QThread):
         emit('team_scoredown',
              WebServer.actions.team_color(info.get("scoreboardNumber", "1"), info.get("team"), "#" + info.get("color")))
 
+
+    @app.route('/scoreboard<scoreboardNumber>-get')
+    def get_route(scoreboardNumber):
+        return WebServer.actions.get_scoreboard(scoreboardNumber)
+
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
     #
