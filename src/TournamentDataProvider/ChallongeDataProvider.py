@@ -701,6 +701,8 @@ class ChallongeDataProvider(TournamentDataProvider):
                     return TSHLocaleHelper.matchNames.get("losers_semi_final")
                 elif match.get("round") == lastLosersRoundNum + 2:
                     return TSHLocaleHelper.matchNames.get("losers_quarter_final")
+                elif match.get("round") == lastLosersRoundNum + 3:
+                    return TSHLocaleHelper.matchNames.get("losers_top8")
                 else:
                     return TSHLocaleHelper.matchNames.get("losers_round").format(abs(match.get("round")))
 

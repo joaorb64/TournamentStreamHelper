@@ -4996,5 +4996,187 @@
     },
     "eventSettings": null,
     "expand": []
+  },
+  {
+    "type": "deck",
+    "cardDupeLimit": null,
+    "deckLimit": 1,
+    "cardLimit": null,
+    "maxOverlap": null,
+    "minOverlapWithPrimary": null,
+    "allowCharacterDupes": false,
+    "classSelectionCount": null,
+    "decksPerClass": null,
+    "requirePrimaryDeck": null,
+    "deckExternalLinkRegex": null,
+    "id": 208,
+    "videogameId": 80625,
+    "name": "Pokémon Trading Card Game Pocket",
+    "description": "Pokémon Trading Card Game Pocket ruleset",
+    "isDefault": true,
+    "gameMode": 1,
+    "settings": {
+      "gameSetup": true
+    },
+    "eventSettings": {
+      "deckDeadlineBehavior": {
+        "label": "Deck Deadline Behavior",
+        "isRequired": true,
+        "defaultValue": 1,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Remove Entrant From Bracket",
+              "value": 0
+            },
+            {
+              "name": "Do Not Remove Entrant",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "deckUploadMethod": {
+        "label": "Deck Upload Method",
+        "description": "Defines how players must display their decks.",
+        "isRequired": true,
+        "defaultValue": 1,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Players upload images of their deck",
+              "value": 1
+            },
+            {
+              "name": "Disable decks",
+              "value": 0
+            }
+          ]
+        }
+      }
+    },
+    "expand": []
+  },
+  {
+    "type": "deck",
+    "cardDupeLimit": null,
+    "deckLimit": 1,
+    "cardLimit": null,
+    "maxOverlap": null,
+    "minOverlapWithPrimary": null,
+    "allowCharacterDupes": false,
+    "classSelectionCount": null,
+    "decksPerClass": null,
+    "requirePrimaryDeck": null,
+    "deckExternalLinkRegex": null,
+    "id": 209,
+    "videogameId": 103900,
+    "name": "Battle Aces",
+    "description": "Battle Aces ruleset",
+    "isDefault": true,
+    "gameMode": 1,
+    "settings": {
+      "gameSetup": true
+    },
+    "eventSettings": {
+      "deckDeadlineBehavior": {
+        "label": "Deck Deadline Behavior",
+        "isRequired": true,
+        "defaultValue": 1,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Remove Entrant From Bracket",
+              "value": 0
+            },
+            {
+              "name": "Do Not Remove Entrant",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "deckUploadMethod": {
+        "label": "Deck Upload Method",
+        "description": "Defines how players must display their decks.",
+        "isRequired": true,
+        "defaultValue": 1,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Players upload images of their deck",
+              "value": 1
+            },
+            {
+              "name": "Disable decks",
+              "value": 0
+            }
+          ]
+        }
+      }
+    },
+    "expand": []
+  },
+  {
+    "type": "deck",
+    "cardDupeLimit": null,
+    "deckLimit": 2,
+    "cardLimit": null,
+    "maxOverlap": null,
+    "minOverlapWithPrimary": null,
+    "allowCharacterDupes": false,
+    "classSelectionCount": null,
+    "decksPerClass": null,
+    "requirePrimaryDeck": null,
+    "deckExternalLinkRegex": "^https:\\/\\/shadowverse-wb\\.com\\/en\\/deck\\/detail\\/\\?hash=([0-9]+\\.[0-9]+\\.[a-zA-Z0-9\\-.]+)$",
+    "id": 210,
+    "videogameId": 103453,
+    "name": "Shadowverse: Worlds Beyond",
+    "description": "Shadowverse: Worlds Beyond ruleset",
+    "isDefault": true,
+    "gameMode": 1,
+    "settings": {
+      "gameSetup": true
+    },
+    "eventSettings": {
+      "deckDeadlineBehavior": {
+        "label": "Deck Deadline Behavior",
+        "isRequired": true,
+        "defaultValue": 1,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Remove Entrant From Bracket",
+              "value": 0
+            },
+            {
+              "name": "Do Not Remove Entrant",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "deckUploadMethod": {
+        "label": "Deck Upload Method",
+        "description": "Defines how players must display their decks.",
+        "isRequired": true,
+        "defaultValue": 3,
+        "component": "FormsySelectElement",
+        "componentProps": {
+          "options": [
+            {
+              "name": "Players enter a link to their deck on an external site",
+              "value": 3
+            }
+          ]
+        }
+      }
+    },
+    "expand": []
   }
 ]
