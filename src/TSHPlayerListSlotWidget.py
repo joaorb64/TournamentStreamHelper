@@ -46,6 +46,7 @@ class TSHPlayerListSlotWidget(QGroupBox):
         scoreLabel = QLabel()
         scoreLabel.setText(QApplication.translate("app", "Score"))
         score = QSpinBox()
+        score.setMaximum(999999)
         self.scoreWidget.layout().addWidget(scoreLabel)
         self.scoreWidget.layout().addWidget(score)
         score.editingFinished.connect(
