@@ -6,7 +6,13 @@ import SetScore from "./SetScore";
 import Team from "./Team";
 
 export default class CurrentSet extends React.Component {
-    /** @type {SetScoreState} */
+    /**
+     * @typedef CurrentSetState
+     * @prop {?TSHScoreInfo} score
+     * @prop {boolean} isLoading
+     */
+
+    /** @type {CurrentSetState} */
     state;
 
     /** @param {TSHCharacters} props.characters */
@@ -83,7 +89,8 @@ export default class CurrentSet extends React.Component {
         Promise.all([
             this.team1Ref.current.submitTeamData().catch(console.error),
             this.team2Ref.current.submitTeamData().catch(console.error),
-            this.scoreRef.current.submitScore().catch(console.error)
+            this.scoreRef.current.submitScore().catch(console.error),
+            this.scoreRef.current.submitSetInfo().catch(console.error)
         ]).catch((e) => console.log("Error submitting data: ", e.text()));
     }
 
@@ -124,7 +131,7 @@ export default class CurrentSet extends React.Component {
             )
         }
 
-        let setTitle = "";
+        let setTitle;
         const {phase, match} = this.state.score;
         if (!!phase) {
             if (!!match) {
@@ -168,6 +175,8 @@ export default class CurrentSet extends React.Component {
                                         leftTeam={teams[0]}
                                         rightTeam={teams[1]}
                                         best_of={this.state.score.best_of}
+                                        match={this.state.score.match ?? ""}
+                                        phase={this.state.score.phase ?? ""}
                                         ref={this.scoreRef}
                                     />
                                 </Paper>

@@ -540,6 +540,7 @@ class WebServer(QThread):
         emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
     @app.route('/', defaults=dict(filename=None))
+    @app.route('/scoreboard', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
     def test(filename):

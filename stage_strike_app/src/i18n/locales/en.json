@@ -20,6 +20,7 @@
     "undo": "Undo",
     "redo": "Redo",
 
+    "scoreboard": "Scoreboard",
     "no_set": "No set selected",
     "loading": "Loading...",
     "avatar_for": "Avatar for {{player}}",

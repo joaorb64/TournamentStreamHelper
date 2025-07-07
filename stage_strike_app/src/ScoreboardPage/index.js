@@ -23,6 +23,8 @@ export default class ScoreboardPage extends React.Component {
     }
 
     componentDidMount = () => {
+        window.title = `TSH ${i18n.t("scoreboard")}`;
+
         fetch("http://" + window.location.hostname + `:5000/characters`)
             .then((res) => res.json())
             .then((data) => {
