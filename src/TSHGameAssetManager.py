@@ -67,7 +67,7 @@ class TSHGameAssetManager(QObject):
 
                     try:
                         # Test if downloaded JSON is valid
-                        json.load(open('./assets/characters.json.tmp'))
+                        orjson.loads(open('./assets/characters.json.tmp').read())
 
                         # Remove old file, overwrite with new one
                         os.remove('./assets/characters.json')
@@ -719,7 +719,7 @@ class TSHGameAssetManager(QObject):
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
             with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
-                icon_config = json.loads(icon_config_file.read())
+                icon_config = orjson.loads(icon_config_file.read())
             icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.png"
             if os.path.isfile(icon_filename):
                 icon_path = icon_filename
@@ -731,7 +731,7 @@ class TSHGameAssetManager(QObject):
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
             with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
-                icon_config = json.loads(icon_config_file.read())
+                icon_config = orjson.loads(icon_config_file.read())
             icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.png"
             if os.path.isfile(icon_filename):
                 icon_size = icon_config.get("image_sizes", {}).get(variant_codename, {}).get("null")

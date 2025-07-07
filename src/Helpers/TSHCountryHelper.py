@@ -13,7 +13,7 @@ from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
-import json
+import orjson
 from loguru import logger
 
 
@@ -59,7 +59,7 @@ class TSHCountryHelper(QObject):
                     try:
                         # Test if downloaded JSON is valid
                         with tmp_file.open(mode='r', encoding='utf-8') as f:
-                            json.load(f)
+                            orjson.loads(f.read())
 
                         # Remove old file, overwrite with new one
                         tmp_file.replace(out_file)
@@ -96,60 +96,63 @@ class TSHCountryHelper(QObject):
         try:
             f = open("./assets/countries+states+cities.json",
                      'r', encoding='utf-8')
-            countries_json = json.loads(f.read())
+            countries_json = orjson.loads(f.read())
             TSHCountryHelper.countries_json = countries_json
 
             # Setup countries - states
             for c in countries_json:
-                # Load display name
-                display_name = c["name"]
+                try:
+                    # Load display name
+                    display_name = c.get("name")
 
-                locale = TSHLocaleHelper.programLocale
-                if locale.replace("_", "-") in c["translations"]:
-                    display_name = c["translations"][locale.replace(
-                        "_", "-")]
-                elif re.split("-|_", locale)[0] in c["translations"]:
-                    display_name = c["translations"][re.split(
-                        "-|_", locale)[0]]
+                    locale = TSHLocaleHelper.programLocale
+                    if locale.replace("_", "-") in c.get("translations", {}):
+                        display_name = c.get("translations", {})[locale.replace(
+                            "_", "-")]
+                    elif re.split("-|_", locale)[0] in c.get("translations", {}):
+                        display_name = c.get("translations", {})[re.split(
+                            "-|_", locale)[0]]
 
-                # Load display name
-                export_name = c["name"]
+                    # Load display name
+                    export_name = c["name"]
 
-                locale = TSHLocaleHelper.exportLocale
-                if locale.replace("_", "-") in c["translations"]:
-                    export_name = c["translations"][locale.replace(
-                        "_", "-")]
-                elif re.split("-|_", locale)[0] in c["translations"]:
-                    export_name = c["translations"][re.split(
-                        "-|_", locale)[0]]
+                    locale = TSHLocaleHelper.exportLocale
+                    if locale.replace("_", "-") in c.get("translations", {}):
+                        export_name = c.get("translations", {})[locale.replace(
+                            "_", "-")]
+                    elif re.split("-|_", locale)[0] in c.get("translations", {}):
+                        export_name = c.get("translations", {})[re.split(
+                            "-|_", locale)[0]]
 
-                ccode = c.get("iso2") if not c.get("iso2").isdigit() else "".join([
-                    word[0] for word in re.split(r'\s+|-', c.get("name"))])
+                    ccode = c.get("iso2") if not c.get("iso2").isdigit() else "".join([
+                        word[0] for word in re.split(r'\s+|-', c.get("name"))])
 
-                TSHCountryHelper.countries[c["iso2"]] = {
-                    "name": export_name,
-                    "display_name": display_name,
-                    "en_name": c.get("name"),
-                    "code": ccode,
-                    "latitude": c.get("latitude"),
-                    "longitude": c.get("longitude"),
-                    "states": {}
-                }
-
-                for s in c.get("states", []):
-                    if s.get("state_code") is None:
-                        continue
-
-                    scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
-                        word[0] for word in re.split(r'\s+|-', s.get("name").strip()) if len(word) > 0])
-
-                    TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
-                        "name": s.get("name"),
-                        "code": scode,
-                        "original_code": s.get("state_code"),
-                        "latitude": s.get("latitude"),
-                        "longitude": s.get("longitude"),
+                    TSHCountryHelper.countries[c["iso2"]] = {
+                        "name": export_name,
+                        "display_name": display_name,
+                        "en_name": c.get("name"),
+                        "code": ccode,
+                        "latitude": c.get("latitude"),
+                        "longitude": c.get("longitude"),
+                        "states": {}
                     }
+
+                    for s in c.get("states", []):
+                        if s.get("state_code") is None:
+                            continue
+
+                        scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
+                            word[0] for word in re.split(r'\s+|-', s.get("name").strip()) if len(word) > 0])
+
+                        TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
+                            "name": s.get("name"),
+                            "code": scode,
+                            "original_code": s.get("state_code"),
+                            "latitude": s.get("latitude"),
+                            "longitude": s.get("longitude"),
+                        }
+                except:
+                    pass
 
             # Setup model
             TSHCountryHelper.countryModel = QStandardItemModel()
