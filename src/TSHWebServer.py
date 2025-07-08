@@ -539,13 +539,18 @@ class WebServer(QThread):
     def ws_set_tournament(message):
         emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
-    @app.route('/', defaults=dict(filename=None))
-    @app.route('/scoreboard', defaults=dict(filename=None))
+    @app.route('/')
+    @app.route('/scoreboard')
+    @app.route('/stage-strike-app')
+    @cross_origin()
+    def stage_strike_app():
+        return send_file(os.path.join(os.path.abspath('.'), 'stage_strike_app/build/index.html'))
+
+
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
     def test(filename):
         try:
-            filename = filename or 'stage_strike_app/build/index.html'
             return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'))
         except Exception as e:
             logger.error(f"File not found: {e}")
