@@ -170,7 +170,7 @@ class TSHTournamentInfoWidget(QDockWidget):
             try:
                 widget: QWidget = self.findChild(QWidget, key)
 
-                if widget:
+                if widget and data[key] is not None:
                     if type(widget) == QLineEdit:
                         widget.setText(data[key])
                         widget.editingFinished.emit()
