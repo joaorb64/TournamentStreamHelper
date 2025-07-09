@@ -417,6 +417,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             view = QListView()
             view.setIconSize(QSize(128, 128))
             player_character_color.setView(view)
+            player_character_color.setEditable(True)
+            player_character_color.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+            player_character_color.completer().setCompletionMode(QCompleter.PopupCompletion)
             # self.player_character_color.activated.connect(self.CharacterChanged)
             # self.CharacterChanged()
 
@@ -434,6 +437,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             view = QListView()
             view.setIconSize(QSize(24, 24))
             player_variant.setView(view)
+            player_variant.setEditable(True)
+            player_variant.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+            player_variant.completer().setCompletionMode(QCompleter.PopupCompletion)
 
             # Move up/down
             btMoveUp = QPushButton()
