@@ -1,15 +1,27 @@
 import React from "react";
-import {Backdrop, Button, CircularProgress, Paper, Stack, Typography} from "@mui/material";
+import {
+    Backdrop,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CircularProgress, Collapse, IconButton,
+    Paper,
+    Stack,
+    Typography
+} from "@mui/material";
 import i18n from "../i18n/config";
 
 import SetScore from "./SetScore";
 import Team from "./Team";
+import {ExpandMore} from "@mui/icons-material";
 
 export default class CurrentSet extends React.Component {
     /**
      * @typedef CurrentSetState
      * @prop {?TSHScoreInfo} score
      * @prop {boolean} isLoading
+     * @prop {boolean} expanded
      */
 
     /** @type {CurrentSetState} */
@@ -26,7 +38,8 @@ export default class CurrentSet extends React.Component {
         this.props = props;
         this.state = {
             score: null,
-            isLoading: false
+            isLoading: false,
+            expanded: true
         }
     }
 
@@ -135,7 +148,7 @@ export default class CurrentSet extends React.Component {
         const {phase, match} = this.state.score;
         if (!!phase) {
             if (!!match) {
-                setTitle = `${phase} - ${match}`;
+                setTitle = `${match}`;
             } else {
                 setTitle = phase;
             }
@@ -148,57 +161,60 @@ export default class CurrentSet extends React.Component {
         }
 
         return (
-            <>
-                <Typography
-                    sx={{ typography: { xs: "h7", sm: "h5" } }}
-                    component="div"
-                >
-                    Current Set: {setTitle}
+                <Card>
+                    <CardHeader
+                        title={`Current Set: ${setTitle}`}
+                        action={
+                            <IconButton onClick={() => this.setState({...this.state, expanded: !this.state.expanded})}>
+                                <ExpandMore sx={{
+                                    transform: this.state.expanded ? 'rotate(0deg)' : 'rotate(270deg)'
+                                }} />
+                            </IconButton>
+                        }
+                    />
+                    <Collapse in={this.state.expanded} timeout={"auto"}>
+                        <CardContent>
+                            {
+                                hasSuitableTeamCount && (
+                                    <Stack direction={{xs: "column", sm: "row"}} spacing={2} alignItems={"center"} justifyContent={"space-evenly"}>
+                                        <Team ref={this.team1Ref}
+                                              key={this.state.score.set_id + "1"}
+                                              teamId={teamKeys[0]}
+                                              team={teams[0]}
+                                              characters={this.props.characters}
+                                        />
 
-                </Typography>
-                {
-                    hasSuitableTeamCount && (
-                        <Stack direction={{xs: "column", sm: "row"}} spacing={2} alignItems={"center"} justifyContent={"space-evenly"}>
-                            <Paper sx={{padding:2}} elevation={3}>
-                                <Team ref={this.team1Ref}
-                                      key={this.state.score.set_id + "1"}
-                                      teamId={teamKeys[0]}
-                                      team={teams[0]}
-                                      characters={this.props.characters}
-                                />
-                            </Paper>
+                                        <Stack gap={4}>
+                                            <Paper sx={{padding:2}} elevation={3}>
+                                                <SetScore
+                                                    key={this.state.score.set_id + "score"}
+                                                    leftTeam={teams[0]}
+                                                    rightTeam={teams[1]}
+                                                    best_of={this.state.score.best_of}
+                                                    match={this.state.score.match ?? ""}
+                                                    phase={this.state.score.phase ?? ""}
+                                                    ref={this.scoreRef}
+                                                />
+                                            </Paper>
 
-                            <Stack gap={4}>
-                                <Paper sx={{padding:2}} elevation={3}>
-                                    <SetScore
-                                        key={this.state.score.set_id + "score"}
-                                        leftTeam={teams[0]}
-                                        rightTeam={teams[1]}
-                                        best_of={this.state.score.best_of}
-                                        match={this.state.score.match ?? ""}
-                                        phase={this.state.score.phase ?? ""}
-                                        ref={this.scoreRef}
-                                    />
-                                </Paper>
+                                            <Stack gap={2}>
+                                                <Button variant={"outlined"} onClick={this.submitChanges}>Submit Changes</Button>
+                                                <Button variant={"outlined"} onClick={this.clearScoreboard}>Clear Scoreboard</Button>
+                                            </Stack>
+                                        </Stack>
 
-                                <Stack gap={2}>
-                                    <Button variant={"outlined"} onClick={this.submitChanges}>Submit Changes</Button>
-                                    <Button variant={"outlined"} onClick={this.clearScoreboard}>Clear Scoreboard</Button>
-                                </Stack>
-                            </Stack>
-
-                            <Paper sx={{padding:2}} elevation={3}>
-                                <Team key={this.state.score.set_id + "2"}
-                                      ref={this.team2Ref}
-                                      teamId={teamKeys[1]}
-                                      team={teams[1]}
-                                      characters={this.props.characters}
-                                />
-                            </Paper>
-                        </Stack>
-                    )
-                }
-            </>
+                                        <Team key={this.state.score.set_id + "2"}
+                                              ref={this.team2Ref}
+                                              teamId={teamKeys[1]}
+                                              team={teams[1]}
+                                              characters={this.props.characters}
+                                        />
+                                    </Stack>
+                                )
+                            }
+                        </CardContent>
+                    </Collapse>
+                </Card>
         )
 
     }

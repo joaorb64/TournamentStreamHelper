@@ -1,7 +1,18 @@
 import React from "react";
-import {FormControl, InputLabel, MenuItem, Paper, Select, Stack} from "@mui/material";
+import {
+    Avatar,
+    Card,
+    CardContent,
+    CardHeader,
+    Collapse,
+    FormControl, IconButton,
+    InputLabel,
+    Select,
+    Stack
+} from "@mui/material";
 import TextField from './TextField';
 import i18n from "../i18n/config";
+import {ExpandMore} from "@mui/icons-material";
 
 export default class Player extends React.Component {
     /**
@@ -16,6 +27,7 @@ export default class Player extends React.Component {
         super(props);
         this.props = props;
 
+        console.log("Player: ", props.player)
         this.player = props.player;
         this.state = {
             countryCode: props.player.country?.code,
@@ -25,10 +37,12 @@ export default class Player extends React.Component {
             realName: props.player.real_name,
             twitter: props.player.twitter,
             pronoun: props.player.pronoun,
-            charCode: props.player.character[1].codename
+            charCode: props.player.character[1].codename ?? "",
+            expanded: true
         }
 
         this.teamId = props.teamId;
+        this.playerId = this.player?.id?.at(0) || this.player?.id?.at(1) || -1;
     }
 
     changeHandlerFor = (fieldName) => {
@@ -68,64 +82,114 @@ export default class Player extends React.Component {
 
     render = () => {
         const player = this.player;
-        const idBase = `team-${this.teamId}-player-${player.id}-`;
+        const idBase = `team-${this.teamId}-player-${this.playerId}-`;
         const rowProps = {direction: 'row', spacing: 2};
 
         return (
-            <Paper elevation={2} sx={{padding: 1}}>
-                <Stack spacing={4}>
-                    <div style={{height: 96}}>
-                        {player?.online_avatar &&
-                            <img
-                                src={player.online_avatar}
-                                width={96}
-                                height={96}
-                                style={{objectFit: "contain"}}
-                                alt={i18n.t("avatar_for", {player: this.state.name})}
+            <Card elevation={2} sx={{padding: 1}}>
+                <CardHeader
+                    avatar={<Avatar
+                        src={player?.online_avatar}
+                        width={96}
+                        height={96}
+                        sx={{objectFit: "contain"}}
+                        alt={i18n.t("avatar_for", {player: this.state.name})}
+                    >{this.state.name?.at(0) ?? "?"}</Avatar>}
+                    action={<IconButton onClick={() => this.setState({...this.state, expanded: !this.state.expanded})}>
+                        <ExpandMore sx={{
+                            transform: this.state.expanded ? 'rotate(0deg)' : 'rotate(270deg)'
+                        }}/>
+                    </IconButton>}
+                    title={this.state.name}
+                    height={96}
+                />
+                <Collapse in={this.state.expanded} timeout={"auto"}>
+                    <CardContent>
+                        <Stack spacing={4}>
+                            <Stack {...rowProps}>
+                                <TextField label={i18n.t("sponsor")}
+                                           key={idBase + "sponsor"}
+                                           id={idBase + "sponsor"}
+                                           value={this.state.team}
+                                           onChange={this.changeHandlerFor('team')}
+                                />
+                                <TextField label={i18n.t("tag")}
+                                           key={idBase + "tag"}
+                                           id={idBase + "tag"}
+                                           value={this.state.name}
+                                           onChange={this.changeHandlerFor('name')}
+                                />
+                            </Stack>
+
+                            <TextField label={i18n.t("real_name")}
+                                       key={idBase + "realName"}
+                                       id={idBase + "realName"}
+                                       value={this.state.realName}
+                                       onChange={this.changeHandlerFor('realName')}
                             />
-                        }
-                    </div>
-                    <Stack {...rowProps}>
-                        <TextField label={i18n.t("sponsor")} id={idBase + "sponsor"} value={this.state.team}
-                                   onChange={this.changeHandlerFor('team')}/>
-                        <TextField label={i18n.t("tag")} id={idBase + "tag"} value={this.state.name}
-                                   onChange={this.changeHandlerFor('name')}/>
-                    </Stack>
 
-                    <TextField label={i18n.t("real_name")} id={idBase + "realName"} value={this.state.realName} onChange={this.changeHandlerFor('realName')}/>
+                            <Stack {...rowProps}>
+                                <TextField label={i18n.t("twitter")}
+                                           key={idBase + "twitter"}
+                                           id={idBase + "twitter"}
+                                           value={this.state.twitter}
+                                           onChange={this.changeHandlerFor('twitter')}
+                                />
+                                <TextField label={i18n.t("pronouns")}
+                                           key={idBase + "pronoun"}
+                                           id={idBase + "pronoun"}
+                                           value={this.state.pronoun}
+                                           onChange={this.changeHandlerFor('pronoun')}
+                                />
+                            </Stack>
 
-                    <Stack {...rowProps}>
-                        <TextField label={i18n.t("twitter")} id={idBase + "twitter"} value={this.state.twitter} onChange={this.changeHandlerFor('twitter')}/>
-                        <TextField label={i18n.t("pronouns")} id={idBase + "pronoun"} value={this.state.pronoun} onChange={this.changeHandlerFor('pronoun')}/>
-                    </Stack>
+                            <Stack {...rowProps}>
+                                <TextField label={i18n.t("country")}
+                                           key={idBase + "country"}
+                                           id={idBase + "country"}
+                                           value={this.state.countryCode}
+                                           onChange={this.changeHandlerFor('countryCode')}
+                                />
+                                <TextField label={i18n.t("state")}
+                                           key={idBase + "state"}
+                                           id={idBase + "state"}
+                                           value={this.state.stateCode}
+                                           onChange={this.changeHandlerFor('stateCode')}
+                                />
+                            </Stack>
 
-                    <Stack {...rowProps}>
-                        <TextField label={i18n.t("country")} id={idBase + "country"} value={this.state.countryCode} onChange={this.changeHandlerFor('countryCode')}/>
-                        <TextField label={i18n.t("state")} id={idBase + "state"} value={this.state.stateCode} onChange={this.changeHandlerFor('stateCode')}/>
-                    </Stack>
-
-                    <FormControl>
-                        <InputLabel id={idBase + "char-label"} sx={t => ({'&[data-shrink="false"]': {color: t.palette.text.disabled}})}>Character</InputLabel>
-                        <Select
-                            id={idBase + "char-select"}
-                            labelId={idBase + "char-label"}
-                            label={i18n.t("character")}
-                            defaultValue={""}
-                            value={this.state.charCode ?? ""}
-                            onChange={this.changeHandlerFor('charCode')}
-                        >
-                            <MenuItem value={""}>&lt;unset&gt;</MenuItem>
-                            {
-                                Object.values(this.props.characters).sort().map((character) => (
-                                    <MenuItem key={character.codename} value={character.codename}>
-                                        {character.display_name}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-                </Stack>
-            </Paper>
+                            <FormControl>
+                                <InputLabel
+                                    id={idBase + "char-label"}
+                                    sx={t => ({'&[data-shrink="false"]': {color: t.palette.text.disabled}})}
+                                    htmlFor={idBase + "char-select"}
+                                >
+                                    Character
+                                </InputLabel>
+                                <Select
+                                    key={idBase + "char-select"}
+                                    id={idBase + "char-select"}
+                                    labelId={idBase + "char-label"}
+                                    label={i18n.t("character")}
+                                    defaultValue={""}
+                                    value={this.state.charCode ?? ""}
+                                    onChange={this.changeHandlerFor('charCode')}
+                                    native={true}
+                                >
+                                    <option value={""}></option>
+                                    {
+                                        Object.values(this.props.characters).sort().map((character) => (
+                                            <option key={character.codename} value={character.codename}>
+                                                {character.display_name}
+                                            </option>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Stack>
+                    </CardContent>
+                </Collapse>
+            </Card>
         )
     }
 }

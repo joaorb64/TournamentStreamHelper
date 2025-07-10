@@ -8,7 +8,7 @@
  */
 /**
  * @typedef {object} TSHPlayerInfo
- * @prop {[int, int]} id
+ * @prop {?[int, int]} id
  * @prop {?string} city
  * @prop {?TSHCountryInfo} state
  * @prop {?TSHCountryInfo} country

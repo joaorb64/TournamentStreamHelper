@@ -59,7 +59,7 @@ export default class Team extends React.Component {
     }
 
     render = () => {
-        const idBase = `team-${this.props.team.id}`;
+        const idBase = `team-${this.props.teamId}`;
 
         const playerWidgets = this.playersInTeam().map(([teamKey, player]) => {
             if (!(teamKey in this.playerRefs)) {
@@ -70,14 +70,21 @@ export default class Team extends React.Component {
                 <Player
                     key={`${idBase}${String(player.id)}`}
                     ref={this.playerRefs[teamKey]}
-                    teamId={this.props.team.id}
+                    teamId={this.props.teamId}
                     player={player}
                     characters={this.props.characters}/>
             );
         });
 
-        return <Paper>
-            {playerWidgets}
+        let borderStyle = {};
+        if (this.props.team.color) {
+            borderStyle = {
+                borderTop: `solid 4px ${this.props.team.color}`
+            };
+        }
+
+        return <Paper padding={2} elevation={3} sx={borderStyle}>
+                {playerWidgets}
         </Paper>
     }
 }

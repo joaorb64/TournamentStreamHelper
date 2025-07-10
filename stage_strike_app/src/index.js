@@ -26,7 +26,7 @@ ReactDOM.render(
                   />
                   <Route
                       path="*"
-                      element={<Navigate to={"/stage-strike-app"} />}
+                      element={<Navigate to={"/stage-strike-app"} replace={true}/>}
                   />
               </Routes>
           </BrowserRouter>

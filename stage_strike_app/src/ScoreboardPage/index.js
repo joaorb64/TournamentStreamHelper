@@ -2,7 +2,7 @@ import "../App.css";
 import {darkTheme} from "../themes";
 import i18n from "../i18n/config";
 import {
-    Paper
+    Paper, Stack
 } from "@mui/material";
 import React from "react";
 import {Box} from "@mui/system";
@@ -18,6 +18,7 @@ export default class ScoreboardPage extends React.Component {
         this.state = {
             connectionError: false,
             isLoading: true,
+            currentSetExpanded: true,
             characters: {}
         }
     }
@@ -67,14 +68,11 @@ export default class ScoreboardPage extends React.Component {
             );
         } else {
             body = (
-                <>
-                    <Paper elevation={2} sx={{padding: '8px'}}>
-                        <CurrentSet ref={this.currentSetDisplayRef} characters={this.state.characters} />
-                    </Paper>
-                    <Paper elevation={2} sx={{padding: '8px'}}>
-                        <UpcomingSets onSelectedSetChanged={this.onSelectedSetChanged}/>
-                    </Paper>
-                </>
+                // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
+                <Stack gap={4} marginBottom={24}>
+                    <CurrentSet ref={this.currentSetDisplayRef} characters={this.state.characters} />
+                    <UpcomingSets onSelectedSetChanged={this.onSelectedSetChanged}/>
+                </Stack>
             )
         }
 
