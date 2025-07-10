@@ -6,7 +6,7 @@ import {
     CardHeader,
     Collapse,
     FormControl, IconButton,
-    InputLabel,
+    InputLabel, Paper,
     Select,
     Stack
 } from "@mui/material";
@@ -86,7 +86,7 @@ export default class Player extends React.Component {
         const rowProps = {direction: 'row', spacing: 2};
 
         return (
-            <Card elevation={2} sx={{padding: 1}}>
+            <Card raised={true}>
                 <CardHeader
                     avatar={<Avatar
                         src={player?.online_avatar}

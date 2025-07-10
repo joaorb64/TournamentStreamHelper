@@ -1,5 +1,5 @@
 import React from "react";
-import {Paper} from "@mui/material";
+import {Paper, Stack} from "@mui/material";
 import Player from "./Player";
 
 export default class Team extends React.Component {
@@ -84,7 +84,9 @@ export default class Team extends React.Component {
         }
 
         return <Paper padding={2} elevation={3} sx={borderStyle}>
+            <Stack gap={2} padding={1}>
                 {playerWidgets}
+            </Stack>
         </Paper>
     }
 }
