@@ -105,24 +105,26 @@ class TSHCountryHelper(QObject):
                     # Load display name
                     display_name = c.get("name")
 
-                    locale = TSHLocaleHelper.programLocale
-                    if locale.replace("_", "-") in c.get("translations", {}):
-                        display_name = c.get("translations", {})[locale.replace(
-                            "_", "-")]
-                    elif re.split("-|_", locale)[0] in c.get("translations", {}):
-                        display_name = c.get("translations", {})[re.split(
-                            "-|_", locale)[0]]
+                    if c.get("translations", {}):
+                        locale = TSHLocaleHelper.programLocale
+                        if locale.replace("_", "-") in c.get("translations", {}):
+                            display_name = c.get("translations", {})[locale.replace(
+                                "_", "-")]
+                        elif re.split("-|_", locale)[0] in c.get("translations", {}):
+                            display_name = c.get("translations", {})[re.split(
+                                "-|_", locale)[0]]
 
                     # Load display name
                     export_name = c["name"]
 
-                    locale = TSHLocaleHelper.exportLocale
-                    if locale.replace("_", "-") in c.get("translations", {}):
-                        export_name = c.get("translations", {})[locale.replace(
-                            "_", "-")]
-                    elif re.split("-|_", locale)[0] in c.get("translations", {}):
-                        export_name = c.get("translations", {})[re.split(
-                            "-|_", locale)[0]]
+                    if c.get("translations", {}):
+                        locale = TSHLocaleHelper.exportLocale
+                        if locale.replace("_", "-") in c.get("translations", {}):
+                            export_name = c.get("translations", {})[locale.replace(
+                                "_", "-")]
+                        elif re.split("-|_", locale)[0] in c.get("translations", {}):
+                            export_name = c.get("translations", {})[re.split(
+                                "-|_", locale)[0]]
 
                     ccode = c.get("iso2") if not c.get("iso2").isdigit() else "".join([
                         word[0] for word in re.split(r'\s+|-', c.get("name"))])
