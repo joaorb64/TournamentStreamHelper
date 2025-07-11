@@ -971,7 +971,7 @@ class Window(QMainWindow):
                         QLabel(QApplication.translate("app", "New version available:")+" "+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        QApplication.translate("app", "Update to latest version?")+"\n"+QApplication.translate("app", "NOTE: WILL BACKUP /layout/ AND OVERWRITE DATA IN ALL OTHER DIRECTORIES")))
+                        QApplication.translate("app", "Update to latest version?")+"\n\n"+QApplication.translate("app", "NOTE: This will open a new tab in your browser and close Tournament Stream Helper.")))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)
@@ -985,7 +985,7 @@ class Window(QMainWindow):
 
                     buttonReply.show()
 
-                    def Update():
+                    def Update_Old(): # Deprecated
                         db = QFontDatabase()
                         db.removeAllApplicationFonts()
                         QFontDatabase.removeAllApplicationFonts()
@@ -1039,6 +1039,11 @@ class Window(QMainWindow):
                         worker.signals.progress.connect(progress)
                         worker.signals.finished.connect(finished)
                         self.threadpool.start(worker)
+
+                    def Update(): # Opens the releases page in the web browser
+                        latest_release_url = "https://github.com/joaorb64/TournamentStreamHelper/releases/latest"
+                        QDesktopServices.openUrl(QUrl(latest_release_url))
+                        QCoreApplication.quit()
 
                     btUpdate.clicked.connect(Update)
                     btCancel.clicked.connect(lambda: buttonReply.close())
