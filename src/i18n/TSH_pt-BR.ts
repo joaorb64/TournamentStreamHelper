@@ -155,6 +155,7 @@ p, li { white-space: pre-wrap; }
         <translation>TIME</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListSlotWidget.py" line="37"/>
         <location filename="../layout/TSHScoreboardTeam.ui" line="74"/>
         <source>Team Name</source>
         <translation>Nome do Time</translation>
@@ -1248,22 +1249,27 @@ p, li { white-space: pre-wrap; }
         <translation>Personagens por jogador</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="86"/>
+        <location filename="../TSHPlayerListWidget.py" line="89"/>
+        <source>Show scores</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHPlayerListWidget.py" line="96"/>
         <source>Load tournament standings</source>
         <translation>Carregar resultados do torneio</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="91"/>
+        <location filename="../TSHPlayerListWidget.py" line="101"/>
         <source>Generate Descriptive Text for Results</source>
         <translation>Gerar texto de resultados</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="125"/>
+        <location filename="../TSHPlayerListWidget.py" line="135"/>
         <source>Descriptive Text for Results</source>
         <translation>Texto de resultados</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="138"/>
+        <location filename="../TSHPlayerListWidget.py" line="148"/>
         <source>Copy text</source>
         <translation>Copiar texto</translation>
     </message>
@@ -1447,6 +1453,7 @@ p, li { white-space: pre-wrap; }
         <translation>Equipe {0}</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListSlotWidget.py" line="47"/>
         <source>Score</source>
         <translation>Placar</translation>
     </message>
