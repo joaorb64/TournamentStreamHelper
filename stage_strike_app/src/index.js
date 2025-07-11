@@ -1,12 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import StageStrikePage from './StageStrikePage';
 import reportWebVitals from './reportWebVitals';
+
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import ScoreboardPage from "./ScoreboardPage";
+import {darkTheme} from "./themes";
+import {ThemeProvider} from "@mui/material/styles";
+import {CssBaseline} from "@mui/material";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+      <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <BrowserRouter>
+              <Routes>
+                  <Route
+                      path="/stage-strike-app"
+                      element={<StageStrikePage />}
+                  />
+                  <Route
+                      path="/scoreboard"
+                      element={<ScoreboardPage />}
+                  />
+                  <Route
+                      path="*"
+                      element={<Navigate to={"/stage-strike-app"} replace={true}/>}
+                  />
+              </Routes>
+          </BrowserRouter>
+      </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

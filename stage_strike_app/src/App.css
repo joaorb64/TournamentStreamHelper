@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: "Roboto Condensed";
+  font-family: "Roboto Condensed", sans-serif;
   font-weight: bold;
   overflow: hidden;
   margin: 0;
@@ -57,7 +57,7 @@ body {
   font-size: 14px;
   height: 28px;
   bottom: 0;
-  letter-spacing: 0.8;
+  letter-spacing: 0.8rem;
   text-transform: uppercase;
 }
 

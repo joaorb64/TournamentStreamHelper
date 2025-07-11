@@ -29,8 +29,37 @@ class TSHPlayerListSlotWidget(QGroupBox):
         self.signals = TSHPlayerListSlotWidgetSignals()
 
         self.setLayout(QVBoxLayout())
+        slotNameWidget = QWidget()
+        slotNameWidget.setLayout(QHBoxLayout())
+
         self.slotName = QLineEdit()
-        self.layout().addWidget(self.slotName)
+        slotNameLabel = QLabel()
+        slotNameLabel.setText(QApplication.translate("Form", "Team Name"))
+        slotNameLabel.setMaximumWidth(150)
+        slotNameLabel.setMinimumWidth(slotNameLabel.maximumWidth())
+        slotNameWidget.layout().addWidget(slotNameLabel)
+        slotNameWidget.layout().addWidget(self.slotName)
+        self.layout().addWidget(slotNameWidget)
+
+        self.scoreWidget = QWidget()
+        self.scoreWidget.setLayout(QHBoxLayout())
+        scoreLabel = QLabel()
+        scoreLabel.setText(QApplication.translate("app", "Score"))
+        score = QSpinBox()
+        score.setMaximum(999999)
+        self.scoreWidget.layout().addWidget(scoreLabel)
+        self.scoreWidget.layout().addWidget(score)
+        score.editingFinished.connect(
+            lambda: [
+                StateManager.Set(
+                    f"{self.base}.slot.{self.index}.score", score.value())
+            ]
+        )
+        self.layout().addWidget(self.scoreWidget)
+        score.editingFinished.emit()
+        self.scoreWidget.setVisible(False)
+        scoreLabel.setMaximumWidth(slotNameLabel.maximumWidth())
+        scoreLabel.setMinimumWidth(scoreLabel.maximumWidth())
 
         self.childDataChangedLock = False
 
@@ -40,10 +69,12 @@ class TSHPlayerListSlotWidget(QGroupBox):
                     f"{self.base}.slot.{self.index}.name", self.slotName.text())
             ]
         )
+        self.slotName.editingFinished.emit()
 
         self.list = QWidget()
         self.list.setLayout(QHBoxLayout())
         self.layout().addWidget(self.list)
+
 
         self.playerWidgets = []
 

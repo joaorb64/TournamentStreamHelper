@@ -177,6 +177,11 @@ class WebServer(QThread):
         emit('team_scoredown',
              WebServer.actions.team_color(info.get("scoreboardNumber", "1"), info.get("team"), "#" + info.get("color")))
 
+
+    @app.route('/scoreboard<scoreboardNumber>-get')
+    def get_route(scoreboardNumber):
+        return WebServer.actions.get_scoreboard(scoreboardNumber)
+
     # Dynamic endpoint to allow flexible sets of information
     # Ex. http://192.168.1.2:5000/set?best-of=5
     #
@@ -534,7 +539,14 @@ class WebServer(QThread):
     def ws_set_tournament(message):
         emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
-    @app.route('/', defaults=dict(filename=None))
+    @app.route('/')
+    @app.route('/scoreboard')
+    @app.route('/stage-strike-app')
+    @cross_origin()
+    def stage_strike_app():
+        return send_file(os.path.join(os.path.abspath('.'), 'stage_strike_app/build/index.html'))
+
+
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
     def file_request(filename):
@@ -544,6 +556,7 @@ class WebServer(QThread):
             if filename.endswith('.js'):
                 mimetype = "text/javascript"
             return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
+
         except Exception as e:
             logger.error(f"File not found: {e}")
 

@@ -1,4 +1,5 @@
 import platform
+import socket
 import subprocess
 
 from qtpy.QtGui import *
@@ -310,6 +311,14 @@ class TSHScoreboardWidget(QWidget):
             self.btLoadPlayerSetOptions.clicked.connect(
                 self.LoadUserSetOptionsClicked)
             hbox.addWidget(self.btLoadPlayerSetOptions)
+
+        self.remoteScoreboardLabel = QLabel(
+            QApplication.translate(
+                "app", "Open {0} in a browser to edit the scoreboard remotely."
+            ).format(f"<a href='http://{self.GetIP()}:5000/scoreboard'>http://{self.GetIP()}:5000/scoreboard</a>")
+        )
+        self.remoteScoreboardLabel.setOpenExternalLinks(True)
+        bottomOptions.layout().addWidget(self.remoteScoreboardLabel)
 
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             self.UpdateBottomButtons)
@@ -1018,11 +1027,14 @@ class TSHScoreboardWidget(QWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
-
-            if data.get("team1score"):
+            if data.get("team1score") and data.get("team1score") != 0:
                 scoreContainers[0].setValue(data.get("team1score"))
-            if data.get("team2score"):
+            else:
+                scoreContainers[0].setValue(0)
+            if data.get("team2score") and data.get("team2score") != 0:
                 scoreContainers[1].setValue(data.get("team2score"))
+            else:
+                scoreContainers[1].setValue(0)
             if data.get("bestOf"):
                 self.scoreColumn.findChild(
                     QSpinBox, "best_of").setValue(data.get("bestOf"))
@@ -1166,3 +1178,16 @@ class TSHScoreboardWidget(QWidget):
         print(players, "players", characters, "characters")
         self.playerNumber.setValue(players)
         self.charNumber.setValue(characters)
+
+    def GetIP(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
+    pass
