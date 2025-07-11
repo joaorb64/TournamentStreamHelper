@@ -82,6 +82,16 @@ class TSHPlayerListWidget(QDockWidget):
         row.setLayout(QHBoxLayout())
         topOptions.layout().addWidget(row)
 
+        showScoresWidget = QWidget()
+        showScoresWidget.setLayout(QVBoxLayout())
+        self.showScoresCheckbox = QCheckBox()
+        self.showScoresCheckbox.setChecked(False)
+        showScoresWidget.layout().addWidget(QLabel(QApplication.translate("app", "Show scores")))
+        showScoresWidget.layout().addWidget(self.showScoresCheckbox)
+        self.showScoresCheckbox.checkStateChanged.connect(
+            self.playerList.SetScoresVisible)
+        row.layout().addWidget(showScoresWidget)
+
         self.loadFromStandingsBt = QPushButton(
             QApplication.translate("app", "Load tournament standings"))
         self.loadFromStandingsBt.clicked.connect(self.LoadFromStandingsClicked)

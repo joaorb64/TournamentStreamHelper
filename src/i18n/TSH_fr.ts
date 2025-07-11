@@ -143,10 +143,10 @@ p, li { white-space: pre-wrap; }
     <name>Form</name>
     <message>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHScoreboardScore.ui" line="20"/>
-        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardScore.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
         <source>Form</source>
         <translation>Formulaire</translation>
     </message>
@@ -156,6 +156,7 @@ p, li { white-space: pre-wrap; }
         <translation>ÉQUIPE</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListSlotWidget.py" line="37"/>
         <location filename="../layout/TSHScoreboardTeam.ui" line="74"/>
         <source>Team Name</source>
         <translation>Nom de l&apos;Équipe</translation>
@@ -622,14 +623,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupBox</name>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="23"/>
         <location filename="../layout/TSHCommentator.ui" line="29"/>
+        <location filename="../layout/TSHCommentary.ui" line="23"/>
         <source>GroupBox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="26"/>
         <location filename="../layout/TSHCommentator.ui" line="32"/>
+        <location filename="../layout/TSHCommentary.ui" line="26"/>
         <source>Commentator 1</source>
         <translation>Commentateur 1</translation>
     </message>
@@ -654,38 +655,38 @@ p, li { white-space: pre-wrap; }
         <translation>Sponsor</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="90"/>
         <location filename="../layout/TSHCommentator.ui" line="90"/>
+        <location filename="../layout/TSHCommentary.ui" line="90"/>
         <source>GamerTag</source>
         <translation>Pseudo</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="108"/>
         <location filename="../layout/TSHCommentator.ui" line="108"/>
+        <location filename="../layout/TSHCommentary.ui" line="108"/>
         <source>REAL NAME</source>
         <translation>NOM RÉEL</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="124"/>
         <location filename="../layout/TSHCommentator.ui" line="124"/>
+        <location filename="../layout/TSHCommentary.ui" line="124"/>
         <source>Real Name</source>
         <translation>Nom Réel</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="140"/>
         <location filename="../layout/TSHCommentator.ui" line="140"/>
+        <location filename="../layout/TSHCommentary.ui" line="140"/>
         <source>TWITTER</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="156"/>
         <location filename="../layout/TSHCommentator.ui" line="156"/>
+        <location filename="../layout/TSHCommentary.ui" line="156"/>
         <source>Handle Only</source>
         <translation>Pseudo Seulement</translation>
     </message>
     <message>
-        <location filename="../layout/TSHCommentary.ui" line="170"/>
         <location filename="../layout/TSHCommentator.ui" line="172"/>
+        <location filename="../layout/TSHCommentary.ui" line="170"/>
         <source>PRONOUNS</source>
         <translation>PRONOMS</translation>
     </message>
@@ -771,14 +772,14 @@ p, li { white-space: pre-wrap; }
         <translation>Tableau des scores</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="404"/>
         <location filename="../TSHCommentaryWidget.py" line="22"/>
+        <location filename="../TournamentStreamHelper.py" line="404"/>
         <source>Commentary</source>
         <translation>Commentateurs</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="415"/>
         <location filename="../TSHPlayerListWidget.py" line="34"/>
+        <location filename="../TournamentStreamHelper.py" line="415"/>
         <source>Player List</source>
         <translation>Liste de joueurs</translation>
     </message>
@@ -803,8 +804,8 @@ p, li { white-space: pre-wrap; }
         <translation>Vérifier les mises à jour</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="545"/>
         <location filename="../TSHAssetDownloader.py" line="78"/>
+        <location filename="../TournamentStreamHelper.py" line="545"/>
         <source>Download assets</source>
         <translation>Télécharger des ressources</translation>
     </message>
@@ -858,10 +859,10 @@ p, li { white-space: pre-wrap; }
         <translation>Téléchargement de la mise à jour... </translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="983"/>
-        <location filename="../TournamentStreamHelper.py" line="993"/>
         <location filename="../TSHAssetDownloader.py" line="306"/>
         <location filename="../TSHAssetDownloader.py" line="468"/>
+        <location filename="../TournamentStreamHelper.py" line="983"/>
+        <location filename="../TournamentStreamHelper.py" line="993"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
@@ -896,7 +897,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="493"/>
         <source>Pull Latest Completed Sets from StartGG</source>
-        <translation type="unfinished"></translation>
+        <translation>Récupérer les sets terminés récemment depuis StartGG</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="572"/>
@@ -1209,42 +1210,47 @@ p, li { white-space: pre-wrap; }
         <translation>Commentateur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="73"/>
         <location filename="../TSHPlayerListWidget.py" line="57"/>
+        <location filename="../TSHBracketWidget.py" line="73"/>
         <source>Number of slots</source>
         <translation>Nombre d&apos;emplacements</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="84"/>
         <location filename="../TSHPlayerListWidget.py" line="66"/>
+        <location filename="../TSHBracketWidget.py" line="84"/>
         <source>Players per slot</source>
         <translation>Nombre de joueurs par emplacement</translation>
     </message>
     <message>
-        <location filename="../TSHBracketWidget.py" line="93"/>
-        <location filename="../TSHCommentaryWidget.py" line="55"/>
         <location filename="../TSHPlayerListWidget.py" line="75"/>
+        <location filename="../TSHCommentaryWidget.py" line="55"/>
         <location filename="../TSHScoreboardWidget.py" line="167"/>
+        <location filename="../TSHBracketWidget.py" line="93"/>
         <source>Characters per player</source>
         <translation>Nombre de personnages par joueur</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="86"/>
+        <location filename="../TSHPlayerListWidget.py" line="89"/>
+        <source>Show scores</source>
+        <translation>Afficher les scores</translation>
+    </message>
+    <message>
+        <location filename="../TSHPlayerListWidget.py" line="96"/>
         <source>Load tournament standings</source>
         <translation>Charger les résultats du tournoi</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="91"/>
+        <location filename="../TSHPlayerListWidget.py" line="101"/>
         <source>Generate Descriptive Text for Results</source>
         <translation>Générer l’alternative textuelle pour les résultats</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="125"/>
+        <location filename="../TSHPlayerListWidget.py" line="135"/>
         <source>Descriptive Text for Results</source>
         <translation>Alternative textuelle pour les résultats</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="138"/>
+        <location filename="../TSHPlayerListWidget.py" line="148"/>
         <source>Copy text</source>
         <translation>Copier le texte</translation>
     </message>
@@ -1272,9 +1278,9 @@ p, li { white-space: pre-wrap; }
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="379"/>
         <location filename="../TSHSelectSetWindow.py" line="115"/>
         <location filename="../TSHSelectSetWindow.py" line="117"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="379"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
         <source>Player {0}</source>
         <translation>Joueur {0}</translation>
@@ -1315,6 +1321,7 @@ p, li { white-space: pre-wrap; }
         <translation>La valeur pour les bans maximums par match est invalide.</translation>
     </message>
     <message>
+        <location filename="../TSHPlayerListSlotWidget.py" line="47"/>
         <source>Score</source>
         <translation>Score</translation>
     </message>
@@ -1670,14 +1677,14 @@ p, li { white-space: pre-wrap; }
         <translation>]</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="846"/>
         <location filename="../TSHSelectSetWindow.py" line="140"/>
+        <location filename="../TournamentStreamHelper.py" line="846"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
-        <location filename="../TournamentStreamHelper.py" line="846"/>
         <location filename="../TSHSelectSetWindow.py" line="141"/>
+        <location filename="../TournamentStreamHelper.py" line="846"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -1697,7 +1704,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="184"/>
         <source>Default Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Affichage par défaut</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="218"/>
@@ -1788,7 +1795,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="83"/>
         <source>Hide the StartGG player tracking functionality from TSH (takes effect on next restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher la fonctionnalité de suivi d&apos;un joueur via StartGG (Prend effet après le redémarrage de l&apos;application)</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1846,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="177"/>
         <source>Show Additional Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Informations supplémentaires&quot;</translation>
     </message>
 </context>
 <context>
@@ -1847,7 +1854,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="153"/>
         <source>Show Characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Personnages&quot;</translation>
     </message>
 </context>
 <context>
@@ -1855,7 +1862,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="169"/>
         <source>Show Controller</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Manette&quot;</translation>
     </message>
 </context>
 <context>
@@ -1863,7 +1870,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="145"/>
         <source>Show Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Lieu&quot;</translation>
     </message>
 </context>
 <context>
@@ -1871,7 +1878,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="129"/>
         <source>Show Real Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Nom Réel&quot;</translation>
     </message>
 </context>
 <context>
@@ -1879,7 +1886,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="161"/>
         <source>Show Pronouns</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Pronoms&quot;</translation>
     </message>
 </context>
 <context>
@@ -1887,7 +1894,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="137"/>
         <source>Show Social Media</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Médias sociaux&quot;</translation>
     </message>
 </context>
 <context>
