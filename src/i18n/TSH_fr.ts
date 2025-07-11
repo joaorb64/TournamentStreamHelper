@@ -1047,6 +1047,11 @@ p, li { white-space: pre-wrap; }
         <translation>Contribuer aux ressources</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="974"/>
+        <source>NOTE: This will open a new tab in your browser and close Tournament Stream Helper.</source>
+        <translation>NOTE : Cela ouvrira un nouvel onglet dans votre navigateur web par défaut et fermera Tournament Stream Helper.</translation>
+    </message>
+    <message>
         <location filename="../TournamentStreamHelper.py" line="1115"/>
         <source>Change Tab Title</source>
         <translation>Modifier le nom d’un tableau des scores</translation>
