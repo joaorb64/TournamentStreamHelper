@@ -537,10 +537,13 @@ class WebServer(QThread):
     @app.route('/', defaults=dict(filename=None))
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
-    def test(filename):
+    def file_request(filename):
         try:
             filename = filename or 'stage_strike_app/build/index.html'
-            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'))
+            mimetype = None
+            if filename.endswith('.js'):
+                mimetype = "text/javascript"
+            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
         except Exception as e:
             logger.error(f"File not found: {e}")
 
