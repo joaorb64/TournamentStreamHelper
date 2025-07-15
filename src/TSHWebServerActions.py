@@ -12,6 +12,7 @@ from loguru import logger
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
+from .TSHPlayerDB import TSHPlayerDB
 from .TSHScoreboardWidget import TSHScoreboardWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
@@ -401,7 +402,10 @@ class WebServerActions(QThread):
             provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=False)
             return sets
-        
+
+    def get_playerdb(self):
+        return TSHPlayerDB.database
+
     def get_match(self, setId=None):
         setId = int(setId)
         provider = TSHTournamentDataProvider.instance.GetProvider()

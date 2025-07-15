@@ -81,4 +81,17 @@
  * @property {?string} tournament_phase
  */
 
+/**
+ * @typedef TSHPlayerDbEntry
+ * @property {string} controller
+ * @property {string} country_code
+ * @property {string} custom_textbox
+ * @property {string} gamerTag
+ * @property {Object.<string, [string, number, string]>} mains
+ * @property {string} name
+ * @property {string} prefix
+ * @property {string} pronoun
+ * @property {string} twitter
+ */
+
 export const BackendTypes = {};
