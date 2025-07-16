@@ -3,7 +3,9 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 import requests
 import os
+import pathlib
 import shutil
+import time
 import traceback
 import zipfile
 import json
@@ -32,6 +34,14 @@ class TSHControllerHelper(QObject):
 
     def UpdateControllerFile(self):
         try:
+            out_dir = pathlib.Path('./assets/controller')
+
+            if out_dir.exists():
+                modtime = out_dir.stat().st_mtime
+                if time.time() - modtime <= (12 * 60 * 60):
+                    logger.debug("Skipping controller db download.")
+                    return
+
             url = 'https://github.com/Wolfy76700/ControllerDatabase/archive/refs/heads/main.zip'
             r = requests.get(url, allow_redirects=True)
 
