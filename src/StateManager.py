@@ -93,6 +93,7 @@ class StateManager:
             StateManager.SaveState()
 
     def Set(key: str, value):
+        # logger.debug(f"StateManager Setting {key} to {value}")
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
 

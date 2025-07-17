@@ -1114,6 +1114,8 @@ class TSHScoreboardWidget(QWidget):
 
                     teamInstance[player].SetData(
                         data.get("data"), False, False)
+                    if data.get("data", {}).get("savePlayerToDb", False):
+                        teamInstance[player].SavePlayerToDB()
                 except Exception as e:
                     logger.error(f"Error while setting entrants: {e}")
                 finally:

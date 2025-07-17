@@ -50,6 +50,11 @@ export default function CurrentSet() {
             .catch(console.error);
     }
 
+    const swapTeams = () => {
+        fetch(`http://${window.location.hostname}:5000/scoreboard1-swap-teams`)
+            .catch(console.error)
+    }
+
     const hasSuitableTeamCount =
         !!score
         && !!score.team
@@ -121,6 +126,7 @@ export default function CurrentSet() {
                                     <Stack gap={2}>
                                         <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
                                         <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
+                                        <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
                                     </Stack>
                                 </Stack>
 

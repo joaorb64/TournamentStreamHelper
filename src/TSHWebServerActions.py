@@ -250,7 +250,13 @@ class WebServerActions(QThread):
             item_data = item.data(Qt.ItemDataRole.UserRole)
 
             if item_data is not None:
+                skin_models = TSHGameAssetManager.instance.skinModels.get(item_data.get("en_name"))
+                item_data["skins"] = []
+                if skin_models is not None:
+                    for skindex in range(skin_models.rowCount()):
+                        item_data["skins"].append(skin_models.index(skindex, 0).data(Qt.ItemDataRole.UserRole))
                 data[item_data.get("name")] = item_data
+
         return data
     
     def get_variants(self):

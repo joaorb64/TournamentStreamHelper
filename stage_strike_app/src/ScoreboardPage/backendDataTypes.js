@@ -87,11 +87,15 @@
  * @property {string} country_code
  * @property {string} custom_textbox
  * @property {string} gamerTag
- * @property {Object.<string, [string, number, string]>} mains
+ * @property {Object.<string, [string, number, string][]>} mains
  * @property {string} name
  * @property {string} prefix
  * @property {string} pronoun
  * @property {string} twitter
+ */
+
+/**
+ * @typedef {Object.<string, TSHPlayerDbEntry>} TSHPlayerDb
  */
 
 export const BackendTypes = {};

@@ -1,13 +1,13 @@
 import React from "react";
 import {
     Avatar,
+    Autocomplete,
     Card,
     CardContent,
     CardHeader,
     Collapse,
-    FormControl, IconButton,
-    InputLabel, Paper,
-    Select,
+    IconButton,
+    MenuItem,
     Stack
 } from "@mui/material";
 import TextField from './TextField';
@@ -29,6 +29,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         _twitter: player.twitter,
         _pronoun: player.pronoun,
         _charCode: player.character[1].codename ?? "",
+        _charSkin: 0,
 
         countryCode: player.country?.code,
         stateCode: player.state?.code,
@@ -38,12 +39,13 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         twitter: player.twitter,
         pronoun: player.pronoun,
         charCode: player.character[1].codename ?? "",
+        charSkin: 0,
         expanded: true
     });
 
     const tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;
-    const playerDb = React.useContext(TSHPlayerDBContext);
+    /** @type TSHPlayerDb */ const playerDb = React.useContext(TSHPlayerDBContext);
 
     React.useEffect(() => {
         const newProps = {
@@ -112,13 +114,43 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                 rval.mains = {};
             }
 
-            rval.mains[gameCodename] = [[characters[state.charCode].en_name, 0, ""]];
+            rval.mains[gameCodename] = [[characters[state.charCode].en_name, state.charSkin ?? 0, ""]];
         }
 
-        rval.overwrite = true;
+        // Don't persist player info to DB if they have no tag.
+        rval.savePlayerToDb = (!!state.name);
 
         console.log("Update payload:",  rval)
         return rval;
+    }
+
+    const onTagChanged = (/** React.SyntheticEvent */ event, value,  /** string */ reason) => {
+        if (value instanceof Object && value.hasOwnProperty("gamerTag")) {
+            let charCode = "";
+            if (value.mains?.hasOwnProperty(gameCodename)) {
+                charCode = value.mains?.[gameCodename]?.[0]?.[0] ?? "";
+            }
+            // value is a TSHPlayerDbEntry
+            setState({
+                ...state,
+                countryCode: value.country_code ?? "",
+                name: value.gamerTag,
+                team: value.prefix ?? "",
+                realName: value.name ?? "",
+                twitter: value.twitter ?? "",
+                pronoun: value.pronoun ?? "",
+                stateCode: value.state_code ?? "",
+                charCode: charCode
+            });
+        } else {
+            // value is an ad-hoc string of a player tag.
+            setState({...state, name: value})
+        }
+        console.log(event, value, reason);
+    };
+
+    const onCharCodeChanged = (event, value, reason) => {
+        setState({...state, charCode: value?.codename ?? value})
     }
 
     const idBase = `team-${teamId}-player-${playerId}-`;
@@ -126,7 +158,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
 
     React.useImperativeHandle(ref, () => ({
         getModifiedPlayerData: getModifiedPlayerData
-    }) );
+    }), [state]);
 
     return (
         <Card raised={true}>
@@ -153,21 +185,43 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                             <TextField label={i18n.t("sponsor")}
                                        key={idBase + "sponsor"}
                                        id={idBase + "sponsor"}
-                                       value={state.team}
+                                       value={state.team ?? ''}
                                        onChange={changeHandlerFor('team')}
                             />
+
+                            <Autocomplete
+                                key={idBase + "tag"}
+                                id={idBase + "tag"}
+                                options={Object.values(playerDb)}
+                                value={state.name ?? ''}
+                                getOptionLabel={(/** TSHPlayerDbEntry|string */ player) => {
+                                    return player?.gamerTag ?? player;
+                                }}
+                                freeSolo={true}
+                                sx={{width: '100%'}}
+                                onChange={onTagChanged}
+                                renderInput={(params) =>
+                                    <TextField
+                                        {...params}
+                                        label={i18n.t("tag")}
+                                    />}
+                            />
+
+
+                            {/*
                             <TextField label={i18n.t("tag")}
                                        key={idBase + "tag"}
                                        id={idBase + "tag"}
                                        value={state.name}
                                        onChange={changeHandlerFor('name')}
                             />
+                            */}
                         </Stack>
 
                         <TextField label={i18n.t("real_name")}
                                    key={idBase + "realName"}
                                    id={idBase + "realName"}
-                                   value={state.realName}
+                                   value={state.realName ?? ''}
                                    onChange={changeHandlerFor('realName')}
                         />
 
@@ -175,13 +229,13 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                             <TextField label={i18n.t("twitter")}
                                        key={idBase + "twitter"}
                                        id={idBase + "twitter"}
-                                       value={state.twitter}
+                                       value={state.twitter ?? ''}
                                        onChange={changeHandlerFor('twitter')}
                             />
                             <TextField label={i18n.t("pronouns")}
                                        key={idBase + "pronoun"}
                                        id={idBase + "pronoun"}
-                                       value={state.pronoun}
+                                       value={state.pronoun ?? ''}
                                        onChange={changeHandlerFor('pronoun')}
                             />
                         </Stack>
@@ -190,44 +244,101 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                             <TextField label={i18n.t("country")}
                                        key={idBase + "country"}
                                        id={idBase + "country"}
-                                       value={state.countryCode}
+                                       value={state.countryCode ?? ''}
                                        onChange={changeHandlerFor('countryCode')}
                             />
                             <TextField label={i18n.t("state")}
                                        key={idBase + "state"}
                                        id={idBase + "state"}
-                                       value={state.stateCode}
+                                       value={state.stateCode ?? ''}
                                        onChange={changeHandlerFor('stateCode')}
                             />
                         </Stack>
 
-                        <FormControl>
-                            <InputLabel
-                                id={idBase + "char-label"}
-                                sx={t => ({'&[data-shrink="false"]': {color: t.palette.text.disabled}})}
-                                htmlFor={idBase + "char-select"}
-                            >
-                                Character
-                            </InputLabel>
-                            <Select
+                            <Stack {...rowProps} alignItems={"stretch"} justifyContent={"space-evenly"} sx={{height: 56}}>
+                            <Autocomplete
                                 key={idBase + "char-select"}
                                 id={idBase + "char-select"}
-                                labelId={idBase + "char-label"}
-                                label={i18n.t("character")}
-                                value={state.charCode ?? ""}
-                                onChange={changeHandlerFor('charCode')}
-                                native={true}
-                            >
-                                <option value={""}></option>
-                                {
-                                    Object.values(characters).sort().map((character) => (
-                                        <option key={character.codename} value={character.codename}>
-                                            {character.display_name}
-                                        </option>
-                                    ))
+                                options={Object.values(characters)}
+                                value={characters?.[state.charCode] ?? ""}
+                                freeSolo={true}
+                                sx={{width: '50%'}}
+                                onChange={onCharCodeChanged}
+                                getOptionLabel={(char) => char?.display_name ?? char}
+                                renderOption={(props, option, state, ownerState) => {
+                                    let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
+                                    if (!!skimage) {
+                                        skimage = skimage.replace("./", "");
+                                    }
+
+                                    return <li {...props}>
+                                        {skimage
+                                            ? <img height="32" width="32" src={`http://${window.location.hostname}:5000/${skimage}`}/>
+                                            : <div style={{height:'32px', width:'32px'}}/>
+                                        }
+                                        <span style={{marginLeft: '16px'}}>
+                                            {option?.display_name ?? option}
+                                        </span>
+                                    </li>
+                                }}
+                                renderInput={(params) => {
+                                    return(
+                                    <div>
+                                        <TextField
+                                            {...params}
+                                            label={i18n.t("character")}
+                                        />
+                                    </div>)
+                                    }
                                 }
-                            </Select>
-                        </FormControl>
+                            />
+
+                                <TextField
+                                    label={"Skin"}
+                                    select
+                                    value={(!state.charCode || state.charCode === '') ? '' : state.charSkin }
+                                    onChange={changeHandlerFor('charSkin')}
+                                    sx={{
+                                        display: 'block',
+                                        width: '50%',
+                                        height: '100%',
+
+                                        padding:0,
+                                        '& .MuiPopover-paper': {
+                                            minWidth: 'initial'
+                                        },
+                                        '& .MuiInputBase-root': {
+                                            height: '100%',
+                                            width: '100%'
+                                        },
+                                        '& .MuiSelect-select': {
+                                            paddingTop: 0,
+                                            paddingBottom: 0
+                                        },
+                                    }}
+                                >
+                                    {
+                                        Object.entries(characters[state.charCode]?.skins ?? {}).map(([idx, skin]) => (
+                                            <MenuItem
+                                                key={state.charCode + idx}
+                                                value={idx}
+                                            >
+                                                <div style={{height: 56, width: 56, overflow: 'hidden', margin: 'auto'}}>
+                                                    <img
+                                                        style={{
+                                                            height: '100%',
+                                                            width: '100%',
+                                                            verticalAlign: 'middle',
+                                                            objectFit: 'cover'
+                                                        }}
+                                                        src={`http://${window.location.hostname}:5000/${skin?.assets?.costume?.asset?.slice(2)}`}
+                                                    />
+                                                </div>
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </TextField>
+                            </Stack>
                     </Stack>
                 </CardContent>
             </Collapse>
