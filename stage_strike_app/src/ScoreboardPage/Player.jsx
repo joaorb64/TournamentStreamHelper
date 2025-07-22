@@ -204,7 +204,6 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
             // value is an ad-hoc string of a player tag.
             setState({...state, name: newPlayer})
         }
-        console.log(event, newPlayer, reason);
     };
 
     const onCharCodeChanged = (event, value, _) => {
