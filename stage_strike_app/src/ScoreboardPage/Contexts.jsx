@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 
-export const TSHStateContext = createContext(null);
-export const TSHCharacterContext = createContext(null);
-export const TSHPlayerDBContext = createContext(null);
+export const /** @type {Context<TSHState>} */ TSHStateContext = createContext(null);
+export const /** @type {Context<TSHCharacterDb>} */ TSHCharacterContext = createContext(null);
+export const /** @type {Context<TSHPlayerDb>} */ TSHPlayerDBContext =  createContext(null);
+

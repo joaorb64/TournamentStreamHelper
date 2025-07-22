@@ -14,13 +14,61 @@ import TextField from './TextField';
 import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
+/** @typedef {{
+ *     _countryCode?: string,
+ *     _stateCode?: string,
+ *     _team: string,
+ *     _name: string,
+ *     _realName: string,
+ *     _twitter: string,
+ *     _pronoun: string,
+ *     _charCode: string,
+ *     _charSkin: string | number,
+ *
+ *     countryCode?: string,
+ *     stateCode?: string,
+ *     team: string,
+ *     name: string,
+ *     realName: string,
+ *     twitter: string,
+ *     pronoun: string,
+ *     charCode: string,
+ *     charSkin: string,
+ *     expanded: boolean
+ * }} PlayerState
+ */
+
+/**
+ * @param {TSHPlayerDbEntry} player
+ * @param {string} gameCodename
+ * @return {{charCode?: string, charSkin: string}}
+ */
+function getMain(player, gameCodename) {
+    let charCode = "";
+    let charSkin = "";
+
+    if (player.mains?.hasOwnProperty(gameCodename)) {
+        const main = player.mains?.[gameCodename]?.[0];
+        if (main) {
+            charCode = main?.[0] ?? "";
+            charSkin = main?.[1] ?? "";
+        }
+    }
+
+    return {
+        charCode, charSkin
+    };
+}
 
 /**
  * @param {string} teamId
  * @param {TSHPlayerInfo} player
  */
 export default React.forwardRef(function Player({teamId, player}, ref) {
-    const [state, setState] = React.useState({
+    const [
+        /** @type {PlayerState} */ state,
+        setState
+    ] = React.useState({
         _countryCode: player.country?.code,
         _stateCode: player.state?.code,
         _team: player.team,
@@ -29,7 +77,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         _twitter: player.twitter,
         _pronoun: player.pronoun,
         _charCode: player.character[1].codename ?? "",
-        _charSkin: 0,
+        _charSkin: "",
 
         countryCode: player.country?.code,
         stateCode: player.state?.code,
@@ -39,11 +87,11 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         twitter: player.twitter,
         pronoun: player.pronoun,
         charCode: player.character[1].codename ?? "",
-        charSkin: 0,
+        charSkin: "",
         expanded: true
     });
 
-    const tshState = React.useContext(TSHStateContext);
+    const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;
     /** @type TSHPlayerDb */ const playerDb = React.useContext(TSHPlayerDBContext);
 
@@ -57,6 +105,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
             twitter: player.twitter,
             pronoun: player.pronoun,
             charCode: player?.character?.[1]?.codename ?? "",
+            charSkin: player?.character?.[1]?.skin ?? "",
         }
 
         const stateUpdates = {};
@@ -73,7 +122,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         }
     }, [player])
 
-    const characters = React.useContext(TSHCharacterContext);
+    const /** @type {TSHCharacterDb} */ characters = React.useContext(TSHCharacterContext);
     const playerId = player?.id?.at(0) || player?.id?.at(1) || -1;
 
     const changeHandlerFor = (fieldName) => {
@@ -106,7 +155,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         rval.pronoun = state.pronoun
         if (!!state.charCode) {
             const lookupName = !!player.prefix ? `${player.prefix} ${player.name}` : player.name;
-            if (Object.keys(playerDb).includes(player.name)) {
+            if (Object.keys(playerDb).includes(lookupName)) {
                 rval.mains = {
                     ...playerDb[player.name].mains,
                 }
@@ -114,7 +163,14 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                 rval.mains = {};
             }
 
-            rval.mains[gameCodename] = [[characters[state.charCode].en_name, state.charSkin ?? 0, ""]];
+
+            rval.mains[gameCodename] = [
+                [
+                    state.charCode ? characters[state.charCode].en_name : "",
+                    state.charSkin || 0,
+                    ""
+                ]
+            ];
         }
 
         // Don't persist player info to DB if they have no tag.
@@ -124,33 +180,43 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         return rval;
     }
 
-    const onTagChanged = (/** React.SyntheticEvent */ event, value,  /** string */ reason) => {
-        if (value instanceof Object && value.hasOwnProperty("gamerTag")) {
-            let charCode = "";
-            if (value.mains?.hasOwnProperty(gameCodename)) {
-                charCode = value.mains?.[gameCodename]?.[0]?.[0] ?? "";
-            }
-            // value is a TSHPlayerDbEntry
+    /**
+     *
+     * @param {React.SyntheticEvent} event
+     * @param {TSHPlayerDbEntry|string} newPlayer
+     * @param {string} reason
+     */
+    const onTagChanged = (event, newPlayer,  reason) => {
+        if (newPlayer instanceof Object && newPlayer.hasOwnProperty("gamerTag")) {
+            // newPlayer is a TSHPlayerDbEntry
             setState({
                 ...state,
-                countryCode: value.country_code ?? "",
-                name: value.gamerTag,
-                team: value.prefix ?? "",
-                realName: value.name ?? "",
-                twitter: value.twitter ?? "",
-                pronoun: value.pronoun ?? "",
-                stateCode: value.state_code ?? "",
-                charCode: charCode
+                countryCode: newPlayer.country_code ?? "",
+                name: newPlayer.gamerTag,
+                team: newPlayer.prefix ?? "",
+                realName: newPlayer.name ?? "",
+                twitter: newPlayer.twitter ?? "",
+                pronoun: newPlayer.pronoun ?? "",
+                stateCode: newPlayer.state_code ?? "",
+                ...getMain(newPlayer, gameCodename),
             });
         } else {
             // value is an ad-hoc string of a player tag.
-            setState({...state, name: value})
+            setState({...state, name: newPlayer})
         }
-        console.log(event, value, reason);
+        console.log(event, newPlayer, reason);
     };
 
-    const onCharCodeChanged = (event, value, reason) => {
-        setState({...state, charCode: value?.codename ?? value})
+    const onCharCodeChanged = (event, value, _) => {
+        const charEntry = characters?.[value?.codename];
+        let charSkin = "";
+        if (charEntry) {
+            const charSkins = charEntry?.skins?.length;
+            if (charSkins && charSkins > 0) {
+                charSkin = 0;
+            }
+        }
+        setState({...state, charCode: value?.codename ?? value, charSkin: charSkin})
     }
 
     const idBase = `team-${teamId}-player-${playerId}-`;
@@ -158,7 +224,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
 
     React.useImperativeHandle(ref, () => ({
         getModifiedPlayerData: getModifiedPlayerData
-    }), [state]);
+    }), [state, getModifiedPlayerData]);
 
     return (
         <Card raised={true}>
@@ -256,47 +322,48 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                         </Stack>
 
                             <Stack {...rowProps} alignItems={"stretch"} justifyContent={"space-evenly"} sx={{height: 56}}>
-                            <Autocomplete
-                                key={idBase + "char-select"}
-                                id={idBase + "char-select"}
-                                options={Object.values(characters)}
-                                value={characters?.[state.charCode] ?? ""}
-                                freeSolo={true}
-                                sx={{width: '50%'}}
-                                onChange={onCharCodeChanged}
-                                getOptionLabel={(char) => char?.display_name ?? char}
-                                renderOption={(props, option, state, ownerState) => {
-                                    let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
-                                    if (!!skimage) {
-                                        skimage = skimage.replace("./", "");
-                                    }
-
-                                    return <li {...props}>
-                                        {skimage
-                                            ? <img height="32" width="32" src={`http://${window.location.hostname}:5000/${skimage}`}/>
-                                            : <div style={{height:'32px', width:'32px'}}/>
+                                <Autocomplete
+                                    key={idBase + "char-select"}
+                                    id={idBase + "char-select"}
+                                    options={Object.values(characters)}
+                                    value={characters?.[state.charCode] ?? ""}
+                                    freeSolo={true}
+                                    sx={{width: '50%'}}
+                                    onChange={onCharCodeChanged}
+                                    getOptionLabel={(char) => char?.display_name ?? char}
+                                    renderOption={(props, option, _) => {
+                                        let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
+                                        if (!!skimage) {
+                                            skimage = skimage.replace("./", "");
                                         }
-                                        <span style={{marginLeft: '16px'}}>
+
+                                        return <li {...props}>
+                                            {skimage
+                                                ? <img height="32" width="32" alt={`Profile icon for ${state.name}`} src={`http://${window.location.hostname}:5000/${skimage}`}/>
+                                                : <div style={{height:'32px', width:'32px'}}/>
+                                            }
+                                            <span style={{marginLeft: '16px'}}>
                                             {option?.display_name ?? option}
                                         </span>
-                                    </li>
-                                }}
-                                renderInput={(params) => {
-                                    return(
-                                    <div>
-                                        <TextField
-                                            {...params}
-                                            label={i18n.t("character")}
-                                        />
-                                    </div>)
+                                        </li>
+                                    }}
+                                    renderInput={(params) => {
+                                        return(
+                                            <div>
+                                                <TextField
+                                                    {...params}
+                                                    label={i18n.t("character")}
+                                                />
+                                            </div>)
                                     }
-                                }
-                            />
+                                    }
+                                />
 
                                 <TextField
                                     label={"Skin"}
                                     select
                                     value={(!state.charCode || state.charCode === '') ? '' : state.charSkin }
+                                    disabled={(!state.charCode || state.charCode === '')}
                                     onChange={changeHandlerFor('charSkin')}
                                     sx={{
                                         display: 'block',
@@ -325,6 +392,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                                             >
                                                 <div style={{height: 56, width: 56, overflow: 'hidden', margin: 'auto'}}>
                                                     <img
+                                                        alt={`Skin number ${idx} for ${state.charCode}`}
                                                         style={{
                                                             height: '100%',
                                                             width: '100%',
