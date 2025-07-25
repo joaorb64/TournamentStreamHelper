@@ -12,6 +12,7 @@ from loguru import logger
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketView import TSHBracketView
 from .TSHBracketWidget import TSHBracketWidget
+from .TSHPlayerDB import TSHPlayerDB
 from .TSHScoreboardWidget import TSHScoreboardWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
@@ -249,7 +250,13 @@ class WebServerActions(QThread):
             item_data = item.data(Qt.ItemDataRole.UserRole)
 
             if item_data is not None:
+                skin_models = TSHGameAssetManager.instance.skinModels.get(item_data.get("en_name"))
+                item_data["skins"] = []
+                if skin_models is not None:
+                    for skindex in range(skin_models.rowCount()):
+                        item_data["skins"].append(skin_models.index(skindex, 0).data(Qt.ItemDataRole.UserRole))
                 data[item_data.get("name")] = item_data
+
         return data
     
     def get_variants(self):
@@ -401,7 +408,10 @@ class WebServerActions(QThread):
             provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=False)
             return sets
-        
+
+    def get_playerdb(self):
+        return TSHPlayerDB.database
+
     def get_match(self, setId=None):
         setId = int(setId)
         provider = TSHTournamentDataProvider.instance.GetProvider()

@@ -9,6 +9,7 @@ from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
+
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
@@ -482,6 +483,15 @@ class WebServer(QThread):
     def ws_get_set(message):
         emit('get_set', WebServer.actions.get_set(
             orjson.loads(message).get('scoreboardNumber', '1')))
+        
+    @app.route('/playerdb')
+    def playerdb():
+        return WebServer.actions.get_playerdb()
+
+    @socketio.on('playerdb')
+    def ws_playerdb(message):
+        emit('playerdb', WebServer.actions.get_playerdb())
+
 
     # Update bracket
     @app.route('/update-bracket')

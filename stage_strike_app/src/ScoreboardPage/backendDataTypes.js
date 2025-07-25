@@ -22,7 +22,7 @@
  * @prop {?string} sponsor_logo
  * @prop {?string} team
  * @prop {?string} twitter
- * @prop {Object.<number, TSHCharacter>} character
+ * @prop {Object.<number, TSHCharacterSelection>} character
  */
 /**
  * @typedef {object} TSHTeamInfo
@@ -30,6 +30,17 @@
  * @prop {string} teamName
  * @prop {Object.<int, TSHPlayerInfo>} player
  */
+
+/** @typedef {object} TSHState very incomplete definition
+ * @prop {{
+ *   [scoreboard: number]: TSHScoreInfo
+ *   ruleset: object
+ * }} score
+ * @prop {?{
+ *     codename?: string
+ * }} game
+ */
+
 /**
  * @typedef {object} TSHScoreInfo
  * @prop {int} best_of
@@ -41,8 +52,9 @@
  * @prop {?string} stream_url
  * @prop {Object.<int, TSHTeamInfo>} team
  */
+
 /**
- * @typedef {object} TSHCharacter
+ * @typedef {object} TSHCharacterBase
  * @prop {string} codename
  * @prop {string} display_name
  * @prop {string} en_name
@@ -50,7 +62,50 @@
  */
 
 /**
- * @typedef {Object.<string, TSHCharacter>} TSHCharacters
+ * @typedef {object} TSHCharacterSelection
+ * @extends {TSHCharacterBase}
+ * @prop {number} skin This is -1 if unset.
+ */
+
+/** @typedef {Object.<string, TSHCharacterDbEntry>} TSHCharacterDb */
+/**
+ * @typedef {object} TSHCharacterDbEntry
+ * @extends {TSHCharacterBase}
+ * @prop {TSHCharacterSkin[]} skins
+ */
+
+/**
+ * @typedef {object} TSHCharacterSkin
+ * @property {TSHCharacterSkinAsset[]} assets
+ */
+
+/**
+ * @typedef {object} TSHCharacterSkinAssets
+ * @prop {?TSHCharacterSkinAsset} art
+ * @prop {?TSHCharacterSkinAsset} base_files/icon
+ * @prop {?TSHCharacterSkinAsset} costume
+ * @prop {?TSHCharacterSkinAsset} css
+ * @prop {?TSHCharacterSkinAsset} full
+ * @prop {?TSHCharacterSkinAsset} profile
+ */
+
+/** @typedef Point2D
+ *  @prop {number} x
+ *  @prop {number} y
+ */
+
+/**
+ * @typedef {object} TSHCharacterSkinAsset
+ * @prop {string} asset Path to the asset
+ * @prop {?Point2D} average_size
+ * @prop {?Point2D} image_size
+ * @prop {?number} rescaling_factor
+ * @prop {?string[]} type
+ * @prop {?string[]} uncropped_edge
+ */
+
+/**
+ * @typedef {Object.<string, TSHCharacterSelection>} TSHCharacters
  */
 
 /**
@@ -79,6 +134,32 @@
  * @property {int} team1score
  * @property {int} team2score
  * @property {?string} tournament_phase
+ */
+
+/** @typedef {Object.<string, TSHPlayerDbEntry>} TSHPlayerDb */
+/**
+ * @typedef TSHPlayerDbEntry
+ * @property {string} controller
+ * @property {string} country_code
+ * @property {string} custom_textbox
+ * @property {string} gamerTag
+ * @property {?TSHMainsMap} mains
+ * @property {string} name
+ * @property {string} prefix
+ * @property {string} pronoun
+ * @property {string} twitter
+ */
+
+/**
+ * @typedef {Object.<string, TSHMain[]>} TSHMainsMap
+ */
+
+/**
+ * @typedef {[string, number, string]} TSHMain
+ */
+
+/**
+ * @typedef {Object.<string, TSHPlayerDbEntry>} TSHPlayerDb
  */
 
 export const BackendTypes = {};
