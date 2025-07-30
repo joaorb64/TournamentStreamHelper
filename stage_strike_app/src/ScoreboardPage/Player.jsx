@@ -22,7 +22,7 @@ import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contex
  *     _realName: string,
  *     _twitter: string,
  *     _pronoun: string,
- *     _charCode: string,
+ *     _charName: string,
  *     _charSkin: string | number,
  *
  *     countryCode?: string,
@@ -32,31 +32,56 @@ import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contex
  *     realName: string,
  *     twitter: string,
  *     pronoun: string,
- *     charCode: string,
- *     charSkin: string,
+ *     charName: string,
+ *     charSkin: string | number,
  *     expanded: boolean
  * }} PlayerState
  */
 
 /**
+ * @param {TSHCharacterSkin} skin
+ * @return string
+ */
+function getSkinAssetUrl(skin) {
+    if (!skin) {
+        return "about:_blank";
+    }
+
+    const assets = skin.assets;
+    let asset = null;
+
+    if (assets?.costume) {
+        asset = assets.costume;
+    } else if (assets?.full) {
+        asset = assets.full;
+    } else if (assets?.['base_files/icon']) {
+        asset = assets['base_files/icon'];
+    } else {
+        return "about:_blank";
+    }
+
+    return `http://${window.location.hostname}:5000/${asset.asset.slice(2)}`;
+}
+
+/**
  * @param {TSHPlayerDbEntry} player
  * @param {string} gameCodename
- * @return {{charCode?: string, charSkin: string}}
+ * @return {{charName?: string, charSkin: string}}
  */
 function getMain(player, gameCodename) {
-    let charCode = "";
+    let charName = "";
     let charSkin = "";
 
     if (player.mains?.hasOwnProperty(gameCodename)) {
         const main = player.mains?.[gameCodename]?.[0];
         if (main) {
-            charCode = main?.[0] ?? "";
+            charName = main?.[0] ?? "";
             charSkin = main?.[1] ?? "";
         }
     }
 
     return {
-        charCode, charSkin
+        charName, charSkin
     };
 }
 
@@ -76,7 +101,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         _realName: player.real_name,
         _twitter: player.twitter,
         _pronoun: player.pronoun,
-        _charCode: player.character[1].codename ?? "",
+        _charName: player.character[1].en_name,
         _charSkin: "",
 
         countryCode: player.country?.code,
@@ -86,7 +111,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         realName: player.real_name,
         twitter: player.twitter,
         pronoun: player.pronoun,
-        charCode: player.character[1].codename ?? "",
+        charName: player.character[1].en_name ?? "",
         charSkin: "",
         expanded: true
     });
@@ -104,7 +129,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
             realName: player.real_name,
             twitter: player.twitter,
             pronoun: player.pronoun,
-            charCode: player?.character?.[1]?.codename ?? "",
+            charName: player?.character?.[1]?.en_name ?? "",
             charSkin: player?.character?.[1]?.skin ?? "",
         }
 
@@ -153,7 +178,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         rval.name = state.realName
         rval.twitter = state.twitter
         rval.pronoun = state.pronoun
-        if (!!state.charCode) {
+        if (!!state.charName) {
             const lookupName = !!player.prefix ? `${player.prefix} ${player.name}` : player.name;
             if (Object.keys(playerDb).includes(lookupName)) {
                 rval.mains = {
@@ -166,7 +191,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
 
             rval.mains[gameCodename] = [
                 [
-                    state.charCode ? characters[state.charCode].en_name : "",
+                    state.charName ? characters[state.charName]?.en_name : "",
                     state.charSkin || 0,
                     ""
                 ]
@@ -206,8 +231,8 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         }
     };
 
-    const onCharCodeChanged = (event, value, _) => {
-        const charEntry = characters?.[value?.codename];
+    const onCharNameChanged = (event, value, _) => {
+        const charEntry = characters?.[value?.en_name];
         let charSkin = "";
         if (charEntry) {
             const charSkins = charEntry?.skins?.length;
@@ -215,7 +240,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                 charSkin = 0;
             }
         }
-        setState({...state, charCode: value?.codename ?? value, charSkin: charSkin})
+        setState({...state, charName: value?.en_name ?? value, charSkin: charSkin})
     }
 
     const idBase = `team-${teamId}-player-${playerId}-`;
@@ -325,10 +350,10 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                                     key={idBase + "char-select"}
                                     id={idBase + "char-select"}
                                     options={Object.values(characters)}
-                                    value={characters?.[state.charCode] ?? ""}
+                                    value={characters?.[state.charName] ?? ""}
                                     freeSolo={true}
                                     sx={{width: '50%'}}
-                                    onChange={onCharCodeChanged}
+                                    onChange={onCharNameChanged}
                                     getOptionLabel={(char) => char?.display_name ?? char}
                                     renderOption={(props, option, _) => {
                                         let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
@@ -361,8 +386,8 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                                 <TextField
                                     label={"Skin"}
                                     select
-                                    value={(!state.charCode || state.charCode === '') ? '' : state.charSkin }
-                                    disabled={(!state.charCode || state.charCode === '')}
+                                    value={(!state.charName || state.charName === '') ? '' : state.charSkin }
+                                    disabled={(!state.charName || state.charName === '')}
                                     onChange={changeHandlerFor('charSkin')}
                                     sx={{
                                         display: 'block',
@@ -384,21 +409,21 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                                     }}
                                 >
                                     {
-                                        Object.entries(characters[state.charCode]?.skins ?? {}).map(([idx, skin]) => (
+                                        Object.entries(characters[state.charName]?.skins ?? {}).map(([idx, skin]) => (
                                             <MenuItem
-                                                key={state.charCode + idx}
+                                                key={state.charName + idx}
                                                 value={idx}
                                             >
                                                 <div style={{height: 56, width: 56, overflow: 'hidden', margin: 'auto'}}>
                                                     <img
-                                                        alt={`Skin number ${idx} for ${state.charCode}`}
+                                                        alt={`Skin ${idx}`}
                                                         style={{
                                                             height: '100%',
                                                             width: '100%',
                                                             verticalAlign: 'middle',
                                                             objectFit: 'cover'
                                                         }}
-                                                        src={`http://${window.location.hostname}:5000/${skin?.assets?.costume?.asset?.slice(2)}`}
+                                                        src={getSkinAssetUrl(skin)}
                                                     />
                                                 </div>
                                             </MenuItem>

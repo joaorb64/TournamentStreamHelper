@@ -51,7 +51,16 @@ export default function ScoreboardPage(props) {
 
         socket.on("characters", data => {
             console.log("Character data received", data);
-            setCharacters(data);
+
+            // We need our character list to be keyed by the en_name, because things like player mains are set
+            // to the english name instead the localized name. We won't be able to do lookups if we don't
+            // rearrange it like this.
+            const enChars = {};
+            Object.values(data).forEach((/** TSHCharacterBase */ char) => {
+                enChars[char.en_name] = char;
+            });
+            console.log("Character data set", enChars);
+            setCharacters(enChars);
         })
 
         socket.on("disconnect", () => {console.log("SocketIO disconnected.")});

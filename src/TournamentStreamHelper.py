@@ -843,7 +843,8 @@ class Window(QMainWindow):
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
         if index is not None:
             self.gameSelect.setCurrentIndex(index)
-    
+            self.webserver.emit("characters", self.webserver.actions.get_characters())
+
     def Signal_GameChange(self, url):
         if url == "":
             self.gameSelect.setCurrentIndex(0)
