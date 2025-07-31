@@ -76,7 +76,7 @@
 
 /**
  * @typedef {object} TSHCharacterSkin
- * @property {TSHCharacterSkinAsset[]} assets
+ * @property {TSHCharacterSkinAssets} assets
  */
 
 /**
