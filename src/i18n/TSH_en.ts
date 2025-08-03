@@ -1156,7 +1156,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="86"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="946"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="960"/>
         <source>Save new player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1171,7 +1171,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="379"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="393"/>
         <location filename="../TSHSelectSetWindow.py" line="115"/>
         <location filename="../TSHSelectSetWindow.py" line="117"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
@@ -1179,7 +1179,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="943"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="957"/>
         <source>Update player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1230,7 +1230,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="87"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="548"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="562"/>
         <location filename="../TSHScoreboardWidget.py" line="236"/>
         <source>Controller</source>
         <translation type="unfinished"></translation>
