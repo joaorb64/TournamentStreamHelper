@@ -280,7 +280,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             merged += name
 
-            merged = re.sub(r"[,/|;: <>\\?*]", "_", merged)
+            merged = re.sub(r"[,/|;:<>\\?*]", "_", merged)
 
             # Online avatar
             StateManager.Set(
@@ -296,7 +296,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 
             sponsor_logo = None
 
-            cleaned_sponsor = re.sub(r"[,/|;: <>\\?*]", "_", team)
+            cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", team)
             if os.path.exists(f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"):
                 sponsor_logo = f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"
                 StateManager.Unset(f"{self.path}.sponsor_logos")
