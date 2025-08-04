@@ -1027,14 +1027,18 @@ class TSHScoreboardWidget(QWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
-            if data.get("team1score") and data.get("team1score") != 0:
-                scoreContainers[0].setValue(data.get("team1score"))
-            else:
-                scoreContainers[0].setValue(0)
-            if data.get("team2score") and data.get("team2score") != 0:
-                scoreContainers[1].setValue(data.get("team2score"))
-            else:
-                scoreContainers[1].setValue(0)
+            
+            if data.get("team1score") is not None:
+                if data.get("team1score") != 0:
+                    scoreContainers[0].setValue(data.get("team1score"))
+                else:
+                    scoreContainers[0].setValue(0)
+            if data.get("team2score") is not None:
+                if data.get("team2score") != 0:
+                    scoreContainers[1].setValue(data.get("team2score"))
+                else:
+                    scoreContainers[1].setValue(0)
+            
             if data.get("bestOf"):
                 self.scoreColumn.findChild(
                     QSpinBox, "best_of").setValue(data.get("bestOf"))

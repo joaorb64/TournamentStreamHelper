@@ -86,6 +86,14 @@ class TSHSettingsWindow(QDialog):
             False
         ))
 
+        generalSettings.append((
+            QApplication.translate(
+                "settings.disable_country_file_downloading", "Disables attempting to download the country and states file (takes effect on next restart, should prevent weird loading issues with updates)"),
+            "disable_country_file_downloading",
+            "checkbox",
+            False
+        ))
+
         self.add_setting_widget(QApplication.translate(
             "settings", "General"), SettingsWidget("general", generalSettings))
 
