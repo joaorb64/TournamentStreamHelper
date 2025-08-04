@@ -1650,7 +1650,7 @@ p, li { white-space: pre-wrap; }
         <translation>Certifique-se de que a URL está no formato correto e que o evento existe.</translation>
     </message>
     <message>
-        <location filename="../Helpers/TSHCountryHelper.py" line="205"/>
+        <location filename="../Helpers/TSHCountryHelper.py" line="210"/>
         <source>Custom Flags</source>
         <translation>Bandeiras customizadas</translation>
     </message>
@@ -1720,22 +1720,22 @@ p, li { white-space: pre-wrap; }
         <translation>Habilitar teclas de atalho</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
         <source>General</source>
         <translation>Geral</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="122"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="130"/>
         <source>Hotkeys</source>
         <translation>Teclas de atalho</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="184"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="192"/>
         <source>Default Display Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="218"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="226"/>
         <source>Bluesky</source>
         <translation></translation>
     </message>
@@ -1748,32 +1748,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.bsky</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="190"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="198"/>
         <source>Host server</source>
         <translation>Servidor</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="197"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="205"/>
         <source>Bluesky Handle</source>
         <translation>Usuário Bluesky</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="204"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="212"/>
         <source>Application Password</source>
         <translation>Senha de Aplicativo</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="210"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="218"/>
         <source>You can get an app password by going into your Bluesky settings -&gt; Privacy &amp; Security</source>
         <translation>Você pode obter a Senha de Aplicativo no Bluesky em Configurações -&gt; Privacidade e Segurança</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="212"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="220"/>
         <source>Please note that said app password will be stored in plain text on your computer</source>
         <translation>Note que a Senha de Aplicativo será salva no seu computador em forma de texto</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="214"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="222"/>
         <source>Do not use your regular account password!</source>
         <translation>Não utilize a sua senha pessoal de login!</translation>
     </message>
@@ -1792,6 +1792,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../Settings/TSHSettingsWindow.py" line="59"/>
         <source>Disable automatic set updating for the scoreboard</source>
         <translation>Desabilitar atualização automática do placar</translation>
+    </message>
+</context>
+<context>
+    <name>settings.disable_country_file_downloading</name>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="91"/>
+        <source>Disables attempting to download the country and states file (takes effect on next restart, should prevent weird loading issues with updates)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1861,42 +1869,42 @@ p, li { white-space: pre-wrap; }
         <translation>Habilitar teclas de atalho</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="103"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="111"/>
         <source>Load set</source>
         <translation>Carregar set</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="104"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="112"/>
         <source>Team 1 score up</source>
         <translation>Aumentar pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="105"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="113"/>
         <source>Team 1 score down</source>
         <translation>Diminuir pontuação da equipe 1</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="106"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="114"/>
         <source>Team 2 score up</source>
         <translation>Aumentar pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="107"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="115"/>
         <source>Team 2 score down</source>
         <translation>Diminuir pontuação da equipe 2</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="108"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="116"/>
         <source>Reset scores</source>
         <translation>Zerar placar</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="109"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="117"/>
         <source>Swap teams</source>
         <translation>Inverter times</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="96"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="104"/>
         <source>Enable hotkeys</source>
         <translation>Habilitar teclas de atalho</translation>
     </message>
@@ -1904,7 +1912,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_additional</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="177"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="185"/>
         <source>Show Additional Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1912,7 +1920,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_characters</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="153"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="161"/>
         <source>Show Characters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1920,7 +1928,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_controller</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="169"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="177"/>
         <source>Show Controller</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1928,7 +1936,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_location</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="145"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="153"/>
         <source>Show Location</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1936,7 +1944,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_name</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="129"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="137"/>
         <source>Show Real Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1944,7 +1952,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_pronouns</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="161"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="169"/>
         <source>Show Pronouns</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1952,7 +1960,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_social</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="137"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="145"/>
         <source>Show Social Media</source>
         <translation type="unfinished"></translation>
     </message>
