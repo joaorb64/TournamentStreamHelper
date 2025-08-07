@@ -1,5 +1,5 @@
 from qtpy.QtWidgets import *
-from ..TSHHotkeys import TSHHotkeys
+from ..TSHColorButton import TSHColorButton
 from ..SettingsManager import SettingsManager
 import textwrap
 
@@ -71,6 +71,16 @@ class SettingsWidget(QWidget):
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setText(defaultValue),
+                    callback()
+                ]
+            )
+        elif type == "color":
+            settingWidget = TSHColorButton(color=SettingsManager.Get(self.settingsBase+"."+setting, defaultValue), disable_right_click=True)
+            settingWidget.colorChanged.connect(
+                lambda val=None: SettingsManager.Set(self.settingsBase+"."+setting, settingWidget.color()))
+            resetButton.clicked.connect(
+                lambda bt=None, setting=setting, settingWidget=settingWidget: [
+                    settingWidget.setColor(defaultValue),
                     callback()
                 ]
             )

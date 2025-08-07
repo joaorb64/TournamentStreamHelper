@@ -4,6 +4,7 @@ from qtpy.QtWidgets import *
 from loguru import logger
 
 from .TSHScoreboardWidget import TSHScoreboardWidget
+from .SettingsManager import SettingsManager
 from .StateManager import StateManager
 
 
@@ -46,9 +47,9 @@ class TSHScoreboardManager(QDockWidget):
                     "Scoreboard Manager - Creating Scoreboard " + str(amount))
 
                 if int(amount)-1 == 1:
-                    self.GetScoreboard(1).btLoadPlayerSet.setHidden(True)
-                    self.GetScoreboard(
-                        1).btLoadPlayerSetOptions.setHidden(True)
+                    if not SettingsManager.Get("general.hide_track_player", False):
+                        self.GetScoreboard(1).btLoadPlayerSet.setHidden(True)
+                        self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(True)
 
                 scoreboard = QWidget()
                 scoreboard.setLayout(QVBoxLayout())
@@ -64,9 +65,9 @@ class TSHScoreboardManager(QDockWidget):
                 self.scoreboardholder[amount].deleteLater()
                 self.scoreboardholder.pop(amount)
                 if int(amount) == 1:
-                    self.GetScoreboard(1).btLoadPlayerSet.setHidden(False)
-                    self.GetScoreboard(
-                        1).btLoadPlayerSetOptions.setHidden(False)
+                    if not SettingsManager.Get("general.hide_track_player", False):
+                        self.GetScoreboard(1).btLoadPlayerSet.setHidden(False)
+                        self.GetScoreboard(1).btLoadPlayerSetOptions.setHidden(False)
                 StateManager.Unset(f"score.{amount+1}")
         finally:
             StateManager.ReleaseSaving()

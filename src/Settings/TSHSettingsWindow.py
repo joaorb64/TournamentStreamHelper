@@ -88,10 +88,26 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
-                "settings.disable_country_file_downloading", "Disables attempting to download the country and states file (takes effect on next restart, should prevent weird loading issues with updates)"),
+                "settings.disable_country_file_downloading", "Disables attempting to download the country and states file (takes effect on next restart)"),
             "disable_country_file_downloading",
             "checkbox",
             False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
+                "settings.team_1_default_color", "Default Color of Team 1"),
+            "team_1_default_color",
+            "color",
+            "#fe3636"
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
+                "settings.team_2_default_color", "Default Color of Team 2"),
+            "team_2_default_color",
+            "color",
+            "#2e89ff"
         ))
 
         self.add_setting_widget(QApplication.translate(
