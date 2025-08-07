@@ -1117,12 +1117,13 @@ class Window(QMainWindow):
             qdarktheme.setup_theme()
 
     def ToggleTopOption(self):
-        if TSHScoreboardManager.instance.GetTabAmount() > 1:
-            self.btLoadPlayerSet.setHidden(True)
-            self.btLoadPlayerSetOptions.setHidden(True)
-        else:
-            self.btLoadPlayerSet.setHidden(False)
-            self.btLoadPlayerSetOptions.setHidden(False)
+        if not SettingsManager.Get("general.hide_track_player", False):
+            if TSHScoreboardManager.instance.GetTabAmount() > 1:
+                self.btLoadPlayerSet.setHidden(True)
+                self.btLoadPlayerSetOptions.setHidden(True)
+            else:
+                self.btLoadPlayerSet.setHidden(False)
+                self.btLoadPlayerSetOptions.setHidden(False)
 
     def ChangeTab(self):
         tabNameWindow = QDialog(self)

@@ -351,13 +351,14 @@ class TSHScoreboardWidget(QWidget):
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
 
-        DEFAULT_TEAM1_COLOR = 'rgb(254, 54, 54)'
-
+        DEFAULT_TEAM1_COLOR = SettingsManager.Get("general.team_1_default_color", "#fe3636")
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
         # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
         self.colorButton1.colorChanged.connect(
             lambda color: [
-                self.CommandTeamColor(0, color)
+                StateManager.BlockSaving(),
+                StateManager.Set(f"score.{self.scoreboardNumber}.team.1.color", color),
+                StateManager.ReleaseSaving()
             ])
         self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
 
@@ -391,15 +392,17 @@ class TSHScoreboardWidget(QWidget):
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))
 
-        DEFAULT_TEAM2_COLOR = 'rgb(46, 137, 255)'
-
+        DEFAULT_TEAM2_COLOR = SettingsManager.Get("general.team_2_default_color", "#2e89ff")
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
         self.colorButton2.colorChanged.connect(
             lambda color: [
-                self.CommandTeamColor(1, color)
+                StateManager.BlockSaving(),
+                StateManager.Set(f"score.{self.scoreboardNumber}.team.2.color", color),
+                StateManager.ReleaseSaving()
             ])
         # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
         self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
+
         self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
         ).insertWidget(0, self.colorButton2)
 
