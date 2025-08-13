@@ -76,7 +76,7 @@ export default class SetScore extends React.Component {
         return (
             fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
                 "best-of": this.state.bestOf,
-                "phase": this.props.phase,
+                "phase": this.state.phase,
                 "match": this.state.match,
             }).toString())
                 .then(resp => resp.text())
