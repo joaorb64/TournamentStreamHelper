@@ -29,6 +29,8 @@
  * @prop {int} score
  * @prop {string} teamName
  * @prop {Object.<int, TSHPlayerInfo>} player
+ * @prop {boolean} losers
+ * @prop {string} color
  */
 
 /** @typedef {object} TSHState very incomplete definition
