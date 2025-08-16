@@ -142,9 +142,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c.editingFinished.connect(
                 lambda element=c: [
                     StateManager.Set(
-                        f"{self.path}.{element.objectName()}", element.text()),
+                        f"{self.path}.{element.objectName() if element.objectName() != 'qt_spinbox_lineedit' else element.parent().objectName()}", element.text()),
                     self.instanceSignals.dataChanged.emit()
                 ])
+        
+        self.findChild(QSpinBox, "seed").setValue(0)
+        self.findChild(QSpinBox, "seed").lineEdit().editingFinished.emit()
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
@@ -359,6 +362,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 data[widget.objectName()] = widget.text()
                             if type(widget) == QComboBox:
                                 data[widget.objectName()] = widget.currentIndex()
+                            if type(widget) == QPlainTextEdit:
+                                data[widget.objectName()] = widget.toPlainText()
                         data["online_avatar"] = StateManager.Get(
                             f"{w.path}.online_avatar")
                         data["id"] = StateManager.Get(
@@ -379,6 +384,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     widget.editingFinished.emit()
                                 if type(widget) == QComboBox:
                                     widget.setCurrentIndex(tmpData[i][objName])
+                                if type(widget) == QPlainTextEdit:
+                                    widget.setPlainText(tmpData[i][objName])
                         QCoreApplication.processEvents()
                         w.ExportPlayerImages(tmpData[i]["online_avatar"])
                         w.ExportPlayerId(tmpData[i]["id"])
@@ -876,6 +883,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             if data.get("seed"):
                 StateManager.Set(f"{self.path}.seed", data.get("seed"))
+                self.findChild(QSpinBox, "seed").setValue(data.get("seed"))
+            else:
+                self.findChild(QSpinBox, "seed").setValue(0)
             if data.get("city"):
                 StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:
@@ -975,16 +985,24 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         StateManager.BlockSaving()
         with self.dataLock:
             for c in self.findChildren(QLineEdit):
-                if c.text() != "":
-                    c.setText("")
-                    c.editingFinished.emit()
+                if c.objectName() != "" and c.objectName() != 'qt_spinbox_lineedit':
+                    if c.text() != "":
+                        c.setText("")
+                        c.editingFinished.emit()
+
+            for c in self.findChildren(QSpinBox):
+                logger.info(c.objectName())
+                c.setValue(0)
+                c.lineEdit().editingFinished.emit()
 
             for c in self.findChildren(QPlainTextEdit):
+                logger.info(c.objectName())
                 if c.toPlainText() != "":
                     c.clear()
                     c.textChanged.emit()
 
             for c in self.findChildren(QComboBox):
+                logger.info(c.objectName())
                 if (no_mains):
                     for charelem in self.character_elements:
                         for i in range(len(charelem)):
@@ -995,5 +1013,4 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         continue  # only executed if the inner loop DID break
                 else:
                     c.setCurrentIndex(0)
-        StateManager.Unset(f"{self.path}.seed")
         StateManager.ReleaseSaving()

@@ -70,11 +70,11 @@ class TSHCommentaryWidget(QDockWidget):
         menu.addSection("Players")
 
         self.elements = [
-            ["Real Name",              ["real_name", "real_nameLabel"],       "show_name"],
+            ["Real Name",              ["real_name"],                         "show_name"],
             ["Twitter",                ["twitter", "twitterLabel"],           "show_social"],
             ["Location",               ["locationLabel", "state", "country"], "show_location"],
             ["Characters",             ["characters"],                        "show_characters"],
-            ["Pronouns",               ["pronoun", "pronounLabel"],           "show_pronouns"],
+            ["Pronouns",               ["pronoun"],                           "show_pronouns"],
             ["Controller",             ["controller", "controllerLabel"],     "show_controller"],
             ["Additional information", ["custom_textbox"],                    "show_additional"],
         ]
