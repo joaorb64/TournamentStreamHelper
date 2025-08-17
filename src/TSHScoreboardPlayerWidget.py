@@ -246,7 +246,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.ExportMergedName()
                 self.ExportPlayerImages()
                 self.ExportPlayerId()
-                self.ExportPlayerSeed()
 
             self.lastExportedName = merged
 
@@ -331,12 +330,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         self.instanceSignals.player1Id_changed.emit()
                     else:
                         self.instanceSignals.player2Id_changed.emit()
-
-    def ExportPlayerSeed(self, seed=None):
-        with self.dataLock:
-            if StateManager.Get(f"{self.path}.seed") != seed:
-                StateManager.Set(
-                    f"{self.path}.seed", seed)
 
     def ExportPlayerCity(self, city=None):
         with self.dataLock:
@@ -446,6 +439,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             # Add variant
             player_variant = QComboBox()
+            player_variant.setObjectName("variants")
             character_element.layout().addWidget(player_variant)
             player_variant.setIconSize(QSize(24, 24))
             player_variant.setFixedHeight(32)
@@ -461,6 +455,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_variant.setEditable(True)
             player_variant.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             player_variant.completer().setCompletionMode(QCompleter.PopupCompletion)
+
+            if len(TSHGameAssetManager.instance.variants) <= 0:
+                player_variant.setVisible(False)
 
             # Move up/down
             btMoveUp = QPushButton()
@@ -509,8 +506,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"character_{len(self.character_elements)}")
             player_character_color.setObjectName(
                 f"character_color_{len(self.character_elements)}")
-            player_variant.setObjectName(
-                f"variant_{len(self.character_elements)}")
+            # player_variant.setObjectName(
+            #     f"variant_{len(self.character_elements)}")
 
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
@@ -681,6 +678,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             target.setModel(QStandardItemModel())
 
     def ReloadCharacters(self):
+        if len(TSHGameAssetManager.instance.variants) <= 0:
+            self.character_container.findChild(QComboBox, "variants").setVisible(False)
+        else:
+            self.character_container.findChild(QComboBox, "variants").setVisible(True)
         for c in self.character_elements:
             c[1].setModel(TSHGameAssetManager.instance.characterModel)
             c[1].setIconSize(QSize(24, 24))
@@ -755,9 +756,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             if data.get("id"):
                 self.ExportPlayerId(data.get("id"))
-
-            if data.get("seed"):
-                self.ExportPlayerSeed(data.get("seed"))
 
             if data.get("city"):
                 self.ExportPlayerCity(data.get("city"))
