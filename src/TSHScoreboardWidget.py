@@ -193,12 +193,13 @@ class TSHScoreboardWidget(QWidget):
         # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
         
-        self.bskyBtn = QPushButton(
-            QApplication.translate("app", "Post to Bluesky") + " ")
-        self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
-        self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
-        self.bskyBtn.clicked.connect(self.PostToBsky)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.bskyBtn = QPushButton(
+                QApplication.translate("app", "Post to Bluesky") + " ")
+            self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
+            self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+            col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
+            self.bskyBtn.clicked.connect(self.PostToBsky)
 
         # VISIBILITY
         col = QWidget()
@@ -259,16 +260,17 @@ class TSHScoreboardWidget(QWidget):
 
         self.innerWidget.layout().addWidget(bottomOptions)
 
-        self.streamUrl = QHBoxLayout()
-        self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
-        self.streamUrl.layout().addWidget(self.streamUrlLabel)
-        self.streamUrlTextBox = QLineEdit()
-        self.streamUrl.layout().addWidget(self.streamUrlTextBox)
-        self.streamUrlTextBox.editingFinished.connect(
-            lambda element=self.streamUrlTextBox: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stream_url", element.text()))
-        self.streamUrlTextBox.editingFinished.emit()
-        bottomOptions.layout().addLayout(self.streamUrl)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.streamUrl = QHBoxLayout()
+            self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
+            self.streamUrl.layout().addWidget(self.streamUrlLabel)
+            self.streamUrlTextBox = QLineEdit()
+            self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+            self.streamUrlTextBox.editingFinished.connect(
+                lambda element=self.streamUrlTextBox: StateManager.Set(
+                    f"score.{self.scoreboardNumber}.stream_url", element.text()))
+            self.streamUrlTextBox.editingFinished.emit()
+            bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
@@ -1057,7 +1059,7 @@ class TSHScoreboardWidget(QWidget):
             if self.teamsSwapped:
                 losersContainers.reverse()
 
-            if data.get("stream"):
+            if SettingsManager.Get("bsky_account.enable_bluesky", True) and data.get("stream"):
                 self.streamUrlTextBox.setText(data.get("stream"))
                 self.streamUrlTextBox.editingFinished.emit()
 

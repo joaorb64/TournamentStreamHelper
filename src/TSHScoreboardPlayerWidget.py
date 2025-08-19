@@ -879,11 +879,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             if variant_element.currentIndex() != variantIndex:
                                 variant_element.setCurrentIndex(variantIndex)
 
-            if data.get("seed"):
-                StateManager.Set(f"{self.path}.seed", data.get("seed"))
-                self.findChild(QSpinBox, "seed").setValue(data.get("seed"))
-            else:
-                self.findChild(QSpinBox, "seed").setValue(0)
+            if data.get("seed") is not None:
+                if data.get("seed") > 0:
+                    StateManager.Set(f"{self.path}.seed", data.get("seed"))
+                    self.findChild(QSpinBox, "seed").setValue(int(data.get("seed")))
+                else:
+                    self.findChild(QSpinBox, "seed").setValue(0)
             if data.get("city"):
                 StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:
@@ -989,18 +990,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         c.editingFinished.emit()
 
             for c in self.findChildren(QSpinBox):
-                logger.info(c.objectName())
                 c.setValue(0)
                 c.lineEdit().editingFinished.emit()
 
             for c in self.findChildren(QPlainTextEdit):
-                logger.info(c.objectName())
                 if c.toPlainText() != "":
                     c.clear()
                     c.textChanged.emit()
 
             for c in self.findChildren(QComboBox):
-                logger.info(c.objectName())
                 if (no_mains):
                     for charelem in self.character_elements:
                         for i in range(len(charelem)):

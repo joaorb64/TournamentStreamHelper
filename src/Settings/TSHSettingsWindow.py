@@ -211,6 +211,13 @@ class TSHSettingsWindow(QDialog):
         bskySettings = []
         bskySettings.append((
             QApplication.translate(
+                "settings.bsky", "Enable Bluesky Features"),
+            "enable_bluesky",
+            "checkbox",
+            True
+        ))
+        bskySettings.append((
+            QApplication.translate(
                 "settings.bsky", "Host server"),
             "host",
             "textbox",

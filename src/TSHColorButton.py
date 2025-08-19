@@ -16,20 +16,25 @@ class TSHColorButton(QToolButton):
 
     colorChanged = Signal(object)
 
-    def __init__(self, *args, color=None, disable_right_click=False, enable_alpha_selection=False, **kwargs):
+    def __init__(self, *args, color=None, disable_right_click=False, enable_alpha_selection=False, ignore_same_color=True, **kwargs):
         super(TSHColorButton, self).__init__(*args, **kwargs)
 
         self._color = None
         self._default = color
         self.disable_right_click = disable_right_click
         self.enable_alpha_selection = enable_alpha_selection
+        self.ignore_same_color = ignore_same_color
         self.pressed.connect(self.onColorPicker)
 
         # Set the initial/default state.
         self.setColor(self._default)
 
     def setColor(self, color):
-        if color != self._color:
+        if self.ignore_same_color:
+            if color != self._color:
+                self._color = color
+                self.colorChanged.emit(color)
+        else:
             self._color = color
             self.colorChanged.emit(color)
 

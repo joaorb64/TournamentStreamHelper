@@ -1,4 +1,5 @@
 import sys
+from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .LayoutOptionsWidget import LayoutOptionsWidget
@@ -10,6 +11,10 @@ class TSHLayoutOptionsWindow(QDialog):
 
     def UiMounted(self):
         self.setWindowTitle(QApplication.translate("LayoutOptions", "Layout Options"))
+        
+        # Create a combobox for preset selections to quick apply options
+        self.presets = QComboBox()
+        self.presets.setObjectName("presets")
 
         # Create a list widget for the selection
         self.selection_list = QListWidget()
@@ -29,44 +34,83 @@ class TSHLayoutOptionsWindow(QDialog):
         splitter.addWidget(self.selection_list)
         splitter.addWidget(scroll_area)
 
+        # Create a Line Edit widget for setting the name of the preset
+        preset_name = QHBoxLayout()
+        preset_name_label = QLabel()
+        preset_name_label.setText(QApplication.translate("layout_options.preset_name", "Preset Name"))
+        preset_name.addWidget(preset_name_label)
+        self.preset_name = QLineEdit()
+        self.preset_name.setObjectName("preset_name")
+        preset_name.addWidget(self.preset_name)
+
+        # Create the push buttons to save/update and delete presets
+        save_options = QHBoxLayout()
+        self.saveBtn = QPushButton()
+        self.saveBtn.setIcon(QIcon('assets/icons/save.svg'))
+        # self.saveBtn.setText(QApplication.translate("app", "Save new"))
+        self.saveBtn.setText(QApplication.translate("app", "Update"))
+        save_options.addWidget(self.saveBtn)
+        self.deleteBtn = QPushButton()
+        self.deleteBtn.setIcon(QIcon('assets/icons/cancel.svg'))
+        self.deleteBtn.setText("Delete")
+        save_options.addWidget(self.deleteBtn)
+
+
         # Set the layout for the dialog
         layout = QVBoxLayout()
+        layout.addWidget(self.presets)
+        layout.addLayout(preset_name)
         layout.addWidget(splitter)
+        layout.addLayout(save_options)
         self.setLayout(layout)
 
-        # Add general settings
+        # ================================================================
+        # START LAYOUT OPTIONS SECTIONS
+        # ================================================================
+        GRADIENT_DIRECTIONS = ["TO TOP LEFT", "TO TOP", "TO TOP RIGHT", "TO LEFT", "TO RIGHT", "TO BOTTOM LEFT", "TO BOTTOM", "TO BOTTOM RIGHT"]
+
+        # ================================================================
+        # START CHIPS LAYOUT OPTIONS
+        # ================================================================
         chipOptions = []
 
         chipOptions.append((
-            QApplication.translate("layout_options.seed_display", "Display Player Seed Number"),
-            "seed_display",
+            QApplication.translate("layout_options.chip_seed_display", "Display Player Seed Number"),
+            "chip_seed_display",
             "checkbox",
             True
         ))
 
         chipOptions.append((
-            QApplication.translate("layout_options.social_media", "Display Player Social Media"),
-            "social_media_display",
+            QApplication.translate("layout_options.chip_social_media", "Display Player Social Media"),
+            "chip_social_media_display",
             "checkbox",
             True
         ))
 
         chipOptions.append((
-            QApplication.translate("layout_options.country_flag", "Display Player Country Flag"),
-            "country_flag_display",
+            QApplication.translate("layout_options.chip_country_flag", "Display Player Country Flag"),
+            "chip_country_flag_display",
             "checkbox",
             True
         ))
 
         chipOptions.append((
-            QApplication.translate("layout_options.state_flag", "Display Player State Flag"),
-            "state_flag_display",
+            QApplication.translate("layout_options.chip_state_flag", "Display Player State Flag"),
+            "chip_state_flag_display",
             "checkbox",
             True
         ))
 
         chipOptions.append((
-            QApplication.translate("layout_options.chip_bg_color", "Background Color for Chips"),
+            QApplication.translate("layout_options.chip_text_color", "Text Color for Chips"),
+            "chip_text_color",
+            "color",
+            "#121212"
+        ))
+
+        chipOptions.append((
+            QApplication.translate("layout_options.chip_bg_color", "Primary Color for Chips"),
             "chip_bg_color",
             "color",
             "#121212"
@@ -80,7 +124,7 @@ class TSHLayoutOptionsWindow(QDialog):
         ))
 
         chipOptions.append((
-            QApplication.translate("layout_options.chip_bg_secondary_color", "Secondary Background Color for Chips"),
+            QApplication.translate("layout_options.chip_bg_secondary_color", "Secondary Color for Chips"),
             "chip_bg_secondary_color",
             "color",
             "#121212"
@@ -90,11 +134,109 @@ class TSHLayoutOptionsWindow(QDialog):
             QApplication.translate("layout_options.chip_bg_gradient_direction", "Background Gradient Direction for Chips"),
             "chip_bg_gradient_direction",
             "dropdown",
-            ["to top left", "to top", "to top right", "to left", "to right", "to bottom left", "to bottom", "to bottom right"]
+            GRADIENT_DIRECTIONS
         ))
 
         self.add_setting_widget(QApplication.translate(
             "layout_options", "Chip Options"), LayoutOptionsWidget("chip-options", chipOptions))
+
+        # ================================================================
+        # START BRACKET LAYOUT OPTIONS
+        # ================================================================
+        bracketOptions = []
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_character", "Display Player Avatar"),
+            "bracket_avatar_display",
+            "checkbox",
+            True
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_character", "Display Player Character"),
+            "bracket_character_display",
+            "checkbox",
+            True
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_country_flag", "Display Player Country Flag"),
+            "bracket_country_flag_display",
+            "checkbox",
+            True
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_state_flag", "Display Player State Flag"),
+            "bracket_state_flag_display",
+            "checkbox",
+            True
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_score_color", "Primary Color for Player Score"),
+            "bracket_score_color",
+            "color",
+            "#fe3636"
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_score_color_gradient", "Make Score Color a Linear Gradient"),
+            "bracket_score_color_gradient",
+            "checkbox",
+            False
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_score_gradient_direction", "Background Gradient Direction for Score"),
+            "bracket_score_gradient_direction",
+            "dropdown",
+            GRADIENT_DIRECTIONS
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_score_secondary_color", "Secondary Color for Player Score"),
+            "bracket_score_secondary_color",
+            "color",
+            "#121212"
+        ))
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_sponsor_color", "Primary Color for Player Sponsor"),
+            "bracket_sponsor_color",
+            "color",
+            "#fe3636"
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_sponsor_color_gradient", "Make Sponsor Color a Linear Gradient"),
+            "bracket_sponsor_color_gradient",
+            "checkbox",
+            False
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_sponsor_gradient_direction", "Background Gradient Direction for Sponsor"),
+            "bracket_sponsor_gradient_direction",
+            "dropdown",
+            GRADIENT_DIRECTIONS
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_sponsor_secondary_color", "Secondary Color for Player Sponsor"),
+            "bracket_sponsor_secondary_color",
+            "color",
+            "#121212"
+        ))
+
+        bracketOptions.append((
+            QApplication.translate("layout_options.bracket_line_color", "Color for Bracket Lines"),
+            "bracket_lines_color",
+            "color",
+            "#000000"
+        ))
+
+        self.add_setting_widget(QApplication.translate(
+            "layout_options", "Bracket Options"), LayoutOptionsWidget("bracket-options", bracketOptions))
 
         self.resize(1000, 500)
         QApplication.processEvents()

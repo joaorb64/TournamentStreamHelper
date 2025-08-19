@@ -29,7 +29,7 @@ class LayoutOptionsManager:
         return deep_get(LayoutOptionsManager.settings, key, default)
 
 
-if not os.path.isfile("./user_data/settings.json"):
+if not os.path.isfile("./user_data/layout_options.json"):
     LayoutOptionsManager.SaveSettings()
 
 LayoutOptionsManager.LoadSettings()

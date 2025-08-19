@@ -61,7 +61,7 @@ class LayoutOptionsWidget(QWidget):
                 ]
             )
         elif type == "color":
-            settingWidget = TSHColorButton(color="#000000", disable_right_click=True, enable_alpha_selection=True)
+            settingWidget = TSHColorButton(color="#000000", disable_right_click=True, enable_alpha_selection=True, ignore_same_color=False)
             settingWidget.colorChanged.connect(
                 lambda val=None: [
                     LayoutOptionsManager.Set(self.settingsBase+"."+setting, settingWidget.color()),
@@ -83,8 +83,8 @@ class LayoutOptionsWidget(QWidget):
                     LayoutOptionsManager.Set(self.settingsBase+"."+setting, settingWidget.currentText()),
                     StateManager.Set("layout_options."+self.settingsBase+"."+setting, settingWidget.currentText())
                 ])
-            logger.info(LayoutOptionsManager.Get(self.settingsBase+"."+setting))
-            settingWidget.setCurrentIndex(defaultValue.index(LayoutOptionsManager.Get(self.settingsBase+"."+setting)))
+            index = LayoutOptionsManager.Get(self.settingsBase+"."+setting, "")
+            settingWidget.setCurrentIndex(defaultValue.index(index) if index != "" and index in defaultValue else 0)
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setCurrentText(settingWidget.setCurrentIndex(0)),
