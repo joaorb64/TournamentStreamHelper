@@ -512,6 +512,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
+        
+        if self.character_container.findChild(QComboBox, "variants") is not None:
+            if len(TSHGameAssetManager.instance.variants) <= 0:
+                for container in self.findChildren(QComboBox, "variants"):
+                    container.setVisible(False)
+            else:
+                for container in self.findChildren(QComboBox, "variants"):
+                    container.setVisible(True)
 
         self.CharactersChanged(includeMains=True)
 
@@ -679,9 +687,11 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def ReloadCharacters(self):
         if len(TSHGameAssetManager.instance.variants) <= 0:
-            self.character_container.findChild(QComboBox, "variants").setVisible(False)
+            for container in self.findChildren(QComboBox, "variants"):
+                container.setVisible(False)
         else:
-            self.character_container.findChild(QComboBox, "variants").setVisible(True)
+            for container in self.findChildren(QComboBox, "variants"):
+                container.setVisible(True)
         for c in self.character_elements:
             c[1].setModel(TSHGameAssetManager.instance.characterModel)
             c[1].setIconSize(QSize(24, 24))
