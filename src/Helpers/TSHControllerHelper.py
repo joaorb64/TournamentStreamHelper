@@ -106,13 +106,19 @@ class TSHControllerHelper(QObject):
                         icon_path = f"{controller_directory}/image.png"
                     else:
                         icon_path = None
+                        
+                    if os.path.exists(f"{controller_directory}/icon.png"):
+                        simple_icon_path = f"{controller_directory}/icon.png"
+                    else:
+                        simple_icon_path = None
 
                     controller_json = {
                         "name": config_json.get("name"),
                         "manufacturer": manufacturer,
                         "type": controller_type,
                         "icon_path": icon_path,
-                        "config_path": f"{controller_directory}/config.json"
+                        "config_path": f"{controller_directory}/config.json",
+                        "simple_icon_path": simple_icon_path
                     }
                     controller_list[controller_id] = controller_json
         self.controller_list = controller_list
@@ -138,6 +144,7 @@ class TSHControllerHelper(QObject):
 
                 
                 data["icon_path"] = self.controller_list[c].get("icon_path")
+                data["simple_icon_path"] = self.controller_list[c].get("simple_icon_path")
                 if data["icon_path"]:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage(data["icon_path"])))
                     )
