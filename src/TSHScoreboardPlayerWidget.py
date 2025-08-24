@@ -62,6 +62,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         custom_textbox_layout.addWidget(self.custom_textbox)
         self.layout().addLayout(custom_textbox_layout, 98, 2, 1, 1)
         self.custom_textbox.setObjectName("custom_textbox")
+        self.custom_textbox.setMaximumHeight(100)
+        self.custom_textbox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.custom_textbox.setPlaceholderText(QApplication.translate("app", "Additional information"))
         self.custom_textbox.textChanged.connect(
                 lambda element=self.custom_textbox: [
@@ -567,13 +569,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 TSHControllerHelper.BuildControllerTree()
                 TSHControllerHelper.UpdateControllerModel()
             
-            controller_layout = QVBoxLayout()
+            controller_layout = QHBoxLayout()
 
             controller_label = QLabel()
             controller_layout.addWidget(controller_label)
             controller_label.setText(QApplication.translate("app", "Controller").upper())
             controller_label.setStyleSheet("QLabel{font-weight: bold; font-size: 8pt;}")
             controller_label.setObjectName("controllerLabel")
+            controller_label.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
             self.controller = QComboBox()
 

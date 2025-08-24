@@ -1,3 +1,4 @@
+import math
 import platform
 import socket
 import subprocess
@@ -454,8 +455,16 @@ class TSHScoreboardWidget(QWidget):
             lambda value: [
                 StateManager.Set(
                     f"score.{self.scoreboardNumber}.best_of", value),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.best_of_short_text", f"BO{value}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
                     "best_of").format(value) if value > 0 else ""),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to", math.ceil(value/2)),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
+                StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
+                    "first_to").format(math.ceil(value/2)) if value > 0 else ""),
             ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
