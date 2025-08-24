@@ -62,6 +62,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         custom_textbox_layout.addWidget(self.custom_textbox)
         self.layout().addLayout(custom_textbox_layout, 98, 2, 1, 1)
         self.custom_textbox.setObjectName("custom_textbox")
+        self.custom_textbox.setMaximumHeight(100)
+        self.custom_textbox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.custom_textbox.setPlaceholderText(QApplication.translate("app", "Additional information"))
         self.custom_textbox.textChanged.connect(
                 lambda element=self.custom_textbox: [
@@ -142,9 +144,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             c.editingFinished.connect(
                 lambda element=c: [
                     StateManager.Set(
-                        f"{self.path}.{element.objectName()}", element.text()),
+                        f"{self.path}.{element.objectName() if element.objectName() != 'qt_spinbox_lineedit' else element.parent().objectName()}", element.text()),
                     self.instanceSignals.dataChanged.emit()
                 ])
+        
+        self.findChild(QSpinBox, "seed").setValue(0)
+        self.findChild(QSpinBox, "seed").lineEdit().editingFinished.emit()
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(
@@ -243,7 +248,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.ExportMergedName()
                 self.ExportPlayerImages()
                 self.ExportPlayerId()
-                self.ExportPlayerSeed()
 
             self.lastExportedName = merged
 
@@ -329,12 +333,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     else:
                         self.instanceSignals.player2Id_changed.emit()
 
-    def ExportPlayerSeed(self, seed=None):
-        with self.dataLock:
-            if StateManager.Get(f"{self.path}.seed") != seed:
-                StateManager.Set(
-                    f"{self.path}.seed", seed)
-
     def ExportPlayerCity(self, city=None):
         with self.dataLock:
             if StateManager.Get(f"{self.path}.city") != city:
@@ -359,6 +357,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 data[widget.objectName()] = widget.text()
                             if type(widget) == QComboBox:
                                 data[widget.objectName()] = widget.currentIndex()
+                            if type(widget) == QPlainTextEdit:
+                                data[widget.objectName()] = widget.toPlainText()
                         data["online_avatar"] = StateManager.Get(
                             f"{w.path}.online_avatar")
                         data["id"] = StateManager.Get(
@@ -379,6 +379,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     widget.editingFinished.emit()
                                 if type(widget) == QComboBox:
                                     widget.setCurrentIndex(tmpData[i][objName])
+                                if type(widget) == QPlainTextEdit:
+                                    widget.setPlainText(tmpData[i][objName])
                         QCoreApplication.processEvents()
                         w.ExportPlayerImages(tmpData[i]["online_avatar"])
                         w.ExportPlayerId(tmpData[i]["id"])
@@ -439,6 +441,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             # Add variant
             player_variant = QComboBox()
+            player_variant.setObjectName("variants")
             character_element.layout().addWidget(player_variant)
             player_variant.setIconSize(QSize(24, 24))
             player_variant.setFixedHeight(32)
@@ -454,6 +457,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             player_variant.setEditable(True)
             player_variant.completer().setFilterMode(Qt.MatchFlag.MatchContains)
             player_variant.completer().setCompletionMode(QCompleter.PopupCompletion)
+
+            if len(TSHGameAssetManager.instance.variants) <= 0:
+                player_variant.setVisible(False)
 
             # Move up/down
             btMoveUp = QPushButton()
@@ -502,12 +508,20 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"character_{len(self.character_elements)}")
             player_character_color.setObjectName(
                 f"character_color_{len(self.character_elements)}")
-            player_variant.setObjectName(
-                f"variant_{len(self.character_elements)}")
+            # player_variant.setObjectName(
+            #     f"variant_{len(self.character_elements)}")
 
         while len(self.character_elements) > number:
             self.character_elements[-1][0].setParent(None)
             self.character_elements.pop()
+        
+        if self.character_container.findChild(QComboBox, "variants") is not None:
+            if len(TSHGameAssetManager.instance.variants) <= 0:
+                for container in self.findChildren(QComboBox, "variants"):
+                    container.setVisible(False)
+            else:
+                for container in self.findChildren(QComboBox, "variants"):
+                    container.setVisible(True)
 
         self.CharactersChanged(includeMains=True)
 
@@ -555,13 +569,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 TSHControllerHelper.BuildControllerTree()
                 TSHControllerHelper.UpdateControllerModel()
             
-            controller_layout = QVBoxLayout()
+            controller_layout = QHBoxLayout()
 
             controller_label = QLabel()
             controller_layout.addWidget(controller_label)
             controller_label.setText(QApplication.translate("app", "Controller").upper())
             controller_label.setStyleSheet("QLabel{font-weight: bold; font-size: 8pt;}")
             controller_label.setObjectName("controllerLabel")
+            controller_label.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
             self.controller = QComboBox()
 
@@ -674,6 +689,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             target.setModel(QStandardItemModel())
 
     def ReloadCharacters(self):
+        if len(TSHGameAssetManager.instance.variants) <= 0:
+            for container in self.findChildren(QComboBox, "variants"):
+                container.setVisible(False)
+        else:
+            for container in self.findChildren(QComboBox, "variants"):
+                container.setVisible(True)
         for c in self.character_elements:
             c[1].setModel(TSHGameAssetManager.instance.characterModel)
             c[1].setIconSize(QSize(24, 24))
@@ -748,9 +769,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             if data.get("id"):
                 self.ExportPlayerId(data.get("id"))
-
-            if data.get("seed"):
-                self.ExportPlayerSeed(data.get("seed"))
 
             if data.get("city"):
                 self.ExportPlayerCity(data.get("city"))
@@ -874,8 +892,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             if variant_element.currentIndex() != variantIndex:
                                 variant_element.setCurrentIndex(variantIndex)
 
-            if data.get("seed"):
-                StateManager.Set(f"{self.path}.seed", data.get("seed"))
+            if data.get("seed") is not None:
+                if data.get("seed") > 0:
+                    StateManager.Set(f"{self.path}.seed", data.get("seed"))
+                    self.findChild(QSpinBox, "seed").setValue(int(data.get("seed")))
+                else:
+                    self.findChild(QSpinBox, "seed").setValue(0)
             if data.get("city"):
                 StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:
@@ -975,9 +997,14 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         StateManager.BlockSaving()
         with self.dataLock:
             for c in self.findChildren(QLineEdit):
-                if c.text() != "":
-                    c.setText("")
-                    c.editingFinished.emit()
+                if c.objectName() != "" and c.objectName() != 'qt_spinbox_lineedit':
+                    if c.text() != "":
+                        c.setText("")
+                        c.editingFinished.emit()
+
+            for c in self.findChildren(QSpinBox):
+                c.setValue(0)
+                c.lineEdit().editingFinished.emit()
 
             for c in self.findChildren(QPlainTextEdit):
                 if c.toPlainText() != "":
@@ -995,5 +1022,4 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         continue  # only executed if the inner loop DID break
                 else:
                     c.setCurrentIndex(0)
-        StateManager.Unset(f"{self.path}.seed")
         StateManager.ReleaseSaving()

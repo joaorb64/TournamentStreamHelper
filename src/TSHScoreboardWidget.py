@@ -1,3 +1,4 @@
+import math
 import platform
 import socket
 import subprocess
@@ -193,12 +194,13 @@ class TSHScoreboardWidget(QWidget):
         # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
         
-        self.bskyBtn = QPushButton(
-            QApplication.translate("app", "Post to Bluesky") + " ")
-        self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
-        self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
-        self.bskyBtn.clicked.connect(self.PostToBsky)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.bskyBtn = QPushButton(
+                QApplication.translate("app", "Post to Bluesky") + " ")
+            self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
+            self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+            col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
+            self.bskyBtn.clicked.connect(self.PostToBsky)
 
         # VISIBILITY
         col = QWidget()
@@ -219,11 +221,11 @@ class TSHScoreboardWidget(QWidget):
         menu.addSection("Players")
 
         self.elements = [
-            ["Real Name",              ["real_name", "real_nameLabel"],       "show_name"],
+            ["Real Name",              ["real_name"],                         "show_name"],
             ["Twitter",                ["twitter", "twitterLabel"],           "show_social"],
             ["Location",               ["locationLabel", "state", "country"], "show_location"],
             ["Characters",             ["characters"],                        "show_characters"],
-            ["Pronouns",               ["pronoun", "pronounLabel"],           "show_pronouns"],
+            ["Pronouns",               ["pronoun"],                           "show_pronouns"],
             ["Controller",             ["controller", "controllerLabel"],     "show_controller"],
             ["Additional information", ["custom_textbox"],                    "show_additional"],
         ]
@@ -259,16 +261,17 @@ class TSHScoreboardWidget(QWidget):
 
         self.innerWidget.layout().addWidget(bottomOptions)
 
-        self.streamUrl = QHBoxLayout()
-        self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
-        self.streamUrl.layout().addWidget(self.streamUrlLabel)
-        self.streamUrlTextBox = QLineEdit()
-        self.streamUrl.layout().addWidget(self.streamUrlTextBox)
-        self.streamUrlTextBox.editingFinished.connect(
-            lambda element=self.streamUrlTextBox: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stream_url", element.text()))
-        self.streamUrlTextBox.editingFinished.emit()
-        bottomOptions.layout().addLayout(self.streamUrl)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.streamUrl = QHBoxLayout()
+            self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
+            self.streamUrl.layout().addWidget(self.streamUrlLabel)
+            self.streamUrlTextBox = QLineEdit()
+            self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+            self.streamUrlTextBox.editingFinished.connect(
+                lambda element=self.streamUrlTextBox: StateManager.Set(
+                    f"score.{self.scoreboardNumber}.stream_url", element.text()))
+            self.streamUrlTextBox.editingFinished.emit()
+            bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
@@ -452,8 +455,16 @@ class TSHScoreboardWidget(QWidget):
             lambda value: [
                 StateManager.Set(
                     f"score.{self.scoreboardNumber}.best_of", value),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.best_of_short_text", f"BO{value}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
                     "best_of").format(value) if value > 0 else ""),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to", math.ceil(value/2)),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
+                StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
+                    "first_to").format(math.ceil(value/2)) if value > 0 else ""),
             ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
@@ -715,6 +726,8 @@ class TSHScoreboardWidget(QWidget):
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
             self.team2column.findChild(QLineEdit, "teamName").setVisible(True)
+            self.team1column.findChild(QLabel, "teamLabel").setVisible(False)
+            self.team2column.findChild(QLabel, "teamLabel").setVisible(False)
         else:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team1column.findChild(QLineEdit, "teamName").setText("")
@@ -724,6 +737,8 @@ class TSHScoreboardWidget(QWidget):
             self.team2column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(
                 QLineEdit, "teamName").editingFinished.emit()
+            self.team1column.findChild(QLabel, "teamLabel").setVisible(True)
+            self.team2column.findChild(QLabel, "teamLabel").setVisible(True)
 
         for x, element in enumerate(self.elements, start=1):
             action: QAction = self.eyeBt.menu().actions()[x]
@@ -1053,7 +1068,7 @@ class TSHScoreboardWidget(QWidget):
             if self.teamsSwapped:
                 losersContainers.reverse()
 
-            if data.get("stream"):
+            if SettingsManager.Get("bsky_account.enable_bluesky", True) and data.get("stream"):
                 self.streamUrlTextBox.setText(data.get("stream"))
                 self.streamUrlTextBox.editingFinished.emit()
 

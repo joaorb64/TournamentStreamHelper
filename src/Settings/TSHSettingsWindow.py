@@ -96,6 +96,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.disable_controller_file_downloading", "Disables attempting to download the controllers file (takes effect on next restart)"),
+            "disable_controller_file_downloading",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.team_1_default_color", "Default Color of Team 1"),
             "team_1_default_color",
             "color",
@@ -209,6 +217,13 @@ class TSHSettingsWindow(QDialog):
 
         # Add Bluesky settings
         bskySettings = []
+        bskySettings.append((
+            QApplication.translate(
+                "settings.bsky", "Enable Bluesky Features"),
+            "enable_bluesky",
+            "checkbox",
+            True
+        ))
         bskySettings.append((
             QApplication.translate(
                 "settings.bsky", "Host server"),
