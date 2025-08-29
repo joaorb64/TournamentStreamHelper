@@ -4,6 +4,8 @@ from .Helpers.TSHDictHelper import *
 
 
 class LayoutOptionsManager:
+    presets = {}
+    currentPreset = ""
     settings = {}
 
     def SaveSettings():

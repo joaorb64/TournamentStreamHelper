@@ -1,6 +1,4 @@
 import dateutil.parser
-import requests
-import os
 import traceback
 import re
 import orjson
@@ -11,16 +9,12 @@ from qtpy.QtCore import *
 from datetime import datetime
 import dateutil
 from ..Helpers.TSHDictHelper import deep_get
-from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
 from qtpy.QtCore import *
-from qtpy.QtGui import QStandardItem, QStandardItemModel
 from ..Workers import Worker
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import next_power_of_2
-import math
-import random
 import cloudscraper
 from loguru import logger
 

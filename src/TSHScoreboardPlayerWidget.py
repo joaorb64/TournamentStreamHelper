@@ -10,15 +10,9 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
 from .Workers import Worker
 import threading
-import copy
-import time
-import math
-import random
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 from loguru import logger
 

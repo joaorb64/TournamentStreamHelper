@@ -1,8 +1,6 @@
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from qtpy import uic
-import json
 import traceback
 from loguru import logger
 from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget

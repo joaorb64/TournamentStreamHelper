@@ -1,6 +1,5 @@
 # https://www.pythonguis.com/widgets/qcolorbutton-a-color-selector-tool-for-pyqt/
 
-import qtpy
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *

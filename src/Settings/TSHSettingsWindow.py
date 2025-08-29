@@ -1,4 +1,3 @@
-import sys
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget

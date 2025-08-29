@@ -1,8 +1,6 @@
 from collections import Counter
 import re
-from time import sleep
 from qtpy.QtCore import *
-from qtpy.QtGui import QStandardItem, QStandardItemModel
 import requests
 import os
 import traceback
@@ -18,7 +16,6 @@ from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import is_power_of_two
 
 from ..Workers import Worker
-import sys
 
 
 class StartGGDataProvider(TournamentDataProvider):

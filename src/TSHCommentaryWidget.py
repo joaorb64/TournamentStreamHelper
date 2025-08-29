@@ -1,12 +1,9 @@
-from rlcompleter import Completer
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from qtpy import uic
 from loguru import logger
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
-from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 from .TSHPlayerDB import TSHPlayerDB
 from .SettingsManager import SettingsManager
 from .StateManager import StateManager

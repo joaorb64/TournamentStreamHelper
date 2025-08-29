@@ -1,5 +1,4 @@
 import os
-import json
 import orjson
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -7,7 +6,6 @@ from qtpy.QtCore import *
 from .StateManager import StateManager
 import re
 import traceback
-import threading
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Workers import Worker
 from PIL import Image

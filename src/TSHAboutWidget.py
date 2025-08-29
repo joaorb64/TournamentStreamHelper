@@ -3,12 +3,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 import json
-from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHDirHelper import TSHResolve
-from .StateManager import StateManager
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHAboutWidget(QDialog):
