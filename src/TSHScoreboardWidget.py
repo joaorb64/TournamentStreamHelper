@@ -1000,6 +1000,7 @@ class TSHScoreboardWidget(QWidget):
                     QComboBox, "match").setCurrentText(round_name)
                 self.scoreColumn.findChild(
                     QComboBox, "match").lineEdit().editingFinished.emit()
+                StateManager.Set(f"score.{self.scoreboardNumber}.match", round_name)
 
             tournament_phase = data.get("tournament_phase")
             if tournament_phase:
@@ -1019,6 +1020,7 @@ class TSHScoreboardWidget(QWidget):
                     QComboBox, "phase").setCurrentText(tournament_phase)
                 self.scoreColumn.findChild(
                     QComboBox, "phase").lineEdit().editingFinished.emit()
+                StateManager.Set(f"score.{self.scoreboardNumber}.phase", tournament_phase)
 
             scoreContainers = [
                 self.scoreColumn.findChild(QSpinBox, "score_left"),
