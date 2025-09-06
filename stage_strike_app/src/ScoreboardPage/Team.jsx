@@ -1,21 +1,29 @@
 import React from "react";
-import {Paper, Stack} from "@mui/material";
+import {Checkbox, FormControlLabel, FormGroup, Paper, Stack} from "@mui/material";
 import Player from "./Player";
+import {Box} from "@mui/system";
 
-export default React.forwardRef(function Team({teamId, team}, ref) {
+export default React.forwardRef(
     /**
-     * @typedef {Object} TeamProps
-     * @prop {any} teamId
-     * @prop {TSHTeamInfo} team
+     * @param {Object} props
+     * @param {any} props.teamId
+     * @param {TSHTeamInfo} props.team
+     * @param {React.ForwardedRef<unknown>} ref
      */
+    function Team({teamId, team}, ref) {
 
     /**
      * @typedef {Object} TeamState
-     * @prop {TSHTeamInfo} team
+     * @prop {boolean} inLosers
      */
+    const [state, setState] = React.useState( {inLosers: team.losers});
 
-
-    const playerRefs = [];
+        React.useEffect(() => {
+            setState(s => ({
+                ...s,
+                inLosers: team.losers
+            }))
+        }, [team.losers]);
 
     React.useImperativeHandle(ref, () => {
         return {
@@ -23,6 +31,8 @@ export default React.forwardRef(function Team({teamId, team}, ref) {
             getTeamDataFromForm: getTeamDataFromForm
         }
     },);
+
+    const playerRefs = [];
 
     /** @returns {[any, TSHPlayerInfo]} */
     const playersInTeam = () => {
@@ -42,20 +52,34 @@ export default React.forwardRef(function Team({teamId, team}, ref) {
         const teamData = getTeamDataFromForm();
 
         return Promise.all(
-            Object.entries(teamData.player).map(([teamKey, playerData]) => {
-                return fetch(
-                    `http://${window.location.hostname}:5000`
-                    + `/scoreboard1-update-team-${teamId}-${teamKey}`,
-                    {
-                        method: 'POST',
-                        headers: {'content-type': 'application/json'},
-                        body: JSON.stringify(playerData)
-                    }
-                )
-                    .then((resp) => resp.text())
-                    .then((d) => console.info(`Submitting team ${teamId} data: `, d))
-                    .catch(console.error);
-            })
+            [
+                (
+                    fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
+                        losers: state.inLosers,
+                        team: teamId
+                    }).toString())
+                        .then(resp => resp.text())
+                        .then((d) => console.log("Submit set info: ", d))
+                ),
+                ...Object.entries(teamData.player).map(([teamKey, playerData]) => {
+                    const body = {...playerData};
+                    body[`team${teamId}losers`] = state.inLosers.toString();
+                    console.log("team update payload", body);
+
+                    return fetch(
+                        `http://${window.location.hostname}:5000`
+                        + `/scoreboard1-update-team-${teamId}-${teamKey}`,
+                        {
+                            method: 'POST',
+                            headers: {'content-type': 'application/json'},
+                            body: JSON.stringify(body)
+                        }
+                    )
+                        .then((resp) => resp.text())
+                        .then((d) => console.info(`Submitted team ${teamId} data: `, d))
+                        .catch(console.error);
+                })
+            ]
         );
     }
 
@@ -84,6 +108,23 @@ export default React.forwardRef(function Team({teamId, team}, ref) {
     }
 
     return <Paper padding={2} elevation={3} sx={borderStyle}>
+        <Box paddingX={1}>
+            <FormGroup>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            onChange={
+                                (e) => {
+                                    setState(s => ({...s, inLosers: e.target.checked}))
+                                }
+                            }
+                        />
+                    }
+                    label={"Losers Bracket"}
+                />
+            </FormGroup>
+        </Box>
+
         <Stack gap={2} padding={1}>
             {playerWidgets}
         </Stack>

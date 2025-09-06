@@ -29,6 +29,8 @@
  * @prop {int} score
  * @prop {string} teamName
  * @prop {Object.<int, TSHPlayerInfo>} player
+ * @prop {boolean} losers
+ * @prop {string} color
  */
 
 /** @typedef {object} TSHState very incomplete definition
@@ -37,8 +39,23 @@
  *   ruleset: object
  * }} score
  * @prop {?{
+ *     name: string
+ *     smashgg_id: int
+ *     logo?: string
  *     codename?: string
  * }} game
+ * @prop {?{
+ *     tournamentName?: string
+ *     address?: string
+ *     eventName?: string
+ *     shortLink?: string
+ *     endAt?: string
+ *     startAt?: string
+ *     eventEndAt?: string
+ *     eventStartAt?: string
+ *     initial_load?: boolean
+ *     numEntrants?: int
+ * }} tournamentInfo
  */
 
 /**

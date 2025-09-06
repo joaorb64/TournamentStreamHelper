@@ -12,7 +12,7 @@ import './backendDataTypes';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
-
+import {Header} from "./Header";
 
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
@@ -94,10 +94,18 @@ export default function ScoreboardPage(props) {
     } else {
         body = (
             // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
-            <Stack gap={4} marginBottom={24}>
-                    <CurrentSet/>
-                    <UpcomingSets onSelectedSetChanged={() => {setLoadingStatus({isLoading: true, connectionError: false})}}/>
-            </Stack>
+            <>
+                <Header/>
+                <Box
+                    paddingX={2}
+                    paddingY={2}
+                >
+                    <Stack gap={4} marginBottom={24}>
+                        <CurrentSet/>
+                        <UpcomingSets onSelectedSetChanged={() => {setLoadingStatus({isLoading: true, connectionError: false})}}/>
+                    </Stack>
+                </Box>
+            </>
         )
     }
 
@@ -109,8 +117,6 @@ export default function ScoreboardPage(props) {
                 height: "100vh",
                 gap: darkTheme.spacing(2),
             }}
-            paddingY={2}
-            paddingX={2}
             sx={{overflow: "auto !important"}}
         >
             <TSHStateContext.Provider value={tshState}>

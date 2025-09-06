@@ -26,22 +26,33 @@ export default class SetScore extends React.Component {
      */
     constructor(props) {
         super(props);
+        this.state = this.stateFromProps(props);
+    }
 
-        this.best_of = (
+    /** @returns {SetScoreState} */
+    stateFromProps(props) {
+        const best_of = (
             (props.best_of !== undefined)
                 ? props.best_of
                 : null
         );
 
-        this.leftTeam = props.leftTeam;
-        this.rightTeam = props.rightTeam;
-        this.state = {
+        const leftTeam = props.leftTeam;
+        const rightTeam = props.rightTeam;
+        return {
             scoreLeft: props.leftTeam.score,
             scoreRight: props.rightTeam.score,
             match: props.match ?? "",
             phase: props.phase ?? "",
-            bestOf: this.best_of
+            bestOf: best_of
         };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
+            console.log("updating SetScore", prevProps, this.props);
+            this.setState({...prevState, ...this.stateFromProps(this.props)});
+        }
     }
 
     /** @return {?number} */
@@ -76,7 +87,7 @@ export default class SetScore extends React.Component {
         return (
             fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
                 "best-of": this.state.bestOf,
-                "phase": this.props.phase,
+                "phase": this.state.phase,
                 "match": this.state.match,
             }).toString())
                 .then(resp => resp.text())

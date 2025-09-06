@@ -7,7 +7,7 @@ import {
     Collapse, IconButton,
     Paper,
     Stack,
-    Typography
+    Typography, useMediaQuery
 } from "@mui/material";
 import i18n from "../i18n/config";
 
@@ -15,6 +15,7 @@ import SetScore from "./SetScore";
 import Team from "./Team";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHStateContext} from "./Contexts";
+import {useTheme} from "@mui/material/styles";
 
 export default function CurrentSet() {
     /**
@@ -28,6 +29,8 @@ export default function CurrentSet() {
 
     const tshState = React.useContext(TSHStateContext);
     const tshChars = React.useContext(TSHCharacterContext);
+    const theme = useTheme();
+    const isSmall = useMediaQuery(theme.breakpoints.down('md'));
 
 
     /** @type {TSHScoreInfo} */
@@ -61,7 +64,7 @@ export default function CurrentSet() {
         && Object.keys(score.team).length >= 2;
 
     if (!hasSuitableTeamCount) {
-        return <Typography sx={{ typography: {xs: "h7", sm: "h5"}}}>
+        return <Typography sx={{typography: isSmall ? "h7": "h5"}}>
             {i18n.t("no_set")}
         </Typography>
     }
@@ -101,7 +104,11 @@ export default function CurrentSet() {
                 <CardContent>
                     {
                         hasSuitableTeamCount && (
-                            <Stack direction={{xs: "column", sm: "row"}} spacing={2} alignItems={"center"} justifyContent={"space-evenly"}>
+                            <Stack direction={isSmall ? "column" : "row"}
+                                   spacing={2}
+                                   alignItems={"center"}
+                                   justifyContent={"space-evenly"}
+                            >
                                 <Team
                                       key={score.set_id + "1"}
                                       teamId={teamKeys[0]}
