@@ -143,8 +143,7 @@ class TSHCountryHelper(QObject):
                         if s.get("state_code") is None:
                             continue
 
-                        scode = s.get("state_code") if not s.get("state_code").isdigit() else "".join([
-                            word[0] for word in re.split(r'\s+|-', s.get("name").strip()) if len(word) > 0])
+                        scode = s.get("state_code")
 
                         TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
                             "name": s.get("name"),
