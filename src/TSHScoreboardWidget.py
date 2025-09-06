@@ -351,13 +351,14 @@ class TSHScoreboardWidget(QWidget):
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
 
-        DEFAULT_TEAM1_COLOR = 'rgb(254, 54, 54)'
-
+        DEFAULT_TEAM1_COLOR = SettingsManager.Get("general.team_1_default_color", "#fe3636")
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
         # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
         self.colorButton1.colorChanged.connect(
             lambda color: [
-                self.CommandTeamColor(0, color)
+                StateManager.BlockSaving(),
+                StateManager.Set(f"score.{self.scoreboardNumber}.team.1.color", color),
+                StateManager.ReleaseSaving()
             ])
         self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
 
@@ -391,15 +392,17 @@ class TSHScoreboardWidget(QWidget):
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))
 
-        DEFAULT_TEAM2_COLOR = 'rgb(46, 137, 255)'
-
+        DEFAULT_TEAM2_COLOR = SettingsManager.Get("general.team_2_default_color", "#2e89ff")
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
         self.colorButton2.colorChanged.connect(
             lambda color: [
-                self.CommandTeamColor(1, color)
+                StateManager.BlockSaving(),
+                StateManager.Set(f"score.{self.scoreboardNumber}.team.2.color", color),
+                StateManager.ReleaseSaving()
             ])
         # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
         self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
+
         self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
         ).insertWidget(0, self.colorButton2)
 
@@ -997,6 +1000,7 @@ class TSHScoreboardWidget(QWidget):
                     QComboBox, "match").setCurrentText(round_name)
                 self.scoreColumn.findChild(
                     QComboBox, "match").lineEdit().editingFinished.emit()
+                StateManager.Set(f"score.{self.scoreboardNumber}.match", round_name)
 
             tournament_phase = data.get("tournament_phase")
             if tournament_phase:
@@ -1016,6 +1020,7 @@ class TSHScoreboardWidget(QWidget):
                     QComboBox, "phase").setCurrentText(tournament_phase)
                 self.scoreColumn.findChild(
                     QComboBox, "phase").lineEdit().editingFinished.emit()
+                StateManager.Set(f"score.{self.scoreboardNumber}.phase", tournament_phase)
 
             scoreContainers = [
                 self.scoreColumn.findChild(QSpinBox, "score_left"),
@@ -1027,14 +1032,18 @@ class TSHScoreboardWidget(QWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
-            if data.get("team1score") and data.get("team1score") != 0:
-                scoreContainers[0].setValue(data.get("team1score"))
-            else:
-                scoreContainers[0].setValue(0)
-            if data.get("team2score") and data.get("team2score") != 0:
-                scoreContainers[1].setValue(data.get("team2score"))
-            else:
-                scoreContainers[1].setValue(0)
+            
+            if data.get("team1score") is not None:
+                if data.get("team1score") != 0:
+                    scoreContainers[0].setValue(data.get("team1score"))
+                else:
+                    scoreContainers[0].setValue(0)
+            if data.get("team2score") is not None:
+                if data.get("team2score") != 0:
+                    scoreContainers[1].setValue(data.get("team2score"))
+                else:
+                    scoreContainers[1].setValue(0)
+            
             if data.get("bestOf"):
                 self.scoreColumn.findChild(
                     QSpinBox, "best_of").setValue(data.get("bestOf"))
@@ -1114,6 +1123,8 @@ class TSHScoreboardWidget(QWidget):
 
                     teamInstance[player].SetData(
                         data.get("data"), False, False)
+                    if data.get("data", {}).get("savePlayerToDb", False):
+                        teamInstance[player].SavePlayerToDB()
                 except Exception as e:
                     logger.error(f"Error while setting entrants: {e}")
                 finally:

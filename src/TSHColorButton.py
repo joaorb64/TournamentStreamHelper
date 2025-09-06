@@ -16,11 +16,12 @@ class TSHColorButton(QToolButton):
 
     colorChanged = Signal(object)
 
-    def __init__(self, *args, color=None, **kwargs):
+    def __init__(self, *args, color=None, disable_right_click=False, **kwargs):
         super(TSHColorButton, self).__init__(*args, **kwargs)
 
         self._color = None
         self._default = color
+        self.disable_right_click = disable_right_click
         self.pressed.connect(self.onColorPicker)
 
         # Set the initial/default state.
@@ -32,7 +33,7 @@ class TSHColorButton(QToolButton):
             self.colorChanged.emit(color)
 
         if self._color:
-            self.setStyleSheet("background-color: %s;" % self._color)
+            self.setStyleSheet("QToolButton { background-color: %s; }" % self._color)
         else:
             self.setStyleSheet("")
 
@@ -47,7 +48,6 @@ class TSHColorButton(QToolButton):
 
         '''
         dlg = QColorDialog(self)
-        dlg.setStyleSheet("* { background-color: rgb(41, 41, 41); }")
         if self._color:
             dlg.setCurrentColor(QColor(self._color))
 
@@ -55,7 +55,7 @@ class TSHColorButton(QToolButton):
             self.setColor(dlg.currentColor().name())
 
     def mousePressEvent(self, e):
-        if e.button() == Qt.RightButton:
+        if not self.disable_right_click and e.button() == Qt.RightButton:
             self.setColor(self._default)
 
         return super(TSHColorButton, self).mousePressEvent(e)

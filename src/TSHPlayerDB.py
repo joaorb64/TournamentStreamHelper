@@ -21,6 +21,7 @@ class TSHPlayerDB:
     signals = TSHPlayerDBSignals()
     database = {}
     model: QStandardItemModel = None
+    webServer = None
     fieldnames = ["prefix", "gamerTag", "name", "twitter",
                   "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"] # Please always add the new fields at the end of the list
     modelLock = Lock()
@@ -65,6 +66,9 @@ class TSHPlayerDB:
                             logger.error(f"No mains found for: {tag}")
 
             TSHPlayerDB.SetupModel()
+
+            if TSHPlayerDB.webServer is not None:
+                TSHPlayerDB.webServer.emit('playerdb', TSHPlayerDB.database)
         except Exception as e:
             logger.error(traceback.format_exc())
 
@@ -225,6 +229,9 @@ class TSHPlayerDB:
                             playerData["mains"] = json.dumps(player["mains"])
 
                         spamwriter.writerow(playerData)
+
+            if TSHPlayerDB.webServer is not None:
+                TSHPlayerDB.webServer.emit('playerdb', TSHPlayerDB.database)
         except Exception as e:
             logger.error(traceback.format_exc())
 

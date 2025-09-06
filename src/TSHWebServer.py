@@ -9,6 +9,7 @@ from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
+
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
@@ -482,6 +483,15 @@ class WebServer(QThread):
     def ws_get_set(message):
         emit('get_set', WebServer.actions.get_set(
             orjson.loads(message).get('scoreboardNumber', '1')))
+        
+    @app.route('/playerdb')
+    def playerdb():
+        return WebServer.actions.get_playerdb()
+
+    @socketio.on('playerdb')
+    def ws_playerdb(message):
+        emit('playerdb', WebServer.actions.get_playerdb())
+
 
     # Update bracket
     @app.route('/update-bracket')
@@ -549,9 +559,14 @@ class WebServer(QThread):
 
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     @cross_origin()
-    def test(filename):
+    def file_request(filename):
         try:
-            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'))
+            filename = filename or 'stage_strike_app/build/index.html'
+            mimetype = None
+            if filename.endswith('.js'):
+                mimetype = "text/javascript"
+            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
+
         except Exception as e:
             logger.error(f"File not found: {e}")
 

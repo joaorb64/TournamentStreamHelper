@@ -9,6 +9,7 @@ import traceback
 import time
 from pathlib import Path
 
+from ..SettingsManager import SettingsManager
 from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
@@ -40,6 +41,11 @@ class TSHCountryHelper(QObject):
                 out_file = Path('./assets/countries+states+cities.json')
 
                 if out_file.exists():
+                    if SettingsManager.Get("general.disable_country_file_downloading", False):
+                        logger.debug("Skipping countries file download (SETTING ENABLED)")
+                        TSHCountryHelper.LoadCountries()
+                        return
+
                     modtime = out_file.stat().st_mtime
                     # Less than 12 hours since file was written to?
                     # Skip so there aren't redundant downloads
@@ -140,15 +146,15 @@ class TSHCountryHelper(QObject):
                     }
 
                     for s in c.get("states", []):
-                        if s.get("state_code") is None:
+                        if s.get("iso2") is None:
                             continue
 
-                        scode = s.get("state_code")
+                        scode = s.get("iso2")
 
-                        TSHCountryHelper.countries[c["iso2"]]["states"][s["state_code"]] = {
+                        TSHCountryHelper.countries[c["iso2"]]["states"][s["iso2"]] = {
                             "name": s.get("name"),
                             "code": scode,
-                            "original_code": s.get("state_code"),
+                            "original_code": s.get("iso2"),
                             "latitude": s.get("latitude"),
                             "longitude": s.get("longitude"),
                         }
@@ -182,8 +188,7 @@ class TSHCountryHelper(QObject):
                         city_name = TSHCountryHelper.remove_accents_lower(
                             c["name"])
                         if city_name not in TSHCountryHelper.cities[country["iso2"]]:
-                            TSHCountryHelper.cities[country["iso2"]
-                                                    ][city_name] = state["state_code"]
+                            TSHCountryHelper.cities[country["iso2"]][city_name] = state["iso2"]
 
             TSHCountryHelper.signals.countriesUpdated.emit()
 

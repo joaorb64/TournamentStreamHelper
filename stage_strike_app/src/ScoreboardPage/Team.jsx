@@ -1,93 +1,133 @@
 import React from "react";
-import {Paper, Stack} from "@mui/material";
+import {Checkbox, FormControlLabel, FormGroup, Paper, Stack} from "@mui/material";
 import Player from "./Player";
+import {Box} from "@mui/system";
 
-export default class Team extends React.Component {
+export default React.forwardRef(
     /**
-     * @typedef {Object} TeamProps
-     * @prop {any} teamId
-     * @prop {TSHTeamInfo} team
-     * @prop {TSHCharacters} characters
+     * @param {Object} props
+     * @param {any} props.teamId
+     * @param {TSHTeamInfo} props.team
+     * @param {React.ForwardedRef<unknown>} ref
      */
+    function Team({teamId, team}, ref) {
 
     /**
      * @typedef {Object} TeamState
-     * @prop {TSHTeamInfo} team
+     * @prop {boolean} inLosers
      */
+    const [state, setState] = React.useState( {inLosers: team.losers});
 
-    /** @type {TeamProps} */ props;
-    constructor(/** TeamProps */ props) {
-        super(props);
+        React.useEffect(() => {
+            setState(s => ({
+                ...s,
+                inLosers: team.losers
+            }))
+        }, [team.losers]);
 
-        this.playerRefs = [];
-        this.props = props;
-    }
+    React.useImperativeHandle(ref, () => {
+        return {
+            submitTeamData: submitTeamData,
+            getTeamDataFromForm: getTeamDataFromForm
+        }
+    },);
+
+    const playerRefs = [];
 
     /** @returns {[any, TSHPlayerInfo]} */
-    playersInTeam = () => {
-        return Object.keys(this.props.team.player).sort().map(k => [k, this.props.team.player[k]]);
+    const playersInTeam = () => {
+        return Object.keys(team.player).sort().map(k => [k, team.player[k]]);
     }
 
-    getTeamDataFromForm = () => {
-        /** @type TSHTeamInfo */ const rval = JSON.parse(JSON.stringify(this.props.team));
-        for (const teamKey in this.playerRefs) {
-            /** @type Player */ const widget = this.playerRefs[teamKey].current;
+    const getTeamDataFromForm = () => {
+        /** @type TSHTeamInfo */ const rval = JSON.parse(JSON.stringify(team));
+        for (const teamKey in playerRefs) {
+            /** @type Player */ const widget = playerRefs[teamKey].current;
             rval.player[teamKey] = widget.getModifiedPlayerData();
         }
         return rval;
     }
 
-    submitTeamData = () => {
-        const teamData = this.getTeamDataFromForm();
+    const submitTeamData = () => {
+        const teamData = getTeamDataFromForm();
 
         return Promise.all(
-            Object.entries(teamData.player).map(([teamKey, playerData]) => {
-                return fetch(
-                    `http://${window.location.hostname}:5000`
-                    + `/scoreboard1-update-team-${this.props.teamId}-${teamKey}`,
-                    {
-                        method: 'POST',
-                        headers: {'content-type': 'application/json'},
-                        body: JSON.stringify(playerData)
-                    }
-                )
-                    .then((resp) => resp.text())
-                    .then((d) => console.info(`Submitting team ${this.props.teamId} data: `, d))
-                    .catch(console.error);
-            })
+            [
+                (
+                    fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
+                        losers: state.inLosers,
+                        team: teamId
+                    }).toString())
+                        .then(resp => resp.text())
+                        .then((d) => console.log("Submit set info: ", d))
+                ),
+                ...Object.entries(teamData.player).map(([teamKey, playerData]) => {
+                    const body = {...playerData};
+                    body[`team${teamId}losers`] = state.inLosers.toString();
+                    console.log("team update payload", body);
+
+                    return fetch(
+                        `http://${window.location.hostname}:5000`
+                        + `/scoreboard1-update-team-${teamId}-${teamKey}`,
+                        {
+                            method: 'POST',
+                            headers: {'content-type': 'application/json'},
+                            body: JSON.stringify(body)
+                        }
+                    )
+                        .then((resp) => resp.text())
+                        .then((d) => console.info(`Submitted team ${teamId} data: `, d))
+                        .catch(console.error);
+                })
+            ]
         );
     }
 
-    render = () => {
-        const idBase = `team-${this.props.teamId}`;
+    const idBase = `team-${teamId}`;
 
-        const playerWidgets = this.playersInTeam().map(([teamKey, player]) => {
-            if (!(teamKey in this.playerRefs)) {
-                this.playerRefs[teamKey] = React.createRef();
-            }
-
-            return (
-                <Player
-                    key={`${idBase}${String(player.id)}`}
-                    ref={this.playerRefs[teamKey]}
-                    teamId={this.props.teamId}
-                    player={player}
-                    characters={this.props.characters}/>
-            );
-        });
-
-        let borderStyle = {};
-        if (this.props.team.color) {
-            borderStyle = {
-                borderTop: `solid 4px ${this.props.team.color}`
-            };
+    const playerWidgets = playersInTeam().map(([teamKey, player]) => {
+        if (!(teamKey in playerRefs)) {
+            playerRefs[teamKey] = React.createRef();
         }
 
-        return <Paper padding={2} elevation={3} sx={borderStyle}>
-            <Stack gap={2} padding={1}>
-                {playerWidgets}
-            </Stack>
-        </Paper>
+        return (
+            <Player
+                key={`${idBase}${String(player.id)}${player.name}`}
+                ref={playerRefs[teamKey]}
+                teamId={teamId}
+                player={player}
+            />
+        );
+    });
+
+    let borderStyle = {};
+    if (team.color) {
+        borderStyle = {
+            borderTop: `solid 4px ${team.color}`
+        };
     }
-}
+
+    return <Paper padding={2} elevation={3} sx={borderStyle}>
+        <Box paddingX={1}>
+            <FormGroup>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            onChange={
+                                (e) => {
+                                    setState(s => ({...s, inLosers: e.target.checked}))
+                                }
+                            }
+                        />
+                    }
+                    label={"Losers Bracket"}
+                />
+            </FormGroup>
+        </Box>
+
+        <Stack gap={2} padding={1}>
+            {playerWidgets}
+        </Stack>
+    </Paper>
+});
 

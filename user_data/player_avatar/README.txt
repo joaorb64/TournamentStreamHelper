@@ -1,4 +1,4 @@
-Since "/", ":" and "|" cannot be used in file names, change any ocurrence of those to a space " ".
+As the following characters (,/|;:<>\?*) are not able to be used in (Windows) file names,
+all invalid characters will need to be replaced with an underscore (_) to be recognized as valid for TSH.
 
 The image will only be exported once you open the program and select the player.
-Adding the image here after the player is set or with the program closed will have no effect.
