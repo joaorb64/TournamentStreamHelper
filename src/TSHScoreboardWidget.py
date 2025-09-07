@@ -1,3 +1,4 @@
+import math
 import platform
 import socket
 import subprocess
@@ -193,12 +194,13 @@ class TSHScoreboardWidget(QWidget):
         # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
         self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
         
-        self.bskyBtn = QPushButton(
-            QApplication.translate("app", "Post to Bluesky") + " ")
-        self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
-        self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
-        self.bskyBtn.clicked.connect(self.PostToBsky)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.bskyBtn = QPushButton(
+                QApplication.translate("app", "Post to Bluesky") + " ")
+            self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
+            self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+            col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
+            self.bskyBtn.clicked.connect(self.PostToBsky)
 
         # VISIBILITY
         col = QWidget()
@@ -219,11 +221,11 @@ class TSHScoreboardWidget(QWidget):
         menu.addSection("Players")
 
         self.elements = [
-            ["Real Name",              ["real_name", "real_nameLabel"],       "show_name"],
+            ["Real Name",              ["real_name"],                         "show_name"],
             ["Twitter",                ["twitter", "twitterLabel"],           "show_social"],
             ["Location",               ["locationLabel", "state", "country"], "show_location"],
             ["Characters",             ["characters"],                        "show_characters"],
-            ["Pronouns",               ["pronoun", "pronounLabel"],           "show_pronouns"],
+            ["Pronouns",               ["pronoun"],                           "show_pronouns"],
             ["Controller",             ["controller", "controllerLabel"],     "show_controller"],
             ["Additional information", ["custom_textbox"],                    "show_additional"],
         ]
@@ -259,16 +261,17 @@ class TSHScoreboardWidget(QWidget):
 
         self.innerWidget.layout().addWidget(bottomOptions)
 
-        self.streamUrl = QHBoxLayout()
-        self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
-        self.streamUrl.layout().addWidget(self.streamUrlLabel)
-        self.streamUrlTextBox = QLineEdit()
-        self.streamUrl.layout().addWidget(self.streamUrlTextBox)
-        self.streamUrlTextBox.editingFinished.connect(
-            lambda element=self.streamUrlTextBox: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stream_url", element.text()))
-        self.streamUrlTextBox.editingFinished.emit()
-        bottomOptions.layout().addLayout(self.streamUrl)
+        if SettingsManager.Get("bsky_account.enable_bluesky", True):
+            self.streamUrl = QHBoxLayout()
+            self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
+            self.streamUrl.layout().addWidget(self.streamUrlLabel)
+            self.streamUrlTextBox = QLineEdit()
+            self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+            self.streamUrlTextBox.editingFinished.connect(
+                lambda element=self.streamUrlTextBox: StateManager.Set(
+                    f"score.{self.scoreboardNumber}.stream_url", element.text()))
+            self.streamUrlTextBox.editingFinished.emit()
+            bottomOptions.layout().addLayout(self.streamUrl)
 
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
@@ -450,10 +453,20 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
+                StateManager.BlockSaving(),
                 StateManager.Set(
                     f"score.{self.scoreboardNumber}.best_of", value),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.best_of_short_text", f"BO{value}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
                     "best_of").format(value) if value > 0 else ""),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to", math.ceil(value/2)),
+                StateManager.Set(
+                    f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
+                StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
+                    "first_to").format(math.ceil(value/2)) if value > 0 else ""),
+                StateManager.ReleaseSaving()
             ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
@@ -635,8 +648,7 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1,
                 teamNumber=1,
-                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}',
-                scoreboardNumber=self.scoreboardNumber)
+                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
 
             self.team1column.findChild(
@@ -658,14 +670,15 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.LastSetsP1Signal.emit)
             p.instanceSignals.player1Id_changed.connect(
                 self.stats.signals.PlayerHistoryStandingsP1Signal.emit)
+            p.instanceSignals.player_seed_changed.connect(
+                self.stats.signals.UpsetFactorCalculation.emit)
 
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team2playerWidgets)+1,
                 teamNumber=2,
-                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
-                scoreboardNumber=self.scoreboardNumber)
+                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}')
             self.playerWidgets.append(p)
 
             self.team2column.findChild(
@@ -687,6 +700,8 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.LastSetsP2Signal.emit)
             p.instanceSignals.player2Id_changed.connect(
                 self.stats.signals.PlayerHistoryStandingsP2Signal.emit)
+            p.instanceSignals.player_seed_changed.connect(
+                self.stats.signals.UpsetFactorCalculation.emit)
 
             self.team2playerWidgets.append(p)
 
@@ -715,6 +730,8 @@ class TSHScoreboardWidget(QWidget):
         if number > 1:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
             self.team2column.findChild(QLineEdit, "teamName").setVisible(True)
+            self.team1column.findChild(QLabel, "teamLabel").setVisible(False)
+            self.team2column.findChild(QLabel, "teamLabel").setVisible(False)
         else:
             self.team1column.findChild(QLineEdit, "teamName").setVisible(False)
             self.team1column.findChild(QLineEdit, "teamName").setText("")
@@ -724,6 +741,8 @@ class TSHScoreboardWidget(QWidget):
             self.team2column.findChild(QLineEdit, "teamName").setText("")
             self.team2column.findChild(
                 QLineEdit, "teamName").editingFinished.emit()
+            self.team1column.findChild(QLabel, "teamLabel").setVisible(True)
+            self.team2column.findChild(QLabel, "teamLabel").setVisible(True)
 
         for x, element in enumerate(self.elements, start=1):
             action: QAction = self.eyeBt.menu().actions()[x]
@@ -1032,17 +1051,17 @@ class TSHScoreboardWidget(QWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
-            
-            if data.get("team1score") is not None:
-                if data.get("team1score") != 0:
-                    scoreContainers[0].setValue(data.get("team1score"))
-                else:
-                    scoreContainers[0].setValue(0)
-            if data.get("team2score") is not None:
-                if data.get("team2score") != 0:
-                    scoreContainers[1].setValue(data.get("team2score"))
-                else:
-                    scoreContainers[1].setValue(0)
+            if not SettingsManager.Get("general.disable_scoreupdate", False):
+                if data.get("team1score") is not None:
+                    if data.get("team1score") != 0:
+                        scoreContainers[0].setValue(data.get("team1score"))
+                    else:
+                        scoreContainers[0].setValue(0)
+                if data.get("team2score") is not None:
+                    if data.get("team2score") != 0:
+                        scoreContainers[1].setValue(data.get("team2score"))
+                    else:
+                        scoreContainers[1].setValue(0)
             
             if data.get("bestOf"):
                 self.scoreColumn.findChild(
@@ -1055,7 +1074,7 @@ class TSHScoreboardWidget(QWidget):
             if self.teamsSwapped:
                 losersContainers.reverse()
 
-            if data.get("stream"):
+            if SettingsManager.Get("bsky_account.enable_bluesky", True) and data.get("stream"):
                 self.streamUrlTextBox.setText(data.get("stream"))
                 self.streamUrlTextBox.editingFinished.emit()
 

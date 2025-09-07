@@ -13,6 +13,7 @@
         "losers_round": "Tour {0} Loser",
         "round": "Tour {0}",
         "best_of": "Best of {0}",
+        "first_to": "First to {0}",
         "qualifier": "Match de qualification - {0} {1}",
         "qualifier_winners_indicator": "(W)",
         "qualifier_losers_indicator": "(L)"

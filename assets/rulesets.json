@@ -5132,7 +5132,7 @@
     "classSelectionCount": null,
     "decksPerClass": null,
     "requirePrimaryDeck": null,
-    "deckExternalLinkRegex": "^https:\\/\\/shadowverse-wb\\.com\\/en\\/deck\\/detail\\/\\?hash=([0-9]+\\.[0-9]+\\.[a-zA-Z0-9\\-.]+)$",
+    "deckExternalLinkRegex": "^https:\\/\\/shadowverse-wb\\.com\\/en\\/deck\\/detail\\/\\?hash=[^&]+$",
     "id": 210,
     "videogameId": 103453,
     "name": "Shadowverse: Worlds Beyond",

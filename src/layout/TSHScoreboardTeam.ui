@@ -50,7 +50,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -94,7 +93,6 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -122,7 +120,6 @@
      <property name="font">
       <font>
        <pointsize>10</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -163,7 +160,7 @@
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::Panel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
@@ -180,7 +177,7 @@
            <x>0</x>
            <y>0</y>
            <width>394</width>
-           <height>234</height>
+           <height>233</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">

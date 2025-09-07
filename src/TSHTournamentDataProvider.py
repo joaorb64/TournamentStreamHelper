@@ -1,18 +1,14 @@
 import re
 import time
-import traceback
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-import requests
-import threading
 from .SettingsManager import SettingsManager
 from .StateManager import StateManager
-from .TSHGameAssetManager import TSHGameAssetManager, TSHGameAssetManagerSignals
+from .TSHGameAssetManager import TSHGameAssetManager
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-import json
 from loguru import logger
 
 from .Workers import Worker

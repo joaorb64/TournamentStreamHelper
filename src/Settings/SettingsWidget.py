@@ -27,6 +27,7 @@ class SettingsWidget(QWidget):
 
         resetButton = QPushButton(
             QApplication.translate("settings", "Default"))
+        resetButton.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
         if type == "checkbox":
             settingWidget = QCheckBox()
