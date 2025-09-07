@@ -577,12 +577,12 @@ class Window(QMainWindow):
 
         self.optionsBt.menu().addSeparator()
 
-        self.layoutOptions = TSHLayoutOptionsWindow(self)
+        # self.layoutOptions = TSHLayoutOptionsWindow(self)
 
-        action = self.optionsBt.menu().addAction(
-            QApplication.translate("LayoutOptions", "Layout Options"))
-        action.setIcon(QIcon('assets/icons/settings.svg'))
-        action.triggered.connect(lambda: self.layoutOptions.show())
+        # action = self.optionsBt.menu().addAction(
+        #     QApplication.translate("LayoutOptions", "Layout Options"))
+        # action.setIcon(QIcon('assets/icons/settings.svg'))
+        # action.triggered.connect(lambda: self.layoutOptions.show())
 
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Migrate Layout"))
