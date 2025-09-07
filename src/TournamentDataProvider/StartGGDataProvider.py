@@ -1070,7 +1070,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     stateData = {}
                     if countryData:
                         states = countryData.get("states")
-                        if stateCode:
+                        if states and stateCode:
                             stateData = states[stateCode]
 
                             path = f'./assets/state_flag/{countryCode}/{"_CON" if stateCode == "CON" else stateCode}.png'

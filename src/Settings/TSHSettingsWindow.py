@@ -63,6 +63,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.disable_scoreupdate", "Disable automatic score updating for the scoreboard"),
+            "disable_scoreupdate",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.disable_export", "Disable TSH file exporting"),
             "disable_export",
             "checkbox",

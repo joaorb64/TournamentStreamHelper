@@ -163,23 +163,19 @@ class TSHStatsUtil:
         StateManager.ReleaseSaving()
 
     def GetSetUpsetFactor(self):
-        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            bracket_type = StateManager.Get(f"score.bracket_type", "")
-            p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
-            p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
+        if len(self.scoreboard.team1playerWidgets) == 1:
+            bracket_type = StateManager.Get(f"score.bracket_type", "DOUBLE_ELIMINATION")
 
-            if p1id and p2id and orjson.dumps(p1id) != orjson.dumps(p2id):
-                p1 = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.seed")
-                p2 = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.seed")
-                if p1 and p2:
-                    logger.info(f"Scoreboard {self.scoreboardNumber} - P1 Seed: " + str(p1))
-                    p1_upset = self.CalculatePlacementMath(bracket_type, p1)
+            p1 = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.seed")
+            logger.info(f"Scoreboard {self.scoreboardNumber} - P1 Seed: " + str(p1))
+            p2 = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.seed")
+            logger.info(f"Scoreboard {self.scoreboardNumber} - P2 Seed: " + str(p2))
+            if p1 and p2:
+                p1_upset = self.CalculatePlacementMath(bracket_type, int(p1))
+                p2_upset = self.CalculatePlacementMath(bracket_type, int(p2))
 
-                    logger.info(f"Scoreboard {self.scoreboardNumber} - P2 Seed: " + str(p2))
-                    p2_upset = self.CalculatePlacementMath(bracket_type, p2)
-
-                    StateManager.Set(f"score.{self.scoreboardNumber}.upset_factor",
-                                     abs(p1_upset - p2_upset))
+                StateManager.Set(f"score.{self.scoreboardNumber}.upset_factor",
+                                    abs(p1_upset - p2_upset))
         else:
             StateManager.Set(f"score.upset_factor", 0)
 

@@ -21,6 +21,7 @@ class TSHScoreboardPlayerWidgetSignals(QObject):
     playerId_changed = Signal()
     player1Id_changed = Signal()
     player2Id_changed = Signal()
+    player_seed_changed = Signal()
     dataChanged = Signal()
 
 
@@ -33,7 +34,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     dataLock = threading.RLock()
 
-    def __init__(self, index=0, teamNumber=0, path="", scoreboardNumber=1, customName="", *args):
+    def __init__(self, index=0, teamNumber=0, path="", customName="", *args):
         super().__init__(*args)
 
         self.instanceSignals = TSHScoreboardPlayerWidgetSignals()
@@ -42,7 +43,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
         self.index = index
         self.teamNumber = teamNumber
-        self.scoreboardNumber = scoreboardNumber
         self.customName = customName
 
         self.losers = False
@@ -142,8 +142,23 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     self.instanceSignals.dataChanged.emit()
                 ])
         
-        self.findChild(QSpinBox, "seed").setValue(0)
-        self.findChild(QSpinBox, "seed").lineEdit().editingFinished.emit()
+        seed = self.findChild(QSpinBox, "seed")
+        seed.valueChanged.connect(
+            lambda value: StateManager.Set(f"{self.path}.seed", value)
+        )
+        seed.valueChanged.connect(
+            lambda value: self.instanceSignals.player_seed_changed.emit()
+        )
+        
+        seed.setValue(0)
+        seed.valueChanged.emit(seed.value)
+
+        self.findChild(QCheckBox, "birthday").toggled.connect(
+            lambda state, element=c: [
+                StateManager.Set(
+                    f"{self.path}.birthday", state)
+        ])
+        self.findChild(QCheckBox, "birthday").toggled.emit(False)
 
         for c in self.findChildren(QComboBox):
             c.currentIndexChanged.connect(

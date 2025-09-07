@@ -453,6 +453,7 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
+                StateManager.BlockSaving(),
                 StateManager.Set(
                     f"score.{self.scoreboardNumber}.best_of", value),
                 StateManager.Set(
@@ -465,6 +466,7 @@ class TSHScoreboardWidget(QWidget):
                     f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
                     "first_to").format(math.ceil(value/2)) if value > 0 else ""),
+                StateManager.ReleaseSaving()
             ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
@@ -646,8 +648,7 @@ class TSHScoreboardWidget(QWidget):
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1,
                 teamNumber=1,
-                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}',
-                scoreboardNumber=self.scoreboardNumber)
+                path=f'score.{self.scoreboardNumber}.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
 
             self.team1column.findChild(
@@ -669,14 +670,15 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.LastSetsP1Signal.emit)
             p.instanceSignals.player1Id_changed.connect(
                 self.stats.signals.PlayerHistoryStandingsP1Signal.emit)
+            p.instanceSignals.player_seed_changed.connect(
+                self.stats.signals.UpsetFactorCalculation.emit)
 
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team2playerWidgets)+1,
                 teamNumber=2,
-                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}',
-                scoreboardNumber=self.scoreboardNumber)
+                path=f'score.{self.scoreboardNumber}.team.{2}.player.{len(self.team2playerWidgets)+1}')
             self.playerWidgets.append(p)
 
             self.team2column.findChild(
@@ -698,6 +700,8 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.LastSetsP2Signal.emit)
             p.instanceSignals.player2Id_changed.connect(
                 self.stats.signals.PlayerHistoryStandingsP2Signal.emit)
+            p.instanceSignals.player_seed_changed.connect(
+                self.stats.signals.UpsetFactorCalculation.emit)
 
             self.team2playerWidgets.append(p)
 
@@ -1045,17 +1049,17 @@ class TSHScoreboardWidget(QWidget):
             if data.get("reset_score"):
                 scoreContainers[0].setValue(0)
                 scoreContainers[1].setValue(0)
-            
-            if data.get("team1score") is not None:
-                if data.get("team1score") != 0:
-                    scoreContainers[0].setValue(data.get("team1score"))
-                else:
-                    scoreContainers[0].setValue(0)
-            if data.get("team2score") is not None:
-                if data.get("team2score") != 0:
-                    scoreContainers[1].setValue(data.get("team2score"))
-                else:
-                    scoreContainers[1].setValue(0)
+            if not SettingsManager.Get("general.disable_scoreupdate", False):
+                if data.get("team1score") is not None:
+                    if data.get("team1score") != 0:
+                        scoreContainers[0].setValue(data.get("team1score"))
+                    else:
+                        scoreContainers[0].setValue(0)
+                if data.get("team2score") is not None:
+                    if data.get("team2score") != 0:
+                        scoreContainers[1].setValue(data.get("team2score"))
+                    else:
+                        scoreContainers[1].setValue(0)
             
             if data.get("bestOf"):
                 self.scoreColumn.findChild(

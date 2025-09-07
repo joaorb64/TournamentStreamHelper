@@ -647,7 +647,7 @@ class TSHGameAssetManager(QObject):
             for c in self.characters.keys():
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
-                print(c)
+                logger.info(c)
                 item.setIcon(
                     QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
                 )
@@ -681,7 +681,7 @@ class TSHGameAssetManager(QObject):
             for c in self.variants.keys():
                 item = QStandardItem()
                 item.setData(c, Qt.ItemDataRole.EditRole)
-                print(c)
+                logger.info(c)
 
                 data = {
                     "name": self.variants[c].get("export_name"),
