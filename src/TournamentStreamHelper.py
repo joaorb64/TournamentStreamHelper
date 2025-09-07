@@ -832,7 +832,7 @@ class Window(QMainWindow):
 
         TSHCountryHelper.LoadCountries()
         self.settingsWindow.UiMounted()
-        self.layoutOptions.UiMounted()
+        # self.layoutOptions.UiMounted()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()
