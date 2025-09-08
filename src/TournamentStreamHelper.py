@@ -131,7 +131,6 @@ from .SettingsManager import SettingsManager
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHScoreboardManager import TSHScoreboardManager
-from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
@@ -368,12 +367,14 @@ class Window(QMainWindow):
 
         self.dockWidgets = []
 
-        thumbnailSetting = TSHThumbnailSettingsWidget()
-        thumbnailSetting.setObjectName(
-            QApplication.translate("app", "Thumbnail Settings"))
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
-        self.dockWidgets.append(thumbnailSetting)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
+            thumbnailSetting = TSHThumbnailSettingsWidget()
+            thumbnailSetting.setObjectName(
+                QApplication.translate("app", "Thumbnail Settings"))
+            self.addDockWidget(
+                Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+            self.dockWidgets.append(thumbnailSetting)
 
         bracket = TSHBracketWidget()
         bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
@@ -433,7 +434,8 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
-        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.tabifyDockWidget(self.scoreboard, notes)
@@ -569,7 +571,8 @@ class Window(QMainWindow):
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(self.stageWidget.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
-        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
         toggleWidgets.addAction(bracket.toggleViewAction())
