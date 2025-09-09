@@ -59,7 +59,10 @@ class TSHColorButton(QToolButton):
             dlg.setCurrentColor(QColor(self._color))
 
         if dlg.exec_():
-            self.setColor(dlg.currentColor().name(QColor.NameFormat.HexArgb))
+            if self.enable_alpha_selection:
+                self.setColor(dlg.currentColor().name(QColor.NameFormat.HexArgb))
+            else:
+                self.setColor(dlg.currentColor().name(QColor.NameFormat.HexRgb))
 
     def mousePressEvent(self, e):
         if not self.disable_right_click and e.button() == Qt.RightButton:
