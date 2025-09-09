@@ -69,6 +69,8 @@ class TSHCommentaryWidget(QDockWidget):
         self.elements = [
             ["Real Name",              ["real_name"],                         "show_name"],
             ["Twitter",                ["twitter", "twitterLabel"],           "show_social"],
+            ["Seed",                   ["seed", "seedLabel"],                 "show_seed"],
+            ["Birthday",               ["birthday"],                          "show_birthday"],
             ["Location",               ["locationLabel", "state", "country"], "show_location"],
             ["Characters",             ["characters"],                        "show_characters"],
             ["Pronouns",               ["pronoun"],                           "show_pronouns"],
@@ -77,11 +79,13 @@ class TSHCommentaryWidget(QDockWidget):
         ]
         self.elements[0][0] = QApplication.translate("app", "Real Name")
         self.elements[1][0] = QApplication.translate("app", "Twitter")
-        self.elements[2][0] = QApplication.translate("app", "Location")
-        self.elements[3][0] = QApplication.translate("app", "Characters")
-        self.elements[4][0] = QApplication.translate("app", "Pronouns")
-        self.elements[5][0] = QApplication.translate("app", "Controller")
-        self.elements[6][0] = QApplication.translate("app", "Additional information")
+        self.elements[2][0] = QApplication.translate("app", "Seed")
+        self.elements[3][0] = QApplication.translate("app", "Birthday")
+        self.elements[4][0] = QApplication.translate("app", "Location")
+        self.elements[5][0] = QApplication.translate("app", "Characters")
+        self.elements[6][0] = QApplication.translate("app", "Pronouns")
+        self.elements[7][0] = QApplication.translate("app", "Controller")
+        self.elements[8][0] = QApplication.translate("app", "Additional information")
         for element in self.elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
             action.setCheckable(True)
