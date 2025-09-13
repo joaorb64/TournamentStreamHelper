@@ -114,6 +114,7 @@ def catchtime(msg = ''):
 
 # autopep8: off
 from .Settings.TSHSettingsWindow import TSHSettingsWindow
+from .LayoutOptions.TSHLayoutOptionsWindow import TSHLayoutOptionsWindow
 from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHNotesWidget import TSHNotesWidget
@@ -579,6 +580,13 @@ class Window(QMainWindow):
 
         self.optionsBt.menu().addSeparator()
 
+        # self.layoutOptions = TSHLayoutOptionsWindow(self)
+
+        # action = self.optionsBt.menu().addAction(
+        #     QApplication.translate("LayoutOptions", "Layout Options"))
+        # action.setIcon(QIcon('assets/icons/settings.svg'))
+        # action.triggered.connect(lambda: self.layoutOptions.show())
+
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Migrate Layout"))
         action.triggered.connect(self.MigrateWindow)
@@ -731,6 +739,8 @@ class Window(QMainWindow):
             QDesktopServices.openUrl(QUrl(asset_url)),
             help_messagebox.exec()
         ])
+        
+        self.optionsBt.menu().addSeparator()
 
         self.settingsWindow = TSHSettingsWindow(self)
 
@@ -825,6 +835,7 @@ class Window(QMainWindow):
 
         TSHCountryHelper.LoadCountries()
         self.settingsWindow.UiMounted()
+        # self.layoutOptions.UiMounted()
         TSHTournamentDataProvider.instance.UiMounted()
         TSHGameAssetManager.instance.UiMounted()
         TSHAlertNotification.instance.UiMounted()

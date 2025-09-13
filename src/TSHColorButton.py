@@ -1,6 +1,5 @@
 # https://www.pythonguis.com/widgets/qcolorbutton-a-color-selector-tool-for-pyqt/
 
-import qtpy
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -16,19 +15,25 @@ class TSHColorButton(QToolButton):
 
     colorChanged = Signal(object)
 
-    def __init__(self, *args, color=None, disable_right_click=False, **kwargs):
+    def __init__(self, *args, color=None, disable_right_click=False, enable_alpha_selection=False, ignore_same_color=True, **kwargs):
         super(TSHColorButton, self).__init__(*args, **kwargs)
 
         self._color = None
         self._default = color
         self.disable_right_click = disable_right_click
+        self.enable_alpha_selection = enable_alpha_selection
+        self.ignore_same_color = ignore_same_color
         self.pressed.connect(self.onColorPicker)
 
         # Set the initial/default state.
         self.setColor(self._default)
 
     def setColor(self, color):
-        if color != self._color:
+        if self.ignore_same_color:
+            if color != self._color:
+                self._color = color
+                self.colorChanged.emit(color)
+        else:
             self._color = color
             self.colorChanged.emit(color)
 
@@ -48,11 +53,16 @@ class TSHColorButton(QToolButton):
 
         '''
         dlg = QColorDialog(self)
+        if self.enable_alpha_selection:
+            dlg.setOption(QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if self._color:
             dlg.setCurrentColor(QColor(self._color))
 
         if dlg.exec_():
-            self.setColor(dlg.currentColor().name())
+            if self.enable_alpha_selection:
+                self.setColor(dlg.currentColor().name(QColor.NameFormat.HexArgb))
+            else:
+                self.setColor(dlg.currentColor().name(QColor.NameFormat.HexRgb))
 
     def mousePressEvent(self, e):
         if not self.disable_right_click and e.button() == Qt.RightButton:

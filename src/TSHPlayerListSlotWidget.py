@@ -1,17 +1,11 @@
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from qtpy import uic
-import json
 import traceback
 from loguru import logger
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
-from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
 
 
 class TSHPlayerListSlotWidgetSignals(QObject):

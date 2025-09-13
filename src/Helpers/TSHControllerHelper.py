@@ -11,6 +11,7 @@ import zipfile
 import json
 from loguru import logger
 import glob
+from ..SettingsManager import SettingsManager
 
 
 class TSHControllerHelperSignals(QObject):
@@ -27,7 +28,10 @@ class TSHControllerHelper(QObject):
         self.controller_list = {}
         self.controllerModel = QStandardItemModel()
 
-        self.UpdateControllerFile()
+        if SettingsManager.Get("general.disable_controller_file_downloading", False):
+            logger.debug("Skipping controller file download (SETTING ENABLED)")
+        else:
+            self.UpdateControllerFile()
         self.BuildControllerTree()
         self.UpdateControllerModel()
     

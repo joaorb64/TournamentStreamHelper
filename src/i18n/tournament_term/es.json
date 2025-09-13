@@ -12,6 +12,7 @@
         "losers_round": "Repesca Ronda {0}",
         "round": "Ronda {0}",
         "best_of": "Mejor de {0}",
+        "first_to": "First to {0}",
         "qualifier": "Clasificatoria - {0} {1}",
         "qualifier_winners_indicator": "(W)",
         "qualifier_losers_indicator": "(L)"

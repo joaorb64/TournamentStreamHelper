@@ -180,7 +180,8 @@ class TSHAssetDownloader(QObject):
             header_labels[10] = QApplication.translate("app", "Credits")
 
             model.setHorizontalHeaderLabels(header_labels)
-            downloadList.hideColumn(0)
+            if downloadList and not downloadList.isColumnHidden(0):
+                downloadList.hideColumn(0)
             downloadList.hideColumn(1)
             downloadList.horizontalHeader().setStretchLastSection(True)
             downloadList.setWordWrap(True)

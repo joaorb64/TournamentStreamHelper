@@ -1,4 +1,3 @@
-import sys
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
@@ -64,6 +63,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.disable_scoreupdate", "Disable automatic score updating for the scoreboard"),
+            "disable_scoreupdate",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.disable_export", "Disable TSH file exporting"),
             "disable_export",
             "checkbox",
@@ -90,6 +97,14 @@ class TSHSettingsWindow(QDialog):
             QApplication.translate(
                 "settings.disable_country_file_downloading", "Disables attempting to download the country and states file (takes effect on next restart)"),
             "disable_country_file_downloading",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
+                "settings.disable_controller_file_downloading", "Disables attempting to download the controllers file (takes effect on next restart)"),
+            "disable_controller_file_downloading",
             "checkbox",
             False
         ))
@@ -209,6 +224,13 @@ class TSHSettingsWindow(QDialog):
 
         # Add Bluesky settings
         bskySettings = []
+        bskySettings.append((
+            QApplication.translate(
+                "settings.bsky", "Enable Bluesky Features"),
+            "enable_bluesky",
+            "checkbox",
+            True
+        ))
         bskySettings.append((
             QApplication.translate(
                 "settings.bsky", "Host server"),

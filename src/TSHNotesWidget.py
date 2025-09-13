@@ -1,22 +1,8 @@
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from qtpy import uic
-import json
-import traceback
 from loguru import logger
-from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
-
-from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
-from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
-from .TSHGameAssetManager import TSHGameAssetManager
-from .TSHPlayerDB import TSHPlayerDB
-from .TSHTournamentDataProvider import TSHTournamentDataProvider
-from .TSHPlayerList import TSHPlayerList
-from src.Helpers.TSHAltTextHelper import generate_top_n_alt_text, add_alt_text_tooltip_to_button
-import textwrap
-import re
 
 
 class TSHNotesWidget(QDockWidget):

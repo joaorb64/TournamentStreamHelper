@@ -9,6 +9,7 @@ import sys
 import os
 from loguru import logger
 import traceback
+import json
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .SettingsManager import *

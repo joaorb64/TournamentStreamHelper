@@ -4,7 +4,6 @@ import json
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-import re
 import csv
 import traceback
 from loguru import logger
