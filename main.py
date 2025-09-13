@@ -3,6 +3,7 @@
 
 import src
 import multiprocessing
+import signal
 import sys
 import os
 import asyncio
@@ -17,6 +18,9 @@ async def main(event_loop):
         future.cancel()
 
     future = asyncio.Future()
+
+    event_loop.add_signal_handler(signal.SIGINT, lambda: window.close())
+    event_loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
 
     window = src.Window(event_loop)
     if hasattr(src.App, "aboutToQuit"):
@@ -37,6 +41,6 @@ if __name__ == '__main__':
     try:
         loop = QEventLoop()
         asyncio.set_event_loop(loop)
-        sys.exit(run(main(loop)))
+        sys.exit(loop.run_until_complete(main(loop)))
     except asyncio.exceptions.CancelledError:
         sys.exit(0)

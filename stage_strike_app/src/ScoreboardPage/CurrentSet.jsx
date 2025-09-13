@@ -70,6 +70,7 @@ export default function CurrentSet() {
     }
 
     const teamKeys = Object.keys(score.team).sort()
+    const setId = score.set_id ?? 'unk';
     const teams = [score.team[teamKeys[0]], score.team[teamKeys[1]]];
 
     let setTitle;
@@ -110,8 +111,9 @@ export default function CurrentSet() {
                                    justifyContent={"space-evenly"}
                             >
                                 <Team
-                                      key={score.set_id + "1"}
-                                      teamId={teamKeys[0]}
+                                      key={`s-${setId}-t-${teamKeys[0]}`}
+                                      teamId={`s-${setId}-t-${teamKeys[0]}`}
+                                      tshTeamId={teamKeys[0]}
                                       ref={team1Ref}
                                       team={teams[0]}
                                       characters={tshChars}
@@ -137,9 +139,10 @@ export default function CurrentSet() {
                                     </Stack>
                                 </Stack>
 
-                                <Team key={score.set_id + "2"}
+                                <Team key={`s-${setId}-t-${teamKeys[1]}`}
+                                      teamId={`s-${setId}-t-${teamKeys[1]}`}
+                                      tshTeamId={teamKeys[1]}
                                       ref={team2Ref}
-                                      teamId={teamKeys[1]}
                                       team={teams[1]}
                                 />
                             </Stack>
