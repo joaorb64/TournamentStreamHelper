@@ -507,6 +507,7 @@ class WebServer(QThread):
 
     @socketio.on('playerdb')
     def ws_playerdb(message):
+        logger.info("Emitting playerdb info.")
         WebServer.ws_emit('playerdb', WebServer.actions.get_playerdb())
 
 

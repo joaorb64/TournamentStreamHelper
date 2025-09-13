@@ -41,7 +41,7 @@ if parse(qtpy.QT_VERSION).major == 6:
 App = QApplication(sys.argv)
 
 fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
-       "| <level>{level}</level> ({process}, {thread}) | " +
+       "| <level>{level}</level> | " +
        "<yellow>{file}</yellow>:<blue>{function}</blue>:<cyan>{line}</cyan> " +
        "- <level>{message}</level>")
 
@@ -925,7 +925,6 @@ class Window(QMainWindow):
         #
         # Given that this webserver is local in scope, it's reasonable to not do any
         # connection-draining process.
-        self.webserver.terminate()
         try:
             web_socket_fd = os.environ.get('WERKZEUG_SOCKET_FD', None)
             if web_socket_fd:
@@ -934,6 +933,7 @@ class Window(QMainWindow):
         except Exception as e:
             logger.warning("Error closing web socket on shutdown", exc_info=True)
 
+        self.webserver.terminate()
         self.webserver.wait()
 
     def ReloadGames(self):

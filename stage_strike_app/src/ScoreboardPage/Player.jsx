@@ -53,23 +53,35 @@ import {CharSelector} from "./CharSelector";
 /**
  * @param {TSHPlayerDbEntry} player
  * @param {string} gameCodename
- * @return {{charName?: string, charSkin: string}}
+ * @param {number} count
+ * @return {CharacterSelections}
  */
-function getMain(player, gameCodename) {
-    let charName = "";
-    let charSkin = "";
+function getMains(player, gameCodename, count) {
+    const /** @type CharacterSelections */ rval = {};
+    // Yeah, we do 1-based counting here.
+    for (let i = 1; i < count+1; i += 1) {
+        rval[i] = {
+            charName: "",
+            charSkin: "",
+            charIdx: i
+        };
+    }
 
     if (player.mains?.hasOwnProperty(gameCodename)) {
-        const main = player.mains?.[gameCodename]?.[0];
-        if (main) {
-            charName = main?.[0] ?? "";
-            charSkin = main?.[1] ?? "";
+        const mains = player.mains?.[gameCodename];
+        if (mains) {
+            for (let i = 0; i < count && i < mains.length; i += 1) {
+                const main = mains[i]
+                rval[i+1] = {
+                    charName: main?.[0] ?? "",
+                    charSkin: main?.[1] ?? "",
+                    charIdx: i+1
+                }
+            }
         }
     }
 
-    return {
-        charName, charSkin
-    };
+    return rval;
 }
 
 /**
@@ -167,20 +179,36 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
         rval.pronoun = state.pronoun
         rval.mains = {[gameCodename]: []}
 
-        rval.mains[gameCodename] = [
-            ...Object.values(state.charSelections).map(charSelection => {
-                return [
-                    (charSelection.charName ? characters[charSelection.charName]?.en_name : ""),
-                    charSelection.charSkin || 0,
+        /*
+         * When we submit character selection, it also updates the player's mains in the player DB. To prevent
+         * overriding them when we haven't selected a character, we do this song-and-dance to submit the selected
+         * characters and fall back
+         */
+        const lookupName = !!player.prefix ? `${player.prefix} ${player.name}` : player.name;
+        const existingMains = Object.values(playerDb[lookupName]?.mains?.[gameCodename] ?? [])
+        const charsFromForm = Object.values(state.charSelections)
+        // The number of characters from the original TSH state.
+        const maxChars = Object.values(state._charSelections).length;
+        const mainsToSubmit = [];
+        for (let i = 0; i < maxChars; i += 1) {
+            if (i < charsFromForm.length && !!charsFromForm[i].charName) {
+                mainsToSubmit.push([
+                    (charsFromForm[i].charName ? characters[charsFromForm[i].charName]?.en_name : ""),
+                    charsFromForm[i].charSkin || 0,
                     ""
-                ];
-            })
-        ];
+                ])
+            } else if (i < existingMains.length) {
+                mainsToSubmit.push(existingMains[i]);
+            } else {
+                mainsToSubmit.push(["", 0, ""])
+            }
+        }
+        rval.mains[gameCodename] = mainsToSubmit;
 
         // Don't persist player info to DB if they have no tag.
         rval.savePlayerToDb = (!!state.name);
 
-        console.log("Update payload:",  rval)
+        console.log("Player update payload:",  rval)
         return rval;
     }
 
@@ -202,7 +230,7 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                 twitter: newPlayer.twitter ?? "",
                 pronoun: newPlayer.pronoun ?? "",
                 stateCode: newPlayer.state_code ?? "",
-                ...getMain(newPlayer, gameCodename),
+                charSelections: getMains(newPlayer, gameCodename, Object.keys(state._charSelections).length),
             });
         } else {
             // value is an ad-hoc string of a player tag.
