@@ -1,6 +1,7 @@
 import html
 import os
 import traceback
+from functools import partial
 
 import flask
 import flask_socketio
@@ -13,9 +14,11 @@ from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
 
+from .StateManager import StateManager
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
+
 import traceback
 
 import logging
@@ -44,6 +47,10 @@ class WebServer(QThread):
             stageWidget=stageWidget,
             commentaryWidget=commentaryWidget
         )
+
+        StateManager.signals.state_updated.connect(WebServer.on_program_state_update)
+        StateManager.signals.state_big_change.connect(WebServer.ws_program_state)
+
         self.host_name = "0.0.0.0"
         self.port = 5000
 
@@ -51,12 +58,20 @@ class WebServer(QThread):
     def program_state():
         return WebServer.actions.program_state()
 
+    @socketio.on('program-state-update')
+    def ws_program_state_update(message):
+        WebServer.ws_emit('program_state_update', {})
+
+    def on_program_state_update(changes):
+        if len(changes) > 0:
+            WebServer.socketio.emit('program_state_update', changes)
+
     @socketio.on('connect')
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
     @socketio.on('program-state')
-    def ws_program_state(message):
+    def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
     @socketio.on_error_default

@@ -400,12 +400,14 @@ class WebServerActions(QThread):
             return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
 
     def get_sets(self, args):
+        provider = TSHTournamentDataProvider.instance.GetProvider()
+        if provider is None:
+            return []
+
         if args.get('getFinished') is not None:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=True)
             return sets
         else:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=False)
             return sets
 

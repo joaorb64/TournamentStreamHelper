@@ -2,6 +2,7 @@ import os
 import orjson
 import traceback
 
+from deepdiff.helper import DELTA_VIEW
 from qtpy.QtCore import QObject, Signal
 from deepdiff import DeepDiff, extract
 from functools import partial
@@ -15,7 +16,8 @@ from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset, deep_clone
 from .SettingsManager import SettingsManager
 
 class StateManagerSignals(QObject):
-    state_updated = Signal()
+    state_big_change = Signal()
+    state_updated = Signal(dict)
 
 class StateManager:
     lastSavedState = {}
@@ -64,13 +66,22 @@ class StateManager:
                 diff = DeepDiff(
                     StateManager.lastSavedState,
                     StateManager.state,
-                    include_paths=StateManager.changedKeys
+                    include_paths=StateManager.changedKeys,
+                    verbose_level=2, # Necessary to see values of added items.
                 )
+                diff_count = diff.get_stats()['DIFF COUNT']
+                # logger.debug(f"State diff length: {diff_count}")
+                if diff_count > 200:
+                    StateManager.signals.state_big_change.emit()
+                elif diff_count > 0:
+                    try:
+                        StateManager.signals.state_updated.emit(diff.to_dict())
+                    except TypeError:
+                        logger.warning(f"Couldn't serialize diff. Changed Keys: {StateManager.changedKeys}")
 
                 StateManager.changedKeys = []
 
                 if len(diff) > 0:
-                    StateManager.signals.state_updated.emit()
                     exportThread = threading.Thread(
                         target=partial(ExportAll, ref_diff=diff))
                     StateManager.threads.append(exportThread)
@@ -83,11 +94,13 @@ class StateManager:
         try:
             with open("./out/program_state.json", 'rb') as file:
                 StateManager.state = orjson.loads(file.read())
+                StateManager.signals.state_big_change.emit()
         except FileNotFoundError:
             pass
         except Exception as e:
             logger.error(traceback.format_exc())
             StateManager.state = {}
+            StateManager.signals.state_big_change.emit()
             StateManager.SaveState()
 
     def Set(key: str, value):

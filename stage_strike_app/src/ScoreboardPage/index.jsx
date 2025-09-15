@@ -7,12 +7,31 @@ import {
 import React from "react";
 import {Box} from "@mui/system";
 import { io } from 'socket.io-client';
+import imm_update from 'immutability-helper';
 
 import './backendDataTypes';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
 import {Header} from "./Header";
+
+
+/**
+ *
+ * @param inputStr
+ * @returns {string[]}
+ */
+function getKeysFromPyDeepDiffStr(inputStr) {
+    const r = new RegExp(/\[([^[\]]*)]/g)
+    const m = inputStr.matchAll(r)
+    const vals = m
+        .toArray()
+        .map(
+            o => o[1]
+                .replaceAll(/['"]/g, "")
+        );
+    return vals;
+}
 
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
@@ -40,9 +59,72 @@ export default function ScoreboardPage(props) {
         });
 
         socket.on("program_state", data => {
-            console.log("TSH state update received ", data);
+            console.log("TSH state received ", data);
             setTshState(data);
-        })
+        });
+
+        socket.on("program_state_update", data => {
+            console.log("TSH state update received", data);
+            setTshState((prevState) => {
+                const query = {};
+                for (
+                    let diffOperation of
+                        [
+                        'values_changed',
+                        'dictionary_item_added',
+                        'dictionary_item_removed'
+                        ]
+                    )
+                {
+                    if (!data[diffOperation]) {
+                        continue;
+                    }
+
+                    for (let dataKeyStr in data[diffOperation]) {
+                        const pathPieces = getKeysFromPyDeepDiffStr(dataKeyStr);
+                        const lp = pathPieces[pathPieces.length-1];
+                        let queryInner = {};
+                        switch(diffOperation) {
+                            case 'values_changed':
+                                // _.set(newState, pathPieces, data[diffOperation][dataKeyStr]['new_value'])
+                                queryInner = {"$set": data[diffOperation][dataKeyStr]['new_value']}
+                                break;
+                            case 'dictionary_item_added':
+                                // _.set(newState, pathPieces, data[diffOperation][dataKeyStr])
+                                queryInner = {"$set": data[diffOperation][dataKeyStr]}
+                                break;
+                            case 'dictionary_item_removed':
+                                queryInner = {"$unset": [lp]}
+                                // _.unset(newState, pathPieces)
+                                break;
+                        }
+
+                        let currentQueryObj = query;
+                        for (let i = 0; i < pathPieces.length; i += 1) {
+                            if (!currentQueryObj[pathPieces[i]]) {
+                                currentQueryObj[pathPieces[i]] = {};
+                            }
+
+                            if (i === pathPieces.length-1 && diffOperation === 'dictionary_item_removed') {
+                                if (currentQueryObj.hasOwnProperty("$unset")) {
+                                    currentQueryObj['$unset'].push(lp)
+                                } else {
+                                    currentQueryObj['$unset'] = queryInner['$unset'];
+                                }
+                                break;
+                            }
+
+                            currentQueryObj = currentQueryObj[pathPieces[i]];
+                        }
+                        if (diffOperation !== 'dictionary_item_removed') {
+                            currentQueryObj['$set'] = queryInner['$set'];
+                        }
+                    }
+                }
+                console.log("Updating TSH state with query: ", query);
+                return imm_update(prevState, query)
+            });
+        });
 
         socket.on("playerdb", data => {
             console.log("Player data received", data);
