@@ -1,7 +1,7 @@
 import html
+import json
 import os
 import traceback
-from functools import partial
 
 import flask
 import flask_socketio
@@ -19,11 +19,21 @@ from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 
-import traceback
-
 import logging
 log = logging.getLogger('socketio.server')
 log.setLevel(logging.ERROR)
+
+class SocketioJson:
+    def default(obj):
+        if isinstance(obj, type(type(1))):
+            return str(obj)
+        return obj
+
+    def dumps(*args, **kwargs):
+        return json.dumps(*args, **kwargs, default=SocketioJson.default)
+
+    def loads(*args, **kwargs):
+        return json.loads(*args, **kwargs)
 
 
 class WebServer(QThread):
@@ -35,6 +45,7 @@ class WebServer(QThread):
         # Uncomment to enable SocketIO logging (As logging is unuseful, we'll make this a dev flag)
         # logger=logger,
         async_mode='threading',
+        json=SocketioJson
     )
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
@@ -64,7 +75,15 @@ class WebServer(QThread):
 
     def on_program_state_update(changes):
         if len(changes) > 0:
-            WebServer.socketio.emit('program_state_update', changes)
+            try:
+                WebServer.ws_emit('program_state_update', changes)
+            except TypeError:
+                logger.warning("Unserializable program state update")
+
+                # If we can't emit a diff, fall back to emitting the whole program
+                # state. Well-behaved listeners should discard their existing state
+                # and re-sync with us that way.
+                WebServer.ws_program_state()
 
     @socketio.on('connect')
     def ws_connect(message):

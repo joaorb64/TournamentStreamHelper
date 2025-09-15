@@ -1,4 +1,5 @@
 import os
+
 import orjson
 import traceback
 
@@ -66,6 +67,7 @@ class StateManager:
                 diff = DeepDiff(
                     StateManager.lastSavedState,
                     StateManager.state,
+                    exclude_types=[type(None)],
                     include_paths=StateManager.changedKeys,
                     verbose_level=2, # Necessary to see values of added items.
                 )

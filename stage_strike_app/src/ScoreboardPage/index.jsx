@@ -14,24 +14,8 @@ import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
 import {Header} from "./Header";
+import {queryFromDiff} from "../pythonDeepDiffUtils";
 
-
-/**
- *
- * @param inputStr
- * @returns {string[]}
- */
-function getKeysFromPyDeepDiffStr(inputStr) {
-    const r = new RegExp(/\[([^[\]]*)]/g)
-    const m = inputStr.matchAll(r)
-    const vals = m
-        .toArray()
-        .map(
-            o => o[1]
-                .replaceAll(/['"]/g, "")
-        );
-    return vals;
-}
 
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
@@ -47,7 +31,7 @@ export default function ScoreboardPage(props) {
     function connectToSocketIO() {
         socket = io(`ws://${window.location.hostname}:5000/`, {
             transports: ['websocket', 'webtransport'],
-            timeout: 500,
+            timeout: 5000,
             reconnectionDelay: 500,
             reconnectionDelayMax: 1500
         });
@@ -66,63 +50,19 @@ export default function ScoreboardPage(props) {
         socket.on("program_state_update", data => {
             console.log("TSH state update received", data);
             setTshState((prevState) => {
-                const query = {};
-                for (
-                    let diffOperation of
-                        [
-                        'values_changed',
-                        'dictionary_item_added',
-                        'dictionary_item_removed'
-                        ]
-                    )
-                {
-                    if (!data[diffOperation]) {
-                        continue;
-                    }
+                try {
+                    const query = queryFromDiff(data);
+                    console.log("Updating TSH state with query: ", query);
+                    return imm_update(prevState, query);
+                } catch (e) {
+                    console.error("Coult not update TSH state. Requesting a full state refresh. Diff: ", data);
+                    socket.emit("program_state", {}, () => {
+                        console.log("TSH acked program state request");
+                    });
 
-                    for (let dataKeyStr in data[diffOperation]) {
-                        const pathPieces = getKeysFromPyDeepDiffStr(dataKeyStr);
-                        const lp = pathPieces[pathPieces.length-1];
-                        let queryInner = {};
-                        switch(diffOperation) {
-                            case 'values_changed':
-                                // _.set(newState, pathPieces, data[diffOperation][dataKeyStr]['new_value'])
-                                queryInner = {"$set": data[diffOperation][dataKeyStr]['new_value']}
-                                break;
-                            case 'dictionary_item_added':
-                                // _.set(newState, pathPieces, data[diffOperation][dataKeyStr])
-                                queryInner = {"$set": data[diffOperation][dataKeyStr]}
-                                break;
-                            case 'dictionary_item_removed':
-                                queryInner = {"$unset": [lp]}
-                                // _.unset(newState, pathPieces)
-                                break;
-                        }
-
-                        let currentQueryObj = query;
-                        for (let i = 0; i < pathPieces.length; i += 1) {
-                            if (!currentQueryObj[pathPieces[i]]) {
-                                currentQueryObj[pathPieces[i]] = {};
-                            }
-
-                            if (i === pathPieces.length-1 && diffOperation === 'dictionary_item_removed') {
-                                if (currentQueryObj.hasOwnProperty("$unset")) {
-                                    currentQueryObj['$unset'].push(lp)
-                                } else {
-                                    currentQueryObj['$unset'] = queryInner['$unset'];
-                                }
-                                break;
-                            }
-
-                            currentQueryObj = currentQueryObj[pathPieces[i]];
-                        }
-                        if (diffOperation !== 'dictionary_item_removed') {
-                            currentQueryObj['$set'] = queryInner['$set'];
-                        }
-                    }
+                    // We're fine waiting for a full state update if our diff-apply failed.
+                    return prevState;
                 }
-                console.log("Updating TSH state with query: ", query);
-                return imm_update(prevState, query)
             });
         });
 
