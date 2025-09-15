@@ -596,8 +596,8 @@ class TSHGameAssetManager(QObject):
                 if (not mods_active) and stage[1].get("modded"):
                     item.setEnabled(False)
                     item.setSelectable(False)
-
-                self.stageModel.appendRow(item)
+                else:
+                    self.stageModel.appendRow(item)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
                 worker.signals.result.connect(self.LoadStageImageComplete)
@@ -678,7 +678,8 @@ class TSHGameAssetManager(QObject):
                 if (not mods_active) and data.get("modded"):
                     item.setEnabled(False)
                     item.setSelectable(False)
-                self.characterModel.appendRow(item)
+                else:
+                    self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
         except:
