@@ -547,7 +547,9 @@ class TSHGameAssetManager(QObject):
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
 
-    def UpdateStageModel(self):
+    def UpdateStageModel(self, mods_active = True):
+        # TODO: Make modded content disabled by default
+        # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.stageModel = QStandardItemModel()
 
@@ -590,6 +592,11 @@ class TSHGameAssetManager(QObject):
                 item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
                     "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
                 item.setData(stage[1], Qt.ItemDataRole.UserRole)
+
+                if (not mods_active) and stage[1].get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
+
                 self.stageModel.appendRow(item)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
@@ -636,7 +643,9 @@ class TSHGameAssetManager(QObject):
             logger.error(traceback.format_exc())
             return (None)
 
-    def UpdateCharacterModel(self):
+    def UpdateCharacterModel(self, mods_active = True):
+        # TODO: Make modded content disabled by default
+        # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.characterModel = QStandardItemModel()
 
@@ -656,7 +665,8 @@ class TSHGameAssetManager(QObject):
                     "name": self.characters[c].get("export_name"),
                     "en_name": c,
                     "display_name": self.characters[c].get("display_name"),
-                    "codename": self.characters[c].get("codename")
+                    "codename": self.characters[c].get("codename"),
+                    "modded": self.characters[c].get("modded", False)
                 }
 
                 if self.characters[c].get("display_name") != c:
@@ -664,6 +674,10 @@ class TSHGameAssetManager(QObject):
                         f'{self.characters[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
+
+                if (not mods_active) and data.get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
                 self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
