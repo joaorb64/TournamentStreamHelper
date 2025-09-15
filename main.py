@@ -19,13 +19,16 @@ async def main(event_loop):
 
     future = asyncio.Future()
 
-    event_loop.add_signal_handler(signal.SIGINT, lambda: window.close())
-    event_loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
-
     window = src.Window(event_loop)
     if hasattr(src.App, "aboutToQuit"):
         getattr(src.App, "aboutToQuit").connect(
             partial(close_future, future, event_loop))
+
+    try:
+        event_loop.add_signal_handler(signal.SIGINT, lambda: window.close())
+        event_loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
+    except NotImplementedError:  # windows...
+        pass
 
     await future
     if isinstance(future.result(), int):
