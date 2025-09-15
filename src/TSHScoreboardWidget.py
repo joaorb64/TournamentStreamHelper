@@ -548,6 +548,10 @@ class TSHScoreboardWidget(QWidget):
             self.SetDefaultsFromAssets
         )
 
+    def closeEvent(self, event):
+        self.autoUpdateTimer.stop()
+        self.timeLeftTimer.stop()
+
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo",

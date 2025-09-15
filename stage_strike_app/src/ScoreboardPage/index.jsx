@@ -63,7 +63,11 @@ export default function ScoreboardPage(props) {
             setCharacters(enChars);
         })
 
-        socket.on("disconnect", () => {console.log("SocketIO disconnected.")});
+        socket.on("disconnect", () => {
+            console.log("SocketIO disconnected.")
+            socket.connect();
+        });
+
         socket.on('error', (err) => {
             console.log(err);
             setLoadingStatus({connectionError: true})

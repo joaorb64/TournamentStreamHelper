@@ -15,6 +15,7 @@ import traceback
 import time
 import os
 import unicodedata
+import socket
 import sys
 import atexit
 import time
@@ -47,7 +48,7 @@ fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
 if sys.stdout != None:
     config = {
         "handlers": [
-            {"sink": sys.stdout, "format": fmt},
+            {"sink": sys.stdout, "format": fmt, "level": "DEBUG"},
         ],
     }
     logger.configure(**config)
@@ -294,6 +295,7 @@ class WindowSignals(QObject):
     DetectGame = Signal(int)
     SetupAutocomplete = Signal()
     UiMounted = Signal()
+    GameChanged = Signal()
 
 
 class Window(QMainWindow):
@@ -415,9 +417,10 @@ class Window(QMainWindow):
         self.dockWidgets.append(commentary)
 
         self.webserver = WebServer(
-            parent=None, stageWidget=self.stageWidget, commentaryWidget=commentary)
-        StateManager.webServer = self.webserver
+            parent=self, stageWidget=self.stageWidget, commentaryWidget=commentary)
         self.webserver.start()
+        self.signals.GameChanged.connect(self.webserver.ws_program_state)
+        self.signals.GameChanged.connect(self.webserver.ws_get_characters)
 
         playerList = TSHPlayerListWidget()
         playerList.setWindowIcon(QIcon('assets/icons/list.svg'))
@@ -838,7 +841,9 @@ class Window(QMainWindow):
         TSHAlertNotification.instance.UiMounted()
         TSHAssetDownloader.instance.UiMounted()
         TSHHotkeys.instance.UiMounted(self)
-        TSHPlayerDB.webServer = self.webserver
+        TSHPlayerDB.signals.db_updated.connect(
+            self.webserver.ws_playerdb
+        )
         TSHPlayerDB.LoadDB()
 
         StateManager.ReleaseSaving()
@@ -846,6 +851,9 @@ class Window(QMainWindow):
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
         StateManager.Unset("completed_sets")
+        StateManager.signals.state_updated.connect(
+            self.webserver.ws_program_state
+        )
 
         DownloadLayoutsOnBoot()
 
@@ -854,7 +862,7 @@ class Window(QMainWindow):
             "name") or self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get("codename")), None)
         if index is not None:
             self.gameSelect.setCurrentIndex(index)
-            self.webserver.emit("characters", self.webserver.actions.get_characters())
+            self.signals.GameChanged.emit()
 
     def Signal_GameChange(self, url):
         if url == "":
@@ -896,6 +904,7 @@ class Window(QMainWindow):
             self.scoreboard, startgg=True)
 
     def closeEvent(self, event):
+        logger.info("Shutting down...")
         self.qtSettings.setValue("geometry", self.saveGeometry())
         self.qtSettings.setValue("windowState", self.saveState())
 
@@ -909,6 +918,23 @@ class Window(QMainWindow):
                 crashpath.unlink()
         except:
             pass
+
+        # For whatever reason, the webserver thread won't respond to the quit() signal nicely.
+        # This is usually unsafe, but there's no easy way to terminate the flask server,
+        # so we hard-kill its thread as we're shutting down to prevent exit-crashes.
+        #
+        # Given that this webserver is local in scope, it's reasonable to not do any
+        # connection-draining process.
+        try:
+            web_socket_fd = os.environ.get('WERKZEUG_SOCKET_FD', None)
+            if web_socket_fd:
+                sock = socket.socket(fileno=int(web_socket_fd))
+                sock.close()
+        except Exception as e:
+            logger.warning("Error closing web socket on shutdown", exc_info=True)
+
+        self.webserver.terminate()
+        self.webserver.wait()
 
     def ReloadGames(self):
         logger.info("Reload games")
