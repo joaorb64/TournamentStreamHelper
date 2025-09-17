@@ -10,6 +10,7 @@ from qtpy import uic
 from typing import List
 from src.TSHColorButton import TSHColorButton
 from .Helpers.TSHDirHelper import TSHResolve
+from .Helpers.TSHVersionHelper import get_beta_status
 from .Helpers.TSHBskyHelper import post_to_bsky
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
@@ -315,11 +316,18 @@ class TSHScoreboardWidget(QWidget):
                 self.LoadUserSetOptionsClicked)
             hbox.addWidget(self.btLoadPlayerSetOptions)
 
-        self.remoteScoreboardLabel = QLabel(
-            QApplication.translate(
+        self.remoteScoreboardLabel = QApplication.translate(
                 "app", "Open {0} in a browser to edit the scoreboard remotely."
             ).format(f"<a href='http://{self.GetIP()}:5000/scoreboard'>http://{self.GetIP()}:5000/scoreboard</a>")
-        )
+        
+
+        # Check if feature is beta
+        if get_beta_status("web_score"):
+            beta_label = "[" + str(QApplication.translate("app", "beta")).upper() + "] "
+            self.remoteScoreboardLabel = beta_label + self.remoteScoreboardLabel
+        
+        self.remoteScoreboardLabel = QLabel(self.remoteScoreboardLabel)
+
         self.remoteScoreboardLabel.setOpenExternalLinks(True)
         bottomOptions.layout().addWidget(self.remoteScoreboardLabel)
 
