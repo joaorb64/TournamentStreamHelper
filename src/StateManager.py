@@ -1,6 +1,8 @@
 import os
 import orjson
 import traceback
+
+from qtpy.QtCore import QObject, Signal
 from deepdiff import DeepDiff, extract
 from functools import partial
 import shutil
@@ -12,12 +14,14 @@ from loguru import logger
 from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset, deep_clone
 from .SettingsManager import SettingsManager
 
+class StateManagerSignals(QObject):
+    state_updated = Signal()
 
 class StateManager:
     lastSavedState = {}
     state = {}
     saveBlocked = 0
-    webServer = None
+    signals = StateManagerSignals()
     changedKeys = []
 
     lock = threading.RLock()
@@ -66,13 +70,7 @@ class StateManager:
                 StateManager.changedKeys = []
 
                 if len(diff) > 0:
-                    try:
-                        if StateManager.webServer is not None:
-                            StateManager.webServer.emit(
-                                'program_state', StateManager.state)
-                    except Exception as e:
-                        logger.error(traceback.format_exc())
-
+                    StateManager.signals.state_updated.emit()
                     exportThread = threading.Thread(
                         target=partial(ExportAll, ref_diff=diff))
                     StateManager.threads.append(exportThread)

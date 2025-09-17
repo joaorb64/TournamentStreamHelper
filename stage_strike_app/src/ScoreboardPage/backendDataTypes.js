@@ -22,7 +22,7 @@
  * @prop {?string} sponsor_logo
  * @prop {?string} team
  * @prop {?string} twitter
- * @prop {Object.<number, TSHCharacterSelection>} character
+ * @prop {TSHCharacterSelections} character
  */
 /**
  * @typedef {object} TSHTeamInfo
@@ -80,14 +80,17 @@
 
 /**
  * @typedef {object} TSHCharacterSelection
- * @extends {TSHCharacterBase}
+ * @augments {TSHCharacterBase}
  * @prop {number} skin This is -1 if unset.
+ */
+/**
+ * @typedef {Record.<int, TSHCharacterSelection>} TSHCharacterSelections
  */
 
 /** @typedef {Object.<string, TSHCharacterDbEntry>} TSHCharacterDb */
 /**
  * @typedef {object} TSHCharacterDbEntry
- * @extends {TSHCharacterBase}
+ * @augments {TSHCharacterBase}
  * @prop {TSHCharacterSkin[]} skins
  */
 

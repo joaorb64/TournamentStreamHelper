@@ -553,6 +553,10 @@ class TSHScoreboardWidget(QWidget):
             self.SetDefaultsFromAssets
         )
 
+    def closeEvent(self, event):
+        self.autoUpdateTimer.stop()
+        self.timeLeftTimer.stop()
+
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.logo",
@@ -1032,13 +1036,19 @@ class TSHScoreboardWidget(QWidget):
                 # check if this isn't pools and isn't a qualifier
                 round_division = data.get("roundDivision", 0)
                 if round_division:
-                    if data.get("isPools", False) is False and round_division > 6:
+                    if data.get("isPools", False) is False:
+                        phase = tournament_phase
                         original_str = tournament_phase.split(" - ")
-                        tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(round_division)
+                        if round_division > 4:
+                            tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(round_division)
+                        elif round_division <= 4:
+                            tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(4)
 
                         # Include "Bracket - XYZ" similar to if it's Pools
                         if len(original_str) > 1:
                             tournament_phase = f"{original_str[0]} - {tournament_phase}"
+                        elif "Top" not in phase:
+                            tournament_phase = f"{phase} - {tournament_phase}"
 
                 self.scoreColumn.findChild(
                     QComboBox, "phase").setCurrentText(tournament_phase)

@@ -65,9 +65,6 @@ class TSHPlayerDB:
                             logger.error(f"No mains found for: {tag}")
 
             TSHPlayerDB.SetupModel()
-
-            if TSHPlayerDB.webServer is not None:
-                TSHPlayerDB.webServer.emit('playerdb', TSHPlayerDB.database)
         except Exception as e:
             logger.error(traceback.format_exc())
 
@@ -228,9 +225,6 @@ class TSHPlayerDB:
                             playerData["mains"] = json.dumps(player["mains"])
 
                         spamwriter.writerow(playerData)
-
-            if TSHPlayerDB.webServer is not None:
-                TSHPlayerDB.webServer.emit('playerdb', TSHPlayerDB.database)
         except Exception as e:
             logger.error(traceback.format_exc())
 

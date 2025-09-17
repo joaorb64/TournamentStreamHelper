@@ -156,7 +156,7 @@ export default class UpcomingSets extends React.Component {
                             <FormGroup>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox label="Show finished sets" onChange={this.showFinishedSetsChanged}  />
+                                        <Checkbox id={"show-finished-sets"} label="Show finished sets" onChange={this.showFinishedSetsChanged}  />
                                     }
                                     label={i18n.t("show_finished_sets")}
                                 />
