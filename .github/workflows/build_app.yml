@@ -42,6 +42,7 @@ jobs:
 
       - name: Generate TSH Windows executable
         run: |
+          pip uninstall pyside6
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
