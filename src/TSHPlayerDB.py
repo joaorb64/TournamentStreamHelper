@@ -10,6 +10,7 @@ import traceback
 from loguru import logger
 
 from .Helpers.TSHDictHelper import deep_clone
+from copy import deepcopy
 from .TSHGameAssetManager import TSHGameAssetManager
 from .SettingsManager import SettingsManager
 
@@ -23,6 +24,8 @@ class TSHPlayerDB:
     model: QStandardItemModel = None
     webServer = None
     modelLock = Lock()
+    fieldnames = ["prefix", "gamerTag", "name", "twitter",
+                "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"] # Used for filtering what we save locally
 
     def LoadDB():
         try:
@@ -34,8 +37,6 @@ class TSHPlayerDB:
 
             if (not json_db_exists) and os.path.exists("./user_data/local_players.csv"):
                 logger.info("Importing from the previous version of the player database")
-                fieldnames = ["prefix", "gamerTag", "name", "twitter",
-                            "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"]
                 with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
                     reader = csv.DictReader(csvfile, quotechar='\'')
                     for player in reader:
@@ -226,6 +227,11 @@ class TSHPlayerDB:
             for player in TSHPlayerDB.database.values():
                 if player is not None:
                     playerData = deep_clone(player)
+
+                    for key in deepcopy(list(playerData.keys())):
+                        if key not in TSHPlayerDB.fieldnames:
+                            del playerData[key]
+
                     player_list.append(playerData)
 
             with open('./user_data/local_players.json', 'wt', encoding="utf-8") as outfile:
