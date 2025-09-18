@@ -3,12 +3,13 @@
 
 import src
 import multiprocessing
+import signal
 import sys
 import os
 import asyncio
 from qasync import run, QEventLoop
 from functools import partial
-os.environ["QT_API"] = "pyside6"
+os.environ["QT_API"] = "PyQt6"
 
 
 async def main(event_loop):
@@ -22,6 +23,12 @@ async def main(event_loop):
     if hasattr(src.App, "aboutToQuit"):
         getattr(src.App, "aboutToQuit").connect(
             partial(close_future, future, event_loop))
+
+    try:
+        event_loop.add_signal_handler(signal.SIGINT, lambda: window.close())
+        event_loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
+    except NotImplementedError:  # windows...
+        pass
 
     await future
     if isinstance(future.result(), int):
@@ -37,6 +44,6 @@ if __name__ == '__main__':
     try:
         loop = QEventLoop()
         asyncio.set_event_loop(loop)
-        sys.exit(run(main(loop)))
+        sys.exit(loop.run_until_complete(main(loop)))
     except asyncio.exceptions.CancelledError:
         sys.exit(0)

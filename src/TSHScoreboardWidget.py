@@ -10,6 +10,7 @@ from qtpy import uic
 from typing import List
 from src.TSHColorButton import TSHColorButton
 from .Helpers.TSHDirHelper import TSHResolve
+from .Helpers.TSHVersionHelper import add_beta_label
 from .Helpers.TSHBskyHelper import post_to_bsky
 
 from src.TSHSelectSetWindow import TSHSelectSetWindow
@@ -315,11 +316,12 @@ class TSHScoreboardWidget(QWidget):
                 self.LoadUserSetOptionsClicked)
             hbox.addWidget(self.btLoadPlayerSetOptions)
 
-        self.remoteScoreboardLabel = QLabel(
-            QApplication.translate(
+        self.remoteScoreboardLabel = QApplication.translate(
                 "app", "Open {0} in a browser to edit the scoreboard remotely."
             ).format(f"<a href='http://{self.GetIP()}:5000/scoreboard'>http://{self.GetIP()}:5000/scoreboard</a>")
-        )
+        self.remoteScoreboardLabel = add_beta_label(self.remoteScoreboardLabel, "web_score")
+        self.remoteScoreboardLabel = QLabel(self.remoteScoreboardLabel)
+
         self.remoteScoreboardLabel.setOpenExternalLinks(True)
         bottomOptions.layout().addWidget(self.remoteScoreboardLabel)
 
@@ -547,6 +549,10 @@ class TSHScoreboardWidget(QWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.SetDefaultsFromAssets
         )
+
+    def closeEvent(self, event):
+        self.autoUpdateTimer.stop()
+        self.timeLeftTimer.stop()
 
     def ExportTeamLogo(self, team, value):
         if os.path.exists(f"./user_data/team_logo/{value.lower()}.png"):
@@ -829,17 +835,21 @@ class TSHScoreboardWidget(QWidget):
             self.timerLayout.setVisible(True)
 
             if data.get("auto_update") == "set":
-                self.labelAutoUpdate.setText("Auto update (Set)")
+                self.labelAutoUpdate.setText(
+                    QApplication.translate("app", "Auto update (Set)")
+                    )
             elif data.get("auto_update") == "stream":
                 self.labelAutoUpdate.setText(
-                    f"Auto update (Stream [{self.lastStationSelected.get('identifier')}])")
+                    QApplication.translate("app", "Auto update (Stream [{0}])").format(self.lastStationSelected.get('identifier'))
+                    )
             elif data.get("auto_update") == "station":
                 self.labelAutoUpdate.setText(
-                    f"Auto update (Station [{self.lastStationSelected.get('identifier')}])")
+                    QApplication.translate("app", "Auto update (Station [{0}])").format(self.lastStationSelected.get('identifier'))
+                    )
             elif data.get("auto_update") == "user":
-                self.labelAutoUpdate.setText("Auto update (User)")
+                self.labelAutoUpdate.setText(QApplication.translate("app", "Auto update (User)"))
             else:
-                self.labelAutoUpdate.setText("Auto update")
+                self.labelAutoUpdate.setText(QApplication.translate("app", "Auto update"))
 
         # Lock all player widgets
         for p in self.playerWidgets:
@@ -1027,13 +1037,19 @@ class TSHScoreboardWidget(QWidget):
                 # check if this isn't pools and isn't a qualifier
                 round_division = data.get("roundDivision", 0)
                 if round_division:
-                    if data.get("isPools", False) is False and round_division > 6:
+                    if data.get("isPools", False) is False:
+                        phase = tournament_phase
                         original_str = tournament_phase.split(" - ")
-                        tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(round_division)
+                        if round_division > 4:
+                            tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(round_division)
+                        elif round_division <= 4:
+                            tournament_phase = TSHLocaleHelper.phaseNames.get("top_n", "Top {0}").format(4)
 
                         # Include "Bracket - XYZ" similar to if it's Pools
                         if len(original_str) > 1:
                             tournament_phase = f"{original_str[0]} - {tournament_phase}"
+                        elif "Top" not in phase:
+                            tournament_phase = f"{phase} - {tournament_phase}"
 
                 self.scoreColumn.findChild(
                     QComboBox, "phase").setCurrentText(tournament_phase)

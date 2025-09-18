@@ -14,6 +14,20 @@ import TextField from './TextField';
 import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
+import {CharSelector} from "./CharSelector";
+
+/**
+ * @typedef {{
+ *    charIdx: string,
+ *    charName: string,
+ *    charSkin: string | number
+ * }} CharacterSelection
+ */
+
+/**
+ * @typedef {Record.<number, CharacterSelection>} CharacterSelections
+ */
+
 /** @typedef {{
  *     _countryCode?: string,
  *     _stateCode?: string,
@@ -22,8 +36,7 @@ import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contex
  *     _realName: string,
  *     _twitter: string,
  *     _pronoun: string,
- *     _charName: string,
- *     _charSkin: string | number,
+ *     _characterSelections: CharacterSelections
  *
  *     countryCode?: string,
  *     stateCode?: string,
@@ -32,64 +45,51 @@ import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contex
  *     realName: string,
  *     twitter: string,
  *     pronoun: string,
- *     charName: string,
- *     charSkin: string | number,
+ *     characterSelections: CharacterSelections
  *     expanded: boolean
  * }} PlayerState
  */
 
 /**
- * @param {TSHCharacterSkin} skin
- * @return string
- */
-function getSkinAssetUrl(skin) {
-    if (!skin) {
-        return "about:_blank";
-    }
-
-    const assets = skin.assets;
-    let asset = null;
-
-    if (assets?.costume) {
-        asset = assets.costume;
-    } else if (assets?.full) {
-        asset = assets.full;
-    } else if (assets?.['base_files/icon']) {
-        asset = assets['base_files/icon'];
-    } else {
-        return "about:_blank";
-    }
-
-    return `http://${window.location.hostname}:5000/${asset.asset.slice(2)}`;
-}
-
-/**
  * @param {TSHPlayerDbEntry} player
  * @param {string} gameCodename
- * @return {{charName?: string, charSkin: string}}
+ * @param {number} count
+ * @return {CharacterSelections}
  */
-function getMain(player, gameCodename) {
-    let charName = "";
-    let charSkin = "";
+function getMains(player, gameCodename, count) {
+    const /** @type CharacterSelections */ rval = {};
+    // Yeah, we do 1-based counting here.
+    for (let i = 1; i < count+1; i += 1) {
+        rval[i] = {
+            charName: "",
+            charSkin: "",
+            charIdx: i
+        };
+    }
 
     if (player.mains?.hasOwnProperty(gameCodename)) {
-        const main = player.mains?.[gameCodename]?.[0];
-        if (main) {
-            charName = main?.[0] ?? "";
-            charSkin = main?.[1] ?? "";
+        const mains = player.mains?.[gameCodename];
+        if (mains) {
+            for (let i = 0; i < count && i < mains.length; i += 1) {
+                const main = mains[i]
+                rval[i+1] = {
+                    charName: main?.[0] ?? "",
+                    charSkin: main?.[1] ?? "",
+                    charIdx: i+1
+                }
+            }
         }
     }
 
-    return {
-        charName, charSkin
-    };
+    return rval;
 }
 
 /**
  * @param {string} teamId
+ * @param {string} teamKey
  * @param {TSHPlayerInfo} player
  */
-export default React.forwardRef(function Player({teamId, player}, ref) {
+export default React.forwardRef(function Player({teamId, teamKey, player}, ref) {
     const [
         /** @type {PlayerState} */ state,
         setState
@@ -101,8 +101,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         _realName: player.real_name,
         _twitter: player.twitter,
         _pronoun: player.pronoun,
-        _charName: player.character[1].en_name,
-        _charSkin: "",
+        _charSelections: charsFromTsh(player.character),
 
         countryCode: player.country?.code,
         stateCode: player.state?.code,
@@ -111,11 +110,11 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         realName: player.real_name,
         twitter: player.twitter,
         pronoun: player.pronoun,
-        charName: player.character[1].en_name ?? "",
-        charSkin: "",
+        charSelections: charsFromTsh(player.character),
         expanded: true
     });
 
+    const playerId = `${teamId}-p-${teamKey}`;
     const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;
     /** @type TSHPlayerDb */ const playerDb = React.useContext(TSHPlayerDBContext);
@@ -129,26 +128,26 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
             realName: player.real_name,
             twitter: player.twitter,
             pronoun: player.pronoun,
-            charName: player?.character?.[1]?.en_name ?? "",
-            charSkin: player?.character?.[1]?.skin ?? "",
+            charSelections: charsFromTsh(player.character),
         }
 
         const stateUpdates = {};
         for (const prop in newProps) {
-            if (state[`_${prop}`] !== newProps[prop]) {
-                stateUpdates[prop] = newProps[prop];
-                stateUpdates[`_${prop}`] = newProps[prop];
-            }
+            stateUpdates[prop] = newProps[prop];
+            stateUpdates[`_${prop}`] = newProps[prop];
         }
 
         if (Object.keys(stateUpdates).length > 0) {
-            console.log("Updating player data: ", stateUpdates);
-            setState({...state, ...stateUpdates});
+            console.log(`Received new data for [${playerId}, DB: ${tshPlayerDbId}]`, stateUpdates);
+            setState({
+                ...state,
+                ...stateUpdates,
+            });
         }
     }, [player])
 
     const /** @type {TSHCharacterDb} */ characters = React.useContext(TSHCharacterContext);
-    const playerId = player?.id?.at(0) || player?.id?.at(1) || -1;
+    const tshPlayerDbId = player?.id?.at(0) || player?.id?.at(1) || -1;
 
     const changeHandlerFor = (fieldName) => {
         return (/** React.ChangeEvent<HTMLInputElement> */ e) => {
@@ -178,30 +177,38 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         rval.name = state.realName
         rval.twitter = state.twitter
         rval.pronoun = state.pronoun
-        if (!!state.charName) {
-            const lookupName = !!player.prefix ? `${player.prefix} ${player.name}` : player.name;
-            if (Object.keys(playerDb).includes(lookupName)) {
-                rval.mains = {
-                    ...playerDb[player.name].mains,
-                }
-            } else {
-                rval.mains = {};
-            }
+        rval.mains = {[gameCodename]: []}
 
-
-            rval.mains[gameCodename] = [
-                [
-                    state.charName ? characters[state.charName]?.en_name : "",
-                    state.charSkin || 0,
+        /*
+         * When we submit character selection, it also updates the player's mains in the player DB. To prevent
+         * overriding them when we haven't selected a character, we do this song-and-dance to submit the selected
+         * characters and fall back
+         */
+        const lookupName = !!player.prefix ? `${player.prefix} ${player.name}` : player.name;
+        const existingMains = Object.values(playerDb[lookupName]?.mains?.[gameCodename] ?? [])
+        const charsFromForm = Object.values(state.charSelections)
+        // The number of characters from the original TSH state.
+        const maxChars = Object.values(state._charSelections).length;
+        const mainsToSubmit = [];
+        for (let i = 0; i < maxChars; i += 1) {
+            if (i < charsFromForm.length && !!charsFromForm[i].charName) {
+                mainsToSubmit.push([
+                    (charsFromForm[i].charName ? characters[charsFromForm[i].charName]?.en_name : ""),
+                    charsFromForm[i].charSkin || 0,
                     ""
-                ]
-            ];
+                ])
+            } else if (i < existingMains.length) {
+                mainsToSubmit.push(existingMains[i]);
+            } else {
+                mainsToSubmit.push(["", 0, ""])
+            }
         }
+        rval.mains[gameCodename] = mainsToSubmit;
 
         // Don't persist player info to DB if they have no tag.
         rval.savePlayerToDb = (!!state.name);
 
-        console.log("Update payload:",  rval)
+        console.log("Player update payload:",  rval)
         return rval;
     }
 
@@ -223,7 +230,7 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                 twitter: newPlayer.twitter ?? "",
                 pronoun: newPlayer.pronoun ?? "",
                 stateCode: newPlayer.state_code ?? "",
-                ...getMain(newPlayer, gameCodename),
+                charSelections: getMains(newPlayer, gameCodename, Object.keys(state._charSelections).length),
             });
         } else {
             // value is an ad-hoc string of a player tag.
@@ -231,8 +238,13 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
         }
     };
 
-    const onCharNameChanged = (event, value, _) => {
-        const charEntry = characters?.[value?.en_name];
+    /**
+     *
+     * @param charIdx
+     * @param {TSHCharacterBase|string} newChar
+     */
+    const onCharNameChanged = (charIdx, newChar) => {
+        const charEntry = characters?.[newChar?.en_name];
         let charSkin = "";
         if (charEntry) {
             const charSkins = charEntry?.skins?.length;
@@ -240,7 +252,31 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                 charSkin = 0;
             }
         }
-        setState({...state, charName: value?.en_name ?? value, charSkin: charSkin})
+
+        setState({
+            ...state,
+            charSelections: {
+                ...state.charSelections,
+                [charIdx]: {
+                    charIdx,
+                    charName: newChar?.en_name ?? newChar,
+                    charSkin: charSkin
+                }
+            }
+        });
+    }
+
+    const onCharSkinChanged = (charIdx, newSkinIdx) => {
+        setState({
+            ...state,
+            charSelections: {
+                ...state.charSelections,
+                [charIdx]: {
+                    ...(state.charSelections?.[charIdx] ?? {}),
+                    charSkin: newSkinIdx
+                }
+            }
+        })
     }
 
     const idBase = `team-${teamId}-player-${playerId}-`;
@@ -296,16 +332,6 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                                         label={i18n.t("tag")}
                                     />}
                             />
-
-
-                            {/*
-                            <TextField label={i18n.t("tag")}
-                                       key={idBase + "tag"}
-                                       id={idBase + "tag"}
-                                       value={state.name}
-                                       onChange={changeHandlerFor('name')}
-                            />
-                            */}
                         </Stack>
 
                         <TextField label={i18n.t("real_name")}
@@ -345,95 +371,42 @@ export default React.forwardRef(function Player({teamId, player}, ref) {
                             />
                         </Stack>
 
-                            <Stack {...rowProps} alignItems={"stretch"} justifyContent={"space-evenly"} sx={{height: 56}}>
-                                <Autocomplete
-                                    key={idBase + "char-select"}
-                                    id={idBase + "char-select"}
-                                    options={Object.values(characters)}
-                                    value={characters?.[state.charName] ?? ""}
-                                    freeSolo={true}
-                                    sx={{width: '50%'}}
-                                    onChange={onCharNameChanged}
-                                    getOptionLabel={(char) => char?.display_name ?? char}
-                                    renderOption={(props, option, _) => {
-                                        let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
-                                        if (!!skimage) {
-                                            skimage = skimage.replace("./", "");
-                                        }
 
-                                        return <li {...props}>
-                                            {skimage
-                                                ? <img height="32" width="32" alt={`Profile icon for ${state.name}`} src={`http://${window.location.hostname}:5000/${skimage}`}/>
-                                                : <div style={{height:'32px', width:'32px'}}/>
-                                            }
-                                            <span style={{marginLeft: '16px'}}>
-                                            {option?.display_name ?? option}
-                                        </span>
-                                        </li>
-                                    }}
-                                    renderInput={(params) => {
-                                        return(
-                                            <div>
-                                                <TextField
-                                                    {...params}
-                                                    label={i18n.t("character")}
-                                                />
-                                            </div>)
-                                    }
-                                    }
+                        {
+                            Object.values(state.charSelections).map( (cs) =>
+                                <CharSelector
+                                    key={`${playerId}-cs-${cs.charIdx}`}
+                                    id={`${playerId}-cs-${cs.charIdx}`}
+                                    charName={cs.charName}
+                                    charSkin={cs.charSkin}
+                                    onCharNameChanged={(ev, val, _) => onCharNameChanged(cs.charIdx, val)}
+                                    onCharSkinChanged={(ev, val, _) => onCharSkinChanged(cs.charIdx, ev.target.value)}
+                                    stackProps={rowProps}
                                 />
-
-                                <TextField
-                                    label={"Skin"}
-                                    select
-                                    value={(!state.charName || state.charName === '') ? '' : state.charSkin }
-                                    disabled={(!state.charName || state.charName === '')}
-                                    onChange={changeHandlerFor('charSkin')}
-                                    sx={{
-                                        display: 'block',
-                                        width: '50%',
-                                        height: '100%',
-
-                                        padding:0,
-                                        '& .MuiPopover-paper': {
-                                            minWidth: 'initial'
-                                        },
-                                        '& .MuiInputBase-root': {
-                                            height: '100%',
-                                            width: '100%'
-                                        },
-                                        '& .MuiSelect-select': {
-                                            paddingTop: 0,
-                                            paddingBottom: 0
-                                        },
-                                    }}
-                                >
-                                    {
-                                        Object.entries(characters[state.charName]?.skins ?? {}).map(([idx, skin]) => (
-                                            <MenuItem
-                                                key={state.charName + idx}
-                                                value={idx}
-                                            >
-                                                <div style={{height: 56, width: 56, overflow: 'hidden', margin: 'auto'}}>
-                                                    <img
-                                                        alt={`Skin ${idx}`}
-                                                        style={{
-                                                            height: '100%',
-                                                            width: '100%',
-                                                            verticalAlign: 'middle',
-                                                            objectFit: 'cover'
-                                                        }}
-                                                        src={getSkinAssetUrl(skin)}
-                                                    />
-                                                </div>
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </TextField>
-                            </Stack>
+                            )
+                        }
                     </Stack>
                 </CardContent>
             </Collapse>
         </Card>
     )
 });
+
+/**
+ *
+ * @param {TSHCharacterSelections} tshChars
+ * @returns {CharacterSelections}
+ */
+function charsFromTsh(tshChars) {
+    const res = {};
+    for (const i in tshChars) {
+        res[i] = {
+            charIdx: i,
+            charName: tshChars[i].en_name,
+            charSkin: tshChars[i].skin,
+        }
+
+    }
+    return res;
+}
+
