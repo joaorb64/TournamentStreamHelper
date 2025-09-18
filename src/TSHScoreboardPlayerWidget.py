@@ -151,7 +151,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         )
         
         seed.setValue(0)
-        seed.valueChanged.emit(seed.value)
+        seed.valueChanged.emit(seed.value())
 
         self.findChild(QCheckBox, "birthday").toggled.connect(
             lambda state, element=c: [
