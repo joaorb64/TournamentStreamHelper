@@ -21,8 +21,6 @@ class TSHPlayerDB:
     database = {}
     model: QStandardItemModel = None
     webServer = None
-    fieldnames = ["prefix", "gamerTag", "name", "twitter",
-                  "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"] # Please always add the new fields at the end of the list
     modelLock = Lock()
 
     def LoadDB():
@@ -35,6 +33,8 @@ class TSHPlayerDB:
 
             if (not json_db_exists) and os.path.exists("./user_data/local_players.csv"):
                 logger.info("Importing from the previous version of the player database")
+                fieldnames = ["prefix", "gamerTag", "name", "twitter",
+                            "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"]
                 with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
                     reader = csv.DictReader(csvfile, quotechar='\'')
                     for player in reader:
@@ -51,7 +51,7 @@ class TSHPlayerDB:
                                 logger.error(f"No mains found for: {tag}")
 
             json_db_exists = True
-            
+
             if os.path.exists("./user_data/local_players.csv"):
                 try:
                     os.remove("./user_data/local_players.csv")
