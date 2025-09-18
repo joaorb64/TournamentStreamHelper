@@ -21,6 +21,11 @@
     "socket.io-client": "^4.8.1",
     "web-vitals": "^5.1.0"
   },
+  "overrides": {
+    "react-scripts": {
+      "typescript": "^5"
+    }
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
