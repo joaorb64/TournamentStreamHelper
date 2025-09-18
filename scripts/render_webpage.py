@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from PySide6 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
+from PyQt6 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
 
 os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
 
