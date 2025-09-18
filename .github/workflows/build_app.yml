@@ -11,12 +11,10 @@ on:
 jobs:
   build_locale:
     name: Generate Locale Files
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) || startsWith( github.ref, 'refs/heads/fix/' ) }}
     strategy:
       fail-fast: false
-      matrix:
-        os: ["windows-latest"]
 
     steps:
       - uses: actions/checkout@v4
@@ -37,14 +35,14 @@ jobs:
       - name: Generate locale files
         run: |
           pyside6-lrelease -version
-          python3 .\src\i18n\gen_translation_files.py
-          python3 .\src\i18n\gen_translation_binaries.py
+          python3 ./src/i18n/gen_translation_files.py
+          python3 ./src/i18n/gen_translation_binaries.py
 
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .\src\i18n\*.ts .\src\i18n\*.qm
+          git add ./src/i18n/*.ts ./src/i18n/*.qm
           if ! git diff --cached --quiet; then
             git commit -m "Update locale files" -a
           else
