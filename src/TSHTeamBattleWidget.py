@@ -1,4 +1,5 @@
 from qtpy.QtCore import *
+from qtpy.QtWidgets import *
 from loguru import logger
 
 class TSHTeamBattleSignals(QObject):
@@ -20,11 +21,50 @@ class TSHTeamBattleSignals(QObject):
     team2_stock_down = Signal()
     team2_active_player_changed = Signal(int)
 
-class TSHTeamBattleWidget:
+class TSHTeamBattleWidget(QDockWidget):
 
-    def __init__(self):
+    def __init__(self, *args):
+        super().__init__(*args)
         logger.info("BATTLE START")
         self.signals = TSHTeamBattleSignals()
+
+        self.setWindowTitle(QApplication.translate("app", "Crew/Team Battle"))
+        self.setFloating(True)
+        self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
+        self.widget = QWidget()
+        self.setWidget(self.widget)
+        self.widget.setLayout(QVBoxLayout())
+        self.setWindowFlags(Qt.WindowType.Window)
+
+        label = QLabel()
+        label.setText("CREW/TEAM BATTLE")
+        self.widget.layout().addWidget(label)
+
+        topOptions = QWidget()
+        topOptions.setLayout(QHBoxLayout())
+        topOptions.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+        self.widget.layout().addWidget(topOptions)
+
+        col = QWidget()
+        col.setLayout(QVBoxLayout())
+        topOptions.layout().addWidget(col)
+        self.commentatorNumber = QSpinBox()
+        row = QWidget()
+        row.setLayout(QHBoxLayout())
+        commsNumber = QLabel(QApplication.translate("app", "Number of commentators"))
+        commsNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        row.layout().addWidget(commsNumber)
+        row.layout().addWidget(self.commentatorNumber)
+        # self.commentatorNumber.valueChanged.connect(
+        #     lambda val: self.SetCommentatorNumber(val))
+        
+        self.characterNumber = QSpinBox()
+        charNumber = QLabel(QApplication.translate("app", "Characters per player"))
+        charNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        row.layout().addWidget(charNumber)
+        row.layout().addWidget(self.characterNumber)
+        # self.characterNumber.valueChanged.connect(self.SetCharacterNumber)
 
         # Hook into Signals for Control
         self.signals.reset_all_stocks.connect(self.ResetAllStocks)

@@ -8,10 +8,8 @@ from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
-from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHPlayerDB import TSHPlayerDB
 from .Helpers.TSHDirHelper import TSHResolve
-from .Workers import Worker
 import threading
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 from loguru import logger
