@@ -83,7 +83,8 @@ jobs:
 
       - name: Generate TSH Windows executable
         run: |
-          git pull
+          git pull origin main
+          git checkout main
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
