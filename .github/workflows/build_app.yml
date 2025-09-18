@@ -81,6 +81,8 @@ jobs:
 
       - name: Generate TSH Windows executable
         run: |
+          git pull main
+          git checkout main
           set PYTHONUTF8=1
           chcp 65001
           set PYTHONIOENCODING=utf-8
@@ -93,7 +95,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add TSH.exe
-          git commit -m "Update exe and locale files" -a
+          git commit -m "Update exe" -a
 
       - name: Push changes
         uses: ad-m/github-push-action@master
