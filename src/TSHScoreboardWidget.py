@@ -835,17 +835,21 @@ class TSHScoreboardWidget(QWidget):
             self.timerLayout.setVisible(True)
 
             if data.get("auto_update") == "set":
-                self.labelAutoUpdate.setText("Auto update (Set)")
+                self.labelAutoUpdate.setText(
+                    QApplication.translate("app", "Auto update (Set)")
+                    )
             elif data.get("auto_update") == "stream":
                 self.labelAutoUpdate.setText(
-                    f"Auto update (Stream [{self.lastStationSelected.get('identifier')}])")
+                    QApplication.translate("app", "Auto update (Stream [{0}])").format(self.lastStationSelected.get('identifier'))
+                    )
             elif data.get("auto_update") == "station":
                 self.labelAutoUpdate.setText(
-                    f"Auto update (Station [{self.lastStationSelected.get('identifier')}])")
+                    QApplication.translate("app", "Auto update (Station [{0}])").format(self.lastStationSelected.get('identifier'))
+                    )
             elif data.get("auto_update") == "user":
-                self.labelAutoUpdate.setText("Auto update (User)")
+                self.labelAutoUpdate.setText(QApplication.translate("app", "Auto update (User)"))
             else:
-                self.labelAutoUpdate.setText("Auto update")
+                self.labelAutoUpdate.setText(QApplication.translate("app", "Auto update"))
 
         # Lock all player widgets
         for p in self.playerWidgets:
