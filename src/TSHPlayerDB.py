@@ -1,6 +1,7 @@
 from multiprocessing import Lock
 import os
 import json
+import orjson
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -59,10 +60,10 @@ class TSHPlayerDB:
                     logger.error(traceback.format_exc())
 
             with open('./user_data/local_players.json', 'rt', encoding='utf-8') as jsonfile:
-                player_list = json.loads(jsonfile.read())
+                player_list = orjson.loads(jsonfile.read())
                 for player in player_list:
-
                     tag = player.get("prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+                    logger.info(f"Loading player {tag} from local database")
                     if tag not in TSHPlayerDB.database:
                         TSHPlayerDB.database[tag] = player
 
