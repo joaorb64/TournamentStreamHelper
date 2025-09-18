@@ -32,7 +32,7 @@ jobs:
         id: extract_branch
 
       - name: Install Python dependencies
-        run: pip install -r .\dependencies\requirements.txt pyinstaller
+        run: pip install -r .\dependencies\requirements.txt pyinstaller pyside6
 
       - name: Generate locale files
         run: |
