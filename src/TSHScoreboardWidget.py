@@ -318,7 +318,7 @@ class TSHScoreboardWidget(QWidget):
 
         self.remoteScoreboardLabel = QApplication.translate(
                 "app", "Open {0} in a browser to edit the scoreboard remotely."
-            ).format(f"<a href='http://{self.GetIP()}:5000/scoreboard'>http://{self.GetIP()}:5000/scoreboard</a>")
+            ).format(f"<a href='http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}/scoreboard'>http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}/scoreboard</a>")
         self.remoteScoreboardLabel = add_beta_label(self.remoteScoreboardLabel, "web_score")
         self.remoteScoreboardLabel = QLabel(self.remoteScoreboardLabel)
 

@@ -39,6 +39,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.general", "Webserver Port"),
+            "webserver_port",
+            "spinbox",
+            5000
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.general", "Enable profanity filter"),
             "profanity_filter",
             "checkbox",
