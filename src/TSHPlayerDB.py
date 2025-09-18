@@ -27,44 +27,49 @@ class TSHPlayerDB:
 
     def LoadDB():
         try:
-            if os.path.exists("./user_data/local_players.csv") == False:
-                with open('./user_data/local_players.csv', 'w', encoding='utf-8') as outfile:
-                    spamwriter = csv.writer(outfile)
-                    spamwriter.writerow(TSHPlayerDB.fieldnames)
-            
-            # Backwards compatibility
-            with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
-                lines = csvfile.readlines()
-                header = lines[0].rstrip().split(",")
-                for field in TSHPlayerDB.fieldnames:
-                    if field not in header:
-                        lines[0] = lines[0].rstrip() + f",{field}"
-                        for i in range(1, len(lines)):
-                            lines[i] = lines[i].rstrip() + ","
-            
-            with open('./user_data/local_players.csv', 'w', encoding='utf-8') as outfile:
-                out_lines = []
-                for line in lines:
-                    if line.rstrip("\n"):
-                        out_lines.append(line.rstrip("\n"))
-                outfile.write("\n".join(out_lines))
+            json_db_exists = True
+            if os.path.exists("./user_data/local_players.json") == False:
+                json_db_exists = False
+                with open('./user_data/local_players.json', 'wt', encoding='utf-8') as outfile:
+                    outfile.write(json.dumps([]))
 
-            with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile, quotechar='\'')
-                for player in reader:
-                    tag = player.get(
-                        "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+            if (not json_db_exists) and os.path.exists("./user_data/local_players.csv"):
+                logger.info("Importing from the previous version of the player database")
+                with open('./user_data/local_players.csv', 'r', encoding='utf-8') as csvfile:
+                    reader = csv.DictReader(csvfile, quotechar='\'')
+                    for player in reader:
+                        tag = player.get(
+                            "prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
+                        if tag not in TSHPlayerDB.database:
+                            TSHPlayerDB.database[tag] = player
+                            logger.info(f"Import player {tag} from old database")
+                            try:
+                                player["mains"] = json.loads(
+                                    player.get("mains", "{}"))
+                            except:
+                                player["mains"] = {}
+                                logger.error(f"No mains found for: {tag}")
+                try:
+                    os.remove("./user_data/local_players.csv")
+                except Exception as e:
+                    logger.error(traceback.format_exc())
+
+            json_db_exists = True
+
+            with open('./user_data/local_players.json', 'rt', encoding='utf-8') as jsonfile:
+                player_list = json.loads(jsonfile.read())
+                for player in player_list:
+
+                    tag = player.get("prefix")+" "+player.get("gamerTag") if player.get("prefix") else player.get("gamerTag")
                     if tag not in TSHPlayerDB.database:
                         TSHPlayerDB.database[tag] = player
 
                         try:
-                            player["mains"] = json.loads(
-                                player.get("mains", "{}"))
+                            player["mains"] = player.get("mains", "{}")
                         except:
                             player["mains"] = {}
                             logger.error(f"No mains found for: {tag}")
-
-            TSHPlayerDB.SetupModel()
+            
         except Exception as e:
             logger.error(traceback.format_exc())
 
@@ -210,21 +215,18 @@ class TSHPlayerDB:
 
             TSHPlayerDB.signals.db_updated.emit()
 
+
     def SaveDB():
         try:
-            with open('./user_data/local_players.csv', 'w', encoding="utf-8", newline='') as outfile:
-                spamwriter = csv.DictWriter(
-                    outfile, fieldnames=TSHPlayerDB.fieldnames, extrasaction="ignore", quotechar='\'')
-                spamwriter.writeheader()
+            player_list = []
 
-                for player in TSHPlayerDB.database.values():
-                    if player is not None:
-                        playerData = deep_clone(player)
+            for player in TSHPlayerDB.database.values():
+                if player is not None:
+                    playerData = deep_clone(player)
+                    player_list.append(playerData)
 
-                        if player.get("mains") is not None:
-                            playerData["mains"] = json.dumps(player["mains"])
-
-                        spamwriter.writerow(playerData)
+            with open('./user_data/local_players.json', 'wt', encoding="utf-8") as outfile:
+                outfile.write(json.dumps(player_list, indent=2))
         except Exception as e:
             logger.error(traceback.format_exc())
 
