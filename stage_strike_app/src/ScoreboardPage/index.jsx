@@ -80,7 +80,9 @@ export default function ScoreboardPage(props) {
         return () => {
            socket.close();
         };
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // Adding the deps suggested above will actually break things... we
+    // want this to only run once when the component is loaded.
 
     let body;
     if (!!loadingStatus.connectionError) {

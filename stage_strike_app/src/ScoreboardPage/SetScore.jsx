@@ -37,8 +37,6 @@ export default class SetScore extends React.Component {
                 : null
         );
 
-        const leftTeam = props.leftTeam;
-        const rightTeam = props.rightTeam;
         return {
             scoreLeft: props.leftTeam.score,
             scoreRight: props.rightTeam.score,
