@@ -49,12 +49,14 @@ class TSHPlayerDB:
                             except:
                                 player["mains"] = {}
                                 logger.error(f"No mains found for: {tag}")
+
+            json_db_exists = True
+            
+            if os.path.exists("./user_data/local_players.csv"):
                 try:
                     os.remove("./user_data/local_players.csv")
                 except Exception as e:
                     logger.error(traceback.format_exc())
-
-            json_db_exists = True
 
             with open('./user_data/local_players.json', 'rt', encoding='utf-8') as jsonfile:
                 player_list = json.loads(jsonfile.read())
