@@ -45,7 +45,11 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .\src\i18n\*.ts .\src\i18n\*.qm
-          git commit -m "Update locale files" -a
+          if ! git diff --cached --quiet; then
+            git commit -m "Update locale files" -a
+          else
+            echo "No changes to commit"
+          fi
 
       - name: Push changes
         uses: ad-m/github-push-action@master
