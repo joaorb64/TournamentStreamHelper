@@ -16,6 +16,7 @@ import Team from "./Team";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHStateContext} from "./Contexts";
 import {useTheme} from "@mui/material/styles";
+import {BACKEND_PORT} from "../env";
 
 export default function CurrentSet() {
     /**
@@ -49,12 +50,12 @@ export default function CurrentSet() {
     }
 
     const clearScoreboard = () => {
-        fetch(`http://${window.location.hostname}:5000/scoreboard1-clear-all`)
+        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-clear-all`)
             .catch(console.error);
     }
 
     const swapTeams = () => {
-        fetch(`http://${window.location.hostname}:5000/scoreboard1-swap-teams`)
+        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-swap-teams`)
             .catch(console.error)
     }
 
