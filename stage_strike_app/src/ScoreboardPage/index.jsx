@@ -17,6 +17,12 @@ import {produce as immer_produce} from "immer";
 import {applyDeltas, combineDeltas} from "../stateDelta";
 
 
+/**
+ * Main page for the scoreboard. This whole contraption is powered by TSH's python-side
+ * program state. In order to do that, we subscribe to updates that get sent out and update
+ * our state piecemeal. Each update has a number so that we can tell if our updates are stale
+ * or out of order and request a full state send-over.
+ */
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
     const [receivedDeltas, setReceivedDeltas] = React.useState([]);

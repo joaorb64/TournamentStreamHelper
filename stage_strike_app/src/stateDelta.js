@@ -6,70 +6,16 @@
  *
  * Further, since we are using React, react requires an entirely new object to be created
  * on state updates, which is a large amount of memory to burn to change a single key in
- * an object 6 layers of nesting down. To solve this, we rely on the `immutability-helper` library,
+ * an object 6 layers of nesting down. To solve this, we rely on the `immer` library,
  * which knows how to create "new" objects without re-allocating unchanged memory. Since React state
- * objects don't change, this is both safe and considered good practice. Basically we'll create
- * a nested "query" object and then tell the helper what update we'd like to perform.
+ * objects don't change, this is both safe and considered good practice. Basically
+ * the way it works is that immer creates a "draft" object, which is very similar to a
+ * recording mock used for unit tests. Once you modify the draft object, immer
+ * will create a new object that shares memory with the old object where possible.
  *
- * Here's an example of a python DeepDiff delta (docs: https://zepworks.com/deepdiff/current/delta.html):
- *
- * {
- *     "values_changed": {
- *         "root['foo']['bar']['baz']": {"new_value": "aaaa", "old_value": "bbbb"}
- *     },
- *     "dictionary_item_added": {
- *         "root['foo']['bar']['slop']: "new value here"
- *     },
- *     "dictionary_item_removed": {
- *         "root['foo']['bar']['notAnymore']": "deleted value here"
- *     }
- * }
- *
- * Here's an example of a immutability-helper update query from the above
- *
- * {
- *     foo: {
- *         bar: {
- *           baz: {
- *               "$set": "aaaa"
- *           },
- *           slop: {
- *               "$set": "new value here"
- *           }
- *           "$unset": ["notAnymore"]
- *         }
- *     }
- * }
- *
- * And if we had an existing state structure that looked like this:
- * {
- *     foo: {
- *         bar: {
- *             baz: "bbbb"
- *             notAnymore: "oh no"
- *         }
- *     }
- * }
- *
- * We would expect it to turn into the following:
- *
- * {
- *     foo: {
- *         bar: {
- *             baz: "aaaa"
- *             slop: "new value here"
- *         }
- *     }
- * }
- *
- */
-
-/** @typedef {'values_changed'|'dictionary_item_added'|'dictionary_item_removed'} DiffOperation */
-/** @typedef {Object} ImmutabilityHelperQuery */
-/**
- * @typedef {{
- *   [DiffOperation]: Record.<str, any>
- * }} Diff
+ * It's worth mentioning that we depend on using the **Delta** portion of python's DeepDiff library.
+ * using the deltas makes it specify every changed scalar rather than grouping things into
+ * objects that get added, which complicates things dramatically when trying to batch updates.
  */
 
 /** @typedef {{
@@ -97,7 +43,7 @@
  */
 
 /**
- * Takes a single diff operation, and adds it to an existing query object.
+ * Takes a single delta operation, and modifies the data object.
  *
  * @param {Object} data
  * @param {Delta} delta
