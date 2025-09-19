@@ -7,18 +7,20 @@ import {
 import React from "react";
 import {Box} from "@mui/system";
 import { io } from 'socket.io-client';
-import imm_update from 'immutability-helper';
 
 import './backendDataTypes';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
 import {Header} from "./Header";
-import {queryFromDiff} from "../pythonDeepDiffUtils";
+import {produce as immer_produce} from "immer";
+import {applyDeltas, combineDeltas} from "../stateDelta";
 
 
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
+    const [receivedDeltas, setReceivedDeltas] = React.useState([]);
+    const [maxAppliedDeltaIdx, setMaxAppliedDeltaIdx] = React.useState(-1);
     const [loadingStatus, setLoadingStatus] = React.useState({
         connectionError: false,
         isLoading: true,
@@ -44,26 +46,26 @@ export default function ScoreboardPage(props) {
 
         socket.on("program_state", data => {
             console.log("TSH state received ", data);
-            setTshState(data);
+            setMaxAppliedDeltaIdx(data['delta_index'])
+            setReceivedDeltas(receivedDeltas.filter(d => d.deltaIdx <= data['delta_index']))
+            setTshState(data['state']);
         });
 
-        socket.on("program_state_update", data => {
-            console.log("TSH state update received", data);
-            setTshState((prevState) => {
-                try {
-                    const query = queryFromDiff(data);
-                    console.log("Updating TSH state with query: ", query);
-                    return imm_update(prevState, query);
-                } catch (e) {
-                    console.error("Coult not update TSH state. Requesting a full state refresh. Diff: ", data);
-                    socket.emit("program_state", {}, () => {
-                        console.log("TSH acked program state request");
-                    });
-
-                    // We're fine waiting for a full state update if our diff-apply failed.
-                    return prevState;
-                }
-            });
+        socket.on("program_state_update", deltaMessage => {
+            console.log("TSH state update received", deltaMessage);
+            const deltaIdx = deltaMessage['delta_index'];
+            const delta = deltaMessage['delta'];
+            if (deltaIdx < maxAppliedDeltaIdx) {
+                console.warn("Received out of order delta! Requesting new full state.");
+                socket.emit("program_state", {});
+            } else {
+                setReceivedDeltas((prevState) => immer_produce(prevState, (draft) => {
+                    // Each delta that we receive is an array of delta objects.
+                    for (let subdelta of delta) {
+                        draft.push({deltaIdx, delta: subdelta});
+                    }
+                }));
+            }
         });
 
         socket.on("playerdb", data => {
@@ -97,6 +99,37 @@ export default function ScoreboardPage(props) {
     }
 
     React.useEffect(() => {
+        const intervalId = setInterval(() => {
+            let sortedDeltas = receivedDeltas.toSorted((a, b) => a.deltaIdx - b.deltaIdx);
+            const staleDeltas = sortedDeltas.filter((d) => d.deltaIdx < maxAppliedDeltaIdx);
+            sortedDeltas = sortedDeltas.filter((d) => d.deltaIdx >= maxAppliedDeltaIdx);
+            if (staleDeltas.length > 0) {
+                console.warn("Skipping applying stale deltas...", staleDeltas);
+            }
+            if (sortedDeltas.length > 0) {
+                console.log("Applying deltas: ", combineDeltas(sortedDeltas.map(d => d.delta)));
+                setTshState((prevState) => {
+                    const newState = immer_produce(prevState, (draftState) => {
+                        try {
+                            applyDeltas(draftState, sortedDeltas.map((d) => d.delta));
+                        } catch (e) {
+                            console.warn("Could not apply deltas.", e);
+                        }
+                    });
+
+                    return newState;
+                });
+
+                setMaxAppliedDeltaIdx(sortedDeltas[sortedDeltas.length-1].deltaIdx);
+                setReceivedDeltas([]);
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [receivedDeltas]);
+
+
+    React.useEffect(() => {
         window.title = `TSH ${i18n.t("scoreboard")}`;
         connectToSocketIO();
         return () => {
@@ -107,34 +140,43 @@ export default function ScoreboardPage(props) {
     // want this to only run once when the component is loaded.
 
     let body;
+    const connectionError = (
+        <Paper key="connection_error" elevation={2} sx={{padding: '8px'}}>
+            <div>{i18n.t("failed_to_connect")}</div>
+        </Paper>
+    );
+    const loading = (
+        <Paper key="loading" elevation={2} sx={{padding: '8px'}}>
+            <div>{i18n.t("loading")}</div>
+        </Paper>
+    );
+
+    const onSelectedSetChanged = React.useCallback(() => {
+        setLoadingStatus({isLoading: true, connectionError: false})
+    }, []);
+
+    const fullbody = React.useMemo(() => (
+        // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
+        <>
+            <Header/>
+            <Box
+                paddingX={2}
+                paddingY={2}
+            >
+                <Stack gap={4} marginBottom={24}>
+                    <CurrentSet/>
+                    <UpcomingSets onSelectedSetChanged={() => {setLoadingStatus({isLoading: true, connectionError: false})}}/>
+                </Stack>
+            </Box>
+        </>
+    ), []);
+
     if (!!loadingStatus.connectionError) {
-        body = (
-            <Paper elevation={2} sx={{padding: '8px'}}>
-                <div>{i18n.t("failed_to_connect")}</div>
-            </Paper>
-        );
+        body = connectionError;
     } else if (tshState === null || characters === null || playerDb === null) {
-        body = (
-            <Paper elevation={2} sx={{padding: '8px'}}>
-                <div>{i18n.t("loading")}</div>
-            </Paper>
-        );
+        body = loading;
     } else {
-        body = (
-            // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
-            <>
-                <Header/>
-                <Box
-                    paddingX={2}
-                    paddingY={2}
-                >
-                    <Stack gap={4} marginBottom={24}>
-                        <CurrentSet/>
-                        <UpcomingSets onSelectedSetChanged={() => {setLoadingStatus({isLoading: true, connectionError: false})}}/>
-                    </Stack>
-                </Box>
-            </>
-        )
+        body = fullbody;
     }
 
     return (
@@ -155,5 +197,5 @@ export default function ScoreboardPage(props) {
                 </TSHCharacterContext.Provider>
             </TSHStateContext.Provider>
         </Box>
-    );
+    )
 }

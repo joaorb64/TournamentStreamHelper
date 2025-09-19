@@ -5,7 +5,7 @@ import traceback
 
 from deepdiff.helper import DELTA_VIEW
 from qtpy.QtCore import QObject, Signal
-from deepdiff import DeepDiff, extract
+from deepdiff import DeepDiff, Delta, extract
 from functools import partial
 import shutil
 import threading
@@ -26,6 +26,7 @@ class StateManager:
     saveBlocked = 0
     signals = StateManagerSignals()
     changedKeys = []
+    deltaIndex = 0
 
     lock = threading.RLock()
     threads = []
@@ -71,13 +72,18 @@ class StateManager:
                     include_paths=StateManager.changedKeys,
                     verbose_level=2, # Necessary to see values of added items.
                 )
-                diff_count = diff.get_stats()['DIFF COUNT']
+                delta = Delta(diff).to_flat_dicts()
                 # logger.debug(f"State diff length: {diff_count}")
-                if diff_count > 200:
+                if len(delta) > 100:
+                    StateManager.deltaIndex += 1
                     StateManager.signals.state_big_change.emit()
-                elif diff_count > 0:
+                elif len(delta) > 0:
                     try:
-                        StateManager.signals.state_updated.emit(diff.to_dict())
+                        StateManager.deltaIndex += 1
+                        StateManager.signals.state_updated.emit({
+                            'delta_index': StateManager.deltaIndex,
+                            'delta': Delta(diff).to_flat_dicts()
+                        })
                     except TypeError:
                         logger.warning(f"Couldn't serialize diff. Changed Keys: {StateManager.changedKeys}")
 
