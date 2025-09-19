@@ -2089,7 +2089,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="42"/>
         <source>Webserver Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Port du serveur web</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="50"/>
