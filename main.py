@@ -9,7 +9,7 @@ import os
 import asyncio
 from qasync import run, QEventLoop
 from functools import partial
-os.environ["QT_API"] = "pyside6"
+os.environ["QT_API"] = "PyQt6"
 
 
 async def main(event_loop):

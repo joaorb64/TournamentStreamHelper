@@ -15,6 +15,7 @@ import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contex
 import {Header} from "./Header";
 import {produce as immer_produce} from "immer";
 import {applyDeltas, combineDeltas} from "../stateDelta";
+import {BACKEND_PORT} from "../env";
 
 
 /**
@@ -37,7 +38,7 @@ export default function ScoreboardPage(props) {
     let socket;
 
     function connectToSocketIO() {
-        socket = io(`ws://${window.location.hostname}:5000/`, {
+        socket = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
             transports: ['websocket', 'webtransport'],
             timeout: 5000,
             reconnectionDelay: 500,

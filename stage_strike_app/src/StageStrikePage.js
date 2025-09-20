@@ -20,6 +20,7 @@ import i18n from "./i18n/config";
 import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "./themes";
+import {BACKEND_PORT} from "./env";
 
 class StageStrikePage extends Component {
   state = {
@@ -43,7 +44,7 @@ class StageStrikePage extends Component {
   };
 
   RestartStageStrike() {
-    fetch("http://" + window.location.hostname + ":5000/stage_strike_reset", {
+    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_reset`, {
       method: "POST",
       contentType: "application/json",
     });
@@ -109,7 +110,7 @@ class StageStrikePage extends Component {
 
   StageClicked(stage) {
     fetch(
-      "http://" + window.location.hostname + ":5000/stage_strike_stage_clicked",
+      "http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_stage_clicked`,
       {
         method: "POST",
         body: JSON.stringify(stage),
@@ -119,14 +120,14 @@ class StageStrikePage extends Component {
   }
 
   Undo() {
-    fetch("http://" + window.location.hostname + ":5000/stage_strike_undo", {
+    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_undo`, {
       method: "POST",
       contentType: "application/json",
     });
   }
 
   Redo() {
-    fetch("http://" + window.location.hostname + ":5000/stage_strike_redo", {
+    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_redo`, {
       method: "POST",
       contentType: "application/json",
     });
@@ -159,7 +160,7 @@ class StageStrikePage extends Component {
     fetch(
       "http://" +
         window.location.hostname +
-        ":5000/stage_strike_confirm_clicked",
+        `:${BACKEND_PORT}/stage_strike_confirm_clicked`,
       {
         method: "POST",
         contentType: "application/json",
@@ -169,7 +170,7 @@ class StageStrikePage extends Component {
 
   MatchWinner(id) {
     fetch(
-      "http://" + window.location.hostname + ":5000/stage_strike_match_win",
+      "http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_match_win`,
       {
         method: "POST",
         contentType: "application/json",
@@ -184,7 +185,7 @@ class StageStrikePage extends Component {
     fetch(
       "http://" +
         window.location.hostname +
-        ":5000/stage_strike_set_gentlemans",
+        `:${BACKEND_PORT}/stage_strike_set_gentlemans`,
       {
         method: "POST",
         contentType: "application/json",
@@ -220,7 +221,7 @@ class StageStrikePage extends Component {
   }
 
   FetchRuleset() {
-    fetch("http://" + window.location.hostname + ":5000/ruleset")
+    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/ruleset`)
       .then((res) => res.json())
       .then((data) => {
         this.setState({
@@ -498,7 +499,7 @@ class StageStrikePage extends Component {
                                   <CardMedia
                                       component="img"
                                       style={{ aspectRatio: "3 / 2" }}
-                                      image={`http://${window.location.hostname}:5000/${stage.path}`}
+                                      image={`http://${window.location.hostname}:${BACKEND_PORT}/${stage.path}`}
                                   />
                                   <Box
                                       sx={{
@@ -762,7 +763,7 @@ class StageStrikePage extends Component {
                                   fetch(
                                       "http://" +
                                       window.location.hostname +
-                                      ":5000/stage_strike_rps_win",
+                                      `:${BACKEND_PORT}/stage_strike_rps_win`,
                                       {
                                         method: "POST",
                                         contentType: "application/json",
@@ -789,7 +790,7 @@ class StageStrikePage extends Component {
                                   fetch(
                                       "http://" +
                                       window.location.hostname +
-                                      ":5000/stage_strike_rps_win",
+                                      `:${BACKEND_PORT}/stage_strike_rps_win`,
                                       {
                                         method: "POST",
                                         contentType: "application/json",
@@ -820,7 +821,7 @@ class StageStrikePage extends Component {
                               fetch(
                                   "http://" +
                                   window.location.hostname +
-                                  ":5000/stage_strike_rps_win",
+                                  `:${BACKEND_PORT}/stage_strike_rps_win`,
                                   {
                                     method: "POST",
                                     contentType: "application/json",

@@ -18,6 +18,8 @@ from .StateManager import StateManager
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
+from .SettingsManager import SettingsManager
+import traceback
 
 import logging
 log = logging.getLogger('socketio.server')
@@ -63,7 +65,7 @@ class WebServer(QThread):
         StateManager.signals.state_big_change.connect(WebServer.ws_program_state)
 
         self.host_name = "0.0.0.0"
-        self.port = 5000
+        self.port = SettingsManager.Get("general.webserver_port", 5000)
 
     @app.route('/program-state')
     def program_state():
