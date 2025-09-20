@@ -50,7 +50,7 @@ export const Header = (props) => {
                     <span>Game:&nbsp;</span>
                     {tshState.game?.logo
                         ? <img
-                            alt={"Game logo"}
+                            alt="Game logo"
                             src={`http://${window.location.hostname}:${BACKEND_PORT}/${tshState.game.logo.replace("./", "/")}`}
                             height={48}
                         />

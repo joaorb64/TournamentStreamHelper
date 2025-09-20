@@ -133,7 +133,7 @@ export default function ScoreboardPage(props) {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [receivedDeltas]);
+    }, [receivedDeltas, maxAppliedDeltaIdx]);
 
 
     React.useEffect(() => {
@@ -162,28 +162,26 @@ export default function ScoreboardPage(props) {
         setLoadingStatus({isLoading: true, connectionError: false})
     }, []);
 
-    const fullbody = React.useMemo(() => (
-        // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
-        <>
-            <Header/>
-            <Box
-                paddingX={2}
-                paddingY={2}
-            >
-                <Stack gap={4} marginBottom={24}>
-                    <CurrentSet/>
-                    <UpcomingSets onSelectedSetChanged={() => {setLoadingStatus({isLoading: true, connectionError: false})}}/>
-                </Stack>
-            </Box>
-        </>
-    ), []);
-
     if (!!loadingStatus.connectionError) {
         body = connectionError;
-    } else if (tshState === null || characters === null || playerDb === null) {
+    } else if (!tshState || !characters || !playerDb) {
         body = loading;
     } else {
-        body = fullbody;
+        body = (
+            // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
+            <>
+                <Header/>
+                <Box
+                    paddingX={2}
+                    paddingY={2}
+                >
+                    <Stack gap={4} marginBottom={24}>
+                        <CurrentSet/>
+                        <UpcomingSets onSelectedSetChanged={onSelectedSetChanged}/>
+                    </Stack>
+                </Box>
+            </>
+        );
     }
 
     return (

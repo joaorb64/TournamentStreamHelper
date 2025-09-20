@@ -52,7 +52,7 @@ export function CharSelector({
 
                 return <li {...props}>
                     {skimage
-                        ? <img height="32" width="32" alt={`Image for skin ${charSkin}`}
+                        ? <img height="32" width="32" alt={`Skin ${charSkin}`}
                                src={`http://${window.location.hostname}:${BACKEND_PORT}/${skimage}`}/>
                         : <div style={{height: '32px', width: '32px'}}/>
                     }
