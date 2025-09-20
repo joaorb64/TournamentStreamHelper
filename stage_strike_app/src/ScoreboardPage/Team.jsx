@@ -90,7 +90,6 @@ export default React.forwardRef(
             playerRefs[teamKey] = React.createRef();
         }
 
-        console.log(`Rendering player widget: `, player)
         return (
             <Player
                 key={`${teamId}-p-${teamKey}`}

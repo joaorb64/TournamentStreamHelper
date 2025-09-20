@@ -113,6 +113,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
         expanded: true
     });
 
+    // console.log(`Rendering player widget: `, player)
+
     const playerId = `${teamId}-p-${teamKey}`;
     const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;

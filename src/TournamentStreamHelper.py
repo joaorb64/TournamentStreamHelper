@@ -851,9 +851,6 @@ class Window(QMainWindow):
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
         StateManager.Unset("completed_sets")
-        StateManager.signals.state_updated.connect(
-            self.webserver.ws_program_state
-        )
 
         DownloadLayoutsOnBoot()
 
