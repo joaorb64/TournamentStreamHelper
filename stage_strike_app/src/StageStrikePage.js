@@ -1,29 +1,18 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { Component } from "react";
 import ReactDOMServer from "react-dom/server";
 import "./NoSleep";
 import {
-  useTheme,
-  ThemeProvider,
-  createTheme,
-  responsiveFontSizes,
-} from "@mui/material/styles";
-import {
   Button,
   Card,
   CardActionArea,
-  CardContent,
   CardMedia,
   Container,
-  CssBaseline,
-  Grid,
+  GridLegacy as Grid,
   Typography,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
-  DialogActions,
   Fab,
 } from "@mui/material";
 import { Box } from "@mui/system";
@@ -206,10 +195,10 @@ class StageStrikePage extends Component {
   }
 
   GetStrikeNumber() {
-    if (this.state.currGame == 0) {
+    if (this.state.currGame === 0) {
       return this.state.ruleset.strikeOrder[this.state.currStep];
     } else {
-      if (this.state.ruleset.banCount != 0) {
+      if (this.state.ruleset.banCount !== 0) {
         // Fixed ban count
         return this.state.ruleset.banCount;
       } else if (
@@ -235,8 +224,6 @@ class StageStrikePage extends Component {
     fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/ruleset`)
       .then((res) => res.json())
       .then((data) => {
-        let oldRuleset = this.state.ruleset;
-
         this.setState({
           playerNames: [
             data.p1 ? data.p1 : i18n.t("p1"),
@@ -293,7 +280,7 @@ class StageStrikePage extends Component {
                     >
                       <Grid item xs={12}>
                         <Typography
-                            sx={{ typography: { xs: "h7", sm: "h5" } }}
+                            variant={"h4"}
                             component="div"
                         >
                           {this.state.phase ? this.state.phase + " / " : ""}
@@ -308,7 +295,7 @@ class StageStrikePage extends Component {
                       </Grid>
                       <Grid item xs={12}>
                         <Typography
-                            sx={{ typography: { xs: "h7", sm: "h4" } }}
+                            variant={"h4"}
                             component="div"
                         >
                           {this.state.stagesWon && this.state.stagesWon.length > 0
@@ -320,7 +307,7 @@ class StageStrikePage extends Component {
                               : 0}
                         </Typography>
                       </Grid>
-                      {this.state.currPlayer != -1 ? (
+                      {this.state.currPlayer !== -1 ? (
                           <Grid item xs={12}>
                             <Typography
                                 sx={{ typography: { xs: "h6", sm: "h4" } }}
@@ -420,7 +407,7 @@ class StageStrikePage extends Component {
                                 )
                                 : this.state.ruleset.neutralStages
                         ).map((stage) => (
-                            <Grid item xs={4} sm={3} md={2}>
+                            <Grid key={stage.en_name} item xs={4} sm={3} md={2}>
                               <Card
                                   style={{
                                     borderStyle: "solid",
@@ -459,8 +446,8 @@ class StageStrikePage extends Component {
                                               fontSize={{ xs: 16, md: "" }}
                                           >
                                             {this.state.strikedBy[0].findIndex(
-                                                (s) => s == stage.codename
-                                            ) != -1
+                                                (s) => s === stage.codename
+                                            ) !== -1
                                                 ? this.state.playerNames[0]
                                                 : this.state.playerNames[1]}
                                           </Typography>
@@ -525,23 +512,18 @@ class StageStrikePage extends Component {
                                         noWrap
                                         fontSize={{ xs: 8, sm: 12, lg: "" }}
                                     >
-                                      {i18next.t("{{name}}", {
-                                        name: stage.locale
-                                            ? stage.locale.hasOwnProperty(
-                                                i18next.language
-                                            )
-                                                ? stage.locale[
-                                                    i18next.language.replace("-", "_")
-                                                    ]
-                                                : stage.locale.hasOwnProperty(
-                                                    i18next.language.split("-")[0]
-                                                )
-                                                    ? stage.locale[
-                                                        i18next.language.split("-")[0]
-                                                        ]
-                                                    : stage.en_name
-                                            : stage.en_name,
-                                      })}
+                                        {(() => {
+                                            if (stage.locale) {
+                                                if (stage.locale.hasOwnProperty(i18next.language)) {
+                                                    return stage.locale[i18next.language.replace("-", "_")];
+                                                }
+                                                const shortLang = i18next.language.split("-")[0];
+                                                if (stage.locale.hasOwnProperty(shortLang)) {
+                                                    return stage.locale[shortLang];
+                                                }
+                                            }
+                                            return stage.en_name; // fallback
+                                        })()}
                                     </Typography>
                                   </Box>
                                 </CardActionArea>
@@ -738,7 +720,7 @@ class StageStrikePage extends Component {
                   </Box>
                 </Container>
                 <Dialog
-                    open={this.state.currPlayer == -1}
+                    open={this.state.currPlayer === -1}
                     onClose={() => {}}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
@@ -859,10 +841,10 @@ class StageStrikePage extends Component {
           ) : null}
 
           {this.state.ruleset != null &&
-          this.state.ruleset.neutralStages.length == 0 ? (
+          this.state.ruleset.neutralStages.length === 0 ? (
               <>
                 <Dialog
-                    open={this.state.currPlayer == -1}
+                    open={this.state.currPlayer === -1}
                     onClose={() => {}}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
