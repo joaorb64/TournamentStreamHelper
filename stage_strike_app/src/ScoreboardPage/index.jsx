@@ -13,6 +13,7 @@ import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
 import {Header} from "./Header";
+import {BACKEND_PORT} from "../env";
 
 export default function ScoreboardPage(props) {
     const [tshState, setTshState] = React.useState(null);
@@ -26,7 +27,7 @@ export default function ScoreboardPage(props) {
     let socket;
 
     function connectToSocketIO() {
-        socket = io(`ws://${window.location.hostname}:5000/`, {
+        socket = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
             transports: ['websocket', 'webtransport'],
             timeout: 500,
             reconnectionDelay: 500,

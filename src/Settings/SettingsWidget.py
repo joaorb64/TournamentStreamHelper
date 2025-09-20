@@ -39,6 +39,18 @@ class SettingsWidget(QWidget):
                 lambda bt=None, settingWidget=settingWidget:
                 settingWidget.setChecked(defaultValue)
             )
+        elif type == "spinbox":
+            settingWidget = QSpinBox()
+            settingWidget.setMinimum(1)
+            settingWidget.setMaximum(99999)
+            settingWidget.setValue(SettingsManager.Get(
+                self.settingsBase+"."+setting, defaultValue))
+            settingWidget.valueChanged.connect(
+                lambda val=None: SettingsManager.Set(self.settingsBase+"."+setting, settingWidget.value()))
+            resetButton.clicked.connect(
+                lambda bt=None, settingWidget=settingWidget:
+                settingWidget.setValue(defaultValue)
+            )
         elif type == "hotkey":
             settingWidget = QKeySequenceEdit()
             settingWidget.keySequenceChanged.connect(

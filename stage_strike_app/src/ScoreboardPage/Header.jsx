@@ -3,6 +3,7 @@ import {TSHStateContext} from "./Contexts";
 import {AppBar, Toolbar, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
+import {BACKEND_PORT} from "../env";
 
 
 export const Header = (props) => {
@@ -35,7 +36,7 @@ export const Header = (props) => {
                         mr: 4,
                     }}
                 >
-                    <img alt="TSH logo" src={`http://${window.location.hostname}:5000/assets/icons/icon.png`} height={48} width={48} sx={{mr: 2}} />
+                    <img alt="TSH logo" src={`http://${window.location.hostname}:${BACKEND_PORT}/assets/icons/icon.png`} height={48} width={48} sx={{mr: 2}} />
                     Web Scoreboard
                 </Typography>
 
@@ -49,8 +50,8 @@ export const Header = (props) => {
                     <span>Game:&nbsp;</span>
                     {tshState.game?.logo
                         ? <img
-                            alt={"Game logo"}
-                            src={`http://${window.location.hostname}:5000/${tshState.game.logo.replace("./", "/")}`}
+                            alt="Game logo"
+                            src={`http://${window.location.hostname}:${BACKEND_PORT}/${tshState.game.logo.replace("./", "/")}`}
                             height={48}
                         />
                         : <span>{tshState.game?.name ?? "Unknown"}</span>
