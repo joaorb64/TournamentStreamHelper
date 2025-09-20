@@ -96,6 +96,8 @@ class TSHPlayerDB:
                         dbMains = deep_clone(
                             TSHPlayerDB.database[tag].get("mains", {})
                         )
+                        if isinstance(dbMains, str):
+                            dbMains = json.loads(dbMains)
                         incomingMains = player.get("mains", {})
 
                         newMains = []

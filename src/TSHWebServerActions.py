@@ -34,7 +34,7 @@ class WebServerActions(QThread):
         self.threadPool = QThreadPool()
 
     def program_state(self):
-        return StateManager.state
+        return {'state': StateManager.state, 'delta_index': StateManager.deltaIndex}
 
     def ruleset(self):
         data = {}
@@ -400,12 +400,14 @@ class WebServerActions(QThread):
             return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
 
     def get_sets(self, args):
+        provider = TSHTournamentDataProvider.instance.GetProvider()
+        if provider is None:
+            return []
+
         if args.get('getFinished') is not None:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=True)
             return sets
         else:
-            provider = TSHTournamentDataProvider.instance.GetProvider()
             sets = provider.GetMatches(getFinished=False)
             return sets
 

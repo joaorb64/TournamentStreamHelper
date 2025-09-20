@@ -1,4 +1,5 @@
 import html
+import json
 import os
 import traceback
 
@@ -13,6 +14,7 @@ from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
 
+from .StateManager import StateManager
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
@@ -22,6 +24,18 @@ import traceback
 import logging
 log = logging.getLogger('socketio.server')
 log.setLevel(logging.ERROR)
+
+class SocketioJson:
+    def default(obj):
+        if isinstance(obj, type(type(1))):
+            return str(obj)
+        return obj
+
+    def dumps(*args, **kwargs):
+        return json.dumps(*args, **kwargs, default=SocketioJson.default)
+
+    def loads(*args, **kwargs):
+        return json.loads(*args, **kwargs)
 
 
 class WebServer(QThread):
@@ -33,6 +47,7 @@ class WebServer(QThread):
         # Uncomment to enable SocketIO logging (As logging is unuseful, we'll make this a dev flag)
         # logger=logger,
         async_mode='threading',
+        json=SocketioJson
     )
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
@@ -45,6 +60,10 @@ class WebServer(QThread):
             stageWidget=stageWidget,
             commentaryWidget=commentaryWidget
         )
+
+        StateManager.signals.state_updated.connect(WebServer.on_program_state_update)
+        StateManager.signals.state_big_change.connect(WebServer.ws_program_state)
+
         self.host_name = "0.0.0.0"
         self.port = SettingsManager.Get("general.webserver_port", 5000)
 
@@ -52,12 +71,28 @@ class WebServer(QThread):
     def program_state():
         return WebServer.actions.program_state()
 
+    @socketio.on('program-state-update')
+    def ws_program_state_update(message):
+        WebServer.ws_emit('program_state_update', {})
+
+    def on_program_state_update(changes):
+        if len(changes) > 0:
+            try:
+                WebServer.ws_emit('program_state_update', changes)
+            except TypeError:
+                logger.warning("Unserializable program state update")
+
+                # If we can't emit a diff, fall back to emitting the whole program
+                # state. Well-behaved listeners should discard their existing state
+                # and re-sync with us that way.
+                WebServer.ws_program_state()
+
     @socketio.on('connect')
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
     @socketio.on('program-state')
-    def ws_program_state(message):
+    def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
     @socketio.on_error_default

@@ -2,6 +2,7 @@ import React from "react";
 import {Checkbox, FormControlLabel, FormGroup, Paper, Stack} from "@mui/material";
 import Player from "./Player";
 import {Box} from "@mui/system";
+import {BACKEND_PORT} from "../env";
 
 export default React.forwardRef(
     /**
@@ -55,7 +56,7 @@ export default React.forwardRef(
         return Promise.all(
             [
                 (
-                    fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
+                    fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-set?` + new URLSearchParams({
                         losers: state.inLosers,
                         team: teamId
                     }).toString())
@@ -68,7 +69,7 @@ export default React.forwardRef(
                     console.log("team update payload", body);
 
                     return fetch(
-                        `http://${window.location.hostname}:5000`
+                        `http://${window.location.hostname}:${BACKEND_PORT}`
                         + `/scoreboard1-update-team-${tshTeamId}-${teamKey}`,
                         {
                             method: 'POST',
@@ -89,7 +90,6 @@ export default React.forwardRef(
             playerRefs[teamKey] = React.createRef();
         }
 
-        console.log(`Rendering player widget: `, player)
         return (
             <Player
                 key={`${teamId}-p-${teamKey}`}

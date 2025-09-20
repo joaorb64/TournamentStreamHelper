@@ -7,7 +7,6 @@ import {
     CardHeader,
     Collapse,
     IconButton,
-    MenuItem,
     Stack
 } from "@mui/material";
 import TextField from './TextField';
@@ -114,6 +113,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
         expanded: true
     });
 
+    // console.log(`Rendering player widget: `, player)
+
     const playerId = `${teamId}-p-${teamKey}`;
     const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;
@@ -144,7 +145,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                 ...stateUpdates,
             });
         }
-    }, [player])
+    }, [player]) // eslint-disable-line react-hooks/exhaustive-deps
+    // We don't want our dependencies to be exhaustive above because we want to specifically only
 
     const /** @type {TSHCharacterDb} */ characters = React.useContext(TSHCharacterContext);
     const tshPlayerDbId = player?.id?.at(0) || player?.id?.at(1) || -1;
@@ -284,7 +286,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
 
     React.useImperativeHandle(ref, () => ({
         getModifiedPlayerData: getModifiedPlayerData
-    }), [state, getModifiedPlayerData]);
+    }), [state, getModifiedPlayerData]); // eslint-disable-line react-hooks/exhaustive-deps
+    // ignoring changes in state cause getModifiedPlayerData to return bad values for some reason.
 
     return (
         <Card raised={true}>
