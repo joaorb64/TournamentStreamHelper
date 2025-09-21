@@ -299,20 +299,6 @@ class WebServer(QThread):
                 data
             ))
         
-    # Set url
-    @app.post('/update-tournament-link')
-    def set_tournament_link():
-        data = request.get_json()
-        return WebServer.actions.set_tournament_link(data)
-    
-    @socketio.on('tournament_link')
-    def ws_set_tournament_link(message):
-        data = orjson.loads(message)
-        WebServer.ws_emit('update_tournament_link',
-            WebServer.actions.set_tournament_link(
-                data
-            ))
-    
     # Set game
     @app.post('/update-game')
     def set_game():
