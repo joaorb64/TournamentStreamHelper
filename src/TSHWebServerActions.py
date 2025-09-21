@@ -241,6 +241,22 @@ class WebServerActions(QThread):
         self.commentaryWidget.ChangeCommDataSignal.emit(index, data)
 
         return "OK"
+    
+    def set_game(self, data):
+        set_codename = data.get("codename")
+        found_game = False
+        for i, codename in enumerate(TSHGameAssetManager.instance.games.keys()):
+            if codename == set_codename:
+                # TSHGameAssetManager.instance.selectedGame = TSHGameAssetManager.instance.games[codename]
+                # self.parent().SetGame()
+                TSHGameAssetManager.instance.LoadGameAssets(i+1, async_mode=False)
+                found_game = True
+                break
+
+        if not found_game:
+            return f"Could not find game {set_codename}"
+
+        return "OK"
 
     def get_games(self):
         data = {}
