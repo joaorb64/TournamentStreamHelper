@@ -242,6 +242,20 @@ class WebServerActions(QThread):
 
         return "OK"
 
+    def get_games(self):
+        data = {}
+        for key in TSHGameAssetManager.instance.games.keys():
+            data[key] = {
+                "name": TSHGameAssetManager.instance.games[key].get("name"),
+                "locale": TSHGameAssetManager.instance.games[key].get("locale"),
+                "challonge_game_id": TSHGameAssetManager.instance.games[key].get("challonge_game_id"),
+                "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
+                "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
+                "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename"))
+            }
+
+        return data
+    
     def get_characters(self):
         data = {}
         for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):

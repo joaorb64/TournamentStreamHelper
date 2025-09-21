@@ -299,6 +299,15 @@ class WebServer(QThread):
                 data
             ))
 
+    # Get games
+    @app.route('/games')
+    def get_games():
+        return WebServer.actions.get_games()
+
+    @socketio.on('games')
+    def ws_get_games(message):
+        WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
+
     # Get characters
     @app.route('/characters')
     def get_characters():
