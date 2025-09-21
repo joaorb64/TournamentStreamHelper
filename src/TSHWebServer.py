@@ -306,7 +306,7 @@ class WebServer(QThread):
         return WebServer.actions.set_game(data)
     
     @socketio.on('update_game')
-    def ws_set_commentary_data(message):
+    def ws_set_game_data(message):
         data = orjson.loads(message)
         WebServer.ws_emit('update_game',
             WebServer.actions.set_game(
