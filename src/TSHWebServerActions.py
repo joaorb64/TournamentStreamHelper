@@ -4,6 +4,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import orjson
+import re
 
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
@@ -256,6 +257,41 @@ class WebServerActions(QThread):
         if not found_game:
             return f"Could not find game {set_codename}"
 
+        return "OK"
+    
+    def set_tournament_link(self, data):
+        url = data.get("url")
+        validators = [
+            "(.*start.gg/tournament/[^/]*/event[s]?/[^/]*)",
+            "(.*challonge.com/[^/]*/[^/]*)"
+        ]
+        valid = False
+
+        for validator in validators:
+            if re.match(validator, url):
+                valid = True
+
+        if not valid:
+            return(f"URL {url} not valid")
+
+        if "start.gg" in url:
+            matches = re.match(
+                "(.*start.gg/tournament/[^/]*/event[s]?/[^/]*)", url)
+            if matches:
+                url = matches.group(0)
+
+                # Some URLs in startgg have eventS but the API doesn't work with that format
+                url = url.replace("/events/", "/event/")
+        if "challonge" in url:
+            matches = re.match(
+                "(.*challonge.com/[^/]*/[^/]*)", url)
+            if matches:
+                url = matches.group(0)
+
+        SettingsManager.Set("TOURNAMENT_URL", url)
+        TSHTournamentDataProvider.instance.SetTournament(
+            SettingsManager.Get("TOURNAMENT_URL"))
+        
         return "OK"
 
     def get_games(self):
