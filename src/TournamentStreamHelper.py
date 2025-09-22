@@ -935,23 +935,24 @@ class Window(QMainWindow):
 
     def ReloadGames(self):
         logger.info("Reload games")
-        self.gameSelect.setModel(QStandardItemModel())
-        self.gameSelect.addItem("", 0)
-        for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
-            if game[1].get("name"):
-                self.gameSelect.addItem(game[1].get(
-                    "logo", QIcon()), game[1].get("name"), i+1)
-            else:
-                self.gameSelect.addItem(
-                    game[1].get("logo", QIcon()), game[0], i+1)
-        self.gameSelect.setIconSize(QSize(64, 64))
-        self.gameSelect.setFixedHeight(32)
-        view = QListView()
-        view.setIconSize(QSize(64, 64))
-        view.setStyleSheet("QListView::item { height: 32px; }")
-        self.gameSelect.setView(view)
-        self.gameSelect.model().sort(0)
-        self.SetGame()
+        with StateManager.SaveBlock():
+            self.gameSelect.setModel(QStandardItemModel())
+            self.gameSelect.addItem("", 0)
+            for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
+                if game[1].get("name"):
+                    self.gameSelect.addItem(game[1].get(
+                        "logo", QIcon()), game[1].get("name"), i+1)
+                else:
+                    self.gameSelect.addItem(
+                        game[1].get("logo", QIcon()), game[0], i+1)
+            self.gameSelect.setIconSize(QSize(64, 64))
+            self.gameSelect.setFixedHeight(32)
+            view = QListView()
+            view.setIconSize(QSize(64, 64))
+            view.setStyleSheet("QListView::item { height: 32px; }")
+            self.gameSelect.setView(view)
+            self.gameSelect.model().sort(0)
+            self.SetGame()
 
     def DetectGameFromId(self, id):
         def detect_smashgg_id_match(games, game, id):

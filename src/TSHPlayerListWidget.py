@@ -150,23 +150,27 @@ class TSHPlayerListWidget(QDockWidget):
         messagebox.exec()
 
     def LoadFromStandings(self, data):
-        StateManager.BlockSaving()
-        if data is not None and len(data) > 0:
-            playerNumber = len(data[0].get("players"))
-            self.playerList.SetPlayersPerTeam(playerNumber)
+        with StateManager.SaveBlock():
+            if data is not None and len(data) > 0:
+                playerNumber = len(data[0].get("players"))
+                self.playerList.SetPlayersPerTeam(playerNumber)
 
-            for i, slot in enumerate(self.playerList.slotWidgets):
-                try:
-                    slot.SetTeamData(data[i])
-                except:
-                    slot.Clear()
-                    logger.error(traceback.format_exc())
-        StateManager.ReleaseSaving()
+                for i, slot in enumerate(self.playerList.slotWidgets):
+                    try:
+                        slot.SetTeamData(data[i])
+                    except:
+                        slot.Clear()
+                        logger.error(traceback.format_exc())
 
     def SetDefaultsFromAssets(self):
         if StateManager.Get(f'game.defaults'):
             players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
         else:
             players, characters = 1, 1
-        self.playerPerTeam.setValue(players)
-        self.charNumber.setValue(characters)
+
+        with StateManager.SaveBlock():
+            if self.playerList.playersPerTeam != players:
+                self.playerList.SetPlayersPerTeam(players)
+
+            if self.playerList.charactersPerPlayer != characters:
+                self.playerList.SetCharactersPerPlayer(characters)
