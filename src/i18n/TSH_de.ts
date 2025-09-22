@@ -1135,7 +1135,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="1019"/>
-        <source>NOTE: This will open a new tab in your browser and close Tournament Stream Helper.</source>
+        <source>NOTE: This will open a new tab in your browser and close TournamentStreamHelper.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

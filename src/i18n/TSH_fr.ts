@@ -754,7 +754,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="152"/>
         <source>Stream powered by TournamentStreamHelper:</source>
-        <translation>Stream produit avec Tournament Stream Helper :</translation>
+        <translation>Stream produit avec TournamentStreamHelper :</translation>
     </message>
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="206"/>
@@ -764,7 +764,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Helpers/TSHAltTextHelper.py" line="279"/>
         <source>Stream powered by TournamentStreamHelper</source>
-        <translation>Stream produit avec Tournament Stream Helper</translation>
+        <translation>Stream produit avec TournamentStreamHelper</translation>
     </message>
 </context>
 <context>
@@ -1069,8 +1069,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="1019"/>
-        <source>NOTE: This will open a new tab in your browser and close Tournament Stream Helper.</source>
-        <translation>NOTE : Cela ouvrira un nouvel onglet dans votre navigateur web par défaut et fermera Tournament Stream Helper.</translation>
+        <source>NOTE: This will open a new tab in your browser and close TournamentStreamHelper.</source>
+        <translation>NOTE : Cela ouvrira un nouvel onglet dans votre navigateur web par défaut et fermera TournamentStreamHelper.</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="1166"/>
