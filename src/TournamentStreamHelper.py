@@ -1016,7 +1016,7 @@ class Window(QMainWindow):
                         QLabel(QApplication.translate("app", "New version available:")+" "+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        QApplication.translate("app", "Update to latest version?")+"\n\n"+QApplication.translate("app", "NOTE: This will open a new tab in your browser and close Tournament Stream Helper.")))
+                        QApplication.translate("app", "Update to latest version?")+"\n\n"+QApplication.translate("app", "NOTE: This will open a new tab in your browser and close TournamentStreamHelper.")))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)
