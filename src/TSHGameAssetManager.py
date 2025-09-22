@@ -86,80 +86,81 @@ class TSHGameAssetManager(QObject):
     def LoadGames(self):
         class GameLoaderThread(QThread):
             def run(self):
-                self.parent().games = {}
+                with StateManager.SaveBlock():
+                    self.parent().games = {}
 
-                gameDirs = os.listdir("./user_data/games/")
+                    gameDirs = os.listdir("./user_data/games/")
 
-                for game in gameDirs:
-                    if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
-                        with open("./user_data/games/"+game +
-                                  "/base_files/config.json", "rb") as f:
-                            self.parent().games[game] = orjson.loads(f.read())
+                    for game in gameDirs:
+                        if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
+                            with open("./user_data/games/"+game +
+                                      "/base_files/config.json", "rb") as f:
+                                self.parent().games[game] = orjson.loads(f.read())
 
-                        # Try logo_small, if it doesn't exist use logo
-                        if os.path.isfile("./user_data/games/"+game+"/base_files/logo_small.png"):
-                            self.parent().games[game]["logo"] = QIcon(
-                                QPixmap(
-                                    QImage("./user_data/games/"+game+"/base_files/logo_small.png").scaled(
-                                        64,
-                                        64,
-                                        Qt.AspectRatioMode.KeepAspectRatio,
-                                        Qt.TransformationMode.SmoothTransformation
+                            # Try logo_small, if it doesn't exist use logo
+                            if os.path.isfile("./user_data/games/"+game+"/base_files/logo_small.png"):
+                                self.parent().games[game]["logo"] = QIcon(
+                                    QPixmap(
+                                        QImage("./user_data/games/"+game+"/base_files/logo_small.png").scaled(
+                                            64,
+                                            64,
+                                            Qt.AspectRatioMode.KeepAspectRatio,
+                                            Qt.TransformationMode.SmoothTransformation
+                                        )
                                     )
                                 )
-                            )
-                        elif os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
-                            self.parent().games[game]["logo"] = QIcon(
-                                QPixmap(
-                                    QImage("./user_data/games/"+game+"/base_files/logo.png").scaled(
-                                        64,
-                                        64,
-                                        Qt.AspectRatioMode.KeepAspectRatio,
-                                        Qt.TransformationMode.SmoothTransformation
+                            elif os.path.isfile("./user_data/games/"+game+"/base_files/logo.png"):
+                                self.parent().games[game]["logo"] = QIcon(
+                                    QPixmap(
+                                        QImage("./user_data/games/"+game+"/base_files/logo.png").scaled(
+                                            64,
+                                            64,
+                                            Qt.AspectRatioMode.KeepAspectRatio,
+                                            Qt.TransformationMode.SmoothTransformation
+                                        )
                                     )
                                 )
-                            )
 
-                        self.parent().games[game]["assets"] = {}
-                        self.parent(
-                        ).games[game]["path"] = "./user_data/games/"+game+"/"
+                            self.parent().games[game]["assets"] = {}
+                            self.parent(
+                            ).games[game]["path"] = "./user_data/games/"+game+"/"
 
-                        assetDirs = os.listdir("./user_data/games/"+game)
-                        assetDirs += ["base_files/" +
-                                      f for f in os.listdir("./user_data/games/"+game+"/base_files/")]
+                            assetDirs = os.listdir("./user_data/games/"+game)
+                            assetDirs += ["base_files/" +
+                                          f for f in os.listdir("./user_data/games/"+game+"/base_files/")]
 
-                        for dir in assetDirs:
-                            if os.path.isdir("./user_data/games/"+game+"/"+dir):
-                                if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
-                                    logger.info(
-                                        "Found asset config for ["+game+"]["+dir+"]")
-                                    with open("./user_data/games/"+game+"/"+dir +
-                                              "/config.json", "rb") as f:
-                                        self.parent().games[game]["assets"][dir] = \
-                                            orjson.loads(f.read())
-                                else:
-                                    logger.error(
-                                        "No config file for "+game+" - "+dir)
+                            for dir in assetDirs:
+                                if os.path.isdir("./user_data/games/"+game+"/"+dir):
+                                    if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
+                                        logger.info(
+                                            "Found asset config for ["+game+"]["+dir+"]")
+                                        with open("./user_data/games/"+game+"/"+dir +
+                                                  "/config.json", "rb") as f:
+                                            self.parent().games[game]["assets"][dir] = \
+                                                orjson.loads(f.read())
+                                    else:
+                                        logger.error(
+                                            "No config file for "+game+" - "+dir)
 
-                        # Load translated names
-                        # Translate game name
-                        locale = TSHLocaleHelper.programLocale
-                        if locale.replace('-', '_') in self.parent().games[game].get("locale", {}):
-                            game_name = self.parent(
-                            ).games[game]["locale"][locale.replace('-', '_')].get("name")
-                            if game_name:
-                                self.parent(
-                                ).games[game]["name"] = game_name
-                        elif locale.split('-')[0] in self.parent().games[game].get("locale", {}):
-                            game_name = self.parent(
-                            ).games[game]["locale"][locale.split('-')[0]].get("name")
-                            if game_name:
-                                self.parent(
-                                ).games[game]["name"] = game_name
-                    else:
-                        logger.info("Game config for "+game+" doesn't exist.")
-                # print(self.parent().games)
-                self.parent().signals.onLoadAssets.emit()
+                            # Load translated names
+                            # Translate game name
+                            locale = TSHLocaleHelper.programLocale
+                            if locale.replace('-', '_') in self.parent().games[game].get("locale", {}):
+                                game_name = self.parent(
+                                ).games[game]["locale"][locale.replace('-', '_')].get("name")
+                                if game_name:
+                                    self.parent(
+                                    ).games[game]["name"] = game_name
+                            elif locale.split('-')[0] in self.parent().games[game].get("locale", {}):
+                                game_name = self.parent(
+                                ).games[game]["locale"][locale.split('-')[0]].get("name")
+                                if game_name:
+                                    self.parent(
+                                    ).games[game]["name"] = game_name
+                        else:
+                            logger.info("Game config for "+game+" doesn't exist.")
+                    # print(self.parent().games)
+                    self.parent().signals.onLoadAssets.emit()
 
         gameLoaderThread = GameLoaderThread(self)
         gameLoaderThread.start()
@@ -498,19 +499,20 @@ class TSHGameAssetManager(QObject):
                         except:
                             logger.error(traceback.format_exc())
 
-                    StateManager.Set(f"game", {
-                        "name": self.parent().selectedGame.get("name"),
-                        "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
-                        "codename": self.parent().selectedGame.get("codename"),
-                        "logo": self.parent().selectedGame.get("path", "")+"/base_files/logo.png",
-                        "defaults": self.parent().selectedGame.get("defaults"),
-                    })
+                    with StateManager.SaveBlock():
+                        StateManager.Set(f"game", {
+                            "name": self.parent().selectedGame.get("name"),
+                            "smashgg_id": self.parent().selectedGame.get("smashgg_game_id"),
+                            "codename": self.parent().selectedGame.get("codename"),
+                            "logo": self.parent().selectedGame.get("path", "")+"/base_files/logo.png",
+                            "defaults": self.parent().selectedGame.get("defaults"),
+                        })
 
-                    self.parent().UpdateCharacterModel()
-                    self.parent().UpdateSkinModel()
-                    self.parent().UpdateVariantModel()
-                    self.parent().UpdateStageModel()
-                    self.parent().signals.onLoad.emit()
+                        self.parent().UpdateCharacterModel()
+                        self.parent().UpdateSkinModel()
+                        self.parent().UpdateVariantModel()
+                        self.parent().UpdateStageModel()
+                        self.parent().signals.onLoad.emit()
                 except:
                     logger.error(traceback.format_exc())
                 finally:
