@@ -651,10 +651,12 @@ class TSHScoreboardWidget(QWidget):
             self.btSelectSet.setEnabled(False)
 
     def SetCharacterNumber(self, value):
+        # logger.info(f"TSHScoreboardWidget#SetCharacterNumber({value})")
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
 
     def SetPlayersPerTeam(self, number):
+        # logger.info(f"TSHScoreboardWidget#SetPlayersPerTeam({number})")
         while len(self.team1playerWidgets) < number:
             p = TSHScoreboardPlayerWidget(
                 index=len(self.team1playerWidgets)+1,

@@ -1,3 +1,4 @@
+import contextlib
 import os
 
 import orjson
@@ -31,6 +32,14 @@ class StateManager:
     lock = threading.RLock()
     threads = []
     loop = None
+
+    @contextlib.contextmanager
+    def SaveBlock():
+        StateManager.BlockSaving()
+        try:
+            yield
+        finally:
+            StateManager.ReleaseSaving()
 
     def BlockSaving():
         StateManager.saveBlocked += 1
@@ -112,7 +121,10 @@ class StateManager:
             StateManager.SaveState()
 
     def Set(key: str, value):
-        # logger.debug(f"StateManager Setting {key} to {value}")
+        # import inspect
+        # func = inspect.currentframe().f_back.f_code
+        # fname = os.path.split(func.co_filename)[1]
+        # logger.debug(f"{func.co_name}({fname}:{func.co_firstlineno}) Setting {key} to {value}")
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
 
@@ -129,6 +141,11 @@ class StateManager:
                 # StateManager.ExportText(oldState)
 
     def Unset(key: str):
+        # import inspect
+        # func = inspect.currentframe().f_back.f_code
+        # fname = os.path.split(func.co_filename)[1]
+        # logger.debug(f"{func.co_name}({fname}:{func.co_firstlineno}) Deleting {key}")
+
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
             deep_unset(StateManager.state, key)

@@ -1,6 +1,8 @@
 import os
 import re
 import traceback
+from typing import override
+
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -29,6 +31,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     countries = None
     countryModel = None
     characterModel = None
+    _deleted = False
 
     dataLock = threading.RLock()
 
@@ -195,12 +198,21 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
 
+    @override
+    def deleteLater(self):
+        self._deleted = True
+        super().deleteLater()
+
     def ComboBoxIndexChanged(self, element: QComboBox):
         StateManager.Set(
             f"{self.path}.{element.objectName()}", element.currentData())
         self.instanceSignals.dataChanged.emit()
 
     def CharactersChanged(self, includeMains=False):
+        if self._deleted:
+            logger.warning(f"CharactersChanged called on deleted TSHScoreboardPlayerWidget for {self.path}")
+            return
+
         with self.dataLock:
             characters = {}
 
@@ -408,6 +420,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.teamNumber = team
 
     def SetCharactersPerPlayer(self, number):
+        # logger.info(f"TSHScoreboardPlayerWidget#SetCharactersPerPlayer({number})")
         while len(self.character_elements) < number:
             character_element = QWidget()
             character_element.setLayout(QHBoxLayout())
