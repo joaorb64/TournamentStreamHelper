@@ -1,7 +1,6 @@
 import os
 import re
 import traceback
-from typing import override
 
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -200,7 +199,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
 
-    @override
     def deleteLater(self):
         self._deleted = True
         super().deleteLater()
