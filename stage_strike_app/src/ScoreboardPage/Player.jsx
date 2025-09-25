@@ -14,6 +14,8 @@ import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
 import {CharSelector} from "./CharSelector";
+import {CountrySelector} from "../CountrySelector";
+import {CountryStateSelector} from "../CountryStateSelector";
 
 /**
  * @typedef {{
@@ -152,10 +154,16 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
     const tshPlayerDbId = player?.id?.at(0) || player?.id?.at(1) || -1;
 
     const changeHandlerFor = (fieldName) => {
-        return (/** React.ChangeEvent<HTMLInputElement> */ e) => {
+        return (/** React.ChangeEvent<HTMLInputElement> | string */ e) => {
+            const newVal = (
+                typeof e === 'string' ? e
+                    : e === null || e === undefined ? ''
+                    : e?.target?.value
+            );
+
             const newState = {
                 ...state,
-                [fieldName]: e.target.value,
+                [fieldName]: typeof e === 'string' ? e : e?.target?.value,
             };
 
             setState(newState);
@@ -360,17 +368,20 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                         </Stack>
 
                         <Stack {...rowProps}>
-                            <TextField label={i18n.t("country")}
-                                       key={idBase + "country"}
-                                       id={idBase + "country"}
-                                       value={state.countryCode ?? ''}
-                                       onChange={changeHandlerFor('countryCode')}
+
+                            <CountrySelector
+                                sx={{width: '50%'}}
+                                label={i18n.t("country")}
+                                value={state.countryCode ?? ''}
+                                onChange={changeHandlerFor('countryCode')}
                             />
-                            <TextField label={i18n.t("state")}
-                                       key={idBase + "state"}
-                                       id={idBase + "state"}
-                                       value={state.stateCode ?? ''}
-                                       onChange={changeHandlerFor('stateCode')}
+
+                            <CountryStateSelector
+                                countryCode={state.countryCode}
+                                sx={{width: '50%'}}
+                                label={i18n.t("state")}
+                                value={state.stateCode ?? ''}
+                                onChange={changeHandlerFor('stateCode')}
                             />
                         </Stack>
 

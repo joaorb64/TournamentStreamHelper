@@ -8,7 +8,7 @@ import flask_socketio
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from flask import Flask, send_from_directory, request, send_file
+from flask import Flask, send_from_directory, request, send_file, abort
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
@@ -603,6 +603,21 @@ class WebServer(QThread):
     def ws_set_tournament(message):
         WebServer.ws_emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
+    @app.route('/states')
+    def get_states():
+        countryCode = request.args.get('countryCode', None)
+        if not countryCode:
+            abort(400, "countryCode not specified")
+
+        return WebServer.actions.get_states(countryCode)
+
+
+    @socketio.on('states')
+    def ws_get_states(message):
+        args = orjson.loads(message)
+        return WebServer.actions.get_states(args.get('countryCode', ''))
+
+
     @app.route('/')
     @app.route('/scoreboard')
     @app.route('/stage-strike-app')
@@ -619,7 +634,16 @@ class WebServer(QThread):
             mimetype = None
             if filename.endswith('.js'):
                 mimetype = "text/javascript"
-            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
+            if filename.lower().endswith('.png'):
+                mimetype = "image/apng"
+
+            return send_from_directory(
+                os.path.abspath('.'),
+                filename,
+                as_attachment=filename.endswith('.gz'),
+                mimetype=mimetype,
+                max_age=86400
+            )
 
         except Exception as e:
             logger.error(f"File not found: {e}")
