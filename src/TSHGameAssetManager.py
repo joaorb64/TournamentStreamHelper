@@ -720,9 +720,12 @@ class TSHGameAssetManager(QObject):
         if os.path.isfile(icon_config_path):
             with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
                 icon_config = orjson.loads(icon_config_file.read())
-            icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.png"
-            if os.path.isfile(icon_filename):
-                icon_path = icon_filename
+            extensions = ["png", "jpg", "gif", "webp"]
+            for extension in extensions:
+                icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.{extension}"
+                if os.path.isfile(icon_filename):
+                    icon_path = icon_filename
+                    break
         return(icon_path)
     
     def GetVariantIconSize(self, variant_codename):

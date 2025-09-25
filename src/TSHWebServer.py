@@ -91,7 +91,7 @@ class WebServer(QThread):
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
-    @socketio.on('program-state')
+    @socketio.on('program_state')
     def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
