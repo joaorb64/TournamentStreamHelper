@@ -91,7 +91,7 @@ class WebServer(QThread):
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
-    @socketio.on('program-state')
+    @socketio.on('program_state')
     def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
@@ -298,6 +298,29 @@ class WebServer(QThread):
                 data.get("commentator"),
                 data
             ))
+        
+    # Set game
+    @app.post('/update-game')
+    def set_game():
+        data = request.get_json()
+        return WebServer.actions.set_game(data)
+    
+    @socketio.on('update_game')
+    def ws_set_game_data(message):
+        data = orjson.loads(message)
+        WebServer.ws_emit('update_game',
+            WebServer.actions.set_game(
+                data
+            ))
+
+    # Get games
+    @app.route('/games')
+    def get_games():
+        return WebServer.actions.get_games()
+
+    @socketio.on('games')
+    def ws_get_games(message):
+        WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
 
     # Get characters
     @app.route('/characters')
