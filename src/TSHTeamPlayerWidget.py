@@ -101,7 +101,7 @@ class TSHTeamPlayerWidget(QGroupBox):
                 lambda element=c: [
                     StateManager.Set(
                         f"{self.path}.{element.objectName() if element.objectName() != 'qt_spinbox_lineedit' else element.parent().objectName()}", element.text()),
-                    self.instanceSignals.dataChanged.emit()
+                    # self.instanceSignals.dataChanged.emit()
                 ])
 
         for c in self.findChildren(QComboBox):
@@ -144,7 +144,7 @@ class TSHTeamPlayerWidget(QGroupBox):
     def ComboBoxIndexChanged(self, element: QComboBox):
         StateManager.Set(
             f"{self.path}.{element.objectName()}", element.currentData())
-        self.instanceSignals.dataChanged.emit()
+        # self.instanceSignals.dataChanged.emit()
 
     def CharactersChanged(self, includeMains=False):
         with self.dataLock:
@@ -195,7 +195,7 @@ class TSHTeamPlayerWidget(QGroupBox):
             if merged != self.lastExportedName:
                 self.ExportMergedName()
                 self.ExportPlayerImages()
-                self.ExportPlayerId()
+                # self.ExportPlayerId()
 
             self.lastExportedName = merged
 
@@ -315,7 +315,7 @@ class TSHTeamPlayerWidget(QGroupBox):
                                     widget.setPlainText(tmpData[i][objName])
                         QCoreApplication.processEvents()
                         w.ExportPlayerImages(tmpData[i]["online_avatar"])
-                        w.ExportPlayerId(tmpData[i]["id"])
+                        # w.ExportPlayerId(tmpData[i]["id"])
                         StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
                         StateManager.Set(f"{w.path}.city", tmpData[i]["city"])
         finally:
@@ -680,18 +680,11 @@ class TSHTeamPlayerWidget(QGroupBox):
                 team.setText(f'{data.get("prefix")}')
                 team.editingFinished.emit()
 
-            real_name = self.findChild(QWidget, "real_name")
-            if data.get("name") and data.get("name") != real_name.text():
-                data["name"] = TSHBadWordFilter.Censor(
-                    data["name"], data.get("country_code"))
-                real_name.setText(f'{data.get("name")}')
-                real_name.editingFinished.emit()
-
             if data.get("avatar"):
                 self.ExportPlayerImages(data.get("avatar"))
 
-            if data.get("id"):
-                self.ExportPlayerId(data.get("id"))
+            # if data.get("id"):
+            #     self.ExportPlayerId(data.get("id"))
 
             if data.get("city"):
                 self.ExportPlayerCity(data.get("city"))
@@ -815,12 +808,6 @@ class TSHTeamPlayerWidget(QGroupBox):
                             if variant_element.currentIndex() != variantIndex:
                                 variant_element.setCurrentIndex(variantIndex)
 
-            if data.get("seed") is not None:
-                if data.get("seed") > 0:
-                    StateManager.Set(f"{self.path}.seed", data.get("seed"))
-                    self.findChild(QSpinBox, "seed").setValue(int(data.get("seed")))
-                else:
-                    self.findChild(QSpinBox, "seed").setValue(0)
             if data.get("city"):
                 StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:

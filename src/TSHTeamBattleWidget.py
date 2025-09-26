@@ -1,6 +1,11 @@
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
+from qtpy import uic
+from typing import List
 from loguru import logger
+from .StateManager import StateManager
+from .Helpers.TSHDirHelper import TSHResolve
+from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
 
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
@@ -35,36 +40,67 @@ class TSHTeamBattleWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
         self.setWindowFlags(Qt.WindowType.Window)
+        
+        self.playerWidgets: List[TSHTeamPlayerWidget] = []
+        self.team1playerWidgets: List[TSHTeamPlayerWidget] = []
+        self.team2playerWidgets: List[TSHTeamPlayerWidget] = []
 
-        label = QLabel()
-        label.setText("CREW/TEAM BATTLE")
-        self.widget.layout().addWidget(label)
-
-        topOptions = QWidget()
-        topOptions.setLayout(QHBoxLayout())
-        topOptions.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
-
-        self.widget.layout().addWidget(topOptions)
-
-        col = QWidget()
-        col.setLayout(QVBoxLayout())
-        topOptions.layout().addWidget(col)
-        self.commentatorNumber = QSpinBox()
+        self.playerNumber = QSpinBox()
         row = QWidget()
         row.setLayout(QHBoxLayout())
-        commsNumber = QLabel(QApplication.translate("app", "Number of commentators"))
-        commsNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
-        row.layout().addWidget(commsNumber)
-        row.layout().addWidget(self.commentatorNumber)
-        # self.commentatorNumber.valueChanged.connect(
-        #     lambda val: self.SetCommentatorNumber(val))
+        row.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.widget.layout().addWidget(row)
+
+        playerColumn = QWidget()
+        playerColumn.setLayout(QVBoxLayout())
+        playerLabel = QLabel(QApplication.translate("app", "Number of Players"))
+        playerLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        playerColumn.layout().addWidget(playerLabel)
+        playerColumn.layout().addWidget(self.playerNumber)
+        self.playerNumber.valueChanged.connect(
+            lambda val: self.SetPlayersPerTeam(val))
+        row.layout().addWidget(playerColumn)
         
-        self.characterNumber = QSpinBox()
-        charNumber = QLabel(QApplication.translate("app", "Characters per player"))
+        characterColumn = QWidget()
+        characterColumn.setLayout(QVBoxLayout())
+        charNumber = QLabel(QApplication.translate("app", "Characters per Player"))
         charNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
-        row.layout().addWidget(charNumber)
-        row.layout().addWidget(self.characterNumber)
-        # self.characterNumber.valueChanged.connect(self.SetCharacterNumber)
+        self.characterNumber = QSpinBox()
+        characterColumn.layout().addWidget(charNumber)
+        characterColumn.layout().addWidget(self.characterNumber)
+        self.characterNumber.valueChanged.connect(self.SetCharacterNumber)
+        row.layout().addWidget(characterColumn)
+
+        lifeColumn = QWidget()
+        lifeColumn.setLayout(QVBoxLayout())
+        lifeNumber = QLabel(QApplication.translate("app", "Lives/Stocks per Player"))
+        lifeNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.livesNumber = QSpinBox()
+        lifeColumn.layout().addWidget(lifeNumber)
+        lifeColumn.layout().addWidget(self.livesNumber)
+        row.layout().addWidget(lifeColumn)
+
+        scrollArea = QScrollArea()
+        scrollArea.setFrameShadow(QFrame.Shadow.Plain)
+        scrollArea.setFrameShape(QFrame.Shape.Panel)
+        scrollArea.setWidgetResizable(True)
+
+        self.widgetArea = QWidget()
+        self.widgetArea.setLayout(QHBoxLayout())
+        self.widgetArea.setSizePolicy(
+            QSizePolicy.Preferred, QSizePolicy.Preferred)
+        scrollArea.setWidget(self.widgetArea)
+
+        self.team1column = uic.loadUi(TSHResolve("src/layout/TSHBattleTeam.ui"))
+        self.team1column.setSizePolicy(
+            QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.team2column = uic.loadUi(TSHResolve("src/layout/TSHBattleTeam.ui"))
+        self.team2column.setSizePolicy(
+            QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.widgetArea.layout().addWidget(self.team1column)
+        self.widgetArea.layout().addWidget(self.team2column)
+
+        self.widget.layout().addWidget(scrollArea)
 
         # Hook into Signals for Control
         self.signals.reset_all_stocks.connect(self.ResetAllStocks)
@@ -83,6 +119,82 @@ class TSHTeamBattleWidget(QDockWidget):
 
     def ResetEverything(self):
         logger.info("RESET EVERYTHING")
+    
+    def SetCharacterNumber(self, value):
+        for pw in self.playerWidgets:
+            pw.SetCharactersPerPlayer(value)
+    
+    def SetPlayersPerTeam(self, number):
+        # logger.info(f"TSHScoreboardWidget#SetPlayersPerTeam({number})")
+        while len(self.team1playerWidgets) < number:
+            p = TSHTeamPlayerWidget(
+                index=len(self.team1playerWidgets)+1,
+                teamNumber=1,
+                path=f'team_battle.team.{1}.player.{len(self.team1playerWidgets)+1}')
+            self.playerWidgets.append(p)
+
+            self.team1column.findChild(
+                QScrollArea).widget().layout().addWidget(p)
+            # p.SetCharactersPerPlayer(self.charNumber.value())
+            # self.team1column.findChild(
+            #     QCheckBox, "losers").toggled.connect(p.SetLosers)
+
+            index = len(self.team1playerWidgets)
+
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
+                self.team1playerWidgets[index-1 if index > 0 else 0]))
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
+                self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
+
+            self.team1playerWidgets.append(p)
+
+            p = TSHTeamPlayerWidget(
+                index=len(self.team2playerWidgets)+1,
+                teamNumber=2,
+                path=f'team_battle.team.{2}.player.{len(self.team2playerWidgets)+1}')
+            self.playerWidgets.append(p)
+
+            self.team2column.findChild(
+                QScrollArea).widget().layout().addWidget(p)
+            # p.SetCharactersPerPlayer(self.charNumber.value())
+            # self.team2column.findChild(
+            #     QCheckBox, "losers").toggled.connect(p.SetLosers)
+
+            index = len(self.team2playerWidgets)
+
+            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
+                self.team2playerWidgets[index-1 if index > 0 else 0]))
+            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
+                self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
+
+            self.team2playerWidgets.append(p)
+
+        while len(self.team1playerWidgets) > number:
+            team1player = self.team1playerWidgets[-1]
+            StateManager.Unset(team1player.path)
+            team1player.setParent(None)
+            self.playerWidgets.remove(team1player)
+            self.team1playerWidgets.remove(team1player)
+            team1player.deleteLater()
+
+            team2player = self.team2playerWidgets[-1]
+            StateManager.Unset(team2player.path)
+            team2player.setParent(None)
+            self.playerWidgets.remove(team2player)
+            self.team2playerWidgets.remove(team2player)
+            team2player.deleteLater()
+
+        for team in [1, 2]:
+            if StateManager.Get(f'team_battle.team.{team}'):
+                for k in list(StateManager.Get(f'team_battle.team.{team}.player').keys()):
+                    if int(k) > number:
+                        StateManager.Unset(
+                            f'team_battle.team.{team}.player.{k}')
+
+        # for x, element in enumerate(self.elements, start=1):
+        #     action: QAction = self.eyeBt.menu().actions()[x]
+        #     self.ToggleElements(action, element[1])
+
 
     # =====================================================
     # NEXT ACTIVE PLAYERS
