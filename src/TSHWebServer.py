@@ -646,6 +646,7 @@ class WebServer(QThread):
 
         except Exception as e:
             logger.error(f"File not found: {e}")
+            return "File not found", 404
 
     def run(self):
         try:
