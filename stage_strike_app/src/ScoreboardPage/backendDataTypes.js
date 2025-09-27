@@ -182,4 +182,18 @@
  * @typedef {Object.<string, TSHPlayerDbEntry>} TSHPlayerDb
  */
 
+/**
+ * @typedef {{
+ *
+ * }} TSHCountry
+ */
+
+/**
+ * @typedef {string} TSHCountryCode
+ */
+
+/**
+ * @typedef {Object.<TSHCountryCode, TSHCountry>} TSHCountries
+ */
+
 export const BackendTypes = {};

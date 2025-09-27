@@ -17,6 +17,7 @@ import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHStateContext} from "./Contexts";
 import {useTheme} from "@mui/material/styles";
 import {BACKEND_PORT} from "../env";
+import {Grid} from "@mui/system";
 
 export default function CurrentSet() {
     /**
@@ -106,47 +107,59 @@ export default function CurrentSet() {
                 <CardContent>
                     {
                         hasSuitableTeamCount && (
-                            <Stack direction={isSmall ? "column" : "row"}
-                                   spacing={2}
-                                   alignItems={"center"}
-                                   justifyContent={"space-evenly"}
+                            <Grid
+                                container
+                                direction={"row"}
+                                spacing={2}
+                                alignItems={"stretch"}
+                                justifyContent={"space-evenly"}
                             >
-                                <Team
-                                      key={`s-${setId}-t-${teamKeys[0]}`}
-                                      teamId={`s-${setId}-t-${teamKeys[0]}`}
-                                      tshTeamId={teamKeys[0]}
-                                      ref={team1Ref}
-                                      team={teams[0]}
-                                      characters={tshChars}
-                                />
+                                <Grid
+                                    item
+                                    size={isSmall ? 12 : 4.5}
+                                >
+                                    <Team
+                                          key={`s-${setId}-t-${teamKeys[0]}`}
+                                          teamId={`s-${setId}-t-${teamKeys[0]}`}
+                                          tshTeamId={teamKeys[0]}
+                                          ref={team1Ref}
+                                          team={teams[0]}
+                                          characters={tshChars}
+                                    />
+                                </Grid>
 
-                                <Stack gap={4}>
-                                    <Paper sx={{padding:2}} elevation={3}>
-                                        <SetScore
-                                            key={score.set_id + "score"}
-                                            leftTeam={teams[0]}
-                                            rightTeam={teams[1]}
-                                            best_of={score.best_of}
-                                            match={score.match ?? ""}
-                                            phase={score.phase ?? ""}
-                                            ref={scoreRef}
-                                        />
-                                    </Paper>
 
-                                    <Stack gap={2}>
-                                        <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
-                                        <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
-                                        <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                <Grid item >
+                                    <Stack gap={4}>
+                                        <Paper sx={{padding:2}} elevation={3}>
+                                            <SetScore
+                                                key={score.set_id + "score"}
+                                                leftTeam={teams[0]}
+                                                rightTeam={teams[1]}
+                                                best_of={score.best_of}
+                                                match={score.match ?? ""}
+                                                phase={score.phase ?? ""}
+                                                ref={scoreRef}
+                                            />
+                                        </Paper>
+
+                                        <Stack gap={2}>
+                                            <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
+                                            <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
+                                            <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                        </Stack>
                                     </Stack>
-                                </Stack>
+                                </Grid>
 
+                                <Grid item size={isSmall ? 12 : 4.5}>
                                 <Team key={`s-${setId}-t-${teamKeys[1]}`}
                                       teamId={`s-${setId}-t-${teamKeys[1]}`}
                                       tshTeamId={teamKeys[1]}
                                       ref={team2Ref}
                                       team={teams[1]}
                                 />
-                            </Stack>
+                                </Grid>
+                            </Grid>
                         )
                     }
                 </CardContent>
