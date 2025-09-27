@@ -115,7 +115,11 @@ export default function ScoreboardPage(props) {
         ).then(
             (resp) => resp.json()
         ).then((json) => {
-             console.log("Loaded countries json file", json);
+             for (let key in json) {
+                 json[key].code = key;
+             }
+
+            console.log("Loaded countries json file", json);
              setCountriesData({
                  countries: json,
                  isLoaded: true

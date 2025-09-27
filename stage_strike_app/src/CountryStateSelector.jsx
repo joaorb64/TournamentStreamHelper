@@ -1,19 +1,19 @@
 import TextField from "./ScoreboardPage/TextField";
 import i18n from "./i18n/config";
-import React, {useContext, useEffect, useState} from "react";
-import {TSHCountriesContext} from "./ScoreboardPage/Contexts";
-import {Autocomplete, AutocompleteValue, createFilterOptions} from "@mui/material";
-import {BACKEND_PORT} from "./env";
+import React, {useEffect, useState} from "react";
+import {Autocomplete, InputAdornment} from "@mui/material";
+import {BACKEND_PORT, inlineFlagWidth} from "./env";
 
 /**
  * @param {?string} countryCode
- * @param {?string} stateCode
- * @param {(val: AutocompleteValue<string, false, false, true>)=> any} onChange
+ * @param {?string} value
+ * @param {(val: string)=> any} onChange
  * @param props
  * @returns {Element}
  */
 export function CountryStateSelector({
                                     countryCode,
+                                    value,
                                     onChange,
                                     ...props
                                 }) {
@@ -23,12 +23,20 @@ export function CountryStateSelector({
         isLoading: true
     });
 
+    const selectedState = (!stateData.isLoading && stateData.states[value])
+        ? stateData.states[value]
+        : undefined;
+
+    const stateDisplayName = (state) => {
+        return `${state.name} (${state.code})`;
+    }
+
     useEffect(() => {
         if (isValidCountryCode) {
             fetch(`http://${window.location.hostname}:${BACKEND_PORT}/states?countryCode=${countryCode}`)
                 .then(d => d.json())
                 .then(j => setStateData({
-                    states: Object.entries(j).reduce((acc, st) => {acc[st.name] = st; return acc}, {}),
+                    states: j,
                     isLoading: false
                 }))
                 .catch(e => {
@@ -39,46 +47,86 @@ export function CountryStateSelector({
 
     }, [countryCode, isValidCountryCode]);
 
-    return <Autocomplete
-        freeSolo
-        disabled={countryCode === "" || !countryCode || stateData.isLoading}
-        filterOptions={(options, state) => {
-            if (state.inputValue.length < 2) {
-                return [];
-            }
+    const getStateFlagAsset = (inp) => {
+        const stData = typeof inp === 'string'
+            ? stateData.states[inp]
+            : inp;
 
-            return createFilterOptions({
-                limit: 8,
-            })(options, state);
-        }}
+        if (!stData) { return null; }
+
+        let stateAsset = stData?.asset;
+        if (stateAsset && stateAsset[0] === ".") {
+            return `http://${window.location.hostname}:${BACKEND_PORT}${stateAsset.slice(1)}`;
+        } else {
+            return `http://${window.location.hostname}:${BACKEND_PORT}/assets/state_flag/${countryCode}/${stData.code}.png`;
+        }
+    }
+
+    return <Autocomplete
+        autoHighlight
+        forcePopupIcon={false}
+        clearIcon={null}
+        disabled={countryCode === "" || !countryCode || stateData.isLoading}
         renderOption={(_props, option, _) => {
             const {key, ...rest} = _props;
-            let stateAsset = stateData[option]?.asset;
-            if (stateAsset[0] === ".") {
-                stateAsset = stateAsset.slice(1);
-            }
+            const stateFlagAsset = getStateFlagAsset(option);
+            const optionState = stateData.states[option];
 
             return (
                 <li key={key} {...rest}>
-                    <img alt="State flag" loading={"lazy"} src={`http://${window.location.hostname}:${BACKEND_PORT}${stateAsset}`} width={32} />
-                    <span style={{marginLeft: '16px'}}>
-                        {[option]?.name ?? option}
+                    { stateFlagAsset &&
+                        <img
+                            alt="State flag"
+                            loading={"lazy"}
+                            src={stateFlagAsset}
+                            width={inlineFlagWidth}
+                            onError={(e) => e.nativeEvent.target.remove()}
+                            style={{marginRight: '16px'}} />
+                    }
+                    <span>
+                        {stateDisplayName(optionState) ?? option}
                     </span>
                 </li>
             )
         }}
         renderInput={(params) => {
+            const slotProps = params.slotProps ?? {};
+            if (selectedState?.name) {
+                const flagAsset = getStateFlagAsset(selectedState);
+                if (flagAsset) {
+                    slotProps['input'] = {
+                        startAdornment: <InputAdornment position="start">
+                            <img
+                                alt="Country flag"
+                                loading={"lazy"}
+                                src={flagAsset}
+                                onError={(e) => e.nativeEvent.target.remove()}
+                                width={inlineFlagWidth}
+                            />
+                        </InputAdornment>
+                    }
+                }
+            }
+
             return <div>
                 <TextField
                     {...params}
+                    slotProps={slotProps}
                     label={i18n.t("state")}
                 />
             </div>
         }}
-        value={countryCode}
+
+        value={selectedState?.name ?? null}
         options={Object.keys(stateData.states)}
-        onChange={(ev, val) => onChange(val)}
-        getOptionLabel={(opt) => (stateData[opt]?.name ?? opt)}
+        onChange={(ev, val) => onChange(stateData?.states[val]?.code ?? "")}
+        getOptionLabel={(opt) => (stateData.states[opt]?.name ?? opt)}
         {...props}
+        sx={{
+            ...(props.sx ?? {}),
+            '& .MuiAutocomplete-popupIndicator': {
+                display: 'none'
+            },
+        }}
     />
 }
