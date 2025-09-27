@@ -31,6 +31,8 @@ export function CountryStateSelector({
         return `${state.name} (${state.code})`;
     }
 
+    const isDisabled = countryCode === "" || !countryCode || stateData.isLoading;
+
     useEffect(() => {
         if (isValidCountryCode) {
             fetch(`http://${window.location.hostname}:${BACKEND_PORT}/states?countryCode=${countryCode}`)
@@ -66,7 +68,7 @@ export function CountryStateSelector({
         autoHighlight
         forcePopupIcon={false}
         clearIcon={null}
-        disabled={countryCode === "" || !countryCode || stateData.isLoading}
+        disabled={isDisabled}
         renderOption={(_props, option, _) => {
             const {key, ...rest} = _props;
             const stateFlagAsset = getStateFlagAsset(option);
@@ -93,7 +95,7 @@ export function CountryStateSelector({
             const slotProps = params.slotProps ?? {};
             if (selectedState?.name) {
                 const flagAsset = getStateFlagAsset(selectedState);
-                if (flagAsset) {
+                if (flagAsset && !isDisabled) {
                     slotProps['input'] = {
                         startAdornment: <InputAdornment position="start">
                             <img
@@ -117,7 +119,7 @@ export function CountryStateSelector({
             </div>
         }}
 
-        value={selectedState?.name ?? null}
+        value={isDisabled ? null : (selectedState?.name ?? null)}
         options={Object.keys(stateData.states)}
         onChange={(ev, val) => onChange(stateData?.states[val]?.code ?? "")}
         getOptionLabel={(opt) => (stateData.states[opt]?.name ?? opt)}

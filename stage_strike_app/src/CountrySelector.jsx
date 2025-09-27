@@ -32,7 +32,7 @@ export function CountrySelector({
     };
 
     const countryDisplayName = (/** TSHCountry */ country) => {
-        return `${country.name} (${country.code})`
+        return country?.name ? `${country.name} (${country.code})` : country;
     };
 
     return <Autocomplete
