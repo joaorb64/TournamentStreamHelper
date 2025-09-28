@@ -1,10 +1,12 @@
 import os
 import re
+from flask import abort
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import orjson
 
+from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -507,3 +509,6 @@ class WebServerActions(QThread):
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
             
             return "OK"
+
+    def get_states(self, countryCode: str):
+        return TSHCountryHelper.GetStates(countryCode)

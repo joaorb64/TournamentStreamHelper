@@ -11,7 +11,7 @@ import { io } from 'socket.io-client';
 import './backendDataTypes';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
-import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
+import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext, TSHCountriesContext} from "./Contexts";
 import {Header} from "./Header";
 import {produce as immer_produce} from "immer";
 import {applyDeltas, combineDeltas} from "../stateDelta";
@@ -34,6 +34,10 @@ export default function ScoreboardPage(props) {
     });
     const [characters, setCharacters] = React.useState(null);
     const [playerDb, setPlayerDb] = React.useState(null);
+    const [countriesData, setCountriesData] = React.useState({
+        countries: {},
+        isLoaded: false,
+    });
 
     let socket;
 
@@ -105,6 +109,30 @@ export default function ScoreboardPage(props) {
         })
     }
 
+    const loadCountriesFile = () => {
+        fetch(
+            `http://${window.location.hostname}:${BACKEND_PORT}/assets/data_countries.json`
+        ).then(
+            (resp) => resp.json()
+        ).then((json) => {
+             for (let key in json) {
+                 json[key].code = key;
+             }
+
+            console.log("Loaded countries json file", json);
+             setCountriesData({
+                 countries: json,
+                 isLoaded: true
+             });
+        }).catch((e) => {
+            console.error("Failed to request countries file", e);
+            setCountriesData({
+                countries: {},
+                isLoaded: true
+            });
+        });
+    }
+
     React.useEffect(() => {
         const intervalId = setInterval(() => {
             let sortedDeltas = receivedDeltas.toSorted((a, b) => a.deltaIdx - b.deltaIdx);
@@ -139,6 +167,7 @@ export default function ScoreboardPage(props) {
     React.useEffect(() => {
         window.title = `TSH ${i18n.t("scoreboard")}`;
         connectToSocketIO();
+        loadCountriesFile();
         return () => {
            socket.close();
         };
@@ -164,7 +193,7 @@ export default function ScoreboardPage(props) {
 
     if (!!loadingStatus.connectionError) {
         body = connectionError;
-    } else if (!tshState || !characters || !playerDb) {
+    } else if (!tshState || !characters || !playerDb || !countriesData.isLoaded) {
         body = loading;
     } else {
         body = (
@@ -197,7 +226,9 @@ export default function ScoreboardPage(props) {
             <TSHStateContext.Provider value={tshState}>
                 <TSHCharacterContext.Provider value={characters}>
                     <TSHPlayerDBContext.Provider value={playerDb}>
-                        {body}
+                        <TSHCountriesContext.Provider value={countriesData.countries}>
+                            {body}
+                        </TSHCountriesContext.Provider>
                     </TSHPlayerDBContext.Provider>
                 </TSHCharacterContext.Provider>
             </TSHStateContext.Provider>
