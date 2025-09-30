@@ -141,8 +141,17 @@ class WebServerActions(QThread):
 
     def post_score(self, data):
         score = orjson.loads(data)
+        scoreboard_number = 1
+
+        if "scoreboard" in score:
+            try:
+                scoreboard_number = int(score["scoreboard"])
+            except ValueError:
+                logger.warning(f"Couldn't parse scoreboard [${score['scoreboard']}] from /post_data as int, falling back to scoreboard 1")
+                scoreboard_number = 1
+
         score.update({"reset_score": True})
-        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit(score)
+        self.scoreboard.GetScoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
     def team_scoreup(self, scoreboard, team):
