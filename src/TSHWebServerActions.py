@@ -1,10 +1,12 @@
 import os
 import re
+from flask import abort
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import orjson
 
+from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -139,8 +141,17 @@ class WebServerActions(QThread):
 
     def post_score(self, data):
         score = orjson.loads(data)
+        scoreboard_number = 1
+
+        if "scoreboard" in score:
+            try:
+                scoreboard_number = int(score["scoreboard"])
+            except ValueError:
+                logger.warning(f"Couldn't parse scoreboard [${score['scoreboard']}] from /post_data as int, falling back to scoreboard 1")
+                scoreboard_number = 1
+
         score.update({"reset_score": True})
-        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit(score)
+        self.scoreboard.GetScoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
     def team_scoreup(self, scoreboard, team):
@@ -507,3 +518,6 @@ class WebServerActions(QThread):
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
             
             return "OK"
+
+    def get_states(self, countryCode: str):
+        return TSHCountryHelper.GetStates(countryCode)

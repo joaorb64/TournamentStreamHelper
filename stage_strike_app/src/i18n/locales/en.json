@@ -42,5 +42,5 @@
     "stream": "Stream",
     "station": "Station",
     "failed_to_connect": "Failed to connect to TournamentStreamHelper",
-    "unknown": "Unknown"
+    "expand_scoreboard": "Expand the current scoreboard."
 }
