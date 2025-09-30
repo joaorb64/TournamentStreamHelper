@@ -1,8 +1,7 @@
 import "../App.css";
-import {darkTheme} from "../themes";
 import i18n from "../i18n/config";
 import {
-    Paper, Stack
+    Paper, Stack, Tabs, Tab
 } from "@mui/material";
 import React from "react";
 import {Box} from "@mui/system";
@@ -39,6 +38,8 @@ export default function ScoreboardPage(props) {
         isLoaded: false,
     });
 
+    const [selectedScoreboard, setSelectedScoreboard] = React.useState(-1);
+
     let socket;
 
     function connectToSocketIO() {
@@ -60,6 +61,10 @@ export default function ScoreboardPage(props) {
             setMaxAppliedDeltaIdx(data['delta_index'])
             setReceivedDeltas(receivedDeltas.filter(d => d.deltaIdx <= data['delta_index']))
             setTshState(data['state']);
+
+            if (selectedScoreboard === -1) {
+                setSelectedScoreboard(scoreboardKeys(data['state'])?.[0] ?? 1)
+            }
         });
 
         socket.on("program_state_update", deltaMessage => {
@@ -196,17 +201,40 @@ export default function ScoreboardPage(props) {
     } else if (!tshState || !characters || !playerDb || !countriesData.isLoaded) {
         body = loading;
     } else {
+
         body = (
             // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
             <>
                 <Header/>
                 <Box
                     paddingX={2}
-                    paddingY={2}
+                    paddingTop={1}
+                    paddingBottom={2}
                 >
                     <Stack gap={4} marginBottom={24}>
-                        <CurrentSet/>
-                        <UpcomingSets onSelectedSetChanged={onSelectedSetChanged}/>
+                        <Box>
+                            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                                <Tabs
+                                    sx={{width: '100%'}}
+                                    variant={"scrollable"}
+                                    onChange={(event, newValue) => setSelectedScoreboard(newValue)}
+                                    value={selectedScoreboard}
+                                >
+                                    {
+                                        scoreboardKeys(tshState).map(sbName =>
+                                            <Tab key={sbName} value={sbName} label={`Scoreboard ${sbName}`} />)
+                                    }
+                                </Tabs>
+                            </Box>
+                            <div
+                                role={"tabpanel"}
+                                id={`scoreboards-tabpanel-${selectedScoreboard}`}
+                                aria-labelledby={`scoreboards-tabpanel-${selectedScoreboard}`}
+                            >
+                                <CurrentSet scoreboardNumber={selectedScoreboard} />
+                            </div>
+                        </Box>
+                        <UpcomingSets onSelectedSetChanged={onSelectedSetChanged} scoreboardNumber={selectedScoreboard}/>
                     </Stack>
                 </Box>
             </>
@@ -219,7 +247,6 @@ export default function ScoreboardPage(props) {
                 display: "flex",
                 flexDirection: "column",
                 height: "100vh",
-                gap: darkTheme.spacing(2),
             }}
             sx={{overflow: "auto !important"}}
         >
@@ -234,4 +261,15 @@ export default function ScoreboardPage(props) {
             </TSHStateContext.Provider>
         </Box>
     )
+}
+
+/** @returns {number[]} */
+const scoreboardKeys = (tshState) => {
+    if (tshState.score) {
+        return Object.keys(tshState.score)
+            .filter(k => k.match(/^\d+$/))
+            .map(k => Number.parseInt(k));
+    } else {
+        return [];
+    }
 }
