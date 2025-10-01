@@ -802,7 +802,8 @@ class Window(QMainWindow):
         moddedContentLayout.addWidget(self.moddedContentCheck)
 
         TSHGameAssetManager.instance.signals.onLoad.connect(lambda x=None: [
-            self.moddedContentWidget.setVisible(TSHGameAssetManager.instance.has_modded_content)
+            self.moddedContentWidget.setVisible(TSHGameAssetManager.instance.has_modded_content),
+            self.moddedContentCheck.setChecked(StateManager.Get("game").get("mods_active", False))
         ])
 
         self.moddedContentCheck.stateChanged.connect(lambda x=None: [
