@@ -796,7 +796,7 @@ class Window(QMainWindow):
         self.moddedContentWidget.setVisible(False)
         self.moddedContentCheck.setChecked(False)
         moddedContentCheckLabel = QLabel()
-        moddedContentCheckLabel.setText(label_margin + "Modded content")
+        moddedContentCheckLabel.setText(label_margin + QApplication.translate("app", "Modded content"))
         self.moddedContentWidget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         moddedContentLayout.addWidget(moddedContentCheckLabel)
         moddedContentLayout.addWidget(self.moddedContentCheck)
