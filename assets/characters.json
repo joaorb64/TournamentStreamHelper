@@ -117099,6 +117099,84 @@
         ],
         "characterId": null,
         "expand": []
+      },
+      {
+        "id": 2788,
+        "name": "Vi",
+        "isCommon": null,
+        "videogameId": 64423,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8703209,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2788/image-3e118b034e4c1990c2ef298f5bef361c.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8703210,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2788/image-a7bc6b1613e0832cbe003bef2f86d3f6.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2789,
+        "name": "Blitzcrank",
+        "isCommon": null,
+        "videogameId": 64423,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8703215,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2789/image-58d7b9f6450b92d0d4e7561a41433f01.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8703216,
+            "width": 100,
+            "height": 100,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2789/image-58d7b9f6450b92d0d4e7561a41433f01.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
       }
     ]
   },
@@ -119598,7 +119676,9 @@
     2784,
     2785,
     2786,
-    2787
+    2787,
+    2788,
+    2789
   ],
   "resultEntity": "character",
   "actionRecords": []
