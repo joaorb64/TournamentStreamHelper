@@ -2,6 +2,7 @@ import React from "react";
 import {Checkbox, FormControlLabel, FormGroup, Paper, Stack} from "@mui/material";
 import Player from "./Player";
 import {Box} from "@mui/system";
+import {BACKEND_PORT} from "../env";
 
 export default React.forwardRef(
     /**
@@ -49,13 +50,13 @@ export default React.forwardRef(
         return rval;
     }
 
-    const submitTeamData = () => {
+    const submitTeamData = (scoreboardNumber) => {
         const teamData = getTeamDataFromForm();
 
         return Promise.all(
             [
                 (
-                    fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
+                    fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
                         losers: state.inLosers,
                         team: teamId
                     }).toString())
@@ -68,8 +69,8 @@ export default React.forwardRef(
                     console.log("team update payload", body);
 
                     return fetch(
-                        `http://${window.location.hostname}:5000`
-                        + `/scoreboard1-update-team-${tshTeamId}-${teamKey}`,
+                        `http://${window.location.hostname}:${BACKEND_PORT}`
+                        + `/scoreboard${scoreboardNumber}-update-team-${tshTeamId}-${teamKey}`,
                         {
                             method: 'POST',
                             headers: {'content-type': 'application/json'},
@@ -82,14 +83,13 @@ export default React.forwardRef(
                 })
             ]
         );
-    }
+    };
 
     const playerWidgets = playersInTeam().map(([teamKey, player]) => {
         if (!(teamKey in playerRefs)) {
             playerRefs[teamKey] = React.createRef();
         }
 
-        console.log(`Rendering player widget: `, player)
         return (
             <Player
                 key={`${teamId}-p-${teamKey}`}

@@ -8,6 +8,7 @@ import orjson
 import requests
 
 from src.Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .SettingsManager import SettingsManager
 from src.TSHStageStrikeLogic import TSHStageStrikeLogic
 from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHDictHelper import deep_get
@@ -124,7 +125,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
-            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:5000'>http://{self.GetIP()}:5000</a>"))
+            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}'>http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
         self.labelValidation = self.findChild(QLabel, "labelValidation")

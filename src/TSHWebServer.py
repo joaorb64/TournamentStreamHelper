@@ -1,4 +1,5 @@
 import html
+import json
 import os
 import traceback
 
@@ -7,20 +8,34 @@ import flask_socketio
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from flask import Flask, send_from_directory, request, send_file
+from flask import Flask, send_from_directory, request, send_file, abort
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
 
+from .StateManager import StateManager
 from .TSHWebServerActions import WebServerActions
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
+from .SettingsManager import SettingsManager
 import traceback
 
 import logging
 log = logging.getLogger('socketio.server')
 log.setLevel(logging.ERROR)
+
+class SocketioJson:
+    def default(obj):
+        if isinstance(obj, type(type(1))):
+            return str(obj)
+        return obj
+
+    def dumps(*args, **kwargs):
+        return json.dumps(*args, **kwargs, default=SocketioJson.default)
+
+    def loads(*args, **kwargs):
+        return json.loads(*args, **kwargs)
 
 
 class WebServer(QThread):
@@ -32,6 +47,7 @@ class WebServer(QThread):
         # Uncomment to enable SocketIO logging (As logging is unuseful, we'll make this a dev flag)
         # logger=logger,
         async_mode='threading',
+        json=SocketioJson
     )
     app.config['CORS_HEADERS'] = 'Content-Type'
     actions = None
@@ -44,19 +60,39 @@ class WebServer(QThread):
             stageWidget=stageWidget,
             commentaryWidget=commentaryWidget
         )
+
+        StateManager.signals.state_updated.connect(WebServer.on_program_state_update)
+        StateManager.signals.state_big_change.connect(WebServer.ws_program_state)
+
         self.host_name = "0.0.0.0"
-        self.port = 5000
+        self.port = SettingsManager.Get("general.webserver_port", 5000)
 
     @app.route('/program-state')
     def program_state():
         return WebServer.actions.program_state()
 
+    @socketio.on('program-state-update')
+    def ws_program_state_update(message):
+        WebServer.ws_emit('program_state_update', {})
+
+    def on_program_state_update(changes):
+        if len(changes) > 0:
+            try:
+                WebServer.ws_emit('program_state_update', changes)
+            except TypeError:
+                logger.warning("Unserializable program state update")
+
+                # If we can't emit a diff, fall back to emitting the whole program
+                # state. Well-behaved listeners should discard their existing state
+                # and re-sync with us that way.
+                WebServer.ws_program_state()
+
     @socketio.on('connect')
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
-    @socketio.on('program-state')
-    def ws_program_state(message):
+    @socketio.on('program_state')
+    def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
     @socketio.on_error_default
@@ -262,6 +298,29 @@ class WebServer(QThread):
                 data.get("commentator"),
                 data
             ))
+        
+    # Set game
+    @app.post('/update-game')
+    def set_game():
+        data = request.get_json()
+        return WebServer.actions.set_game(data)
+    
+    @socketio.on('update_game')
+    def ws_set_game_data(message):
+        data = orjson.loads(message)
+        WebServer.ws_emit('update_game',
+            WebServer.actions.set_game(
+                data
+            ))
+
+    # Get games
+    @app.route('/games')
+    def get_games():
+        return WebServer.actions.get_games()
+
+    @socketio.on('games')
+    def ws_get_games(message):
+        WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
 
     # Get characters
     @app.route('/characters')
@@ -567,6 +626,21 @@ class WebServer(QThread):
     def ws_set_tournament(message):
         WebServer.ws_emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
+    @app.route('/states')
+    def get_states():
+        countryCode = request.args.get('countryCode', None)
+        if not countryCode:
+            abort(400, "countryCode not specified")
+
+        return WebServer.actions.get_states(countryCode)
+
+
+    @socketio.on('states')
+    def ws_get_states(message):
+        args = orjson.loads(message)
+        return WebServer.actions.get_states(args.get('countryCode', ''))
+
+
     @app.route('/')
     @app.route('/scoreboard')
     @app.route('/stage-strike-app')
@@ -583,7 +657,16 @@ class WebServer(QThread):
             mimetype = None
             if filename.endswith('.js'):
                 mimetype = "text/javascript"
-            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
+            if filename.lower().endswith('.png'):
+                mimetype = "image/apng"
+
+            return send_from_directory(
+                os.path.abspath('.'),
+                filename,
+                as_attachment=filename.endswith('.gz'),
+                mimetype=mimetype,
+                max_age=86400
+            )
 
         except Exception as e:
             logger.error(f"File not found: {e}")

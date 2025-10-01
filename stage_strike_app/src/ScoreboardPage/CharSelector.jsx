@@ -3,6 +3,7 @@ import {TSHCharacterContext} from "./Contexts";
 import TextField from "./TextField";
 import {useContext} from "react";
 import i18n from "i18next";
+import {BACKEND_PORT} from "../env";
 
 /**
  * @typedef {{
@@ -43,16 +44,17 @@ export function CharSelector({
             sx={{width: '50%'}}
             onChange={onCharNameChanged}
             getOptionLabel={(char) => char?.display_name ?? char}
-            renderOption={(props, option, _) => {
+            renderOption={(_allProps, option, _) => {
+                const {key, ..._props} = _allProps;
                 let skimage = option?.skins?.[0]?.assets?.['base_files/icon']?.['asset']
                 if (!!skimage) {
                     skimage = skimage.replace("./", "");
                 }
 
-                return <li {...props}>
+                return <li key={key} {..._props}>
                     {skimage
-                        ? <img height="32" width="32" alt={`Image for skin ${charSkin}`}
-                               src={`http://${window.location.hostname}:5000/${skimage}`}/>
+                        ? <img height="32" alt={`Skin ${charSkin}`}
+                               src={`http://${window.location.hostname}:${BACKEND_PORT}/${skimage}`}/>
                         : <div style={{height: '32px', width: '32px'}}/>
                     }
                     <span style={{marginLeft: '16px'}}>
@@ -150,6 +152,6 @@ function getSkinAssetUrl(skin) {
         return "about:_blank";
     }
 
-    return `http://${window.location.hostname}:5000/${asset.asset.slice(2)}`;
+    return `http://${window.location.hostname}:${BACKEND_PORT}/${asset.asset.slice(2)}`;
 }
 

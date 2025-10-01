@@ -41,6 +41,6 @@
     "match": "Match",
     "stream": "Stream",
     "station": "Station",
-    "failed_to_connect": "Failed to connect to Tournament Stream Helper",
-    "unknown": "Unknown"
+    "failed_to_connect": "Failed to connect to TournamentStreamHelper",
+    "expand_scoreboard": "Expand the current scoreboard."
 }

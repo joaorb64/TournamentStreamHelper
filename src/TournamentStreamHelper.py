@@ -851,9 +851,6 @@ class Window(QMainWindow):
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
         StateManager.Unset("completed_sets")
-        StateManager.signals.state_updated.connect(
-            self.webserver.ws_program_state
-        )
 
         DownloadLayoutsOnBoot()
 
@@ -938,23 +935,24 @@ class Window(QMainWindow):
 
     def ReloadGames(self):
         logger.info("Reload games")
-        self.gameSelect.setModel(QStandardItemModel())
-        self.gameSelect.addItem("", 0)
-        for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
-            if game[1].get("name"):
-                self.gameSelect.addItem(game[1].get(
-                    "logo", QIcon()), game[1].get("name"), i+1)
-            else:
-                self.gameSelect.addItem(
-                    game[1].get("logo", QIcon()), game[0], i+1)
-        self.gameSelect.setIconSize(QSize(64, 64))
-        self.gameSelect.setFixedHeight(32)
-        view = QListView()
-        view.setIconSize(QSize(64, 64))
-        view.setStyleSheet("QListView::item { height: 32px; }")
-        self.gameSelect.setView(view)
-        self.gameSelect.model().sort(0)
-        self.SetGame()
+        with StateManager.SaveBlock():
+            self.gameSelect.setModel(QStandardItemModel())
+            self.gameSelect.addItem("", 0)
+            for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
+                if game[1].get("name"):
+                    self.gameSelect.addItem(game[1].get(
+                        "logo", QIcon()), game[1].get("name"), i+1)
+                else:
+                    self.gameSelect.addItem(
+                        game[1].get("logo", QIcon()), game[0], i+1)
+            self.gameSelect.setIconSize(QSize(64, 64))
+            self.gameSelect.setFixedHeight(32)
+            view = QListView()
+            view.setIconSize(QSize(64, 64))
+            view.setStyleSheet("QListView::item { height: 32px; }")
+            self.gameSelect.setView(view)
+            self.gameSelect.model().sort(0)
+            self.SetGame()
 
     def DetectGameFromId(self, id):
         def detect_smashgg_id_match(games, game, id):
@@ -1018,7 +1016,7 @@ class Window(QMainWindow):
                         QLabel(QApplication.translate("app", "New version available:")+" "+myVersion+" → "+currVersion))
                     buttonReply.layout().addWidget(QLabel(release["body"]))
                     buttonReply.layout().addWidget(QLabel(
-                        QApplication.translate("app", "Update to latest version?")+"\n\n"+QApplication.translate("app", "NOTE: This will open a new tab in your browser and close Tournament Stream Helper.")))
+                        QApplication.translate("app", "Update to latest version?")+"\n\n"+QApplication.translate("app", "NOTE: This will open a new tab in your browser and close TournamentStreamHelper.")))
 
                     hbox = QHBoxLayout()
                     vbox.addLayout(hbox)

@@ -7,7 +7,6 @@ import {
     CardHeader,
     Collapse,
     IconButton,
-    MenuItem,
     Stack
 } from "@mui/material";
 import TextField from './TextField';
@@ -15,6 +14,8 @@ import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
 import {CharSelector} from "./CharSelector";
+import {CountrySelector} from "../CountrySelector";
+import {CountryStateSelector} from "../CountryStateSelector";
 
 /**
  * @typedef {{
@@ -114,6 +115,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
         expanded: true
     });
 
+    // console.log(`Rendering player widget: `, player)
+
     const playerId = `${teamId}-p-${teamKey}`;
     const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
     const gameCodename = tshState?.game?.codename;
@@ -144,16 +147,25 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                 ...stateUpdates,
             });
         }
-    }, [player])
+    }, [player]) // eslint-disable-line react-hooks/exhaustive-deps
+    // We don't want our dependencies to be exhaustive above because we want to specifically only
 
     const /** @type {TSHCharacterDb} */ characters = React.useContext(TSHCharacterContext);
     const tshPlayerDbId = player?.id?.at(0) || player?.id?.at(1) || -1;
 
     const changeHandlerFor = (fieldName) => {
-        return (/** React.ChangeEvent<HTMLInputElement> */ e) => {
+        return (/** React.ChangeEvent<HTMLInputElement> | string */ e) => {
+            const newVal = (
+                typeof e === 'string' ? e
+                    : e === null || e === undefined ? ''
+                    : e?.target?.value
+            );
+
+            console.log(`React-State: Setting (${playerId}).${fieldName} to ${newVal}`);
+
             const newState = {
                 ...state,
-                [fieldName]: e.target.value,
+                [fieldName]: newVal
             };
 
             setState(newState);
@@ -284,7 +296,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
 
     React.useImperativeHandle(ref, () => ({
         getModifiedPlayerData: getModifiedPlayerData
-    }), [state, getModifiedPlayerData]);
+    }), [state, getModifiedPlayerData]); // eslint-disable-line react-hooks/exhaustive-deps
+    // ignoring changes in state cause getModifiedPlayerData to return bad values for some reason.
 
     return (
         <Card raised={true}>
@@ -341,14 +354,16 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                                    onChange={changeHandlerFor('realName')}
                         />
 
-                        <Stack {...rowProps}>
+                        <Stack {...rowProps} alignItems={"stretch"}>
                             <TextField label={i18n.t("twitter")}
+                                       sx={{width: '50%', maxWidth: '50%'}}
                                        key={idBase + "twitter"}
                                        id={idBase + "twitter"}
                                        value={state.twitter ?? ''}
                                        onChange={changeHandlerFor('twitter')}
                             />
                             <TextField label={i18n.t("pronouns")}
+                                       sx={{width: '50%', maxWidth: '50%'}}
                                        key={idBase + "pronoun"}
                                        id={idBase + "pronoun"}
                                        value={state.pronoun ?? ''}
@@ -357,17 +372,20 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                         </Stack>
 
                         <Stack {...rowProps}>
-                            <TextField label={i18n.t("country")}
-                                       key={idBase + "country"}
-                                       id={idBase + "country"}
-                                       value={state.countryCode ?? ''}
-                                       onChange={changeHandlerFor('countryCode')}
+
+                            <CountrySelector
+                                sx={{width: '50%', maxWidth: '50%'}}
+                                label={i18n.t("country")}
+                                value={state.countryCode ?? ''}
+                                onChange={changeHandlerFor('countryCode')}
                             />
-                            <TextField label={i18n.t("state")}
-                                       key={idBase + "state"}
-                                       id={idBase + "state"}
-                                       value={state.stateCode ?? ''}
-                                       onChange={changeHandlerFor('stateCode')}
+
+                            <CountryStateSelector
+                                countryCode={state.countryCode}
+                                sx={{width: '50%', maxWidth: '50%'}}
+                                label={i18n.t("state")}
+                                value={state.stateCode ?? ''}
+                                onChange={changeHandlerFor('stateCode')}
                             />
                         </Stack>
 

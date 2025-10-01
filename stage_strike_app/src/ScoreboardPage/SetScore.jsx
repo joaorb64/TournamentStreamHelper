@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from "./TextField";
 import {Stack} from "@mui/material";
 import i18n from "i18next";
+import {BACKEND_PORT} from "../env";
 
 /**
  * @typedef {object} SetScoreState
@@ -37,8 +38,6 @@ export default class SetScore extends React.Component {
                 : null
         );
 
-        const leftTeam = props.leftTeam;
-        const rightTeam = props.rightTeam;
         return {
             scoreLeft: props.leftTeam.score,
             scoreRight: props.rightTeam.score,
@@ -67,13 +66,14 @@ export default class SetScore extends React.Component {
             : null;
     }
 
-    submitScore = () => {
+    submitScore = (scoreboardNumber) => {
         return (
-            fetch(`http://${window.location.hostname}:5000/score`,
+            fetch(`http://${window.location.hostname}:${BACKEND_PORT}/score`,
                 {
                     method: 'POST',
                     headers: {'content-type': 'application/json'},
                     body: JSON.stringify({
+                        scoreboard: scoreboardNumber,
                         team1score: Number.parseInt(this.state.scoreLeft),
                         team2score: Number.parseInt(this.state.scoreRight)
                     })
@@ -83,9 +83,9 @@ export default class SetScore extends React.Component {
         );
     }
 
-    submitSetInfo = () => {
+    submitSetInfo = (scoreboardNumber) => {
         return (
-            fetch(`http://${window.location.hostname}:5000/scoreboard1-set?` + new URLSearchParams({
+            fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
                 "best-of": this.state.bestOf,
                 "phase": this.state.phase,
                 "match": this.state.match,

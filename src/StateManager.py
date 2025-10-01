@@ -1,9 +1,12 @@
+import contextlib
 import os
+
 import orjson
 import traceback
 
+from deepdiff.helper import DELTA_VIEW
 from qtpy.QtCore import QObject, Signal
-from deepdiff import DeepDiff, extract
+from deepdiff import DeepDiff, Delta, extract
 from functools import partial
 import shutil
 import threading
@@ -15,7 +18,8 @@ from .Helpers.TSHDictHelper import deep_get, deep_set, deep_unset, deep_clone
 from .SettingsManager import SettingsManager
 
 class StateManagerSignals(QObject):
-    state_updated = Signal()
+    state_big_change = Signal()
+    state_updated = Signal(dict)
 
 class StateManager:
     lastSavedState = {}
@@ -23,10 +27,19 @@ class StateManager:
     saveBlocked = 0
     signals = StateManagerSignals()
     changedKeys = []
+    deltaIndex = 0
 
     lock = threading.RLock()
     threads = []
     loop = None
+
+    @contextlib.contextmanager
+    def SaveBlock():
+        StateManager.BlockSaving()
+        try:
+            yield
+        finally:
+            StateManager.ReleaseSaving()
 
     def BlockSaving():
         StateManager.saveBlocked += 1
@@ -64,13 +77,28 @@ class StateManager:
                 diff = DeepDiff(
                     StateManager.lastSavedState,
                     StateManager.state,
-                    include_paths=StateManager.changedKeys
+                    exclude_types=[type(None)],
+                    include_paths=StateManager.changedKeys,
+                    verbose_level=2, # Necessary to see values of added items.
                 )
+                delta = Delta(diff).to_flat_dicts()
+                # logger.debug(f"State diff length: {diff_count}")
+                if len(delta) > 100:
+                    StateManager.deltaIndex += 1
+                    StateManager.signals.state_big_change.emit()
+                elif len(delta) > 0:
+                    try:
+                        StateManager.deltaIndex += 1
+                        StateManager.signals.state_updated.emit({
+                            'delta_index': StateManager.deltaIndex,
+                            'delta': Delta(diff).to_flat_dicts()
+                        })
+                    except TypeError:
+                        logger.warning(f"Couldn't serialize diff. Changed Keys: {StateManager.changedKeys}")
 
                 StateManager.changedKeys = []
 
                 if len(diff) > 0:
-                    StateManager.signals.state_updated.emit()
                     exportThread = threading.Thread(
                         target=partial(ExportAll, ref_diff=diff))
                     StateManager.threads.append(exportThread)
@@ -83,15 +111,20 @@ class StateManager:
         try:
             with open("./out/program_state.json", 'rb') as file:
                 StateManager.state = orjson.loads(file.read())
+                StateManager.signals.state_big_change.emit()
         except FileNotFoundError:
             pass
         except Exception as e:
             logger.error(traceback.format_exc())
             StateManager.state = {}
+            StateManager.signals.state_big_change.emit()
             StateManager.SaveState()
 
     def Set(key: str, value):
-        # logger.debug(f"StateManager Setting {key} to {value}")
+        # import inspect
+        # func = inspect.currentframe().f_back.f_code
+        # fname = os.path.split(func.co_filename)[1]
+        # logger.debug(f"{func.co_name}({fname}:{func.co_firstlineno}) Setting {key} to {value}")
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
 
@@ -108,6 +141,11 @@ class StateManager:
                 # StateManager.ExportText(oldState)
 
     def Unset(key: str):
+        # import inspect
+        # func = inspect.currentframe().f_back.f_code
+        # fname = os.path.split(func.co_filename)[1]
+        # logger.debug(f"{func.co_name}({fname}:{func.co_firstlineno}) Deleting {key}")
+
         with StateManager.lock:
             # StateManager.lastSavedState = deep_clone(StateManager.state)
             deep_unset(StateManager.state, key)
