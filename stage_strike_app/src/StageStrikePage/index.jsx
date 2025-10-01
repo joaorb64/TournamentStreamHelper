@@ -1,7 +1,6 @@
-import "./App.css";
 import { Component } from "react";
 import ReactDOMServer from "react-dom/server";
-import "./NoSleep";
+import "../NoSleep";
 import {
   Button,
   Card,
@@ -21,6 +20,7 @@ import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "../themes";
 import {BACKEND_PORT} from "../env";
+import {NoRulesetError} from "./NoRulesetError";
 
 class StageStrikePage extends Component {
   state = {
@@ -253,6 +253,21 @@ class StageStrikePage extends Component {
         }
       })
       .catch(console.log);
+  }
+
+  ReportRpsWin(/** number */ winner) {
+    fetch(
+      "http://" +
+      window.location.hostname +
+      `:${BACKEND_PORT}/stage_strike_rps_win`,
+      {
+        method: "POST",
+        contentType: "application/json",
+        body: JSON.stringify({
+          winner: winner
+        }),
+      }
+    )
   }
 
   render() {
@@ -759,18 +774,7 @@ class StageStrikePage extends Component {
                               fullWidth
                               color="p1color"
                               variant="contained"
-                              onClick={() =>
-                                  fetch(
-                                      "http://" +
-                                      window.location.hostname +
-                                      `:${BACKEND_PORT}/stage_strike_rps_win`,
-                                      {
-                                        method: "POST",
-                                        contentType: "application/json",
-                                        body: JSON.stringify({ winner: 0 }),
-                                      }
-                                  )
-                              }
+                              onClick={() => this.ReportRpsWin(0)}
                           >
                             {i18n.t("player_won", {
                               player: this.state.playerNames[0],
@@ -786,18 +790,7 @@ class StageStrikePage extends Component {
                               fullWidth
                               color="p2color"
                               variant="contained"
-                              onClick={() =>
-                                  fetch(
-                                      "http://" +
-                                      window.location.hostname +
-                                      `:${BACKEND_PORT}/stage_strike_rps_win`,
-                                      {
-                                        method: "POST",
-                                        contentType: "application/json",
-                                        body: JSON.stringify({ winner: 1 }),
-                                      }
-                                  )
-                              }
+                              onClick={() => this.ReportRpsWin(1)}
                           >
                             {i18n.t("player_won", {
                               player: this.state.playerNames[1],
@@ -817,20 +810,7 @@ class StageStrikePage extends Component {
                           fullWidth
                           color="success"
                           variant="outlined"
-                          onClick={() =>
-                              fetch(
-                                  "http://" +
-                                  window.location.hostname +
-                                  `:${BACKEND_PORT}/stage_strike_rps_win`,
-                                  {
-                                    method: "POST",
-                                    contentType: "application/json",
-                                    body: JSON.stringify({
-                                      winner: Math.random() > 0.5 ? 1 : 0,
-                                    }),
-                                  }
-                              )
-                          }
+                          onClick={() => this.ReportRpsWin(Math.random() > 0.5 ? 1 : 0)}
                       >
                         {i18n.t("randomize")}
                       </Button>
@@ -840,31 +820,11 @@ class StageStrikePage extends Component {
               </>
           ) : null}
 
-          {this.state.ruleset != null &&
-          this.state.ruleset.neutralStages.length === 0 ? (
-              <>
-                <Dialog
-                    open={this.state.currPlayer === -1}
-                    onClose={() => {}}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                  <DialogTitle id="responsive-dialog-title">
-                    {i18n.t("title")}
-                  </DialogTitle>
-                  <DialogContent>
-                    <Box
-                        component="div"
-                        gap={2}
-                        display="flex"
-                        flexDirection={"column"}
-                    >
-                      <Typography>{i18n.t("no_ruleset_error")}</Typography>
-                    </Box>
-                  </DialogContent>
-                </Dialog>
-              </>
-          ) : null}
+          {
+            this.state.ruleset != null && this.state.ruleset.neutralStages.length === 0
+                ? <NoRulesetError currPlayer={this.state.currPlayer} />
+                : null
+          }
         </>
     );
   }
