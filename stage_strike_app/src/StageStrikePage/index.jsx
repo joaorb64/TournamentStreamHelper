@@ -16,11 +16,11 @@ import {
   Fab,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import i18n from "./i18n/config";
+import i18n from "../i18n/config";
 import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
 import i18next from "i18next";
-import {darkTheme} from "./themes";
-import {BACKEND_PORT} from "./env";
+import {darkTheme} from "../themes";
+import {BACKEND_PORT} from "../env";
 
 class StageStrikePage extends Component {
   state = {
