@@ -509,6 +509,8 @@ class TSHGameAssetManager(QObject):
                             "logo": self.parent().selectedGame.get("path", "")+"/base_files/logo.png",
                             "defaults": self.parent().selectedGame.get("defaults"),
                             "mods_active": self.mods_active,
+                            "has_stages": bool(self.parent().selectedGame.get("stage_to_codename")),
+                            "has_variants": bool(self.parent().selectedGame.get("variant_to_codename"))
                         })
 
                         self.parent().has_modded_content = False
@@ -516,6 +518,9 @@ class TSHGameAssetManager(QObject):
                         self.parent().UpdateSkinModel()
                         self.parent().UpdateVariantModel()
                         self.parent().UpdateStageModel(self.mods_active)
+
+                        StateManager.Set(f"game.has_modded_content", self.parent().has_modded_content)
+
                         self.parent().signals.onLoad.emit()
                 except:
                     logger.error(traceback.format_exc())
@@ -790,7 +795,9 @@ class TSHGameAssetManager(QObject):
                         "codename": self.parent.selectedGame.get("codename"),
                         "logo": self.parent.selectedGame.get("path", "")+"/base_files/logo.png",
                         "defaults": self.parent.selectedGame.get("defaults"),
-                        "mods_active": mods_active
+                        "mods_active": mods_active,
+                        "has_stages": bool(self.parent.selectedGame.get("stage_to_codename")),
+                        "has_variants": bool(self.parent.selectedGame.get("variant_to_codename"))
                     })
 
                     self.parent.has_modded_content = False
@@ -798,6 +805,9 @@ class TSHGameAssetManager(QObject):
                     self.parent.UpdateSkinModel()
                     self.parent.UpdateVariantModel()
                     self.parent.UpdateStageModel(mods_active)
+
+                    StateManager.Set(f"game.has_modded_content", self.parent.has_modded_content)
+                    
                     self.parent.signals.onLoad.emit()
                 except:
                     logger.error(traceback.format_exc())

@@ -260,7 +260,7 @@ class WebServerActions(QThread):
             if codename == set_codename:
                 # TSHGameAssetManager.instance.selectedGame = TSHGameAssetManager.instance.games[codename]
                 # self.parent().SetGame()
-                TSHGameAssetManager.instance.LoadGameAssets(i+1, async_mode=False)
+                TSHGameAssetManager.instance.LoadGameAssets(i+1, async_mode=False, mods_active=data.get("mods_active", False), mods_reload_mode=True)
                 found_game = True
                 break
 
@@ -282,6 +282,9 @@ class WebServerActions(QThread):
             }
 
         return data
+    
+    def get_current_game(self):
+        return StateManager.Get("game")
     
     def get_characters(self):
         data = {}
