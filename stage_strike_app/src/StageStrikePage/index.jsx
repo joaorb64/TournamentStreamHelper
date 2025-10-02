@@ -1,5 +1,4 @@
 import { Component } from "react";
-import ReactDOMServer from "react-dom/server";
 import "../NoSleep";
 import {
   Container,
@@ -9,7 +8,7 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import i18n from "../i18n/config";
-import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
+import { Check } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "../themes";
 import {BACKEND_PORT, BASE_URL} from "../env";
@@ -23,7 +22,7 @@ import {RpsDialog} from "./RpsDialog";
 import {FooterControls} from "./FooterControls";
 import {PlayerWonButton} from "./PlayerWonButton";
 import {io, Socket} from "socket.io-client";
-import {produce as immer_produce} from "immer";
+import {StagePromptText} from "./StagePromptText";
 
 class StageStrikePage extends Component {
   state = {
@@ -143,12 +142,20 @@ class StageStrikePage extends Component {
     }
   };
 
-  componentDidMount() {
-    if (this.socket != null) {
-      this.socket.close();
-      this.socket = null;
-    }
+  /** @param {string} stageCodename */
+  PlayerWhoStrikedStage = (stageCodename) => {
+    return this.state.strikedBy[0].findIndex(
+      (s) => s === stageCodename
+    ) !== -1
+      ? this.state.playerNames[0]
+      : this.state.playerNames[1]
+  }
 
+  PlayerWinCount = (playerNum) => {
+    return this.state?.stagesWon?.[0]?.length ?? 0;
+  }
+
+  componentDidMount() {
     this.socket = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
       transports: ['websocket', 'webtransport'],
       timeout: 5000,
@@ -177,10 +184,7 @@ class StageStrikePage extends Component {
   }
 
   componentWillUnmount() {
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
-    }
+    this.socket.close();
   }
 
   ProcessRulesetData = (data) => {
@@ -214,243 +218,164 @@ class StageStrikePage extends Component {
   }
 
   render() {
-    return (
-        <>
-          {this.state.ruleset && this.state.ruleset.neutralStages.length > 0
-            ? <>
-              <Container>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100vh",
-                    gap: darkTheme.spacing(2),
-                  }}
-                  paddingY={2}
-                >
-                  <Grid
-                    container
-                    xs
-                    textAlign={"center"}
-                    spacing={{ xs: 0, sm: 1 }}
-                    justifyItems="center"
-                    style={{ flexGrow: 0 }}
-                  >
-                    <Grid item xs={12}>
-                      <Typography
-                        variant={"h4"}
-                        component="div"
-                      >
-                        {this.state.phase ? this.state.phase + " / " : ""}
-                        {this.state.match ? this.state.match + " / " : ""}
-                        {i18n.t("game", { value: this.state.currGame + 1 })}
-                        {this.state.bestOf &&
-                           ` (${i18n.t("best_of", { value: this.state.bestOf })})`
-                        }
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography
-                        variant={"h4"}
-                        component="div"
-                      >
-                        {this.state.stagesWon && this.state.stagesWon.length > 0
-                          ? this.state.stagesWon[0].length
-                          : 0}{" "}
-                        -{" "}
-                        {this.state.stagesWon && this.state.stagesWon.length > 0
-                          ? this.state.stagesWon[1].length
-                          : 0}
-                      </Typography>
-                    </Grid>
-                    {this.state.currPlayer !== -1 ? (
-                      <Grid item xs={12}>
-                        <Typography
-                          sx={{ typography: { xs: "h6", sm: "h4" } }}
-                          component="div"
-                        >
-                          {this.state.selectedStage ? (
-                            <>{i18n.t("report_results")}</>
-                          ) : (
-                            <>
-                              {this.state.gentlemans ? (
-                                <>
-                                  {i18n.t("gentlemans_prompt", {
-                                    gentlemans_pick: i18n.t("gentlemans_pick"),
-                                  })}
-                                </>
-                              ) : this.state.currGame > 0 &&
-                              this.state.currStep > 0 ? (
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: i18n.t("select_a_stage_prompt", {
-                                      player: ReactDOMServer.renderToStaticMarkup(
-                                        <span
-                                          style={{
-                                            color:
-                                            darkTheme.palette[
-                                              `p${
-                                                this.state.currPlayer + 1
-                                              }color`
-                                              ].main,
-                                          }}
-                                        >
-                                        {
-                                          this.state.playerNames[
-                                            this.state.currPlayer
-                                            ]
-                                        }
-                                      </span>
-                                      ),
-                                      val: this.GetStrikeNumber(),
-                                      interpolation: { escapeValue: false },
-                                    }),
-                                  }}
-                                ></div>
-                              ) : (
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: i18n.t("ban_prompt", {
-                                      player: ReactDOMServer.renderToStaticMarkup(
-                                        <span
-                                          style={{
-                                            color:
-                                            darkTheme.palette[
-                                              `p${
-                                                this.state.currPlayer + 1
-                                              }color`
-                                              ].main,
-                                          }}
-                                        >
-                                        {
-                                          this.state.playerNames[
-                                            this.state.currPlayer
-                                            ]
-                                        }
-                                      </span>
-                                      ),
-                                      val: this.GetStrikeNumber(),
-                                      interpolation: { escapeValue: false },
-                                    }),
-                                  }}
-                                ></div>
-                              )}
-                            </>
-                          )}
-                        </Typography>
-                      </Grid>
-                    ) : null}
-                  </Grid>
-                  <Grid
-                    container
-                    xs
-                    textAlign={"center"}
-                    spacing={1}
-                    justifyItems="center"
-                    style={{ overflow: "auto", height: "100%" }}
-                  >
-                    <Grid
-                      item
-                      container
-                      xs={12}
-                      spacing={2}
-                      justifyContent="center"
-                      alignContent={"center"}
-                    >
-                      {(this.state.currGame > 0
-                          ? this.state.ruleset.neutralStages.concat(
-                            this.state.ruleset.counterpickStages
-                          )
-                          : this.state.ruleset.neutralStages
-                      ).map((stage) =>
-                        <StageCard
-                          key={stage.en_name}
-                          stageName={StageName(stage)}
-                          stageImage={`${BASE_URL}/${stage.path}`}
-                          isSelected={this.state.selectedStage === stage.codename}
-                          onClick={() => StageClicked(stage)}
-                          isStriked={this.IsStageStriked(stage.codename)}
-                          isBanned={this.IsStageBanned(stage.codename)}
-                          isGentlemanEnabled={this.state.gentlemans}
-                          currentPlayerName={this.state.playerNames[this.state.currPlayer]}
-                          strikedBy={
-                            this.state.strikedBy[0].findIndex(
-                              (s) => s === stage.codename
-                            ) !== -1
-                              ? this.state.playerNames[0]
-                              : this.state.playerNames[1]
-                          }
-                        />
-                      )}
+    if (!this.state.ruleset || this.state.ruleset.neutralStages.length === 0) {
+      return <NoRulesetError currPlayer={this.state.currPlayer} />
+    }
 
-                    </Grid>
-                  </Grid>
-                  <Grid
-                    container
-                    xs
-                    textAlign={"center"}
-                    spacing={1}
-                    justifyItems="center"
-                    style={{ flexGrow: 0, zIndex: 9999 }}
-                  >
-                    { /* Has Confirm and p1/p2 win buttons */ }
-                    <Box style={{ position: "relative", width: "100%" }}>
-                      {this.CanConfirm() && (
-                        <Fab
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          color="success"
-                          variant="extended"
-                          onClick={() => ConfirmClicked()}
-                          style={{
-                            top: -16,
-                            left: "50%",
-                            transform: "translateX(-50%) translateY(-100%)",
-                            position: "absolute",
-                          }}
-                          sx={{
-                            minWidth: {
-                              xs: "100%",
-                              md: "33%",
-                            },
-                          }}
-                        >
-                          <Check sx={{ mr: 1 }} />
-                          {i18n.t("confirm")}
-                        </Fab>
-                      )}
+    const currentPlayerColor = darkTheme.palette[`p${this.state.currPlayer + 1}color`];
+    const currentPlayerName = this.state.playerNames[this.state.currPlayer]
+    const ruleset = this.state.ruleset;
+    const activeStages = this.state.currGame > 0
+      ? ruleset.neutralStages.concat(ruleset.counterpickStages)
+      : ruleset.neutralStages;
 
-                      { this.state.selectedStage &&
-                        [0, 1].map(playerNum =>
-                          <PlayerWonButton
-                            key={this.state.playerNames[playerNum]}
-                            playerName={this.state.playerNames[playerNum]}
-                            color={`p${playerNum+1}color`}
-                            leftSide={playerNum === 0}
-                          />
-                        )
-                      }
-                    </Box>
-                    <FooterControls
-                      canUndo={this.state.canUndo}
-                      canRedo={this.state.canRedo}
-                      isGentlemans={this.state.gentlemans}
-                    />
-                  </Grid>
-                </Box>
-              </Container>
-
-              { this.state.currPlayer === -1 &&
-                <RpsDialog
-                  playerNames={this.state.playerNames}
+    return <>
+      <Container>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            gap: darkTheme.spacing(2),
+          }}
+          paddingY={2}
+        >
+          <Grid
+            container
+            xs
+            textAlign={"center"}
+            spacing={{ xs: 0, sm: 1 }}
+            justifyItems="center"
+            style={{ flexGrow: 0 }}
+          >
+            <Grid item xs={12}>
+              <Typography
+                variant={"h4"}
+                component="div"
+              >
+                {this.state.phase && `${this.state.phase} / `}
+                {this.state.match && `${this.state.match} / `}
+                {i18n.t("game", { value: this.state.currGame + 1 })}
+                {this.state.bestOf &&
+                  ` (${i18n.t("best_of", { value: this.state.bestOf })})`
+                }
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                variant={"h4"}
+                component="div"
+              >
+                {`${this.PlayerWinCount(0)} - ${this.PlayerWinCount(1)}`}
+              </Typography>
+            </Grid>
+            { this.state.currPlayer !== -1 &&
+              <StagePromptText
+                selectedStage={this.state.selectedStage}
+                isGentlemans={this.state.gentlemans}
+                currGame={this.state.currGame}
+                currStep={this.state.currStep}
+                strikeNumber={this.GetStrikeNumber()}
+                currentPlayerColor={currentPlayerColor}
+                currentPlayerName={currentPlayerName}
+              />
+            }
+          </Grid>
+          <Grid
+            container
+            xs
+            textAlign={"center"}
+            spacing={1}
+            justifyItems="center"
+            style={{ overflow: "auto", height: "100%" }}
+          >
+            <Grid
+              item
+              container
+              xs={12}
+              spacing={2}
+              justifyContent="center"
+              alignContent={"center"}
+            >
+              {activeStages.map((stage) =>
+                <StageCard
+                  key={stage.en_name}
+                  stageName={StageName(stage)}
+                  stageImage={`${BASE_URL}/${stage.path}`}
+                  isSelected={this.state.selectedStage === stage.codename}
+                  onClick={() => StageClicked(stage)}
+                  isStriked={this.IsStageStriked(stage.codename)}
+                  isBanned={this.IsStageBanned(stage.codename)}
+                  isGentlemanEnabled={this.state.gentlemans}
+                  currentPlayerName={this.state.playerNames[this.state.currPlayer]}
+                  strikedBy={this.PlayerWhoStrikedStage(stage.codename)}
                 />
+              )}
+
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            xs
+            textAlign={"center"}
+            spacing={1}
+            justifyItems="center"
+            style={{ flexGrow: 0, zIndex: 9999 }}
+          >
+            { /* Has Confirm and p1/p2 win buttons */ }
+            <Box style={{ position: "relative", width: "100%" }}>
+              {this.CanConfirm() && (
+                <Fab
+                  size={
+                    darkTheme.breakpoints.up("md") ? "large" : "small"
+                  }
+                  color="success"
+                  variant="extended"
+                  onClick={() => ConfirmClicked()}
+                  style={{
+                    top: -16,
+                    left: "50%",
+                    transform: "translateX(-50%) translateY(-100%)",
+                    position: "absolute",
+                  }}
+                  sx={{
+                    minWidth: {
+                      xs: "100%",
+                      md: "33%",
+                    },
+                  }}
+                >
+                  <Check sx={{ mr: 1 }} />
+                  {i18n.t("confirm")}
+                </Fab>
+              )}
+
+              { this.state.selectedStage &&
+                [0, 1].map(playerNum =>
+                  <PlayerWonButton
+                    key={this.state.playerNames[playerNum]}
+                    playerName={this.state.playerNames[playerNum]}
+                    color={`p${playerNum+1}color`}
+                    leftSide={playerNum === 0}
+                  />
+                )
               }
-            </>
-            : <NoRulesetError currPlayer={this.state.currPlayer} />
-          }
-        </>
-    );
+            </Box>
+            <FooterControls
+              canUndo={this.state.canUndo}
+              canRedo={this.state.canRedo}
+              isGentlemans={this.state.gentlemans}
+            />
+          </Grid>
+        </Box>
+      </Container>
+
+      { this.state.currPlayer === -1 &&
+        <RpsDialog
+          playerNames={this.state.playerNames}
+        />
+      }
+    </>
   }
 }
 
