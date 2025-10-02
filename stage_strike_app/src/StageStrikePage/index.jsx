@@ -146,6 +146,13 @@ class StageStrikePage extends Component {
     this.interval = window.setInterval(() => this.FetchRuleset(), 500);
   }
 
+  componentWillUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+  }
+
   FetchRuleset = () => {
     fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/ruleset`)
       .then((res) => res.json())
