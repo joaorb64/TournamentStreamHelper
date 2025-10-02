@@ -31,6 +31,8 @@ import {
   StageClicked
 } from "./postActions";
 import {RpsDialog} from "./RpsDialog";
+import {FooterControls} from "./FooterControls";
+import {PlayerWonButton} from "./PlayerWonButton";
 
 class StageStrikePage extends Component {
   state = {
@@ -157,7 +159,11 @@ class StageStrikePage extends Component {
   };
 
   componentDidMount() {
-    window.setInterval(() => this.FetchRuleset(), 100);
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
+    this.interval = window.setInterval(() => this.FetchRuleset(), 500);
   }
 
   FetchRuleset = () => {
@@ -225,11 +231,9 @@ class StageStrikePage extends Component {
                         {this.state.phase ? this.state.phase + " / " : ""}
                         {this.state.match ? this.state.match + " / " : ""}
                         {i18n.t("game", { value: this.state.currGame + 1 })}
-                        {this.state.bestOf
-                          ? " (" +
-                          i18n.t("best_of", { value: this.state.bestOf }) +
-                          ")"
-                          : ""}
+                        {this.state.bestOf &&
+                           ` (${i18n.t("best_of", { value: this.state.bestOf })})`
+                        }
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -376,6 +380,7 @@ class StageStrikePage extends Component {
                     justifyItems="center"
                     style={{ flexGrow: 0, zIndex: 9999 }}
                   >
+                    { /* Has Confirm and p1/p2 win buttons */ }
                     <Box style={{ position: "relative", width: "100%" }}>
                       {this.CanConfirm() && (
                         <Fab
@@ -402,156 +407,23 @@ class StageStrikePage extends Component {
                           {i18n.t("confirm")}
                         </Fab>
                       )}
-                      {this.state.selectedStage && (
-                        <Fab
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          color="p1color"
-                          variant="extended"
-                          onClick={() => MatchWinner(0)}
-                          style={{
-                            top: -16,
-                            left: 16,
-                            transform: "translateY(-100%)",
-                            position: "absolute",
-                          }}
-                          sx={{
-                            width: {
-                              xs: "45%",
-                              md: "33%",
-                            },
-                          }}
-                        >
-                          {i18n.t("player_won", {
-                            player: this.state.playerNames[0],
-                          })}
-                        </Fab>
-                      )}
 
-                      {this.state.selectedStage && (
-                        <Fab
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          color="p2color"
-                          variant="extended"
-                          onClick={() => MatchWinner(1)}
-                          style={{
-                            top: -16,
-                            right: 16,
-                            transform: "translateY(-100%)",
-                            position: "absolute",
-                          }}
-                          sx={{
-                            width: {
-                              xs: "45%",
-                              md: "33%",
-                            },
-                          }}
-                        >
-                          {i18n.t("player_won", {
-                            player: this.state.playerNames[1],
-                          })}
-                        </Fab>
-                      )}
+                      { this.state.selectedStage &&
+                        [0, 1].map(playerNum =>
+                          <PlayerWonButton
+                            key={this.state.playerNames[playerNum]}
+                            playerName={this.state.playerNames[playerNum]}
+                            color={`p${playerNum+1}color`}
+                            leftSide={playerNum === 0}
+                          />
+                        )
+                      }
                     </Box>
-                    <Grid
-                      container
-                      item
-                      xs={12}
-                      spacing={2}
-                      justifyContent="center"
-                    >
-                      <Grid item xs>
-                        <Button
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          disabled={!this.state.canUndo}
-                          variant="outlined"
-                          sx={{
-                            flexDirection: { xs: "column", lg: "unset" },
-                            fontSize: { xs: 10, lg: "unset" },
-                          }}
-                          onClick={() => {
-                            this.Undo();
-                          }}
-                          startIcon={<Undo />}
-                        >
-                          {i18n.t("undo")}
-                        </Button>
-                      </Grid>
-                      <Grid item xs>
-                        <Button
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          disabled={!this.state.canRedo}
-                          variant="outlined"
-                          sx={{
-                            flexDirection: { xs: "column", lg: "unset" },
-                            fontSize: { xs: 10, lg: "unset" },
-                          }}
-                          onClick={() => {
-                            this.Redo();
-                          }}
-                          startIcon={<Redo />}
-                        >
-                          {i18n.t("redo")}
-                        </Button>
-                      </Grid>
-                      <Grid item xs>
-                        <Button
-                          sx={{
-                            flexDirection: { xs: "column", lg: "unset" },
-                            fontSize: { xs: 10, lg: "unset" },
-                          }}
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          variant={
-                            this.state.gentlemans ? "contained" : "outlined"
-                          }
-                          startIcon={<Handshake />}
-                          onClick={() => {
-                            SetGentlemans(!this.state.gentlemans);
-                          }}
-                        >
-                          {i18n.t("gentlemans_pick")}
-                        </Button>
-                      </Grid>
-                      <Grid item xs>
-                        <Button
-                          size={
-                            darkTheme.breakpoints.up("md") ? "large" : "small"
-                          }
-                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                          fullWidth
-                          variant="outlined"
-                          sx={{
-                            flexDirection: { xs: "column", lg: "unset" },
-                            fontSize: { xs: 10, lg: "unset" },
-                          }}
-                          onClick={() => {
-                            RestartStageStrike(true);
-                          }}
-                          startIcon={<RestartAlt />}
-                        >
-                          {i18n.t("restart_all")}
-                        </Button>
-                      </Grid>
-                    </Grid>
+                    <FooterControls
+                      canUndo={this.state.canUndo}
+                      canRedo={this.state.canRedo}
+                      isGentlemans={this.state.gentlemans}
+                    />
                   </Grid>
                 </Box>
               </Container>
