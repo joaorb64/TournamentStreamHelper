@@ -19,8 +19,17 @@ import i18n from "../i18n/config";
 import { Check, Handshake, Redo, RestartAlt, Undo } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "../themes";
-import {BACKEND_PORT} from "../env";
+import {BACKEND_PORT, BASE_URL} from "../env";
 import {NoRulesetError} from "./NoRulesetError";
+import {StageCard} from "./StageCard";
+import {
+  ConfirmClicked,
+  MatchWinner,
+  ReportRpsWin,
+  RestartStageStrike,
+  SetGentlemans,
+  StageClicked
+} from "./postActions";
 
 class StageStrikePage extends Component {
   state = {
@@ -43,7 +52,7 @@ class StageStrikePage extends Component {
     canRedo: false,
   };
 
-  GetStage(stage) {
+  GetStage(/** string */ stage) {
     let found = this.state.ruleset.neutralStages.find(
       (s) => s.codename === stage
     );
@@ -55,7 +64,7 @@ class StageStrikePage extends Component {
     return null;
   }
 
-  IsStageStriked(stage, previously = false) {
+  IsStageStriked(/** string */ stage, previously = false) {
     for (
       let i = 0;
       i < Object.values(this.state.strikedStages).length;
@@ -89,9 +98,9 @@ class StageStrikePage extends Component {
     }
 
     return banList;
-  }
+  };
 
-  IsStageBanned(stage) {
+  IsStageBanned(/** string */ stage) {
     let banList = this.GetBannedStages();
 
     let found = banList.findIndex((e) => e === stage);
@@ -124,7 +133,7 @@ class StageStrikePage extends Component {
     return false;
   }
 
-  GetStrikeNumber() {
+  GetStrikeNumber = () => {
     if (this.state.currGame === 0) {
       return this.state.ruleset.strikeOrder[this.state.currStep];
     } else {
@@ -144,13 +153,13 @@ class StageStrikePage extends Component {
         return 0;
       }
     }
-  }
+  };
 
   componentDidMount() {
     window.setInterval(() => this.FetchRuleset(), 100);
   }
 
-  FetchRuleset() {
+  FetchRuleset = () => {
     fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/ruleset`)
       .then((res) => res.json())
       .then((data) => {
@@ -184,22 +193,6 @@ class StageStrikePage extends Component {
       })
       .catch(console.log);
   }
-
-  ReportRpsWin(/** number */ winner) {
-    fetch(
-      "http://" +
-      window.location.hostname +
-      `:${BACKEND_PORT}/stage_strike_rps_win`,
-      {
-        method: "POST",
-        contentType: "application/json",
-        body: JSON.stringify({
-          winner: winner
-        }),
-      }
-    )
-  }
-
   render() {
     return (
         <>
@@ -351,130 +344,27 @@ class StageStrikePage extends Component {
                                     this.state.ruleset.counterpickStages
                                 )
                                 : this.state.ruleset.neutralStages
-                        ).map((stage) => (
-                            <Grid key={stage.en_name} item xs={4} sm={3} md={2}>
-                              <Card
-                                  style={{
-                                    borderStyle: "solid",
-                                    borderWidth: 3,
-                                    borderRadius: 8,
-                                    borderColor:
-                                        this.state.selectedStage === stage.codename
-                                            ? "#4caf50ff"
-                                            : (this.IsStageStriked(stage.codename) ||
-                                                this.IsStageBanned(stage.codename))
-                                                ? "#f44336ff"
-                                                : "lightgray",
-                                    boxShadow:
-                                        this.state.selectedStage === stage.codename
-                                            ? "0 0 10px #4caf50ff"
-                                            : (this.IsStageStriked(stage.codename) ||
-                                                this.IsStageBanned(stage.codename))
-                                                ? "0 0 10px #f44336ff"
-                                                : "0 0 0px #ffffff00",
-                                    transitionProperty: "border-color box-shadow",
-                                    transitionDuration: "500ms",
-                                  }}
-                              >
-                                <CardActionArea
-                                    onClick={() => this.StageClicked(stage)}
-                                >
-                                  {this.IsStageStriked(stage.codename) ? (
-                                      <>
-                                        <div className="stamp stage-striked"></div>
-                                        <div className="banned_by">
-                                          <Typography
-                                              variant="button"
-                                              component="div"
-                                              fontWeight={"bold"}
-                                              noWrap
-                                              fontSize={{ xs: 16, md: "" }}
-                                          >
-                                            {this.state.strikedBy[0].findIndex(
-                                                (s) => s === stage.codename
-                                            ) !== -1
-                                                ? this.state.playerNames[0]
-                                                : this.state.playerNames[1]}
-                                          </Typography>
-                                        </div>
-                                      </>
-                                  ) : null}
-                                  {this.IsStageBanned(stage.codename) ? (
-                                      <div className="stamp stage-dsr"></div>
-                                  ) : null}
-                                  {this.state.selectedStage === stage.codename ? (
-                                      <>
-                                        {this.state.gentlemans ? (
-                                            <>
-                                              <div className="stamp stage-gentlemans"></div>
-                                              <div className="banned_by">
-                                                <Typography
-                                                    variant="button"
-                                                    component="div"
-                                                    fontWeight={"bold"}
-                                                    noWrap
-                                                    fontSize={{ xs: 16, md: "" }}
-                                                >
-                                                  {i18n.t("gentlemans")}
-                                                </Typography>
-                                              </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                              <div className="stamp stage-selected"></div>
-                                              <div className="banned_by">
-                                                <Typography
-                                                    variant="button"
-                                                    component="div"
-                                                    fontWeight={"bold"}
-                                                    noWrap
-                                                    fontSize={{ xs: 16, md: "" }}
-                                                >
-                                                  {
-                                                    this.state.playerNames[
-                                                        this.state.currPlayer
-                                                        ]
-                                                  }
-                                                </Typography>
-                                              </div>
-                                            </>
-                                        )}
-                                      </>
-                                  ) : null}
-                                  <CardMedia
-                                      component="img"
-                                      style={{ aspectRatio: "3 / 2" }}
-                                      image={`http://${window.location.hostname}:${BACKEND_PORT}/${stage.path}`}
-                                  />
-                                  <Box
-                                      sx={{
-                                        padding: { xs: "4px", sm: "6px", lg: "8px" },
-                                      }}
-                                  >
-                                    <Typography
-                                        variant="button"
-                                        component="div"
-                                        noWrap
-                                        fontSize={{ xs: 8, sm: 12, lg: "" }}
-                                    >
-                                        {(() => {
-                                            if (stage.locale) {
-                                                if (stage.locale.hasOwnProperty(i18next.language)) {
-                                                    return stage.locale[i18next.language.replace("-", "_")];
-                                                }
-                                                const shortLang = i18next.language.split("-")[0];
-                                                if (stage.locale.hasOwnProperty(shortLang)) {
-                                                    return stage.locale[shortLang];
-                                                }
-                                            }
-                                            return stage.en_name; // fallback
-                                        })()}
-                                    </Typography>
-                                  </Box>
-                                </CardActionArea>
-                              </Card>
-                            </Grid>
-                        ))}
+                        ).map((stage) =>
+                            <StageCard
+                                key={stage.en_name}
+                                stageName={StageName(stage)}
+                                stageImage={`${BASE_URL}/${stage.path}`}
+                                isSelected={this.state.selectedStage === stage.codename}
+                                onClick={() => StageClicked(stage.codename)}
+                                isStriked={this.IsStageStriked(stage.codename)}
+                                isBanned={this.IsStageBanned(stage.codename)}
+                                isGentlemanEnabled={this.state.gentlemans}
+                                currentPlayerName={this.state.playerNames[this.state.currPlayer]}
+                                strikedBy={
+                                  this.state.strikedBy[0].findIndex(
+                                      (s) => s === stage.codename
+                                  ) !== -1
+                                      ? this.state.playerNames[0]
+                                      : this.state.playerNames[1]
+                                }
+                            />
+                        )}
+
                       </Grid>
                     </Grid>
                     <Grid
@@ -493,7 +383,7 @@ class StageStrikePage extends Component {
                                 }
                                 color="success"
                                 variant="extended"
-                                onClick={() => this.ConfirmClicked()}
+                                onClick={() => ConfirmClicked()}
                                 style={{
                                   top: -16,
                                   left: "50%",
@@ -520,7 +410,7 @@ class StageStrikePage extends Component {
                                 fullWidth
                                 color="p1color"
                                 variant="extended"
-                                onClick={() => this.MatchWinner(0)}
+                                onClick={() => MatchWinner(0)}
                                 style={{
                                   top: -16,
                                   left: 16,
@@ -549,7 +439,7 @@ class StageStrikePage extends Component {
                                 fullWidth
                                 color="p2color"
                                 variant="extended"
-                                onClick={() => this.MatchWinner(1)}
+                                onClick={() => MatchWinner(1)}
                                 style={{
                                   top: -16,
                                   right: 16,
@@ -634,7 +524,7 @@ class StageStrikePage extends Component {
                               }
                               startIcon={<Handshake />}
                               onClick={() => {
-                                this.SetGentlemans(!this.state.gentlemans);
+                                SetGentlemans(!this.state.gentlemans);
                               }}
                           >
                             {i18n.t("gentlemans_pick")}
@@ -653,7 +543,7 @@ class StageStrikePage extends Component {
                                 fontSize: { xs: 10, lg: "unset" },
                               }}
                               onClick={() => {
-                                this.RestartStageStrike(true);
+                                RestartStageStrike(true);
                               }}
                               startIcon={<RestartAlt />}
                           >
@@ -704,7 +594,7 @@ class StageStrikePage extends Component {
                               fullWidth
                               color="p1color"
                               variant="contained"
-                              onClick={() => this.ReportRpsWin(0)}
+                              onClick={() => ReportRpsWin(0)}
                           >
                             {i18n.t("player_won", {
                               player: this.state.playerNames[0],
@@ -720,7 +610,7 @@ class StageStrikePage extends Component {
                               fullWidth
                               color="p2color"
                               variant="contained"
-                              onClick={() => this.ReportRpsWin(1)}
+                              onClick={() => ReportRpsWin(1)}
                           >
                             {i18n.t("player_won", {
                               player: this.state.playerNames[1],
@@ -740,7 +630,7 @@ class StageStrikePage extends Component {
                           fullWidth
                           color="success"
                           variant="outlined"
-                          onClick={() => this.ReportRpsWin(Math.random() > 0.5 ? 1 : 0)}
+                          onClick={() => ReportRpsWin(Math.random() > 0.5 ? 1 : 0)}
                       >
                         {i18n.t("randomize")}
                       </Button>
@@ -758,6 +648,19 @@ class StageStrikePage extends Component {
         </>
     );
   }
+}
+
+function StageName(stage) {
+  if (stage.locale) {
+    if (stage.locale.hasOwnProperty(i18next.language)) {
+      return stage.locale[i18next.language.replace("-", "_")];
+    }
+    const shortLang = i18next.language.split("-")[0];
+    if (stage.locale.hasOwnProperty(shortLang)) {
+      return stage.locale[shortLang];
+    }
+  }
+  return stage.en_name; // fallback
 }
 
 export default StageStrikePage;

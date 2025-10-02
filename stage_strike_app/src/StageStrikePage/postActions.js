@@ -1,4 +1,4 @@
-import {BASE_URL} from "../env";
+import {BACKEND_PORT, BASE_URL} from "../env";
 
 export function ConfirmClicked() {
     fetch(
@@ -65,3 +65,19 @@ export function Redo() {
         contentType: "application/json",
     });
 }
+
+export function ReportRpsWin(/** number */ winner) {
+  fetch(
+    "http://" +
+    window.location.hostname +
+    `:${BACKEND_PORT}/stage_strike_rps_win`,
+    {
+      method: "POST",
+      contentType: "application/json",
+      body: JSON.stringify({
+        winner: winner
+      }),
+    }
+  )
+}
+
