@@ -118,7 +118,7 @@ class WebServer(QThread):
         return WebServer.actions.ruleset()
 
     @socketio.on('ruleset')
-    def ws_ruleset(message):
+    def ws_ruleset(message=None):
         WebServer.ws_emit('ruleset', WebServer.actions.ruleset(), json=True)
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
