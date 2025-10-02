@@ -30,6 +30,7 @@ import {
   SetGentlemans,
   StageClicked
 } from "./postActions";
+import {RpsDialog} from "./RpsDialog";
 
 class StageStrikePage extends Component {
   state = {
@@ -196,454 +197,372 @@ class StageStrikePage extends Component {
   render() {
     return (
         <>
-          {this.state.ruleset && this.state.ruleset.neutralStages.length > 0 ? (
-              <>
-                <Container>
-                  <Box
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "100vh",
-                        gap: darkTheme.spacing(2),
-                      }}
-                      paddingY={2}
+          {this.state.ruleset && this.state.ruleset.neutralStages.length > 0
+            ? <>
+              <Container>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100vh",
+                    gap: darkTheme.spacing(2),
+                  }}
+                  paddingY={2}
+                >
+                  <Grid
+                    container
+                    xs
+                    textAlign={"center"}
+                    spacing={{ xs: 0, sm: 1 }}
+                    justifyItems="center"
+                    style={{ flexGrow: 0 }}
+                  >
+                    <Grid item xs={12}>
+                      <Typography
+                        variant={"h4"}
+                        component="div"
+                      >
+                        {this.state.phase ? this.state.phase + " / " : ""}
+                        {this.state.match ? this.state.match + " / " : ""}
+                        {i18n.t("game", { value: this.state.currGame + 1 })}
+                        {this.state.bestOf
+                          ? " (" +
+                          i18n.t("best_of", { value: this.state.bestOf }) +
+                          ")"
+                          : ""}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant={"h4"}
+                        component="div"
+                      >
+                        {this.state.stagesWon && this.state.stagesWon.length > 0
+                          ? this.state.stagesWon[0].length
+                          : 0}{" "}
+                        -{" "}
+                        {this.state.stagesWon && this.state.stagesWon.length > 0
+                          ? this.state.stagesWon[1].length
+                          : 0}
+                      </Typography>
+                    </Grid>
+                    {this.state.currPlayer !== -1 ? (
+                      <Grid item xs={12}>
+                        <Typography
+                          sx={{ typography: { xs: "h6", sm: "h4" } }}
+                          component="div"
+                        >
+                          {this.state.selectedStage ? (
+                            <>{i18n.t("report_results")}</>
+                          ) : (
+                            <>
+                              {this.state.gentlemans ? (
+                                <>
+                                  {i18n.t("gentlemans_prompt", {
+                                    gentlemans_pick: i18n.t("gentlemans_pick"),
+                                  })}
+                                </>
+                              ) : this.state.currGame > 0 &&
+                              this.state.currStep > 0 ? (
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: i18n.t("select_a_stage_prompt", {
+                                      player: ReactDOMServer.renderToStaticMarkup(
+                                        <span
+                                          style={{
+                                            color:
+                                            darkTheme.palette[
+                                              `p${
+                                                this.state.currPlayer + 1
+                                              }color`
+                                              ].main,
+                                          }}
+                                        >
+                                        {
+                                          this.state.playerNames[
+                                            this.state.currPlayer
+                                            ]
+                                        }
+                                      </span>
+                                      ),
+                                      val: this.GetStrikeNumber(),
+                                      interpolation: { escapeValue: false },
+                                    }),
+                                  }}
+                                ></div>
+                              ) : (
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: i18n.t("ban_prompt", {
+                                      player: ReactDOMServer.renderToStaticMarkup(
+                                        <span
+                                          style={{
+                                            color:
+                                            darkTheme.palette[
+                                              `p${
+                                                this.state.currPlayer + 1
+                                              }color`
+                                              ].main,
+                                          }}
+                                        >
+                                        {
+                                          this.state.playerNames[
+                                            this.state.currPlayer
+                                            ]
+                                        }
+                                      </span>
+                                      ),
+                                      val: this.GetStrikeNumber(),
+                                      interpolation: { escapeValue: false },
+                                    }),
+                                  }}
+                                ></div>
+                              )}
+                            </>
+                          )}
+                        </Typography>
+                      </Grid>
+                    ) : null}
+                  </Grid>
+                  <Grid
+                    container
+                    xs
+                    textAlign={"center"}
+                    spacing={1}
+                    justifyItems="center"
+                    style={{ overflow: "auto", height: "100%" }}
                   >
                     <Grid
-                        container
-                        xs
-                        textAlign={"center"}
-                        spacing={{ xs: 0, sm: 1 }}
-                        justifyItems="center"
-                        style={{ flexGrow: 0 }}
+                      item
+                      container
+                      xs={12}
+                      spacing={2}
+                      justifyContent="center"
+                      alignContent={"center"}
                     >
-                      <Grid item xs={12}>
-                        <Typography
-                            variant={"h4"}
-                            component="div"
+                      {(this.state.currGame > 0
+                          ? this.state.ruleset.neutralStages.concat(
+                            this.state.ruleset.counterpickStages
+                          )
+                          : this.state.ruleset.neutralStages
+                      ).map((stage) =>
+                        <StageCard
+                          key={stage.en_name}
+                          stageName={StageName(stage)}
+                          stageImage={`${BASE_URL}/${stage.path}`}
+                          isSelected={this.state.selectedStage === stage.codename}
+                          onClick={() => StageClicked(stage)}
+                          isStriked={this.IsStageStriked(stage.codename)}
+                          isBanned={this.IsStageBanned(stage.codename)}
+                          isGentlemanEnabled={this.state.gentlemans}
+                          currentPlayerName={this.state.playerNames[this.state.currPlayer]}
+                          strikedBy={
+                            this.state.strikedBy[0].findIndex(
+                              (s) => s === stage.codename
+                            ) !== -1
+                              ? this.state.playerNames[0]
+                              : this.state.playerNames[1]
+                          }
+                        />
+                      )}
+
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    xs
+                    textAlign={"center"}
+                    spacing={1}
+                    justifyItems="center"
+                    style={{ flexGrow: 0, zIndex: 9999 }}
+                  >
+                    <Box style={{ position: "relative", width: "100%" }}>
+                      {this.CanConfirm() && (
+                        <Fab
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          color="success"
+                          variant="extended"
+                          onClick={() => ConfirmClicked()}
+                          style={{
+                            top: -16,
+                            left: "50%",
+                            transform: "translateX(-50%) translateY(-100%)",
+                            position: "absolute",
+                          }}
+                          sx={{
+                            minWidth: {
+                              xs: "100%",
+                              md: "33%",
+                            },
+                          }}
                         >
-                          {this.state.phase ? this.state.phase + " / " : ""}
-                          {this.state.match ? this.state.match + " / " : ""}
-                          {i18n.t("game", { value: this.state.currGame + 1 })}
-                          {this.state.bestOf
-                              ? " (" +
-                              i18n.t("best_of", { value: this.state.bestOf }) +
-                              ")"
-                              : ""}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                            variant={"h4"}
-                            component="div"
-                        >
-                          {this.state.stagesWon && this.state.stagesWon.length > 0
-                              ? this.state.stagesWon[0].length
-                              : 0}{" "}
-                          -{" "}
-                          {this.state.stagesWon && this.state.stagesWon.length > 0
-                              ? this.state.stagesWon[1].length
-                              : 0}
-                        </Typography>
-                      </Grid>
-                      {this.state.currPlayer !== -1 ? (
-                          <Grid item xs={12}>
-                            <Typography
-                                sx={{ typography: { xs: "h6", sm: "h4" } }}
-                                component="div"
-                            >
-                              {this.state.selectedStage ? (
-                                  <>{i18n.t("report_results")}</>
-                              ) : (
-                                  <>
-                                    {this.state.gentlemans ? (
-                                        <>
-                                          {i18n.t("gentlemans_prompt", {
-                                            gentlemans_pick: i18n.t("gentlemans_pick"),
-                                          })}
-                                        </>
-                                    ) : this.state.currGame > 0 &&
-                                    this.state.currStep > 0 ? (
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                              __html: i18n.t("select_a_stage_prompt", {
-                                                player: ReactDOMServer.renderToStaticMarkup(
-                                                    <span
-                                                        style={{
-                                                          color:
-                                                          darkTheme.palette[
-                                                              `p${
-                                                                  this.state.currPlayer + 1
-                                                              }color`
-                                                              ].main,
-                                                        }}
-                                                    >
-                                        {
-                                          this.state.playerNames[
-                                              this.state.currPlayer
-                                              ]
-                                        }
-                                      </span>
-                                                ),
-                                                val: this.GetStrikeNumber(),
-                                                interpolation: { escapeValue: false },
-                                              }),
-                                            }}
-                                        ></div>
-                                    ) : (
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                              __html: i18n.t("ban_prompt", {
-                                                player: ReactDOMServer.renderToStaticMarkup(
-                                                    <span
-                                                        style={{
-                                                          color:
-                                                          darkTheme.palette[
-                                                              `p${
-                                                                  this.state.currPlayer + 1
-                                                              }color`
-                                                              ].main,
-                                                        }}
-                                                    >
-                                        {
-                                          this.state.playerNames[
-                                              this.state.currPlayer
-                                              ]
-                                        }
-                                      </span>
-                                                ),
-                                                val: this.GetStrikeNumber(),
-                                                interpolation: { escapeValue: false },
-                                              }),
-                                            }}
-                                        ></div>
-                                    )}
-                                  </>
-                              )}
-                            </Typography>
-                          </Grid>
-                      ) : null}
-                    </Grid>
-                    <Grid
-                        container
-                        xs
-                        textAlign={"center"}
-                        spacing={1}
-                        justifyItems="center"
-                        style={{ overflow: "auto", height: "100%" }}
-                    >
-                      <Grid
-                          item
-                          container
-                          xs={12}
-                          spacing={2}
-                          justifyContent="center"
-                          alignContent={"center"}
-                      >
-                        {(this.state.currGame > 0
-                                ? this.state.ruleset.neutralStages.concat(
-                                    this.state.ruleset.counterpickStages
-                                )
-                                : this.state.ruleset.neutralStages
-                        ).map((stage) =>
-                            <StageCard
-                                key={stage.en_name}
-                                stageName={StageName(stage)}
-                                stageImage={`${BASE_URL}/${stage.path}`}
-                                isSelected={this.state.selectedStage === stage.codename}
-                                onClick={() => StageClicked(stage.codename)}
-                                isStriked={this.IsStageStriked(stage.codename)}
-                                isBanned={this.IsStageBanned(stage.codename)}
-                                isGentlemanEnabled={this.state.gentlemans}
-                                currentPlayerName={this.state.playerNames[this.state.currPlayer]}
-                                strikedBy={
-                                  this.state.strikedBy[0].findIndex(
-                                      (s) => s === stage.codename
-                                  ) !== -1
-                                      ? this.state.playerNames[0]
-                                      : this.state.playerNames[1]
-                                }
-                            />
-                        )}
-
-                      </Grid>
-                    </Grid>
-                    <Grid
-                        container
-                        xs
-                        textAlign={"center"}
-                        spacing={1}
-                        justifyItems="center"
-                        style={{ flexGrow: 0, zIndex: 9999 }}
-                    >
-                      <Box style={{ position: "relative", width: "100%" }}>
-                        {this.CanConfirm() && (
-                            <Fab
-                                size={
-                                  darkTheme.breakpoints.up("md") ? "large" : "small"
-                                }
-                                color="success"
-                                variant="extended"
-                                onClick={() => ConfirmClicked()}
-                                style={{
-                                  top: -16,
-                                  left: "50%",
-                                  transform: "translateX(-50%) translateY(-100%)",
-                                  position: "absolute",
-                                }}
-                                sx={{
-                                  minWidth: {
-                                    xs: "100%",
-                                    md: "33%",
-                                  },
-                                }}
-                            >
-                              <Check sx={{ mr: 1 }} />
-                              {i18n.t("confirm")}
-                            </Fab>
-                        )}
-                        {this.state.selectedStage && (
-                            <Fab
-                                size={
-                                  darkTheme.breakpoints.up("md") ? "large" : "small"
-                                }
-                                fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                                fullWidth
-                                color="p1color"
-                                variant="extended"
-                                onClick={() => MatchWinner(0)}
-                                style={{
-                                  top: -16,
-                                  left: 16,
-                                  transform: "translateY(-100%)",
-                                  position: "absolute",
-                                }}
-                                sx={{
-                                  width: {
-                                    xs: "45%",
-                                    md: "33%",
-                                  },
-                                }}
-                            >
-                              {i18n.t("player_won", {
-                                player: this.state.playerNames[0],
-                              })}
-                            </Fab>
-                        )}
-
-                        {this.state.selectedStage && (
-                            <Fab
-                                size={
-                                  darkTheme.breakpoints.up("md") ? "large" : "small"
-                                }
-                                fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                                fullWidth
-                                color="p2color"
-                                variant="extended"
-                                onClick={() => MatchWinner(1)}
-                                style={{
-                                  top: -16,
-                                  right: 16,
-                                  transform: "translateY(-100%)",
-                                  position: "absolute",
-                                }}
-                                sx={{
-                                  width: {
-                                    xs: "45%",
-                                    md: "33%",
-                                  },
-                                }}
-                            >
-                              {i18n.t("player_won", {
-                                player: this.state.playerNames[1],
-                              })}
-                            </Fab>
-                        )}
-                      </Box>
-                      <Grid
-                          container
-                          item
-                          xs={12}
-                          spacing={2}
-                          justifyContent="center"
-                      >
-                        <Grid item xs>
-                          <Button
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              disabled={!this.state.canUndo}
-                              variant="outlined"
-                              sx={{
-                                flexDirection: { xs: "column", lg: "unset" },
-                                fontSize: { xs: 10, lg: "unset" },
-                              }}
-                              onClick={() => {
-                                this.Undo();
-                              }}
-                              startIcon={<Undo />}
-                          >
-                            {i18n.t("undo")}
-                          </Button>
-                        </Grid>
-                        <Grid item xs>
-                          <Button
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              disabled={!this.state.canRedo}
-                              variant="outlined"
-                              sx={{
-                                flexDirection: { xs: "column", lg: "unset" },
-                                fontSize: { xs: 10, lg: "unset" },
-                              }}
-                              onClick={() => {
-                                this.Redo();
-                              }}
-                              startIcon={<Redo />}
-                          >
-                            {i18n.t("redo")}
-                          </Button>
-                        </Grid>
-                        <Grid item xs>
-                          <Button
-                              sx={{
-                                flexDirection: { xs: "column", lg: "unset" },
-                                fontSize: { xs: 10, lg: "unset" },
-                              }}
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              variant={
-                                this.state.gentlemans ? "contained" : "outlined"
-                              }
-                              startIcon={<Handshake />}
-                              onClick={() => {
-                                SetGentlemans(!this.state.gentlemans);
-                              }}
-                          >
-                            {i18n.t("gentlemans_pick")}
-                          </Button>
-                        </Grid>
-                        <Grid item xs>
-                          <Button
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              variant="outlined"
-                              sx={{
-                                flexDirection: { xs: "column", lg: "unset" },
-                                fontSize: { xs: 10, lg: "unset" },
-                              }}
-                              onClick={() => {
-                                RestartStageStrike(true);
-                              }}
-                              startIcon={<RestartAlt />}
-                          >
-                            {i18n.t("restart_all")}
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Container>
-                <Dialog
-                    open={this.state.currPlayer === -1}
-                    onClose={() => {}}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                  <DialogTitle id="responsive-dialog-title">
-                    {i18n.t("title")}
-                  </DialogTitle>
-                  <DialogContent>
-                    <Box
-                        component="div"
-                        gap={2}
-                        display="flex"
-                        flexDirection={"column"}
-                    >
-                      <Typography>{i18n.t("initial_explanation")}</Typography>
-
-                      <Typography
-                          sx={{ typography: { xs: "h6", sm: "h5" } }}
-                          align="center"
-                      >
-                        {i18n.t("rock_paper_scissors")}
-                      </Typography>
-                      <Grid
-                          container
-                          item
-                          xs={12}
-                          spacing={2}
-                          justifyContent="center"
-                      >
-                        <Grid item xs>
-                          <Button
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              color="p1color"
-                              variant="contained"
-                              onClick={() => ReportRpsWin(0)}
-                          >
-                            {i18n.t("player_won", {
-                              player: this.state.playerNames[0],
-                            })}
-                          </Button>
-                        </Grid>
-                        <Grid item xs>
-                          <Button
-                              size={
-                                darkTheme.breakpoints.up("md") ? "large" : "small"
-                              }
-                              fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-                              fullWidth
-                              color="p2color"
-                              variant="contained"
-                              onClick={() => ReportRpsWin(1)}
-                          >
-                            {i18n.t("player_won", {
-                              player: this.state.playerNames[1],
-                            })}
-                          </Button>
-                        </Grid>
-                      </Grid>
-                      <Typography
-                          sx={{ typography: { xs: "h6", sm: "h5" } }}
-                          align="center"
-                      >
-                        {i18n.t("randomize")}
-                      </Typography>
-                      <Button
-                          size={darkTheme.breakpoints.up("md") ? "large" : "small"}
+                          <Check sx={{ mr: 1 }} />
+                          {i18n.t("confirm")}
+                        </Fab>
+                      )}
+                      {this.state.selectedStage && (
+                        <Fab
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
                           fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
                           fullWidth
-                          color="success"
-                          variant="outlined"
-                          onClick={() => ReportRpsWin(Math.random() > 0.5 ? 1 : 0)}
-                      >
-                        {i18n.t("randomize")}
-                      </Button>
-                    </Box>
-                  </DialogContent>
-                </Dialog>
-              </>
-          ) : null}
+                          color="p1color"
+                          variant="extended"
+                          onClick={() => MatchWinner(0)}
+                          style={{
+                            top: -16,
+                            left: 16,
+                            transform: "translateY(-100%)",
+                            position: "absolute",
+                          }}
+                          sx={{
+                            width: {
+                              xs: "45%",
+                              md: "33%",
+                            },
+                          }}
+                        >
+                          {i18n.t("player_won", {
+                            player: this.state.playerNames[0],
+                          })}
+                        </Fab>
+                      )}
 
-          {
-            this.state.ruleset != null && this.state.ruleset.neutralStages.length === 0
-                ? <NoRulesetError currPlayer={this.state.currPlayer} />
-                : null
+                      {this.state.selectedStage && (
+                        <Fab
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          color="p2color"
+                          variant="extended"
+                          onClick={() => MatchWinner(1)}
+                          style={{
+                            top: -16,
+                            right: 16,
+                            transform: "translateY(-100%)",
+                            position: "absolute",
+                          }}
+                          sx={{
+                            width: {
+                              xs: "45%",
+                              md: "33%",
+                            },
+                          }}
+                        >
+                          {i18n.t("player_won", {
+                            player: this.state.playerNames[1],
+                          })}
+                        </Fab>
+                      )}
+                    </Box>
+                    <Grid
+                      container
+                      item
+                      xs={12}
+                      spacing={2}
+                      justifyContent="center"
+                    >
+                      <Grid item xs>
+                        <Button
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          disabled={!this.state.canUndo}
+                          variant="outlined"
+                          sx={{
+                            flexDirection: { xs: "column", lg: "unset" },
+                            fontSize: { xs: 10, lg: "unset" },
+                          }}
+                          onClick={() => {
+                            this.Undo();
+                          }}
+                          startIcon={<Undo />}
+                        >
+                          {i18n.t("undo")}
+                        </Button>
+                      </Grid>
+                      <Grid item xs>
+                        <Button
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          disabled={!this.state.canRedo}
+                          variant="outlined"
+                          sx={{
+                            flexDirection: { xs: "column", lg: "unset" },
+                            fontSize: { xs: 10, lg: "unset" },
+                          }}
+                          onClick={() => {
+                            this.Redo();
+                          }}
+                          startIcon={<Redo />}
+                        >
+                          {i18n.t("redo")}
+                        </Button>
+                      </Grid>
+                      <Grid item xs>
+                        <Button
+                          sx={{
+                            flexDirection: { xs: "column", lg: "unset" },
+                            fontSize: { xs: 10, lg: "unset" },
+                          }}
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          variant={
+                            this.state.gentlemans ? "contained" : "outlined"
+                          }
+                          startIcon={<Handshake />}
+                          onClick={() => {
+                            SetGentlemans(!this.state.gentlemans);
+                          }}
+                        >
+                          {i18n.t("gentlemans_pick")}
+                        </Button>
+                      </Grid>
+                      <Grid item xs>
+                        <Button
+                          size={
+                            darkTheme.breakpoints.up("md") ? "large" : "small"
+                          }
+                          fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
+                          fullWidth
+                          variant="outlined"
+                          sx={{
+                            flexDirection: { xs: "column", lg: "unset" },
+                            fontSize: { xs: 10, lg: "unset" },
+                          }}
+                          onClick={() => {
+                            RestartStageStrike(true);
+                          }}
+                          startIcon={<RestartAlt />}
+                        >
+                          {i18n.t("restart_all")}
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Container>
+
+              { this.state.currPlayer === -1 &&
+                <RpsDialog
+                  playerNames={this.state.playerNames}
+                />
+              }
+            </>
+            : <NoRulesetError currPlayer={this.state.currPlayer} />
           }
         </>
     );

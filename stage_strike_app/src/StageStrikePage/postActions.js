@@ -41,7 +41,7 @@ export function RestartStageStrike() {
     });
 }
 
-export function StageClicked(stage) {
+export function StageClicked(/** object */ stage) {
     fetch(
         `${BASE_URL}/stage_strike_stage_clicked`,
         {
