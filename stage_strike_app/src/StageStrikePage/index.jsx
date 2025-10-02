@@ -2,16 +2,9 @@ import { Component } from "react";
 import ReactDOMServer from "react-dom/server";
 import "../NoSleep";
 import {
-  Button,
-  Card,
-  CardActionArea,
-  CardMedia,
   Container,
   GridLegacy as Grid,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Fab,
 } from "@mui/material";
 import { Box } from "@mui/system";
@@ -24,10 +17,6 @@ import {NoRulesetError} from "./NoRulesetError";
 import {StageCard} from "./StageCard";
 import {
   ConfirmClicked,
-  MatchWinner,
-  ReportRpsWin,
-  RestartStageStrike,
-  SetGentlemans,
   StageClicked
 } from "./postActions";
 import {RpsDialog} from "./RpsDialog";
@@ -114,26 +103,17 @@ class StageStrikePage extends Component {
   }
 
   CanConfirm() {
-    if (this.state.strikedStages[this.state.currStep]) {
-      if (this.state.currGame === 0) {
-        if (
-          this.state.strikedStages[this.state.currStep].length ===
-            this.state.ruleset.strikeOrder[this.state.currStep] &&
-          !this.state.selectedStage
-        ) {
-          return true;
-        }
-      } else {
-        if (
-          this.state.strikedStages[this.state.currStep].length ===
-          this.GetStrikeNumber()
-        ) {
-          return true;
-        }
-      }
+    const strikedStages = this.state.strikedStages[this.state.currStep];
+    const strikeOrder = this.state.ruleset.strikeOrder[this.state.currStep];
+    if (this.state.selectedStage || !strikedStages) {
+      return false;
     }
 
-    return false;
+    if (this.state.currGame === 0) {
+      return strikedStages.length === strikeOrder;
+    } else {
+      return strikedStages.length === this.GetStrikeNumber();
+    }
   }
 
   GetStrikeNumber = () => {
