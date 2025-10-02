@@ -1,20 +1,25 @@
 import {useContext} from "react";
-import {TSHStateContext} from "./Contexts";
-import {AppBar, Toolbar, Typography} from "@mui/material";
+import {TSHStateContext, TSHGamesContext} from "./Contexts";
+import {AppBar, MenuItem, Select, Toolbar, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
-import {BACKEND_PORT} from "../env";
+import {BASE_URL} from "../env";
+import {GameIcon} from "../GameIcon";
 
 
-export const Header = (props) => {
+export const Header = ({onSelectedGameChange, ...rest}) => {
     const /** @type {TSHState} */ tshState = useContext(TSHStateContext);
     const theme = useTheme();
+    const /** @type {TSHGamesInfo} */ games = useContext(TSHGamesContext);
 
     return (
-        <AppBar sx={{
-            position: 'unset',
-            px: '2em',
-        }}>
+        <AppBar
+          sx={{
+              position: 'unset',
+              px: '2em',
+          }}
+          {...rest}
+        >
             <Toolbar disableGutters sx={{
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
@@ -36,7 +41,7 @@ export const Header = (props) => {
                         mr: 4,
                     }}
                 >
-                    <img alt="TSH logo" src={`http://${window.location.hostname}:${BACKEND_PORT}/assets/icons/icon.png`} height={48} width={48} sx={{mr: 2}} />
+                    <img alt="TSH logo" src={`${BASE_URL}/assets/icons/icon.png`} height={48} width={48} sx={{mr: 2}} />
                     Web Scoreboard
                 </Typography>
 
@@ -48,14 +53,28 @@ export const Header = (props) => {
                     }}
                 >
                     <span>Game:&nbsp;</span>
-                    {tshState.game?.logo
-                        ? <img
-                            alt="Game logo"
-                            src={`http://${window.location.hostname}:${BACKEND_PORT}/${tshState.game.logo.replace("./", "/")}`}
-                            height={48}
-                        />
-                        : <span>{tshState.game?.name ?? "Unknown"}</span>
-                    }
+                    <Select
+                      sx={{
+                          '.MuiSelect-select': {
+                              paddingY: 0,
+                              marginY: 0
+                          },
+                      }}
+                      value={tshState.game.codename}
+                      renderValue={(codename) =>
+                        <GameIcon game={games[codename]} />
+                      }
+                      onChange={(e) => onSelectedGameChange(e.target.value)}
+                    >
+                        {
+                            Object.values(games).map(game =>
+                              <MenuItem key={game.codename} value={game.codename}>
+                                  <GameIcon fixedWidth={true} game={game} />
+                                  <Typography>{game.name}</Typography>
+                              </MenuItem>
+                            )
+                        }
+                    </Select>
                 </Box>
 
                 <Box sx={{
