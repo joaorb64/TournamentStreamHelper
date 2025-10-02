@@ -43,13 +43,6 @@ class StageStrikePage extends Component {
     canRedo: false,
   };
 
-  RestartStageStrike() {
-    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_reset`, {
-      method: "POST",
-      contentType: "application/json",
-    });
-  }
-
   GetStage(stage) {
     let found = this.state.ruleset.neutralStages.find(
       (s) => s.codename === stage
@@ -108,31 +101,6 @@ class StageStrikePage extends Component {
     return false;
   }
 
-  StageClicked(stage) {
-    fetch(
-      "http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_stage_clicked`,
-      {
-        method: "POST",
-        body: JSON.stringify(stage),
-        contentType: "application/json",
-      }
-    );
-  }
-
-  Undo() {
-    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_undo`, {
-      method: "POST",
-      contentType: "application/json",
-    });
-  }
-
-  Redo() {
-    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_redo`, {
-      method: "POST",
-      contentType: "application/json",
-    });
-  }
-
   CanConfirm() {
     if (this.state.strikedStages[this.state.currStep]) {
       if (this.state.currGame === 0) {
@@ -154,44 +122,6 @@ class StageStrikePage extends Component {
     }
 
     return false;
-  }
-
-  ConfirmClicked() {
-    fetch(
-      "http://" +
-        window.location.hostname +
-        `:${BACKEND_PORT}/stage_strike_confirm_clicked`,
-      {
-        method: "POST",
-        contentType: "application/json",
-      }
-    );
-  }
-
-  MatchWinner(id) {
-    fetch(
-      "http://" + window.location.hostname + `:${BACKEND_PORT}/stage_strike_match_win`,
-      {
-        method: "POST",
-        contentType: "application/json",
-        body: JSON.stringify({
-          winner: id,
-        }),
-      }
-    );
-  }
-
-  SetGentlemans(value) {
-    fetch(
-      "http://" +
-        window.location.hostname +
-        `:${BACKEND_PORT}/stage_strike_set_gentlemans`,
-      {
-        method: "POST",
-        contentType: "application/json",
-        body: JSON.stringify({ value: value }),
-      }
-    );
   }
 
   GetStrikeNumber() {
