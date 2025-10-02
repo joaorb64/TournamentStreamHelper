@@ -22,6 +22,8 @@ import {
 import {RpsDialog} from "./RpsDialog";
 import {FooterControls} from "./FooterControls";
 import {PlayerWonButton} from "./PlayerWonButton";
+import {io, Socket} from "socket.io-client";
+import {produce as immer_produce} from "immer";
 
 class StageStrikePage extends Component {
   state = {
@@ -43,6 +45,9 @@ class StageStrikePage extends Component {
     canUndo: false,
     canRedo: false,
   };
+
+  /** @type {Socket | null} */
+  socket = null;
 
   GetStage(/** string */ stage) {
     let found = this.state.ruleset.neutralStages.find(
@@ -139,54 +144,75 @@ class StageStrikePage extends Component {
   };
 
   componentDidMount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    if (this.socket != null) {
+      this.socket.close();
+      this.socket = null;
     }
-    this.interval = window.setInterval(() => this.FetchRuleset(), 500);
+
+    this.socket = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
+      transports: ['websocket', 'webtransport'],
+      timeout: 5000,
+      reconnectionDelay: 500,
+      reconnectionDelayMax: 1500,
+    });
+
+    this.socket.on("connect", () => {
+      console.log("SocketIO connection established.");
+      this.socket.emit("ruleset", {}, () => {console.log("TSH acked ruleset request")});
+    });
+
+    this.socket.on("ruleset", data => {
+      console.log("TSH ruleset data received ", data);
+      this.ProcessRulesetData(data);
+    });
+
+    this.socket.on("disconnect", () => {
+      console.log("SocketIO disconnected.")
+      this.socket.connect();
+    });
+
+    this.socket.on('error', (err) => {
+      console.log(err);
+    })
   }
 
   componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
     }
   }
 
-  FetchRuleset = () => {
-    fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/ruleset`)
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({
-          playerNames: [
-            data.p1 ? data.p1 : i18n.t("p1"),
-            data.p2 ? data.p2 : i18n.t("p2"),
-          ],
-          ruleset: data.ruleset,
-          phase: data.phase,
-          match: data.match,
-          bestOf: data.best_of,
-        });
+  ProcessRulesetData = (data) => {
+    this.setState({
+      playerNames: [
+        data.p1 ? data.p1 : i18n.t("p1"),
+        data.p2 ? data.p2 : i18n.t("p2"),
+      ],
+      ruleset: data.ruleset,
+      phase: data.phase,
+      match: data.match,
+      bestOf: data.best_of,
+    });
 
-        if (data.state && Object.keys(data.state).length > 0) {
-          this.setState({
-            currGame: data.state.currGame,
-            currPlayer: data.state.currPlayer,
-            currStep: data.state.currStep,
-            strikedStages: data.state.strikedStages,
-            strikedBy: data.state.strikedBy,
-            stagesWon: data.state.stagesWon,
-            stagesPicked: data.state.stagesPicked,
-            selectedStage: data.state.selectedStage,
-            lastWinner: data.state.lastWinner,
-            gentlemans: data.state.gentlemans,
-            canUndo: data.state.canUndo,
-            canRedo: data.state.canRedo,
-          });
-        }
-      })
-      .catch(console.log);
+    if (data.state && Object.keys(data.state).length > 0) {
+      this.setState({
+        currGame: data.state.currGame,
+        currPlayer: data.state.currPlayer,
+        currStep: data.state.currStep,
+        strikedStages: data.state.strikedStages,
+        strikedBy: data.state.strikedBy,
+        stagesWon: data.state.stagesWon,
+        stagesPicked: data.state.stagesPicked,
+        selectedStage: data.state.selectedStage,
+        lastWinner: data.state.lastWinner,
+        gentlemans: data.state.gentlemans,
+        canUndo: data.state.canUndo,
+        canRedo: data.state.canRedo,
+      });
+    }
   }
+
   render() {
     return (
         <>

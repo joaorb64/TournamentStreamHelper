@@ -10,7 +10,6 @@ export function PlayerWonButton({playerName, color, leftSide}) {
       darkTheme.breakpoints.up("md") ? "large" : "small"
     }
     fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
-    fullWidth
     color={color}
     variant="extended"
     onClick={() => MatchWinner(leftSide ? 0 : 1)}
