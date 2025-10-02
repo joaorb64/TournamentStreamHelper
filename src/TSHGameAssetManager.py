@@ -228,12 +228,14 @@ class TSHGameAssetManager(QObject):
 
         logger.info("Game CSS file copy complete")
 
-    def LoadGameAssets(self, game: int = 0, async_mode=True):
+    def LoadGameAssets(self, game: int = 0, async_mode=True, mods_active=False, mods_reload_mode=False):
         class AssetsLoaderThread(QThread):
             def __init__(self, parent=...) -> None:
                 super().__init__(parent)
                 self.game = None
                 self.lock = None
+                self.mods_active = False
+                self.mods_reload_mode = False
 
             def run(self):
                 self.lock.lock()
@@ -249,7 +251,7 @@ class TSHGameAssetManager(QObject):
                         game = list(self.parent().games.keys())[game-1]
 
                     # Game is already loaded
-                    if game == self.parent().selectedGame.get("codename"):
+                    if game == self.parent().selectedGame.get("codename") and (not self.mods_reload_mode):
                         self.parent().threadpool.waitForDone()
                         return
 
@@ -506,12 +508,19 @@ class TSHGameAssetManager(QObject):
                             "codename": self.parent().selectedGame.get("codename"),
                             "logo": self.parent().selectedGame.get("path", "")+"/base_files/logo.png",
                             "defaults": self.parent().selectedGame.get("defaults"),
+                            "mods_active": self.mods_active,
+                            "has_stages": bool(self.parent().selectedGame.get("stage_to_codename")),
+                            "has_variants": bool(self.parent().selectedGame.get("variant_to_codename"))
                         })
 
-                        self.parent().UpdateCharacterModel()
+                        self.parent().has_modded_content = False
+                        self.parent().UpdateCharacterModel(self.mods_active)
                         self.parent().UpdateSkinModel()
                         self.parent().UpdateVariantModel()
-                        self.parent().UpdateStageModel()
+                        self.parent().UpdateStageModel(self.mods_active)
+
+                        StateManager.Set(f"game.has_modded_content", self.parent().has_modded_content)
+
                         self.parent().signals.onLoad.emit()
                 except:
                     logger.error(traceback.format_exc())
@@ -524,7 +533,7 @@ class TSHGameAssetManager(QObject):
                 self.parent = parent
                 self.game = None
 
-            def run(self):
+            def run(self, mods_active=False, mods_reload_mode=False):
                 try:
                     game = self.game
 
@@ -537,7 +546,7 @@ class TSHGameAssetManager(QObject):
                         game = list(self.parent.games.keys())[game-1]
 
                     # Game is already loaded
-                    if game == self.parent.selectedGame.get("codename"):
+                    if game == self.parent.selectedGame.get("codename") and (not mods_reload_mode):
                         return
 
                     logger.info("Changed to game: "+game)
@@ -786,12 +795,19 @@ class TSHGameAssetManager(QObject):
                         "codename": self.parent.selectedGame.get("codename"),
                         "logo": self.parent.selectedGame.get("path", "")+"/base_files/logo.png",
                         "defaults": self.parent.selectedGame.get("defaults"),
+                        "mods_active": mods_active,
+                        "has_stages": bool(self.parent.selectedGame.get("stage_to_codename")),
+                        "has_variants": bool(self.parent.selectedGame.get("variant_to_codename"))
                     })
 
-                    self.parent.UpdateCharacterModel()
+                    self.parent.has_modded_content = False
+                    self.parent.UpdateCharacterModel(mods_active)
                     self.parent.UpdateSkinModel()
                     self.parent.UpdateVariantModel()
-                    self.parent.UpdateStageModel()
+                    self.parent.UpdateStageModel(mods_active)
+
+                    StateManager.Set(f"game.has_modded_content", self.parent.has_modded_content)
+                    
                     self.parent.signals.onLoad.emit()
                 except:
                     logger.error(traceback.format_exc())
@@ -802,13 +818,15 @@ class TSHGameAssetManager(QObject):
                 TSHGameAssetManager.instance)
             self.assetsLoaderThread.game = game
             self.assetsLoaderThread.lock = self.assetsLoaderLock
+            self.assetsLoaderThread.mods_active = mods_active
+            self.assetsLoaderThread.mods_reload_mode = mods_reload_mode
             self.assetsLoaderThread.start(QThread.Priority.HighestPriority)
         else:
             self.assetsLoader = AssetsLoader(
                 parent=TSHGameAssetManager.instance
             )
             self.assetsLoader.game = game
-            self.assetsLoader.run()
+            self.assetsLoader.run(mods_active=mods_active, mods_reload_mode=mods_reload_mode)
 
         # Setup startgg character id to character name
         sggcharacters = orjson.loads(
@@ -833,7 +851,9 @@ class TSHGameAssetManager(QObject):
         # for game in self.games:
         #    self.gameSelect.addItem(self.games[game]["name"])
 
-    def UpdateStageModel(self):
+    def UpdateStageModel(self, mods_active = True):
+        # TODO: Make modded content disabled by default
+        # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.stageModel = QStandardItemModel()
 
@@ -876,7 +896,15 @@ class TSHGameAssetManager(QObject):
                 item = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
                     "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
                 item.setData(stage[1], Qt.ItemDataRole.UserRole)
-                self.stageModel.appendRow(item)
+
+                if stage[1].get("modded"):
+                    self.has_modded_content = True
+
+                if (not mods_active) and stage[1].get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
+                else:
+                    self.stageModel.appendRow(item)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
                 worker.signals.result.connect(self.LoadStageImageComplete)
@@ -922,7 +950,9 @@ class TSHGameAssetManager(QObject):
             logger.error(traceback.format_exc())
             return (None)
 
-    def UpdateCharacterModel(self):
+    def UpdateCharacterModel(self, mods_active = True):
+        # TODO: Make modded content disabled by default
+        # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.characterModel = QStandardItemModel()
 
@@ -942,7 +972,8 @@ class TSHGameAssetManager(QObject):
                     "name": self.characters[c].get("export_name"),
                     "en_name": c,
                     "display_name": self.characters[c].get("display_name"),
-                    "codename": self.characters[c].get("codename")
+                    "codename": self.characters[c].get("codename"),
+                    "modded": self.characters[c].get("modded", False)
                 }
 
                 if self.characters[c].get("display_name") != c:
@@ -950,7 +981,15 @@ class TSHGameAssetManager(QObject):
                         f'{self.characters[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
-                self.characterModel.appendRow(item)
+
+                if data.get("modded"):
+                    self.has_modded_content = True
+
+                if (not mods_active) and data.get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
+                else:
+                    self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
         except:

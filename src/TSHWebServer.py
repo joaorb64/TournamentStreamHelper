@@ -322,6 +322,15 @@ class WebServer(QThread):
     def ws_get_games(message):
         WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
 
+    # Get current game
+    @app.route('/current-game')
+    def get_current_game():
+        return WebServer.actions.get_current_game()
+
+    @socketio.on('current_game')
+    def ws_get_current_game(message):
+        WebServer.ws_emit('get_current_game', WebServer.actions.get_current_game(), json=True)
+
     # Get characters
     @app.route('/characters')
     def get_characters():
