@@ -307,7 +307,11 @@ class WebServer(QThread):
     
     @socketio.on('update_game')
     def ws_set_game_data(message):
-        data = orjson.loads(message)
+        if type(message) in {str, bytes}:
+            data = orjson.loads(message)
+        else:
+            data = message
+
         WebServer.ws_emit('update_game',
             WebServer.actions.set_game(
                 data
