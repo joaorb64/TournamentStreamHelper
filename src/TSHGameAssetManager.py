@@ -1214,7 +1214,10 @@ class TSHGameAssetManager(QObject):
                         "l" in uncropped_edge and
                         "r" in uncropped_edge
                     ):
-                        customZoom = 1.2  # Add zoom in for uncropped assets
+                        if "icon" in asset.get("type", []):
+                            customZoom = 1.0
+                        else:
+                            customZoom = 1.2  # Add zoom in for uncropped assets
                         minZoom = customZoom * proportional_zoom * rescalingFactor
                     elif (
                         not "l" in uncropped_edge and
