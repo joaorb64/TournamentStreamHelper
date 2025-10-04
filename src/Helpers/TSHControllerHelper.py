@@ -12,6 +12,7 @@ import json
 from loguru import logger
 import glob
 from ..SettingsManager import SettingsManager
+from pathlib import Path
 
 
 class TSHControllerHelperSignals(QObject):
@@ -116,13 +117,21 @@ class TSHControllerHelper(QObject):
                     else:
                         simple_icon_path = None
 
+                    # Get category icon
+                    category_path = Path(controller_directory).parent.parent.relative_to("./")
+                    if os.path.exists(f"./{category_path}/icon.png"):
+                        category_icon_path = f"./{category_path}/icon.png"
+                    else:
+                        category_icon_path = None
+
                     controller_json = {
                         "name": config_json.get("name"),
                         "manufacturer": manufacturer,
                         "type": controller_type,
                         "icon_path": icon_path,
                         "config_path": f"{controller_directory}/config.json",
-                        "simple_icon_path": simple_icon_path
+                        "simple_icon_path": simple_icon_path,
+                        "category_icon_path": category_icon_path
                     }
                     controller_list[controller_id] = controller_json
         self.controller_list = controller_list
@@ -149,13 +158,33 @@ class TSHControllerHelper(QObject):
                 
                 data["icon_path"] = self.controller_list[c].get("icon_path")
                 data["simple_icon_path"] = self.controller_list[c].get("simple_icon_path")
+                data["category_icon_path"] = self.controller_list[c].get("category_icon_path")
                 if data["icon_path"]:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage(data["icon_path"])))
                     )
+                    width, height = QImage(data["icon_path"]).width(), QImage(data["icon_path"]).height()
+                    data["icon_dimensions"] = {
+                        "x": int(width),
+                        "y": int(height)
+                    }
                 else:
                     item.setIcon(QIcon(QPixmap.fromImage(QImage('./assets/icons/cancel.svg')))
                     )
                 
+                if data["simple_icon_path"]:
+                    width, height = QImage(data["simple_icon_path"]).width(), QImage(data["simple_icon_path"]).height()
+                    data["simple_icon_dimensions"] = {
+                        "x": int(width),
+                        "y": int(height)
+                    }
+
+                if data["category_icon_path"]:
+                    width, height = QImage(data["category_icon_path"]).width(), QImage(data["category_icon_path"]).height()
+                    data["category_icon_dimensions"] = {
+                        "x": int(width),
+                        "y": int(height)
+                    }
+
                 if self.controller_list[c].get("name") != c:
                     item.setData(
                         f'{self.controller_list[c].get("name")}', Qt.ItemDataRole.EditRole)
