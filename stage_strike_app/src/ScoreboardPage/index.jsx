@@ -8,7 +8,7 @@ import React from "react";
 import {Box} from "@mui/system";
 import { io } from 'socket.io-client';
 
-import './backendDataTypes';
+import '../backendDataTypes.ts';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {TSHStateContext, TSHCharacterContext, TSHPlayerDBContext} from "./Contexts";
@@ -16,6 +16,9 @@ import {Header} from "./Header";
 import {produce as immer_produce} from "immer";
 import {applyDeltas, combineDeltas} from "../stateDelta";
 import {BACKEND_PORT} from "../env";
+import {tshStore} from "../redux"
+import {Provider, useDispatch} from "react-redux";
+import {tshStateSlice} from "../redux/tshState.ts";
 
 
 /**
@@ -34,6 +37,7 @@ export default function ScoreboardPage(props) {
     });
     const [characters, setCharacters] = React.useState(null);
     const [playerDb, setPlayerDb] = React.useState(null);
+    const dispatch = useDispatch();
 
     let socket;
 
@@ -55,6 +59,7 @@ export default function ScoreboardPage(props) {
             console.log("TSH state received ", data);
             setMaxAppliedDeltaIdx(data['delta_index'])
             setReceivedDeltas(receivedDeltas.filter(d => d.deltaIdx <= data['delta_index']))
+            dispatch(tshStateSlice.actions.overwrite(data['state']));
             setTshState(data['state']);
         });
 
@@ -66,6 +71,7 @@ export default function ScoreboardPage(props) {
                 console.warn("Received out of order delta! Requesting new full state.");
                 socket.emit("program_state", {});
             } else {
+                dispatch(tshStateSlice.actions.addDeltas(delta));
                 setReceivedDeltas((prevState) => immer_produce(prevState, (draft) => {
                     // Each delta that we receive is an array of delta objects.
                     for (let subdelta of delta) {
@@ -118,6 +124,7 @@ export default function ScoreboardPage(props) {
                 setTshState((prevState) => {
                     const newState = immer_produce(prevState, (draftState) => {
                         try {
+                            dispatch(tshStateSlice.actions.applyDiff());
                             applyDeltas(draftState, sortedDeltas.map((d) => d.delta));
                         } catch (e) {
                             console.warn("Could not apply deltas.", e);

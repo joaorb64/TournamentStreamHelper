@@ -14,6 +14,7 @@ import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
 import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
 import {CharSelector} from "./CharSelector";
+import {useSelector} from "react-redux";
 
 /**
  * @typedef {{
@@ -116,7 +117,8 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
     // console.log(`Rendering player widget: `, player)
 
     const playerId = `${teamId}-p-${teamKey}`;
-    const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
+    // const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
+    const tshState = useSelector((s) => s.tshState);
     const gameCodename = tshState?.game?.codename;
     /** @type TSHPlayerDb */ const playerDb = React.useContext(TSHPlayerDBContext);
 
