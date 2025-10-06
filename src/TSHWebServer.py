@@ -118,7 +118,7 @@ class WebServer(QThread):
         return WebServer.actions.ruleset()
 
     @socketio.on('ruleset')
-    def ws_ruleset(message):
+    def ws_ruleset(message=None):
         WebServer.ws_emit('ruleset', WebServer.actions.ruleset(), json=True)
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
@@ -307,7 +307,11 @@ class WebServer(QThread):
     
     @socketio.on('update_game')
     def ws_set_game_data(message):
-        data = orjson.loads(message)
+        if type(message) in {str, bytes}:
+            data = orjson.loads(message)
+        else:
+            data = message
+
         WebServer.ws_emit('update_game',
             WebServer.actions.set_game(
                 data
@@ -321,6 +325,15 @@ class WebServer(QThread):
     @socketio.on('games')
     def ws_get_games(message):
         WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
+
+    # Get current game
+    @app.route('/current-game')
+    def get_current_game():
+        return WebServer.actions.get_current_game()
+
+    @socketio.on('current_game')
+    def ws_get_current_game(message):
+        WebServer.ws_emit('get_current_game', WebServer.actions.get_current_game(), json=True)
 
     # Get characters
     @app.route('/characters')
