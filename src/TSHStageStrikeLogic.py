@@ -1,4 +1,3 @@
-from .TSHWebServer import WebServer
 from .StateManager import StateManager
 from copy import deepcopy
 from loguru import logger
@@ -39,7 +38,6 @@ class TSHStageStrikeLogic():
         self.history: list(TSHStageStrikeState) = [TSHStageStrikeState()]
         self.historyIndex = 0
         self.signals = TSHStageStrikeStateSignals()
-        self.signals.state_updated.connect(WebServer.ws_ruleset)
 
     def AddHistory(self, state, justOverwrite=False):
         self.history = self.history[:self.historyIndex+1]
