@@ -1,14 +1,12 @@
 import {Action, createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {applyDeltas, combineDeltas} from "../stateDelta";
-import {TSHCharacterDb, TSHPlayerDb, TSHState} from "../backendDataTypes";
-import {createContext} from "react";
-import socket from "../websocketConnection";
-import {produce as immer_produce} from "immer";
+import {TSHCharacterDb, TSHCountryDb, TSHCountryInfo, TSHGamesDb, TSHPlayerDb, TSHState} from "../backendDataTypes";
+import websocketConnection from "../websocketConnection";
 
 export type Delta = any;
 export type ReceivedDeltas = {
     deltaIdx: number;
-    deltas: Delta[];
+    delta: Delta[];
 };
 
 export type TSHStateMessage = {
@@ -65,12 +63,12 @@ export const tshStateSlice = createSlice({
         addDeltas(state, action: PayloadAction<ReceivedDeltas>){
             if (action.payload.deltaIdx < state.maxAppliedDeltaIdx) {
                 console.warn("Received out of order delta! Requesting new full state.");
-                socket.instance().emit("program_state", {});
+                websocketConnection.instance().emit("program_state", {});
             }
 
             state.maxAppliedDeltaIdx = Math.max(action.payload.deltaIdx, state.maxAppliedDeltaIdx);
 
-            for (let d of action.payload.deltas) {
+            for (let d of action.payload.delta) {
                 state.stateDeltas.push(d);
             }
         },
@@ -123,3 +121,34 @@ export const tshCharactersSlice = createSlice({
         }
     }
 });
+
+export const tshGamesSlice = createSlice({
+    name: 'tshGames',
+    initialState: {
+        value: {} as TSHGamesDb,
+        initializing: true
+    },
+    reducers: {
+        overwrite(state, action: PayloadAction<TSHGamesDb>) {
+            state.value = action.payload;
+            for (let k in state.value) {
+                state.value[k].codename = k;
+            }
+            state.initializing = false;
+        }
+    }
+});
+
+export const tshCountriesSlice = createSlice({
+    name: 'tshCountires',
+    initialState: {
+        value: {} as TSHCountryDb,
+        initializing: true,
+    },
+    reducers: {
+        overwrite(state, action: PayloadAction<TSHCountryDb>) {
+            state.value = action.payload;
+            state.initializing = false;
+        }
+    }
+})

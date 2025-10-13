@@ -129,6 +129,12 @@ export type TSHPlayerDbEntry = {
     twitter: string;
 };
 
+export type TSHCountryCode = string;
+
+export interface TSHCountryDb {
+    [country_code: TSHCountryCode]: TSHCountryInfo
+}
+
 export type TSHMainsMap = Record<string, TSHMain[]>;
 
 export type TSHMain = [string, number, string];
@@ -159,5 +165,19 @@ export type TSHState = {
         numEntrants?: number;
     };
 };
+
+export interface TSHGamesDb {
+    [codename: string]: TSHGameInfo
+}
+
+export interface TSHGameInfo{
+    challonge_game_id: number,
+    has_stages: boolean
+    has_variants: boolean
+    locale: null | object
+    name: string
+    smashgg_game_id: number
+    codename: string // This one isn't in the backend responses, I add it from the key.
+}
 
 export const BackendTypes = {};

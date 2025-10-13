@@ -2,20 +2,23 @@ import "../App.css";
 import {darkTheme} from "../themes";
 import i18n from "../i18n/config";
 import {
-    Paper, Stack
+    Paper, Stack,
+    Tab,
+    Tabs
 } from "@mui/material";
 import React from "react";
 import {Box} from "@mui/system";
-import { io } from 'socket.io-client';
 
 import '../backendDataTypes.ts';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {Header} from "./Header";
 import {tshStore, ReduxState} from "../redux/store"
-import {useDispatch, useSelector} from "react-redux";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {tshStateSlice} from "../redux/tshState";
 import websocketInit from "./websocketInit";
+import websocketConnection from "../websocketConnection";
+import {selectedScoreboardSlice} from "../redux/uiState";
 
 /**
  * Main page for the scoreboard. This whole contraption is powered by TSH's python-side
@@ -25,12 +28,18 @@ import websocketInit from "./websocketInit";
  */
 export default function ScoreboardPage(props: any) {
     const dispatch = useDispatch();
-    const {loading, errored} = useSelector((state: ReduxState) => ({
-        loading: (state.tshState.initializing
+    const {loading, errored, selectedScoreboard, tshState} = useSelector((state: ReduxState) => ({
+        loading: (
+            state.tshState.initializing
             || state.tshCharacters.initializing
-            || state.tshPlayers.initializing),
+            || state.tshPlayers.initializing
+            || state.tshGames.initializing
+            || state.tshCountries.initializing
+        ),
         errored: state.websocketInfo.status === "errored",
-    }));
+        tshState: state.tshState.tshState,
+        selectedScoreboard: state.selectedScoreboard.value
+    }), shallowEqual);
 
     React.useEffect(() => {
         (window as any).title = `TSH ${i18n.t("scoreboard")}`;
@@ -53,9 +62,13 @@ export default function ScoreboardPage(props: any) {
         </Paper>
     );
 
-    const onSelectedSetChanged = React.useCallback(() => {
+    const onSelectedSetChanged = () => {
         dispatch(tshStateSlice.actions.loadingNewData({}));
-    }, []);
+    };
+
+    const onSelectedGameChanged= (newGame: string) => {
+        websocketConnection.instance().emit('update_game', {codename: newGame});
+    };
 
     if (errored) {
         body = connectionError;
@@ -65,14 +78,38 @@ export default function ScoreboardPage(props: any) {
         body = (
             // Extra margin at the bottom allows for mobile users to see the bottom of the page better.
             <>
-                <Header/>
+                <Header onSelectedGameChange={onSelectedGameChanged}/>
                 <Box
                     paddingX={2}
-                    paddingY={2}
+                    paddingTop={1}
+                    paddingBottom={2}
                 >
                     <Stack gap={4} marginBottom={24}>
-                        <CurrentSet/>
-                        <UpcomingSets onSelectedSetChanged={onSelectedSetChanged}/>
+                        <Box>
+                            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                                <Tabs
+                                    sx={{width: '100%'}}
+                                    variant={"scrollable"}
+                                    onChange={(event, newValue) => {
+                                        tshStore.dispatch(selectedScoreboardSlice.actions.setSelectedScoreboard(newValue))
+                                    }}
+                                    value={selectedScoreboard}
+                                >
+                                    {
+                                        scoreboardKeys(tshState).map(sbName =>
+                                            <Tab key={sbName} value={sbName} label={`Scoreboard ${sbName}`} />)
+                                    }
+                                </Tabs>
+                            </Box>
+                            <div
+                                role={"tabpanel"}
+                                id={`scoreboards-tabpanel-${selectedScoreboard}`}
+                                aria-labelledby={`scoreboards-tabpanel-${selectedScoreboard}`}
+                            >
+                                <CurrentSet scoreboardNumber={selectedScoreboard} />
+                            </div>
+                        </Box>
+                        <UpcomingSets onSelectedSetChanged={onSelectedSetChanged} scoreboardNumber={selectedScoreboard}/>
                     </Stack>
                 </Box>
             </>
@@ -92,4 +129,14 @@ export default function ScoreboardPage(props: any) {
             {body}
         </Box>
     )
+}
+
+const scoreboardKeys = (tshState) => {
+    if (tshState.score) {
+        return Object.keys(tshState.score)
+            .filter(k => k.match(/^\d+$/))
+            .map(k => Number.parseInt(k));
+    } else {
+        return [];
+    }
 }

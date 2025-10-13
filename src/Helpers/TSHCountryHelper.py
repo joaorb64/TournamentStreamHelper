@@ -262,4 +262,27 @@ class TSHCountryHelper(QObject):
         return None
 
 
+    def GetStates(country_code: str):
+        """Returns the states for a country code, or None if the country cannot be found"""
+
+        country_data = TSHCountryHelper.countries.get(country_code)
+        if country_data:
+            return country_data.get("states") or {}
+
+        return None
+
+    def GetCities(country_code: str, state_code: str):
+        """Returns the cities for a country+state code, or None if the state can't be found"""
+
+        states = TSHCountryHelper.get_states(country_code)
+        if not states:
+            return None
+
+        state = states.get(state_code, None)
+        if not state:
+            return None
+
+        return state.cities
+
+
 TSHCountryHelper.instance = TSHCountryHelper()

@@ -50,13 +50,13 @@ export default React.forwardRef(
         return rval;
     }
 
-    const submitTeamData = () => {
+    const submitTeamData = (scoreboardNumber) => {
         const teamData = getTeamDataFromForm();
 
         return Promise.all(
             [
                 (
-                    fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-set?` + new URLSearchParams({
+                    fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
                         losers: state.inLosers,
                         team: teamId
                     }).toString())
@@ -70,7 +70,7 @@ export default React.forwardRef(
 
                     return fetch(
                         `http://${window.location.hostname}:${BACKEND_PORT}`
-                        + `/scoreboard1-update-team-${tshTeamId}-${teamKey}`,
+                        + `/scoreboard${scoreboardNumber}-update-team-${tshTeamId}-${teamKey}`,
                         {
                             method: 'POST',
                             headers: {'content-type': 'application/json'},
@@ -83,7 +83,7 @@ export default React.forwardRef(
                 })
             ]
         );
-    }
+    };
 
     const playerWidgets = playersInTeam().map(([teamKey, player]) => {
         if (!(teamKey in playerRefs)) {

@@ -8,7 +8,7 @@ import flask_socketio
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
-from flask import Flask, send_from_directory, request, send_file
+from flask import Flask, send_from_directory, request, send_file, abort
 from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
@@ -91,7 +91,7 @@ class WebServer(QThread):
     def ws_connect(message):
         WebServer.ws_program_state(message)
 
-    @socketio.on('program-state')
+    @socketio.on('program_state')
     def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
 
@@ -118,7 +118,7 @@ class WebServer(QThread):
         return WebServer.actions.ruleset()
 
     @socketio.on('ruleset')
-    def ws_ruleset(message):
+    def ws_ruleset(message=None):
         WebServer.ws_emit('ruleset', WebServer.actions.ruleset(), json=True)
 
     @app.route('/stage_strike_stage_clicked', methods=['POST'])
@@ -298,6 +298,42 @@ class WebServer(QThread):
                 data.get("commentator"),
                 data
             ))
+        
+    # Set game
+    @app.post('/update-game')
+    def set_game():
+        data = request.get_json()
+        return WebServer.actions.set_game(data)
+    
+    @socketio.on('update_game')
+    def ws_set_game_data(message):
+        if type(message) in {str, bytes}:
+            data = orjson.loads(message)
+        else:
+            data = message
+
+        WebServer.ws_emit('update_game',
+            WebServer.actions.set_game(
+                data
+            ))
+
+    # Get games
+    @app.route('/games')
+    def get_games():
+        return WebServer.actions.get_games()
+
+    @socketio.on('games')
+    def ws_get_games(message):
+        WebServer.ws_emit('games', WebServer.actions.get_games(), json=True)
+
+    # Get current game
+    @app.route('/current-game')
+    def get_current_game():
+        return WebServer.actions.get_current_game()
+
+    @socketio.on('current_game')
+    def ws_get_current_game(message):
+        WebServer.ws_emit('get_current_game', WebServer.actions.get_current_game(), json=True)
 
     # Get characters
     @app.route('/characters')
@@ -603,6 +639,21 @@ class WebServer(QThread):
     def ws_set_tournament(message):
         WebServer.ws_emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
 
+    @app.route('/states')
+    def get_states():
+        countryCode = request.args.get('countryCode', None)
+        if not countryCode:
+            abort(400, "countryCode not specified")
+
+        return WebServer.actions.get_states(countryCode)
+
+
+    @socketio.on('states')
+    def ws_get_states(message):
+        args = orjson.loads(message)
+        return WebServer.actions.get_states(args.get('countryCode', ''))
+
+
     @app.route('/')
     @app.route('/scoreboard')
     @app.route('/stage-strike-app')
@@ -619,7 +670,16 @@ class WebServer(QThread):
             mimetype = None
             if filename.endswith('.js'):
                 mimetype = "text/javascript"
-            return send_from_directory(os.path.abspath('.'), filename, as_attachment=filename.endswith('.gz'), mimetype=mimetype)
+            if filename.lower().endswith('.png'):
+                mimetype = "image/apng"
+
+            return send_from_directory(
+                os.path.abspath('.'),
+                filename,
+                as_attachment=filename.endswith('.gz'),
+                mimetype=mimetype,
+                max_age=86400
+            )
 
         except Exception as e:
             logger.error(f"File not found: {e}")

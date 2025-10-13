@@ -1,12 +1,23 @@
 import {createSlice, configureStore, combineReducers} from '@reduxjs/toolkit'
-import {tshCharactersSlice, tshPlayersSlice, tshStateSlice, websocketInfoSlice} from './tshState';
+import {
+    tshCharactersSlice,
+    tshCountriesSlice,
+    tshGamesSlice,
+    tshPlayersSlice,
+    tshStateSlice,
+    websocketInfoSlice
+} from './tshState';
+import {selectedScoreboardSlice} from "./uiState";
 
 export const tshStore = configureStore({
     reducer: combineReducers({
         tshState: tshStateSlice.reducer,
         tshPlayers: tshPlayersSlice.reducer,
         tshCharacters: tshCharactersSlice.reducer,
+        tshGames: tshGamesSlice.reducer,
+        tshCountries: tshCountriesSlice.reducer,
         websocketInfo: websocketInfoSlice.reducer,
+        selectedScoreboard: selectedScoreboardSlice.reducer,
     }),
 });
 

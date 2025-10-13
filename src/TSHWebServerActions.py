@@ -1,10 +1,12 @@
 import os
 import re
+from flask import abort
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 import orjson
 
+from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -139,8 +141,17 @@ class WebServerActions(QThread):
 
     def post_score(self, data):
         score = orjson.loads(data)
+        scoreboard_number = 1
+
+        if "scoreboard" in score:
+            try:
+                scoreboard_number = int(score["scoreboard"])
+            except ValueError:
+                logger.warning(f"Couldn't parse scoreboard [${score['scoreboard']}] from /post_data as int, falling back to scoreboard 1")
+                scoreboard_number = 1
+
         score.update({"reset_score": True})
-        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit(score)
+        self.scoreboard.GetScoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
     def team_scoreup(self, scoreboard, team):
@@ -241,7 +252,40 @@ class WebServerActions(QThread):
         self.commentaryWidget.ChangeCommDataSignal.emit(index, data)
 
         return "OK"
+    
+    def set_game(self, data):
+        set_codename = data.get("codename")
+        found_game = False
+        for i, codename in enumerate(TSHGameAssetManager.instance.games.keys()):
+            if codename == set_codename:
+                # TSHGameAssetManager.instance.selectedGame = TSHGameAssetManager.instance.games[codename]
+                # self.parent().SetGame()
+                TSHGameAssetManager.instance.LoadGameAssets(i+1, async_mode=False, mods_active=data.get("mods_active", False), mods_reload_mode=True)
+                found_game = True
+                break
 
+        if not found_game:
+            return f"Could not find game {set_codename}"
+
+        return "OK"
+
+    def get_games(self):
+        data = {}
+        for key in TSHGameAssetManager.instance.games.keys():
+            data[key] = {
+                "name": TSHGameAssetManager.instance.games[key].get("name"),
+                "locale": TSHGameAssetManager.instance.games[key].get("locale"),
+                "challonge_game_id": TSHGameAssetManager.instance.games[key].get("challonge_game_id"),
+                "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
+                "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
+                "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename"))
+            }
+
+        return data
+    
+    def get_current_game(self):
+        return StateManager.Get("game")
+    
     def get_characters(self):
         data = {}
         for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
@@ -477,3 +521,6 @@ class WebServerActions(QThread):
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
             
             return "OK"
+
+    def get_states(self, countryCode: str):
+        return TSHCountryHelper.GetStates(countryCode)

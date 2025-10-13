@@ -1,4 +1,5 @@
 
+from loguru import logger
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
@@ -100,6 +101,7 @@ class TSHPlayerList(QWidget):
         StateManager.ReleaseSaving()
 
     def SetCharactersPerPlayer(self, value):
+        # logger.info("TSHPlayerList#SetCharactersPerPlayer")
         self.charactersPerPlayer = value
         StateManager.BlockSaving()
         self.childDataChangedLock = True
@@ -117,6 +119,7 @@ class TSHPlayerList(QWidget):
                 s.scoreWidget.setVisible(True)
 
     def SetPlayersPerTeam(self, number):
+        # logger.info("TSHPlayerList#SetPlayersPerTeam")
         self.playersPerTeam = number
         StateManager.BlockSaving()
         self.childDataChangedLock = True

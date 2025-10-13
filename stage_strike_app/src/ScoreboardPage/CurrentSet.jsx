@@ -3,7 +3,6 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
     Collapse, IconButton,
     Paper,
     Stack,
@@ -17,8 +16,9 @@ import {ExpandMore} from "@mui/icons-material";
 import {useTheme} from "@mui/material/styles";
 import {BACKEND_PORT} from "../env";
 import {useSelector} from "react-redux";
+import {Grid} from "@mui/system";
 
-export default function CurrentSet() {
+export default function CurrentSet({scoreboardNumber}) {
     /**
      * @typedef CurrentSetState
      * @prop {?TSHScoreInfo} score
@@ -35,27 +35,27 @@ export default function CurrentSet() {
 
 
     /** @type {TSHScoreInfo} */
-    const score = tshState?.score[1];
+    const score = tshState?.score[scoreboardNumber];
     const team1Ref = React.createRef();
     const team2Ref = React.createRef();
     const scoreRef = React.createRef();
 
     const submitChanges = () => {
         Promise.all([
-            team1Ref.current.submitTeamData().catch(console.error),
-            team2Ref.current.submitTeamData().catch(console.error),
-            scoreRef.current.submitScore().catch(console.error),
-            scoreRef.current.submitSetInfo().catch(console.error)
+            team1Ref.current.submitTeamData(scoreboardNumber).catch(console.error),
+            team2Ref.current.submitTeamData(scoreboardNumber).catch(console.error),
+            scoreRef.current.submitScore(scoreboardNumber).catch(console.error),
+            scoreRef.current.submitSetInfo(scoreboardNumber).catch(console.error)
         ]).catch((e) => console.log("Error submitting data: ", e.text()));
     }
 
     const clearScoreboard = () => {
-        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-clear-all`)
+        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-clear-all`)
             .catch(console.error);
     }
 
     const swapTeams = () => {
-        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard1-swap-teams`)
+        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-swap-teams`)
             .catch(console.error)
     }
 
@@ -71,86 +71,85 @@ export default function CurrentSet() {
     }
 
     const teamKeys = Object.keys(score.team).sort()
-    const setId = score.set_id ?? 'unk';
     const teams = [score.team[teamKeys[0]], score.team[teamKeys[1]]];
 
-    let setTitle;
-    const {phase, match} = score;
-    if (!!phase) {
-        if (!!match) {
-            setTitle = `${match}`;
-        } else {
-            setTitle = phase;
-        }
-    } else {
-        if (!!match) {
-            setTitle = match;
-        } else {
-            setTitle = i18n.t("unknown");
-        }
-    }
-
-    return (
+    return (<>
+        <span style={{position: 'relative', float: 'right'}}>
+                <IconButton
+                    title={i18n.t("expand_scoreboard")}
+                    sx={{
+                        position: 'absolute',
+                        top: "-48px",
+                        right: "0px",
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    <ExpandMore sx={{
+                        transform: expanded ? 'rotate(0deg)' : 'rotate(270deg)'
+                    }} />
+                </IconButton>
+            </span>
         <Card>
-            <CardHeader
-                title={`Current Set: ${setTitle}`}
-                action={
-                    <IconButton onClick={() => setExpanded(!expanded)}>
-                        <ExpandMore sx={{
-                            transform: expanded ? 'rotate(0deg)' : 'rotate(270deg)'
-                        }} />
-                    </IconButton>
-                }
-            />
             <Collapse in={expanded} timeout={"auto"}>
                 <CardContent>
                     {
                         hasSuitableTeamCount && (
-                            <Stack direction={isSmall ? "column" : "row"}
-                                   spacing={2}
-                                   alignItems={"center"}
-                                   justifyContent={"space-evenly"}
+                            <Grid
+                                container
+                                direction={"row"}
+                                spacing={2}
+                                alignItems={"stretch"}
+                                justifyContent={"space-evenly"}
                             >
-                                <Team
-                                      key={`s-${setId}-t-${teamKeys[0]}`}
-                                      teamId={`s-${setId}-t-${teamKeys[0]}`}
-                                      tshTeamId={teamKeys[0]}
-                                      ref={team1Ref}
-                                      team={teams[0]}
-                                      characters={tshChars}
-                                />
+                                <Grid
+                                    size={isSmall ? 12 : 4.5}
+                                >
+                                    <Team
+                                          key={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
+                                          teamId={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
+                                          tshTeamId={teamKeys[0]}
+                                          ref={team1Ref}
+                                          team={teams[0]}
+                                          characters={tshChars}
+                                    />
+                                </Grid>
 
-                                <Stack gap={4}>
-                                    <Paper sx={{padding:2}} elevation={3}>
-                                        <SetScore
-                                            key={score.set_id + "score"}
-                                            leftTeam={teams[0]}
-                                            rightTeam={teams[1]}
-                                            best_of={score.best_of}
-                                            match={score.match ?? ""}
-                                            phase={score.phase ?? ""}
-                                            ref={scoreRef}
-                                        />
-                                    </Paper>
 
-                                    <Stack gap={2}>
-                                        <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
-                                        <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
-                                        <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                <Grid>
+                                    <Stack gap={4}>
+                                        <Paper sx={{padding:2}} elevation={3}>
+                                            <SetScore
+                                                key={score.set_id + "score"}
+                                                leftTeam={teams[0]}
+                                                rightTeam={teams[1]}
+                                                best_of={score.best_of}
+                                                match={score.match ?? ""}
+                                                phase={score.phase ?? ""}
+                                                ref={scoreRef}
+                                            />
+                                        </Paper>
+
+                                        <Stack gap={2}>
+                                            <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
+                                            <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
+                                            <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                        </Stack>
                                     </Stack>
-                                </Stack>
+                                </Grid>
 
-                                <Team key={`s-${setId}-t-${teamKeys[1]}`}
-                                      teamId={`s-${setId}-t-${teamKeys[1]}`}
+                                <Grid size={isSmall ? 12 : 4.5}>
+                                <Team key={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
+                                      teamId={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
                                       tshTeamId={teamKeys[1]}
                                       ref={team2Ref}
                                       team={teams[1]}
                                 />
-                            </Stack>
+                                </Grid>
+                            </Grid>
                         )
                     }
                 </CardContent>
             </Collapse>
         </Card>
-    )
+    </>)
 }

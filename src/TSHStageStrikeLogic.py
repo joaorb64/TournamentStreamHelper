@@ -1,6 +1,12 @@
 from .StateManager import StateManager
 from copy import deepcopy
 from loguru import logger
+from qtpy.QtCore import QObject, Signal
+
+
+class TSHStageStrikeStateSignals(QObject):
+    state_updated = Signal()
+
 
 class TSHStageStrikeState:
     def __init__(self) -> None:
@@ -20,7 +26,7 @@ class TSHStageStrikeState:
         self.timestamp = 0
         self.serverTimestamp = 0
         self.gentlemans = False
-    
+
     def Clone(self):
         clone = TSHStageStrikeState()
         clone.__dict__ = deepcopy(self.__dict__)
@@ -31,7 +37,8 @@ class TSHStageStrikeLogic():
         self.ruleset: "Ruleset" = None
         self.history: list(TSHStageStrikeState) = [TSHStageStrikeState()]
         self.historyIndex = 0
-    
+        self.signals = TSHStageStrikeStateSignals()
+
     def AddHistory(self, state, justOverwrite=False):
         self.history = self.history[:self.historyIndex+1]
 
@@ -74,6 +81,7 @@ class TSHStageStrikeLogic():
             "canUndo": self.historyIndex > 0,
             "canRedo": self.historyIndex < len(self.history) - 1
         })
+        self.signals.state_updated.emit()
 
     def SetRuleset(self, ruleset):
         self.ruleset = ruleset
