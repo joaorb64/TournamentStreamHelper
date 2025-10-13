@@ -1371,9 +1371,11 @@ class TSHGameAssetManager(QObject):
                         if len(eyesights.keys()) > 0:
                             if str(skin) in eyesights:
                                 if assetKey in charFiles:
+                                    charFiles[assetKey] = charFiles.get(assetKey, {})
                                     charFiles[assetKey]["eyesight"] = eyesights.get(
                                         str(skin))
                             else:
+                                charFiles[assetKey] = charFiles.get(assetKey, {})
                                 charFiles[assetKey]["eyesight"] = list(
                                     eyesights.values())[0]
                     
