@@ -1,3 +1,5 @@
+from tempfile import TemporaryDirectory
+
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -11,6 +13,8 @@ import zipfile
 import json
 from loguru import logger
 import glob
+
+from .TSHDownloadHelper import download_file
 from ..SettingsManager import SettingsManager
 
 
@@ -47,36 +51,35 @@ class TSHControllerHelper(QObject):
                     return
 
             url = 'https://github.com/Wolfy76700/ControllerDatabase/archive/refs/heads/main.zip'
-            r = requests.get(url, allow_redirects=True)
 
-            with open('./assets/controller.zip.tmp', 'wb') as zip_file:
-                zip_file.write(r.content)
+            def extract_file(filename):
+                with TemporaryDirectory(ignore_cleanup_errors=True) as tmp_dir:
+                    try:
+                        with zipfile.ZipFile(filename, 'r') as zip_file:
+                            zip_file.extractall(tmp_dir)
 
-            try:
-                # Extract ZIP
-                if os.path.exists("./assets/controller_tmp"):
-                    shutil.rmtree("./assets/controller_tmp")
-                with zipfile.ZipFile('./assets/controller.zip.tmp', 'r') as zip_file:
-                    os.mkdir('./assets/controller_tmp')
-                    zip_file.extractall('./assets/controller_tmp')
+                        # Move directory
+                        if os.path.exists("./assets/controller"):
+                            shutil.rmtree("./assets/controller")
 
-                # Remove ZIP
-                os.remove('./assets/controller.zip.tmp')
+                        shutil.move(tmp_dir, "./assets/controller")
 
-                # Move directory
-                if os.path.exists("./assets/controller"):
-                    shutil.rmtree("./assets/controller")
-                os.rename(
-                    './assets/controller_tmp',
-                    './assets/controller'
-                )
+                        logger.info("Controller files updated")
+                        return True
+                    except Exception:
+                        logger.opt(exception=True).error("Failed to extract Controller files")
+                return False
 
-                logger.info("Controller files updated")
-            except:
-                logger.error("Controller files download failed")
+            download_file(
+                url,
+                filename=None,
+                desc="Controller files",
+                validator=extract_file,
+                assume_size=(1024*1024*95) # ~95MB
+            )
         except Exception as e:
-            logger.error(
-                "Could not update /assets/controller: "+str(e))
+            logger.opt(exception=True).error(
+                "Could not update /assets/controller: ")
 
     def BuildControllerTree(self):
         controller_list = {}

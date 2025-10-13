@@ -54,6 +54,10 @@ export type TSHCharacterSelection = TSHCharacterBase & {
 
 export type TSHCharacterSelections = Record<number, TSHCharacterSelection>;
 
+export type TSHCharacterDb = {
+    [codename: string]: TSHCharacterDbEntry;
+};
+
 export type TSHCharacterDbEntry = TSHCharacterBase & {
     skins: TSHCharacterSkin[];
 };

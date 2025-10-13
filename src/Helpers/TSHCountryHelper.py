@@ -1,4 +1,5 @@
 import re
+import sys
 import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -9,6 +10,9 @@ import traceback
 import time
 from pathlib import Path
 
+from tqdm import tqdm
+
+from .TSHDownloadHelper import download_file
 from ..SettingsManager import SettingsManager
 from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
@@ -56,24 +60,15 @@ class TSHCountryHelper(QObject):
 
                 try:
                     url = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/refs/heads/master/json/countries%2Bstates%2Bcities.json'
-                    r = requests.get(url, allow_redirects=True)
-                    tmp_file = Path('./assets/countries+states+cities.json.tmp')
-
-                    with tmp_file.open(mode='wb') as f:
-                        f.write(r.content)
-
-                    try:
-                        # Test if downloaded JSON is valid
-                        with tmp_file.open(mode='r', encoding='utf-8') as f:
+                    def validate(filename):
+                        with open(filename, mode='r', encoding='utf-8') as f:
                             orjson.loads(f.read())
+                        return True
+                    download_file(url=url, filename=str(out_file), desc="Countries file", validator=validate)
 
-                        # Remove old file, overwrite with new one
-                        tmp_file.replace(out_file)
-
-                        logger.info("Countries file updated")
-                        TSHCountryHelper.LoadCountries()
-                    except:
-                        logger.error("Countries files download failed")
+                    logger.info("Updating data_countries file...")
+                    TSHCountryHelper.LoadCountries()
+                    logger.info("data_countries file updated.")
                 except Exception as e:
                     logger.error(
                         "Could not update countries+states+cities.json: "+str(e))

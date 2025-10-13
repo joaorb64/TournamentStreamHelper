@@ -1,13 +1,12 @@
-import {useContext} from "react";
-import {TSHStateContext} from "./Contexts";
 import {AppBar, Toolbar, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
 import {BACKEND_PORT} from "../env";
+import {useSelector} from "react-redux";
 
 
 export const Header = (props) => {
-    const /** @type {TSHState} */ tshState = useContext(TSHStateContext);
+    const tshState = useSelector(state => state.tshState.tshState);
     const theme = useTheme();
 
     return (
