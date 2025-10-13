@@ -6,10 +6,9 @@ import {
     Tab,
     Tabs
 } from "@mui/material";
-import React from "react";
+import React, {useCallback} from "react";
 import {Box} from "@mui/system";
 
-import '../backendDataTypes.ts';
 import CurrentSet from "./CurrentSet";
 import UpcomingSets from "./UpcomingSets";
 import {Header} from "./Header";
@@ -19,6 +18,7 @@ import {tshStateSlice} from "../redux/tshState";
 import websocketInit from "./websocketInit";
 import websocketConnection from "../websocketConnection";
 import {selectedScoreboardSlice} from "../redux/uiState";
+import {TSHState} from "../backendDataTypes";
 
 /**
  * Main page for the scoreboard. This whole contraption is powered by TSH's python-side
@@ -28,7 +28,7 @@ import {selectedScoreboardSlice} from "../redux/uiState";
  */
 export default function ScoreboardPage(props: any) {
     const dispatch = useDispatch();
-    const {loading, errored, selectedScoreboard, tshState} = useSelector((state: ReduxState) => ({
+    const {loading, errored, selectedScoreboard, scoreboards} = useSelector((state: ReduxState) => ({
         loading: (
             state.tshState.initializing
             || state.tshCharacters.initializing
@@ -37,17 +37,13 @@ export default function ScoreboardPage(props: any) {
             || state.tshCountries.initializing
         ),
         errored: state.websocketInfo.status === "errored",
-        tshState: state.tshState.tshState,
+        scoreboards: state.tshState.tshState.score,
         selectedScoreboard: state.selectedScoreboard.value
     }), shallowEqual);
 
     React.useEffect(() => {
-        (window as any).title = `TSH ${i18n.t("scoreboard")}`;
+        document.title = `TSH ${i18n.t("scoreboard")}`;
         websocketInit();
-        const intervalId = setInterval(() => {
-            tshStore.dispatch(tshStateSlice.actions.applySavedDeltas())
-        }, 1000);
-        return () => clearInterval(intervalId);
     }, []);
 
     let body;
@@ -96,7 +92,7 @@ export default function ScoreboardPage(props: any) {
                                     value={selectedScoreboard}
                                 >
                                     {
-                                        scoreboardKeys(tshState).map(sbName =>
+                                        scoreboardKeys(scoreboards).map(sbName =>
                                             <Tab key={sbName} value={sbName} label={`Scoreboard ${sbName}`} />)
                                     }
                                 </Tabs>
@@ -131,9 +127,9 @@ export default function ScoreboardPage(props: any) {
     )
 }
 
-const scoreboardKeys = (tshState) => {
-    if (tshState.score) {
-        return Object.keys(tshState.score)
+const scoreboardKeys = (scoreboards: TSHState['score']) => {
+    if (scoreboards) {
+        return Object.keys(scoreboards)
             .filter(k => k.match(/^\d+$/))
             .map(k => Number.parseInt(k));
     } else {

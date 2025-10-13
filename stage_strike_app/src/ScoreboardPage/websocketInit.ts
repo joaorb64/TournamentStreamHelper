@@ -10,11 +10,19 @@ import { tshStore } from "../redux/store";
 import socketConnection from "../websocketConnection";
 import {BACKEND_PORT} from "../env";
 
+let initialized = false;
+
 export default function websocketInit() {
+    if (initialized) {
+        return;
+    }
+
+    initialized = true;
     const socket = socketConnection.instance();
 
     socket.on("connect", () => {
         console.log("SocketIO connection established.");
+        tshStore.dispatch(websocketInfoSlice.actions.setStatus("connected"));
         socket.emit("playerdb", {}, () => {
             console.log("TSH acked player db request")
         });
@@ -22,9 +30,6 @@ export default function websocketInit() {
             console.log("TSH acked characters request")
         });
         socket.emit("games", {}, () => {
-            console.log("TSH acked games request")
-        });
-        socket.emit("countries", {}, () => {
             console.log("TSH acked games request")
         });
 
@@ -71,7 +76,14 @@ export default function websocketInit() {
     socket.on('error', (err) => {
         console.log(err);
         tshStore.dispatch(websocketInfoSlice.actions.setStatus("errored"));
-    })
+    });
+
+    const intervalId = setInterval(() => {
+        const state = tshStore.getState();
+        if (state.websocketInfo.status === "connected" && state.tshState?.stateDeltas.length > 0) {
+            tshStore.dispatch(tshStateSlice.actions.applySavedDeltas());
+        }
+    }, 1000);
 }
 
 // Todo, maybe move this to a thunk or something.
@@ -92,3 +104,4 @@ const loadCountriesFile = () => {
         tshStore.dispatch(tshCountriesSlice.actions.overwrite({}));
     });
 }
+

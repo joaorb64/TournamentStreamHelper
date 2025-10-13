@@ -1,10 +1,10 @@
-export type TSHCountryInfo = {
+export interface TSHCountryInfo {
     code: string;
     display_name: string;
     en_name: string;
-};
+}
 
-export type TSHPlayerInfo = {
+export interface TSHPlayerInfo {
     id?: [number, number];
     city?: string;
     state?: TSHCountryInfo;
@@ -20,17 +20,17 @@ export type TSHPlayerInfo = {
     team?: string;
     twitter?: string;
     character: TSHCharacterSelections;
-};
+}
 
-export type TSHTeamInfo = {
+export interface TSHTeamInfo {
     score: number;
     teamName: string;
     player: Record<number, TSHPlayerInfo>;
     losers: boolean;
     color: string;
-};
+}
 
-export type TSHScoreInfo = {
+export interface TSHScoreInfo {
     best_of: number;
     best_of_text: string;
     match: string;
@@ -39,66 +39,66 @@ export type TSHScoreInfo = {
     station?: string;
     stream_url?: string;
     team: Record<number, TSHTeamInfo>;
-};
+}
 
-export type TSHCharacterBase = {
+export interface TSHCharacterBase {
     codename: string;
     display_name: string;
     en_name: string;
     name: string;
-};
+}
 
-export type TSHCharacterSelection = TSHCharacterBase & {
+export interface TSHCharacterSelection extends TSHCharacterBase {
     skin: number; // This is -1 if unset.
-};
+}
 
 export type TSHCharacterSelections = Record<number, TSHCharacterSelection>;
 
-export type TSHCharacterDb = {
+export interface TSHCharacterDb {
     [codename: string]: TSHCharacterDbEntry;
-};
+}
 
-export type TSHCharacterDbEntry = TSHCharacterBase & {
+export interface TSHCharacterDbEntry extends TSHCharacterBase {
     skins: TSHCharacterSkin[];
-};
+}
 
-export type TSHCharacterSkin = {
+export interface TSHCharacterSkin {
     assets: TSHCharacterSkinAssets;
-};
+}
 
-export type TSHCharacterSkinAssets = {
+export interface TSHCharacterSkinAssets {
     art?: TSHCharacterSkinAsset;
     "base_files/icon"?: TSHCharacterSkinAsset;
     costume?: TSHCharacterSkinAsset;
     css?: TSHCharacterSkinAsset;
     full?: TSHCharacterSkinAsset;
     profile?: TSHCharacterSkinAsset;
-};
+}
 
-export type TSHCharacterSkinAsset = {
+export interface TSHCharacterSkinAsset {
     asset: string; // Path to the asset
     average_size?: Point2D;
     image_size?: Point2D;
     rescaling_factor?: number;
     type?: string[];
     uncropped_edge?: string[];
-};
+}
 
-export type Point2D = {
+export interface Point2D {
     x: number;
     y: number;
-};
+}
 
 export type TSHCharacters = Record<string, TSHCharacterSelection>;
 
-export type TSHSetEntrant = {
+export interface TSHSetEntrant {
     gamerTag: string;
     prefix?: string;
     name?: string;
     id: number[];
-};
+}
 
-export type TSHSet = {
+export interface TSHSet {
     bracket_type: string;
     entrants: [TSHSetEntrant, TSHSetEntrant];
     id: number;
@@ -115,19 +115,20 @@ export type TSHSet = {
     team1score: number;
     team2score: number;
     tournament_phase?: string;
-};
+}
 
-export type TSHPlayerDbEntry = {
+export interface TSHPlayerDbEntry {
     controller: string;
     country_code: string;
     custom_textbox: string;
+    prefixed_tag: string;
     gamerTag: string;
     mains?: TSHMainsMap;
     name: string;
     prefix: string;
     pronoun: string;
     twitter: string;
-};
+}
 
 export type TSHCountryCode = string;
 
@@ -141,7 +142,7 @@ export type TSHMain = [string, number, string];
 
 export type TSHPlayerDb = Record<string, TSHPlayerDbEntry>;
 
-export type TSHState = {
+export interface TSHState {
     score: {
         [scoreboard: number]: TSHScoreInfo;
         ruleset: object;
@@ -164,7 +165,7 @@ export type TSHState = {
         initial_load?: boolean;
         numEntrants?: number;
     };
-};
+}
 
 export interface TSHGamesDb {
     [codename: string]: TSHGameInfo
@@ -180,4 +181,22 @@ export interface TSHGameInfo{
     codename: string // This one isn't in the backend responses, I add it from the key.
 }
 
-export const BackendTypes = {};
+export interface Delta {
+    action: DeltaOpType;
+    path: (string | number)[];
+    type: string;
+    value: any;
+}
+
+export type DeltaOpType =
+     "type_changes"
+   | "values_changed"
+   | "dictionary_item_added"
+   | "dictionary_item_removed"
+   | "iterable_item_added"
+   | "iterable_item_removed"
+   | "attribute_added"
+   | "attribute_removed"
+   | "set_item_added"
+   | "set_item_removed"
+   | "repetition_change";

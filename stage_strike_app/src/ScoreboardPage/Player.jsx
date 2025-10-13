@@ -334,7 +334,7 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                                 options={Object.values(playerDb)}
                                 value={state.name ?? ''}
                                 getOptionLabel={(/** TSHPlayerDbEntry|string */ player) => {
-                                    return player?.gamerTag ?? player;
+                                    return player?.prefixed_tag ?? player;
                                 }}
                                 freeSolo={true}
                                 sx={{width: '100%'}}

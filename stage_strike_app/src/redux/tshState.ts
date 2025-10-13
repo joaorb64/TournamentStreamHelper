@@ -1,17 +1,23 @@
-import {Action, createSlice, PayloadAction} from '@reduxjs/toolkit'
+import {Action, createSlice, PayloadAction, WritableDraft} from '@reduxjs/toolkit'
 import {applyDeltas, combineDeltas} from "../stateDelta";
-import {TSHCharacterDb, TSHCountryDb, TSHCountryInfo, TSHGamesDb, TSHPlayerDb, TSHState} from "../backendDataTypes";
 import websocketConnection from "../websocketConnection";
+import {
+    TSHCountryDb,
+    TSHCharacterDb,
+    TSHCharacterDbEntry,
+    TSHPlayerDb,
+    TSHState,
+    TSHGamesDb, Delta
+} from "../backendDataTypes";
 
-export type Delta = any;
 export type ReceivedDeltas = {
-    deltaIdx: number;
+    delta_index: number;
     delta: Delta[];
 };
 
 export type TSHStateMessage = {
     state: TSHState;
-    deltaIdx: number;
+    delta_index: number;
 }
 
 export type WebsocketStatus =
@@ -33,49 +39,56 @@ export const websocketInfoSlice = createSlice({
     }
 });
 
+export type TshStateReduxState = {
+    tshState: TSHState;
+    stateDeltas: ReceivedDeltas[];
+    maxAppliedDeltaIdx: number;
+    initializing: boolean;
+};
+
 export const tshStateSlice = createSlice({
     name: 'tshState',
     initialState: {
         tshState: {} as TSHState,
-        stateDeltas: [] as any[],
+        stateDeltas: [],
         maxAppliedDeltaIdx: -1,
         initializing: true,
-    },
+    } as TshStateReduxState,
     reducers: {
-        applySavedDeltas(state, action: Action) {
-            let sortedDeltas = state.stateDeltas.toSorted((a, b) => a.deltaIdx - b.deltaIdx);
-            const staleDeltas = sortedDeltas.filter((d) => d.deltaIdx < state.maxAppliedDeltaIdx);
-            sortedDeltas = sortedDeltas.filter((d) => d.deltaIdx >= state.maxAppliedDeltaIdx);
+        applySavedDeltas(state: WritableDraft<TshStateReduxState>, action: Action) {
+            let sortedDeltas = state.stateDeltas.toSorted((a, b) => a.delta_index - b.delta_index);
+            const staleDeltas = sortedDeltas.filter((d) => d.delta_index < state.maxAppliedDeltaIdx);
+            sortedDeltas = sortedDeltas.filter((d) => d.delta_index >= state.maxAppliedDeltaIdx);
 
             if (staleDeltas.length > 0) {
                 console.warn("Skipping applying stale deltas...", staleDeltas);
             }
 
             if (sortedDeltas.length > 0) {
-                console.log("Applying deltas: ", combineDeltas(sortedDeltas.map(d => d.delta)));
-                applyDeltas(state, sortedDeltas.map((d) => d.delta));
-                state.maxAppliedDeltaIdx = sortedDeltas[sortedDeltas.length-1].deltaIdx;
-                state.stateDeltas = [];
-                state.initializing = false;
+                for (let deltaSet of sortedDeltas) {
+                    console.log("Applying deltas: ", combineDeltas(deltaSet.delta));
+                    applyDeltas(state.tshState, deltaSet.delta);
+                }
+                state.maxAppliedDeltaIdx = sortedDeltas[sortedDeltas.length-1].delta_index;
             }
+
+            state.initializing = false;
+            state.stateDeltas = [];
         },
 
-        addDeltas(state, action: PayloadAction<ReceivedDeltas>){
-            if (action.payload.deltaIdx < state.maxAppliedDeltaIdx) {
+        addDeltas(state: TshStateReduxState, action: PayloadAction<ReceivedDeltas>){
+            if (action.payload.delta_index < state.maxAppliedDeltaIdx) {
                 console.warn("Received out of order delta! Requesting new full state.");
                 websocketConnection.instance().emit("program_state", {});
             }
 
-            state.maxAppliedDeltaIdx = Math.max(action.payload.deltaIdx, state.maxAppliedDeltaIdx);
-
-            for (let d of action.payload.delta) {
-                state.stateDeltas.push(d);
-            }
+            state.maxAppliedDeltaIdx = Math.max(action.payload.delta_index, state.maxAppliedDeltaIdx);
+            state.stateDeltas.push(action.payload);
         },
 
-        overwrite(state, action: PayloadAction<TSHStateMessage>) {
+        overwrite(state: TshStateReduxState, action: PayloadAction<TSHStateMessage>) {
             state.tshState = action.payload.state;
-            state.maxAppliedDeltaIdx = Math.max(action.payload.deltaIdx, state.maxAppliedDeltaIdx);
+            state.maxAppliedDeltaIdx = Math.max(action.payload.delta_index, state.maxAppliedDeltaIdx);
             state.stateDeltas = [];
             state.initializing = false;
         },
@@ -95,6 +108,9 @@ export const tshPlayersSlice = createSlice({
     reducers: {
         overwrite(state, action: PayloadAction<TSHPlayerDb>) {
             state.players = action.payload;
+            for (let k in state.players) {
+                state.players[k].prefixed_tag = k;
+            }
             state.initializing = false;
         }
     }
@@ -112,7 +128,7 @@ export const tshCharactersSlice = createSlice({
             // to the english name instead the localized name. We won't be able to do lookups if we don't
             // rearrange it like this.
             const enChars: TSHCharacterDb = {};
-            Object.values(action.payload).forEach((/** TSHCharacterBase */ char) => {
+            Object.values(action.payload).forEach((char: TSHCharacterDbEntry) => {
                 enChars[char.en_name] = char;
             });
             console.log("Character data set", enChars);
@@ -140,7 +156,7 @@ export const tshGamesSlice = createSlice({
 });
 
 export const tshCountriesSlice = createSlice({
-    name: 'tshCountires',
+    name: 'tshCountries',
     initialState: {
         value: {} as TSHCountryDb,
         initializing: true,
@@ -151,4 +167,4 @@ export const tshCountriesSlice = createSlice({
             state.initializing = false;
         }
     }
-})
+});

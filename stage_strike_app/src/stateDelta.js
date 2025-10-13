@@ -18,30 +18,6 @@
  * objects that get added, which complicates things dramatically when trying to batch updates.
  */
 
-/** @typedef {{
- *   action: DeltaOpType,
- *   path: (string|number)[]
- *   type: string
- *   value: any
- * }} Delta
- */
-
-/**
- * @typedef {(
- *    "type_changes"
- *  | "values_changed"
- *  | "dictionary_item_added"
- *  | "dictionary_item_removed"
- *  | "iterable_item_added"
- *  | "iterable_item_removed"
- *  | "attribute_added"
- *  | "attribute_removed"
- *  | "set_item_added"
- *  | "set_item_removed"
- *  | "repetition_change"
- * )} DeltaOpType
- */
-
 /**
  * Takes a single delta operation, and modifies the data object.
  *
