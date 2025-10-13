@@ -75,7 +75,7 @@ def download_file(
                     unit_scale=True,
                     total=content_length
             )
-            with progress_bar:
+            try:
                 # Progress bar is helpful, but loggers have no concept of
                 # tty ansi escape codes to reset the cursor position, so we
                 # print directly to the console.
@@ -83,6 +83,9 @@ def download_file(
                     progress_bar.update(len(data))
                     tmp_file.write(data)
                 progress_bar.total = progress_bar.n
+            finally:
+                progress_bar.close()
+
 
             logger.info(str(progress_bar))
 
