@@ -100,6 +100,13 @@ logger.add(
     rotation="20 MB"
 )
 
+try:
+    # Setting the icon for individual windows doesn't work on mac (and perhaps linux? unknown)
+    App.setWindowIcon(QIcon("assets/icons/icon.png"))
+except:
+    logger.opt(exception=True).warning("Could not set window icon for QApplication.")
+
+
 logger.critical("=== TSH IS STARTING ===")
 
 logger.info("QApplication successfully initialized")

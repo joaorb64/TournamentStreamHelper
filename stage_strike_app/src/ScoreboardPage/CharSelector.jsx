@@ -1,9 +1,8 @@
 import {Autocomplete, MenuItem, Stack} from "@mui/material";
-import {TSHCharacterContext} from "./Contexts";
 import TextField from "./TextField";
-import {useContext} from "react";
 import i18n from "i18next";
 import {BACKEND_PORT} from "../env";
+import {useSelector} from "react-redux";
 
 /**
  * @typedef {{
@@ -31,7 +30,7 @@ export function CharSelector({
     onCharSkinChanged,
     stackProps,
  }) {
-    const /** @type {TSHCharacterDb} */ characters = useContext(TSHCharacterContext);
+    const /** @type {TSHCharacterDb} */ characters = useSelector((state) => state.tshCharacters.characters);
     const hasCharName = charName && charName !== '';
 
     return (

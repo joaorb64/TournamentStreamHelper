@@ -21,4 +21,5 @@ termcolor==2.5.0
 orjson==3.10.13
 msgpack==1.1.0
 qasync==0.27.1
+tqdm==2.2.3
 tzdata

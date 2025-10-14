@@ -1,16 +1,18 @@
-import {useContext} from "react";
-import {TSHStateContext, TSHGamesContext} from "./Contexts";
 import {AppBar, MenuItem, Select, Toolbar, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
+import {shallowEqual, useSelector} from "react-redux";
 import {BASE_URL} from "../env";
 import {GameIcon} from "../GameIcon";
 
 
 export const Header = ({onSelectedGameChange, ...rest}) => {
-    const /** @type {TSHState} */ tshState = useContext(TSHStateContext);
+    const {tshState, games} = useSelector(state => ({
+      tshState: state.tshState.tshState,
+      games: state.tshGames.value
+    }), shallowEqual);
+
     const theme = useTheme();
-    const /** @type {TSHGamesInfo} */ games = useContext(TSHGamesContext);
 
     return (
         <AppBar
@@ -64,6 +66,7 @@ export const Header = ({onSelectedGameChange, ...rest}) => {
                       renderValue={(codename) =>
                         <GameIcon game={games[codename]} />
                       }
+                      id={"header-game-select"}
                       onChange={(e) => onSelectedGameChange(e.target.value)}
                     >
                         {

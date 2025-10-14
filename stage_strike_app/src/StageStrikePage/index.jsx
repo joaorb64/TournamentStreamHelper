@@ -11,7 +11,7 @@ import i18n from "../i18n/config";
 import { Check } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "../themes";
-import {BACKEND_PORT, BASE_URL} from "../env";
+import {BASE_URL} from "../env";
 import {NoRulesetError} from "./NoRulesetError";
 import {StageCard} from "./StageCard";
 import {
@@ -21,8 +21,8 @@ import {
 import {RpsDialog} from "./RpsDialog";
 import {FooterControls} from "./FooterControls";
 import {PlayerWonButton} from "./PlayerWonButton";
-import {io, Socket} from "socket.io-client";
 import {StagePromptText} from "./StagePromptText";
+import websocketConnection from "../websocketConnection";
 
 class StageStrikePage extends Component {
   state = {
@@ -45,8 +45,7 @@ class StageStrikePage extends Component {
     canRedo: false,
   };
 
-  /** @type {Socket | null} */
-  socket = null;
+  socket = websocketConnection.instance();
 
   GetStage(/** string */ stage) {
     let found = this.state.ruleset.neutralStages.find(
@@ -156,13 +155,6 @@ class StageStrikePage extends Component {
   }
 
   componentDidMount() {
-    this.socket = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
-      transports: ['websocket', 'webtransport'],
-      timeout: 5000,
-      reconnectionDelay: 500,
-      reconnectionDelayMax: 1500,
-    });
-
     this.socket.on("connect", () => {
       console.log("SocketIO connection established.");
       this.socket.emit("ruleset", {}, () => {console.log("TSH acked ruleset request")});

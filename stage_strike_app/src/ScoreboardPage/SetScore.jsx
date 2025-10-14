@@ -49,7 +49,7 @@ export default class SetScore extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-            console.log("Received new set score info.", prevProps, this.props);
+            // console.log("Set score component received new props.", prevProps, this.props);
             this.setState({...prevState, ...this.stateFromProps(this.props)});
         }
     }

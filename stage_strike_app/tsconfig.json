@@ -1,0 +1,10 @@
+{
+  "extends": ["@tsconfig/recommended", "@tsconfig/create-react-app"],
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "lib": ["es2023", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
+  },
+  "include": [
+    "./src"
+  ]
+}
