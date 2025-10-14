@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 from typing import Optional, Callable
-from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
+from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
 
 import orjson
