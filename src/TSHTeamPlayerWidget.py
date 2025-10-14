@@ -141,11 +141,45 @@ class TSHTeamPlayerWidget(QGroupBox):
         self.pronoun_completer.setModel(self.pronoun_model)
         self.pronoun_model.setStringList(self.pronoun_list)
 
-    def ComboBoxIndexChanged(self, element: QComboBox):
-        StateManager.Set(
-            f"{self.path}.{element.objectName()}", element.currentData())
-        # self.instanceSignals.dataChanged.emit()
+        self.ToggleSponsorDisplay()
+    
+    # =====================================================
+    # BATTLE SPECIFIC CALLS
+    # =====================================================
 
+    def ToggleSponsorDisplay(self):
+        if self.findChild(QLineEdit, "team").isHidden():
+            self.findChild(QLineEdit, "team").show()
+        else:
+            self.findChild(QLineEdit, "team").hide()
+    
+    # TODO: Store internally what way we are doing data to easily flip back without requiring additional calls
+    def ResetDynamicSpinner(self):
+        self.findChild(QSpinBox, "dynamicSpinner").setValue(0)
+        self.findChild(QCheckBox, "dead").setChecked(False)
+    
+    def SetActiveStatus(self, status: bool):
+        # TODO: Find and set active status checkbox
+        self.ExportActiveStatus()
+        return
+    
+    def SetDeathStatus(self, status: bool):
+        # TODO: Find and set status of death checkbox
+        # TODO: Setup system to automatically trigger death status when reaching "end goal"
+        self.ExportDeathStatus()
+        return
+    
+    # =====================================================
+    # EXPORT CALLS
+    # =====================================================
+    def ExportActiveStatus(self):
+        # TODO: Export Current Active Status to StateManager
+        return
+    
+    def ExportDeathStatus(self):
+        # TODO: Export Current Death Status to StateManager
+        return
+    
     def CharactersChanged(self, includeMains=False):
         with self.dataLock:
             characters = {}
@@ -185,6 +219,10 @@ class TSHTeamPlayerWidget(QGroupBox):
             if includeMains:
                 StateManager.Set(
                     f"{self.path}.mains", characters)
+    
+    def ComboBoxIndexChanged(self, element: QComboBox):
+        StateManager.Set(
+            f"{self.path}.{element.objectName()}", element.currentData())
 
     def NameChanged(self):
         with self.dataLock:

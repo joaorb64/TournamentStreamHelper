@@ -7,6 +7,13 @@ from .StateManager import StateManager
 from .Helpers.TSHDirHelper import TSHResolve
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
 
+from enum import Enum
+
+# Enum for Selecting Widget Mode (Mainly for dropdown and switch statements)
+class TSHTeamBattleModeEnum(Enum):
+    STOCK_POOL = QApplication.translate("app", "Stock Pool (Smash)")
+    FIRST_TO = QApplication.translate("app", "First To (Best Of X Team Individuals)")
+
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
     reset_all_stocks = Signal()
@@ -46,6 +53,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.team2playerWidgets: List[TSHTeamPlayerWidget] = []
 
         self.playerNumber = QSpinBox()
+        self.playerNumber.setObjectName("playerNumber")
         row = QWidget()
         row.setLayout(QHBoxLayout())
         row.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
@@ -59,6 +67,7 @@ class TSHTeamBattleWidget(QDockWidget):
         playerColumn.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(
             lambda val: self.SetPlayersPerTeam(val))
+        self.playerNumber.setValue(1)
         row.layout().addWidget(playerColumn)
         
         characterColumn = QWidget()
@@ -102,6 +111,11 @@ class TSHTeamBattleWidget(QDockWidget):
 
         self.widget.layout().addWidget(scrollArea)
 
+        self.findChild(QSpinBox, "playerNumber").valueChanged.emit(1)
+
+        self.team1column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam1)
+        self.team2column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam2)
+
         # Hook into Signals for Control
         self.signals.reset_all_stocks.connect(self.ResetAllStocks)
         self.signals.reset_everything.connect(self.ResetEverything)
@@ -114,6 +128,16 @@ class TSHTeamBattleWidget(QDockWidget):
     # =====================================================
     # GENERAL CONTROL METHODS
     # =====================================================
+    def SwitchBattleMode(self):
+        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+
+        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+            return
+        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+            return
+        else:
+            return
+    
     def ResetAllStocks(self):
         logger.info("RESET ALL STOCKS")
 
@@ -135,9 +159,10 @@ class TSHTeamBattleWidget(QDockWidget):
 
             self.team1column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
-            # p.SetCharactersPerPlayer(self.charNumber.value())
-            # self.team1column.findChild(
-            #     QCheckBox, "losers").toggled.connect(p.SetLosers)
+            p.SetCharactersPerPlayer(self.characterNumber.value())
+
+            if self.team1column.findChild(QCheckBox, "separateSponsors").isChecked():
+                p.ToggleSponsorDisplay()
 
             index = len(self.team1playerWidgets)
 
@@ -156,9 +181,10 @@ class TSHTeamBattleWidget(QDockWidget):
 
             self.team2column.findChild(
                 QScrollArea).widget().layout().addWidget(p)
-            # p.SetCharactersPerPlayer(self.charNumber.value())
-            # self.team2column.findChild(
-            #     QCheckBox, "losers").toggled.connect(p.SetLosers)
+            p.SetCharactersPerPlayer(self.characterNumber.value())
+
+            if self.team2column.findChild(QCheckBox, "separateSponsors").isChecked():
+                p.ToggleSponsorDisplay()
 
             index = len(self.team2playerWidgets)
 
@@ -194,27 +220,77 @@ class TSHTeamBattleWidget(QDockWidget):
         # for x, element in enumerate(self.elements, start=1):
         #     action: QAction = self.eyeBt.menu().actions()[x]
         #     self.ToggleElements(action, element[1])
+    
+    def ToggleSponsorsForTeam1(self):
+        for player in self.team1playerWidgets:
+            player.ToggleSponsorDisplay()
+    
+    def ToggleSponsorsForTeam2(self):
+        for player in self.team2playerWidgets:
+            player.ToggleSponsorDisplay()
 
 
     # =====================================================
     # NEXT ACTIVE PLAYERS
     # =====================================================
-
+    def Team1NextUp(self):
+        # Have this jump to the next player when the current player "dies"
+        return
+    
+    def Team2NextUp(self):
+        # Have this jump to the next player when the current player "dies"
+        return
 
     # =====================================================
     # TEAM 1 STOCK CONTROL
     # =====================================================
     def T1_Stock_Up(self):
-        logger.info("T1 STOCK UP")
+        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+
+        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+            # Tick Down Stock for Team 2
+            return
+        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+            # Tick Up Score for Team 1
+            return
+        else:
+            return
         
     def T1_Stock_Down(self):
-        logger.info("T1 STOCK DOWN")
+        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+
+        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+            # Tick Up Stock for Team 2
+            return
+        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+            # Tick Down Score for Team 1
+            return
+        else:
+            return
 
     # =====================================================
     # TEAM 2 STOCK CONTROL
     # =====================================================
     def T2_Stock_Up(self):
-        logger.info("T2 STOCK UP")
+        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+
+        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+            # Tick Down Stock for Team 1
+            return
+        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+            # Tick Up Score for Team 2
+            return
+        else:
+            return
         
     def T2_Stock_Down(self):
-        logger.info("T2 STOCK DOWN")
+        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+
+        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+            # Tick Up Stock for Team 1
+            return
+        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+            # Tick Down Score for Team 2
+            return
+        else:
+            return
