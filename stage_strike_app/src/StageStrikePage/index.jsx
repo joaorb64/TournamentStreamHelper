@@ -11,7 +11,7 @@ import i18n from "../i18n/config";
 import { Check } from "@mui/icons-material";
 import i18next from "i18next";
 import {darkTheme} from "../themes";
-import {BACKEND_PORT, BASE_URL} from "../env";
+import {BASE_URL} from "../env";
 import {NoRulesetError} from "./NoRulesetError";
 import {StageCard} from "./StageCard";
 import {
@@ -21,7 +21,6 @@ import {
 import {RpsDialog} from "./RpsDialog";
 import {FooterControls} from "./FooterControls";
 import {PlayerWonButton} from "./PlayerWonButton";
-import {io, Socket} from "socket.io-client";
 import {StagePromptText} from "./StagePromptText";
 import websocketConnection from "../websocketConnection";
 

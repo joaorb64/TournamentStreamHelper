@@ -6,7 +6,7 @@ import {
     Tab,
     Tabs
 } from "@mui/material";
-import React, {useCallback} from "react";
+import React from "react";
 import {Box} from "@mui/system";
 
 import CurrentSet from "./CurrentSet";

@@ -1,5 +1,4 @@
 import {BASE_URL} from "./env";
-import ReactDOMServer from "react-dom/server";
 import {useState} from "react";
 
 /** @param {{game: TSHGameInfo, fixedWidth: boolean}} props */

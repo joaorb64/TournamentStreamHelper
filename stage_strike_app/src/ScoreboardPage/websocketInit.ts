@@ -78,7 +78,8 @@ export default function websocketInit() {
         tshStore.dispatch(websocketInfoSlice.actions.setStatus("errored"));
     });
 
-    const intervalId = setInterval(() => {
+    // This can't be set up twice because of the initialization guard at the top of the function.
+    setInterval(() => {
         const state = tshStore.getState();
         if (state.websocketInfo.status === "connected" && state.tshState?.stateDeltas.length > 0) {
             tshStore.dispatch(tshStateSlice.actions.applySavedDeltas());

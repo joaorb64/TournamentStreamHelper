@@ -1,10 +1,9 @@
 import TextField from "./ScoreboardPage/TextField";
 import i18n from "./i18n/config";
-import React, {useContext} from "react";
-import {TSHCountriesContext} from "./ScoreboardPage/Contexts";
+import React from "react";
 import {Autocomplete, createFilterOptions, InputAdornment} from "@mui/material";
 import {BACKEND_PORT, inlineFlagWidth} from "./env";
-import {shallowEqual, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 
 /**
  * @param {?string} countryCode

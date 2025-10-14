@@ -2,7 +2,6 @@ import {AppBar, MenuItem, Select, Toolbar, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
 import {shallowEqual, useSelector} from "react-redux";
-import {BACKEND_PORT} from "../env";
 import {BASE_URL} from "../env";
 import {GameIcon} from "../GameIcon";
 
@@ -67,6 +66,7 @@ export const Header = ({onSelectedGameChange, ...rest}) => {
                       renderValue={(codename) =>
                         <GameIcon game={games[codename]} />
                       }
+                      id={"header-game-select"}
                       onChange={(e) => onSelectedGameChange(e.target.value)}
                     >
                         {
