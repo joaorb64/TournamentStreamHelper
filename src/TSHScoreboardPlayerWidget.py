@@ -537,9 +537,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             if len(TSHGameAssetManager.instance.variants) <= 0:
                 for container in self.findChildren(QComboBox, "variants"):
                     container.setVisible(False)
+                for container in self.findChildren(QComboBox):
+                    if "character_color_" in container.objectName():
+                        container.setMaximumWidth(210)
             else:
                 for container in self.findChildren(QComboBox, "variants"):
                     container.setVisible(True)
+                for container in self.findChildren(QComboBox):
+                    if "character_color_" in container.objectName():
+                        container.setMaximumWidth(120)
 
         self.CharactersChanged(includeMains=True)
 
@@ -710,9 +716,15 @@ class TSHScoreboardPlayerWidget(QGroupBox):
         if len(TSHGameAssetManager.instance.variants) <= 0:
             for container in self.findChildren(QComboBox, "variants"):
                 container.setVisible(False)
+            for container in self.findChildren(QComboBox):
+                if "character_color_" in container.objectName():
+                    container.setMaximumWidth(210)
         else:
             for container in self.findChildren(QComboBox, "variants"):
                 container.setVisible(True)
+            for container in self.findChildren(QComboBox):
+                if "character_color_" in container.objectName():
+                    container.setMaximumWidth(120)
         for c in self.character_elements:
             c[1].setModel(TSHGameAssetManager.instance.characterModel)
             c[1].setIconSize(QSize(24, 24))

@@ -431,6 +431,7 @@ class Window(QMainWindow):
         self.webserver.start()
         self.signals.GameChanged.connect(self.webserver.ws_program_state)
         self.signals.GameChanged.connect(self.webserver.ws_get_characters)
+        self.stageWidget.stageStrikeLogic.signals.state_updated.connect(self.webserver.ws_ruleset)
 
         playerList = TSHPlayerListWidget()
         playerList.setWindowIcon(QIcon('assets/icons/list.svg'))
