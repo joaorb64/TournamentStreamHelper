@@ -19,6 +19,7 @@ from .TSHScoreboardWidget import TSHScoreboardWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .Helpers.TSHControllerHelper import TSHControllerHelper
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Workers import Worker
 import os
 
@@ -285,6 +286,13 @@ class WebServerActions(QThread):
     
     def get_current_game(self):
         return StateManager.Get("game")
+    
+    def get_match_names(self):
+        response = {
+            "match": TSHLocaleHelper.matchNames,
+            "phase": TSHLocaleHelper.phaseNames
+        }
+        return response
     
     def get_characters(self):
         data = {}
