@@ -1903,7 +1903,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return data
 
-    def GetMatchAndInsertInListBecauseFuckPython(self, setId, list, i, progress_callback, cancel_event):
+    def GetMatchAndInsertInList(self, setId, list, i, progress_callback, cancel_event):
         set = self.GetFutureMatch(setId, None)
 
         if set:
@@ -1915,7 +1915,7 @@ class StartGGDataProvider(TournamentDataProvider):
         i = 0
         for set in setsId:
             sets.append(None)
-            worker = Worker(self.GetMatchAndInsertInListBecauseFuckPython, **{
+            worker = Worker(self.GetMatchAndInsertInList, **{
                 "setId": set.get("id"),
                 "list": sets,
                 "i": i
