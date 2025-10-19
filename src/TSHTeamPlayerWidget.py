@@ -6,6 +6,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
@@ -25,6 +26,8 @@ class TSHTeamPlayerWidget(QGroupBox):
     characterModel = None
 
     dataLock = threading.RLock()
+
+    defaultSpinnerValue = 0
 
     def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
@@ -147,15 +150,25 @@ class TSHTeamPlayerWidget(QGroupBox):
     # BATTLE SPECIFIC CALLS
     # =====================================================
 
+    # TODO: Add specific methods to set style for mode, such as setting upper limits on spinbox and updating it to current value, changing label text, etc.
+    # TODO: Finish Reset methods for testing
+
     def ToggleSponsorDisplay(self):
         if self.findChild(QLineEdit, "team").isHidden():
             self.findChild(QLineEdit, "team").show()
         else:
             self.findChild(QLineEdit, "team").hide()
     
+    def SetDefaultSpinnerValue(self, value: int):
+        self.defaultSpinnerValue = value
+    
+    # Changes based on battle mode
+    def SetDynamicSpinnerLabelText(self, text: str):
+        return
+    
     # TODO: Store internally what way we are doing data to easily flip back without requiring additional calls
     def ResetDynamicSpinner(self):
-        self.findChild(QSpinBox, "dynamicSpinner").setValue(0)
+        self.findChild(QSpinBox, "dynamicSpinner").setValue(self.defaultSpinnerValue)
         self.findChild(QCheckBox, "dead").setChecked(False)
     
     def SetActiveStatus(self, status: bool):
@@ -280,28 +293,7 @@ class TSHTeamPlayerWidget(QGroupBox):
                 StateManager.Set(
                     f"{self.path}.avatar", None)
                 
-            sponsor_logo = None
-
-            cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", team)
-            if os.path.exists(f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"):
-                sponsor_logo = f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"
-                StateManager.Unset(f"{self.path}.sponsor_logos")
-            else:
-                split_sponsor = re.split(r"[,/|;: <>\\?*]", team)
-                for i, sponsor in enumerate(split_sponsor):
-                    if os.path.exists(f"./user_data/sponsor_logo/{sponsor.upper()}.png"):
-                        if sponsor_logo is None:
-                            sponsor_logo = f"./user_data/sponsor_logo/{sponsor.upper()}.png"
-                        StateManager.Set(
-                            f"{self.path}.sponsor_logos.{int(i+1)}", f"./user_data/sponsor_logo/{sponsor.upper()}.png")
-
-            if sponsor_logo is not None:
-                StateManager.Set(f"{self.path}.sponsor_logo", sponsor_logo)
-            else:
-                StateManager.Unset(f"{self.path}.sponsor_logo")
-
-            if sponsor_logo is None:
-                StateManager.Unset(f"{self.path}.sponsor_logos")
+            TSHSponsorHelper.ExportValidSponsors(team, self.path)
 
     def ExportPlayerCity(self, city=None):
         with self.dataLock:

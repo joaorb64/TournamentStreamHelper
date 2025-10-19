@@ -103,7 +103,8 @@ def download_file(
             logger.opt(exception=True).warning(f"{desc} download failure.")
             success = False
         finally:
-            os.unlink(tmp_file.name)
+            if Path(tmp_file.name).exists():
+                os.unlink(tmp_file.name)
 
         return success
 

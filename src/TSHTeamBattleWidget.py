@@ -5,14 +5,36 @@ from typing import List
 from loguru import logger
 from .StateManager import StateManager
 from .Helpers.TSHDirHelper import TSHResolve
+from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
+from.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 from enum import Enum
 
-# Enum for Selecting Widget Mode (Mainly for dropdown and switch statements)
+# Enum for Selecting Widget Mode (Mainly for dropdown and switch/if statements)
 class TSHTeamBattleModeEnum(Enum):
+    # STOCK POOL
+    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X number of stocks
+    # remaining (automatically controlled by dynamic spinner in the top bar).
+    # As each stock decreases, the system will export the total pool of stocks remaining and total "score".
+    # When a player hits 0 remaining stocks, the system will automatically declare them as "dead" (toggleable).
     STOCK_POOL = QApplication.translate("app", "Stock Pool (Smash)")
-    FIRST_TO = QApplication.translate("app", "First To (Best Of X Team Individuals)")
+
+    # FIRST TO
+    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X current score of a player to the "First To" amount.
+    # When increasing player score, if the "First To" amount is reached, the system will reset the player's points
+    # and declare the other player "dead" (toggleable).
+    # [Easiest way to do it without needing to handle for other cases, and can be handled through signal calls]
+    FIRST_TO = QApplication.translate("app", "First To (First To X Team Individuals)")
+
+    # Allows matching the current spinbox value to the enum to allow easier matching in code.
+    # Also works across the language barrier thanks to using the translations for values :D
+    # Ex. "Stock Pool (Smash)" will match to STOCK_POOL
+    def MatchToMode(battleMode: str):
+        for mode in TSHTeamBattleModeEnum:
+            if mode.value == battleMode:
+                return mode
+        return TSHTeamBattleModeEnum.STOCK_POOL
 
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
@@ -35,6 +57,12 @@ class TSHTeamBattleSignals(QObject):
 
 class TSHTeamBattleWidget(QDockWidget):
 
+    playerWidgets: List[TSHTeamPlayerWidget] = []
+    team1playerWidgets: List[TSHTeamPlayerWidget] = []
+    team2playerWidgets: List[TSHTeamPlayerWidget] = []
+
+    battleMode = TSHTeamBattleModeEnum.STOCK_POOL
+
     def __init__(self, *args):
         super().__init__(*args)
         logger.info("BATTLE START")
@@ -47,10 +75,6 @@ class TSHTeamBattleWidget(QDockWidget):
         self.setWidget(self.widget)
         self.widget.setLayout(QVBoxLayout())
         self.setWindowFlags(Qt.WindowType.Window)
-        
-        self.playerWidgets: List[TSHTeamPlayerWidget] = []
-        self.team1playerWidgets: List[TSHTeamPlayerWidget] = []
-        self.team2playerWidgets: List[TSHTeamPlayerWidget] = []
 
         self.playerNumber = QSpinBox()
         self.playerNumber.setObjectName("playerNumber")
@@ -67,7 +91,6 @@ class TSHTeamBattleWidget(QDockWidget):
         playerColumn.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(
             lambda val: self.SetPlayersPerTeam(val))
-        self.playerNumber.setValue(1)
         row.layout().addWidget(playerColumn)
         
         characterColumn = QWidget()
@@ -82,12 +105,95 @@ class TSHTeamBattleWidget(QDockWidget):
 
         lifeColumn = QWidget()
         lifeColumn.setLayout(QVBoxLayout())
-        lifeNumber = QLabel(QApplication.translate("app", "Lives/Stocks per Player"))
-        lifeNumber.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.lifeLabel = QLabel()
+        self.lifeLabel.setText(QApplication.translate("app", "Lives/Stocks per Player"))
+        self.lifeLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         self.livesNumber = QSpinBox()
-        lifeColumn.layout().addWidget(lifeNumber)
+        lifeColumn.layout().addWidget(self.lifeLabel)
         lifeColumn.layout().addWidget(self.livesNumber)
         row.layout().addWidget(lifeColumn)
+
+        modeColumn = QWidget()
+        modeColumn.setLayout(QVBoxLayout())
+        modeLabel = QLabel(QApplication.translate("app", "Battle Mode"))
+        modeLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        self.modeCombo = QComboBox()
+        self.modeCombo.currentIndexChanged.connect(self.SwitchBattleMode)
+
+        for mode in TSHTeamBattleModeEnum:
+            self.modeCombo.addItem(mode.value)
+        
+        modeColumn.layout().addWidget(modeLabel)
+        modeColumn.layout().addWidget(self.modeCombo)
+        row.layout().addWidget(modeColumn)
+
+        infoColumn = QWidget()
+        infoColumn.setLayout(QVBoxLayout())
+        phaseRow = QWidget()
+        phaseRow.setLayout(QHBoxLayout())
+        phaseLabel = QLabel(QApplication.translate("app", "Phase"))
+        phaseLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        phaseCombo = QComboBox()
+        phaseCombo.setEditable(True)
+        phaseRow.layout().addWidget(phaseLabel)
+        phaseRow.layout().addWidget(phaseCombo)
+
+        matchRow = QWidget()
+        matchRow.setLayout(QHBoxLayout())
+        matchLabel = QLabel(QApplication.translate("app", "Match"))
+        matchLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        matchCombo = QComboBox()
+        matchCombo.setEditable(True)
+        matchRow.layout().addWidget(matchLabel)
+        matchRow.layout().addWidget(matchCombo)
+
+        phaseCombo.addItem("")
+
+        for phaseString in TSHLocaleHelper.phaseNames.values():
+            if "{0}" in phaseString:
+                for letter in ["A", "B", "C", "D"]:
+                    if phaseCombo.findText(phaseString.format(letter)) < 0:
+                        phaseCombo.addItem(phaseString.format(letter))
+            else:
+                if phaseCombo.findText(phaseString) < 0:
+                    phaseCombo.addItem(phaseString)
+
+        matchCombo.addItem("")
+
+        for key in TSHLocaleHelper.matchNames.keys():
+            matchString = TSHLocaleHelper.matchNames[key]
+
+            try:
+                if "{0}" in matchString and ("qualifier" not in key):
+                    for number in range(5):
+                        if key == "best_of":
+                            if matchCombo.findText(matchString.format(str(2*number+1))) < 0:
+                                matchCombo.addItem(matchString.format(str(2*number+1)))
+                        else:
+                            if matchCombo.findText(matchString.format(str(number+1))) < 0:
+                                matchCombo.addItem(matchString.format(str(number+1)))
+                else:
+                    if matchCombo.findText(matchString) < 0:
+                        matchCombo.addItem(matchString)
+            except:
+                logger.error(
+                    f"Unable to generate match strings for {matchString}")
+
+        infoColumn.layout().addWidget(phaseRow)
+        infoColumn.layout().addWidget(matchRow)
+        infoColumn.layout().setContentsMargins(0, 0, 0, 0)
+        row.layout().addWidget(infoColumn)
+        
+        buttonColumn = QWidget()
+        buttonColumn.setLayout(QVBoxLayout())
+        buttonColumn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        resetValues = QPushButton(QApplication.translate("app", "Reset Player Mode Values"))
+        resetEverything = QPushButton(QApplication.translate("app", "Reset Battle Mode"))
+        buttonColumn.layout().addWidget(resetValues)
+        buttonColumn.layout().addWidget(resetEverything)
+        row.layout().addWidget(buttonColumn)
+
+        # TODO: Finish export for phase and match properly
 
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
@@ -103,15 +209,15 @@ class TSHTeamBattleWidget(QDockWidget):
         self.team1column = uic.loadUi(TSHResolve("src/layout/TSHBattleTeam.ui"))
         self.team1column.setSizePolicy(
             QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.team1column.findChild(QLineEdit, "teamName").editingFinished.connect(self.Team1SponsorExport)
         self.team2column = uic.loadUi(TSHResolve("src/layout/TSHBattleTeam.ui"))
         self.team2column.setSizePolicy(
             QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.team2column.findChild(QLineEdit, "teamName").editingFinished.connect(self.Team2SponsorExport)
         self.widgetArea.layout().addWidget(self.team1column)
         self.widgetArea.layout().addWidget(self.team2column)
 
         self.widget.layout().addWidget(scrollArea)
-
-        self.findChild(QSpinBox, "playerNumber").valueChanged.emit(1)
 
         self.team1column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam1)
         self.team2column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam2)
@@ -124,32 +230,59 @@ class TSHTeamBattleWidget(QDockWidget):
         self.signals.team1_stock_down.connect(self.T1_Stock_Down)
         self.signals.team2_stock_up.connect(self.T2_Stock_Up)
         self.signals.team2_stock_down.connect(self.T2_Stock_Down)
+        
+        self.playerNumber.setValue(1)
+        self.characterNumber.setValue(1)
 
     # =====================================================
     # GENERAL CONTROL METHODS
     # =====================================================
     def SwitchBattleMode(self):
-        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
+        # TODO: Do above with player widgets as well to make sure information displayed is accurate.
+        self.battleMode = TSHTeamBattleModeEnum.MatchToMode(self.modeCombo.currentText())
+        logger.info(f"Switching Battle Mode to: {self.battleMode.name}")
 
-        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            self.lifeLabel.setText(QApplication.translate("app", "Lives/Stocks per Player"))
+            self.livesNumber.setValue(0)
             return
-        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
-            return
-        else:
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            self.lifeLabel.setText(QApplication.translate("app", "First To Amount"))
+            self.livesNumber.setValue(0)
             return
     
     def ResetAllStocks(self):
         logger.info("RESET ALL STOCKS")
 
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            return
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            return
+
     def ResetEverything(self):
         logger.info("RESET EVERYTHING")
+
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            return
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            return
     
+    def ToggleSponsorsForTeam1(self):
+        for player in self.team1playerWidgets:
+            player.ToggleSponsorDisplay()
+    
+    def ToggleSponsorsForTeam2(self):
+        for player in self.team2playerWidgets:
+            player.ToggleSponsorDisplay()
+    
+    # =====================================================
+    # NECESSARY PLAYER METHODS
+    # =====================================================
     def SetCharacterNumber(self, value):
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
     
     def SetPlayersPerTeam(self, number):
-        # logger.info(f"TSHScoreboardWidget#SetPlayersPerTeam({number})")
         while len(self.team1playerWidgets) < number:
             p = TSHTeamPlayerWidget(
                 index=len(self.team1playerWidgets)+1,
@@ -157,8 +290,7 @@ class TSHTeamBattleWidget(QDockWidget):
                 path=f'team_battle.team.{1}.player.{len(self.team1playerWidgets)+1}')
             self.playerWidgets.append(p)
 
-            self.team1column.findChild(
-                QScrollArea).widget().layout().addWidget(p)
+            self.team1column.findChild(QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.characterNumber.value())
 
             if self.team1column.findChild(QCheckBox, "separateSponsors").isChecked():
@@ -179,8 +311,7 @@ class TSHTeamBattleWidget(QDockWidget):
                 path=f'team_battle.team.{2}.player.{len(self.team2playerWidgets)+1}')
             self.playerWidgets.append(p)
 
-            self.team2column.findChild(
-                QScrollArea).widget().layout().addWidget(p)
+            self.team2column.findChild(QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.characterNumber.value())
 
             if self.team2column.findChild(QCheckBox, "separateSponsors").isChecked():
@@ -217,19 +348,6 @@ class TSHTeamBattleWidget(QDockWidget):
                         StateManager.Unset(
                             f'team_battle.team.{team}.player.{k}')
 
-        # for x, element in enumerate(self.elements, start=1):
-        #     action: QAction = self.eyeBt.menu().actions()[x]
-        #     self.ToggleElements(action, element[1])
-    
-    def ToggleSponsorsForTeam1(self):
-        for player in self.team1playerWidgets:
-            player.ToggleSponsorDisplay()
-    
-    def ToggleSponsorsForTeam2(self):
-        for player in self.team2playerWidgets:
-            player.ToggleSponsorDisplay()
-
-
     # =====================================================
     # NEXT ACTIVE PLAYERS
     # =====================================================
@@ -245,52 +363,64 @@ class TSHTeamBattleWidget(QDockWidget):
     # TEAM 1 STOCK CONTROL
     # =====================================================
     def T1_Stock_Up(self):
-        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
 
-        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             # Tick Down Stock for Team 2
             return
-        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             # Tick Up Score for Team 1
-            return
-        else:
             return
         
     def T1_Stock_Down(self):
-        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
 
-        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             # Tick Up Stock for Team 2
             return
-        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             # Tick Down Score for Team 1
-            return
-        else:
             return
 
     # =====================================================
     # TEAM 2 STOCK CONTROL
     # =====================================================
     def T2_Stock_Up(self):
-        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
 
-        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             # Tick Down Stock for Team 1
             return
-        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             # Tick Up Score for Team 2
-            return
-        else:
             return
         
     def T2_Stock_Down(self):
-        mode = TSHTeamBattleModeEnum[self.findChild(QComboBox, "battleMode").value()]
 
-        if mode is TSHTeamBattleModeEnum.STOCK_POOL:
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             # Tick Up Stock for Team 1
             return
-        elif mode is TSHTeamBattleModeEnum.FIRST_TO:
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             # Tick Down Score for Team 2
             return
-        else:
-            return
+    
+    # =====================================================
+    # EXPORTS
+    # =====================================================
+
+    def Team1SponsorExport(self):
+        path = f"team_battle.team.{1}"
+        team = self.team1column.findChild(QLineEdit, "teamName").text()
+        StateManager.Set(path, team)
+        TSHSponsorHelper.ExportValidSponsors(team, path)
+    
+    def Team2SponsorExport(self):
+        path = f"team_battle.team.{2}"
+        team = self.team2column.findChild(QLineEdit, "teamName").text()
+        StateManager.Set(path, team)
+        TSHSponsorHelper.ExportValidSponsors(team, path)
+    
+    def PhaseExport(self):
+        # TODO: Handle export for phase name
+        return
+    
+    def MatchExport(self):
+        # TODO: Handle export for match name
+        return

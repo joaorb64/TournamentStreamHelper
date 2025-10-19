@@ -7,6 +7,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .Helpers.TSHControllerHelper import TSHControllerHelper
@@ -314,29 +315,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             else:
                 StateManager.Set(
                     f"{self.path}.avatar", None)
-                
-            sponsor_logo = None
-
-            cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", team)
-            if os.path.exists(f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"):
-                sponsor_logo = f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"
-                StateManager.Unset(f"{self.path}.sponsor_logos")
-            else:
-                split_sponsor = re.split(r"[,/|;: <>\\?*]", team)
-                for i, sponsor in enumerate(split_sponsor):
-                    if os.path.exists(f"./user_data/sponsor_logo/{sponsor.upper()}.png"):
-                        if sponsor_logo is None:
-                            sponsor_logo = f"./user_data/sponsor_logo/{sponsor.upper()}.png"
-                        StateManager.Set(
-                            f"{self.path}.sponsor_logos.{int(i+1)}", f"./user_data/sponsor_logo/{sponsor.upper()}.png")
-
-            if sponsor_logo is not None:
-                StateManager.Set(f"{self.path}.sponsor_logo", sponsor_logo)
-            else:
-                StateManager.Unset(f"{self.path}.sponsor_logo")
-
-            if sponsor_logo is None:
-                StateManager.Unset(f"{self.path}.sponsor_logos")
+            
+            TSHSponsorHelper.ExportValidSponsors(team, self.path)
 
     def ExportPlayerId(self, id=None):
         with self.dataLock:
