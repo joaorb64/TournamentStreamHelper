@@ -13,9 +13,9 @@ import i18n from "../i18n/config";
 import SetScore from "./SetScore";
 import Team from "./Team";
 import {ExpandMore} from "@mui/icons-material";
-import {TSHCharacterContext, TSHStateContext} from "./Contexts";
 import {useTheme} from "@mui/material/styles";
 import {BACKEND_PORT} from "../env";
+import {useSelector} from "react-redux";
 import {Grid} from "@mui/system";
 
 export default function CurrentSet({scoreboardNumber}) {
@@ -28,8 +28,8 @@ export default function CurrentSet({scoreboardNumber}) {
     /** @type {CurrentSetState} */
     const [expanded, setExpanded] = React.useState(true);
 
-    const tshState = React.useContext(TSHStateContext);
-    const tshChars = React.useContext(TSHCharacterContext);
+    const tshState = useSelector(state => state.tshState.tshState);
+    const tshChars = useSelector(state => state.tshPlayers.players);
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('md'));
 

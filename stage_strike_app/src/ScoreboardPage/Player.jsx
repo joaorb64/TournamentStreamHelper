@@ -12,8 +12,8 @@ import {
 import TextField from './TextField';
 import i18n from "../i18n/config";
 import {ExpandMore} from "@mui/icons-material";
-import {TSHCharacterContext, TSHPlayerDBContext, TSHStateContext} from "./Contexts";
 import {CharSelector} from "./CharSelector";
+import {useSelector} from "react-redux";
 import {CountrySelector} from "../CountrySelector";
 import {CountryStateSelector} from "../CountryStateSelector";
 
@@ -118,9 +118,9 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
     // console.log(`Rendering player widget: `, player)
 
     const playerId = `${teamId}-p-${teamKey}`;
-    const /** @type {TSHState} */ tshState = React.useContext(TSHStateContext);
+    const tshState = useSelector((s) => s.tshState);
     const gameCodename = tshState?.game?.codename;
-    /** @type TSHPlayerDb */ const playerDb = React.useContext(TSHPlayerDBContext);
+    /** @type TSHPlayerDb */ const playerDb = useSelector(state => state.tshPlayers.players);
 
     React.useEffect(() => {
         const newProps = {
@@ -150,7 +150,7 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
     }, [player]) // eslint-disable-line react-hooks/exhaustive-deps
     // We don't want our dependencies to be exhaustive above because we want to specifically only
 
-    const /** @type {TSHCharacterDb} */ characters = React.useContext(TSHCharacterContext);
+    const /** @type {TSHCharacterDb} */ characters = useSelector(state => state.tshCharacters.characters);
     const tshPlayerDbId = player?.id?.at(0) || player?.id?.at(1) || -1;
 
     const changeHandlerFor = (fieldName) => {
@@ -334,7 +334,7 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
                                 options={Object.values(playerDb)}
                                 value={state.name ?? ''}
                                 getOptionLabel={(/** TSHPlayerDbEntry|string */ player) => {
-                                    return player?.gamerTag ?? player;
+                                    return player?.prefixed_tag ?? player;
                                 }}
                                 freeSolo={true}
                                 sx={{width: '100%'}}
