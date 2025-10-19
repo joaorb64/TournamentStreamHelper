@@ -4,69 +4,63 @@ from qtpy import uic
 from typing import List
 from loguru import logger
 from .StateManager import StateManager
+from .TSHTeamBattleModeEnum import TSHTeamBattleModeEnum
 from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
 from.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
-from enum import Enum
-
-# Enum for Selecting Widget Mode (Mainly for dropdown and switch/if statements)
-class TSHTeamBattleModeEnum(Enum):
-    # STOCK POOL
-    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X number of stocks
-    # remaining (automatically controlled by dynamic spinner in the top bar).
-    # As each stock decreases, the system will export the total pool of stocks remaining and total "score".
-    # When a player hits 0 remaining stocks, the system will automatically declare them as "dead" (toggleable).
-    STOCK_POOL = QApplication.translate("app", "Stock Pool (Smash)")
-
-    # FIRST TO
-    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X current score of a player to the "First To" amount.
-    # When increasing player score, if the "First To" amount is reached, the system will reset the player's points
-    # and declare the other player "dead" (toggleable).
-    # [Easiest way to do it without needing to handle for other cases, and can be handled through signal calls]
-    FIRST_TO = QApplication.translate("app", "First To (First To X Team Individuals)")
-
-    # Allows matching the current spinbox value to the enum to allow easier matching in code.
-    # Also works across the language barrier thanks to using the translations for values :D
-    # Ex. "Stock Pool (Smash)" will match to STOCK_POOL
-    def MatchToMode(battleMode: str):
-        for mode in TSHTeamBattleModeEnum:
-            if mode.value == battleMode:
-                return mode
-        return TSHTeamBattleModeEnum.STOCK_POOL
-
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
     reset_all_stocks = Signal()
     reset_everything = Signal()
+    dynamicSpinner_changed = Signal()
 
     # TEAM 1 SIGNALS
     team1_next_active_player = Signal()
-    team1_reset_player_stocks = Signal()
     team1_stock_up = Signal()
     team1_stock_down = Signal()
     team1_active_player_changed = Signal(int)
 
     # TEAM 2 SIGNALS
     team2_next_active_player = Signal()
-    team2_reset_player_stocks = Signal()
     team2_stock_up = Signal()
     team2_stock_down = Signal()
     team2_active_player_changed = Signal(int)
 
+# =====================================================
+# ACTIVE TODOs
+# =====================================================
+# TODO: Finish export for phase and match properly
+# TODO: Handle player spinner reset when a new active player is selected on opposing team in FIRST_TO
+# TODO: Handle triggering "deaths" for the other team when in FIRST_TO and the other team reaches the correct score
+# TODO: Add a setting to be able to set the initial value of a stock pool or a first to match up (quicker setup I guess?)
+# TODO: Track current active players for both teams via index
+# TODO: Calculate and Export Total Score to Output, including remaining stock pool
+# TODO: Add a checkbox to determine if we want to auto track to the next player in line when they "die"
+# =====================================================
+# FOR REMOTE CONTROL
+# =====================================================
+# TODO: Add Webserver calls to handle remote control (And add new Elgato Stream Deck plugin to main repo)
+# TODO: Link signals above to calls
+# TODO: Add a handle to one press jump to the next player in line for active (just check to make sure it's within array bounds and not dead, and if it's at the end of the array, loop back around)
+# =====================================================
 class TSHTeamBattleWidget(QDockWidget):
+    battleMode = TSHTeamBattleModeEnum.STOCK_POOL
 
     playerWidgets: List[TSHTeamPlayerWidget] = []
     team1playerWidgets: List[TSHTeamPlayerWidget] = []
     team2playerWidgets: List[TSHTeamPlayerWidget] = []
 
-    battleMode = TSHTeamBattleModeEnum.STOCK_POOL
+    currentActiveIndexTeam1: int = 0
+    currentActiveIndexTeam2: int = 0
 
     def __init__(self, *args):
         super().__init__(*args)
         logger.info("BATTLE START")
         self.signals = TSHTeamBattleSignals()
+
+        StateManager.Unset("team_battle")
 
         self.setWindowTitle(QApplication.translate("app", "Crew/Team Battle"))
         self.setFloating(True)
@@ -109,6 +103,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.lifeLabel.setText(QApplication.translate("app", "Lives/Stocks per Player"))
         self.lifeLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         self.livesNumber = QSpinBox()
+        self.livesNumber.valueChanged.connect(self.SetSpinnerForPlayers)
         lifeColumn.layout().addWidget(self.lifeLabel)
         lifeColumn.layout().addWidget(self.livesNumber)
         row.layout().addWidget(lifeColumn)
@@ -188,12 +183,12 @@ class TSHTeamBattleWidget(QDockWidget):
         buttonColumn.setLayout(QVBoxLayout())
         buttonColumn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         resetValues = QPushButton(QApplication.translate("app", "Reset Player Mode Values"))
+        resetValues.clicked.connect(self.ResetAllStocks)
         resetEverything = QPushButton(QApplication.translate("app", "Reset Battle Mode"))
+        resetEverything.clicked.connect(self.ResetEverything)
         buttonColumn.layout().addWidget(resetValues)
         buttonColumn.layout().addWidget(resetEverything)
         row.layout().addWidget(buttonColumn)
-
-        # TODO: Finish export for phase and match properly
 
         scrollArea = QScrollArea()
         scrollArea.setFrameShadow(QFrame.Shadow.Plain)
@@ -225,6 +220,7 @@ class TSHTeamBattleWidget(QDockWidget):
         # Hook into Signals for Control
         self.signals.reset_all_stocks.connect(self.ResetAllStocks)
         self.signals.reset_everything.connect(self.ResetEverything)
+        self.signals.dynamicSpinner_changed.connect(self.TotalScoreExport)
 
         self.signals.team1_stock_up.connect(self.T1_Stock_Up)
         self.signals.team1_stock_down.connect(self.T1_Stock_Down)
@@ -233,6 +229,7 @@ class TSHTeamBattleWidget(QDockWidget):
         
         self.playerNumber.setValue(1)
         self.characterNumber.setValue(1)
+        self.livesNumber.setValue(0)
 
     # =====================================================
     # GENERAL CONTROL METHODS
@@ -245,27 +242,24 @@ class TSHTeamBattleWidget(QDockWidget):
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             self.lifeLabel.setText(QApplication.translate("app", "Lives/Stocks per Player"))
             self.livesNumber.setValue(0)
+            for pw in self.playerWidgets:
+                pw.SetBattleMode(self.battleMode)
             return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             self.lifeLabel.setText(QApplication.translate("app", "First To Amount"))
             self.livesNumber.setValue(0)
+            for pw in self.playerWidgets:
+                pw.SetBattleMode(self.battleMode)
             return
     
     def ResetAllStocks(self):
-        logger.info("RESET ALL STOCKS")
-
-        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            return
-        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            return
+        for pw in self.playerWidgets:
+            pw.ResetDynamicSpinner()
 
     def ResetEverything(self):
-        logger.info("RESET EVERYTHING")
-
-        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            return
-        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            return
+        for pw in self.playerWidgets:
+            pw.ResetDynamicSpinner()
+            pw.Clear()
     
     def ToggleSponsorsForTeam1(self):
         for player in self.team1playerWidgets:
@@ -274,6 +268,10 @@ class TSHTeamBattleWidget(QDockWidget):
     def ToggleSponsorsForTeam2(self):
         for player in self.team2playerWidgets:
             player.ToggleSponsorDisplay()
+    
+    def SetSpinnerForPlayers(self):
+        for pw in self.playerWidgets:
+            pw.SetDefaultSpinnerValue(self.livesNumber.value())
     
     # =====================================================
     # NECESSARY PLAYER METHODS
@@ -295,6 +293,8 @@ class TSHTeamBattleWidget(QDockWidget):
 
             if self.team1column.findChild(QCheckBox, "separateSponsors").isChecked():
                 p.ToggleSponsorDisplay()
+            
+            self.signals.dynamicSpinner_changed.connect(p.instanceSignals.dynamicSpinner_changed)
 
             index = len(self.team1playerWidgets)
 
@@ -316,6 +316,8 @@ class TSHTeamBattleWidget(QDockWidget):
 
             if self.team2column.findChild(QCheckBox, "separateSponsors").isChecked():
                 p.ToggleSponsorDisplay()
+            
+            self.signals.dynamicSpinner_changed.connect(p.instanceSignals.dynamicSpinner_changed)
 
             index = len(self.team2playerWidgets)
 
@@ -352,53 +354,49 @@ class TSHTeamBattleWidget(QDockWidget):
     # NEXT ACTIVE PLAYERS
     # =====================================================
     def Team1NextUp(self):
-        # Have this jump to the next player when the current player "dies"
+        # TODO: Have this jump to the next player when the current player "dies"
         return
     
     def Team2NextUp(self):
-        # Have this jump to the next player when the current player "dies"
+        # TODO: Have this jump to the next player when the current player "dies"
         return
 
     # =====================================================
     # TEAM 1 STOCK CONTROL
     # =====================================================
     def T1_Stock_Up(self):
-
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            # Tick Down Stock for Team 2
+            # TODO: Tick Down Stock for Team 2
             return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            # Tick Up Score for Team 1
+            # TODO: Tick Up Score for Team 1
             return
         
     def T1_Stock_Down(self):
-
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            # Tick Up Stock for Team 2
+            # TODO: Tick Up Stock for Team 2
             return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            # Tick Down Score for Team 1
+            # TODO: Tick Down Score for Team 1
             return
 
     # =====================================================
     # TEAM 2 STOCK CONTROL
     # =====================================================
     def T2_Stock_Up(self):
-
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            # Tick Down Stock for Team 1
+            # TODO: Tick Down Stock for Team 1
             return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            # Tick Up Score for Team 2
+            # TODO: Tick Up Score for Team 2
             return
         
     def T2_Stock_Down(self):
-
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
-            # Tick Up Stock for Team 1
+            # TODO: Tick Up Stock for Team 1
             return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            # Tick Down Score for Team 2
+            # TODO: Tick Down Score for Team 2
             return
     
     # =====================================================
@@ -418,9 +416,17 @@ class TSHTeamBattleWidget(QDockWidget):
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def PhaseExport(self):
-        # TODO: Handle export for phase name
         return
     
     def MatchExport(self):
-        # TODO: Handle export for match name
+        return
+    
+    def TotalScoreExport(self):
+        self.Team1TotalScoreExport()
+        self.Team2TotalScoreExport()
+    
+    def Team1TotalScoreExport(self):
+        return
+    
+    def Team2TotalScoreExport(self):
         return

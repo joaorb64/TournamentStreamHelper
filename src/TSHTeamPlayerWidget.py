@@ -10,6 +10,7 @@ from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHPlayerDB import TSHPlayerDB
+from .TSHTeamBattleModeEnum import TSHTeamBattleModeEnum
 from .Helpers.TSHDirHelper import TSHResolve
 import threading
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
@@ -18,6 +19,10 @@ from loguru import logger
 
 class TSHTeamPlayerWidgetSignals(QObject):
     playerId_changed = Signal()
+    dynamicSpinner_changed = Signal()
+    activeStatus_changed = Signal(int)
+    deathStatus_changed = Signal(int)
+    toggleDeathTrigger = Signal(bool)
 
 
 class TSHTeamPlayerWidget(QGroupBox):
@@ -28,6 +33,8 @@ class TSHTeamPlayerWidget(QGroupBox):
     dataLock = threading.RLock()
 
     defaultSpinnerValue = 0
+    battleMode: TSHTeamBattleModeEnum = TSHTeamBattleModeEnum.STOCK_POOL
+    dynamicSpinner: QSpinBox = None
 
     def __init__(self, index=0, teamNumber=0, path="", *args):
         super().__init__(*args)
@@ -42,6 +49,8 @@ class TSHTeamPlayerWidget(QGroupBox):
         self.losers = False
 
         uic.loadUi(TSHResolve("src/layout/TSHTeamPlayer.ui"), self)
+
+        self.dynamicSpinner = self.findChild(QSpinBox, "dynamicSpinner")
 
         # custom_textbox_layout = QHBoxLayout()
         # self.custom_textbox = QPlainTextEdit()
@@ -114,6 +123,9 @@ class TSHTeamPlayerWidget(QGroupBox):
                 ]
             )
             c.currentIndexChanged.emit(0)
+        
+        self.dynamicSpinner.valueChanged.connect(self.instanceSignals.dynamicSpinner_changed.emit)
+        self.dynamicSpinner.valueChanged.connect(self.SpinnerHandling)
 
         self.SetCharactersPerPlayer(1)
 
@@ -145,52 +157,110 @@ class TSHTeamPlayerWidget(QGroupBox):
         self.pronoun_model.setStringList(self.pronoun_list)
 
         self.ToggleSponsorDisplay()
+
+    def GetIndex(self):
+        return self.index
     
     # =====================================================
     # BATTLE SPECIFIC CALLS
     # =====================================================
-
-    # TODO: Add specific methods to set style for mode, such as setting upper limits on spinbox and updating it to current value, changing label text, etc.
-    # TODO: Finish Reset methods for testing
-
     def ToggleSponsorDisplay(self):
         if self.findChild(QLineEdit, "team").isHidden():
             self.findChild(QLineEdit, "team").show()
         else:
             self.findChild(QLineEdit, "team").hide()
     
+    def SetBattleMode(self, mode: TSHTeamBattleModeEnum):
+        self.battleMode = mode
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            self.SetDynamicSpinnerLabelText(QApplication.translate("app", "STOCKS/LIVES"))
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            self.SetDynamicSpinnerLabelText(QApplication.translate("app", "GAMES WON"))
+    
     def SetDefaultSpinnerValue(self, value: int):
         self.defaultSpinnerValue = value
+        self.dynamicSpinner.setMaximum(value)
+        self.ResetDynamicSpinner()
     
     # Changes based on battle mode
     def SetDynamicSpinnerLabelText(self, text: str):
-        return
+        self.findChild(QLabel, "dynamicLabel").setText(text)
     
-    # TODO: Store internally what way we are doing data to easily flip back without requiring additional calls
+    def GetSpinnerValue(self):
+        return self.dynamicSpinner.value()
+    
     def ResetDynamicSpinner(self):
-        self.findChild(QSpinBox, "dynamicSpinner").setValue(self.defaultSpinnerValue)
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            self.dynamicSpinner.setValue(self.defaultSpinnerValue)
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            self.dynamicSpinner.setValue(0)
         self.findChild(QCheckBox, "dead").setChecked(False)
+
+    def IsActive(self):
+        return self.findChild(QCheckBox, "activePlayer").isChecked()
     
     def SetActiveStatus(self, status: bool):
-        # TODO: Find and set active status checkbox
+        self.findChild(QCheckBox, "activePlayer").setChecked(status)
         self.ExportActiveStatus()
         return
     
+    def IsDead(self):
+        return self.findChild(QCheckBox, "dead").isChecked()
+    
     def SetDeathStatus(self, status: bool):
-        # TODO: Find and set status of death checkbox
-        # TODO: Setup system to automatically trigger death status when reaching "end goal"
+        self.findChild(QCheckBox, "dead").setChecked(status)
         self.ExportDeathStatus()
         return
+    
+    def SpinnerHandling(self):
+        value = self.dynamicSpinner
+        StateManager.Set(f"{self.path}.dynamic_spinner", value.value())
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            if value.value() <= 0:
+                self.SetDeathStatus(True)
+            else:
+                self.SetDeathStatus(False)
+
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            if value.value() >= self.defaultSpinnerValue:
+                self.instanceSignals.toggleDeathTrigger.emit(True)
+            else:
+                self.instanceSignals.toggleDeathTrigger.emit(False)
+
+    def IncreaseCall(self):
+        value = self.dynamicSpinner
+
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            if value.value() <= 0:
+                return
+            value.setValue(value.value() - 1)
+
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            if value.value() >= self.defaultSpinnerValue:
+                return
+            value.setValue(value.value() + 1)
+
+    def DecreaseCall(self):
+        value = self.dynamicSpinner
+
+        if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
+            if value.value() >= self.defaultSpinnerValue:
+                return
+            value.setValue(value.value() + 1)
+        elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
+            if value.value() <= 0:
+                return
+            value.setValue(value.value() - 1)
     
     # =====================================================
     # EXPORT CALLS
     # =====================================================
     def ExportActiveStatus(self):
-        # TODO: Export Current Active Status to StateManager
+        StateManager.Set(f"{self.path}.active", self.findChild(QCheckBox, "activePlayer").isChecked())
         return
     
     def ExportDeathStatus(self):
-        # TODO: Export Current Death Status to StateManager
+        StateManager.Set(f"{self.path}.dead", self.findChild(QCheckBox, "dead").isChecked())
         return
     
     def CharactersChanged(self, includeMains=False):

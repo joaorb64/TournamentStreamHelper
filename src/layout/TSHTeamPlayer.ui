@@ -249,7 +249,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="dead">
        <property name="font">
         <font>
          <pointsize>8</pointsize>
