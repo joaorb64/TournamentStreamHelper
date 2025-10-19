@@ -335,6 +335,15 @@ class WebServer(QThread):
     def ws_get_current_game(message):
         WebServer.ws_emit('get_current_game', WebServer.actions.get_current_game(), json=True)
 
+    # Get match and phase names
+    @app.route('/match-names')
+    def get_match_names():
+        return WebServer.actions.get_match_names()
+
+    @socketio.on('match_names')
+    def ws_get_match_names(message):
+        WebServer.ws_emit('match_names', WebServer.actions.get_match_names(), json=True)
+
     # Get characters
     @app.route('/characters')
     def get_characters():

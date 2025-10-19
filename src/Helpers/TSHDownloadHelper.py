@@ -3,10 +3,9 @@ Utility functions for downloading things.
 """
 import os
 import sys
-from os.path import devnull
 from pathlib import Path
 from typing import Optional, Callable
-from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
+from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
 
 import orjson
@@ -17,7 +16,7 @@ import requests
 
 def download_file(
         url,
-        filename: str,
+        filename: Optional[str],
         desc: Optional[str] = None,
         validator: Optional[Callable[[str], bool]] = None,
         assume_size: Optional[int] = None
@@ -73,7 +72,8 @@ def download_file(
                     file=(sys.__stdout__ if has_stdout else os.devnull),
                     unit="B",
                     unit_scale=True,
-                    total=content_length
+                    total=content_length,
+                    leave=True
             )
             try:
                 # Progress bar is helpful, but loggers have no concept of
@@ -85,9 +85,6 @@ def download_file(
                 progress_bar.total = progress_bar.n
             finally:
                 progress_bar.close()
-
-
-            logger.info(str(progress_bar))
 
             tmp_file.close()
 
@@ -105,8 +102,9 @@ def download_file(
         except Exception:
             logger.opt(exception=True).warning(f"{desc} download failure.")
             success = False
+        finally:
+            os.unlink(tmp_file.name)
 
-        os.unlink(tmp_file.name)
         return success
 
 
