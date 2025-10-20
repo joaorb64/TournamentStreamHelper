@@ -38,6 +38,7 @@ class TSHGameAssetManager(QObject):
         self.skinModels = {}
         self.variantModel = QStandardItemModel()
         self.stageModel = QStandardItemModel()
+        self.stageModelWithBlank = QStandardItemModel()
 
         StateManager.Set(f"game", {})
         self.assetsLoaderLock = QMutex()
@@ -856,6 +857,11 @@ class TSHGameAssetManager(QObject):
         # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.stageModel = QStandardItemModel()
+            self.stageModelWithBlank = QStandardItemModel()
+            # Add blank
+            item = QStandardItem("")
+            item.setData({}, Qt.ItemDataRole.UserRole)
+            self.stageModelWithBlank.appendRow(item)
 
             for stage in self.selectedGame.get("stage_to_codename", {}).items():
                 # Load stage name translations
@@ -897,16 +903,24 @@ class TSHGameAssetManager(QObject):
                     "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
                 item.setData(stage[1], Qt.ItemDataRole.UserRole)
 
+                item_with_blank = QStandardItem(f'{stage[1].get("display_name")} / {stage[1].get("en_name")}' if stage[1].get(
+                    "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
+                item_with_blank.setData(stage[1], Qt.ItemDataRole.UserRole)
+
                 if stage[1].get("modded"):
                     self.has_modded_content = True
 
                 if (not mods_active) and stage[1].get("modded"):
                     item.setEnabled(False)
                     item.setSelectable(False)
+                    item_with_blank.setEnabled(False)
+                    item_with_blank.setSelectable(False)
                 else:
                     self.stageModel.appendRow(item)
+                    self.stageModelWithBlank.appendRow(item_with_blank)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
+                worker = Worker(self.LoadStageImage, *[stage[1], item_with_blank])
                 worker.signals.result.connect(self.LoadStageImageComplete)
                 self.threadpool.start(worker)
         except:
