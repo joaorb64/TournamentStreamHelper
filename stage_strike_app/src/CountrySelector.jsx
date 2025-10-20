@@ -1,9 +1,9 @@
 import TextField from "./ScoreboardPage/TextField";
 import i18n from "./i18n/config";
-import React, {useContext} from "react";
-import {TSHCountriesContext} from "./ScoreboardPage/Contexts";
+import React from "react";
 import {Autocomplete, createFilterOptions, InputAdornment} from "@mui/material";
 import {BACKEND_PORT, inlineFlagWidth} from "./env";
+import {useSelector} from "react-redux";
 
 /**
  * @param {?string} countryCode
@@ -16,7 +16,7 @@ export function CountrySelector({
     onChange,
     ...props
 }) {
-    const countries = useContext(TSHCountriesContext);
+    const countries = useSelector(state => state.tshCountries.value);
 
     const country = countries[value];
     const getCountryFlagAsset = (inp) => {
