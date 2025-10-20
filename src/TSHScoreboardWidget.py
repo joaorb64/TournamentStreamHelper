@@ -656,8 +656,8 @@ class TSHScoreboardWidget(QWidget):
 
     def SwapStageResults(self):
         for i in range(len(self.stageWidgetList)):
-            stageTeam1Check = self.stageWidgetList[i].findChild(QToolButton, f"stageTeam1Check_{i}")
-            stageTeam2Check = self.stageWidgetList[i].findChild(QToolButton, f"stageTeam2Check_{i}")
+            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
             team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
             stageTeam1Check.setChecked(team_2_old_state)
             stageTeam2Check.setChecked(team_1_old_state)
