@@ -589,7 +589,7 @@ class TSHScoreboardWidget(QWidget):
         stageTeam2Check.setCheckable(True)
 
         # Add Logic
-        stageMenu.editTextChanged.connect(
+        stageMenu.currentIndexChanged.connect(
             lambda: [
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}", stageMenu.currentData()),
                 stageTeam1Check.setChecked(False),
