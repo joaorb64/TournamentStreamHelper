@@ -625,7 +625,7 @@ class TSHScoreboardWidget(QWidget):
     def CreateStageOrder(self):
         self.stageOrderWidget = QWidget()
         self.stageOrderLayout = QVBoxLayout()
-        stageOrderLabel = QLabel(text=QApplication.translate("app", "Individual game data").upper())
+        stageOrderLabel = QLabel(text=add_beta_label(QApplication.translate("app", "Individual game data").upper(), "game_tracker"))
         stageOrderLabelFont = QFont()
         stageOrderLabelFont.setPointSize(10)
         stageOrderLabelFont.setBold(True)
