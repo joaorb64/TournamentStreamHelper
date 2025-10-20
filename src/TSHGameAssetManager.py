@@ -920,9 +920,11 @@ class TSHGameAssetManager(QObject):
                     self.stageModelWithBlank.appendRow(item_with_blank)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
-                worker = Worker(self.LoadStageImage, *[stage[1], item_with_blank])
+                worker_blank = Worker(self.LoadStageImage, *[stage[1], item_with_blank])
                 worker.signals.result.connect(self.LoadStageImageComplete)
+                worker_blank.signals.result.connect(self.LoadStageImageComplete)
                 self.threadpool.start(worker)
+                self.threadpool.start(worker_blank)
             self.stageModelWithBlank.sort(0)
         except:
             logger.error(traceback.format_exc())
