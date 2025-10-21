@@ -118,7 +118,7 @@ export default React.forwardRef(function Player({teamId, teamKey, player}, ref) 
     // console.log(`Rendering player widget: `, player)
 
     const playerId = `${teamId}-p-${teamKey}`;
-    const tshState = useSelector((s) => s.tshState);
+    const tshState = useSelector((s) => s.tshState.tshState);
     const gameCodename = tshState?.game?.codename;
     /** @type TSHPlayerDb */ const playerDb = useSelector(state => state.tshPlayers.players);
 
