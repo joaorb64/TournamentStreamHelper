@@ -453,6 +453,9 @@ class TSHScoreboardWidget(QWidget):
             c.lineEdit().editingFinished.emit()
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        # Add stage order widget
+        self.CreateStageOrder()
+        
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
                 StateManager.BlockSaving(),
@@ -468,6 +471,7 @@ class TSHScoreboardWidget(QWidget):
                     f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
                     "first_to").format(math.ceil(value/2)) if value > 0 else ""),
+                self.setStageNumber(value),
                 StateManager.ReleaseSaving()
             ]
         )
@@ -504,7 +508,12 @@ class TSHScoreboardWidget(QWidget):
             QPushButton, "btSwapTeams").setIcon(QIcon('assets/icons/swap.svg'))
 
         self.scoreColumn.findChild(
-            QPushButton, "btResetScore").clicked.connect(self.ResetScore)
+            QPushButton, "btResetScore").clicked.connect(
+                lambda: [
+                    self.ResetScore(),
+                    self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value())
+                    ]
+                )
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
 
@@ -547,8 +556,114 @@ class TSHScoreboardWidget(QWidget):
                     f"Unable to generate match strings for {matchString}")
 
         TSHGameAssetManager.instance.signals.onLoad.connect(
-            self.SetDefaultsFromAssets
+            lambda: [
+                self.SetDefaultsFromAssets(),
+                self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value())
+            ]
         )
+    
+
+    def CreateStageInStageOrderWidget(self, index=0):
+        stageWidget = QWidget()
+        stageLayout = QHBoxLayout()
+
+        gameLabel = QLabel()
+        gameLabel.setText(QApplication.translate("app", "Game {0}").format(index + 1))
+
+        stageMenu = QComboBox()
+        stageMenu.setMaximumWidth(300)
+        stageMenu.setEditable(True)
+        stageMenu.setObjectName(f"stageMenu_{index}")
+        stageMenu.setModel(TSHGameAssetManager.instance.stageModelWithBlank)
+        stageMenu.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        stageMenu.completer().setCompletionMode(QCompleter.PopupCompletion)
+        stageTeam1Check = QPushButton()
+        stageTeam1Check.setMaximumWidth(40)
+        stageTeam1Check.setObjectName(f"stageTeam1Check_{index}")
+        stageTeam1Check.setText(QApplication.translate("app", "T{0}").format(1))
+        stageTeam1Check.setCheckable(True)
+        stageTeam2Check = QPushButton()
+        stageTeam2Check.setMaximumWidth(40)
+        stageTeam2Check.setObjectName(f"stageTeam2Check_{index}")
+        stageTeam2Check.setText(QApplication.translate("app", "T{0}").format(2))
+        stageTeam2Check.setCheckable(True)
+
+        # Add Logic
+        stageMenu.currentIndexChanged.connect(
+            lambda: [
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}", stageMenu.currentData()),
+                stageTeam1Check.setChecked(False),
+                stageTeam2Check.setChecked(False),
+                stageTeam1Check.clicked.emit(),
+                stageTeam2Check.clicked.emit()
+                ]
+        )
+        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", False)
+        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", False)
+
+        stageTeam1Check.clicked.connect(
+            lambda: [
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked())
+            ]
+        )
+        stageTeam2Check.clicked.connect(
+            lambda: [
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked())
+            ]
+        )
+
+        stageLayout.addWidget(gameLabel)
+        if StateManager.Get("game.has_stages", False): # Only add stage column if the game supports stage
+            stageLayout.addWidget(stageMenu)
+        stageLayout.addWidget(stageTeam1Check)
+        stageLayout.addWidget(stageTeam2Check)
+
+        stageWidget.setLayout(stageLayout)
+        return stageWidget
+
+
+    def CreateStageOrder(self):
+        self.stageOrderWidget = QWidget()
+        self.stageOrderLayout = QVBoxLayout()
+        stageOrderLabel = QLabel(text=add_beta_label(QApplication.translate("app", "Individual game data").upper(), "game_tracker"))
+        stageOrderLabelFont = QFont()
+        stageOrderLabelFont.setPointSize(10)
+        stageOrderLabelFont.setBold(True)
+        stageOrderLabel.setFont(stageOrderLabelFont)
+        self.stageOrderLayout.addWidget(stageOrderLabel)
+        self.stageOrderWidget.setLayout(self.stageOrderLayout)
+        self.scoreColumn.findChild(QVBoxLayout, "verticalLayout").addWidget(self.stageOrderWidget)
+
+        self.stageWidgetList = []
+        self.stageOrderListWidget = QWidget()
+
+
+    def setStageNumber(self, stage_number=5):
+        self.stageOrderLayout.removeWidget(self.stageOrderListWidget)
+        self.stageWidgetList = []
+        self.stageOrderListLayout = QVBoxLayout()
+        self.stageOrderListWidget = QWidget()
+        self.stageOrderListWidget.setLayout(self.stageOrderListLayout)
+        StateManager.Set(f"score.{self.scoreboardNumber}.stages", {})
+        if stage_number == 0:
+            self.stageOrderWidget.setVisible(False)
+        else:
+            self.stageOrderWidget.setVisible(True)
+            for i in range(stage_number):
+                self.stageWidgetList.append(self.CreateStageInStageOrderWidget(i))
+                self.stageOrderListLayout.addWidget(self.stageWidgetList[-1])
+        self.stageOrderLayout.addWidget(self.stageOrderListWidget)
+
+    def SwapStageResults(self):
+        for i in range(len(self.stageWidgetList)):
+            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
+            team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
+            stageTeam1Check.setChecked(team_2_old_state)
+            stageTeam2Check.setChecked(team_1_old_state)
+            stageTeam1Check.clicked.emit(),
+            stageTeam2Check.clicked.emit()
+
 
     def closeEvent(self, event):
         self.autoUpdateTimer.stop()
@@ -794,6 +909,8 @@ class TSHScoreboardWidget(QWidget):
                 QLineEdit, "teamName").editingFinished.emit()
             self.team2column.findChild(
                 QLineEdit, "teamName").editingFinished.emit()
+            
+            self.SwapStageResults()
 
             self.teamsSwapped = not self.teamsSwapped
 
