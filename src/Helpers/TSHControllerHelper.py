@@ -136,6 +136,12 @@ class TSHControllerHelper(QObject):
                         "simple_icon_path": simple_icon_path,
                         "category_icon_path": category_icon_path
                     }
+
+                    if config_json.get("short_name"):
+                        controller_json["short_name"] = config_json.get("short_name")
+                    else:
+                        controller_json["short_name"] = config_json.get("name")
+
                     controller_list[controller_id] = controller_json
         self.controller_list = controller_list
 
@@ -153,6 +159,7 @@ class TSHControllerHelper(QObject):
                 item.setData(c, Qt.ItemDataRole.EditRole)
                 data = {
                     "name": self.controller_list[c].get("name"),
+                    "short_name": self.controller_list[c].get("short_name"),
                     "manufacturer": self.controller_list[c].get("manufacturer"),
                     "type": self.controller_list[c].get("type"),
                     "codename": c
