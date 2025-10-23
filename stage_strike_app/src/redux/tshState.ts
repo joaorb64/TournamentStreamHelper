@@ -82,7 +82,6 @@ export const tshStateSlice = createSlice({
                 websocketConnection.instance().emit("program_state", {});
             }
 
-            state.maxAppliedDeltaIdx = Math.max(action.payload.delta_index, state.maxAppliedDeltaIdx);
             state.stateDeltas.push(action.payload);
         },
 

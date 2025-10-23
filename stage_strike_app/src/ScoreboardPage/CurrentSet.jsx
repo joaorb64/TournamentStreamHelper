@@ -3,7 +3,7 @@ import {
     Button,
     Card,
     CardContent,
-    Collapse, IconButton,
+    Collapse, Container, IconButton,
     Paper,
     Stack,
     Typography, useMediaQuery
@@ -31,7 +31,7 @@ export default function CurrentSet({scoreboardNumber}) {
     const tshState = useSelector(state => state.tshState.tshState);
     const tshChars = useSelector(state => state.tshPlayers.players);
     const theme = useTheme();
-    const isSmall = useMediaQuery(theme.breakpoints.down('md'));
+    const isSmall = useMediaQuery(theme.breakpoints.down('lg'));
 
 
     /** @type {TSHScoreInfo} */
@@ -104,47 +104,53 @@ export default function CurrentSet({scoreboardNumber}) {
                                 <Grid
                                     size={isSmall ? 12 : 4.5}
                                 >
-                                    <Team
-                                          key={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
-                                          teamId={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
-                                          tshTeamId={teamKeys[0]}
-                                          ref={team1Ref}
-                                          team={teams[0]}
-                                          characters={tshChars}
-                                    />
+                                    <Container disableGutters maxWidth={'sm'}>
+                                        <Team
+                                            key={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
+                                            teamId={`s-${scoreboardNumber}-t-${teamKeys[0]}`}
+                                            tshTeamId={teamKeys[0]}
+                                            ref={team1Ref}
+                                            team={teams[0]}
+                                            characters={tshChars}
+                                        />
+                                    </Container>
                                 </Grid>
 
 
-                                <Grid>
-                                    <Stack gap={4}>
-                                        <Paper sx={{padding:2}} elevation={3}>
-                                            <SetScore
-                                                key={score.set_id + "score"}
-                                                leftTeam={teams[0]}
-                                                rightTeam={teams[1]}
-                                                best_of={score.best_of}
-                                                match={score.match ?? ""}
-                                                phase={score.phase ?? ""}
-                                                ref={scoreRef}
-                                            />
-                                        </Paper>
+                                <Grid size={isSmall ? 12 : 3}>
+                                    <Container disableGutters maxWidth={'xs'}>
+                                        <Stack gap={4}>
+                                            <Paper sx={{padding:2}} elevation={3}>
+                                                <SetScore
+                                                    key={score.set_id + "score"}
+                                                    leftTeam={teams[0]}
+                                                    rightTeam={teams[1]}
+                                                    best_of={score.best_of}
+                                                    match={score.match ?? ""}
+                                                    phase={score.phase ?? ""}
+                                                    ref={scoreRef}
+                                                />
+                                            </Paper>
 
-                                        <Stack gap={2}>
-                                            <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
-                                            <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
-                                            <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                            <Stack gap={2}>
+                                                <Button variant={"outlined"} onClick={submitChanges}>Submit Changes</Button>
+                                                <Button variant={"outlined"} onClick={clearScoreboard}>Clear Scoreboard</Button>
+                                                <Button variant={"outlined"} onClick={swapTeams}>Swap Teams</Button>
+                                            </Stack>
                                         </Stack>
-                                    </Stack>
+                                    </Container>
                                 </Grid>
 
-                                <Grid size={isSmall ? 12 : 4.5}>
-                                <Team key={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
-                                      teamId={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
-                                      tshTeamId={teamKeys[1]}
-                                      ref={team2Ref}
-                                      team={teams[1]}
-                                />
-                                </Grid>
+                                    <Grid size={isSmall ? 12 : 4.5}>
+                                        <Container disableGutters maxWidth={'sm'}>
+                                            <Team key={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
+                                                  teamId={`s-${scoreboardNumber}-t-${teamKeys[1]}`}
+                                                  tshTeamId={teamKeys[1]}
+                                                  ref={team2Ref}
+                                                  team={teams[1]}
+                                            />
+                                        </Container>
+                                    </Grid>
                             </Grid>
                         )
                     }
