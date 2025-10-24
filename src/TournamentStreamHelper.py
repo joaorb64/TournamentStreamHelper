@@ -970,7 +970,8 @@ class Window(QMainWindow):
             logger.warning("Error closing web socket on shutdown", exc_info=True)
 
         self.webserver.terminate()
-        self.webserver.wait()
+        self.webserver.wait(10000)  # 10 seconds grace period.
+        super().closeEvent(event)
 
     def ReloadGames(self):
         logger.info("Reload games")
