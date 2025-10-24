@@ -8,7 +8,6 @@ from typing import Optional, Callable
 from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
 
-import orjson
 from loguru import logger
 from tqdm import tqdm
 import requests
@@ -66,15 +65,17 @@ def download_file(
     ) as tmp_file:
         try:
             has_stdout = (sys.__stdout__ is not None)
-            progress_bar = tqdm(
-                    # os.devnull is cross-platform, although windows' mechanism
-                    # is not called /dev/null per se
-                    file=(sys.__stdout__ if has_stdout else os.devnull),
-                    unit="B",
-                    unit_scale=True,
-                    total=content_length,
-                    leave=True
-            )
+            if has_stdout:
+                progress_bar = tqdm(
+                        file=sys.__stdout__,
+                        unit="B",
+                        unit_scale=True,
+                        total=content_length,
+                        leave=True
+                )
+            else:
+                progress_bar = NullProgressBar()
+
             try:
                 # Progress bar is helpful, but loggers have no concept of
                 # tty ansi escape codes to reset the cursor position, so we
@@ -103,9 +104,18 @@ def download_file(
             logger.opt(exception=True).warning(f"{desc} download failure.")
             success = False
         finally:
-            os.unlink(tmp_file.name)
+            if os.path.exists(tmp_file.name):
+                os.unlink(tmp_file.name)
 
         return success
 
 
+class NullProgressBar:
+    """
+    This class does nothing, but you can call methods on it just fine.
+    """
+    def __init__(self, *args, **kwargs):
+        pass
 
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: None
