@@ -154,6 +154,8 @@ class TSHSettingsWindow(QDialog):
             "team2_score_down": QApplication.translate("settings.hotkeys", "Team 2 score down"),
             "reset_scores": QApplication.translate("settings.hotkeys", "Reset scores"),
             "swap_teams": QApplication.translate("settings.hotkeys", "Swap teams"),
+            "refresh_phase_group": QApplication.translate("settings.hotkeys", "Refresh bracket phase groups"),
+            "limit_export": QApplication.translate("settings.hotkeys", "Toggle bracket limit export"),
         }
 
         for i, (setting, value) in enumerate(TSHHotkeys.instance.keys.items()):
