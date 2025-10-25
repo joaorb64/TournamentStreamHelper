@@ -603,12 +603,14 @@ class TSHScoreboardWidget(QWidget):
 
         stageTeam1Check.clicked.connect(
             lambda: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked())
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
+                self.SetScoreFromStageResults()
             ]
         )
         stageTeam2Check.clicked.connect(
             lambda: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked())
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
+                self.SetScoreFromStageResults()
             ]
         )
 
@@ -654,6 +656,7 @@ class TSHScoreboardWidget(QWidget):
                 self.stageOrderListLayout.addWidget(self.stageWidgetList[-1])
         self.stageOrderLayout.addWidget(self.stageOrderListWidget)
 
+
     def SwapStageResults(self):
         for i in range(len(self.stageWidgetList)):
             stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
@@ -663,6 +666,27 @@ class TSHScoreboardWidget(QWidget):
             stageTeam2Check.setChecked(team_1_old_state)
             stageTeam1Check.clicked.emit(),
             stageTeam2Check.clicked.emit()
+
+
+    def SetScoreFromStageResults(self):
+        scoreTeam1, scoreTeam2 = 0, 0
+        for i in range(len(self.stageWidgetList)):
+            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
+            if stageTeam1Check.isChecked():
+                scoreTeam1 += 1
+            if stageTeam2Check.isChecked():
+                scoreTeam2 += 1
+        
+        self.scoreColumn.findChild(
+            QSpinBox, "score_left").setValue(scoreTeam1)
+        self.scoreColumn.findChild(
+            QSpinBox, "score_left").valueChanged.emit(scoreTeam1)
+
+        self.scoreColumn.findChild(
+            QSpinBox, "score_right").setValue(scoreTeam2)
+        self.scoreColumn.findChild(
+            QSpinBox, "score_right").valueChanged.emit(scoreTeam2)
 
 
     def closeEvent(self, event):
