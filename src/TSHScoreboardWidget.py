@@ -645,7 +645,7 @@ class TSHScoreboardWidget(QWidget):
         self.stageOrderListWidget = QWidget()
         self.stageOrderListWidget.setLayout(self.stageOrderListLayout)
         StateManager.Set(f"score.{self.scoreboardNumber}.stages", {})
-        if stage_number == 0:
+        if stage_number == 0 or SettingsManager.Get('general.disable_individual_game_tracker', True):
             self.stageOrderWidget.setVisible(False)
         else:
             self.stageOrderWidget.setVisible(True)

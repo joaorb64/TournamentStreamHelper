@@ -2,6 +2,7 @@ from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
 from ..TSHHotkeys import TSHHotkeys
+from ..Helpers.TSHVersionHelper import add_beta_label
 
 
 class TSHSettingsWindow(QDialog):
@@ -115,6 +116,15 @@ class TSHSettingsWindow(QDialog):
             "disable_controller_file_downloading",
             "checkbox",
             False
+        ))
+
+
+        generalSettings.append((
+            add_beta_label(QApplication.translate(
+                "settings.disable_individual_game_tracker", "Disables the individual game tracker (takes effect on next restart)"), "game_tracker"),
+            "disable_individual_game_tracker",
+            "checkbox",
+            True
         ))
 
         generalSettings.append((
