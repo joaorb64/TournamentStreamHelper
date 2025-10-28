@@ -356,6 +356,10 @@ class TSHScoreboardWidget(QWidget):
         self.team1column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(1))
 
+        colorGroup1 = QWidget()
+        colorGroup1.setLayout(QHBoxLayout())
+        colorGroup1.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
         DEFAULT_TEAM1_COLOR = SettingsManager.Get("general.team_1_default_color", "#fe3636")
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
         # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
@@ -367,8 +371,26 @@ class TSHScoreboardWidget(QWidget):
             ])
         self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
 
-        self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
-        ).insertWidget(0, self.colorButton1)
+        self.colorMenu1 = QComboBox()
+        self.colorMenu1.setVisible(False)
+        self.colorMenu1.setModel(TSHGameAssetManager.instance.colorModel)
+        self.colorMenu1.setEditable(True)
+        self.colorMenu1.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.colorMenu1.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.colorMenu1.setMaximumWidth(200)
+        self.colorMenu1.setIconSize(QSize(24, 24))
+
+        colorGroup1.layout().addWidget(self.colorButton1)
+        colorGroup1.layout().addWidget(self.colorMenu1)
+
+        self.colorMenu1.currentIndexChanged.connect(
+                lambda element=self.colorMenu1: [
+                    self.CommandTeamColor(0, element),
+                    self.CommandTeamColor(1, element, force_opponent=True)
+                ]
+            )
+
+        self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, colorGroup1)
         self.team1column.findChild(QScrollArea).setWidget(QWidget())
         self.team1column.findChild(
             QScrollArea).widget().setLayout(QVBoxLayout())
@@ -392,6 +414,10 @@ class TSHScoreboardWidget(QWidget):
         self.scoreColumn = uic.loadUi(TSHResolve("src/layout/TSHScoreboardScore.ui"))
         self.columns.layout().addWidget(self.scoreColumn)
 
+        colorGroup2 = QWidget()
+        colorGroup2.setLayout(QHBoxLayout())
+        colorGroup2.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
         self.team2column = uic.loadUi(TSHResolve("src/layout/TSHScoreboardTeam.ui"))
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText(
@@ -408,8 +434,26 @@ class TSHScoreboardWidget(QWidget):
         # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
         self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
 
-        self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout(
-        ).insertWidget(0, self.colorButton2)
+        self.colorMenu2 = QComboBox()
+        self.colorMenu2.setVisible(False)
+        self.colorMenu2.setModel(TSHGameAssetManager.instance.colorModel)
+        self.colorMenu2.setEditable(True)
+        self.colorMenu2.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.colorMenu2.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.colorMenu2.setMaximumWidth(200)
+        self.colorMenu2.setIconSize(QSize(24, 24))
+
+        colorGroup2.layout().addWidget(self.colorButton2)
+        colorGroup2.layout().addWidget(self.colorMenu2)
+
+        self.colorMenu2.currentIndexChanged.connect(
+                lambda element=self.colorMenu2: [
+                    self.CommandTeamColor(1, element),
+                    self.CommandTeamColor(0, element, force_opponent=True)
+                ]
+            )
+
+        self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, colorGroup2)
 
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
         self.team2column.findChild(
@@ -558,7 +602,11 @@ class TSHScoreboardWidget(QWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             lambda: [
                 self.SetDefaultsFromAssets(),
-                self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value())
+                self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value()),
+                self.colorMenu1.setModel(TSHGameAssetManager.instance.colorModel),
+                self.colorMenu2.setModel(TSHGameAssetManager.instance.colorModel),
+                self.colorMenu1.setVisible(StateManager.Get(f"game.has_colors", False)),
+                self.colorMenu2.setVisible(StateManager.Get(f"game.has_colors", False))
             ]
         )
     
@@ -1126,16 +1174,41 @@ class TSHScoreboardWidget(QWidget):
         self.team1column.findChild(QCheckBox, "losers").setChecked(False)
         self.team2column.findChild(QCheckBox, "losers").setChecked(False)
 
-    def CommandTeamColor(self, team: int, color):
-        if team == 0:
-            self.colorButton1.setColor(color)
-        if team == 1:
-            self.colorButton2.setColor(color)
-        if team in (0, 1):
-            StateManager.BlockSaving()
-            StateManager.Set(
-                f"score.{self.scoreboardNumber}.team.{team + 1}.color", color)
-            StateManager.ReleaseSaving()
+    def CommandTeamColor(self, team: int, color, force_opponent=False):
+        if color:
+            value = None
+            if type(color) is str:
+                value = color
+            if type(color) is int and color > 0:
+                value = TSHGameAssetManager.instance.colorModel.item(color).data(Qt.ItemDataRole.UserRole)
+                if force_opponent:
+                    value = value.get("force_opponent")
+                else:
+                    value = value.get("value")
+                if value:
+                    value = "#" + value
+
+            if value:
+                if team == 0:
+                    self.colorButton1.setColor(value)
+                if team == 1:
+                    self.colorButton2.setColor(value)
+                if team in (0, 1):
+                    StateManager.BlockSaving()
+                    StateManager.Set(
+                        f"score.{self.scoreboardNumber}.team.{team + 1}.color", value)
+                    StateManager.ReleaseSaving()
+                
+                # Set in menu if recognized
+                if type(color) is int and force_opponent:
+                    for i in range(1, TSHGameAssetManager.instance.colorModel.rowCount()):
+                        current_menu_item_data = TSHGameAssetManager.instance.colorModel.item(i).data(Qt.ItemDataRole.UserRole)
+                        if current_menu_item_data.get("value") in value:
+                            if team == 0:
+                                self.colorMenu1.setCurrentIndex(i)
+                            if team == 1:
+                                self.colorMenu2.setCurrentIndex(i)
+
 
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):

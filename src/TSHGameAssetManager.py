@@ -30,6 +30,7 @@ class TSHGameAssetManager(QObject):
         self.games = {}
         self.characters = {}
         self.variants = {}
+        self.colors = []
         self.selectedGame = {}
         self.stockIcons = {}
         self.startgg_id_to_character = {}
@@ -37,6 +38,7 @@ class TSHGameAssetManager(QObject):
         self.characterModel = QStandardItemModel()
         self.skinModels = {}
         self.variantModel = QStandardItemModel()
+        self.colorModel = QStandardItemModel()
         self.stageModel = QStandardItemModel()
         self.stageModelWithBlank = QStandardItemModel()
 
@@ -267,6 +269,7 @@ class TSHGameAssetManager(QObject):
                     if gameObj != None:
                         self.parent().characters = gameObj.get("character_to_codename", {})
                         self.parent().variants = gameObj.get("variant_to_codename", {})
+                        self.parent().colors = gameObj.get("preset_colors", [])
 
                         assetsKey = ""
                         if len(list(gameObj.get("assets", {}).keys())) > 0:
@@ -502,6 +505,45 @@ class TSHGameAssetManager(QObject):
                         except:
                             logger.error(traceback.format_exc())
 
+                        # Load translations for colors
+                        try:
+                            for c in range(len(self.parent().colors)):
+                                display_name = self.parent().colors[c].get("name")
+                                export_name = self.parent().colors[c].get("name")
+                                en_name = self.parent().colors[c].get("name")
+
+                                if self.parent().colors[c].get("locale"):
+                                    locale = TSHLocaleHelper.programLocale
+                                    if locale.replace("-", "_") in self.parent().colors[c]["locale"]:
+                                        display_name = self.parent().colors[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().colors[c]["locale"]:
+                                        display_name = self.parent().colors[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in self.parent().colors[c]["locale"]:
+                                        display_name = self.parent().colors[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.programLocale)]
+
+                                    locale = TSHLocaleHelper.exportLocale
+                                    if locale.replace("-", "_") in self.parent().colors[c]["locale"]:
+                                        export_name = self.parent().colors[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent().colors[c]["locale"]:
+                                        export_name = self.parent().colors[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in self.parent().colors[c]["locale"]:
+                                        export_name = self.parent().colors[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.exportLocale)]
+
+                                self.parent(
+                                ).colors[c]["display_name"] = display_name
+                                self.parent(
+                                ).colors[c]["export_name"] = export_name
+                                self.parent(
+                                ).colors[c]["en_name"] = en_name
+                        except:
+                            logger.error(traceback.format_exc())
+
                     with StateManager.SaveBlock():
                         StateManager.Set(f"game", {
                             "name": self.parent().selectedGame.get("name"),
@@ -511,13 +553,15 @@ class TSHGameAssetManager(QObject):
                             "defaults": self.parent().selectedGame.get("defaults"),
                             "mods_active": self.mods_active,
                             "has_stages": bool(self.parent().selectedGame.get("stage_to_codename")),
-                            "has_variants": bool(self.parent().selectedGame.get("variant_to_codename"))
+                            "has_variants": bool(self.parent().selectedGame.get("variant_to_codename")),
+                            "has_colors": bool(self.parent().selectedGame.get("preset_colors"))
                         })
 
                         self.parent().has_modded_content = False
                         self.parent().UpdateCharacterModel(self.mods_active)
                         self.parent().UpdateSkinModel()
                         self.parent().UpdateVariantModel()
+                        self.parent().UpdateColorModel()
                         self.parent().UpdateStageModel(self.mods_active)
 
                         StateManager.Set(f"game.has_modded_content", self.parent().has_modded_content)
@@ -561,6 +605,7 @@ class TSHGameAssetManager(QObject):
                     if gameObj != None:
                         self.parent.characters = gameObj.get("character_to_codename", {})
                         self.parent.variants = gameObj.get("variant_to_codename", {})
+                        self.parent.colors = gameObj.get("preset_colors", {})
 
                         assetsKey = ""
                         if len(list(gameObj.get("assets", {}).keys())) > 0:
@@ -790,6 +835,42 @@ class TSHGameAssetManager(QObject):
                         except:
                             logger.error(traceback.format_exc())
 
+                        # Load translations for colors
+                        try:
+                            for c in self.parent.colors.keys():
+                                display_name = c
+                                export_name = c
+                                en_name = c
+
+                                if self.parent.colors[c].get("locale"):
+                                    locale = TSHLocaleHelper.programLocale
+                                    if locale.replace("-", "_") in self.parent.colors[c]["locale"]:
+                                        display_name = self.parent.colors[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent.colors[c]["locale"]:
+                                        display_name = self.parent.colors[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.programLocale) in self.parent.colors[c]["locale"]:
+                                        display_name = self.parent.colors[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.programLocale)]
+
+                                    locale = TSHLocaleHelper.exportLocale
+                                    if locale.replace("-", "_") in self.parent.colors[c]["locale"]:
+                                        export_name = self.parent.colors[
+                                            c]["locale"][locale.replace("-", "_")]
+                                    elif re.split("-|_", locale)[0] in self.parent.colors[c]["locale"]:
+                                        export_name = self.parent.colors[
+                                            c]["locale"][re.split("-|_", locale)[0]]
+                                    elif TSHLocaleHelper.GetRemaps(TSHLocaleHelper.exportLocale) in self.parent.colors[c]["locale"]:
+                                        export_name = self.parent.colors[c]["locale"][TSHLocaleHelper.GetRemaps(
+                                            TSHLocaleHelper.exportLocale)]
+
+                                self.parent.colors[c]["display_name"] = display_name
+                                self.parent.colors[c]["export_name"] = export_name
+                                self.parent.colors[c]["en_name"] = en_name
+                        except:
+                            logger.error(traceback.format_exc())
+
                     StateManager.Set(f"game", {
                         "name": self.parent.selectedGame.get("name"),
                         "smashgg_id": self.parent.selectedGame.get("smashgg_game_id"),
@@ -798,13 +879,15 @@ class TSHGameAssetManager(QObject):
                         "defaults": self.parent.selectedGame.get("defaults"),
                         "mods_active": mods_active,
                         "has_stages": bool(self.parent.selectedGame.get("stage_to_codename")),
-                        "has_variants": bool(self.parent.selectedGame.get("variant_to_codename"))
+                        "has_variants": bool(self.parent.selectedGame.get("variant_to_codename")),
+                        "has_colors": bool(self.parent.selectedGame.get("preset_colors"))
                     })
 
                     self.parent.has_modded_content = False
                     self.parent.UpdateCharacterModel(mods_active)
                     self.parent.UpdateSkinModel()
                     self.parent.UpdateVariantModel()
+                    self.parent.UpdateColorModel()
                     self.parent.UpdateStageModel(mods_active)
 
                     StateManager.Set(f"game.has_modded_content", self.parent.has_modded_content)
@@ -1011,6 +1094,45 @@ class TSHGameAssetManager(QObject):
             self.characterModel.sort(0)
         except:
             logger.error(traceback.format_exc())
+
+    def UpdateColorModel(self):
+        try:
+            self.colorModel = QStandardItemModel()
+
+            # Add one empty
+            item = QStandardItem("")
+            self.colorModel.appendRow(item)
+
+            for c in range(len(self.colors)):
+                name = self.colors[c].get("name")
+                item = QStandardItem()
+                item.setData(name, Qt.ItemDataRole.EditRole)
+                logger.info(name)
+
+                data = {
+                    "name": self.colors[c].get("export_name"),
+                    "en_name": c,
+                    "display_name": self.colors[c].get("display_name"),
+                    "value": self.colors[c].get("value"),
+                    "force_opponent": self.colors[c].get("force_opponent")
+                }
+
+                icon = QPixmap(100,100)
+                icon.fill(QColor("#" + self.colors[c].get("value")))
+                item.setIcon(QIcon(icon))
+
+
+                if self.colors[c].get("display_name") != name:
+                    item.setData(
+                        f'{self.colors[c].get("display_name")} / {name}', Qt.ItemDataRole.EditRole)
+
+                item.setData(data, Qt.ItemDataRole.UserRole)
+                self.colorModel.appendRow(item)
+
+            self.colorModel.sort(0)
+        except:
+            logger.error(traceback.format_exc())
+
 
     def UpdateVariantModel(self):
         try:
