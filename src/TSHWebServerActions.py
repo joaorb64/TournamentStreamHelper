@@ -279,7 +279,8 @@ class WebServerActions(QThread):
                 "challonge_game_id": TSHGameAssetManager.instance.games[key].get("challonge_game_id"),
                 "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
                 "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
-                "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename"))
+                "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename")),
+                "has_colors": bool(TSHGameAssetManager.instance.games[key].get("preset_colors"))
             }
 
         return data
