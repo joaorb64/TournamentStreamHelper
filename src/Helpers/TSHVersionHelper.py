@@ -21,3 +21,13 @@ def add_beta_label(text, feature):
         return(beta_label + text)
     else:
         return(text)
+    
+def get_supported_providers():
+    try:
+        versions = json.load(
+            open(TSHResolve('./assets/versions.json'), encoding='utf-8'))
+    except Exception as e:
+        logger.error("Local version file not found")
+        versions = {}
+    
+    return(versions.get("supported_providers", []))
