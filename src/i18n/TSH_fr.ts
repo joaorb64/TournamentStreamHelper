@@ -55,7 +55,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="133"/>
         <source>Load from tournament</source>
-        <translation>Charger depuis un service dédié</translation>
+        <translation>Charger depuis la source externe</translation>
     </message>
     <message>
         <location filename="../layout/TSHTournamentInfo.ui" line="140"/>
