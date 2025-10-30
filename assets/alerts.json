@@ -47,6 +47,6 @@
     "10": {
         "dateStart": null,
         "dateEnd": null,
-        "alert": "WARNING:\n\nEND OF CHALLONGE SUPPORT\nStarting with TournamentStreamHelper v5.966, the program will no longer support importing tournament data from Challonge. This decision was made in order to prepare the refactoring of data import as well as due to the many difficulties we encounter when working with the Challonge API, which could cause the program to hang. We are also curently investigating the possibility of adding support for other tournament providers besides StartGG. We apologize for the inconvenience."
+        "alert": "WARNING:\n\nEND OF CHALLONGE SUPPORT\nStarting with TournamentStreamHelper v5.966, the program will no longer support importing tournament data from Challonge. This decision was made in order to prepare the refactoring of data import as well as due to the many difficulties we encounter when working with the Challonge API, which could cause the program to hang. We are also curently investigating the possibility of adding support for other tournament providers besides StartGG. We apologize for the inconvenience.\n\nTournamentStreamHelper v5.965 will remain available on the Releases page of the Github repo in case you need it."
     }
 }
