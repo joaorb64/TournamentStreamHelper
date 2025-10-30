@@ -3,5 +3,8 @@
     "beta_features": [
         "web_score",
         "game_tracker"
+    ],
+    "supported_providers": [
+        "StartGG"
     ]
 }

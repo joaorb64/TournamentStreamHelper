@@ -276,7 +276,6 @@ class WebServerActions(QThread):
             data[key] = {
                 "name": TSHGameAssetManager.instance.games[key].get("name"),
                 "locale": TSHGameAssetManager.instance.games[key].get("locale"),
-                "challonge_game_id": TSHGameAssetManager.instance.games[key].get("challonge_game_id"),
                 "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
                 "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
                 "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename")),
@@ -503,8 +502,7 @@ class WebServerActions(QThread):
             return "OK"
         else:
             validators = [
-                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
-                QRegularExpression("challonge.com/.+")
+                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+")
             ]
 
             for validator in validators:
@@ -520,11 +518,6 @@ class WebServerActions(QThread):
 
                     # Some URLs in startgg have eventS but the API doesn't work with that format
                     url = url.replace("/events/", "/event/")
-            if "challonge" in url:
-                matches = re.match(
-                    "(.*challonge.com/[^/]*/[^/]*)", url)
-                if matches:
-                    url = matches.group(0)
 
             SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
