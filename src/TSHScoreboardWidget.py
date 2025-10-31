@@ -614,6 +614,11 @@ class TSHScoreboardWidget(QWidget):
     
 
     def CreateStageInStageOrderWidget(self, index=0):
+        def uncheck_buttons_if_true(value, list_buttons):
+            if value:
+                for button in list_buttons:
+                    button.setChecked(False)
+        
         stageWidget = QWidget()
         stageLayout = QHBoxLayout()
 
@@ -637,6 +642,11 @@ class TSHScoreboardWidget(QWidget):
         stageTeam2Check.setObjectName(f"stageTeam2Check_{index}")
         stageTeam2Check.setText(QApplication.translate("app", "T{0}").format(2))
         stageTeam2Check.setCheckable(True)
+        stageTieCheck = QPushButton()
+        stageTieCheck.setMaximumWidth(40)
+        stageTieCheck.setObjectName(f"stageTieCheck_{index}")
+        stageTieCheck.setText(QApplication.translate("app", "Tie"))
+        stageTieCheck.setCheckable(True)
 
         # Add Logic
         stageMenu.currentIndexChanged.connect(
@@ -650,15 +660,30 @@ class TSHScoreboardWidget(QWidget):
         )
         StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", False)
         StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", False)
+        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", False)
 
         stageTeam1Check.clicked.connect(
             lambda: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked())
+                uncheck_buttons_if_true(stageTeam1Check.isChecked(), [stageTeam2Check, stageTieCheck]),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
             ]
         )
         stageTeam2Check.clicked.connect(
             lambda: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked())
+                uncheck_buttons_if_true(stageTeam2Check.isChecked(), [stageTeam1Check, stageTieCheck]),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
+            ]
+        )
+        stageTieCheck.clicked.connect(
+            lambda: [
+                uncheck_buttons_if_true(stageTieCheck.isChecked(), [stageTeam1Check, stageTeam2Check]),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
             ]
         )
 
@@ -666,6 +691,7 @@ class TSHScoreboardWidget(QWidget):
         if StateManager.Get("game.has_stages", False): # Only add stage column if the game supports stage
             stageLayout.addWidget(stageMenu)
         stageLayout.addWidget(stageTeam1Check)
+        stageLayout.addWidget(stageTieCheck)
         stageLayout.addWidget(stageTeam2Check)
 
         stageWidget.setLayout(stageLayout)
