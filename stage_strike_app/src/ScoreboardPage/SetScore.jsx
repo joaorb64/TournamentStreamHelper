@@ -3,6 +3,7 @@ import TextField from "./TextField";
 import {Stack} from "@mui/material";
 import i18n from "i18next";
 import {BACKEND_PORT} from "../env";
+import {NumberInput} from "../NumberInput";
 
 /**
  * @typedef {object} SetScoreState
@@ -49,7 +50,7 @@ export default class SetScore extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-            console.log("Received new set score info.", prevProps, this.props);
+            // console.log("Set score component received new props.", prevProps, this.props);
             this.setState({...prevState, ...this.stateFromProps(this.props)});
         }
     }
@@ -96,14 +97,7 @@ export default class SetScore extends React.Component {
     }
 
     render = () => {
-        const numInputStyles = {
-            '& input': {
-                width: 50,
-                paddingX: '5px',
-                textAlign: "center"
-            }
-        };
-
+        const formFieldWidth = 195;
         return (
             <Stack gap={4} direction={"column"} alignItems={"center"}>
                 <TextField
@@ -111,46 +105,38 @@ export default class SetScore extends React.Component {
                     value={this.state.phase}
                     variant={"outlined"}
                     onChange={(e) => {this.setState({...this.state, phase: e.target.value})}}
+                    sx={{width: formFieldWidth}}
                 />
                 <TextField
                     label={i18n.t("match")}
                     value={this.state.match}
                     variant={"outlined"}
                     onChange={(e) => {this.setState({...this.state, match: e.target.value})}}
+                    sx={{width: formFieldWidth}}
                 />
-                <TextField
+                <NumberInput
                     type={"number"}
                     label={i18n.t("best_of", {value: ""})}
                     variant="outlined"
+                    wingWidth={48}
                     value={this.state.bestOf}
-                    onChange={((e) => {this.setState({...this.state, bestOf: e.target.value})})}
-                    inputProps={{
-                        min: 0
-                    }}
+                    onChange={((_, newVal) => {this.setState({...this.state, bestOf: newVal})})}
+                    width={formFieldWidth}
+                    min={0}
                 />
-                <Stack gap={2} direction={"row"} alignItems={"baseline"}>
-                    <TextField
-                        type={"number"}
-                        variant="outlined"
+                <Stack gap={0.5} direction={"row"} alignItems={"baseline"}>
+                    <NumberInput
                         value={this.state.scoreLeft}
-                        onChange={((e) => {this.setState({...this.state, scoreLeft: e.target.value})})}
-                        sx={numInputStyles}
-                        inputProps={{
-                            max: this.maxWins(),
-                            min: 0
-                        }}
+                        onChange={((_, newVal) => {this.setState({...this.state, scoreLeft: newVal})})}
+                        min={0}
+                        max={this.maxWins()}
                     />
-                    <span>&nbsp;-&nbsp;</span>
-                    <TextField
-                        type={"number"}
-                        variant="outlined"
+                    <span>-</span>
+                    <NumberInput
                         value={this.state.scoreRight}
-                        onChange={((e) => {this.setState({...this.state, scoreRight: e.target.value})})}
-                        sx={numInputStyles}
-                        inputProps={{
-                            max: this.maxWins(),
-                            min: 0
-                        }}
+                        onChange={((_, newVal) => {this.setState({...this.state, scoreRight: newVal})})}
+                        min={0}
+                        max={this.maxWins()}
                     />
                 </Stack>
             </Stack>
