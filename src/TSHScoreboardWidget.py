@@ -655,9 +655,9 @@ class TSHScoreboardWidget(QWidget):
                 stageTeam1Check.setChecked(False),
                 stageTeam2Check.setChecked(False),
                 stageTieCheck.setChecked(False),
-                stageTeam1Check.clicked.emit(),
-                stageTeam2Check.clicked.emit(),
-                stageTieCheck.clicked.emit()
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
+                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
                 ]
         )
         StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", False)
