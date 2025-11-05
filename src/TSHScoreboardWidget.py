@@ -524,15 +524,17 @@ class TSHScoreboardWidget(QWidget):
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
         self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.{self.scoreboardNumber}.team.1.score", value)
+            lambda value: [
+                self.DetectIncrementFromOldValueAndUpdateScore(0, value)
+                ]
         )
         self.scoreColumn.findChild(
             QSpinBox, "score_left").valueChanged.emit(0)
 
         self.scoreColumn.findChild(QSpinBox, "score_right").valueChanged.connect(
-            lambda value: StateManager.Set(
-                f"score.{self.scoreboardNumber}.team.2.score", value)
+            lambda value: [
+                self.DetectIncrementFromOldValueAndUpdateScore(1, value)
+                ]
         )
         self.scoreColumn.findChild(
             QSpinBox, "score_right").valueChanged.emit(0)
@@ -755,10 +757,13 @@ class TSHScoreboardWidget(QWidget):
             if stageTeam2Check.isChecked():
                 team_2_score += 1
         
-        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(team_1_score)
-        self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.emit(team_1_score)
-        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(team_2_score)
-        self.scoreColumn.findChild(QSpinBox, "score_right").valueChanged.emit(team_2_score)
+        with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_left")):
+            self.scoreColumn.findChild(QSpinBox, "score_left").setValue(team_1_score)
+            StateManager.Set(f"score.{self.scoreboardNumber}.team.1.score", team_1_score)
+
+        with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_right")):
+            self.scoreColumn.findChild(QSpinBox, "score_right").setValue(team_2_score)
+            StateManager.Set(f"score.{self.scoreboardNumber}.team.2.score", team_2_score)
 
 
     def closeEvent(self, event):
@@ -1205,15 +1210,32 @@ class TSHScoreboardWidget(QWidget):
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
             
+
+    def DetectIncrementFromOldValueAndUpdateScore(self, team, value):
+        old_value = StateManager.Get(f"score.{self.scoreboardNumber}.team.{team+1}.score")
+        StateManager.Set(f"score.{self.scoreboardNumber}.team.{team+1}.score", value)
+
         # Game tracker logic for incremental changes
-        if change == 1:
-            self.IncreaseScoreBy1InStageOrder(team)
-        if change == -1:
-            self.DecreaseScoreBy1InStageOrder()
+        if old_value is not None:
+            old_value = int(old_value)
+            if int(value) - old_value == 1:
+                if team == 0:
+                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
+                else:
+                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score"))
+                self.IncreaseScoreBy1InStageOrder(team, current_game)
+            if int(value) - old_value == -1:
+                if team == 0:
+                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
+                else:
+                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + 1
+                self.DecreaseScoreBy1InStageOrder(current_game)
 
 
-    def IncreaseScoreBy1InStageOrder(self, team):
-        current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
+    def IncreaseScoreBy1InStageOrder(self, team, current_game = None):
+        if not current_game:
+            current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
+        logger.info(f"Setting a win for team {team+1} on game {current_game}")
         if current_game > 0 and current_game <= len(self.stageWidgetList):
             i = current_game-1
             current_stage_widget = self.stageWidgetList[i]
@@ -1231,8 +1253,11 @@ class TSHScoreboardWidget(QWidget):
             StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t2_win", stageTeam2Check.isChecked())
             StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.tie", stageTieCheck.isChecked())
 
-    def DecreaseScoreBy1InStageOrder(self):
-        current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
+
+    def DecreaseScoreBy1InStageOrder(self, current_game = None):
+        if not current_game:
+            current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
+        logger.info(f"Resetting wins for game {current_game}")
         if current_game > 0 and current_game <= len(self.stageWidgetList):
             i = current_game-1
             current_stage_widget = self.stageWidgetList[i]
