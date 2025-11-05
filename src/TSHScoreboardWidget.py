@@ -1215,8 +1215,15 @@ class TSHScoreboardWidget(QWidget):
         old_value = StateManager.Get(f"score.{self.scoreboardNumber}.team.{team+1}.score")
         StateManager.Set(f"score.{self.scoreboardNumber}.team.{team+1}.score", value)
 
+        # Disable individual game tracker logic if ties were reported
+        has_ties = False
+        game_data = StateManager.Get(f"score.{self.scoreboardNumber}.stages")
+        for key in game_data.keys():
+            if game_data[key].get("tie"):
+                has_ties = True
+
         # Game tracker logic for incremental changes
-        if old_value is not None:
+        if old_value is not None and not has_ties:
             old_value = int(old_value)
             if int(value) - old_value == 1:
                 if team == 0:
