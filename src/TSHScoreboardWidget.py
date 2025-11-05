@@ -654,8 +654,10 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}", stageMenu.currentData()),
                 stageTeam1Check.setChecked(False),
                 stageTeam2Check.setChecked(False),
+                stageTieCheck.setChecked(False),
                 stageTeam1Check.clicked.emit(),
-                stageTeam2Check.clicked.emit()
+                stageTeam2Check.clicked.emit(),
+                stageTieCheck.clicked.emit()
                 ]
         )
         StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", False)
