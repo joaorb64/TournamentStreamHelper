@@ -652,9 +652,6 @@ class TSHScoreboardWidget(QWidget):
         stageMenu.currentIndexChanged.connect(
             lambda: [
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}", stageMenu.currentData()),
-                stageTeam1Check.setChecked(False),
-                stageTeam2Check.setChecked(False),
-                stageTieCheck.setChecked(False),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
@@ -670,6 +667,7 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
+                self.StageResultsToScore()
             ]
         )
         stageTeam2Check.clicked.connect(
@@ -678,6 +676,7 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
+                self.StageResultsToScore()
             ]
         )
         stageTieCheck.clicked.connect(
@@ -686,6 +685,7 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
+                self.StageResultsToScore()
             ]
         )
 
@@ -741,6 +741,21 @@ class TSHScoreboardWidget(QWidget):
             stageTeam2Check.setChecked(team_1_old_state)
             stageTeam1Check.clicked.emit(),
             stageTeam2Check.clicked.emit()
+
+    def StageResultsToScore(self):
+        team_1_score, team_2_score = 0, 0
+        for i in range(len(self.stageWidgetList)):
+            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
+            if stageTeam1Check.isChecked():
+                team_1_score += 1
+            if stageTeam2Check.isChecked():
+                team_2_score += 1
+        
+        self.scoreColumn.findChild(QSpinBox, "score_left").setValue(team_1_score)
+        self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.emit(team_1_score)
+        self.scoreColumn.findChild(QSpinBox, "score_right").setValue(team_2_score)
+        self.scoreColumn.findChild(QSpinBox, "score_right").valueChanged.emit(team_2_score)
 
 
     def closeEvent(self, event):
