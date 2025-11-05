@@ -736,11 +736,14 @@ class TSHScoreboardWidget(QWidget):
         for i in range(len(self.stageWidgetList)):
             stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
             stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
+            stageTieCheck = self.stageWidgetList[i].findChild(QPushButton, f"stageTieCheck_{i}")
             team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
             stageTeam1Check.setChecked(team_2_old_state)
             stageTeam2Check.setChecked(team_1_old_state)
-            stageTeam1Check.clicked.emit(),
-            stageTeam2Check.clicked.emit()
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.t1_win", stageTeam1Check.isChecked()),
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.t2_win", stageTeam2Check.isChecked()),
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.tie", stageTieCheck.isChecked()),
+
 
     def StageResultsToScore(self):
         team_1_score, team_2_score = 0, 0
@@ -1201,6 +1204,48 @@ class TSHScoreboardWidget(QWidget):
             ]
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
+            
+        # Game tracker logic for incremental changes
+        if change == 1:
+            self.IncreaseScoreBy1InStageOrder(team)
+        if change == -1:
+            self.DecreaseScoreBy1InStageOrder()
+
+
+    def IncreaseScoreBy1InStageOrder(self, team):
+        current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
+        if current_game > 0 and current_game <= len(self.stageWidgetList):
+            i = current_game-1
+            current_stage_widget = self.stageWidgetList[i]
+            stageTeam1Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam2Check_{i}")
+            stageTieCheck: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTieCheck_{i}")
+            if team == 0:
+                stageTeam1Check.setChecked(True)
+                stageTeam2Check.setChecked(False)
+            else:
+                stageTeam2Check.setChecked(True)
+                stageTeam1Check.setChecked(False)
+            stageTieCheck.setChecked(False)
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t1_win", stageTeam1Check.isChecked())
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t2_win", stageTeam2Check.isChecked())
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.tie", stageTieCheck.isChecked())
+
+    def DecreaseScoreBy1InStageOrder(self):
+        current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
+        if current_game > 0 and current_game <= len(self.stageWidgetList):
+            i = current_game-1
+            current_stage_widget = self.stageWidgetList[i]
+            stageTeam1Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam1Check_{i}")
+            stageTeam2Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam2Check_{i}")
+            stageTieCheck: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTieCheck_{i}")
+            stageTeam1Check.setChecked(False)
+            stageTeam2Check.setChecked(False)
+            stageTieCheck.setChecked(False)
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t1_win", stageTeam1Check.isChecked())
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t2_win", stageTeam2Check.isChecked())
+            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.tie", stageTieCheck.isChecked())
+
 
     def CommandClearAll(self, no_mains=False):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
