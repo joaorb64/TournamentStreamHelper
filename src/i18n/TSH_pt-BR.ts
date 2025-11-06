@@ -1533,7 +1533,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="278"/>
-        <location filename="../TSHScoreboardWidget.py" line="838"/>
+        <location filename="../TSHScoreboardWidget.py" line="861"/>
         <source>Load set</source>
         <translation>Carregar set</translation>
     </message>
@@ -1553,14 +1553,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="226"/>
         <location filename="../TournamentStreamHelper.py" line="702"/>
         <location filename="../TournamentStreamHelper.py" line="1031"/>
-        <location filename="../TSHScoreboardWidget.py" line="794"/>
-        <location filename="../TSHScoreboardWidget.py" line="816"/>
+        <location filename="../TSHScoreboardWidget.py" line="817"/>
+        <location filename="../TSHScoreboardWidget.py" line="839"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="932"/>
         <source>Warning</source>
         <translation>Aviso</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="832"/>
+        <location filename="../TSHScoreboardWidget.py" line="855"/>
         <source>Load set from {0}</source>
         <translation>Carregar set do {0}</translation>
     </message>
@@ -1601,68 +1601,68 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="626"/>
+        <location filename="../TSHScoreboardWidget.py" line="628"/>
         <source>Game {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="638"/>
-        <location filename="../TSHScoreboardWidget.py" line="643"/>
+        <location filename="../TSHScoreboardWidget.py" line="640"/>
+        <location filename="../TSHScoreboardWidget.py" line="645"/>
         <source>T{0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="648"/>
+        <location filename="../TSHScoreboardWidget.py" line="650"/>
         <source>Tie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="706"/>
+        <location filename="../TSHScoreboardWidget.py" line="708"/>
         <source>Individual game data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="806"/>
+        <location filename="../TSHScoreboardWidget.py" line="829"/>
         <source>TSH - Bluesky</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="812"/>
+        <location filename="../TSHScoreboardWidget.py" line="835"/>
         <source>The post has successfully been sent to account {0}</source>
         <translation>O post foi enviado com sucesso para a conta {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1036"/>
+        <location filename="../TSHScoreboardWidget.py" line="1059"/>
         <source>Auto update (Set)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1040"/>
+        <location filename="../TSHScoreboardWidget.py" line="1063"/>
         <source>Auto update (Stream [{0}])</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1044"/>
+        <location filename="../TSHScoreboardWidget.py" line="1067"/>
         <source>Auto update (Station [{0}])</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1047"/>
+        <location filename="../TSHScoreboardWidget.py" line="1070"/>
         <source>Auto update (User)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1049"/>
+        <location filename="../TSHScoreboardWidget.py" line="1072"/>
         <source>Auto update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1160"/>
+        <location filename="../TSHScoreboardWidget.py" line="1183"/>
         <source>Load user set ({0})</source>
         <translation>Carregar set do usuário ({0})</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1164"/>
+        <location filename="../TSHScoreboardWidget.py" line="1187"/>
         <source>Load user set</source>
         <translation>Carregar set do usuário</translation>
     </message>
@@ -2325,18 +2325,18 @@ p, li { white-space: pre-wrap; }
         <translation>Tag do jogador {0} não está presente</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="762"/>
+        <location filename="../TSHScoreboardWidget.py" line="785"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="768"/>
+        <location filename="../TSHScoreboardWidget.py" line="791"/>
         <source>The thumbnail has been generated here:</source>
         <translation>A miniatura foi gerada aqui:</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="769"/>
+        <location filename="../TSHScoreboardWidget.py" line="792"/>
         <source>The video title and description have also been generated.</source>
         <translation>O título e a descrição para o vídeo também foram gerados.</translation>
     </message>
