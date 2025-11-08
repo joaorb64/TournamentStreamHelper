@@ -31,10 +31,11 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_url_update = Signal(str)
 
 
-class TSHTournamentDataProvider:
+class TSHTournamentDataProvider(QObject):
     instance: "TSHTournamentDataProvider" = None
 
     def __init__(self) -> None:
+        super().__init__(None)
         self.provider: TournamentDataProvider = None
         self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
         self.entrantsModel: QStandardItemModel = None
@@ -65,6 +66,8 @@ class TSHTournamentDataProvider:
         else:
             logger.error("Unsupported provider...")
 
+    @Slot(str, bool)
+    @Slot(str)
     def SetTournament(self, url, initialLoading=False):
         if self.provider and self.provider.url == url:
             return

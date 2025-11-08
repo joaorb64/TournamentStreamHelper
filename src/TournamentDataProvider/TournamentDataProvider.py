@@ -4,16 +4,20 @@ from loguru import logger
 import random
 from urllib.parse import quote as urlencode
 
+from qtpy.QtCore import QObject
 
-class TournamentDataProvider:
-    def __init__(self, url, threadpool, parent) -> None:
+
+class TournamentDataProvider(QObject):
+    def __init__(self, url, threadpool, tshTdp) -> None:
+        super().__init__(None)
+
         self.name = ""
         self.url = url
         self.entrants = []
         self.tournamentData = {}
         self.threadpool = threadpool
         self.videogame = None
-        self.parent = parent
+        self.tshTdp = tshTdp
 
     def GetIconURL(self):
         pass
