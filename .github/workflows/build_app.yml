@@ -55,9 +55,49 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.extract_branch.outputs.branch }}
 
+  build_frontend:
+    name: build_frontend
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) || startsWith( github.ref, 'refs/heads/fix/' ) }}
+    outputs:
+      frontend-build: ${{ steps.upload-frontend.outputs.artifact-id }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          stage_strike_app
+          assets
+
+    - name: Node setup
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/jod'
+
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: 'stage_strike_app/node_modules'
+        key: |
+          ${{ runner.os }}-node-${{ hashFiles('stage_strike_app/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install frontend dependencies
+      working-directory: 'stage_strike_app'
+      run: npm install
+
+    - name: Build frontend
+      working-directory: 'stage_strike_app'
+      run: npm run build
+
+    - name: upload-frontend
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: stage_strike_app/build
 
   build:
-    needs: build_locale
+    needs: ['build_locale', 'build_frontend']
     name: Generate Windows Release
     runs-on: ${{ matrix.os }}
     if: ${{ github.ref == 'refs/heads/main' || startsWith( github.ref, 'refs/heads/feature/' ) || startsWith( github.ref, 'refs/heads/fix/' ) }}
@@ -74,27 +114,10 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Node setup
-        uses: actions/setup-node@v4
+      - name: Download frontend build
+        uses: actions/download-artifact@v5
         with:
-          node-version: '18'
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: 'stage_strike_app/node_modules'
-          key: |
-            ${{ runner.os }}-node-${{ hashFiles('stage_strike_app/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install frontend dependencies
-        working-directory: 'stage_strike_app'
-        run: npm install
-
-      - name: Build frontend
-        working-directory: 'stage_strike_app'
-        run: npm run build
+          artifact-ids: ${{ needs.build_frontend.outputs.frontend-build }}
 
       - name: Extract branch name
         shell: bash
