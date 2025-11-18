@@ -2,6 +2,7 @@ from .StateManager import StateManager
 from copy import deepcopy
 from loguru import logger
 from qtpy.QtCore import QObject, Signal
+from .TSHScoreboardManager import TSHScoreboardManager
 
 
 class TSHStageStrikeStateSignals(QObject):
@@ -82,6 +83,15 @@ class TSHStageStrikeLogic():
             "canRedo": self.historyIndex < len(self.history) - 1
         })
         self.signals.state_updated.emit()
+
+        if len(self.history) > 0:
+            try:
+                last_known_state = self.history[-1]
+                sb_widget= TSHScoreboardManager.instance.GetScoreboard(1) # Update the game tracker
+                for i in range(len(last_known_state.stagesPicked)):
+                    sb_widget.SetStageInStageOrderWidget(i, last_known_state.stagesPicked[i])
+            except IndexError as e:
+                logger.warning("Could not find scoreboard 1 when piloting the stage history!")
 
     def SetRuleset(self, ruleset):
         self.ruleset = ruleset
