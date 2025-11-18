@@ -7,6 +7,7 @@ from qtpy.QtCore import *
 import orjson
 
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHQtHelper import gui_thread_async, gui_thread_sync
 from .StateManager import StateManager
 from .TSHStatsUtil import TSHStatsUtil
 from .SettingsManager import SettingsManager
@@ -39,6 +40,7 @@ class WebServerActions(QThread):
     def program_state(self):
         return {'state': StateManager.state, 'delta_index': StateManager.deltaIndex}
 
+    @gui_thread_sync
     def ruleset(self):
         data = {}
 
@@ -80,20 +82,24 @@ class WebServerActions(QThread):
 
         return data
 
+    @gui_thread_sync
     def stage_clicked(self, data):
         self.stageWidget.stageStrikeLogic.StageClicked(
             orjson.loads(data))
         return "OK"
 
+    @gui_thread_sync
     def confirm_clicked(self):
         self.stageWidget.stageStrikeLogic.ConfirmClicked()
         return "OK"
 
+    @gui_thread_sync
     def rps_win(self, winner):
         self.stageWidget.stageStrikeLogic.RpsResult(
             int(winner))
         return "OK"
 
+    @gui_thread_sync
     def match_win(self, winner):
         self.stageWidget.stageStrikeLogic.MatchWinner(
             int(winner))
@@ -101,26 +107,31 @@ class WebServerActions(QThread):
         self.UpdateScore()
         return "OK"
 
+    @gui_thread_sync
     def set_gentlemans(self, value):
         self.stageWidget.stageStrikeLogic.SetGentlemans(
             value)
         return "OK"
 
+    @gui_thread_sync
     def stage_strike_undo(self):
         self.stageWidget.stageStrikeLogic.Undo()
         self.UpdateScore()
         return "OK"
 
+    @gui_thread_sync
     def stage_strike_redo(self):
         self.stageWidget.stageStrikeLogic.Redo()
         self.UpdateScore()
         return "OK"
 
+    @gui_thread_sync
     def reset(self):
         self.stageWidget.stageStrikeLogic.Initialize()
         self.UpdateScore()
         return "OK"
 
+    @gui_thread_sync
     def UpdateScore(self):
         if not SettingsManager.Get("general.control_score_from_stage_strike", True):
             return
@@ -140,6 +151,7 @@ class WebServerActions(QThread):
             "reset_score": True
         })
 
+    @gui_thread_sync
     def post_score(self, data):
         score = orjson.loads(data)
         scoreboard_number = 1
@@ -169,7 +181,6 @@ class WebServerActions(QThread):
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
         return "OK"
 
-    
     def team_color(self, scoreboard, team, color):
         if str(team) == "1":
             self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(0, color)
@@ -181,6 +192,7 @@ class WebServerActions(QThread):
         sb_widget: TSHScoreboardWidget = self.scoreboard.GetScoreboard(scoreboard)
         return StateManager.Get(f'score.{sb_widget.scoreboardNumber}')
 
+    @gui_thread_sync
     def set_route(self,
                   scoreboard,
                   bestOf=None,
@@ -253,8 +265,11 @@ class WebServerActions(QThread):
         self.commentaryWidget.ChangeCommDataSignal.emit(index, data)
 
         return "OK"
-    
+
+    @gui_thread_sync
     def set_game(self, data):
+        # Not actually sure if this needs to be in the GUI thread but the asset manager is complex enough that it seems
+        # worthwhile to dispatch it like this.
         set_codename = data.get("codename")
         found_game = False
         for i, codename in enumerate(TSHGameAssetManager.instance.games.keys()):
@@ -293,7 +308,8 @@ class WebServerActions(QThread):
             "phase": TSHLocaleHelper.phaseNames
         }
         return response
-    
+
+    @gui_thread_sync
     def get_characters(self):
         data = {}
         for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
@@ -310,7 +326,8 @@ class WebServerActions(QThread):
                 data[item_data.get("name")] = item_data
 
         return data
-    
+
+    @gui_thread_sync
     def get_variants(self):
         data = {}
         for row in range(TSHGameAssetManager.instance.variantModel.rowCount()):
@@ -321,7 +338,7 @@ class WebServerActions(QThread):
             if item_data is not None:
                 data[item_data.get("name")] = item_data
         return data
-    
+
     def get_controllers(self):
         data = TSHControllerHelper.instance.controller_list
         for key in data.keys():
@@ -372,6 +389,7 @@ class WebServerActions(QThread):
                 "[Last Sets] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
+    @gui_thread_sync
     def stats_history_sets(self, scoreboard, player):
         if str(player) == "1":
             self.scoreboard.GetScoreboard(
@@ -389,20 +407,24 @@ class WebServerActions(QThread):
                 "[History Standings] Unable to find player defined. Allowed values are: 1, 2, or both")
         return "OK"
 
+    @gui_thread_sync
     def reset_scores(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).ResetScore()
         return "OK"
 
+    @gui_thread_sync
     def reset_match(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).ClearScore()
         self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
         return "OK"
 
+    @gui_thread_sync
     def reset_players(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
         return "OK"
 
+    @gui_thread_sync
     def clear_all(self, scoreboard):
         self.scoreboard.GetScoreboard(scoreboard).ClearScore()
         self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
@@ -411,7 +433,8 @@ class WebServerActions(QThread):
         self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(1)
         self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
         return "OK"
-    
+
+    @gui_thread_sync
     def get_thumbnail(self, scoreboard, file_format):
         thumbnailPath = self.scoreboard.GetScoreboard(scoreboard).GenerateThumbnail(quiet_mode=True, disable_msgbox=True)
         if thumbnailPath:
@@ -420,13 +443,15 @@ class WebServerActions(QThread):
             return os.path.abspath(thumbnailPath)
         else:
             return None
-    
+
+    @gui_thread_sync
     def update_bracket(self):
         id = TSHTournamentDataProvider.instance.provider.GetTournamentPhases()[0].get("groups")[0].get("id")
         data = TSHTournamentDataProvider.instance.provider.GetTournamentPhaseGroup(id)
         TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
         return "OK"
 
+    @gui_thread_sync
     def load_set(self, scoreboard, set=None, no_mains=False):
         if set is not None:
             if not isinstance(set, str):
@@ -441,7 +466,7 @@ class WebServerActions(QThread):
                 )
             )
         return "OK"
-    
+
     def get_comms(self):
         return StateManager.Get("commentary")
 
@@ -467,21 +492,10 @@ class WebServerActions(QThread):
         return TSHPlayerDB.database
 
     def get_match(self, setId=None):
-        setId = int(setId)
         provider = TSHTournamentDataProvider.instance.GetProvider()
-        loop, result = QEventLoop(), None
+        return provider.GetMatch(setId=int(setId))
 
-        def handle_result(data):
-            nonlocal result
-            result = data
-            loop.quit()
-
-        worker = Worker(provider.GetMatch, setId=setId)
-        worker.signals.result.connect(handle_result)
-        self.threadPool.start(worker)
-        loop.exec_()
-        return result
-
+    @gui_thread_sync
     def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
         result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
         if result == True:
@@ -497,7 +511,7 @@ class WebServerActions(QThread):
 
     def load_tournament(self, url=None):
         logger.error(f"URL PROVIDED: {url}")
-        if url is None or  url == "":
+        if url is None or url == "":
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(None)
             return "OK"
         else:
@@ -524,5 +538,6 @@ class WebServerActions(QThread):
             
             return "OK"
 
+    @gui_thread_sync
     def get_states(self, countryCode: str):
         return TSHCountryHelper.GetStates(countryCode)

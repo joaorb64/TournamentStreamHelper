@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+from .Helpers import TSHQtHelper
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
 import faulthandler
@@ -39,6 +39,7 @@ if parse(qtpy.QT_VERSION).major == 6:
     QImageReader.setAllocationLimit(0)
 
 App = QApplication(sys.argv)
+TSHQtHelper.init_gui_executor()  # guaranteed to be the main thread.
 
 fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
        "| <level>{level}</level> | " +
