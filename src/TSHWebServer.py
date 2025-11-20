@@ -67,6 +67,17 @@ class WebServer(QThread):
         self.host_name = "0.0.0.0"
         self.port = SettingsManager.Get("general.webserver_port", 5000)
 
+    @staticmethod
+    @app.before_request
+    def log_request():
+        logger.info(f"[FLASK] → {request.method} {request.path} from {request.remote_addr}")
+
+    @staticmethod
+    @app.after_request
+    def log_response(response):
+        logger.info(f"[FLASK] ← {request.method} {request.path} [{response.status_code}]")
+        return response
+
     @app.route('/program-state')
     def program_state():
         return WebServer.actions.program_state()

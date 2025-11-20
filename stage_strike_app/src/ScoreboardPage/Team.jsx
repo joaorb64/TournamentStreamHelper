@@ -58,14 +58,13 @@ export default React.forwardRef(
                 (
                     fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
                         losers: state.inLosers,
-                        team: teamId
+                        team: tshTeamId
                     }).toString())
                         .then(resp => resp.text())
                         .then((d) => console.log("Submit set info: ", d))
                 ),
                 ...Object.entries(teamData.player).map(([teamKey, playerData]) => {
                     const body = {...playerData};
-                    body[`team${teamId}losers`] = state.inLosers.toString();
                     console.log("team update payload", body);
 
                     return fetch(
@@ -115,6 +114,7 @@ export default React.forwardRef(
                     control={
                         <Checkbox
                             id={teamId + "-losers"}
+                            checked={state.inLosers}
                             onChange={
                                 (e) => {
                                     setState(s => ({...s, inLosers: e.target.checked}))
