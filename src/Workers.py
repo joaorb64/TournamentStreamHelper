@@ -33,7 +33,7 @@ class WorkerSignals(QObject):
     finished = Signal()
     error = Signal(tuple)
     result = Signal(object)
-    progress = Signal(object)
+    progress = Signal(int, int)
 
 
 class Worker(QRunnable):
@@ -60,7 +60,7 @@ class Worker(QRunnable):
         self.signals = WorkerSignals()
 
         # Add the callback to our kwargs
-        self.kwargs['progress_callback'] = self.signals.progress
+        self.kwargs['progress_callback'] = lambda n, t: self.signals.progress.emit(n, t)
 
         # Cancellation event
         self.cancel_event = threading.Event()
