@@ -1928,6 +1928,30 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return sets_
 
+    def GetRealEventURL(self, url):
+        matches = re.match(
+                ".*start.gg/admin/tournament/[^/]*/brackets/([^/]*)", url)
+        if matches: 
+            try:
+                data = self.QueryRequests(
+                        "https://www.start.gg/api/-/gql",
+                        type=requests.post,
+                        jsonParams={
+                            "operationName": "TournamentSlugQuery",
+                            "variables": {
+                                "id": matches.group(1)
+                                },
+                            "query": StartGGDataProvider.TournamentSlugQuery
+                            }
+                        )
+
+                slug = deep_get(data, "data.event.slug", None)
+                url = "https://www.start.gg/" + slug
+            except:
+                logger.error(traceback.format_exc())
+        self.url = url
+        return url
+
 sggTdpDir = TSHResolve('src/TournamentDataProvider')
 
 def readQueryFile(tdpdir, filename):
@@ -1951,3 +1975,4 @@ StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "Tournament
 StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
 StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
 StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
+StartGGDataProvider.TournamentSlugQuery = readQueryFile(sggTdpDir, "TournamentSlug")

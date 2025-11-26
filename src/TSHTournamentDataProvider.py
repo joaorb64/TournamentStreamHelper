@@ -75,6 +75,7 @@ class TSHTournamentDataProvider(QObject):
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
+            url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -137,7 +138,8 @@ class TSHTournamentDataProvider(QObject):
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
-            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+")
+            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
+            QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+")
         ]
 
         def validateText():
