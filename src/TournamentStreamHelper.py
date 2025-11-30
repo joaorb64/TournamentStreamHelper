@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+from .Helpers import TSHQtHelper
+from .Helpers.TSHDownloadHelper import DownloadDialog
 from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
 import faulthandler
@@ -39,6 +40,7 @@ if parse(qtpy.QT_VERSION).major == 6:
     QImageReader.setAllocationLimit(0)
 
 App = QApplication(sys.argv)
+TSHQtHelper.init_gui_executor()  # guaranteed to be the main thread.
 
 fmt = ("<green>{time:YYYY-MM-DD HH:mm:ss}</green> " +
        "| <level>{level}</level> | " +
@@ -162,14 +164,10 @@ def DownloadLayoutsOnBoot():
         has_layouts = False
     if not has_layouts:
         logger.info("Layouts were not detected, downloading from Github...")
-        try:
-            url = "https://github.com/TournamentStreamHelper/TournamentStreamHelper-layouts/archive/refs/heads/main.zip"
-            r = requests.get(url, allow_redirects=True)
-            zip_path = './layout/layout.zip.tmp'
-            with open(zip_path, 'wb') as zip_file:
-                zip_file.write(r.content)
+
+        def extract_file(filename):
             try:
-                with zipfile.ZipFile(zip_path, 'r') as zip_file:
+                with zipfile.ZipFile(filename, 'r') as zip_file:
                     zip_file.extractall('./layout')
                 list_files = glob(f"./layout/TournamentStreamHelper-layouts-main/*")
                 for file_path in list_files:
@@ -179,11 +177,18 @@ def DownloadLayoutsOnBoot():
                         new_file_path = file_path.replace("TournamentStreamHelper-layouts-main/", "")
                     os.rename(file_path, new_file_path)
                 os.rmdir(f"./layout/TournamentStreamHelper-layouts-main")
-                os.remove(zip_path)
+                return True
             except Exception as e:
                 logger.error(f"Layouts could not be extracted\nError: {str(e)}")
-        except Exception as e:
-            logger.error(f"Layouts could not be downloaded\nError: {str(e)}")
+                return False
+
+        d = DownloadDialog(
+            url="https://github.com/TournamentStreamHelper/TournamentStreamHelper-layouts/archive/refs/heads/main.zip",
+            filename=None,
+            desc="Layouts",
+            validator=extract_file,
+            assume_size=(1024*1024*140)  # ~140MB
+        ).exec()
 
 def generate_restart_messagebox(main_txt):
     messagebox = QMessageBox()
@@ -316,6 +321,7 @@ class Window(QMainWindow):
 
         TSHLocaleHelper.LoadLocale()
         TSHLocaleHelper.LoadRoundNames()
+        self.LoadTheme()
 
         self.signals = WindowSignals()
 
@@ -352,6 +358,15 @@ class Window(QMainWindow):
 
         self.allplayers = None
         self.local_players = None
+
+        # We don't want download dialogs to trigger the Qt app to try to quit when they close
+        # if it thinks they're the last window being closed.
+        App.setQuitOnLastWindowClosed(False)
+        # These downloads wait and call processEvents() in between downloads.
+        TSHControllerHelper.instance.init()
+        TSHCountryHelper.instance.UpdateCountriesFile()
+        DownloadLayoutsOnBoot()
+        App.setQuitOnLastWindowClosed(True)
 
         try:
             version = json.load(
@@ -582,7 +597,6 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Light mode"))
         action.setCheckable(True)
-        self.LoadTheme()
         action.setChecked(SettingsManager.Get("light_mode", False))
         action.toggled.connect(self.ToggleLightMode)
 
@@ -904,8 +918,6 @@ class Window(QMainWindow):
         TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
             self.ToggleTopOption)
         StateManager.Unset("completed_sets")
-
-        DownloadLayoutsOnBoot()
 
     def SetGame(self, mods_active = False):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(
