@@ -1549,47 +1549,47 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>Paste the tournament URL.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>Supported providers:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="159"/>
+        <location filename="../TSHTournamentDataProvider.py" line="161"/>
         <source>Set tournament URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="182"/>
+        <location filename="../TSHTournamentDataProvider.py" line="184"/>
         <source>Set Twitch username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="182"/>
+        <location filename="../TSHTournamentDataProvider.py" line="184"/>
         <source>Twitch Username:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="192"/>
+        <location filename="../TSHTournamentDataProvider.py" line="194"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="195"/>
+        <location filename="../TSHTournamentDataProvider.py" line="197"/>
         <source>Invalid tournament data provider</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="200"/>
+        <location filename="../TSHTournamentDataProvider.py" line="202"/>
         <source>Set player</source>
         <translation type="unfinished"></translation>
     </message>

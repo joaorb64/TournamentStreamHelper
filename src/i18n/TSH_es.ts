@@ -1275,37 +1275,37 @@ p, li { white-space: pre-wrap; }
         <translation>Descargando {0}...</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>Paste the tournament URL.</source>
         <translation>Pega la URL del torneo.</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>For StartGG, the link must contain the /event/ part</source>
         <translation>Para pegar desde StartGG, el link debe contener la parte /evento/</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="133"/>
+        <location filename="../TSHTournamentDataProvider.py" line="134"/>
         <source>Supported providers:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="159"/>
+        <location filename="../TSHTournamentDataProvider.py" line="161"/>
         <source>Set tournament URL</source>
         <translation>Establecer URL del torneo</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="182"/>
+        <location filename="../TSHTournamentDataProvider.py" line="184"/>
         <source>Set Twitch username</source>
         <translation>Establecer usuario de Twitch</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="182"/>
+        <location filename="../TSHTournamentDataProvider.py" line="184"/>
         <source>Twitch Username:</source>
         <translation>Usuario de Twitch:</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="192"/>
+        <location filename="../TSHTournamentDataProvider.py" line="194"/>
         <source>Paste the URL to the player&apos;s StartGG profile</source>
         <translation>Pega la URL del perfil de StartGG del jugador</translation>
     </message>
@@ -1314,12 +1314,12 @@ p, li { white-space: pre-wrap; }
         <translation>Inserta el nombre del jugador en el bracket</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="195"/>
+        <location filename="../TSHTournamentDataProvider.py" line="197"/>
         <source>Invalid tournament data provider</source>
         <translation>Proveedor de datos de torneo no válido</translation>
     </message>
     <message>
-        <location filename="../TSHTournamentDataProvider.py" line="200"/>
+        <location filename="../TSHTournamentDataProvider.py" line="202"/>
         <source>Set player</source>
         <translation>Establecer jugador</translation>
     </message>
