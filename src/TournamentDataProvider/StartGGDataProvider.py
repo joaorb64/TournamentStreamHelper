@@ -480,11 +480,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     newSets.append(parsed)
 
                 if progress_callback:
-                    progress_callback.emit({
-                        "progress": page,
-                        "totalPages": totalPages,
-                        "sets": newSets
-                    })
+                    logger.info(f"progress_callback: {page}, {totalPages}")
+                    progress_callback(page, totalPages)
 
                 page += 1
                 logger.info(f"Fetching sets... {page}/{totalPages}")
