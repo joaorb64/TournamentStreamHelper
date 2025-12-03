@@ -241,14 +241,22 @@ class TSHTournamentDataProvider(QObject):
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
             logger.info(data),
-            self.signals.get_sets_finished.emit(data)
+            self.signals.get_sets_finished.emit(data),
+            self.signals.sets_data_updated.emit({
+                "progress": 0,
+                "totalPages": 0,
+                "sets": data
+            })
         ])
-        worker.signals.progress.connect(lambda data: [
-            logger.info(f"SetDataUpdated: {data}"),
-            self.signals.sets_data_updated.emit(data)
+        worker.signals.progress.connect(lambda n, t: [
+            logger.info(f"SetDataUpdated: {n}/{t}"),
+            self.signals.sets_data_updated.emit({
+                "progress": n,
+                "totalPages":t,
+                "sets": []
+            })
         ])
         self.setLoadingWorker = worker
-
         self.threadPool.start(worker)
 
     def LoadStations(self):

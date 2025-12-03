@@ -3,6 +3,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 
+from src.Helpers.TSHQtHelper import invokeSlot
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Workers import Worker
 
@@ -67,7 +68,7 @@ class TSHAssetDownloader(QObject):
         thread = AssetUpdatesThread(self)
         thread.start()
 
-    def DownloadAssets(self):
+    def DownloadAssets(self, main_window):
         assets = self.DownloadAssetsFetch()
 
         if assets is None:
@@ -76,11 +77,26 @@ class TSHAssetDownloader(QObject):
         self.preDownloadDialogue = QDialog()
         self.preDownloadDialogue.setWindowTitle(
             QApplication.translate("app", "Download assets"))
+
+        # We set the dialog to non-modal and do enable/disable semantics manually. This
+        # is because on Mac, a window modal is a weird embedded sheet thing that you
+        # have to close with escape. The previous method of using an ApplicationModal
+        # actually prevents any other modal from being active. (hence the name, it's a
+        # modal blocks out the whole application, rather than just its parent widget)
+        # This causes issues with the download sub-modal that we will want to open later.
+        #
+        # Note that window modality and window flag: dialog are not the same. Window flag
+        # dialog ensures that the window pops up floating and is decorated like a dialog.
         self.preDownloadDialogue.setWindowModality(
-            Qt.WindowModality.ApplicationModal)
+            Qt.WindowModality.NonModal)
+        self.preDownloadDialogue.setWindowFlags(Qt.WindowType.Dialog)
         self.preDownloadDialogue.setLayout(QVBoxLayout())
         self.preDownloadDialogue.resize(1400, 500)
+        self.preDownloadDialogue.finished.connect(lambda: main_window.setEnabled(True))
         self.preDownloadDialogue.show()
+
+        if main_window is not None:
+            main_window.setEnabled(False)
 
         self.select = QComboBox()
         selectProxy = QSortFilterProxyModel()
@@ -377,8 +393,16 @@ class TSHAssetDownloader(QObject):
             for f in fileList:
                 with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                     logger.info("Downloading "+f["name"])
-                    progress_callback.emit(QApplication.translate(
-                        "app", "Downloading {0}... ({1}/{2})").format(f["name"], i+1, len(files)))
+
+                    if progress_callback is not None:
+                        # Queue to slot so we're not modifying the GUI from
+                        # a worker thread.
+                        invokeSlot(
+                            self.DownloadAssetsSetLabelText,
+                            QApplication.translate(
+                                "app",
+                                "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(fileList))
+                        )
 
                     response = urllib.request.urlopen(f["path"])
 
@@ -394,8 +418,7 @@ class TSHAssetDownloader(QObject):
                         if self.downloadDialogue.wasCanceled():
                             return
 
-                        progress_callback.emit(
-                            min(int(downloaded/totalSize*100), 99))
+                        progress_callback(downloaded, totalSize)
                     downloadFile.close()
 
                     logger.info("Download OK")
@@ -430,25 +453,29 @@ class TSHAssetDownloader(QObject):
 
             logger.info("Extract OK")
 
-        progress_callback.emit(100)
+        progress_callback(totalSize, totalSize)
 
         logger.info("All OK")
 
-    def DownloadAssetsProgress(self, n):
-        if type(n) == int:
-            self.downloadDialogue.setValue(n)
+    @Slot(str)
+    def DownloadAssetsSetLabelText(self, s):
+        self.downloadDialogue.setLabelText(s)
 
-            if n == 100:
-                self.downloadDialogue.setMaximum(0)
-                self.downloadDialogue.setValue(0)
-                self.downloadDialogue.close()
-        else:
-            self.downloadDialogue.setLabelText(n)
+    @Slot(int, int)
+    def DownloadAssetsProgress(self, n, t):
+        self.downloadDialogue.setValue(n)
+        self.downloadDialogue.setMaximum(t)
+
+        if n >= t:
+            self.downloadDialogue.setMaximum(t)
+            self.downloadDialogue.setValue(t)
 
     def DownloadAssetsFinished(self):
-        self.downloadDialogue.close()
         TSHGameAssetManager.instance.LoadGames()
         TSHAssetDownloader.instance.CheckAssetUpdates()
+        self.downloadDialogue.close()
+        self.preDownloadDialogue.setEnabled(True)
+        self.preDownloadDialogue.setFocus()
 
     def UpdateAllAssets(self):
         def f(assets):
@@ -474,10 +501,14 @@ class TSHAssetDownloader(QObject):
             TSHAssetDownloader.instance.downloadDialogue.setWindowModality(
                 Qt.WindowModality.WindowModal)
             TSHAssetDownloader.instance.downloadDialogue.show()
+            TSHAssetDownloader.instance.downloadDialogue.setFocus()
             worker = Worker(
                 TSHAssetDownloader.instance.DownloadAssetsWorker, *[allFilesToDownload])
             worker.signals.progress.connect(
-                TSHAssetDownloader.instance.DownloadAssetsProgress)
+                lambda n, t:
+                    TSHAssetDownloader.instance.DownloadAssetsProgress(fileToDownload["name"], n, t)
+            )
+
             worker.signals.finished.connect(
                 TSHAssetDownloader.instance.DownloadAssetsFinished)
             TSHAssetDownloader.instance.threadpool.start(worker)

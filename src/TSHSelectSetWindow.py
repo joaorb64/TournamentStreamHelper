@@ -13,7 +13,7 @@ class TSHSelectSetWindow(QDialog):
 
         self.setWindowTitle(
             QApplication.translate("app", "Select a set"))
-        self.setWindowModality(Qt.WindowModal)
+        self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
