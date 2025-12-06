@@ -579,7 +579,7 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Download assets"))
         action.setIcon(QIcon('assets/icons/download.svg'))
-        action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
+        action.triggered.connect(lambda: TSHAssetDownloader.instance.DownloadAssets(self))
         self.downloadAssetsAction = action
 
         action = self.optionsBt.menu().addAction(
