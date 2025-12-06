@@ -328,6 +328,7 @@ class TSHAssetDownloader(QObject):
             self.downloadDialogue.setWindowModality(
                 Qt.WindowModality.WindowModal)
             self.downloadDialogue.show()
+            self.preDownloadDialogue.setEnabled(False)
             worker = Worker(self.DownloadAssetsWorker, *
                             [[list(filesToDownload.values())]])
             worker.signals.progress.connect(self.DownloadAssetsProgress)
