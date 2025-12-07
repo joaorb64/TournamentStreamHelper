@@ -591,7 +591,7 @@ class Window(QMainWindow):
         action = self.optionsBt.menu().addAction(
             QApplication.translate("app", "Download assets"))
         action.setIcon(QIcon('assets/icons/download.svg'))
-        action.triggered.connect(TSHAssetDownloader.instance.DownloadAssets)
+        action.triggered.connect(lambda: TSHAssetDownloader.instance.DownloadAssets(self))
         self.downloadAssetsAction = action
 
         action = self.optionsBt.menu().addAction(
@@ -1120,6 +1120,7 @@ class Window(QMainWindow):
                                             break
 
                                 response = urllib.request.urlopen(dl_url)
+                                length = response.headers.get("Content-Length")
 
                                 while (True):
                                     chunk = response.read(1024*1024)
@@ -1133,12 +1134,12 @@ class Window(QMainWindow):
                                     if self.downloadDialogue.wasCanceled():
                                         return
 
-                                    progress_callback.emit(int(downloaded))
+                                    progress_callback(int(downloaded), length)
                                 downloadFile.close()
 
-                        def progress(downloaded):
+                        def progress(n, t):
                             self.downloadDialogue.setLabelText(
-                                QApplication.translate("app", "Downloading update...")+" "+str(downloaded/1024/1024)+" MB")
+                                QApplication.translate("app", "Downloading update...")+" "+str(n/1024/1024)+" MB")
 
                         def finished():
                             self.downloadDialogue.close()
