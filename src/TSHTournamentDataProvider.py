@@ -31,10 +31,11 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_url_update = Signal(str)
 
 
-class TSHTournamentDataProvider:
+class TSHTournamentDataProvider(QObject):
     instance: "TSHTournamentDataProvider" = None
 
     def __init__(self) -> None:
+        super().__init__(None)
         self.provider: TournamentDataProvider = None
         self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
         self.entrantsModel: QStandardItemModel = None
@@ -65,6 +66,8 @@ class TSHTournamentDataProvider:
         else:
             logger.error("Unsupported provider...")
 
+    @Slot(str, bool)
+    @Slot(str)
     def SetTournament(self, url, initialLoading=False):
         if self.provider and self.provider.url == url:
             return
@@ -72,6 +75,7 @@ class TSHTournamentDataProvider:
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
+            url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -134,7 +138,8 @@ class TSHTournamentDataProvider:
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
-            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+")
+            QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
+            QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+")
         ]
 
         def validateText():
@@ -236,14 +241,22 @@ class TSHTournamentDataProvider:
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
             logger.info(data),
-            self.signals.get_sets_finished.emit(data)
+            self.signals.get_sets_finished.emit(data),
+            self.signals.sets_data_updated.emit({
+                "progress": 0,
+                "totalPages": 0,
+                "sets": data
+            })
         ])
-        worker.signals.progress.connect(lambda data: [
-            logger.info(f"SetDataUpdated: {data}"),
-            self.signals.sets_data_updated.emit(data)
+        worker.signals.progress.connect(lambda n, t: [
+            logger.info(f"SetDataUpdated: {n}/{t}"),
+            self.signals.sets_data_updated.emit({
+                "progress": n,
+                "totalPages":t,
+                "sets": []
+            })
         ])
         self.setLoadingWorker = worker
-
         self.threadPool.start(worker)
 
     def LoadStations(self):
