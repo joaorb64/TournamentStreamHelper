@@ -423,7 +423,7 @@ class TSHScoreboardWidget(QWidget):
         self.columns.layout().addWidget(self.team2column)
         self.team2column.findChild(QLabel, "teamLabel").setText(
             QApplication.translate("app", "TEAM {0}").format(2))
-        self.team2column.findChild(QLabel, "teamLabel").setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        self.team2column.findChild(QLabel, "teamLabel").setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
 
         DEFAULT_TEAM2_COLOR = SettingsManager.Get("general.team_2_default_color", "#2e89ff")
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
