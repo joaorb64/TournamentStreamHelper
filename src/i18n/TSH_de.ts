@@ -1443,7 +1443,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="278"/>
-        <location filename="../TSHScoreboardWidget.py" line="861"/>
+        <location filename="../TSHScoreboardWidget.py" line="884"/>
         <source>Load set</source>
         <translation>Set laden</translation>
     </message>
@@ -1462,8 +1462,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../TournamentStreamHelper.py" line="231"/>
         <location filename="../TournamentStreamHelper.py" line="716"/>
         <location filename="../TournamentStreamHelper.py" line="1043"/>
-        <location filename="../TSHScoreboardWidget.py" line="817"/>
-        <location filename="../TSHScoreboardWidget.py" line="839"/>
+        <location filename="../TSHScoreboardWidget.py" line="840"/>
+        <location filename="../TSHScoreboardWidget.py" line="862"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="932"/>
         <source>Warning</source>
         <translation>ACHTUNG</translation>
@@ -1501,73 +1501,73 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="628"/>
+        <location filename="../TSHScoreboardWidget.py" line="651"/>
         <source>Game {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="640"/>
-        <location filename="../TSHScoreboardWidget.py" line="645"/>
+        <location filename="../TSHScoreboardWidget.py" line="663"/>
+        <location filename="../TSHScoreboardWidget.py" line="668"/>
         <source>T{0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="650"/>
+        <location filename="../TSHScoreboardWidget.py" line="673"/>
         <source>Tie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="708"/>
+        <location filename="../TSHScoreboardWidget.py" line="731"/>
         <source>Individual game data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="829"/>
+        <location filename="../TSHScoreboardWidget.py" line="852"/>
         <source>TSH - Bluesky</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="835"/>
+        <location filename="../TSHScoreboardWidget.py" line="858"/>
         <source>The post has successfully been sent to account {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="855"/>
+        <location filename="../TSHScoreboardWidget.py" line="878"/>
         <source>Load set from {0}</source>
         <translation>Set von {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1059"/>
+        <location filename="../TSHScoreboardWidget.py" line="1082"/>
         <source>Auto update (Set)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1063"/>
+        <location filename="../TSHScoreboardWidget.py" line="1086"/>
         <source>Auto update (Stream [{0}])</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1067"/>
+        <location filename="../TSHScoreboardWidget.py" line="1090"/>
         <source>Auto update (Station [{0}])</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1070"/>
+        <location filename="../TSHScoreboardWidget.py" line="1093"/>
         <source>Auto update (User)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1072"/>
+        <location filename="../TSHScoreboardWidget.py" line="1095"/>
         <source>Auto update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1183"/>
+        <location filename="../TSHScoreboardWidget.py" line="1206"/>
         <source>Load user set ({0})</source>
         <translation>User-Set {0} laden</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1187"/>
+        <location filename="../TSHScoreboardWidget.py" line="1210"/>
         <source>Load user set</source>
         <translation>User-Set laden</translation>
     </message>
@@ -2196,18 +2196,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="785"/>
+        <location filename="../TSHScoreboardWidget.py" line="808"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <source>TSH - Thumbnail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="791"/>
+        <location filename="../TSHScoreboardWidget.py" line="814"/>
         <source>The thumbnail has been generated here:</source>
         <translation>Thumbnail wurde erstellt:</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="792"/>
+        <location filename="../TSHScoreboardWidget.py" line="815"/>
         <source>The video title and description have also been generated.</source>
         <translation type="unfinished"></translation>
     </message>
