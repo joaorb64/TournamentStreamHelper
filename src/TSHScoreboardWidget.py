@@ -568,12 +568,15 @@ class TSHScoreboardWidget(QWidget):
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
 
-        for phaseString in TSHLocaleHelper.phaseNames.values():
+        for key in TSHLocaleHelper.phaseNames.keys():
+            phaseString = TSHLocaleHelper.phaseNames[key]
+
             if "{0}" in phaseString:
-                for letter in ["A", "B", "C", "D"]:
-                    if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString.format(letter)) < 0:
-                        self.scoreColumn.findChild(QComboBox, "phase").addItem(
-                            phaseString.format(letter))
+                if "top" not in key:
+                    for letter in ["A", "B", "C", "D"]:
+                        if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString.format(letter)) < 0:
+                            self.scoreColumn.findChild(QComboBox, "phase").addItem(
+                                phaseString.format(letter))
             else:
                 if self.scoreColumn.findChild(QComboBox, "phase").findText(phaseString) < 0:
                     self.scoreColumn.findChild(
@@ -585,7 +588,25 @@ class TSHScoreboardWidget(QWidget):
             matchString = TSHLocaleHelper.matchNames[key]
 
             try:
-                if "{0}" in matchString and ("qualifier" not in key):
+                if "{0}" in matchString and ("qualifier" in key):
+                    # Generate preset qualifier names
+                    couples = [
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(8), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(16), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(32), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(6), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(8), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(12), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(16), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(24), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(32), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator"))
+                    ]
+
+                    for couple in couples:
+                        print(couple)
+                        self.scoreColumn.findChild(
+                            QComboBox, "match").addItem(matchString.format(*couple))
+                elif "{0}" in matchString and ("qualifier" not in key):
                     for number in range(5):
                         if key == "best_of":
                             if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(2*number+1))) < 0:
@@ -595,6 +616,8 @@ class TSHScoreboardWidget(QWidget):
                             if self.scoreColumn.findChild(QComboBox, "match").findText(matchString.format(str(number+1))) < 0:
                                 self.scoreColumn.findChild(QComboBox, "match").addItem(
                                     matchString.format(str(number+1)))
+                elif "indicator" in key:
+                    pass
                 else:
                     if self.scoreColumn.findChild(QComboBox, "match").findText(matchString) < 0:
                         self.scoreColumn.findChild(
