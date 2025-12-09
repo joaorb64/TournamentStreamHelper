@@ -516,7 +516,8 @@ class WebServerActions(QThread):
             return "OK"
         else:
             validators = [
-                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+")
+                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
+                QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
             ]
 
             for validator in validators:
@@ -532,6 +533,17 @@ class WebServerActions(QThread):
 
                     # Some URLs in startgg have eventS but the API doesn't work with that format
                     url = url.replace("/events/", "/event/")
+
+            elif "parry.gg" in url:
+                # Remove the "_manage" part of admin urls first
+                url = url.replace("/_manage", "")
+
+                matches = re.match(
+                    "(.*parry.gg/[^/]*/[^/]*)", url)
+
+                if matches:
+                    url = matches.group()
+
 
             SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
