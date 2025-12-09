@@ -22,3 +22,6 @@ msgpack==1.1.0
 qasync==0.27.1
 tqdm==2.2.3
 tzdata
+grpcio
+parrygg>=0.1.3
+python-dotenv
