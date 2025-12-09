@@ -8,6 +8,8 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+# TODO 
+# from .TournamentDataProvider.ParryGGDataProvider import ParryGGDataProvider
 from .Helpers.TSHVersionHelper import get_supported_providers
 from loguru import logger
 
@@ -63,6 +65,10 @@ class TSHTournamentDataProvider(QObject):
         if "start.gg" in self.provider.url:
             TSHGameAssetManager.instance.SetGameFromStartGGId(
                 self.provider.videogame)
+        # TODO
+        # elif "parry.gg" in self.provider.url:
+        #     TSHGameAssetManager.instance.SetGameFromParryGGId(
+        #         self.provider.videogame)
         else:
             logger.error("Unsupported provider...")
 
@@ -76,6 +82,10 @@ class TSHTournamentDataProvider(QObject):
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
             url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
+        # TODO
+        # elif url is not None and "parry.gg" in url:
+            # TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+            #     url, self.threadPool, self)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -105,6 +115,10 @@ class TSHTournamentDataProvider(QObject):
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
+        # TODO
+        # elif url is not None and "parry.gg" in url:
+        #     TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+        #         url, self.threadPool, self)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -139,7 +153,8 @@ class TSHTournamentDataProvider(QObject):
         okButton = QPushButton("OK")
         validators = [
             QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
-            QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+")
+            QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+"),
+            QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
         ]
 
         def validateText():
@@ -173,6 +188,16 @@ class TSHTournamentDataProvider(QObject):
                     # Some URLs in startgg have eventS but the API doesn't work with that format
                     url = url.replace("/events/", "/event/")
 
+            elif "parry.gg" in url:
+                # Remove the "_manage" part of admin urls first
+                url = url.replace("/_manage", "")
+
+                matches = re.match(
+                    "(.*parry.gg/[^/]*/[^/]*)", url)
+
+                if matches:
+                    url = matches.group()
+
             SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.SetTournament(
                 SettingsManager.Get("TOURNAMENT_URL"))
@@ -193,6 +218,10 @@ class TSHTournamentDataProvider(QObject):
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
             window_text = QApplication.translate(
                 "app", "Paste the URL to the player's StartGG profile")
+        # TODO
+        # elif (self.provider and self.provider.url and "parry.gg" in self.provider.url):
+        #     window_text = QApplication.translate(
+        #         "app", "Paste the URL to the player's ParryGG profile")
         else:
             logger.error(QApplication.translate(
                 "app", "Invalid tournament data provider"))
