@@ -154,6 +154,10 @@ class TSHTournamentDataProvider(QObject):
         validators = [
             QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
             QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+"),
+            
+            # This could maybe become just "parry.gg/[^/]+/[^/]+"
+            # But that form of url directs to the /main/bracket page anyway,
+            # so it's rare to see it shortened unless typing the url manually.
             QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
         ]
 
