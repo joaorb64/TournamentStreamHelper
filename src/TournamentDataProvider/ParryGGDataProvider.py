@@ -48,34 +48,58 @@ from ..TSHBracket import is_power_of_two
 from ..Workers import Worker
 
 class ParryGGDataProvider(TournamentDataProvider):
-    metadata = None
-    channel = None
-    # Services will be created as they're required.
     tournament_service = None
     event_service = None
+    phase_service = None
+    bracket_service = None
+    match_service = None
+    matchgame_service = None
+    entrant_service = None
+    user_service = None
+    game_service = None
 
     def __init__(self, url, threadpool, tshTdp) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "ParryGG"
+
+        # Set up metadata with API key
+        if PARRYGG_API_KEY:
+            self.metadata = [("x-api-key", PARRYGG_API_KEY)]
+        else:
+            logger.warning("PARRYGG_API_KEY not found in environment variables")
+            self.metadata = []
         
-        # Initialize gRPC channel
-        self._initialize_grpc_connection()
+        # Initialize gRPC
+        self.channel = grpc.secure_channel("api.parry.gg:443", grpc.ssl_channel_credentials())
+        self._create_service("Tournament")
+
+        # Get tournament and event slugs
+        self.tournament_slug = self.url.split("parry.gg/")[1].split("/")[0]
+        self.event_slug = self.url.split("parry.gg/")[1].split("/")[1]
+
     
-    def _initialize_grpc_connection(self):
-        """Initialize gRPC connection to ParryGG API"""
-        try:
-            # Create gRPC channel
-            self.channel = grpc.secure_channel("api.parry.gg:443", grpc.ssl_channel_credentials())
-            
-            # Set up metadata for authentication
-            if PARRYGG_API_KEY:
-                self.metadata = [("x-api-key", PARRYGG_API_KEY)]
-            else:
-                logger.warning("PARRYGG_API_KEY not found in environment variables")
-                self.metadata = []
-                
-        except Exception as e:
-            logger.error(f"Failed to initialize ParryGG gRPC connection: {e}")
+    def _create_service(self, service_name):
+        match service_name:
+            case "Tournament":
+                self.tournament_service = TournamentServiceStub(self.channel)
+            case "Event":
+                self.event_service = EventServiceStub(self.channel)
+            case "Phase":
+                self.phase_service = PhaseServiceStub(self.channel)
+            case "Bracket":
+                self.bracket_service = BracketServiceStub(self.channel)
+            case "Match":
+                self.match_service = MatchServiceStub(self.channel)
+            case "MatchGame":
+                self.matchgame_service = MatchGameServiceStub(self.channel)
+            case "Entrant":
+                self.entrant_service = EntrantServiceStub(self.channel)
+            case "User":
+                self.user_service = UserServiceStub(self.channel)
+            case "Game":
+                self.game_service = GameServiceStub(self.channel)
+            case _:
+                logger.error(f"Service {service_name} not recognized")
     
     def GetIconURL(self):
         # TODO: Accessed early
