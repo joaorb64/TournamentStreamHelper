@@ -102,9 +102,22 @@ class ParryGGDataProvider(TournamentDataProvider):
                 logger.error(f"Service {service_name} not recognized")
     
     def GetIconURL(self):
-        # TODO: Accessed early
-        pass
-    
+        if self.tournament_service is None:
+            self._create_service("Tournament")
+        
+        get_tournament_request = GetTournamentRequest()
+        get_tournament_request.tournament_slug = self.tournament_slug
+        response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata)
+
+        for image in response.tournament.images:
+            # Look for banner image, can be replaced in future if icons are added.
+            if image.type == "IMAGE_TYPE_BANNER":
+                return image.url
+        
+        # Fallback to the ParryGG favicon if no suitable image is found.
+        logger.warning("No banner image found.")
+        return "https://parry.gg/assets/favicon-BgItT2B4.png"
+
     def GetEntrants(self):
         # TODO: Accessed early
         pass
