@@ -239,8 +239,37 @@ class ParryGGDataProvider(TournamentDataProvider):
         pass
     
     def GetTournamentPhases(self, progress_callback=None, cancel_event=None):
-        # TODO: Accessed early
-        pass
+        self._setup_service("Event")
+        
+        get_event_request = GetEventRequest()
+        get_event_request.event_identifier.event_slug_path.tournament_slug = self.tournament_slug
+        get_event_request.event_identifier.event_slug_path.event_slug = self.event_slug
+        get_event_response = self.event_service.GetEvent(get_event_request, metadata=self.metadata)
+
+        phases = []
+
+        try:
+            for phase in get_event_response.event.phases:
+                phase_info = {
+                    "id": phase.id,
+                    "name": phase.name,
+                    "groups": []
+                }
+
+                for bracket in phase.brackets:
+                    bracket_info = {
+                        "id": bracket.id,
+                        "name": bracket.name,
+                        "type": phase.bracket_type.replace("BRACKET_TYPE_", "")
+                    }
+                    phase_info["groups"].append(bracket_info)
+
+                phases.append(phase_info)
+        
+        except Exception as e:
+            logger.error(f"Error getting tournament phases: {e}")
+        
+        return phases
     
     def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
         pass
