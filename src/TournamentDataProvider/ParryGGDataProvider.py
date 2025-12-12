@@ -126,8 +126,44 @@ class ParryGGDataProvider(TournamentDataProvider):
         return "https://parry.gg/assets/favicon-BgItT2B4.png"
 
     def GetEntrants(self):
-        # TODO: Accessed early
-        pass
+        self._setup_service("Event")
+        
+        get_event_entrants_request = GetEventEntrantsRequest()
+        get_event_entrants_request.event_identifier.event_slug_path.tournament_slug = self.tournament_slug
+        get_event_entrants_request.event_identifier.event_slug_path.event_slug = self.event_slug
+        response = self.event_service.GetEventEntrants(get_event_entrants_request, metadata=self.metadata)
+
+        players = []
+        
+        try:
+            for entrant in response.event_entrants:
+                # Assuming single user for now, no teams.
+                user = entrant.entrant.users[0]
+
+                # Format the entrant correctly.
+                formatted_entrant = {
+                    "prefix": "",
+                    "gamerTag": user.gamer_tag,
+                    "name": f"{user.first_name} {user.last_name}".strip(),
+                    "id": [entrant.entrant.id],
+                    "pronoun": user.pronouns,
+                    "avatar": "",
+                    "country_code": user.location_country,
+                    "state_code": user.location_state,
+                    "seed": entrant.seed
+                }
+                
+                # Extract avatar URL from images.
+                for image in user.images:
+                    if image.type == 'IMAGE_TYPE_AVATAR':
+                        formatted_entrant["avatar"] = image.url
+                        break
+                
+                players.append(formatted_entrant)
+        except Exception as e:
+            logger.error(f"Error processing entrants: {e}")
+
+        TSHPlayerDB.AddPlayers(players)
     
     def GetTournamentData(self, progress_callback=None, cancel_event=None):
         # TODO: Accessed early
