@@ -71,39 +71,46 @@ class ParryGGDataProvider(TournamentDataProvider):
         
         # Initialize gRPC
         self.channel = grpc.secure_channel("api.parry.gg:443", grpc.ssl_channel_credentials())
-        self._create_service("Tournament")
+        self._setup_service("Tournament")
 
         # Get tournament and event slugs
         self.tournament_slug = self.url.split("parry.gg/")[1].split("/")[0]
         self.event_slug = self.url.split("parry.gg/")[1].split("/")[1]
-
     
-    def _create_service(self, service_name):
+    def _setup_service(self, service_name):
         match service_name:
             case "Tournament":
-                self.tournament_service = TournamentServiceStub(self.channel)
+                if self.tournament_service is None:
+                    self.tournament_service = TournamentServiceStub(self.channel)
             case "Event":
-                self.event_service = EventServiceStub(self.channel)
+                if self.event_service is None:
+                    self.event_service = EventServiceStub(self.channel)
             case "Phase":
-                self.phase_service = PhaseServiceStub(self.channel)
+                if self.phase_service is None:
+                    self.phase_service = PhaseServiceStub(self.channel)
             case "Bracket":
-                self.bracket_service = BracketServiceStub(self.channel)
+                if self.bracket_service is None:
+                    self.bracket_service = BracketServiceStub(self.channel)
             case "Match":
-                self.match_service = MatchServiceStub(self.channel)
+                if self.match_service is None:
+                    self.match_service = MatchServiceStub(self.channel)
             case "MatchGame":
-                self.matchgame_service = MatchGameServiceStub(self.channel)
+                if self.matchgame_service is None:
+                    self.matchgame_service = MatchGameServiceStub(self.channel)
             case "Entrant":
-                self.entrant_service = EntrantServiceStub(self.channel)
+                if self.entrant_service is None:
+                    self.entrant_service = EntrantServiceStub(self.channel)
             case "User":
-                self.user_service = UserServiceStub(self.channel)
+                if self.user_service is None:
+                    self.user_service = UserServiceStub(self.channel)
             case "Game":
-                self.game_service = GameServiceStub(self.channel)
+                if self.game_service is None:
+                    self.game_service = GameServiceStub(self.channel)
             case _:
                 logger.error(f"Service {service_name} not recognized")
     
     def GetIconURL(self):
-        if self.tournament_service is None:
-            self._create_service("Tournament")
+        self._setup_service("Tournament")
         
         get_tournament_request = GetTournamentRequest()
         get_tournament_request.tournament_slug = self.tournament_slug
