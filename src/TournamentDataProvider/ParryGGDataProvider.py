@@ -8,6 +8,8 @@ PARRYGG_API_KEY = os.getenv('PARRYGG_API_KEY')
 
 from google.protobuf.json_format import MessageToJson
 from loguru import logger
+from datetime import datetime
+from dateutil import parser
 
 # ParryGG Imports
 # TODO: Probably won't use all of these.
@@ -114,9 +116,9 @@ class ParryGGDataProvider(TournamentDataProvider):
         
         get_tournament_request = GetTournamentRequest()
         get_tournament_request.tournament_slug = self.tournament_slug
-        response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata)
+        get_tournament_response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata)
 
-        for image in response.tournament.images:
+        for image in get_tournament_response.tournament.images:
             # Look for banner image, can be replaced in future if icons are added.
             if image.type == "IMAGE_TYPE_BANNER":
                 return image.url
@@ -131,12 +133,12 @@ class ParryGGDataProvider(TournamentDataProvider):
         get_event_entrants_request = GetEventEntrantsRequest()
         get_event_entrants_request.event_identifier.event_slug_path.tournament_slug = self.tournament_slug
         get_event_entrants_request.event_identifier.event_slug_path.event_slug = self.event_slug
-        response = self.event_service.GetEventEntrants(get_event_entrants_request, metadata=self.metadata)
+        get_event_entrants_response = self.event_service.GetEventEntrants(get_event_entrants_request, metadata=self.metadata)
 
         players = []
         
         try:
-            for entrant in response.event_entrants:
+            for entrant in get_event_entrants_response.event_entrants:
                 # Assuming single user for now, no teams.
                 user = entrant.entrant.users[0]
 
@@ -166,8 +168,39 @@ class ParryGGDataProvider(TournamentDataProvider):
         TSHPlayerDB.AddPlayers(players)
     
     def GetTournamentData(self, progress_callback=None, cancel_event=None):
-        # TODO: Accessed early
-        pass
+        self._setup_service("Tournament")
+
+        get_tournament_request = GetTournamentRequest()
+        get_tournament_request.tournament_slug = self.tournament_slug
+        get_tournament_response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata)
+
+        tournament_data = get_tournament_response.tournament
+
+        for event in tournament_data.events:
+            if event.slug == self.event_slug:
+                event_data = event
+                break
+        
+        tournament_info = {}
+        
+        try:
+            tournament_info["tournamentName"] = tournament_data.name
+            tournament_info["eventName"] = event_data.name
+            tournament_info["numEntrants"] = event_data.entrant_count
+            tournament_info["address"] = tournament_data.venue_address
+            tournament_info["startAt"] = int(parser.parse(tournament_data.start_date).timestamp())
+            tournament_info["endAt"] = int(parser.parse(tournament_data.end_date).timestamp())
+            tournament_info["eventStartAt"] = int(parser.parse(event_data.start_date).timestamp())
+            tournament_info["eventEndAt"] = None
+
+            for slug in tournament_data.slugs:
+                if slug.type == 'SLUG_TYPE_CUSTOM':
+                    tournament_info["shortLink"] = slug.slug
+                    break
+        except Exception as e:
+            logger.error(f"Error extracting tournament data: {e}")
+        
+        return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
         pass

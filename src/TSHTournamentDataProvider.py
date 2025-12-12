@@ -156,8 +156,12 @@ class TSHTournamentDataProvider(QObject):
             QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+"),
             
             # This could maybe become just "parry.gg/[^/]+/[^/]+"
+            # 
             # But that form of url directs to the /main/bracket page anyway,
             # so it's rare to see it shortened unless typing the url manually.
+            # 
+            # Only downside is that the tournament management page would match
+            # (parry.gg/tournamentname/_manage) which doesn't include the event slug.
             QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
         ]
 
