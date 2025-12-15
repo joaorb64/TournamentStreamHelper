@@ -18,7 +18,6 @@ from parrygg.services.event_service_pb2_grpc import EventServiceStub
 from parrygg.services.phase_service_pb2_grpc import PhaseServiceStub
 from parrygg.services.bracket_service_pb2_grpc import BracketServiceStub
 from parrygg.services.match_service_pb2_grpc import MatchServiceStub
-from parrygg.services.match_game_service_pb2_grpc import MatchGameServiceStub
 from parrygg.services.entrant_service_pb2_grpc import EntrantServiceStub
 from parrygg.services.user_service_pb2_grpc import UserServiceStub
 from parrygg.services.game_service_pb2_grpc import GameServiceStub
@@ -29,7 +28,6 @@ from parrygg.services.event_service_pb2 import *
 from parrygg.services.phase_service_pb2 import *
 from parrygg.services.bracket_service_pb2 import *
 from parrygg.services.match_service_pb2 import *
-from parrygg.services.match_game_service_pb2 import *
 from parrygg.services.entrant_service_pb2 import *
 from parrygg.services.user_service_pb2 import *
 from parrygg.services.game_service_pb2 import *
@@ -73,11 +71,25 @@ class ParryGGDataProvider(TournamentDataProvider):
         
         # Initialize gRPC
         self.channel = grpc.secure_channel("api.parry.gg:443", grpc.ssl_channel_credentials())
-        self._setup_service("Tournament")
 
-        # Get tournament and event slugs
+        # Get tournament and event slugs and IDs
         self.tournament_slug = self.url.split("parry.gg/")[1].split("/")[0]
         self.event_slug = self.url.split("parry.gg/")[1].split("/")[1]
+        self._get_ids()
+    
+    def _get_ids(self):
+        self._setup_service("Tournament")
+
+        get_tournament_request = GetTournamentRequest()
+        get_tournament_request.tournament_slug = self.tournament_slug
+        get_tournament_response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata)
+
+        self.tournament_id = get_tournament_response.tournament.id
+
+        for event in get_tournament_response.tournament.events:
+            if event.slug == self.event_slug:
+                self.event_id = event.id
+                break
     
     def _setup_service(self, service_name):
         match service_name:
@@ -152,7 +164,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                     "avatar": "",
                     "country_code": user.location_country,
                     "state_code": user.location_state,
-                    "seed": entrant.seed
+                    "seed": 0 #entrant.seed
                 }
                 
                 # Extract avatar URL from images.
@@ -188,9 +200,9 @@ class ParryGGDataProvider(TournamentDataProvider):
             tournament_info["eventName"] = event_data.name
             tournament_info["numEntrants"] = event_data.entrant_count
             tournament_info["address"] = tournament_data.venue_address
-            tournament_info["startAt"] = int(parser.parse(tournament_data.start_date).timestamp())
-            tournament_info["endAt"] = int(parser.parse(tournament_data.end_date).timestamp())
-            tournament_info["eventStartAt"] = int(parser.parse(event_data.start_date).timestamp())
+            tournament_info["startAt"] = tournament_data.start_date
+            tournament_info["endAt"] = tournament_data.end_date
+            tournament_info["eventStartAt"] = event_data.start_date
             tournament_info["eventEndAt"] = None
 
             for slug in tournament_data.slugs:
@@ -199,7 +211,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                     break
         except Exception as e:
             logger.error(f"Error extracting tournament data: {e}")
-        
+
         return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
@@ -242,8 +254,7 @@ class ParryGGDataProvider(TournamentDataProvider):
         self._setup_service("Event")
         
         get_event_request = GetEventRequest()
-        get_event_request.event_identifier.event_slug_path.tournament_slug = self.tournament_slug
-        get_event_request.event_identifier.event_slug_path.event_slug = self.event_slug
+        get_event_request.id = self.event_id
         get_event_response = self.event_service.GetEvent(get_event_request, metadata=self.metadata)
 
         phases = []
@@ -259,9 +270,21 @@ class ParryGGDataProvider(TournamentDataProvider):
                 for bracket in phase.brackets:
                     bracket_info = {
                         "id": bracket.id,
-                        "name": bracket.name,
-                        "type": phase.bracket_type.replace("BRACKET_TYPE_", "")
+                        "name": bracket.name
                     }
+
+                    match phase.bracket_type:
+                        case 0:
+                            bracket_info["type"] = "UNSPECIFIED"
+                        case 1:
+                            bracket_info["type"] = "SINGLE_ELIMINATION"
+                        case 2:
+                            bracket_info["type"] = "DOUBLE_ELIMINATION"
+                        case 3:
+                            bracket_info["type"] = "ROUND_ROBIN"
+                        case _:
+                            bracket_info["type"] = "UNKNOWN"
+
                     phase_info["groups"].append(bracket_info)
 
                 phases.append(phase_info)
