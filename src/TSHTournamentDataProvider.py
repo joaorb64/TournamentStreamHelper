@@ -82,8 +82,15 @@ class TSHTournamentDataProvider(QObject):
                 url, self.threadPool, self)
             url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
         elif url is not None and "parry.gg" in url:
-            TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
-                url, self.threadPool, self)
+            if not SettingsManager.Get("api_keys.parrygg"):
+                logger.error("ParryGG API key not set")
+                TSHTournamentDataProvider.instance.provider = None
+            try:
+                TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+                    url, self.threadPool, self, SettingsManager.Get("api_keys.parrygg"))
+            except Exception as e:
+                logger.error(f"Failed to initialize ParryGG provider: {e}")
+                TSHTournamentDataProvider.instance.provider = None
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None

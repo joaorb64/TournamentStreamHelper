@@ -1,15 +1,5 @@
-import os
-import traceback
 import grpc
-
-from dotenv import load_dotenv 
-load_dotenv()
-PARRYGG_API_KEY = os.getenv('PARRYGG_API_KEY')
-
-from google.protobuf.json_format import MessageToJson
 from loguru import logger
-from datetime import datetime
-from dateutil import parser
 
 # ParryGG Imports
 # TODO: Probably won't use all of these.
@@ -36,20 +26,19 @@ from parrygg.models.slug_pb2 import SlugType
 from parrygg.models.bracket_pb2 import BracketType
 from parrygg.models.image_pb2 import ImageType
 
-from .TournamentDataProvider import TournamentDataProvider
-
 # Other Imports used by StartGGDataProvider
 # TODO: May or may not be required.
-from ..Helpers.TSHCountryHelper import TSHCountryHelper
-from ..Helpers.TSHDictHelper import deep_get
-from ..Helpers.TSHDirHelper import TSHResolve
-from ..Helpers.TSHQtHelper import invokeSlot
-from ..TSHGameAssetManager import TSHGameAssetManager
+from .TournamentDataProvider import TournamentDataProvider
 from ..TSHPlayerDB import TSHPlayerDB
-import orjson
-from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
-from ..TSHBracket import is_power_of_two
-from ..Workers import Worker
+# from ..Helpers.TSHCountryHelper import TSHCountryHelper
+# from ..Helpers.TSHDictHelper import deep_get
+# from ..Helpers.TSHDirHelper import TSHResolve
+# from ..Helpers.TSHQtHelper import invokeSlot
+# from ..TSHGameAssetManager import TSHGameAssetManager
+# import orjson
+# from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
+# from ..TSHBracket import is_power_of_two
+# from ..Workers import Worker
 
 class ParryGGDataProvider(TournamentDataProvider):
     tournament_service = None
@@ -61,20 +50,15 @@ class ParryGGDataProvider(TournamentDataProvider):
     entrant_service = None
     user_service = None
     game_service = None
-    _timeout = 10
 
-    def __init__(self, url, threadpool, tshTdp) -> None:
+    _timeout = 10
+    metadata = None
+
+    def __init__(self, url, threadpool, tshTdp, api_key=None) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "ParryGG"
 
-        # Set up metadata with API key
-        if PARRYGG_API_KEY:
-            self.metadata = [("x-api-key", PARRYGG_API_KEY)]
-        else:
-            logger.warning("PARRYGG_API_KEY not found in environment variables")
-            self.metadata = []
-
-        # Get tournament and event slugs and IDs
+        self.metadata = [("x-api-key", api_key)]
         self._get_slugs_and_ids()
     
     def _get_slugs_and_ids(self):
