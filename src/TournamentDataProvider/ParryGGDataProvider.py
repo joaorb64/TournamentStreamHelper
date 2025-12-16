@@ -159,7 +159,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                 
                 # Extract avatar URL from images.
                 for image in user.images:
-                    if image.type == 'IMAGE_TYPE_AVATAR':
+                    if image.type == ImageType.IMAGE_TYPE_AVATAR:
                         formatted_entrant["avatar"] = image.url
                         break
                 
