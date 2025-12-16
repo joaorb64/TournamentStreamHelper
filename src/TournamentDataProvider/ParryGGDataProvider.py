@@ -58,7 +58,12 @@ class ParryGGDataProvider(TournamentDataProvider):
         super().__init__(url, threadpool, tshTdp)
         self.name = "ParryGG"
 
-        self.metadata = [("x-api-key", api_key)]
+        if api_key:
+            self.metadata = [("x-api-key", api_key)]
+        else:
+            logger.warning("No API key provided for ParryGG")
+            self.metadata = []
+        
         self._get_slugs_and_ids()
     
     def _get_slugs_and_ids(self):
@@ -67,17 +72,26 @@ class ParryGGDataProvider(TournamentDataProvider):
         
         self._setup_service("Tournament")
 
-        get_tournament_request = GetTournamentRequest()
-        get_tournament_request.tournament_slug = self.tournament_slug
-        get_tournament_response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata, timeout=self._timeout)
+        try:
+            get_tournament_request = GetTournamentRequest()
+            get_tournament_request.tournament_slug = self.tournament_slug
+            get_tournament_response = self.tournament_service.GetTournament(get_tournament_request, metadata=self.metadata, timeout=self._timeout)
 
-        self.tournament_id = get_tournament_response.tournament.id
+            self.tournament_id = get_tournament_response.tournament.id
 
-        for event in get_tournament_response.tournament.events:
-            if event.slug == self.event_slug:
-                self.event_id = event.id
-                break
-    
+            for event in get_tournament_response.tournament.events:
+                if event.slug == self.event_slug:
+                    self.event_id = event.id
+                    break
+        except grpc.RpcError as e:
+            if e.code() == grpc.StatusCode.UNAUTHENTICATED:
+                # logger.error("ParryGG authentication failed - invalid API key")
+                raise Exception("Invalid API key")
+            elif e.code() == grpc.StatusCode.NOT_FOUND:
+                raise Exception("Tournament or Event not found")
+            else:
+                logger.error(f"ParryGG gRPC error: {e}")
+                
     def _setup_service(self, service_name):
         if not hasattr(self, 'channel') or self.channel is None:
             self.channel = grpc.secure_channel("api.parry.gg:443", grpc.ssl_channel_credentials())

@@ -85,12 +85,13 @@ class TSHTournamentDataProvider(QObject):
             if not SettingsManager.Get("api_keys.parrygg"):
                 logger.error("ParryGG API key not set")
                 TSHTournamentDataProvider.instance.provider = None
-            try:
-                TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
-                    url, self.threadPool, self, SettingsManager.Get("api_keys.parrygg"))
-            except Exception as e:
-                logger.error(f"Failed to initialize ParryGG provider: {e}")
-                TSHTournamentDataProvider.instance.provider = None
+            else:
+                try:
+                    TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+                        url, self.threadPool, self, SettingsManager.Get("api_keys.parrygg"))
+                except Exception as e:
+                    logger.error(f"Failed to initialize ParryGG provider: {e}")
+                    TSHTournamentDataProvider.instance.provider = None
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
