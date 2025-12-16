@@ -3,7 +3,7 @@ from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 
-from src.Helpers.TSHQtHelper import invokeSlot
+from src.Helpers.TSHQtHelper import assert_gui_thread, gui_thread_sync
 from src.TSHGameAssetManager import TSHGameAssetManager
 from src.Workers import Worker
 
@@ -68,6 +68,7 @@ class TSHAssetDownloader(QObject):
         thread = AssetUpdatesThread(self)
         thread.start()
 
+    @assert_gui_thread
     def DownloadAssets(self, main_window):
         assets = self.DownloadAssetsFetch()
 
@@ -160,6 +161,7 @@ class TSHAssetDownloader(QObject):
 
         self.select.model().sort(0)
 
+        @assert_gui_thread
         def ReloadGameAssets(index=None):
             nonlocal self
 
@@ -301,6 +303,7 @@ class TSHAssetDownloader(QObject):
 
         btUpdateAll.clicked.connect(TSHAssetDownloader.UpdateAllAssets)
 
+        @assert_gui_thread
         def DownloadStart():
             nonlocal self
 
@@ -328,6 +331,8 @@ class TSHAssetDownloader(QObject):
             self.downloadDialogue.setWindowModality(
                 Qt.WindowModality.WindowModal)
             self.downloadDialogue.show()
+            self.downloadDialogue.setAutoClose(False)
+            self.downloadDialogue.setAutoReset(False)
             self.preDownloadDialogue.setEnabled(False)
             worker = Worker(self.DownloadAssetsWorker, *
                             [[list(filesToDownload.values())]])
@@ -335,7 +340,7 @@ class TSHAssetDownloader(QObject):
             worker.signals.finished.connect(self.DownloadAssetsFinished)
             self.threadpool.start(worker)
 
-        btOk.clicked.connect(DownloadStart)
+        btOk.clicked.connect(lambda: DownloadStart())
 
     def DownloadAssetsFetch(self):
         assets = None
@@ -370,6 +375,7 @@ class TSHAssetDownloader(QObject):
                 logger.error(traceback.format_exc())
                 return (None)
 
+    @assert_gui_thread
     def DownloadGameIconComplete(self, result):
         try:
             if result is not None:
@@ -395,15 +401,13 @@ class TSHAssetDownloader(QObject):
                 with open("user_data/games/"+f["name"], 'wb') as downloadFile:
                     logger.info("Downloading "+f["name"])
 
-                    if progress_callback is not None:
-                        # Queue to slot so we're not modifying the GUI from
-                        # a worker thread.
-                        invokeSlot(
-                            self.DownloadAssetsSetLabelText,
-                            QApplication.translate(
-                                "app",
-                                "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(fileList))
-                        )
+                    # Queue to slot so we're not modifying the GUI from
+                    # a worker thread.
+                    gui_thread_sync(self.DownloadAssetsSetLabelText)(
+                        QApplication.translate(
+                            "app",
+                            "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(fileList))
+                    )
 
                     response = urllib.request.urlopen(f["path"])
 
@@ -423,6 +427,17 @@ class TSHAssetDownloader(QObject):
                     downloadFile.close()
 
                     logger.info("Download OK")
+
+            @gui_thread_sync
+            def update_gui():
+                self.DownloadAssetsSetLabelText(
+                    QApplication.translate(
+                        "app",
+                        "Extracting... ({0}/{1})"
+                    ).format(i+1, len(fileList))
+                )
+                self.downloadDialogue.setRange(0, 0)
+            update_gui()
 
             is7z = ".7z" in fileList[0]["name"]
 
@@ -459,10 +474,12 @@ class TSHAssetDownloader(QObject):
         logger.info("All OK")
 
     @Slot(str)
+    @assert_gui_thread
     def DownloadAssetsSetLabelText(self, s):
         self.downloadDialogue.setLabelText(s)
 
     @Slot(int, int)
+    @assert_gui_thread
     def DownloadAssetsProgress(self, n, t):
         self.downloadDialogue.setValue(n)
         self.downloadDialogue.setMaximum(t)
@@ -471,6 +488,7 @@ class TSHAssetDownloader(QObject):
             self.downloadDialogue.setMaximum(t)
             self.downloadDialogue.setValue(t)
 
+    @assert_gui_thread
     def DownloadAssetsFinished(self):
         TSHGameAssetManager.instance.LoadGames()
         TSHAssetDownloader.instance.CheckAssetUpdates()
@@ -478,6 +496,7 @@ class TSHAssetDownloader(QObject):
         self.preDownloadDialogue.setEnabled(True)
         self.preDownloadDialogue.setFocus()
 
+    @assert_gui_thread
     def UpdateAllAssets(self):
         def f(assets):
             TSHAssetDownloader.instance.signals.AssetUpdates.disconnect(f)
@@ -505,10 +524,7 @@ class TSHAssetDownloader(QObject):
             TSHAssetDownloader.instance.downloadDialogue.setFocus()
             worker = Worker(
                 TSHAssetDownloader.instance.DownloadAssetsWorker, *[allFilesToDownload])
-            worker.signals.progress.connect(
-                lambda n, t:
-                    TSHAssetDownloader.instance.DownloadAssetsProgress(fileToDownload["name"], n, t)
-            )
+            worker.signals.progress.connect(TSHAssetDownloader.instance.DownloadAssetsProgress)
 
             worker.signals.finished.connect(
                 TSHAssetDownloader.instance.DownloadAssetsFinished)

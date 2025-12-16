@@ -983,6 +983,11 @@ class Window(QMainWindow):
 
         self.webserver.terminate()
         self.webserver.wait(10000)  # 10 seconds grace period.
+
+        for window in QApplication.allWindows():
+            if window != self:
+                window.close()
+
         super().closeEvent(event)
 
     def ReloadGames(self):
