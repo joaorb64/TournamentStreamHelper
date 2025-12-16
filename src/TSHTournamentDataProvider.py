@@ -8,8 +8,7 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
-# TODO 
-# from .TournamentDataProvider.ParryGGDataProvider import ParryGGDataProvider
+from .TournamentDataProvider.ParryGGDataProvider import ParryGGDataProvider
 from .Helpers.TSHVersionHelper import get_supported_providers
 from loguru import logger
 
@@ -82,10 +81,9 @@ class TSHTournamentDataProvider(QObject):
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
             url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
-        # TODO
-        # elif url is not None and "parry.gg" in url:
-            # TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
-            #     url, self.threadPool, self)
+        elif url is not None and "parry.gg" in url:
+            TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+                url, self.threadPool, self)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -115,10 +113,9 @@ class TSHTournamentDataProvider(QObject):
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-        # TODO
-        # elif url is not None and "parry.gg" in url:
-        #     TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
-        #         url, self.threadPool, self)
+        elif url is not None and "parry.gg" in url:
+            TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+                url, self.threadPool, self)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
