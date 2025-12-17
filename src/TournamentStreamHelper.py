@@ -128,6 +128,7 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHNotesWidget import TSHNotesWidget
 from .TSHCommentaryWidget import TSHCommentaryWidget
+from .TSHTeamBattleWidget import TSHTeamBattleWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
@@ -141,7 +142,6 @@ from .SettingsManager import SettingsManager
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHScoreboardManager import TSHScoreboardManager
-from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
@@ -392,12 +392,14 @@ class Window(QMainWindow):
 
         self.dockWidgets = []
 
-        thumbnailSetting = TSHThumbnailSettingsWidget()
-        thumbnailSetting.setObjectName(
-            QApplication.translate("app", "Thumbnail Settings"))
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
-        self.dockWidgets.append(thumbnailSetting)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
+            thumbnailSetting = TSHThumbnailSettingsWidget()
+            thumbnailSetting.setObjectName(
+                QApplication.translate("app", "Thumbnail Settings"))
+            self.addDockWidget(
+                Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+            self.dockWidgets.append(thumbnailSetting)
 
         bracket = TSHBracketWidget()
         bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
@@ -414,6 +416,14 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
+
+        teamBattle = TSHTeamBattleWidget()
+        teamBattle.setWindowIcon(QIcon('assets/icons/info.svg'))
+        teamBattle.setObjectName(
+            QApplication.translate("app", "Crew/Team Battle"))
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, teamBattle)
+        self.dockWidgets.append(teamBattle)
 
         self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
@@ -459,7 +469,9 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
-        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
+        self.tabifyDockWidget(self.scoreboard, teamBattle)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.tabifyDockWidget(self.scoreboard, notes)
@@ -594,8 +606,10 @@ class Window(QMainWindow):
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(self.stageWidget.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
-        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
+        toggleWidgets.addAction(teamBattle.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
         toggleWidgets.addAction(bracket.toggleViewAction())
         toggleWidgets.addAction(notes.toggleViewAction())
