@@ -1,7 +1,18 @@
 import functools
+import os
 import threading
 
+from loguru import logger
 from qtpy.QtCore import *
+from qtpy.QtWidgets import QApplication
+
+
+_STRICT_THREAD_ASSERT = os.environ.get("TSH_STRICT_THREAD_ASSERT", 0)
+try:
+    _STRICT_THREAD_ASSERT = int(_STRICT_THREAD_ASSERT)
+except ValueError:
+    logger.warning(f"Invalid value {_STRICT_THREAD_ASSERT} for _STRICT_THREAD_ASSERT. Defaulting to 0." )
+    _STRICT_THREAD_ASSERT = 0
 
 
 def invokeSlot(meth, *args):
@@ -124,4 +135,36 @@ def gui_thread_sync(fn):
         return gui_executor.run_sync(lambda: fn(*args, **kwargs))
 
     return wrapper
+
+
+_app = None
+def in_gui_thread() -> bool:
+    global _app
+    if _app is None and (_app := QApplication.instance()) is None:
+        return False
+
+    return _app.thread().isCurrentThread()
+
+
+def assert_gui_thread(fn=None):
+    """Functions as either a decorator or a standalone function with no args."""
+
+    def _assert():
+        if not in_gui_thread():
+            if _STRICT_THREAD_ASSERT != 0:
+                raise RuntimeError("Failed gui thread assertion in strict mode.")
+            else:
+                try:
+                    raise RuntimeError("stack snapshot")
+                except RuntimeError:
+                    logger.opt(exception=True).warning("Failed gui thread assertion in permissive mode.")
+
+    if callable(fn):
+        @functools.wraps(fn)
+        def deco(*args, **kwargs):
+            _assert()
+            return fn(*args, **kwargs)
+        return deco
+    else:
+        return _assert()
 

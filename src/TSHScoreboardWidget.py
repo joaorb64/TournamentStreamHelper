@@ -13,8 +13,9 @@ from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHVersionHelper import add_beta_label
 from .Helpers.TSHBskyHelper import post_to_bsky
 
-from src.TSHSelectSetWindow import TSHSelectSetWindow
-from src.TSHSelectStationWindow import TSHSelectStationWindow
+from .TSHSelectSetWindow import TSHSelectSetWindow
+from .TSHSelectStationWindow import TSHSelectStationWindow
+from .TSHIndividualGameTracker import TSHIndividualGameTracker
 
 from .TSHScoreboardPlayerWidget import TSHScoreboardPlayerWidget
 from .SettingsManager import SettingsManager
@@ -449,11 +450,11 @@ class TSHScoreboardWidget(QWidget):
         colorGroup2.layout().addWidget(self.colorMenu2)
 
         self.colorMenu2.currentIndexChanged.connect(
-                lambda element=self.colorMenu2: [
-                    self.CommandTeamColor(1, element),
-                    self.CommandTeamColor(0, element, force_opponent=True)
-                ]
-            )
+            lambda element=self.colorMenu2: [
+                self.CommandTeamColor(1, element),
+                self.CommandTeamColor(0, element, force_opponent=True)
+            ]
+        )
 
         self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, colorGroup2)
 
@@ -500,7 +501,7 @@ class TSHScoreboardWidget(QWidget):
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Add stage order widget
-        self.CreateStageOrder()
+        self.individualGameTracker = TSHIndividualGameTracker(self.scoreboardNumber)
         
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
@@ -517,7 +518,7 @@ class TSHScoreboardWidget(QWidget):
                     f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
                     "first_to").format(math.ceil(value/2)) if value > 0 else ""),
-                self.setStageNumber(value),
+                self.individualGameTracker.SetStageCount(value),
                 StateManager.ReleaseSaving()
             ]
         )
@@ -525,7 +526,7 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
             lambda value: [
-                self.DetectIncrementFromOldValueAndUpdateScore(0, value)
+                self.individualGameTracker.UpdateScore(0, value)
                 ]
         )
         self.scoreColumn.findChild(
@@ -533,7 +534,7 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QSpinBox, "score_right").valueChanged.connect(
             lambda value: [
-                self.DetectIncrementFromOldValueAndUpdateScore(1, value)
+                self.individualGameTracker.UpdateScore(1, value)
                 ]
         )
         self.scoreColumn.findChild(
@@ -560,8 +561,8 @@ class TSHScoreboardWidget(QWidget):
                 lambda: [
                     self.ResetScore(),
                     self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value())
-                    ]
-                )
+                ]
+        )
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
 
@@ -636,169 +637,11 @@ class TSHScoreboardWidget(QWidget):
                 self.colorMenu2.setVisible(StateManager.Get(f"game.has_colors", False))
             ]
         )
-    
 
-    def SetStageInStageOrderWidget(self, index=0, stage_codename=None):
-        StateManager.BlockSaving()
-        print(f"Setting stage for game {index+1}")
-        if self.stageWidgetList:
-            target = self.findChild(QComboBox, f"stageMenu_{index}")
-            if stage_codename:
-                for i in range(1, TSHGameAssetManager.instance.stageModelWithBlank.rowCount()):
-                    current_menu_item_data = TSHGameAssetManager.instance.stageModelWithBlank.item(i).data(Qt.ItemDataRole.UserRole)
-                    if current_menu_item_data.get("codename") in stage_codename:
-                        print(i, stage_codename)
-                        target.setCurrentIndex(i)
-                        target.currentIndexChanged.emit(i)
-            else:
-                target.setCurrentIndex(0)
-                target.currentIndexChanged.emit(0)
-        
-        StateManager.ReleaseSaving()
+        self.scoreColumn.findChild(QVBoxLayout, "verticalLayout").addWidget(self.individualGameTracker)
 
 
-    def CreateStageInStageOrderWidget(self, index=0):
-        def uncheck_buttons_if_true(value, list_buttons):
-            if value:
-                for button in list_buttons:
-                    button.setChecked(False)
-        
-        stageWidget = QWidget()
-        stageLayout = QHBoxLayout()
-
-        gameLabel = QLabel()
-        gameLabel.setText(QApplication.translate("app", "Game {0}").format(index + 1))
-
-        stageMenu = QComboBox()
-        stageMenu.setMaximumWidth(300)
-        stageMenu.setEditable(True)
-        stageMenu.setObjectName(f"stageMenu_{index}")
-        stageMenu.setModel(TSHGameAssetManager.instance.stageModelWithBlank)
-        stageMenu.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-        stageMenu.completer().setCompletionMode(QCompleter.PopupCompletion)
-        stageTeam1Check = QPushButton()
-        stageTeam1Check.setMaximumWidth(40)
-        stageTeam1Check.setObjectName(f"stageTeam1Check_{index}")
-        stageTeam1Check.setText(QApplication.translate("app", "T{0}").format(1))
-        stageTeam1Check.setCheckable(True)
-        stageTeam2Check = QPushButton()
-        stageTeam2Check.setMaximumWidth(40)
-        stageTeam2Check.setObjectName(f"stageTeam2Check_{index}")
-        stageTeam2Check.setText(QApplication.translate("app", "T{0}").format(2))
-        stageTeam2Check.setCheckable(True)
-        stageTieCheck = QPushButton()
-        stageTieCheck.setMaximumWidth(40)
-        stageTieCheck.setObjectName(f"stageTieCheck_{index}")
-        stageTieCheck.setText(QApplication.translate("app", "Tie"))
-        stageTieCheck.setCheckable(True)
-
-        # Add Logic
-        stageMenu.currentIndexChanged.connect(
-            lambda: [
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}", stageMenu.currentData()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
-                ]
-        )
-        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", False)
-        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", False)
-        StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", False)
-
-        stageTeam1Check.clicked.connect(
-            lambda: [
-                uncheck_buttons_if_true(stageTeam1Check.isChecked(), [stageTeam2Check, stageTieCheck]),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
-                self.StageResultsToScore()
-            ]
-        )
-        stageTeam2Check.clicked.connect(
-            lambda: [
-                uncheck_buttons_if_true(stageTeam2Check.isChecked(), [stageTeam1Check, stageTieCheck]),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
-                self.StageResultsToScore()
-            ]
-        )
-        stageTieCheck.clicked.connect(
-            lambda: [
-                uncheck_buttons_if_true(stageTieCheck.isChecked(), [stageTeam1Check, stageTeam2Check]),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t1_win", stageTeam1Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.t2_win", stageTeam2Check.isChecked()),
-                StateManager.Set(f"score.{self.scoreboardNumber}.stages.{index+1}.tie", stageTieCheck.isChecked()),
-                self.StageResultsToScore()
-            ]
-        )
-
-        stageLayout.addWidget(gameLabel)
-        if StateManager.Get("game.has_stages", False): # Only add stage column if the game supports stage
-            stageLayout.addWidget(stageMenu)
-        stageLayout.addWidget(stageTeam1Check)
-        stageLayout.addWidget(stageTieCheck)
-        stageLayout.addWidget(stageTeam2Check)
-
-        stageWidget.setLayout(stageLayout)
-        return stageWidget
-
-
-    def CreateStageOrder(self):
-        self.stageOrderWidget = QWidget()
-        self.stageOrderLayout = QVBoxLayout()
-        stageOrderLabel = QLabel(text=add_beta_label(QApplication.translate("app", "Individual game data").upper(), "game_tracker"))
-        stageOrderLabelFont = QFont()
-        stageOrderLabelFont.setPointSize(10)
-        stageOrderLabelFont.setBold(True)
-        stageOrderLabel.setFont(stageOrderLabelFont)
-        self.stageOrderLayout.addWidget(stageOrderLabel)
-        self.stageOrderWidget.setLayout(self.stageOrderLayout)
-        self.scoreColumn.findChild(QVBoxLayout, "verticalLayout").addWidget(self.stageOrderWidget)
-
-        self.stageWidgetList = []
-        self.stageOrderListWidget = QWidget()
-
-
-    def setStageNumber(self, stage_number=5):
-        self.stageOrderLayout.removeWidget(self.stageOrderListWidget)
-        self.stageWidgetList = []
-        self.stageOrderListLayout = QVBoxLayout()
-        self.stageOrderListWidget = QWidget()
-        self.stageOrderListWidget.setLayout(self.stageOrderListLayout)
-        StateManager.Set(f"score.{self.scoreboardNumber}.stages", {})
-        if stage_number == 0 or SettingsManager.Get('general.disable_individual_game_tracker', True):
-            self.stageOrderWidget.setVisible(False)
-        else:
-            self.stageOrderWidget.setVisible(True)
-            for i in range(stage_number):
-                self.stageWidgetList.append(self.CreateStageInStageOrderWidget(i))
-                self.stageOrderListLayout.addWidget(self.stageWidgetList[-1])
-        self.stageOrderLayout.addWidget(self.stageOrderListWidget)
-
-    def SwapStageResults(self):
-        for i in range(len(self.stageWidgetList)):
-            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
-            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
-            stageTieCheck = self.stageWidgetList[i].findChild(QPushButton, f"stageTieCheck_{i}")
-            team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
-            stageTeam1Check.setChecked(team_2_old_state)
-            stageTeam2Check.setChecked(team_1_old_state)
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.t1_win", stageTeam1Check.isChecked()),
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.t2_win", stageTeam2Check.isChecked()),
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{i+1}.tie", stageTieCheck.isChecked()),
-
-
-    def StageResultsToScore(self):
-        team_1_score, team_2_score = 0, 0
-        for i in range(len(self.stageWidgetList)):
-            stageTeam1Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam1Check_{i}")
-            stageTeam2Check = self.stageWidgetList[i].findChild(QPushButton, f"stageTeam2Check_{i}")
-            if stageTeam1Check.isChecked():
-                team_1_score += 1
-            if stageTeam2Check.isChecked():
-                team_2_score += 1
-        
+    def StageResultsToScore(self, team_1_score, team_2_score):
         with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_left")):
             self.scoreColumn.findChild(QSpinBox, "score_left").setValue(team_1_score)
             StateManager.Set(f"score.{self.scoreboardNumber}.team.1.score", team_1_score)
@@ -806,7 +649,6 @@ class TSHScoreboardWidget(QWidget):
         with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_right")):
             self.scoreColumn.findChild(QSpinBox, "score_right").setValue(team_2_score)
             StateManager.Set(f"score.{self.scoreboardNumber}.team.2.score", team_2_score)
-
 
     def closeEvent(self, event):
         self.autoUpdateTimer.stop()
@@ -1053,10 +895,8 @@ class TSHScoreboardWidget(QWidget):
             self.team2column.findChild(
                 QLineEdit, "teamName").editingFinished.emit()
             
-            self.SwapStageResults()
-
+            self.individualGameTracker.SwapStageResults()
             self.teamsSwapped = not self.teamsSwapped
-
         finally:
             StateManager.Set(
                 f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
@@ -1252,75 +1092,6 @@ class TSHScoreboardWidget(QWidget):
             scoreContainers[team].setValue(
                 scoreContainers[team].value()+change)
             
-
-    def DetectIncrementFromOldValueAndUpdateScore(self, team, value):
-        old_value = StateManager.Get(f"score.{self.scoreboardNumber}.team.{team+1}.score")
-        StateManager.Set(f"score.{self.scoreboardNumber}.team.{team+1}.score", value)
-
-        # Disable individual game tracker logic if ties were reported
-        has_ties = False
-        game_data = StateManager.Get(f"score.{self.scoreboardNumber}.stages")
-        for key in game_data.keys():
-            if game_data[key].get("tie"):
-                has_ties = True
-
-        # Game tracker logic for incremental changes
-        if old_value is not None and not has_ties:
-            old_value = int(old_value)
-            if int(value) - old_value == 1:
-                if team == 0:
-                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
-                else:
-                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score"))
-                self.IncreaseScoreBy1InStageOrder(team, current_game)
-            if int(value) - old_value == -1:
-                if team == 0:
-                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
-                else:
-                    current_game = int(value) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + 1
-                self.DecreaseScoreBy1InStageOrder(current_game)
-
-
-    def IncreaseScoreBy1InStageOrder(self, team, current_game = None):
-        if not current_game:
-            current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score"))
-        logger.info(f"Setting a win for team {team+1} on game {current_game}")
-        if current_game > 0 and current_game <= len(self.stageWidgetList):
-            i = current_game-1
-            current_stage_widget = self.stageWidgetList[i]
-            stageTeam1Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam1Check_{i}")
-            stageTeam2Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam2Check_{i}")
-            stageTieCheck: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTieCheck_{i}")
-            if team == 0:
-                stageTeam1Check.setChecked(True)
-                stageTeam2Check.setChecked(False)
-            else:
-                stageTeam2Check.setChecked(True)
-                stageTeam1Check.setChecked(False)
-            stageTieCheck.setChecked(False)
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t1_win", stageTeam1Check.isChecked())
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t2_win", stageTeam2Check.isChecked())
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.tie", stageTieCheck.isChecked())
-
-
-    def DecreaseScoreBy1InStageOrder(self, current_game = None):
-        if not current_game:
-            current_game = int(StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score")) + int(StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score")) + 1
-        logger.info(f"Resetting wins for game {current_game}")
-        if current_game > 0 and current_game <= len(self.stageWidgetList):
-            i = current_game-1
-            current_stage_widget = self.stageWidgetList[i]
-            stageTeam1Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam1Check_{i}")
-            stageTeam2Check: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTeam2Check_{i}")
-            stageTieCheck: QPushButton = current_stage_widget.findChild(QPushButton, f"stageTieCheck_{i}")
-            stageTeam1Check.setChecked(False)
-            stageTeam2Check.setChecked(False)
-            stageTieCheck.setChecked(False)
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t1_win", stageTeam1Check.isChecked())
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.t2_win", stageTeam2Check.isChecked())
-            StateManager.Set(f"score.{self.scoreboardNumber}.stages.{current_game}.tie", stageTieCheck.isChecked())
-
-
     def CommandClearAll(self, no_mains=False):
         for t, team in enumerate([self.team1playerWidgets, self.team2playerWidgets]):
             for i, p in enumerate(team):

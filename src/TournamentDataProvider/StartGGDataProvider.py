@@ -7,7 +7,7 @@ from loguru import logger
 from ..Helpers.TSHCountryHelper import TSHCountryHelper
 from ..Helpers.TSHDictHelper import deep_get
 from ..Helpers.TSHDirHelper import TSHResolve
-from ..Helpers.TSHQtHelper import invokeSlot
+from ..Helpers.TSHQtHelper import invokeSlot, gui_thread_sync
 from ..TSHGameAssetManager import TSHGameAssetManager
 from ..TSHPlayerDB import TSHPlayerDB
 from .TournamentDataProvider import TournamentDataProvider
