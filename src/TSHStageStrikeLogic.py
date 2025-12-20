@@ -87,9 +87,9 @@ class TSHStageStrikeLogic():
         if len(self.history) > 1:
             try:
                 last_known_state = self.history[-1]
-                sb_widget= TSHScoreboardManager.instance.GetScoreboard(1) # Update the game tracker
+                sb_widget = TSHScoreboardManager.instance.GetScoreboard(1) # Update the game tracker
                 for i in range(1, len(last_known_state.stagesPicked)):
-                    sb_widget.SetStageInStageOrderWidget(i-1, last_known_state.stagesPicked[i])
+                    sb_widget.individualGameTracker.SetStage(i-1, last_known_state.stagesPicked[i])
             except IndexError as e:
                 logger.warning("Could not find scoreboard 1 when piloting the stage history!")
 
