@@ -502,6 +502,7 @@ class TSHScoreboardWidget(QWidget):
 
         # Add stage order widget
         self.individualGameTracker = TSHIndividualGameTracker(self.scoreboardNumber)
+        self.individualGameTracker.signals.stageResultsUpdate.connect(self.StageResultsToScore)
         
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [

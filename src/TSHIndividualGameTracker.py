@@ -12,7 +12,7 @@ from .StateManager import StateManager
 
 
 class TSHIndividualGameTrackerSignals(QObject):
-    stageResultsUpdate = Signal()
+    stageResultsUpdate = Signal(int, int)
 
 
 class TSHIndividualGameTracker(QWidget):
@@ -294,6 +294,8 @@ class TSHIndividualGameTracker(QWidget):
             if stageTeam2Check.isChecked():
                 team_2_score += 1
 
+        StateManager.Set(f"score.{self.scoreboard_number}.team.1.score", team_1_score)
+        StateManager.Set(f"score.{self.scoreboard_number}.team.2.score", team_2_score)
         self.signals.stageResultsUpdate.emit(team_1_score, team_2_score)
 
     @assert_gui_thread
