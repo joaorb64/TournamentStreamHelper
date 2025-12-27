@@ -83798,7 +83798,7 @@
         "id": 1905,
         "name": "Abbasid Dynasty",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -83837,7 +83837,7 @@
         "id": 1906,
         "name": "French",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -83876,7 +83876,7 @@
         "id": 1907,
         "name": "English",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -83915,7 +83915,7 @@
         "id": 1908,
         "name": "Mongols",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -83954,7 +83954,7 @@
         "id": 1909,
         "name": "Chinese",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -83993,7 +83993,7 @@
         "id": 1910,
         "name": "Holy Roman Empire",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -84032,7 +84032,7 @@
         "id": 1911,
         "name": "Rus",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -84071,7 +84071,7 @@
         "id": 1912,
         "name": "Delhi Sultanate",
         "isCommon": null,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -91442,7 +91442,7 @@
         "id": 2115,
         "name": "Ottomans",
         "isCommon": null,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -91481,7 +91481,7 @@
         "id": 2116,
         "name": "Malians",
         "isCommon": null,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101348,7 +101348,7 @@
         "id": 2375,
         "name": "Ayyubids",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101387,7 +101387,7 @@
         "id": 2376,
         "name": "Byzantines",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101426,7 +101426,7 @@
         "id": 2377,
         "name": "Japanese",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101465,7 +101465,7 @@
         "id": 2378,
         "name": "Jeanne d'Arc",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101504,7 +101504,7 @@
         "id": 2379,
         "name": "Order of the Dragon",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -101543,7 +101543,7 @@
         "id": 2380,
         "name": "Zhu Xi's Legacy",
         "isCommon": true,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -113555,7 +113555,7 @@
         "id": 2697,
         "name": "Knights Templer",
         "isCommon": null,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -113594,7 +113594,7 @@
         "id": 2698,
         "name": "House of Lancaster",
         "isCommon": null,
-        "videogameId": 40325,
+        "videogameId": 45738,
         "externalIdMap": null,
         "images": [
           {
@@ -117420,12 +117420,12 @@
         "externalIdMap": null,
         "images": [
           {
-            "id": 8801268,
+            "id": 8823142,
             "width": 512,
             "height": 512,
             "ratio": 1,
             "type": "icon",
-            "url": "https://images.start.gg/images/character/2796/image-543b543b44295786017edb3e2da6be58.png",
+            "url": "https://images.start.gg/images/character/2796/image-5df7689ebc2747c61120385b432c2f80.png",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -117434,12 +117434,12 @@
             "updatedAt": null
           },
           {
-            "id": 8801269,
+            "id": 8823143,
             "width": 512,
             "height": 512,
             "ratio": 1,
             "type": "stockIcon",
-            "url": "https://images.start.gg/images/character/2796/image-543b543b44295786017edb3e2da6be58.png",
+            "url": "https://images.start.gg/images/character/2796/image-57a1901399029f0e75684991a5488102.png",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -117791,6 +117791,201 @@
             "ratio": 1,
             "type": "stockIcon",
             "url": "https://images.start.gg/images/character/2805/image-8f4b77ac7803cc0ce6e62b86852f10be.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2806,
+        "name": "Golden Horde",
+        "isCommon": null,
+        "videogameId": 45738,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8852788,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2806/image-6ec97cb77a5d77ed23998d40dbf57148.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8852789,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2806/image-54397c21a6054e9b24156c21ed3cd1bb.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2807,
+        "name": "Macedonian Dynasty",
+        "isCommon": null,
+        "videogameId": 45738,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8852794,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2807/image-970155a00b4f30f0191da976340ce8a4.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8852795,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2807/image-36437e9d6d332e28b260534a7d430ace.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2808,
+        "name": "Sengoku Daimyo",
+        "isCommon": null,
+        "videogameId": 45738,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8852798,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2808/image-2ad14d2f032d85291d2348694e918bcf.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8852799,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2808/image-b0f862cf1bf55d1e8db09309d09133d8.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2809,
+        "name": "Tughlaq Dynasty",
+        "isCommon": null,
+        "videogameId": 45738,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8852800,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2809/image-3d6837d9490ae40cd6359d47302a2db5.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8852801,
+            "width": 563,
+            "height": 563,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2809/image-c4789a5c999cb525683db119ef834044.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          }
+        ],
+        "characterId": null,
+        "expand": []
+      },
+      {
+        "id": 2810,
+        "name": "Chun-Li",
+        "isCommon": null,
+        "videogameId": 73221,
+        "externalIdMap": null,
+        "images": [
+          {
+            "id": 8886657,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "icon",
+            "url": "https://images.start.gg/images/character/2810/image-40a9efd2031c8a9e213f42635203097c.png",
+            "isOriginal": true,
+            "entity": null,
+            "entityId": null,
+            "uploadedBy": null,
+            "createdAt": null,
+            "updatedAt": null
+          },
+          {
+            "id": 8886658,
+            "width": 512,
+            "height": 512,
+            "ratio": 1,
+            "type": "stockIcon",
+            "url": "https://images.start.gg/images/character/2810/image-37f822e25a7eb03bc967f79b55ed73c2.png",
             "isOriginal": true,
             "entity": null,
             "entityId": null,
@@ -120318,7 +120513,12 @@
     2802,
     2803,
     2804,
-    2805
+    2805,
+    2806,
+    2807,
+    2808,
+    2809,
+    2810
   ],
   "resultEntity": "character",
   "actionRecords": []

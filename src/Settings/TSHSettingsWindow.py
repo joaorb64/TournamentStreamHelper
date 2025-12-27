@@ -88,7 +88,7 @@ class TSHSettingsWindow(QDialog):
         
         generalSettings.append((
             QApplication.translate(
-                "settings.disable_overwrite", "Do not override existing values in local_players.csv (takes effect on next restart)"),
+                "settings.disable_overwrite", "Do not override existing values in the local player database (takes effect on next restart)"),
             "disable_overwrite",
             "checkbox",
             False

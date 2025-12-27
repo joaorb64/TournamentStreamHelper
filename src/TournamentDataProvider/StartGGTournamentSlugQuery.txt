@@ -1,0 +1,5 @@
+query TournamentSlugQuery($id: ID!) {
+	event(id: $id) {
+		slug
+	}
+}
