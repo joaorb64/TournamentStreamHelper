@@ -7,8 +7,8 @@ from .SettingsManager import SettingsManager
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TournamentDataProvider.TournamentDataProvider import TournamentDataProvider
-from .TournamentDataProvider.ChallongeDataProvider import ChallongeDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+from .Helpers.TSHVersionHelper import get_supported_providers
 from loguru import logger
 
 from .Workers import Worker
@@ -31,10 +31,11 @@ class TSHTournamentDataProviderSignals(QObject):
     tournament_url_update = Signal(str)
 
 
-class TSHTournamentDataProvider:
+class TSHTournamentDataProvider(QObject):
     instance: "TSHTournamentDataProvider" = None
 
     def __init__(self) -> None:
+        super().__init__(None)
         self.provider: TournamentDataProvider = None
         self.signals: TSHTournamentDataProviderSignals = TSHTournamentDataProviderSignals()
         self.entrantsModel: QStandardItemModel = None
@@ -62,12 +63,11 @@ class TSHTournamentDataProvider:
         if "start.gg" in self.provider.url:
             TSHGameAssetManager.instance.SetGameFromStartGGId(
                 self.provider.videogame)
-        elif "challonge.com" in self.provider.url:
-            TSHGameAssetManager.instance.SetGameFromChallongeId(
-                self.provider.videogame)
         else:
             logger.error("Unsupported provider...")
 
+    @Slot(str, bool)
+    @Slot(str)
     def SetTournament(self, url, initialLoading=False):
         if self.provider and self.provider.url == url:
             return
@@ -75,9 +75,7 @@ class TSHTournamentDataProvider:
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-        elif url is not None and "challonge.com" in url:
-            TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
-                url, self.threadPool, self)
+            url = TSHTournamentDataProvider.instance.provider.GetRealEventURL(url)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -107,9 +105,6 @@ class TSHTournamentDataProvider:
         if url is not None and "start.gg" in url:
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 url, self.threadPool, self)
-        elif url is not None and "challonge.com" in url:
-            TSHTournamentDataProvider.instance.provider = ChallongeDataProvider(
-                url, self.threadPool, self)
         else:
             logger.error("Unsupported provider...")
             TSHTournamentDataProvider.instance.provider = None
@@ -136,15 +131,15 @@ class TSHTournamentDataProvider:
         inp.setLayout(layout)
 
         inp.layout().addWidget(QLabel(
-            QApplication.translate("app", "Paste the tournament URL.")+"\n" + QApplication.translate(
-                "app", "For StartGG, the link must contain the /event/ part")
+            QApplication.translate("app", "Paste the tournament URL.")+ "\n" + QApplication.translate("app", "For StartGG, the link must contain the /event/ part") + "\n" + QApplication.translate("app", "Supported providers:") + " " + ", ".join(get_supported_providers())
+
         ))
 
         lineEdit = QLineEdit()
         okButton = QPushButton("OK")
         validators = [
             QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
-            QRegularExpression("challonge.com/.+")
+            QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+")
         ]
 
         def validateText():
@@ -177,11 +172,6 @@ class TSHTournamentDataProvider:
 
                     # Some URLs in startgg have eventS but the API doesn't work with that format
                     url = url.replace("/events/", "/event/")
-            if "challonge" in url:
-                matches = re.match(
-                    "(.*challonge.com/[^/]*/[^/]*)", url)
-                if matches:
-                    url = matches.group(0)
 
             SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.SetTournament(
@@ -203,10 +193,6 @@ class TSHTournamentDataProvider:
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
             window_text = QApplication.translate(
                 "app", "Paste the URL to the player's StartGG profile")
-        elif self.provider and self.provider.url and "challonge" in self.provider.url:
-            window_text = QApplication.translate(
-                "app", "Insert the player's name in bracket")
-            providerName = self.provider.name
         else:
             logger.error(QApplication.translate(
                 "app", "Invalid tournament data provider"))
@@ -255,14 +241,22 @@ class TSHTournamentDataProvider:
                         {"getFinished": showFinished})
         worker.signals.result.connect(lambda data: [
             logger.info(data),
-            self.signals.get_sets_finished.emit(data)
+            self.signals.get_sets_finished.emit(data),
+            self.signals.sets_data_updated.emit({
+                "progress": 0,
+                "totalPages": 0,
+                "sets": data
+            })
         ])
-        worker.signals.progress.connect(lambda data: [
-            logger.info(f"SetDataUpdated: {data}"),
-            self.signals.sets_data_updated.emit(data)
+        worker.signals.progress.connect(lambda n, t: [
+            logger.info(f"SetDataUpdated: {n}/{t}"),
+            self.signals.sets_data_updated.emit({
+                "progress": n,
+                "totalPages":t,
+                "sets": []
+            })
         ])
         self.setLoadingWorker = worker
-
         self.threadPool.start(worker)
 
     def LoadStations(self):

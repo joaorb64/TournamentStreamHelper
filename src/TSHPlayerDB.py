@@ -9,8 +9,10 @@ import csv
 import traceback
 from loguru import logger
 
-from .Helpers.TSHDictHelper import deep_clone
 from copy import deepcopy
+
+from .Helpers.TSHDictHelper import deep_clone
+from .Helpers.TSHQtHelper import gui_thread_sync
 from .TSHGameAssetManager import TSHGameAssetManager
 from .SettingsManager import SettingsManager
 
@@ -27,6 +29,7 @@ class TSHPlayerDB:
     fieldnames = ["prefix", "gamerTag", "name", "twitter",
                 "country_code", "state_code", "mains", "pronoun", "custom_textbox", "controller"] # Used for filtering what we save locally
 
+    @staticmethod
     def LoadDB():
         try:
             json_db_exists = True
@@ -80,6 +83,7 @@ class TSHPlayerDB:
         except Exception as e:
             logger.error(traceback.format_exc())
 
+    @staticmethod
     def AddPlayers(players, overwrite=False):
         logger.info(f"Adding players to DB: {len(players)}")
         for player in players:
@@ -134,6 +138,7 @@ class TSHPlayerDB:
         TSHPlayerDB.SaveDB()
         TSHPlayerDB.SetupModel()
 
+    @staticmethod
     def DeletePlayer(tag):
         if tag in TSHPlayerDB.database:
             del TSHPlayerDB.database[tag]
@@ -141,12 +146,15 @@ class TSHPlayerDB:
         TSHPlayerDB.SaveDB()
         TSHPlayerDB.SetupModel()
 
+    @staticmethod
     def GetPlayerFromTag(tag):
         for player_db in TSHPlayerDB.database.values():
             if tag.lower() == player_db.get("gamerTag").lower():
                 return player_db
         return None
 
+    @staticmethod
+    @gui_thread_sync
     def SetupModel():
         with TSHPlayerDB.modelLock:
             TSHPlayerDB.model = QStandardItemModel()
@@ -224,7 +232,7 @@ class TSHPlayerDB:
 
             TSHPlayerDB.signals.db_updated.emit()
 
-
+    @staticmethod
     def SaveDB():
         try:
             player_list = []
