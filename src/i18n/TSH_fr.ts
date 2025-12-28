@@ -2117,7 +2117,7 @@ p, li { white-space: pre-wrap; }
     <name>settings.disable_overwrite</name>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
-        <source>Do not override existing values in local_players.csv (takes effect on next restart)</source>
+        <source>Do not override existing values in the local player database (takes effect on next restart)</source>
         <translation>Ne pas remplacer les valeurs existantes dans la base de données locale des joueurs (Prend effet après le redémarrage de l&apos;application)</translation>
     </message>
 </context>
