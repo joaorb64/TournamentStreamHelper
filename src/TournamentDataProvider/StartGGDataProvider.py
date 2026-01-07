@@ -471,9 +471,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 totalPages = deep_get(
                     data, "data.event.sets.pageInfo.totalPages", 0)
 
-
-                
-
                 sets = deep_get(data, "data.event.sets.nodes", [])
                 newSets = []
 
@@ -589,11 +586,9 @@ class StartGGDataProvider(TournamentDataProvider):
             # Add Pool identifier if phase has multiple Pools
             phase_name = deep_get(_set, "phaseGroup.phase.name")
             round_name = StartGGDataProvider.TranslateRoundName(_set.get("fullRoundText"))
-            # logger.info(deep_get(_set, "phaseGroup.phase.bracketType"))
 
             if deep_get(_set, "phaseGroup.phase.bracketType") == "MATCHMAKING":
                 round_name = ""
-
 
             bracket_type = deep_get(_set, "phaseGroup.phase.bracketType", "")
 
