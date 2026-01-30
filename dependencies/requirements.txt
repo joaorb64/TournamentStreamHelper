@@ -22,3 +22,4 @@ msgpack==1.1.0
 qasync==0.27.1
 tqdm==2.2.3
 tzdata
+countryflag==1.1.1
