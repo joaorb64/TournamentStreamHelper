@@ -14,7 +14,6 @@ from .TournamentDataProvider import TournamentDataProvider
 import orjson
 from ..Helpers.TSHLocaleHelper import TSHLocaleHelper
 from ..TSHBracket import is_power_of_two
-from multiprocessing import Lock
 
 from ..Workers import Worker
 
@@ -45,38 +44,35 @@ class StartGGDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, tshTdp) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "StartGG"
-        self.lock = Lock()
 
     # Queries the provided URL until a proper 200 status code has been provided back
     #
     # This should work fine in theory unless an API restriction is added
     def QueryRequests(self, url=None, type=None, headers={}, jsonParams=None, params=None):
-        with self.lock:
-            logger.info(f"Requesting StartGG")
-            try:
-                requestCode = 0
-                data = None
-                headers.update({
-                    "client-version": "20",
-                    "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
-                })
-                retries = 0
-                while requestCode != 200 and retries < 5:
-                    data = type(
-                        url,
-                        timeout=self._request_timeout_secs,
-                        headers=headers,
-                        json=jsonParams,
-                        params=params
-                    )
-                    requestCode = data.status_code
-                    retries += 1
-                data = orjson.loads(data.text)
-                return data
-            except Exception as e:
-                logger.error(traceback.format_exc())
-                return {}
+        try:
+            requestCode = 0
+            data = None
+            headers.update({
+                "client-version": "20",
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+            })
+            retries = 0
+            while requestCode != 200 and retries < 5:
+                data = type(
+                    url,
+                    timeout=self._request_timeout_secs,
+                    headers=headers,
+                    json=jsonParams,
+                    params=params
+                )
+                requestCode = data.status_code
+                retries += 1
+            data = orjson.loads(data.text)
+            return data
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return {}
 
     def GetTournamentData(self, progress_callback=None, cancel_event=None):
         finalData = {}
