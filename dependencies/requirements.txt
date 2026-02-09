@@ -2,7 +2,7 @@ chardet
 charset-normalizer==3.4.1
 qtpy
 requests
-py7zz
+py7zr
 deepdiff==8.1.1
 PyQtDarkThemeCglb
 Pillow
