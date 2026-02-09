@@ -9,7 +9,7 @@ from src.Workers import Worker
 
 import requests
 import shutil
-import py7zz
+import py7zr
 import urllib
 import orjson
 import os
@@ -455,7 +455,7 @@ class TSHAssetDownloader(QObject):
                 fileList[0]["name"] = "merged.7z"
 
             if is7z:
-                with py7zz.SevenZipFile("./user_data/games/"+fileList[0]["name"], 'r') as parent_zip:
+                with py7zr.SevenZipFile("./user_data/games/"+fileList[0]["name"], 'r') as parent_zip:
                     parent_zip.extractall(f["extractpath"])
 
                 for f in fileList:
