@@ -59,7 +59,6 @@ main.spec
 logs/*
 Pipfile*
 env
-.env
 desktop.ini
 assets/controller/*
 assets/*_tmp
