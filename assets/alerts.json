@@ -48,5 +48,10 @@
         "dateStart": null,
         "dateEnd": null,
         "alert": "WARNING:\n\nEND OF CHALLONGE SUPPORT\nStarting with TournamentStreamHelper v5.966, the program will no longer support importing tournament data from Challonge. This decision was made in order to prepare the refactoring of data import as well as due to the many difficulties we encounter when working with the Challonge API, which could cause the program to hang. We are also curently investigating the possibility of adding support for other tournament providers besides StartGG. We apologize for the inconvenience.\n\nTournamentStreamHelper v5.965 will remain available on the Releases page of the Github repo in case you need it."
+    },
+    "11": {
+        "dateStart": null,
+        "dateEnd": null,
+        "alert": "REGARDING TSH VERSION 5.967\n\nDue to the numerous crashes encountered in version 5.966, we have decided to revert the current release to a more stable state. That means version 5.967 should match version 5.965, both in feature set and stability.\n\nIf you need the features of 5.966, we recommend downloading the beta instead and helping us debug the instabilities on the Discord or the Issues section of the Github\n\nWe apologize for the inconvenience.\n\nYou can download TSH Version 5.967 here: https://github.com/joaorb64/TournamentStreamHelper/releases/tag/5.967\nYou can download the TSH beta here: https://github.com/joaorb64/TournamentStreamHelper/archive/refs/heads/main.zip"
     }
 }
