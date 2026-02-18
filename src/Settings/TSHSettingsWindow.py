@@ -64,6 +64,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.disable_thumbnail_widget", "Disables the Thumbnail Widget from starting (takes effect on next restart)"),
+            "disable_thumbnail_widget",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.disable_autoupdate", "Disable automatic set updating for the scoreboard"),
             "disable_autoupdate",
             "checkbox",
@@ -193,6 +201,22 @@ class TSHSettingsWindow(QDialog):
             QApplication.translate(
                 "settings.show_social", "Show Social Media"),
             "show_social",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_seed", "Show Seed"),
+            "show_seed",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_birthday", "Show Birthday"),
+            "show_birthday",
             "checkbox",
             True
         ))
