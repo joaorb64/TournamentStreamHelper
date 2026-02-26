@@ -13,6 +13,7 @@ from .TSHPlayerListSlotWidget import TSHPlayerListSlotWidget
 from .TSHBracketView import TSHBracketView
 from .TSHPlayerList import TSHPlayerList
 from .TSHBracket import *
+from .TSHHotkeys import TSHHotkeys
 import traceback
 from loguru import logger
 
@@ -123,6 +124,7 @@ class TSHBracketWidget(QDockWidget):
         updateIcon = QImage("./assets/icons/undo.svg").scaled(24, 24)
         self.btRefreshPhaseGroup.setIcon(QIcon(QPixmap.fromImage(updateIcon)))
         self.btRefreshPhaseGroup.clicked.connect(self.PhaseGroupChanged)
+        TSHHotkeys.signals.refresh_phase_group.connect(self.PhaseGroupChanged)
 
         self.progressionsIn: QSpinBox = self.findChild(
             QSpinBox, "progressionsIn")
@@ -176,6 +178,7 @@ class TSHBracketWidget(QDockWidget):
             ),
             self.bracketView.Update()
         ])
+        TSHHotkeys.signals.limit_export.connect(lambda: self.limitExport.setChecked(not self.limitExport.isChecked()))
 
         self.limitExportNumber: QSpinBox = self.findChild(
             QSpinBox, "limitExportNumber")
