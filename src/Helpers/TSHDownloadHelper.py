@@ -5,6 +5,7 @@ import collections
 import dataclasses
 import datetime
 import os
+import shutil
 import sys
 import threading
 
@@ -118,7 +119,7 @@ def download_file(
 
             # Remove old file, overwrite with new one
             if filename is not None:
-                os.replace(tmp_file.name, filename)
+                shutil.move(tmp_file.name, filename)
 
             logger.info(f"{desc} download complete.")
             return success
