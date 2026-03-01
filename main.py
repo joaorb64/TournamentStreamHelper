@@ -42,8 +42,12 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     try:
-        loop = QEventLoop()
-        asyncio.set_event_loop(loop)
-        sys.exit(loop.run_until_complete(main(loop)))
-    except asyncio.exceptions.CancelledError:
+        try:
+            loop = QEventLoop()
+            asyncio.set_event_loop(loop)
+            sys.exit(loop.run_until_complete(main(loop)))
+        except asyncio.exceptions.CancelledError:
+            sys.exit(0)
+    except RuntimeError:
         sys.exit(0)
+

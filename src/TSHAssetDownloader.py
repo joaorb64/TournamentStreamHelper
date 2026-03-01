@@ -358,17 +358,19 @@ class TSHAssetDownloader(QObject):
     def DownloadGameIcon(self, game_code, index, progress_callback, cancel_event):
         try:
             # Try getting logo_small
-            response = urllib.request.urlopen(
+            response = requests.get(
                 f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo_small.png")
-            data = response.read()
+            response.raise_for_status()
+            data = response.content
             return ([index, data])
         except Exception as e1:
             logger.error(traceback.format_exc())
             try:
                 # Try getting logo
-                response = urllib.request.urlopen(
+                response = requests.get(
                     f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo.png")
-                data = response.read()
+                response.raise_for_status()
+                data = response.content
                 return ([index, data])
             except Exception as e2:
                 # All options failed
@@ -409,11 +411,10 @@ class TSHAssetDownloader(QObject):
                             "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(fileList))
                     )
 
-                    response = urllib.request.urlopen(f["path"])
+                    response = requests.get(f["path"], stream=True)
+                    response.raise_for_status()
 
-                    while (True):
-                        chunk = response.read(1024*1024)
-
+                    for chunk in response.iter_content(chunk_size=1024*1024):
                         if not chunk:
                             break
 

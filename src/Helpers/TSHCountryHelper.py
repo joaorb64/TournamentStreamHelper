@@ -20,6 +20,7 @@ from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
 import orjson
 from loguru import logger
+import countryflag
 
 
 class TSHCountryHelperSignals(QObject):
@@ -87,7 +88,8 @@ class TSHCountryHelper(QObject):
             "code": TSHCountryHelper.countries[country_code]["code"],
             "latitude": TSHCountryHelper.countries[country_code]["latitude"],
             "longitude": TSHCountryHelper.countries[country_code]["longitude"],
-            "asset": f'./assets/country_flag/{country_code.lower()}.png'
+            "asset": f'./assets/country_flag/{country_code.lower()}.png',
+            "emoji": countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
         }
 
     def LoadCountries():
