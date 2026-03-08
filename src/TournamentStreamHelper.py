@@ -9,7 +9,6 @@ import shutil
 import zipfile
 import qdarktheme
 import requests
-import urllib
 import json
 import orjson
 import traceback
@@ -1086,62 +1085,6 @@ class Window(QMainWindow):
                     hbox.addWidget(btCancel)
 
                     buttonReply.show()
-
-                    def Update_Old(): # Deprecated
-                        db = QFontDatabase()
-                        db.removeAllApplicationFonts()
-                        QFontDatabase.removeAllApplicationFonts()
-                        self.downloadDialogue = QProgressDialog(
-                            QApplication.translate("app", "Downloading update..."), QApplication.translate("app", "Cancel"), 0, 0, self)
-                        self.downloadDialogue.setWindowModality(
-                            Qt.WindowModality.WindowModal)
-                        self.downloadDialogue.show()
-
-                        def worker(progress_callback, cancel_event):
-                            with open("./update.zip", 'wb') as downloadFile:
-                                downloaded = 0
-
-                                dl_url = release["zipball_url"]
-
-                                if os.name == 'nt':
-                                    assets = release["assets"] if "assets" in release else []
-                                    for i in range(len(assets)):
-                                        if assets[i]["name"] == "release.zip":
-                                            dl_url = assets[i]["url"]
-                                            break
-
-                                response = urllib.request.urlopen(dl_url)
-                                length = response.headers.get("Content-Length")
-
-                                while (True):
-                                    chunk = response.read(1024*1024)
-
-                                    if not chunk:
-                                        break
-
-                                    downloaded += len(chunk)
-                                    downloadFile.write(chunk)
-
-                                    if self.downloadDialogue.wasCanceled():
-                                        return
-
-                                    progress_callback(int(downloaded), length)
-                                downloadFile.close()
-
-                        def progress(n, t):
-                            self.downloadDialogue.setLabelText(
-                                QApplication.translate("app", "Downloading update...")+" "+str(n/1024/1024)+" MB")
-
-                        def finished():
-                            self.downloadDialogue.close()
-
-                            # Update procedure
-                            UpdateProcedure()
-
-                        worker = Worker(worker)
-                        worker.signals.progress.connect(progress)
-                        worker.signals.finished.connect(finished)
-                        self.threadpool.start(worker)
 
                     def Update(): # Opens the releases page in the web browser
                         latest_release_url = "https://github.com/joaorb64/TournamentStreamHelper/releases/latest"

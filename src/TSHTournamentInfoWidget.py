@@ -10,8 +10,8 @@ from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDirHelper import TSHResolve
 import traceback
 import shutil
-import urllib
 from loguru import logger
+import requests
 
 
 class TSHTournamentInfoWidget(QDockWidget):
@@ -121,9 +121,8 @@ class TSHTournamentInfoWidget(QDockWidget):
                 "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
             }
 
-            request = urllib.request.Request(url, headers=headers)
-            response = urllib.request.urlopen(request, timeout=5)
-            data = response.read()
+            response = requests.get(url, headers=headers)
+            data = response.content
 
             pix = QPixmap()
             pix.loadFromData(data)
