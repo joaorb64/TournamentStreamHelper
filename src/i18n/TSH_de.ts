@@ -1132,7 +1132,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="326"/>
-        <location filename="../TSHAssetDownloader.py" line="516"/>
+        <location filename="../TSHAssetDownloader.py" line="517"/>
         <location filename="../TournamentStreamHelper.py" line="1085"/>
         <location filename="../TournamentStreamHelper.py" line="1095"/>
         <source>Cancel</source>
@@ -1247,7 +1247,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="325"/>
-        <location filename="../TSHAssetDownloader.py" line="515"/>
+        <location filename="../TSHAssetDownloader.py" line="516"/>
         <source>Downloading assets</source>
         <translation>Assets werden heruntergeladen</translation>
     </message>
@@ -1257,12 +1257,12 @@ p, li { white-space: pre-wrap; }
         <translation>Assets von Github laden fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="407"/>
+        <location filename="../TSHAssetDownloader.py" line="409"/>
         <source>Downloading {0}... ({1}/{2})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="434"/>
+        <location filename="../TSHAssetDownloader.py" line="435"/>
         <source>Extracting... ({0}/{1})</source>
         <translation type="unfinished"></translation>
     </message>

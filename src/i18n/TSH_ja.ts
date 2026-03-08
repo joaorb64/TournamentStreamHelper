@@ -968,7 +968,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="326"/>
-        <location filename="../TSHAssetDownloader.py" line="516"/>
+        <location filename="../TSHAssetDownloader.py" line="517"/>
         <location filename="../TournamentStreamHelper.py" line="1085"/>
         <location filename="../TournamentStreamHelper.py" line="1095"/>
         <source>Cancel</source>
@@ -1180,7 +1180,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHAssetDownloader.py" line="325"/>
-        <location filename="../TSHAssetDownloader.py" line="515"/>
+        <location filename="../TSHAssetDownloader.py" line="516"/>
         <source>Downloading assets</source>
         <translation>アセットをダウンロードしています</translation>
     </message>
@@ -1190,12 +1190,12 @@ p, li { white-space: pre-wrap; }
         <translation>アセットをGitHubから取得するのに失敗しました:</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="407"/>
+        <location filename="../TSHAssetDownloader.py" line="409"/>
         <source>Downloading {0}... ({1}/{2})</source>
         <translation>{0}... ({1}/{2})をダウンロード中…</translation>
     </message>
     <message>
-        <location filename="../TSHAssetDownloader.py" line="434"/>
+        <location filename="../TSHAssetDownloader.py" line="435"/>
         <source>Extracting... ({0}/{1})</source>
         <translation type="unfinished"></translation>
     </message>
