@@ -10,7 +10,6 @@ from src.Workers import Worker
 import requests
 import shutil
 import py7zr
-import urllib
 import orjson
 import os
 from loguru import logger
