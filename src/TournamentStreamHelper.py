@@ -995,12 +995,21 @@ class Window(QMainWindow):
             self.gameSelect.setModel(QStandardItemModel())
             self.gameSelect.addItem("", 0)
             for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
-                if game[1].get("name"):
-                    self.gameSelect.addItem(game[1].get(
-                        "logo", QIcon()), game[1].get("name"), i+1)
+                logo_path = game[1].get("logo_path")
+                if logo_path:
+                    icon = QIcon(QPixmap(
+                        QImage(logo_path).scaled(
+                            64, 64,
+                            Qt.AspectRatioMode.KeepAspectRatio,
+                            Qt.TransformationMode.SmoothTransformation
+                        )
+                    ))
                 else:
-                    self.gameSelect.addItem(
-                        game[1].get("logo", QIcon()), game[0], i+1)
+                    icon = QIcon()
+                if game[1].get("name"):
+                    self.gameSelect.addItem(icon, game[1].get("name"), i+1)
+                else:
+                    self.gameSelect.addItem(icon, game[0], i+1)
             self.gameSelect.setIconSize(QSize(64, 64))
             self.gameSelect.setFixedHeight(32)
             view = QListView()
