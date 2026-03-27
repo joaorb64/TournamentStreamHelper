@@ -168,7 +168,8 @@ class TSHPlayerDB:
                 charIcons[char] = {}
                 for skin in TSHGameAssetManager.instance.stockIcons[char]:
                     charIcons[char][skin] = QIcon(QPixmap.fromImage(
-                        TSHGameAssetManager.instance.stockIcons[char][skin]))
+                        QImage(TSHGameAssetManager.instance.stockIcons[char][skin]).scaledToWidth(
+                            32, Qt.TransformationMode.SmoothTransformation)))
 
             for player in TSHPlayerDB.database.values():
                 if player is not None:
