@@ -87,9 +87,9 @@ class TSHPlayerListSlotWidget(QGroupBox):
                 index = len(self.playerWidgets)-1
 
                 p.btMoveUp.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
-                    self.playerWidgets[index-1 if index > 0 else 0]))
+                    self.playerWidgets[max(0, self.playerWidgets.index(p) - 1)]))
                 p.btMoveDown.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
-                    self.playerWidgets[index+1 if index < len(self.playerWidgets) - 1 else index]))
+                    self.playerWidgets[min(len(self.playerWidgets) - 1, self.playerWidgets.index(p) + 1)]))
 
                 p.instanceSignals.dataChanged.connect(
                     self.ChildDataChangedEmit)

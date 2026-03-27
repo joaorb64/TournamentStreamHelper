@@ -766,12 +766,10 @@ class TSHScoreboardWidget(QWidget):
             self.team1column.findChild(
                 QCheckBox, "losers").toggled.connect(p.SetLosers)
 
-            index = len(self.team1playerWidgets)
-
-            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team1playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
+            p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team1playerWidgets[max(0, self.team1playerWidgets.index(p) - 1)]))
+            p.btMoveDown.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team1playerWidgets[min(len(self.team1playerWidgets) - 1, self.team1playerWidgets.index(p) + 1)]))
 
             p.instanceSignals.playerId_changed.connect(
                 self.stats.signals.RecentSetsSignal.emit)
@@ -796,12 +794,10 @@ class TSHScoreboardWidget(QWidget):
             self.team2column.findChild(
                 QCheckBox, "losers").toggled.connect(p.SetLosers)
 
-            index = len(self.team2playerWidgets)
-
-            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team2playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
+            p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team2playerWidgets[max(0, self.team2playerWidgets.index(p) - 1)]))
+            p.btMoveDown.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team2playerWidgets[min(len(self.team2playerWidgets) - 1, self.team2playerWidgets.index(p) + 1)]))
 
             p.instanceSignals.playerId_changed.connect(
                 self.stats.signals.RecentSetsSignal.emit)
