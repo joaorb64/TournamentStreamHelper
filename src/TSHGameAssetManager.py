@@ -274,8 +274,8 @@ class TSHGameAssetManager(QObject):
                                     "prefix", "")+self.parent().characters[c].get("codename")+assetsObj.get("postfix", ""))]
 
                             if len(filteredFiles) == 0:
-                                self.parent().stockIcons[c][0] = QImage(
-                                    './assets/icons/cancel.svg')
+                                # Store path only — QImage must be created on the main thread
+                                self.parent().stockIcons[c][0] = './assets/icons/cancel.svg'
 
                             for i, f in enumerate(filteredFiles):
                                 numberStart = f.rfind(
@@ -287,14 +287,9 @@ class TSHGameAssetManager(QObject):
                                 except:
                                     logger.error(f)
                                     pass
-                                try:
-                                    self.parent().stockIcons[c][number] = QImage(
-                                        './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
-                                            32,
-                                            Qt.TransformationMode.FastTransformation
-                                    )
-                                except:
-                                    logger.error(traceback.format_exc())
+                                # Store path only — QImage must be created on the main thread
+                                self.parent().stockIcons[c][number] = \
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f
 
                         logger.info("Loaded stock icons")
 
@@ -610,8 +605,8 @@ class TSHGameAssetManager(QObject):
                                     "prefix", "")+self.parent.characters[c].get("codename")+assetsObj.get("postfix", ""))]
 
                             if len(filteredFiles) == 0:
-                                self.parent.stockIcons[c][0] = QImage(
-                                    './assets/icons/cancel.svg')
+                                # Store path only — QImage must be created on the main thread
+                                self.parent.stockIcons[c][0] = './assets/icons/cancel.svg'
 
                             for i, f in enumerate(filteredFiles):
                                 numberStart = f.rfind(
@@ -623,14 +618,9 @@ class TSHGameAssetManager(QObject):
                                 except:
                                     logger.error(f)
                                     pass
-                                try:
-                                    self.parent.stockIcons[c][number] = QImage(
-                                        './user_data/games/'+game+'/'+assetsKey+'/'+f).scaledToWidth(
-                                            32,
-                                            Qt.TransformationMode.SmoothTransformation
-                                    )
-                                except:
-                                    logger.error(traceback.format_exc())
+                                # Store path only — QImage must be created on the main thread
+                                self.parent.stockIcons[c][number] = \
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f
 
                         logger.info("Loaded stock icons")
 
@@ -1043,7 +1033,8 @@ class TSHGameAssetManager(QObject):
                 item.setData(c, Qt.ItemDataRole.EditRole)
                 logger.info(c)
                 item.setIcon(
-                    QIcon(QPixmap.fromImage(self.stockIcons[c][0]))
+                    QIcon(QPixmap.fromImage(QImage(self.stockIcons[c][0]).scaledToWidth(
+                        32, Qt.TransformationMode.FastTransformation)))
                 )
 
                 data = {
