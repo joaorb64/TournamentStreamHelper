@@ -9,7 +9,6 @@ import shutil
 import zipfile
 import qdarktheme
 import requests
-import urllib
 import json
 import orjson
 import traceback
@@ -128,6 +127,7 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHNotesWidget import TSHNotesWidget
 from .TSHCommentaryWidget import TSHCommentaryWidget
+# from .TSHTeamBattleWidget import TSHTeamBattleWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
@@ -141,7 +141,6 @@ from .SettingsManager import SettingsManager
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHScoreboardManager import TSHScoreboardManager
-from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
@@ -392,12 +391,14 @@ class Window(QMainWindow):
 
         self.dockWidgets = []
 
-        thumbnailSetting = TSHThumbnailSettingsWidget()
-        thumbnailSetting.setObjectName(
-            QApplication.translate("app", "Thumbnail Settings"))
-        self.addDockWidget(
-            Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
-        self.dockWidgets.append(thumbnailSetting)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            from .TSHThumbnailSettingsWidget import TSHThumbnailSettingsWidget
+            thumbnailSetting = TSHThumbnailSettingsWidget()
+            thumbnailSetting.setObjectName(
+                QApplication.translate("app", "Thumbnail Settings"))
+            self.addDockWidget(
+                Qt.DockWidgetArea.BottomDockWidgetArea, thumbnailSetting)
+            self.dockWidgets.append(thumbnailSetting)
 
         bracket = TSHBracketWidget()
         bracket.setWindowIcon(QIcon('assets/icons/info.svg'))
@@ -414,6 +415,14 @@ class Window(QMainWindow):
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
+
+        # teamBattle = TSHTeamBattleWidget()
+        # teamBattle.setWindowIcon(QIcon('assets/icons/info.svg'))
+        # teamBattle.setObjectName(
+        #     QApplication.translate("app", "Crew/Team Battle"))
+        # self.addDockWidget(
+        #     Qt.DockWidgetArea.BottomDockWidgetArea, teamBattle)
+        # self.dockWidgets.append(teamBattle)
 
         self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
@@ -459,7 +468,9 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
-        self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
+        # self.tabifyDockWidget(self.scoreboard, teamBattle)
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)
         self.tabifyDockWidget(self.scoreboard, bracket)
         self.tabifyDockWidget(self.scoreboard, notes)
@@ -594,8 +605,10 @@ class Window(QMainWindow):
         toggleWidgets.addAction(self.scoreboard.toggleViewAction())
         toggleWidgets.addAction(self.stageWidget.toggleViewAction())
         toggleWidgets.addAction(commentary.toggleViewAction())
-        toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
+        if not SettingsManager.Get("general.disable_thumbnail_widget", False):
+            toggleWidgets.addAction(thumbnailSetting.toggleViewAction())
         toggleWidgets.addAction(tournamentInfo.toggleViewAction())
+        # toggleWidgets.addAction(teamBattle.toggleViewAction())
         toggleWidgets.addAction(playerList.toggleViewAction())
         toggleWidgets.addAction(bracket.toggleViewAction())
         toggleWidgets.addAction(notes.toggleViewAction())
@@ -996,12 +1009,21 @@ class Window(QMainWindow):
             self.gameSelect.setModel(QStandardItemModel())
             self.gameSelect.addItem("", 0)
             for i, game in enumerate(TSHGameAssetManager.instance.games.items()):
-                if game[1].get("name"):
-                    self.gameSelect.addItem(game[1].get(
-                        "logo", QIcon()), game[1].get("name"), i+1)
+                logo_path = game[1].get("logo_path")
+                if logo_path:
+                    icon = QIcon(QPixmap(
+                        QImage(logo_path).scaled(
+                            64, 64,
+                            Qt.AspectRatioMode.KeepAspectRatio,
+                            Qt.TransformationMode.SmoothTransformation
+                        )
+                    ))
                 else:
-                    self.gameSelect.addItem(
-                        game[1].get("logo", QIcon()), game[0], i+1)
+                    icon = QIcon()
+                if game[1].get("name"):
+                    self.gameSelect.addItem(icon, game[1].get("name"), i+1)
+                else:
+                    self.gameSelect.addItem(icon, game[0], i+1)
             self.gameSelect.setIconSize(QSize(64, 64))
             self.gameSelect.setFixedHeight(32)
             view = QListView()
@@ -1086,62 +1108,6 @@ class Window(QMainWindow):
                     hbox.addWidget(btCancel)
 
                     buttonReply.show()
-
-                    def Update_Old(): # Deprecated
-                        db = QFontDatabase()
-                        db.removeAllApplicationFonts()
-                        QFontDatabase.removeAllApplicationFonts()
-                        self.downloadDialogue = QProgressDialog(
-                            QApplication.translate("app", "Downloading update..."), QApplication.translate("app", "Cancel"), 0, 0, self)
-                        self.downloadDialogue.setWindowModality(
-                            Qt.WindowModality.WindowModal)
-                        self.downloadDialogue.show()
-
-                        def worker(progress_callback, cancel_event):
-                            with open("./update.zip", 'wb') as downloadFile:
-                                downloaded = 0
-
-                                dl_url = release["zipball_url"]
-
-                                if os.name == 'nt':
-                                    assets = release["assets"] if "assets" in release else []
-                                    for i in range(len(assets)):
-                                        if assets[i]["name"] == "release.zip":
-                                            dl_url = assets[i]["url"]
-                                            break
-
-                                response = urllib.request.urlopen(dl_url)
-                                length = response.headers.get("Content-Length")
-
-                                while (True):
-                                    chunk = response.read(1024*1024)
-
-                                    if not chunk:
-                                        break
-
-                                    downloaded += len(chunk)
-                                    downloadFile.write(chunk)
-
-                                    if self.downloadDialogue.wasCanceled():
-                                        return
-
-                                    progress_callback(int(downloaded), length)
-                                downloadFile.close()
-
-                        def progress(n, t):
-                            self.downloadDialogue.setLabelText(
-                                QApplication.translate("app", "Downloading update...")+" "+str(n/1024/1024)+" MB")
-
-                        def finished():
-                            self.downloadDialogue.close()
-
-                            # Update procedure
-                            UpdateProcedure()
-
-                        worker = Worker(worker)
-                        worker.signals.progress.connect(progress)
-                        worker.signals.finished.connect(finished)
-                        self.threadpool.start(worker)
 
                     def Update(): # Opens the releases page in the web browser
                         latest_release_url = "https://github.com/joaorb64/TournamentStreamHelper/releases/latest"

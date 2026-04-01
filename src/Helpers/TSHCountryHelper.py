@@ -21,6 +21,7 @@ from .TSHLocaleHelper import TSHLocaleHelper
 import orjson
 from loguru import logger
 import countryflag
+from countryflag.core.exceptions import InvalidCountryError
 
 
 class TSHCountryHelperSignals(QObject):
@@ -81,7 +82,7 @@ class TSHCountryHelper(QObject):
         if not country_code in TSHCountryHelper.countries:
             return {}
 
-        return {
+        data = {
             "name": TSHCountryHelper.countries[country_code]["name"],
             "display_name": TSHCountryHelper.countries[country_code]["display_name"],
             "en_name": TSHCountryHelper.countries[country_code]["en_name"],
@@ -89,8 +90,15 @@ class TSHCountryHelper(QObject):
             "latitude": TSHCountryHelper.countries[country_code]["latitude"],
             "longitude": TSHCountryHelper.countries[country_code]["longitude"],
             "asset": f'./assets/country_flag/{country_code.lower()}.png',
-            "emoji": countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
         }
+    
+        try:
+            data["emoji"] = countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
+        except InvalidCountryError:
+            logger.warning(f'The following country could not be found in the countryflag library: {TSHCountryHelper.countries[country_code]["code"]}')
+            data["emoji"] = None
+        
+        return data
 
     def LoadCountries():
         try:
