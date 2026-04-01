@@ -228,10 +228,13 @@ class ParryGGDataProvider(TournamentDataProvider):
         pass
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
-        pass
+        # TODO Get actual match data, returning an empty list avoids a crash for now.
+        return []
     
     def GetStations(self, progress_callback=None, cancel_event=None):
-        pass
+        # TODO Get actual station/stream data, returning an empty list avoids a crash for now.
+        # Stations are not a short-term priority for parry.gg, but streams are actively being worked on.   
+        return []
     
     def GetStreamQueue(self, streamName=None, progress_callback=None, cancel_event=None):
         pass
