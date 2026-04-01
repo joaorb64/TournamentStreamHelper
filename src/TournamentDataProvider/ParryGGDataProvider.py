@@ -214,7 +214,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                     tournament_info["shortLink"] = slug.slug
                     break
             
-            videogame = event_data.game.id
+            videogame = event_data.game.slug
             if videogame:
                 self.videogame = videogame
                 self.tshTdp.signals.game_changed.emit(videogame)
