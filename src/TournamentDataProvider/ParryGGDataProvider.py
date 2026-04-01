@@ -213,6 +213,12 @@ class ParryGGDataProvider(TournamentDataProvider):
                 if slug.type == SlugType.SLUG_TYPE_CUSTOM:
                     tournament_info["shortLink"] = slug.slug
                     break
+            
+            videogame = event_data.game.id
+            if videogame:
+                self.videogame = videogame
+                self.tshTdp.signals.game_changed.emit(videogame)
+                
         except Exception as e:
             logger.error(f"Error extracting tournament data: {e}")
 

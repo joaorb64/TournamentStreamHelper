@@ -64,10 +64,9 @@ class TSHTournamentDataProvider(QObject):
         if "start.gg" in self.provider.url:
             TSHGameAssetManager.instance.SetGameFromStartGGId(
                 self.provider.videogame)
-        # TODO
-        # elif "parry.gg" in self.provider.url:
-        #     TSHGameAssetManager.instance.SetGameFromParryGGId(
-        #         self.provider.videogame)
+        elif "parry.gg" in self.provider.url:
+            TSHGameAssetManager.instance.SetGameFromParryGGId(
+                self.provider.videogame)
         else:
             logger.error("Unsupported provider...")
 
