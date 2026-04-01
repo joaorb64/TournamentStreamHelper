@@ -84,7 +84,7 @@ class SettingsWidget(QWidget):
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setText(defaultValue),
-                    callback()
+                    callback() if callable(callback) else None
                 ]
             )
         elif type == "color":
