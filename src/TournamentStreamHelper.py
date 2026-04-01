@@ -931,7 +931,7 @@ class Window(QMainWindow):
             TSHGameAssetManager.instance.selectedGame = {}
 
     def UpdateUserSetButton(self):
-        if SettingsManager.Get("StartGG_user"):
+        if SettingsManager.Get("StartGG_user") and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name == "StartGG":
             self.btLoadPlayerSet.setText(
                 QApplication.translate("app", "Load tournament and sets from StartGG user")+" "+QApplication.translate("punctuation", "(")+f"{SettingsManager.Get('StartGG_user')}"+QApplication.translate("punctuation", ")"))
             self.btLoadPlayerSet.setEnabled(True)
