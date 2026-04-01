@@ -176,14 +176,14 @@ class TSHGameAssetManager(QObject):
     
     def SetGameFromParryGGId(self, gameid):
         def detect_parrygg_id_match(game, id):
-            result = str(game.get("parrygg_game_id", "")) == str(id)
+            result = str(game.get("parrygg_game_slug", "")) == str(id)
             if not result:
                 alternates = game.get("alternate_versions", [])
                 alternates_ids = []
                 for alternate in alternates:
-                    if alternate.get("parrygg_game_id"):
+                    if alternate.get("parrygg_game_slug"):
                         alternates_ids.append(
-                            str(alternate.get("parrygg_game_id")))
+                            str(alternate.get("parrygg_game_slug")))
                 result = str(id) in alternates_ids
             return (result)
 
