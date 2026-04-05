@@ -29,6 +29,11 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 
+class ScoreboardNotAvailable(Exception):
+    """Raised when a scoreboard is requested but not yet initialized."""
+    pass
+
+
 class WebServerActions(QThread):
     def __init__(self, parent=None, scoreboard=None, stageWidget=None, commentaryWidget: TSHCommentaryWidget=None) -> None:
         super().__init__(parent)
@@ -36,6 +41,13 @@ class WebServerActions(QThread):
         self.stageWidget = stageWidget
         self.commentaryWidget = commentaryWidget
         self.threadPool = QThreadPool()
+
+    def _get_scoreboard(self, number=1):
+        """Get a scoreboard by number, raising ScoreboardNotAvailable if it doesn't exist."""
+        sb = self.scoreboard.GetScoreboard(number)
+        if sb is None:
+            raise ScoreboardNotAvailable(f"Scoreboard {number} not available")
+        return sb
 
     def program_state(self):
         return {'state': StateManager.state, 'delta_index': StateManager.deltaIndex}
@@ -56,7 +68,7 @@ class WebServerActions(QThread):
 
         # Add player names
         teams = [1, 2]
-        if self.scoreboard.GetScoreboard(1).teamsSwapped:
+        if self._get_scoreboard(1).teamsSwapped:
             teams.reverse()
 
         for i, t in enumerate(teams):
@@ -145,7 +157,7 @@ class WebServerActions(QThread):
 
         logger.info(f"We're supposed to update the score {score}")
 
-        self.scoreboard.GetScoreboard(1).signals.ChangeSetData.emit({
+        self._get_scoreboard(1).signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
             "reset_score": True
@@ -164,32 +176,32 @@ class WebServerActions(QThread):
                 scoreboard_number = 1
 
         score.update({"reset_score": True})
-        self.scoreboard.GetScoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
+        self._get_scoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
     def team_scoreup(self, scoreboard, team):
         if str(team) == "1":
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, 1)
+            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(0, 1)
         else:
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, 1)
+            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(1, 1)
         return "OK"
 
     def team_scoredown(self, scoreboard, team):
         if str(team) == "1":
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(0, -1)
+            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(0, -1)
         else:
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
+            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
         return "OK"
 
     def team_color(self, scoreboard, team, color):
         if str(team) == "1":
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(0, color)
+            self._get_scoreboard(scoreboard).signals.CommandTeamColor.emit(0, color)
         else:
-            self.scoreboard.GetScoreboard(scoreboard).signals.CommandTeamColor.emit(1, color)
+            self._get_scoreboard(scoreboard).signals.CommandTeamColor.emit(1, color)
         return "OK"
 
     def get_scoreboard(self, scoreboard):
-        sb_widget: TSHScoreboardWidget = self.scoreboard.GetScoreboard(scoreboard)
+        sb_widget: TSHScoreboardWidget = self._get_scoreboard(scoreboard)
         return StateManager.Get(f'score.{sb_widget.scoreboardNumber}')
 
     @gui_thread_sync
@@ -205,7 +217,7 @@ class WebServerActions(QThread):
         # Best Of argument
         # best-of=<Best Of Amount>
         if bestOf is not None:
-            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
+            self._get_scoreboard(scoreboard).signals.ChangeSetData.emit(
                 orjson.loads(
                     orjson.dumps({'bestOf': int(bestOf)})
                 )
@@ -214,7 +226,7 @@ class WebServerActions(QThread):
         # Phase argument
         # phase=<Phase Name>
         if phase is not None:
-            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
+            self._get_scoreboard(scoreboard).signals.ChangeSetData.emit(
                 orjson.loads(
                     orjson.dumps({'tournament_phase': phase})
                 )
@@ -223,7 +235,7 @@ class WebServerActions(QThread):
         # Match argument
         # match=<Match Name>
         if match is not None:
-            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
+            self._get_scoreboard(scoreboard).signals.ChangeSetData.emit(
                 orjson.loads(
                     orjson.dumps({'round_name': match})
                 )
@@ -232,17 +244,17 @@ class WebServerActions(QThread):
         # Players argument
         # players=<Amount of Players>
         if players is not None:
-            self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(int(players))
+            self._get_scoreboard(scoreboard).playerNumber.setValue(int(players))
 
         # Characters argument
         # characters=<Amount of Characters>
         if characters is not None:
-            self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(int(characters))
+            self._get_scoreboard(scoreboard).charNumber.setValue(int(characters))
 
         # Losers argument
         # losers=<True/False>&team=<Team Number>
         if losers is not None:
-            self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit(
+            self._get_scoreboard(scoreboard).signals.ChangeSetData.emit(
                 orjson.loads(
                     orjson.dumps({'team' + str(team) + 'losers': False if losers.lower() == 'false' else True})
                 )
@@ -250,7 +262,8 @@ class WebServerActions(QThread):
         return "OK"
 
     def set_team_data(self, scoreboard, team, player, data):
-        self.scoreboard.GetScoreboard(scoreboard).signals.ChangeSetData.emit({
+        sb = self._get_scoreboard(scoreboard)
+        sb.signals.ChangeSetData.emit({
             "team": team,
             "player": player,
             "data": data
@@ -346,22 +359,24 @@ class WebServerActions(QThread):
         return data
 
     def swap_teams(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).signals.SwapTeams.emit()
+        sb = self._get_scoreboard(scoreboard)
+        sb.signals.SwapTeams.emit()
         return "OK"
-    
+
     def get_swap(self, scoreboard):
-        return str(self.scoreboard.GetScoreboard(scoreboard).teamsSwapped)
+        sb = self._get_scoreboard(scoreboard)
+        return str(sb.teamsSwapped)
 
     def open_sets(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).signals.SetSelection.emit()
+        self._get_scoreboard(scoreboard).signals.SetSelection.emit()
         return "OK"
 
     def pull_stream_set(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).signals.StreamSetSelection.emit()
+        self._get_scoreboard(scoreboard).signals.StreamSetSelection.emit()
         return "OK"
 
     def pull_user_set(self):
-        self.scoreboard.GetScoreboard(1).signals.UserSetSelection.emit()
+        self._get_scoreboard(1).signals.UserSetSelection.emit()
         return "OK"
 
     def stats_recent_sets(self, scoreboard):
@@ -374,15 +389,15 @@ class WebServerActions(QThread):
 
     def stats_last_sets(self, scoreboard, player):
         if str(player) == "1":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.LastSetsP1Signal.emit()
         elif str(player) == "2":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.LastSetsP2Signal.emit()
         elif player == "both":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.LastSetsP1Signal.emit()
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.LastSetsP2Signal.emit()
         else:
             logger.error(
@@ -392,15 +407,15 @@ class WebServerActions(QThread):
     @gui_thread_sync
     def stats_history_sets(self, scoreboard, player):
         if str(player) == "1":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP1Signal.emit()
         elif str(player) == "2":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP2Signal.emit()
         elif player == "both":
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP1Signal.emit()
-            self.scoreboard.GetScoreboard(
+            self._get_scoreboard(
                 scoreboard).stats.signals.PlayerHistoryStandingsP2Signal.emit()
         else:
             logger.error(
@@ -409,34 +424,34 @@ class WebServerActions(QThread):
 
     @gui_thread_sync
     def reset_scores(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).ResetScore()
+        self._get_scoreboard(scoreboard).ResetScore()
         return "OK"
 
     @gui_thread_sync
     def reset_match(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).ClearScore()
-        self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
+        self._get_scoreboard(scoreboard).ClearScore()
+        self._get_scoreboard(scoreboard).scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
         return "OK"
 
     @gui_thread_sync
     def reset_players(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
+        self._get_scoreboard(scoreboard).CommandClearAll()
         return "OK"
 
     @gui_thread_sync
     def clear_all(self, scoreboard):
-        self.scoreboard.GetScoreboard(scoreboard).ClearScore()
-        self.scoreboard.GetScoreboard(scoreboard).scoreColumn.findChild(
+        self._get_scoreboard(scoreboard).ClearScore()
+        self._get_scoreboard(scoreboard).scoreColumn.findChild(
             QSpinBox, "best_of").setValue(0)
-        self.scoreboard.GetScoreboard(scoreboard).playerNumber.setValue(1)
-        self.scoreboard.GetScoreboard(scoreboard).charNumber.setValue(1)
-        self.scoreboard.GetScoreboard(scoreboard).CommandClearAll()
+        self._get_scoreboard(scoreboard).playerNumber.setValue(1)
+        self._get_scoreboard(scoreboard).charNumber.setValue(1)
+        self._get_scoreboard(scoreboard).CommandClearAll()
         return "OK"
 
     @gui_thread_sync
     def get_thumbnail(self, scoreboard, file_format):
-        thumbnailPath = self.scoreboard.GetScoreboard(scoreboard).GenerateThumbnail(quiet_mode=True, disable_msgbox=True)
+        thumbnailPath = self._get_scoreboard(scoreboard).GenerateThumbnail(quiet_mode=True, disable_msgbox=True)
         if thumbnailPath:
             if file_format == "jpg":
                 thumbnailPath = thumbnailPath.replace(".png", ".jpg")
@@ -456,7 +471,7 @@ class WebServerActions(QThread):
         if set is not None:
             if not isinstance(set, str):
                 set = '0'
-            self.scoreboard.GetScoreboard(scoreboard).signals.NewSetSelected.emit(
+            self._get_scoreboard(scoreboard).signals.NewSetSelected.emit(
                 orjson.loads(
                     orjson.dumps({
                         'id': set,
@@ -471,10 +486,10 @@ class WebServerActions(QThread):
         return StateManager.Get("commentary")
 
     def get_set(self, scoreboard):
-        if self.scoreboard.GetScoreboard(scoreboard).lastSetSelected is None:
+        if self._get_scoreboard(scoreboard).lastSetSelected is None:
             return "0"
         else:
-            return str(self.scoreboard.GetScoreboard(scoreboard).lastSetSelected)
+            return str(self._get_scoreboard(scoreboard).lastSetSelected)
 
     def get_sets(self, args):
         provider = TSHTournamentDataProvider.instance.GetProvider()
@@ -497,7 +512,7 @@ class WebServerActions(QThread):
 
     @gui_thread_sync
     def load_player_from_tag(self, scoreboard, tag, team, player, no_mains=False):
-        result = self.scoreboard.GetScoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
+        result = self._get_scoreboard(scoreboard).LoadPlayerFromTag(str(tag), int(team), int(player), no_mains)
         if result == True:
             return "OK"
         else:

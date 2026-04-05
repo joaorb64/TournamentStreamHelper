@@ -954,8 +954,10 @@ class Window(QMainWindow):
                 TSHTournamentDataProvider.instance.threadPool,
                 TSHTournamentDataProvider.instance
             )
-            TSHTournamentDataProvider.instance.LoadUserSet(
-                self.scoreboard.GetScoreboard(1), SettingsManager.Get("StartGG_user"))
+            sb = self.scoreboard.GetScoreboard(1)
+            if sb is not None:
+                TSHTournamentDataProvider.instance.LoadUserSet(
+                    sb, SettingsManager.Get("StartGG_user"))
     
     def LoadCompletedSetsClicked(self, data):
         StateManager.Set("completed_sets", {index+1: set for index, set in enumerate(data)})

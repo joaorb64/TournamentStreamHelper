@@ -15,7 +15,7 @@ import orjson
 from loguru import logger
 
 from .StateManager import StateManager
-from .TSHWebServerActions import WebServerActions
+from .TSHWebServerActions import WebServerActions, ScoreboardNotAvailable
 from .TSHScoreboardManager import TSHScoreboardManager
 from .TSHCommentaryWidget import TSHCommentaryWidget
 from .SettingsManager import SettingsManager
@@ -105,6 +105,10 @@ class WebServer(QThread):
     @socketio.on('program_state')
     def ws_program_state(message=None):
         WebServer.ws_emit('program_state', WebServer.actions.program_state())
+
+    @app.errorhandler(ScoreboardNotAvailable)
+    def handle_scoreboard_not_available(e):
+        return str(e), 503
 
     @socketio.on_error_default
     def ws_on_error(e):
