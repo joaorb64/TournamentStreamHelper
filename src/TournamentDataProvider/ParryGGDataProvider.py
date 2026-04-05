@@ -73,6 +73,9 @@ class ParryGGDataProvider(TournamentDataProvider):
         self._get_slugs_and_ids()
     
     def _get_slugs_and_ids(self):
+        if self._initialized:
+            return
+        
         self.tournament_slug = self.url.split("parry.gg/")[1].split("/")[0]
         self.event_slug = self.url.split("parry.gg/")[1].split("/")[1]
         
@@ -89,6 +92,9 @@ class ParryGGDataProvider(TournamentDataProvider):
                 if event.slug == self.event_slug:
                     self.event_id = event.id
                     break
+            
+            self._initialized = True
+
         except grpc.RpcError as e:
             if e.code() == grpc.StatusCode.UNAUTHENTICATED:
                 # logger.error("ParryGG authentication failed - invalid API key")
