@@ -249,7 +249,9 @@ class ParryGGDataProvider(TournamentDataProvider):
         pass
     
     def GetStationMatchId(self, stationId):
-        pass
+        sets = self.GetStationMatchsId(self, stationId)
+
+        return sets[0] if len(sets) > 0 else None
     
     def GetStationMatchsId(self, stationId):
         pass
