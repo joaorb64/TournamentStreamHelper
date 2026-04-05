@@ -4,7 +4,6 @@ import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
-import requests
 import os
 import traceback
 import time
