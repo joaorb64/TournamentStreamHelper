@@ -51,8 +51,14 @@ class ParryGGDataProvider(TournamentDataProvider):
     user_service = None
     game_service = None
 
+    tournament_slug = None
+    event_slug = None
+    tournament_id = None
+    event_id = None
+
     _timeout = 10
     metadata = None
+    _initialized = False
 
     def __init__(self, url, threadpool, tshTdp, api_key=None) -> None:
         super().__init__(url, threadpool, tshTdp)
@@ -168,7 +174,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                     "avatar": "",
                     "country_code": user.location_country,
                     "state_code": user.location_state,
-                    "seed": 0 #entrant.seed
+                    "seed": entrant.seed
                 }
                 
                 # Extract avatar URL from images.
