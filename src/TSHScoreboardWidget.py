@@ -601,7 +601,7 @@ class TSHScoreboardWidget(QWidget):
                     ]
 
                     for couple in couples:
-                        print(couple)
+                        logger.info(couple)
                         self.scoreColumn.findChild(
                             QComboBox, "match").addItem(matchString.format(*couple))
                 elif "{0}" in matchString and ("qualifier" not in key):
@@ -1366,7 +1366,7 @@ class TSHScoreboardWidget(QWidget):
             players, characters = StateManager.Get(f'game.defaults.players_per_team', 1), StateManager.Get(f'game.defaults.characters_per_player', 1)
         else:
             players, characters = 1, 1
-        print(players, "players", characters, "characters")
+        logger.info(f"{players} players, {characters} characters")
         self.playerNumber.setValue(players)
         self.charNumber.setValue(characters)
 
