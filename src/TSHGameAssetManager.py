@@ -127,7 +127,7 @@ class TSHGameAssetManager(QObject):
                                             self.parent().games[game]["assets"][dir] = \
                                                 orjson.loads(f.read())
                                     else:
-                                        logger.error(
+                                        logger.warning(
                                             "No config file for "+game+" - "+dir)
 
                             # Load translated names

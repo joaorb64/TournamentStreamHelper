@@ -1238,6 +1238,11 @@ class TSHScoreboardWidget(QWidget):
                                          self.team2playerWidgets]
                         if self.teamsSwapped:
                             teamInstances.reverse()
+
+                        if t >= len(teamInstances):
+                            logger.warning(f"Entrant team index {t} out of range (max {len(teamInstances)})")
+                            break
+
                         teamInstance = teamInstances[t]
 
                         if len(team) > 1:
@@ -1252,6 +1257,9 @@ class TSHScoreboardWidget(QWidget):
                                 QLineEdit, "teamName").editingFinished.emit()
 
                         for p, player in enumerate(team):
+                            if p >= len(teamInstance):
+                                logger.warning(f"Player index {p} out of range for team {t+1} (max {len(teamInstance)})")
+                                break
                             if data.get("overwrite"):
                                 teamInstance[p].SetData(player, False, True, data.get(
                                     "no_mains") if data.get("no_mains") != None else False)
@@ -1279,7 +1287,16 @@ class TSHScoreboardWidget(QWidget):
 
                     teamInstances = [self.team1playerWidgets,
                                      self.team2playerWidgets]
+
+                    if team >= len(teamInstances):
+                        logger.warning(f"Team index {team+1} out of range (max {len(teamInstances)})")
+                        return
+
                     teamInstance = teamInstances[team]
+
+                    if player >= len(teamInstance):
+                        logger.warning(f"Player index {player+1} out of range for team {team+1} (max {len(teamInstance)})")
+                        return
 
                     teamInstance[player].SetData(
                         data.get("data"), False, False)
@@ -1333,6 +1350,14 @@ class TSHScoreboardWidget(QWidget):
 
         if self.teamsSwapped:
             teamInstances.reverse()
+
+        if team >= len(teamInstances):
+            logger.warning(f"Team index {team+1} out of range in LoadPlayerFromTag")
+            return False
+
+        if player >= len(teamInstances[team]):
+            logger.warning(f"Player index {player+1} out of range in LoadPlayerFromTag")
+            return False
 
         playerData = TSHPlayerDB.GetPlayerFromTag(tag)
         if playerData:
