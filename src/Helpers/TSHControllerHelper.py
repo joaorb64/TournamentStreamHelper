@@ -14,7 +14,7 @@ import json
 from loguru import logger
 import glob
 
-from .TSHDownloadHelper import DownloadDialog, download_file
+from .TSHDownloadHelper import download_file
 from ..SettingsManager import SettingsManager
 from pathlib import Path
 
@@ -33,7 +33,6 @@ class TSHControllerHelper(QObject):
         self.controller_list = {}
         self.controllerModel = QStandardItemModel()
 
-    def init(self):
         if SettingsManager.Get("general.disable_controller_file_downloading", False):
             logger.debug("Skipping controller file download (SETTING ENABLED)")
         else:
@@ -71,13 +70,13 @@ class TSHControllerHelper(QObject):
                         logger.opt(exception=True).error("Failed to extract Controller files")
                 return False
 
-            DownloadDialog(
+            download_file(
                 url,
                 filename=None,
                 desc="Controller files",
                 validator=extract_file,
                 assume_size=(1024*1024*95) # ~95MB
-            ).exec()
+            )
 
         except Exception as e:
             logger.opt(exception=True).error(
