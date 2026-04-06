@@ -646,22 +646,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHBattleTeam.ui" line="87"/>
         <source>SPONSORS?</source>
-        <translation type="unfinished"></translation>
+        <translation>SPONSORS ?</translation>
     </message>
     <message>
         <location filename="../layout/TSHTeamPlayer.ui" line="247"/>
         <source>ACTIVE</source>
-        <translation type="unfinished"></translation>
+        <translation>ACTIF</translation>
     </message>
     <message>
         <location filename="../layout/TSHTeamPlayer.ui" line="260"/>
         <source>DEAD?</source>
-        <translation type="unfinished"></translation>
+        <translation>ÉLIMINÉ ?</translation>
     </message>
     <message>
         <location filename="../layout/TSHTeamPlayer.ui" line="285"/>
         <source>STOCKS/LIVES</source>
-        <translation type="unfinished"></translation>
+        <translation>VIES</translation>
     </message>
 </context>
 <context>
@@ -1254,7 +1254,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="434"/>
         <source>Extracting... ({0}/{1})</source>
-        <translation type="unfinished"></translation>
+        <translation>Extraction en cours... ({0}/{1})</translation>
     </message>
     <message>
         <source>Downloading {0}...</source>
@@ -1414,13 +1414,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHScoreboardWidget.py" line="229"/>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
         <source>Seed</source>
-        <translation type="unfinished"></translation>
+        <translation>TDS</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="230"/>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
         <source>Birthday</source>
-        <translation type="unfinished"></translation>
+        <translation>Anniversaire</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
@@ -1617,28 +1617,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="65"/>
         <source>Crew/Team Battle</source>
-        <translation type="unfinished"></translation>
+        <translation>Combat en équipe</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="82"/>
         <source>Number of Players</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de joueurs</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="92"/>
         <source>Characters per Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de personnages par joueur</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="103"/>
         <location filename="../TSHTeamBattleWidget.py" line="245"/>
         <source>Lives/Stocks per Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de vies par joueur</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="113"/>
         <source>Battle Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de combat</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="129"/>
@@ -1655,17 +1655,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="187"/>
         <source>Reset Player Mode Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser les valeurs joueur</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="189"/>
         <source>Reset Battle Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser le mode de combat</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="251"/>
         <source>First To Amount</source>
-        <translation type="unfinished"></translation>
+        <translation>Score à atteindre</translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="15"/>
@@ -1836,22 +1836,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTeamPlayerWidget.py" line="176"/>
         <source>STOCKS/LIVES</source>
-        <translation type="unfinished"></translation>
+        <translation>VIES</translation>
     </message>
     <message>
         <location filename="../TSHTeamPlayerWidget.py" line="178"/>
         <source>GAMES WON</source>
-        <translation type="unfinished"></translation>
+        <translation>JEUX GAGNÉS</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
         <source>Stock Pool (Smash)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vies restantes (Smash)</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
         <source>First To (First To X Team Individuals)</source>
-        <translation type="unfinished"></translation>
+        <translation>Score à atteindre (Joueurs individuels)</translation>
     </message>
 </context>
 <context>
@@ -2239,7 +2239,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="66"/>
         <source>Disables the Thumbnail Widget from starting (takes effect on next restart)</source>
-        <translation type="unfinished"></translation>
+        <translation>Empêcher le widget &quot;Paramètres de la miniature&quot; de démarrer (Prend effet après le redémarrage de l&apos;application)</translation>
     </message>
 </context>
 <context>
@@ -2303,12 +2303,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="175"/>
         <source>Refresh bracket phase groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualiser les groupes dans le widget &quot;Arbre&quot;</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="176"/>
         <source>Toggle bracket limit export</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer la limite d&apos;export de l&apos;arbre de tournoi</translation>
     </message>
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="161"/>
@@ -2329,7 +2329,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="219"/>
         <source>Show Birthday</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Anniversaire&quot;</translation>
     </message>
 </context>
 <context>
@@ -2377,7 +2377,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="211"/>
         <source>Show Seed</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer le champ &quot;Tête de série&quot;</translation>
     </message>
 </context>
 <context>
