@@ -56,6 +56,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.general", "Enable StateManager Logging"),
+            "statemanager_logging",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.control_score_from_stage_strike", "Enable score control from the stage striking app"),
             "control_score_from_stage_strike",
             "checkbox",

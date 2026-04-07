@@ -49,15 +49,18 @@ class TSHHotkeys(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self.LoadUserHotkeys()
+        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
+            self.LoadUserHotkeys()
 
     def UiMounted(self, parent):
         self.parent = parent
-        self.SetupHotkeys()
+        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
+            self.SetupHotkeys()
 
     def ReloadHotkeys(self):
-        self.LoadUserHotkeys()
-        self.SetupHotkeys()
+        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
+            self.LoadUserHotkeys()
+            self.SetupHotkeys()
     
     def SetupHotkeys(self):
         if self.pynputListener:
@@ -80,7 +83,7 @@ class TSHHotkeys(QObject):
         self.pynputListener.start()
     
     def HotkeyTriggered(self, k, v):
-        if not SettingsManager.Get("hotkeys.hotkeys_enabled", True) == False:
+        if not SettingsManager.Get("hotkeys.hotkeys_enabled", True):
             logger.info(f"Activated {k} by pressing {v}")
             getattr(self.signals, k).emit()
     
