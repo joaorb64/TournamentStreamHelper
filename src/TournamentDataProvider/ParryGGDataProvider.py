@@ -237,8 +237,16 @@ class ParryGGDataProvider(TournamentDataProvider):
         return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
-        logger.error("GetMatch() called, returned {}")
-        return {}
+        # This is a really bad way of getting a match, but the GetMatch request
+        # doesn't include important data or provide a simple way to get it.
+        
+        matches = self.GetMatches()
+
+        for match in matches:
+            if setId == match["id"]:
+                return match
+
+        return None
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         self._setup_service("Match")
