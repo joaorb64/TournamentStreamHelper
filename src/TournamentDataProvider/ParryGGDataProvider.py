@@ -291,7 +291,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                         if len(entrant.users) > 0:
                             user = entrant.users[0]
                             match_info["entrants"][i].append({
-                                "prefix": entrant.id,
+                                "prefix": entrant.sponsor_name,
                                 "gamerTag": user.gamer_tag,
                                 "name": (user.first_name + " " + user.last_name).strip(),
                                 "id": [None, 0]
