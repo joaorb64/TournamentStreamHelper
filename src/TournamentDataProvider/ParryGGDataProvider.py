@@ -149,7 +149,7 @@ class ParryGGDataProvider(TournamentDataProvider):
         for image in get_tournament_response.tournament.images:
             # Look for banner image, can be replaced in future if icons are added.
             if image.type == ImageType.IMAGE_TYPE_BANNER:
-                return image.url
+                return image.url + "?aspect_ratio=1:1"
         
         # Fallback to the ParryGG favicon if no suitable image is found.
         logger.warning("No banner image found.")
