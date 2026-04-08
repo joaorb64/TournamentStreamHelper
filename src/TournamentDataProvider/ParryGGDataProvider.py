@@ -58,11 +58,11 @@ class ParryGGDataProvider(TournamentDataProvider):
 
     _timeout = 10
     metadata = None
-    _initialized = False
 
     def __init__(self, url, threadpool, tshTdp, api_key=None) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "ParryGG"
+        self._initialized = False
 
         if api_key:
             self.metadata = [("x-api-key", api_key)]
@@ -245,21 +245,25 @@ class ParryGGDataProvider(TournamentDataProvider):
     
     def GetStations(self, progress_callback=None, cancel_event=None):
         # TODO Get actual station/stream data, returning an empty list avoids a crash for now.
-        # Stations are not a short-term priority for parry.gg, but streams are actively being worked on.   
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.   
         return []
     
     def GetStreamQueue(self, streamName=None, progress_callback=None, cancel_event=None):
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
         pass
     
     def GetStreamMatchId(self, streamName):
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
         pass
     
     def GetStationMatchId(self, stationId):
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
         sets = self.GetStationMatchsId(self, stationId)
 
         return sets[0] if len(sets) > 0 else None
     
     def GetStationMatchsId(self, stationId):
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
         pass
     
     def GetUserMatchId(self, user):
