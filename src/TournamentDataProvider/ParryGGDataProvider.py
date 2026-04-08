@@ -240,13 +240,14 @@ class ParryGGDataProvider(TournamentDataProvider):
         # This is a really bad way of getting a match, but the GetMatch request
         # doesn't include important data or provide a simple way to get it.
         
-        matches = self.GetMatches()
+        matches = self.GetMatches(True)
 
         for match in matches:
             if setId == match["id"]:
                 return match
-
-        return None
+        
+        logger.error(f"Match {setId} not found")
+        return {}
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         self._setup_service("Match")
@@ -269,8 +270,8 @@ class ParryGGDataProvider(TournamentDataProvider):
                 match_info = {}
 
                 match_info["id"] = match.id
-                match_info["team1score"] = match.slots[0].score
-                match_info["team2score"] = match.slots[1].score
+                match_info["team1score"] = int(match.slots[0].score)
+                match_info["team2score"] = int(match.slots[1].score)
                 match_info["round_name"] = ""
                 match_info["tournament_phase"] = ""
                 match_info["bracket_type"] = ""
@@ -291,7 +292,7 @@ class ParryGGDataProvider(TournamentDataProvider):
                         if len(entrant.users) > 0:
                             user = entrant.users[0]
                             match_info["entrants"][i].append({
-                                "prefix": entrant.sponsor_name,
+                                "prefix": user.sponsor_name,
                                 "gamerTag": user.gamer_tag,
                                 "name": (user.first_name + " " + user.last_name).strip(),
                                 "id": [None, 0]
@@ -310,7 +311,7 @@ class ParryGGDataProvider(TournamentDataProvider):
         # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.   
         return []
     
-    def GetStreamQueue(self, streamName=None, progress_callback=None, cancel_event=None):
+    def GetStreamQueue(self, progress_callback=None, cancel_event=None):
         logger.error("GetStreamQueue() called, returned {}")
         # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.
         return {}
@@ -336,19 +337,19 @@ class ParryGGDataProvider(TournamentDataProvider):
         logger.error("GetUserMatchId() called, returned ''")
         return ""
     
-    def GetRecentSets(self, id1, id2, videogame, callback):
+    def GetRecentSets(self, id1, id2, videogame, callback, requestTime, progress_callback=None, cancel_event=None):
         logger.error("GetRecentSets() called, returned []")
         return []
     
-    def GetLastSets(self, playerId, playerNumber):
+    def GetLastSets(self, playerID, playerNumber, callback, progress_callback=None, cancel_event=None):
         logger.error("GetLastSets() called, returned []")
         return []
     
-    def GetCompletedSets(self):
+    def GetCompletedSets(self, progress_callback=None, cancel_event=None):
         logger.error("GetCompletedSets() called, returned []")
         return []
     
-    def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
+    def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback=None, cancel_event=None):
         logger.error("GetPlayerHistoryStandings() called, returned []")
         return []
     
@@ -393,11 +394,11 @@ class ParryGGDataProvider(TournamentDataProvider):
         logger.error("GetStandings() called, returned []")
         return []
     
-    def GetFutureMatch(self, progrss_callback=None):
+    def GetFutureMatch(self, matchId, progress_callback, cancel_event):
         logger.error("GetFutureMatch() called, returned {}")
         return {}
     
-    def GetFutureMatchesList(self, sets: object, progress_callback=None, cancel_event=None):
+    def GetFutureMatchesList(self, setsId, progress_callback, cancel_event):
         logger.error("GetFutureMatchesList() called, returned []")
         return []
     
