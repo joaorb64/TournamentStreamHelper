@@ -237,7 +237,8 @@ class ParryGGDataProvider(TournamentDataProvider):
         return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
-        pass
+        logger.error("GetMatch() called, returned {}")
+        return {}
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         self._setup_service("Match")
@@ -296,42 +297,52 @@ class ParryGGDataProvider(TournamentDataProvider):
         return final_data
     
     def GetStations(self, progress_callback=None, cancel_event=None):
+        logger.error("GetStations() called, returned []")
         # TODO Get actual station/stream data, returning an empty list avoids a crash for now.
         # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.   
         return []
     
     def GetStreamQueue(self, streamName=None, progress_callback=None, cancel_event=None):
-        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
-        pass
+        logger.error("GetStreamQueue() called, returned {}")
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.
+        return {}
     
     def GetStreamMatchId(self, streamName):
-        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
-        pass
+        logger.error("GetStreamMatchId() called, returned ''")
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.
+        return ""
     
     def GetStationMatchId(self, stationId):
-        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
-        sets = self.GetStationMatchsId(self, stationId)
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.
+        logger.error("GetStationMatchId() called")
+        sets = self.GetStationMatchsId(stationId)
 
         return sets[0] if len(sets) > 0 else None
     
     def GetStationMatchsId(self, stationId):
-        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.  
-        pass
+        # NOTE Stations are not a short-term priority for parry.gg, but streams are actively being worked on.
+        logger.error("GetStationMatchsId() called, returned []")
+        return []
     
     def GetUserMatchId(self, user):
-        pass
+        logger.error("GetUserMatchId() called, returned ''")
+        return ""
     
     def GetRecentSets(self, id1, id2, videogame, callback):
-        pass
+        logger.error("GetRecentSets() called, returned []")
+        return []
     
     def GetLastSets(self, playerId, playerNumber):
-        pass
+        logger.error("GetLastSets() called, returned []")
+        return []
     
     def GetCompletedSets(self):
-        pass
+        logger.error("GetCompletedSets() called, returned []")
+        return []
     
     def GetPlayerHistoryStandings(self, playerId, playerNumber, gameType):
-        pass
+        logger.error("GetPlayerHistoryStandings() called, returned []")
+        return []
     
     def GetTournamentPhases(self, progress_callback=None, cancel_event=None):
         self._setup_service("Event")
@@ -367,16 +378,20 @@ class ParryGGDataProvider(TournamentDataProvider):
         return phases
     
     def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
-        pass
+        logger.error("GetTournamentPhaseGroup() called, returned {}")
+        return {}
     
     def GetStandings(self, playerNumber):
-        pass
+        logger.error("GetStandings() called, returned []")
+        return []
     
     def GetFutureMatch(self, progrss_callback=None):
-        pass
+        logger.error("GetFutureMatch() called, returned {}")
+        return {}
     
     def GetFutureMatchesList(self, sets: object, progress_callback=None, cancel_event=None):
-        pass
+        logger.error("GetFutureMatchesList() called, returned []")
+        return []
     
     def cleanup(self):
         """Properly cleanup gRPC channel and resources"""
