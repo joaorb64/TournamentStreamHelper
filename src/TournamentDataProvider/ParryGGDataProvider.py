@@ -23,7 +23,7 @@ from parrygg.services.user_service_pb2 import *
 from parrygg.services.game_service_pb2 import *
 
 from parrygg.models.slug_pb2 import SlugType
-from parrygg.models.bracket_pb2 import BracketType
+from parrygg.models.bracket_pb2 import BracketType, MatchState
 from parrygg.models.image_pb2 import ImageType
 
 # Other Imports used by StartGGDataProvider
@@ -240,8 +240,60 @@ class ParryGGDataProvider(TournamentDataProvider):
         pass
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
-        # TODO Get actual match data, returning an empty list avoids a crash for now.
-        return []
+        self._setup_service("Match")
+        final_data = []
+
+        try:
+            get_matches_request = GetMatchesRequest()
+            get_matches_request.filter.event.id = self.event_id
+            get_matches_response = self.match_service.GetMatches(get_matches_request, metadata=self.metadata, timeout=self._timeout)
+
+            for match_context in get_matches_response.matches:
+                match = match_context.match
+                seeds = match_context.seeds
+
+                if not getFinished and match.state == MatchState.MATCH_STATE_COMPLETED:
+                    continue
+                elif len(seeds) == 0:
+                    continue
+
+                match_info = {}
+
+                match_info["id"] = match.id
+                match_info["team1score"] = match.slots[0].score
+                match_info["team2score"] = match.slots[1].score
+                match_info["round_name"] = ""
+                match_info["tournament_phase"] = ""
+                match_info["bracket_type"] = ""
+                match_info["p1_name"] = seeds[0].event_entrant.entrant.users[0].gamer_tag if len(seeds) > 0 and seeds[0].HasField("event_entrant") and seeds[0].event_entrant.HasField("entrant") and len(seeds[0].event_entrant.entrant.users) > 0 else ""
+                match_info["p2_name"] = seeds[1].event_entrant.entrant.users[0].gamer_tag if len(seeds) > 1 and seeds[1].HasField("event_entrant") and seeds[1].event_entrant.HasField("entrant") and len(seeds[1].event_entrant.entrant.users) > 0 else ""
+                match_info["p1_seed"] = seeds[0].seed if len(seeds) > 0 else ""
+                match_info["p2_seed"] = seeds[1].seed if len(seeds) > 1 else ""
+                match_info["stream"] = ""
+                match_info["station"] = ""
+                match_info["isOnline"] = ""
+                match_info["isPools"] = ""
+                match_info["round"] = match.round
+                match_info["entrants"] = [[] for _ in range(len(seeds))] if len(seeds) > 0 else [[]]
+
+                for i, seed in enumerate(seeds):
+                    if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
+                        entrant = seed.event_entrant.entrant
+                        if len(entrant.users) > 0:
+                            user = entrant.users[0]
+                            match_info["entrants"][i].append({
+                                "prefix": entrant.id,
+                                "gamerTag": user.gamer_tag,
+                                "name": (user.first_name + " " + user.last_name).strip(),
+                                "id": [None, 0]
+                            })
+                
+                final_data.append(match_info)
+                
+        except Exception as e:
+            logger.error(f"Error processing matches: {e}")
+        
+        return final_data
     
     def GetStations(self, progress_callback=None, cancel_event=None):
         # TODO Get actual station/stream data, returning an empty list avoids a crash for now.
