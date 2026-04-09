@@ -480,7 +480,7 @@ class TSHAssetDownloader(QObject):
 
             logger.info("Extract OK")
 
-        progress_callback.emit(100)
+        progress_callback(totalSize, totalSize)
 
         logger.info("All OK")
 
