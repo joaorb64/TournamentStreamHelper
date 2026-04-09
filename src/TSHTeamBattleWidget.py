@@ -145,36 +145,10 @@ class TSHTeamBattleWidget(QDockWidget):
         matchRow.layout().addWidget(matchCombo)
 
         phaseCombo.addItem("")
-
-        for phaseString in TSHLocaleHelper.phaseNames.values():
-            if "{0}" in phaseString:
-                for letter in ["A", "B", "C", "D"]:
-                    if phaseCombo.findText(phaseString.format(letter)) < 0:
-                        phaseCombo.addItem(phaseString.format(letter))
-            else:
-                if phaseCombo.findText(phaseString) < 0:
-                    phaseCombo.addItem(phaseString)
+        TSHLocaleHelper.LoadPhaseNamesToWidget(phaseCombo)
 
         matchCombo.addItem("")
-
-        for key in TSHLocaleHelper.matchNames.keys():
-            matchString = TSHLocaleHelper.matchNames[key]
-
-            try:
-                if "{0}" in matchString and ("qualifier" not in key):
-                    for number in range(5):
-                        if key == "best_of":
-                            if matchCombo.findText(matchString.format(str(2*number+1))) < 0:
-                                matchCombo.addItem(matchString.format(str(2*number+1)))
-                        else:
-                            if matchCombo.findText(matchString.format(str(number+1))) < 0:
-                                matchCombo.addItem(matchString.format(str(number+1)))
-                else:
-                    if matchCombo.findText(matchString) < 0:
-                        matchCombo.addItem(matchString)
-            except:
-                logger.error(
-                    f"Unable to generate match strings for {matchString}")
+        TSHLocaleHelper.LoadMatchNamesToWidget(matchCombo)
 
         infoColumn.layout().addWidget(phaseRow)
         infoColumn.layout().addWidget(matchRow)
@@ -215,6 +189,9 @@ class TSHTeamBattleWidget(QDockWidget):
         self.widgetArea.layout().addWidget(self.team2column)
 
         self.widget.layout().addWidget(scrollArea)
+        
+        # self.team1column.findChild(QSpinBox, "team1Score").valueChanged.connect(self.ExportScoreForTeam1)
+        # self.team2column.findChild(QSpinBox, "team2Score").valueChanged.connect(self.ExportScoreForTeam2)
 
         self.team1column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam1)
         self.team2column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam2)
@@ -300,10 +277,10 @@ class TSHTeamBattleWidget(QDockWidget):
 
             index = len(self.team1playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team1playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team1playerWidgets[index+1 if index < len(self.team1playerWidgets) - 1 else index]))
+            p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team1playerWidgets[max(0, self.team1playerWidgets.index(p) - 1)]))
+            p.btMoveDown.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team1playerWidgets[min(len(self.team1playerWidgets) - 1, self.team1playerWidgets.index(p) + 1)]))
 
             self.team1playerWidgets.append(p)
 
@@ -323,10 +300,10 @@ class TSHTeamBattleWidget(QDockWidget):
 
             index = len(self.team2playerWidgets)
 
-            p.btMoveUp.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team2playerWidgets[index-1 if index > 0 else 0]))
-            p.btMoveDown.clicked.connect(lambda index=index, p=p: p.SwapWith(
-                self.team2playerWidgets[index+1 if index < len(self.team2playerWidgets) - 1 else index]))
+            p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team2playerWidgets[max(0, self.team2playerWidgets.index(p) - 1)]))
+            p.btMoveDown.clicked.connect(lambda index, p=p: p.SwapWith(
+                self.team2playerWidgets[min(len(self.team2playerWidgets) - 1, self.team2playerWidgets.index(p) + 1)]))
 
             self.team2playerWidgets.append(p)
 

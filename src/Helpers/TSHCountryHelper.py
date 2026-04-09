@@ -97,7 +97,7 @@ class TSHCountryHelper(QObject):
         try:
             data["emoji"] = countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
         except InvalidCountryError:
-            logger.warning(f'The following country could not be found in the countryflag library: {TSHCountryHelper.countries[country_code]["code"]}')
+            # logger.warning(f'The following country could not be found in the countryflag library: {TSHCountryHelper.countries[country_code]["code"]}')
             data["emoji"] = None
         
         return data
@@ -236,7 +236,7 @@ class TSHCountryHelper(QObject):
         # Normalize parts of city string
         split = city.replace(" - ", ",").split(",")
 
-        logger.debug(f"Finding State from city string [{city}]")
+        # logger.debug(f"Finding State from city string [{city}]")
 
         for part in split[::-1]:
             part = part.strip()
@@ -253,8 +253,8 @@ class TSHCountryHelper(QObject):
                     None
                 )
             if state is not None:
-                logger.debug(
-                    f"State was explicit: [{city}] -> [{part}] = {state}")
+                # logger.debug(
+                #     f"State was explicit: [{city}] -> [{part}] = {state}")
                 return state["original_code"]
 
         # No, so get by City
@@ -265,7 +265,7 @@ class TSHCountryHelper(QObject):
                 TSHCountryHelper.remove_accents_lower(part), None)
 
             if state is not None:
-                logger.debug(f"Got state from city name: [{city}] -> [{part}] = {state}")
+                # logger.debug(f"Got state from city name: [{city}] -> [{part}] = {state}")
                 return state
 
         return None
