@@ -166,8 +166,11 @@ class TSHAssetDownloader(QObject):
 
             index = self.select.currentData()
 
-            if index == None:
+            if index is None:
                 index = self.select.currentIndex()
+
+            if index < 0 or index >= len(assets):
+                return
 
             model.clear()
             header_labels = [
@@ -197,9 +200,12 @@ class TSHAssetDownloader(QObject):
             header_labels[10] = QApplication.translate("app", "Credits")
 
             model.setHorizontalHeaderLabels(header_labels)
-            if downloadList and not downloadList.isColumnHidden(0):
-                downloadList.hideColumn(0)
-            downloadList.hideColumn(1)
+            try:
+                if downloadList and not downloadList.isColumnHidden(0):
+                    downloadList.hideColumn(0)
+                downloadList.hideColumn(1)
+            except RuntimeError:
+                pass
             downloadList.horizontalHeader().setStretchLastSection(True)
             downloadList.setWordWrap(True)
             downloadList.resizeColumnsToContents()
@@ -313,7 +319,11 @@ class TSHAssetDownloader(QObject):
             game = downloadList.model().index(row, 0).data()
             key = downloadList.model().index(row, 1).data()
 
-            filesToDownload = assets[game]["assets"][key]["files"]
+            try:
+                filesToDownload = assets[game]["assets"][key]["files"]
+            except KeyError:
+                logger.error(f"Asset data not found for game={game!r} key={key!r}")
+                return
 
             for f in filesToDownload:
                 filesToDownload[f]["path"] = "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
@@ -337,6 +347,7 @@ class TSHAssetDownloader(QObject):
                             [[list(filesToDownload.values())]])
             worker.signals.progress.connect(self.DownloadAssetsProgress)
             worker.signals.finished.connect(self.DownloadAssetsFinished)
+            worker.signals.error.connect(self.DownloadAssetsFailed)
             self.threadpool.start(worker)
 
         btOk.clicked.connect(lambda: DownloadStart())
@@ -461,7 +472,7 @@ class TSHAssetDownloader(QObject):
                 for f in fileList:
                     os.remove("./user_data/games/"+f["name"])
             else:
-                for f in files:
+                for f in fileList:
                     if os.path.isfile(f["extractpath"]+"/"+f["name"]):
                         os.remove(f["extractpath"]+"/"+f["name"])
                     shutil.move("./user_data/games/" +
@@ -489,6 +500,19 @@ class TSHAssetDownloader(QObject):
             self.downloadDialogue.setValue(t)
 
     @assert_gui_thread
+    def DownloadAssetsFailed(self, error):
+        _, value, tb = error
+        logger.error(f"Asset download failed: {tb}")
+        self.downloadDialogue.close()
+        if hasattr(self, 'preDownloadDialogue'):
+            self.preDownloadDialogue.setEnabled(True)
+            self.preDownloadDialogue.setFocus()
+        messagebox = QMessageBox()
+        messagebox.setText(
+            QApplication.translate("app", "Download failed:") + "\n" + str(value))
+        messagebox.exec()
+
+    @assert_gui_thread
     def DownloadAssetsFinished(self):
         TSHGameAssetManager.instance.LoadGames()
         TSHAssetDownloader.instance.CheckAssetUpdates()
@@ -505,6 +529,9 @@ class TSHAssetDownloader(QObject):
 
             for game, _assets in assets.items():
                 for asset in _assets:
+                    if "files" not in asset:
+                        logger.warning(f"Asset entry for game={game!r} missing 'files' key, skipping")
+                        continue
                     filesToDownload = list(asset["files"].values())
                     for fileToDownload in filesToDownload:
                         fileToDownload["path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
@@ -525,9 +552,10 @@ class TSHAssetDownloader(QObject):
             worker = Worker(
                 TSHAssetDownloader.instance.DownloadAssetsWorker, *[allFilesToDownload])
             worker.signals.progress.connect(TSHAssetDownloader.instance.DownloadAssetsProgress)
-
             worker.signals.finished.connect(
                 TSHAssetDownloader.instance.DownloadAssetsFinished)
+            worker.signals.error.connect(
+                TSHAssetDownloader.instance.DownloadAssetsFailed)
             TSHAssetDownloader.instance.threadpool.start(worker)
 
         TSHAssetDownloader.instance.signals.AssetUpdates.connect(f)

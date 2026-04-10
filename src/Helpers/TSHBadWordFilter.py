@@ -53,54 +53,44 @@ class TSHBadWordFilter():
     whiteList = []
     blackList = []
 
+    # Pre-compiled at class level — compiled once, reused forever
+    _LEET_PATTERN = re.compile(r'[ailuvoest]')
+    _LEET_MAP = {
+        'a': r'(a|4|@)',
+        'i': r'(i|1|l|!)',
+        'l': r'(l|1|i|!)',
+        'u': r'(u|v)',
+        'v': r'(v|u)',
+        'o': r'(o|0|@)',
+        'e': r'(e|3)',
+        's': r'(s|\$|5)',
+        't': r'(t|7)',
+    }
+
+    def _apply_leet(word: str) -> str:
+        return TSHBadWordFilter._LEET_PATTERN.sub(lambda m: TSHBadWordFilter._LEET_MAP[m.group()], word)
+
     def LoadBadWordList():
-        langs = defaultdict(set)
+        import threading
 
-        try:
-            for f in os.listdir("./assets/ngword/"):
-                if not f.endswith(".txt"):
-                    continue
+        def _worker():
+            langs = defaultdict(set)
+            try:
+                for f in os.listdir("./assets/ngword/"):
+                    if not f.endswith(".txt"):
+                        continue
+                    words = open(f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
+                    langs[f.split(".")[0]] = {TSHBadWordFilter._apply_leet(w) for w in words}
+            except:
+                logger.error(traceback.format_exc())
 
-                words = open(
-                    f"./assets/ngword/{f}", 'r', encoding="utf-16").read().splitlines()
+            for langkey, lang in langs.items():
+                for word in lang:
+                    TSHBadWordFilter.badWordTries[langkey].insert(word)
+                TSHBadWordFilter.patterns[langkey] = \
+                    TSHBadWordFilter.badWordTries[langkey].build_regex_pattern()
 
-                newWords = set(words)
-                langs[f.split(".")[0]] = newWords
-        except:
-            logger.error(traceback.format_exc())
-
-        # Commenting this block until we have a better performing alternative
-        # This is too time consuming in cases like loading a huge bracket
-
-        # for langkey, lang in langs.items():
-        #     for index, word in enumerate(lang):
-        #         word = re.sub("a", "(a|4|\@)", word)
-
-        #         # from i we generate L so that we know which ones we added ourselves
-        #         word = re.sub("i", "(i|1|L|!)", word)
-        #         word = re.sub("l", "(l|1|i|!)", word)
-        #         # Then turn L into l
-        #         # Otherwise, we'd have (i|(i|l)) all over the place
-        #         word = re.sub("L", "l", word)
-
-        #         # Same logic
-        #         word = re.sub("u", "(u|V)", word)
-        #         word = re.sub("v", "(v|u)", word)
-        #         word = re.sub("V", "v", word)
-
-        #         word = re.sub("o", "(o|0|\@)", word)
-        #         word = re.sub("e", "(e|3)", word)
-        #         word = re.sub("s", "(s|\$|5)", word)
-        #         word = re.sub("t", "(t|7)", word)
-
-        #         langs[langkey][index] = word
-
-        for langkey, lang in langs.items():
-            for word in lang:
-                TSHBadWordFilter.badWordTries[langkey].insert(word)
-
-            TSHBadWordFilter.patterns[langkey] =\
-                TSHBadWordFilter.badWordTries[langkey].build_regex_pattern()
+        threading.Thread(target=_worker, daemon=True).start()
 
     def CensorString(value: str, playerCountry: str = None):
         langTests = set(["common"])
@@ -218,7 +208,7 @@ class TSHBadWordFilter():
                 newString += value[stringStart:]
 
         if value != newString:
-            logger.info(value, "->", newString)
+            logger.info(f"{value} -> {newString}")
 
         return newString
 
