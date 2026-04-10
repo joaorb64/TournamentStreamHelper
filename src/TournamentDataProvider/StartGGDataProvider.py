@@ -55,10 +55,10 @@ class StartGGDataProvider(TournamentDataProvider):
             headers.update({
                 "client-version": "20",
                 "Content-Type": "application/json",
-                "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
             })
             retries = 0
-            while requestCode != 200 and retries < 5:
+            while requestCode != 200 and retries < 10:
                 data = type(
                     url,
                     timeout=self._request_timeout_secs,
@@ -71,7 +71,7 @@ class StartGGDataProvider(TournamentDataProvider):
             data = orjson.loads(data.text)
             return data
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error(f"{type(e).__name__}: {e}")
             return {}
 
     def GetTournamentData(self, progress_callback=None, cancel_event=None):
@@ -489,7 +489,6 @@ class StartGGDataProvider(TournamentDataProvider):
         except Exception as e:
             logger.error(traceback.format_exc())
             return (final_data)
-        return ([])
 
     def GetStations(self, progress_callback=None, cancel_event=None):
         try:
@@ -1722,7 +1721,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
                 page += 1
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error(f"{type(e).__name__}: {e}")
 
     def ProcessEntrantData(entrant, setData=[]):
         player = entrant.get("player")

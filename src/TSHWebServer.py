@@ -84,7 +84,8 @@ class WebServer(QThread):
 
     @socketio.on('program-state-update')
     def ws_program_state_update(message):
-        WebServer.ws_emit('program_state_update', {})
+        # Manual trigger to push full state to all clients
+        WebServer.ws_program_state()
 
     def on_program_state_update(changes):
         if len(changes) > 0:
@@ -661,7 +662,8 @@ class WebServer(QThread):
 
     @socketio.on('set_tournament')
     def ws_set_tournament(message):
-        WebServer.ws_emit('set_tournament', WebServer.actions.load_tournament(request.args.get('url')))
+        info = orjson.loads(message) if isinstance(message, (str, bytes)) else message
+        WebServer.ws_emit('set_tournament', WebServer.actions.load_tournament(info.get('url')))
 
     @app.route('/states')
     def get_states():
@@ -697,12 +699,15 @@ class WebServer(QThread):
             if filename.lower().endswith('.png'):
                 mimetype = "image/apng"
 
+            ext = filename.rsplit('.', 1)[-1].lower()
+            cache_duration = 0 if ext in ('html', 'js', 'css', 'json') else 86400
+
             return send_from_directory(
                 os.path.abspath('.'),
                 filename,
                 as_attachment=filename.endswith('.gz'),
                 mimetype=mimetype,
-                max_age=86400
+                max_age=cache_duration
             )
 
         except Exception as e:
