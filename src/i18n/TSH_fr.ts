@@ -1259,7 +1259,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHAssetDownloader.py" line="512"/>
         <source>Download failed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement échoué :</translation>
     </message>
     <message>
         <source>Downloading {0}...</source>
@@ -2262,7 +2262,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="58"/>
         <source>Enable StateManager Logging</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le logging du gestionnaire d&apos;états</translation>
     </message>
 </context>
 <context>
