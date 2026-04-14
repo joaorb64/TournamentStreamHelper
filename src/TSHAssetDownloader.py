@@ -418,7 +418,7 @@ class TSHAssetDownloader(QObject):
                     gui_thread_sync(self.DownloadAssetsSetLabelText)(
                         QApplication.translate(
                             "app",
-                            "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(fileList))
+                            "Downloading {0}... ({1}/{2})").format(f['name'], i+1, len(files))
                     )
 
                     response = requests.get(f["path"], stream=True)
@@ -445,7 +445,7 @@ class TSHAssetDownloader(QObject):
                     QApplication.translate(
                         "app",
                         "Extracting... ({0}/{1})"
-                    ).format(i+1, len(fileList))
+                    ).format(i+1, len(files))
                 )
                 self.downloadDialogue.setRange(0, 0)
             update_gui()
