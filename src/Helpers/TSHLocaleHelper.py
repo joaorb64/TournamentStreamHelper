@@ -159,6 +159,57 @@ class TSHLocaleHelper(QObject):
                 logger.info("Loaded remap: " + str(remap))
                 return remap
         return None
+    
+    def LoadPhaseNamesToWidget(widget):
+        for key in dict(sorted(TSHLocaleHelper.phaseNames.items(), key=lambda item: item[1])).keys():
+            phaseString = TSHLocaleHelper.phaseNames[key]
+
+            if "{0}" in phaseString:
+                if "top" not in key:
+                    for letter in ["A", "B", "C", "D"]:
+                        if widget.findText(phaseString.format(letter)) < 0:
+                            widget.addItem(phaseString.format(letter))
+            else:
+                if widget.findText(phaseString) < 0:
+                    widget.addItem(phaseString)
+    
+    def LoadMatchNamesToWidget(widget):
+        for key in dict(sorted(TSHLocaleHelper.matchNames.items(), key=lambda item: item[1])).keys():
+            matchString = TSHLocaleHelper.matchNames[key]
+            try:
+                if "{0}" in matchString and ("qualifier" in key):
+                    # Generate preset qualifier names
+                    couples = [
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(8), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(16), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(32), TSHLocaleHelper.matchNames.get("qualifier_winners_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(6), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(8), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(12), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(16), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(24), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator")),
+                        (TSHLocaleHelper.phaseNames.get("top_n").format(32), TSHLocaleHelper.matchNames.get("qualifier_losers_indicator"))
+                    ]
+
+                    for couple in couples:
+                        # logger.info(couple)
+                        widget.addItem(matchString.format(*couple))
+                elif "{0}" in matchString and ("qualifier" not in key):
+                    for number in range(5):
+                        if key == "best_of":
+                            if widget.findText(matchString.format(str(2*number+1))) < 0:
+                                widget.addItem(matchString.format(str(2*number+1)))
+                        else:
+                            if widget.findText(matchString.format(str(number+1))) < 0:
+                                widget.addItem(matchString.format(str(number+1)))
+                elif "indicator" in key:
+                    pass
+                else:
+                    if widget.findText(matchString) < 0:
+                        widget.addItem(matchString)
+            except:
+                logger.error(
+                    f"Unable to generate match strings for {matchString}")
 
 
 TSHLocaleHelper.LoadLanguages()

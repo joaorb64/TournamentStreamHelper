@@ -43,13 +43,13 @@ class StateManager:
 
     def BlockSaving():
         StateManager.saveBlocked += 1
-        logger.debug(
-            "Initial Block - Current Blocking Status: " + str(StateManager.saveBlocked))
+        if SettingsManager.Get("general.statemanager_logging", False):
+            logger.debug("Initial Block - Current Blocking Status: " + str(StateManager.saveBlocked))
 
     def ReleaseSaving():
         StateManager.saveBlocked -= 1
-        logger.debug(
-            "Release Block - Current Blocking Status: " + str(StateManager.saveBlocked))
+        if SettingsManager.Get("general.statemanager_logging", False):
+            logger.debug("Release Block - Current Blocking Status: " + str(StateManager.saveBlocked))
         if StateManager.saveBlocked == 0:
             StateManager.SaveState()
 
@@ -59,12 +59,26 @@ class StateManager:
                 StateManager.threads = []
 
                 def ExportAll(ref_diff):
-                    with open("./out/program_state.json", 'wb', buffering=8192) as file:
-                        # logger.info("SaveState")
-                        StateManager.state.update({"timestamp": time.time()})
-                        file.write(orjson.dumps(
-                            StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2))
-                        StateManager.state.pop("timestamp")
+                    StateManager.state.update({"timestamp": time.time()})
+                    try:
+                        encoded = orjson.dumps(
+                            StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
+
+                        # Write to a temp file then atomically replace, so a concurrent
+                        # reader never sees a truncated file. On Windows the replace can
+                        # fail if the browser has the destination open; fall back to a
+                        # direct write in that case.
+                        tmp_path = "./out/program_state.json.tmp"
+                        with open(tmp_path, 'wb') as file:
+                            file.write(encoded)
+                        try:
+                            os.replace(tmp_path, "./out/program_state.json")
+                        except PermissionError:
+                            os.remove(tmp_path)
+                            with open("./out/program_state.json", 'wb') as file:
+                                file.write(encoded)
+                    finally:
+                        StateManager.state.pop("timestamp", None)
 
                     if not SettingsManager.Get("general.disable_export", False):
                         StateManager.ExportText(

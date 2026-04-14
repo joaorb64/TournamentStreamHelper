@@ -56,10 +56,26 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.general", "Enable StateManager Logging"),
+            "statemanager_logging",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.control_score_from_stage_strike", "Enable score control from the stage striking app"),
             "control_score_from_stage_strike",
             "checkbox",
             True
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
+                "settings.disable_thumbnail_widget", "Disables the Thumbnail Widget from starting (takes effect on next restart)"),
+            "disable_thumbnail_widget",
+            "checkbox",
+            False
         ))
 
         generalSettings.append((
@@ -195,6 +211,22 @@ class TSHSettingsWindow(QDialog):
             QApplication.translate(
                 "settings.show_social", "Show Social Media"),
             "show_social",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_seed", "Show Seed"),
+            "show_seed",
+            "checkbox",
+            True
+        ))
+
+        displaySettings.append((
+            QApplication.translate(
+                "settings.show_birthday", "Show Birthday"),
+            "show_birthday",
             "checkbox",
             True
         ))

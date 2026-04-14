@@ -7,6 +7,7 @@ from qtpy.QtWidgets import *
 from qtpy.QtCore import *
 from qtpy import uic
 from .Helpers.TSHCountryHelper import TSHCountryHelper
+from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .Helpers.TSHControllerHelper import TSHControllerHelper
@@ -31,8 +32,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
     countryModel = None
     characterModel = None
     _deleted = False
-
-    signals = TSHScoreboardPlayerWidgetSignals()
 
     dataLock = threading.RLock()
 
@@ -316,29 +315,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             else:
                 StateManager.Set(
                     f"{self.path}.avatar", None)
-                
-            sponsor_logo = None
-
-            cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", team)
-            if os.path.exists(f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"):
-                sponsor_logo = f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"
-                StateManager.Unset(f"{self.path}.sponsor_logos")
-            else:
-                split_sponsor = re.split(r"[,/|;: <>\\?*]", team)
-                for i, sponsor in enumerate(split_sponsor):
-                    if os.path.exists(f"./user_data/sponsor_logo/{sponsor.upper()}.png"):
-                        if sponsor_logo is None:
-                            sponsor_logo = f"./user_data/sponsor_logo/{sponsor.upper()}.png"
-                        StateManager.Set(
-                            f"{self.path}.sponsor_logos.{int(i+1)}", f"./user_data/sponsor_logo/{sponsor.upper()}.png")
-
-            if sponsor_logo is not None:
-                StateManager.Set(f"{self.path}.sponsor_logo", sponsor_logo)
-            else:
-                StateManager.Unset(f"{self.path}.sponsor_logo")
-
-            if sponsor_logo is None:
-                StateManager.Unset(f"{self.path}.sponsor_logos")
+            
+            TSHSponsorHelper.ExportValidSponsors(team, self.path)
 
     def ExportPlayerId(self, id=None):
         with self.dataLock:
@@ -378,6 +356,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 data[widget.objectName()] = widget.currentIndex()
                             if type(widget) == QPlainTextEdit:
                                 data[widget.objectName()] = widget.toPlainText()
+                            if type(widget) == QCheckBox:
+                                data[widget.objectName()] = widget.isChecked()
                         data["online_avatar"] = StateManager.Get(
                             f"{w.path}.online_avatar")
                         data["id"] = StateManager.Get(
@@ -400,6 +380,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     widget.setCurrentIndex(tmpData[i][objName])
                                 if type(widget) == QPlainTextEdit:
                                     widget.setPlainText(tmpData[i][objName])
+                                if type(widget) == QCheckBox:
+                                    widget.setChecked(tmpData[i][objName])
                         w.ExportPlayerId(tmpData[i]["id"])
                         StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
                         StateManager.Set(f"{w.path}.city", tmpData[i]["city"])
@@ -757,7 +739,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.Clear(no_mains=no_mains)
 
             # Load player data from DB; will be overwriten by incoming data
-            if not dontLoadFromDB:
+            if not dontLoadFromDB and TSHPlayerDB.model is not None:
                 tag = data.get(
                     "prefix")+" "+data.get("gamerTag") if data.get("prefix") else data.get("gamerTag")
 

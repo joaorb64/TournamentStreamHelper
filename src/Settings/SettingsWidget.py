@@ -64,13 +64,13 @@ class SettingsWidget(QWidget):
                 lambda sequence=None, setting=setting: [
                     SettingsManager.Set(
                         self.settingsBase+"."+setting, sequence.toString()),
-                    callback()
+                    self.CheckCallable(callback)
                 ]
             )
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setKeySequence(defaultValue),
-                    callback()
+                    self.CheckCallable(callback)
                 ]
             )
         elif type == "textbox" or type == "password":
@@ -84,7 +84,7 @@ class SettingsWidget(QWidget):
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setText(defaultValue),
-                    callback()
+                    self.CheckCallable(callback)
                 ]
             )
         elif type == "color":
@@ -94,7 +94,7 @@ class SettingsWidget(QWidget):
             resetButton.clicked.connect(
                 lambda bt=None, setting=setting, settingWidget=settingWidget: [
                     settingWidget.setColor(defaultValue),
-                    callback()
+                    self.CheckCallable(callback)
                 ]
             )
         
@@ -103,3 +103,9 @@ class SettingsWidget(QWidget):
 
         self.layout().addWidget(settingWidget, lastRow, 1)
         self.layout().addWidget(resetButton, lastRow, 2)
+    
+    def CheckCallable(self, callback):
+        if callable(callback):
+            return callback()
+        else:
+            return None

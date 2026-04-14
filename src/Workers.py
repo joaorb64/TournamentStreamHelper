@@ -11,6 +11,15 @@ from loguru import logger
 import threading
 
 
+class _ProgressEvent(QEvent):
+    _type = QEvent.Type(QEvent.registerEventType())
+
+    def __init__(self, n, t):
+        super().__init__(self._type)
+        self.n = n
+        self.t = t
+
+
 class WorkerSignals(QObject):
     '''
     Defines the signals available from a running worker thread.
@@ -27,13 +36,19 @@ class WorkerSignals(QObject):
         `object` data returned from processing, anything
 
     progress
-        `int` indicating % progress 
+        `int` indicating % progress
 
     '''
     finished = Signal()
     error = Signal(tuple)
     result = Signal(object)
     progress = Signal(int, int)
+
+    def event(self, e):
+        if e.type() == _ProgressEvent._type:
+            self.progress.emit(e.n, e.t)
+            return True
+        return super().event(e)
 
 
 class Worker(QRunnable):
@@ -59,8 +74,33 @@ class Worker(QRunnable):
         self.kwargs = kwargs
         self.signals = WorkerSignals()
 
+        # ORIGINAL METHOD
         # Add the callback to our kwargs
-        self.kwargs['progress_callback'] = lambda n, t: self.signals.progress.emit(n, t)
+        # self.kwargs['progress_callback'] = lambda n, t: self.signals.progress.emit(n, t)
+        
+        # SECOND WAY, STILL FAILED
+        # Add the callback to our kwargs.
+        # Use QTimer.singleShot with self.signals as the context object so the
+        # emission is always marshalled to the GUI thread, regardless of which
+        # thread calls the callback. Directly emitting Signal(int, int) from a
+        # non-GUI thread triggers a PyQt6 bug in its typed-argument marshaling
+        # that corrupts the heap and causes hard crashes in unrelated threads.
+        # _signals = self.signals
+        # self.kwargs['progress_callback'] = lambda n, t: QTimer.singleShot(
+        #     0, _signals, lambda: _signals.progress.emit(n, t)
+        # )
+
+        # NEW WAY
+        # Add the callback to our kwargs.
+        # Use QTimer.singleShot with self.signals as the context object so the
+        # emission is always marshalled to the GUI thread, regardless of which
+        # thread calls the callback. Directly emitting Signal(int, int) from a
+        # non-GUI thread triggers a PyQt6 bug in its typed-argument marshaling
+        # that corrupts the heap and causes hard crashes in unrelated threads.
+        _signals = self.signals
+        self.kwargs['progress_callback'] = lambda n, t: QApplication.postEvent(
+            _signals, _ProgressEvent(n, t)
+        )
 
         # Cancellation event
         self.cancel_event = threading.Event()
