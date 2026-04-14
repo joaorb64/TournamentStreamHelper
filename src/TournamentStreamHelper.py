@@ -174,8 +174,8 @@ def DownloadLayoutsOnBoot():
                         new_file_path = file_path.replace("TournamentStreamHelper-layouts-main\\", "")
                     else:
                         new_file_path = file_path.replace("TournamentStreamHelper-layouts-main/", "")
-                    os.rename(file_path, new_file_path)
-                os.rmdir(f"./layout/TournamentStreamHelper-layouts-main")
+                    shutil.move(file_path, new_file_path)
+                shutil.rmtree(f"./layout/TournamentStreamHelper-layouts-main", ignore_errors=True)
                 return True
             except Exception as e:
                 logger.error(f"Layouts could not be extracted\nError: {str(e)}")
