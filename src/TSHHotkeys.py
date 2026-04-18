@@ -83,7 +83,7 @@ class TSHHotkeys(QObject):
         self.pynputListener.start()
     
     def HotkeyTriggered(self, k, v):
-        if not SettingsManager.Get("hotkeys.hotkeys_enabled", True):
+        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
             logger.info(f"Activated {k} by pressing {v}")
             getattr(self.signals, k).emit()
     
