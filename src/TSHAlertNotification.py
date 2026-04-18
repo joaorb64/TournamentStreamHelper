@@ -69,7 +69,9 @@ class TSHAlertNotification(QObject):
             message.setLayout(vbox)
             message.setWindowTitle(
                 QApplication.translate("app", "Notifications ({0}/{1})").format(i, len(alerts.keys())))
-            message.layout().addWidget(QLabel(alert.get("alert")))
+            alertMessage = QLabel(alert.get("alert"))
+            alertMessage.setWordWrap(True)
+            message.layout().addWidget(alertMessage)
 
             hbox = QHBoxLayout()
             vbox.addLayout(hbox)
