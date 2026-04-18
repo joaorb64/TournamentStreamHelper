@@ -1708,7 +1708,7 @@ p, li { white-space: pre-wrap; }
         <translation>通知({0}/{1})</translation>
     </message>
     <message>
-        <location filename="../TSHAlertNotification.py" line="79"/>
+        <location filename="../TSHAlertNotification.py" line="81"/>
         <source>Remind later</source>
         <translation>プログラムを再度実行した時にこの通知を表示する</translation>
     </message>

@@ -1117,7 +1117,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAlertNotification.py" line="79"/>
+        <location filename="../TSHAlertNotification.py" line="81"/>
         <source>Remind later</source>
         <translation type="unfinished"></translation>
     </message>

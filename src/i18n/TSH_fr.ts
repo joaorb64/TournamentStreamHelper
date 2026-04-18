@@ -1750,7 +1750,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alertes ({0}/{1})</translation>
     </message>
     <message>
-        <location filename="../TSHAlertNotification.py" line="79"/>
+        <location filename="../TSHAlertNotification.py" line="81"/>
         <source>Remind later</source>
         <translation>Rappeler plus tard</translation>
     </message>
