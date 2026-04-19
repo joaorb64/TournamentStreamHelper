@@ -5,6 +5,7 @@ import requests
 import os
 import traceback
 import json
+import shutil
 import time
 from loguru import logger
 
@@ -34,16 +35,16 @@ class TSHAlertNotification(QObject):
                     logger.error(traceback.format_exc())
 
                 try:
-                    alerts_red = json.load(
-                        open('./user_data/alerts_red.json', encoding='utf-8'))
+                    alerts_read = json.load(
+                        open('./user_data/alerts_read.json', encoding='utf-8'))
                 except Exception as e:
                     logger.error(traceback.format_exc())
 
                 filtered = {}
 
-                if alerts is not None and alerts_red is not None:
+                if alerts is not None and alerts_read is not None:
                     for alertId, alert in alerts.items():
-                        if alertId not in alerts_red:
+                        if alertId not in alerts_read:
                             if alert.get("dateStart", None):
                                 if time.time() > alert.get("dateStart"):
                                     continue
@@ -96,22 +97,24 @@ class TSHAlertNotification(QObject):
             i += 1
 
     def MarkNotificationRed(self, id):
-        alerts_red = None
+        alerts_read = None
 
         try:
-            alerts_red = json.load(
-                open('./user_data/alerts_red.json', encoding='utf-8'))
+            alerts_read = json.load(
+                open('./user_data/alerts_read.json', encoding='utf-8'))
         except Exception as e:
             logger.error(traceback.format_exc())
 
-        if alerts_red is not None:
-            alerts_red.append(id)
-            with open("./user_data/alerts_red.json", 'w') as outfile:
-                json.dump(alerts_red, outfile)
+        if alerts_read is not None:
+            alerts_read.append(id)
+            with open("./user_data/alerts_read.json", 'w') as outfile:
+                json.dump(alerts_read, outfile)
 
+if os.path.exists("./user_data/alerts_red.json"):
+    shutil.move("./user_data/alerts_red.json", "./user_data/alerts_read.json")
 
-if not os.path.exists("./user_data/alerts_red.json"):
-    with open("./user_data/alerts_red.json", 'w') as outfile:
+if not os.path.exists("./user_data/alerts_read.json"):
+    with open("./user_data/alerts_read.json", 'w') as outfile:
         outfile.write("[]")
 
 TSHAlertNotification.instance = TSHAlertNotification()
