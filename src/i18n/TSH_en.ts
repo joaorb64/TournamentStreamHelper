@@ -1188,38 +1188,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="78"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="62"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="63"/>
         <location filename="../TSHScoreboardWidget.py" line="235"/>
         <source>Additional information</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="83"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="994"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="84"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="996"/>
         <source>Save new player</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="96"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="97"/>
         <source>Delete player entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="82"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="109"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="83"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="110"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHSelectSetWindow.py" line="114"/>
         <location filename="../TSHSelectSetWindow.py" line="116"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="394"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="395"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
         <source>Player {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="991"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="993"/>
         <source>Update player</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1282,7 +1282,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="77"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="582"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="583"/>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
         <source>Controller</source>
         <translation type="unfinished"></translation>
@@ -1416,12 +1416,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAlertNotification.py" line="71"/>
+        <location filename="../TSHAlertNotification.py" line="72"/>
         <source>Notifications ({0}/{1})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHAlertNotification.py" line="79"/>
+        <location filename="../TSHAlertNotification.py" line="82"/>
         <source>Remind later</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1708,12 +1708,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="176"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="177"/>
         <source>STOCKS/LIVES</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="178"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="179"/>
         <source>GAMES WON</source>
         <translation type="unfinished"></translation>
     </message>
