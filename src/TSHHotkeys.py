@@ -1,16 +1,10 @@
-import re
-import unicodedata
 from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
-import requests
-import os
 import platform
 import traceback
-import json
 import pynput
 from .SettingsManager import SettingsManager
-from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHDictHelper import deep_clone
 from loguru import logger
 
@@ -49,18 +43,15 @@ class TSHHotkeys(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
-            self.LoadUserHotkeys()
+        self.LoadUserHotkeys()
 
     def UiMounted(self, parent):
         self.parent = parent
-        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
-            self.SetupHotkeys()
+        self.SetupHotkeys()
 
     def ReloadHotkeys(self):
-        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
-            self.LoadUserHotkeys()
-            self.SetupHotkeys()
+        self.LoadUserHotkeys()
+        self.SetupHotkeys()
     
     def SetupHotkeys(self):
         if self.pynputListener:
@@ -83,7 +74,7 @@ class TSHHotkeys(QObject):
         self.pynputListener.start()
     
     def HotkeyTriggered(self, k, v):
-        if not SettingsManager.Get("hotkeys.hotkeys_enabled", True):
+        if SettingsManager.Get("hotkeys.hotkeys_enabled", True):
             logger.info(f"Activated {k} by pressing {v}")
             getattr(self.signals, k).emit()
     

@@ -1088,6 +1088,10 @@ class TSHScoreboardWidget(QWidget):
     def ChangeSetData(self, data):
         StateManager.BlockSaving()
 
+        StateManager.Set(f"score.{self.scoreboardNumber}.phase_size", data.get("numSeeds"))
+        StateManager.Set(f"score.{self.scoreboardNumber}.num_groups", data.get("groupCount"))
+        StateManager.Set(f"score.{self.scoreboardNumber}.round", data.get("round"))
+
         try:
             round_name = data.get("round_name")
             if round_name:

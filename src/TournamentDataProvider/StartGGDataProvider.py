@@ -354,7 +354,7 @@ class StartGGDataProvider(TournamentDataProvider):
             result.update({"new": fetchNew.result if fetchNew.completed else {}})
             result.update({"old": fetchOld.result if fetchOld.completed else {}})
 
-            logger.debug(result)
+            # logger.debug(result)
 
             finalResult = {}
             finalResult.update(result["new"])
@@ -389,7 +389,7 @@ class StartGGDataProvider(TournamentDataProvider):
                             except:
                                 logger.debug(traceback.format_exc())
 
-            logger.debug(f"Final result: {finalResult}")
+            # logger.debug(f"Final result: {finalResult}")
 
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -428,7 +428,7 @@ class StartGGDataProvider(TournamentDataProvider):
                     "query": StartGGDataProvider.SetQuery
                 }
             )
-            logger.debug(data.get("data", {}).get("set", {}))
+            # logger.debug(data.get("data", {}).get("set", {}))
             return self.ParseMatchDataNewApi(data.get("data", {}).get("set", {}))
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -469,7 +469,7 @@ class StartGGDataProvider(TournamentDataProvider):
                 )
 
                 totalPages = deep_get(
-                    data, "data.event.sets.pageInfo.totalPages", 0)
+                    data, "data.event.sets.pageInfo.totalPages", 1)
 
                 sets = deep_get(data, "data.event.sets.nodes", [])
                 newSets = []
@@ -483,8 +483,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     logger.info(f"progress_callback: {page}, {totalPages}")
                     progress_callback(page, totalPages)
 
-                page += 1
                 logger.info(f"Fetching sets... {page}/{totalPages}")
+                page += 1
             return (final_data)
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -606,6 +606,9 @@ class StartGGDataProvider(TournamentDataProvider):
 
             setData = {
                 "id": _set.get("id"),
+                "round": _set.get("round"),
+                "groupCount" : deep_get(_set, "phaseGroup.phase.groupCount"),
+                "numSeeds": deep_get(_set, "phaseGroup.phase.numSeeds", -1),
                 "team1score": _set.get("entrant1Score", 0),
                 "team2score": _set.get("entrant2Score", 0),
                 "round_name": round_name,

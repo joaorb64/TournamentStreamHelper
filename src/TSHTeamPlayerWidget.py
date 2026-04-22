@@ -14,6 +14,7 @@ from .TSHTeamBattleModeEnum import TSHTeamBattleModeEnum
 from .Helpers.TSHDirHelper import TSHResolve
 import threading
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
+from .Helpers.TSHCustomPlayerCompleter import TSHCustomPlayerCompleter
 from loguru import logger
 
 
@@ -729,7 +730,8 @@ class TSHTeamPlayerWidget(QGroupBox):
 
     def SetupAutocomplete(self):
         if TSHPlayerDB.model:
-            self.findChild(QLineEdit, "name").setCompleter(QCompleter())
+            self.findChild(QLineEdit, "name").setCompleter(
+                TSHCustomPlayerCompleter(TSHPlayerDB.model))
             self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
                 lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)) if x is not None else None, Qt.QueuedConnection)
             self.findChild(QLineEdit, "name").completer().setCaseSensitivity(

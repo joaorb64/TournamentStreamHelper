@@ -16,6 +16,7 @@ from .Helpers.TSHDirHelper import TSHResolve
 from .Workers import Worker
 import threading
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
+from .Helpers.TSHCustomPlayerCompleter import TSHCustomPlayerCompleter
 from loguru import logger
 
 
@@ -715,7 +716,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
     def SetupAutocomplete(self):
         if TSHPlayerDB.model:
-            self.findChild(QLineEdit, "name").setCompleter(QCompleter())
+            self.findChild(QLineEdit, "name").setCompleter(
+                TSHCustomPlayerCompleter(TSHPlayerDB.model))
             self.findChild(QLineEdit, "name").completer().activated[QModelIndex].connect(
                 lambda x: self.SetData(x.data(Qt.ItemDataRole.UserRole)) if x is not None else None, Qt.QueuedConnection)
             self.findChild(QLineEdit, "name").completer().setCaseSensitivity(
