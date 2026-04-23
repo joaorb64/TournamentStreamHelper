@@ -329,3 +329,13 @@ class TSHIndividualGameTracker(QWidget):
                 target.currentIndexChanged.emit(0)
         
         StateManager.ReleaseSaving()
+
+    def ResetAllStages(self):
+        StateManager.BlockSaving()
+        print(f"Reset all stages in the game tracker")
+        if self.stage_widget_list:
+            for index in range(len(self.stage_widget_list)):
+                target = self.findChild(QComboBox, f"stageMenu_{index}")
+                target.setCurrentIndex(0)
+                target.currentIndexChanged.emit(0)
+        StateManager.ReleaseSaving()
