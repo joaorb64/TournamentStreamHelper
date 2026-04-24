@@ -160,7 +160,6 @@ class WebServerActions(QThread):
         self._get_scoreboard(1).signals.ChangeSetData.emit({
             "team1score": score[0],
             "team2score": score[1],
-            "reset_score": True
         })
 
     @gui_thread_sync
@@ -175,7 +174,6 @@ class WebServerActions(QThread):
                 logger.warning(f"Couldn't parse scoreboard [${score['scoreboard']}] from /post_data as int, falling back to scoreboard 1")
                 scoreboard_number = 1
 
-        score.update({"reset_score": True})
         self._get_scoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
