@@ -1419,7 +1419,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHCommentaryWidget.py" line="72"/>
         <location filename="../TSHScoreboardWidget.py" line="229"/>
         <source>Seed</source>
-        <translation>TDS</translation>
+        <translation>Tête de série</translation>
     </message>
     <message>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
