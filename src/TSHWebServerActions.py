@@ -141,6 +141,7 @@ class WebServerActions(QThread):
     def reset(self):
         self.stageWidget.stageStrikeLogic.Initialize()
         self.UpdateScore()
+        self._get_scoreboard(0).individualGameTracker.ResetAllStages()
         return "OK"
 
     @gui_thread_sync
