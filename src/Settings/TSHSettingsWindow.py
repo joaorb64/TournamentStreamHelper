@@ -314,6 +314,24 @@ class TSHSettingsWindow(QDialog):
         
         self.add_setting_widget(QApplication.translate(
             "settings", "Bluesky"), SettingsWidget("bsky_account", bskySettings))
+        
+        # Add API Key settings
+        APIKeySettings = []
+        APIKeySettings.append((
+            QApplication.translate(
+                "settings.api_keys", "parry.gg"),
+            "parrygg",
+            "password",
+            "",
+            None,
+            QApplication.translate(
+                "settings.api_keys", "You can get an API Key from parry.gg/api-keys") + "\n" +
+                QApplication.translate(
+                    "settings.api_keys", "Please note that the API Key will be stored in plain text on your computer")
+        ))
+        
+        self.add_setting_widget(QApplication.translate(
+            "settings", "API Keys"), SettingsWidget("api_keys", APIKeySettings))
 
         self.resize(1000, 500)
         QApplication.processEvents()
