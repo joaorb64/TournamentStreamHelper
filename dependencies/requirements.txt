@@ -25,5 +25,5 @@ tzdata
 zstd==1.5.7.3
 countryflag==1.1.1
 grpcio
-parrygg>=0.1.4
+parrygg>=0.1.6
 python-dotenv

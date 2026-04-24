@@ -237,17 +237,52 @@ class ParryGGDataProvider(TournamentDataProvider):
         return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
-        # This is a really bad way of getting a match, but the GetMatch request
-        # doesn't include important data or provide a simple way to get it.
-        
-        matches = self.GetMatches(True)
+        self._setup_service("Match")
+        match_info = {}
 
-        for match in matches:
-            if setId == match["id"]:
-                return match
+        try:
+            get_match_request = GetMatchRequest()
+            get_match_request.id = setId
+            get_match_response = self.match_service.GetMatch(get_match_request, metadata=self.metadata, timeout=self._timeout)
+            
+            match = get_match_response.match.match
+            seeds = get_match_response.match.seeds
+
+            match_info["id"] = match.id
+            match_info["team1score"] = int(match.slots[0].score)
+            match_info["team2score"] = int(match.slots[1].score)
+            match_info["round_name"] = ""
+            match_info["tournament_phase"] = ""
+            match_info["bracket_type"] = ""
+            match_info["p1_name"] = seeds[0].event_entrant.entrant.users[0].gamer_tag if len(seeds) > 0 and seeds[0].HasField("event_entrant") and seeds[0].event_entrant.HasField("entrant") and len(seeds[0].event_entrant.entrant.users) > 0 else ""
+            match_info["p2_name"] = seeds[1].event_entrant.entrant.users[0].gamer_tag if len(seeds) > 1 and seeds[1].HasField("event_entrant") and seeds[1].event_entrant.HasField("entrant") and len(seeds[1].event_entrant.entrant.users) > 0 else ""
+            match_info["p1_seed"] = seeds[0].seed if len(seeds) > 0 else ""
+            match_info["p2_seed"] = seeds[1].seed if len(seeds) > 1 else ""
+            match_info["stream"] = ""
+            match_info["station"] = ""
+            match_info["isOnline"] = ""
+            match_info["isPools"] = ""
+            match_info["round"] = match.round
+            match_info["entrants"] = [[] for _ in range(len(seeds))] if len(seeds) > 0 else [[]]
+
+            for i, seed in enumerate(seeds):
+                if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
+                    entrant = seed.event_entrant.entrant
+                    if len(entrant.users) > 0:
+                        user = entrant.users[0]
+                        match_info["entrants"][i].append({
+                            "prefix": user.sponsor_name,
+                            "gamerTag": user.gamer_tag,
+                            "name": (user.first_name + " " + user.last_name).strip(),
+                            "id": [None, 0]
+                        })
+            
+            return match_info
+            
+        except Exception as e:
+            logger.error(f"Error getting match: {e}")
+            return {}
         
-        logger.error(f"Match {setId} not found")
-        return {}
     
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
         self._setup_service("Match")
