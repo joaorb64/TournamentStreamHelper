@@ -17,6 +17,7 @@ from .TSHDirHelper import TSHResolve
 from .TSHDictHelper import deep_get
 from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
+import json
 import orjson
 from loguru import logger
 import countryflag
@@ -27,6 +28,97 @@ class TSHCountryHelperSignals(QObject):
     countriesUpdated = Signal()
 
 
+class TSHUKHandler(QObject):
+    uk_data = {
+                "ENG": {
+                    "name": "England",
+                    "iso3": "GB-ENG",
+                    "iso2": "ENG",
+                    "translations": {
+                        "fr": "Angleterre",
+                    },
+                    "latitude": "52.53102140",
+                    "longitude": "-1.26490620",
+                    "states": []
+                },
+                "SCT": {
+                    "name": "Scotland",
+                    "iso3": "GB-SCT",
+                    "iso2": "SCT",
+                    "translations": {
+                        "fr": "Écosse",
+                    },
+                    "latitude": "56.78611120",
+                    "longitude": "-4.11405180",
+                    "states": []
+                },
+                "WLS": {
+                    "name": "Wales",
+                    "iso3": "GB-WLS",
+                    "iso2": "WLS",
+                    "translations": {
+                        "fr": "Pays de Galles",
+                    },
+                    "latitude": "52.29281160",
+                    "longitude": "-3.73893000",
+                    "states": []
+                },
+                "NIR": {
+                    "name": "Northern Ireland",
+                    "iso3": "GB-NIR",
+                    "iso2": "NIR",
+                    "translations": {
+                        "fr": "Irlande du Nord",
+                    },
+                    "latitude": "54.58598360",
+                    "longitude": "-6.95915540",
+                    "states": []
+                }
+            }
+
+    def __init__(self) -> None:
+        super().__init__()
+    
+    def AddUKCountries(self):
+        try:
+            f = open("./assets/countries+states+cities.json",
+                        'r', encoding='utf-8')
+            countries_json = orjson.loads(f.read())
+            f.close()
+
+            checked_countries = self.uk_data.keys()
+            found_countries = []
+            found_northern_ireland = False
+            for c in countries_json:
+                ccode = c.get("iso2") if not c.get("iso2").isdigit() else "".join([
+                        word[0] for word in re.split(r'\s+|-', c.get("name"))])
+                if ccode in checked_countries:
+                    found_countries.append(ccode)
+
+            # Add new countries
+            for key in checked_countries:
+                if key not in found_countries:
+                    countries_json.append(self.uk_data[key])
+            
+            print("Writing file")
+
+            with open("./assets/countries+states+cities.json",
+                        'wt', encoding="utf-8") as f:
+                f.write(json.dumps(countries_json, indent=2))
+            
+            print("File written")
+        except:
+            logger.error(f"An error has occured when adding the data for UK countries - {traceback.format_exc()}")
+
+    def GetUKEmoji(ccode, emoji):
+        if ccode == "ENG":
+            emoji = "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+        if ccode == "SCT":
+            emoji = "🏴󠁧󠁢󠁳󠁣󠁴󠁿"
+        if ccode == "WLS":
+            emoji = "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
+        return emoji
+
 class TSHCountryHelper(QObject):
     instance: "TSHCountryHelper" = None
 
@@ -35,6 +127,7 @@ class TSHCountryHelper(QObject):
     cities = {}
     countryModel = None
     signals = TSHCountryHelperSignals()
+    uk_handler = TSHUKHandler()
 
     def __init__(self) -> None:
         super().__init__()
@@ -62,6 +155,8 @@ class TSHCountryHelper(QObject):
                 orjson.loads(f.read())
                 return True
 
+        logger.info("Updating data_countries file...")
+
         DownloadDialog(
             url=url,
             filename=str(out_file),
@@ -69,7 +164,7 @@ class TSHCountryHelper(QObject):
             validator=validate,
         ).exec()
 
-        logger.info("Updating data_countries file...")
+        TSHCountryHelper.uk_handler.AddUKCountries()
         TSHCountryHelper.LoadCountries()
         logger.info("data_countries file updated.")
 
@@ -95,7 +190,7 @@ class TSHCountryHelper(QObject):
             data["emoji"] = countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
         except InvalidCountryError:
             # logger.warning(f'The following country could not be found in the countryflag library: {TSHCountryHelper.countries[country_code]["code"]}')
-            data["emoji"] = None
+            data["emoji"] = TSHUKHandler.GetUKEmoji(TSHCountryHelper.countries[country_code]["code"], None)
         
         return data
 
