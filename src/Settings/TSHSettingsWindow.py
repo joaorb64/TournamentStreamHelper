@@ -2,7 +2,7 @@ from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from .SettingsWidget import SettingsWidget
 from ..TSHHotkeys import TSHHotkeys
-from ..Helpers.TSHVersionHelper import add_beta_label
+from ..Helpers.TSHVersionHelper import add_beta_label, get_beta_status
 
 
 class TSHSettingsWindow(QDialog):
@@ -140,7 +140,7 @@ class TSHSettingsWindow(QDialog):
                 "settings.disable_individual_game_tracker", "Disables the individual game tracker (takes effect on next restart)"), "game_tracker"),
             "disable_individual_game_tracker",
             "checkbox",
-            True
+            get_beta_status("game_tracker")
         ))
 
         generalSettings.append((

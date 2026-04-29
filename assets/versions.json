@@ -1,8 +1,7 @@
 {
-    "program": "5.969",
+    "program": "5.970",
     "beta_features": [
-        "web_score",
-        "game_tracker"
+        "web_score"
     ],
     "supported_providers": [
         "StartGG",
