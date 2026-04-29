@@ -257,7 +257,7 @@
         </font>
        </property>
        <property name="text">
-        <string>DEAD?</string>
+        <string>Eliminated</string>
        </property>
       </widget>
      </item>
