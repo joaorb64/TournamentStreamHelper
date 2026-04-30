@@ -304,6 +304,7 @@ class WebServerActions(QThread):
                 "name": TSHGameAssetManager.instance.games[key].get("name"),
                 "locale": TSHGameAssetManager.instance.games[key].get("locale"),
                 "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
+                "parrygg_game_slug": TSHGameAssetManager.instance.games[key].get("parrygg_game_slug"),
                 "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
                 "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename")),
                 "has_colors": bool(TSHGameAssetManager.instance.games[key].get("preset_colors"))
@@ -532,10 +533,7 @@ class WebServerActions(QThread):
             validators = [
                 QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
                 
-                # This could maybe become just "parry.gg/[^/]+/[^/]+"
-                # But that form of url directs to the /main/bracket page anyway,
-                # so it's rare to see it shortened unless typing the url manually.
-                QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
+                QRegularExpression("parry.gg/[^/]+/[^/]+")
             ]
 
             for validator in validators:

@@ -37,6 +37,7 @@ class StartGGDataProvider(TournamentDataProvider):
     TournamentPhaseGroupQuery = None
     TournamentStandingsQuery = None
     UserSetQuery = None
+    UserMainsQuery = None
     _request_timeout_secs = 20.0
 
     player_seeds = {}
@@ -1150,6 +1151,12 @@ class StartGGDataProvider(TournamentDataProvider):
         return {}
 
     def GetStreamMatchId(self, streamName):
+        # Accept either a bare identifier string or the station dict produced
+        # by GetStations (parry's multi-capacity streams need the dict for slot
+        # context; start.gg streams are always capacity 1, so just use the
+        # identifier).
+        if isinstance(streamName, dict):
+            streamName = streamName.get("identifier", "")
         streamSet = None
 
         try:
@@ -1839,6 +1846,41 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return (playerData)
 
+    def GetUserMains(self, slug, videogameId):
+        # Per-user mains lookup (no other code path fetches mains for a
+        # user in isolation — see ProcessEntrantData/GetMatch which only
+        # populate mains as a side effect of an event-scoped query).
+        # Reuses ProcessEntrantData's selection-counting via a synthesized
+        # entrant, then runs the character-ID → TSH-codename mapping
+        # locally (the mapping is normally inside ProcessEntrantData's
+        # `if user:` branch, which doesn't apply to a user-only synthesis).
+        # Returns ({gameCodename: [[char_name], ...]}) or {}.
+        if not slug or not videogameId:
+            return {}
+        data = self.QueryRequests(
+            "https://www.start.gg/api/-/gql",
+            type=requests.post,
+            jsonParams={
+                "operationName": "UserMainsQuery",
+                "variables": {"userSlug": slug, "videogameId": videogameId},
+                "query": StartGGDataProvider.UserMainsQuery,
+            },
+        )
+        player = deep_get(data, "data.user.player")
+        if not player:
+            return {}
+        startgg_mains = StartGGDataProvider.ProcessEntrantData({"player": player}).get("startggMains") or []
+        selected = TSHGameAssetManager.instance.selectedGame or {}
+        gameCodename = selected.get("codename")
+        if not gameCodename:
+            return {}
+        mains = []
+        for sggmain in startgg_mains:
+            mapped = TSHGameAssetManager.instance.GetCharacterFromStartGGId(sggmain[0])
+            if mapped:
+                mains.append([mapped[0]])
+        return {gameCodename: mains} if mains else {}
+
     def GetStandings(self, playerNumber, progress_callback, cancel_event):
         try:
             data = self.QueryRequests(
@@ -1978,4 +2020,5 @@ StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "Tournament
 StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
 StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
 StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
+StartGGDataProvider.UserMainsQuery = readQueryFile(sggTdpDir, "UserMains")
 StartGGDataProvider.TournamentSlugQuery = readQueryFile(sggTdpDir, "TournamentSlug")

@@ -12,6 +12,7 @@ from .StateManager import StateManager
 from .TSHGameAssetManager import TSHGameAssetManager
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHPlayerDB import TSHPlayerDB
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .Helpers.TSHDirHelper import TSHResolve
 from .Workers import Worker
 import threading
@@ -756,6 +757,13 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         self.SetData(item, dontLoadFromDB=True,
                                      clear=False, no_mains=no_mains)
                         break
+
+            # Provider-side lazy enrichment (e.g. parry → mains from a
+            # linked start.gg account). No-op for providers that don't
+            # override EnrichPlayerData; cached so repeated loads are free.
+            provider = TSHTournamentDataProvider.instance.provider if TSHTournamentDataProvider.instance else None
+            if provider is not None:
+                data = provider.EnrichPlayerData(data) or data
 
             name = self.findChild(QWidget, "name")
             if data.get("gamerTag") and data.get("gamerTag") != name.text():

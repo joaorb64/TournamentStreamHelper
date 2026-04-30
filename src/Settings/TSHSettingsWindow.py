@@ -319,7 +319,7 @@ class TSHSettingsWindow(QDialog):
         APIKeySettings = []
         APIKeySettings.append((
             QApplication.translate(
-                "settings.api_keys", "parry.gg"),
+                "settings.api_keys", "ParryGG"),
             "parrygg",
             "password",
             "",

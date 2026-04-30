@@ -65,7 +65,7 @@ class TSHTournamentDataProvider(QObject):
             TSHGameAssetManager.instance.SetGameFromStartGGId(
                 self.provider.videogame)
         elif "parry.gg" in self.provider.url:
-            TSHGameAssetManager.instance.SetGameFromParryGGId(
+            TSHGameAssetManager.instance.SetGameFromParryGGSlug(
                 self.provider.videogame)
         else:
             logger.error("Unsupported provider...")
@@ -159,14 +159,7 @@ class TSHTournamentDataProvider(QObject):
             QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
             QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+"),
             
-            # This could maybe become just "parry.gg/[^/]+/[^/]+"
-            # 
-            # But that form of url directs to the /main/bracket page anyway,
-            # so it's rare to see it shortened unless typing the url manually.
-            # 
-            # Only downside is that the tournament management page would match
-            # (parry.gg/tournamentname/_manage) which doesn't include the event slug.
-            QRegularExpression("parry.gg/[^/]+/[^/]+/[^/]+")
+            QRegularExpression("parry.gg/[^/]+/[^/]+")
         ]
 
         def validateText():
@@ -223,17 +216,15 @@ class TSHTournamentDataProvider(QObject):
             SettingsManager.Set("twitch_username", text)
             TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
 
-    def SetUserAccount(self, window, startgg=False):
-        providerName = "StartGG"
-        window_text = ""
-
+    def SetUserAccount(self, window, startgg=False, parrygg=False):
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
+            providerName = "StartGG"
             window_text = QApplication.translate(
                 "app", "Paste the URL to the player's StartGG profile")
-        # TODO
-        # elif (self.provider and self.provider.url and "parry.gg" in self.provider.url):
-        #     window_text = QApplication.translate(
-        #         "app", "Paste the URL to the player's ParryGG profile")
+        elif (self.provider and self.provider.url and "parry.gg" in self.provider.url) or parrygg:
+            providerName = "ParryGG"
+            window_text = QApplication.translate(
+                "app", "Paste the URL to the player's ParryGG profile")
         else:
             logger.error(QApplication.translate(
                 "app", "Invalid tournament data provider"))
@@ -320,8 +311,11 @@ class TSHTournamentDataProvider(QObject):
         stationSet = None
 
         if mainWindow.lastStationSelected.get("type") == "stream":
+            # Pass the full station dict so providers that need extra context
+            # (e.g. parry's per-capacity slot index) can read it. Providers that
+            # only care about the identifier string accept either form.
             stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
-                mainWindow.lastStationSelected.get("identifier"))
+                mainWindow.lastStationSelected)
         else:
             stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
                 mainWindow.lastStationSelected.get("id")

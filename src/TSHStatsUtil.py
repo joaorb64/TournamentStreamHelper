@@ -56,7 +56,7 @@ class TSHStatsUtil:
     def GetRecentSets(self):
         updated = False
         # Only if 1 player on each side
-        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name in ("StartGG", "ParryGG"):
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             videogame = StateManager.Get("provider_videogame.id")
@@ -127,7 +127,7 @@ class TSHStatsUtil:
 
     def GetPlayerHistoryStandingsP1(self):
         # Only if 1 player on each side
-        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name in ("StartGG", "ParryGG"):
             p1id = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.player.1.id")
             if p1id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(
@@ -137,7 +137,7 @@ class TSHStatsUtil:
 
     def GetPlayerHistoryStandingsP2(self):
         # Only if 1 player on each side
-        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider.name == "StartGG":
+        if len(self.scoreboard.team1playerWidgets) == 1 and TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name in ("StartGG", "ParryGG"):
             p2id = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.player.1.id")
             if p2id:
                 TSHTournamentDataProvider.instance.GetPlayerHistoryStandings(

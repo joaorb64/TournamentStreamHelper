@@ -174,24 +174,24 @@ class TSHGameAssetManager(QObject):
                 self.LoadGameAssets(i+1)
                 break
     
-    def SetGameFromParryGGId(self, gameid):
-        def detect_parrygg_id_match(game, id):
-            result = str(game.get("parrygg_game_slug", "")) == str(id)
+    def SetGameFromParryGGSlug(self, slug):
+        def detect_parrygg_slug_match(game, slug):
+            result = str(game.get("parrygg_game_slug", "")) == str(slug)
             if not result:
                 alternates = game.get("alternate_versions", [])
-                alternates_ids = []
+                alternate_slugs = []
                 for alternate in alternates:
                     if alternate.get("parrygg_game_slug"):
-                        alternates_ids.append(
+                        alternate_slugs.append(
                             str(alternate.get("parrygg_game_slug")))
-                result = str(id) in alternates_ids
+                result = str(slug) in alternate_slugs
             return (result)
 
         if len(self.games.keys()) == 0:
             return
 
         for i, game in enumerate(self.games.values()):
-            if detect_parrygg_id_match(game, gameid):
+            if detect_parrygg_slug_match(game, slug):
                 self.LoadGameAssets(i+1)
                 break
 
