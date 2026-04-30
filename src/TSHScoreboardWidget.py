@@ -496,6 +496,9 @@ class TSHScoreboardWidget(QWidget):
             c.lineEdit().editingFinished.emit()
             c.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.colorMenu1.setVisible(StateManager.Get(f"game.has_colors", False))
+        self.colorMenu2.setVisible(StateManager.Get(f"game.has_colors", False))
+
         # Add stage order widget
         self.individualGameTracker = TSHIndividualGameTracker(self.scoreboardNumber)
         self.individualGameTracker.signals.stageResultsUpdate.connect(self.StageResultsToScore)
