@@ -820,8 +820,23 @@ class ParryGGDataProvider(TournamentDataProvider):
         return None
 
     def GetStationMatchsId(self, stationId):
-        # parry.gg has no station concept.
-        return []
+        # parry has no station concept, but a parry stream has an ordered
+        # queue of matches. Returning that queue here lets TSH's existing
+        # station-queue plumbing (LoadStationSetsDo → GetFutureMatchesList →
+        # station_queue StateManager key) populate an upcoming-matches
+        # overlay for parry streams. ``stationId`` is the parry stream UUID
+        # passed via lastStationSelected['id'].
+        if not stationId or stationId not in self._get_streams():
+            return []
+        self._setup_service("Stream")
+        try:
+            req = GetStreamQueueRequest()
+            req.stream_id = stationId
+            resp = self.stream_service.GetStreamQueue(req, metadata=self.metadata, timeout=self._timeout)
+            return [{"id": entry.match_id} for entry in resp.entries if entry.match_id]
+        except Exception:
+            logger.error(f"Error fetching parry stream queue for {stationId}: {traceback.format_exc()}")
+            return []
     
     # Accepts a parry profile URL (https://parry.gg/profile/<uuid>) or a bare UUID.
     @staticmethod
@@ -1466,12 +1481,20 @@ class ParryGGDataProvider(TournamentDataProvider):
             return []
     
     def GetFutureMatch(self, matchId, progress_callback, cancel_event):
-        logger.error("GetFutureMatch() called, returned {}")
-        return {}
-    
+        return self._fetch_future_set(matchId) or {}
+
     def GetFutureMatchesList(self, setsId, progress_callback, cancel_event):
-        logger.error("GetFutureMatchesList() called, returned []")
-        return []
+        # Returns {position_str: future_set} keyed by 1-based position in
+        # the queue, matching StartGGDataProvider.GetFutureMatchesList shape.
+        result = {}
+        for position, item in enumerate(setsId or [], start=1):
+            match_id = item.get("id") if isinstance(item, dict) else item
+            if not match_id:
+                continue
+            future_set = self._fetch_future_set(match_id)
+            if future_set:
+                result[str(position)] = future_set
+        return result
     
     def cleanup(self):
         """Properly cleanup gRPC channel and resources"""

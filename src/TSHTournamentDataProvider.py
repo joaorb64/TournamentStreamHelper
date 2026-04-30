@@ -316,22 +316,28 @@ class TSHTournamentDataProvider(QObject):
             # only care about the identifier string accept either form.
             stationSet = TSHTournamentDataProvider.instance.provider.GetStreamMatchId(
                 mainWindow.lastStationSelected)
-        else:
-            stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
-                mainWindow.lastStationSelected.get("id")
-            )
 
-            if stationSets is not None and len(stationSets) > 0:
+        # Populate the upcoming-matches queue for both stream and station
+        # selections. Providers that don't have a queue for the given id
+        # return [] (e.g. start.gg returns [] when called with a stream id).
+        stationSets = TSHTournamentDataProvider.instance.provider.GetStationMatchsId(
+            mainWindow.lastStationSelected.get("id")
+        )
+
+        if stationSets is not None and len(stationSets) > 0:
+            # Station mode: use queue head as the active set when no
+            # stream-mode set was loaded above.
+            if stationSet is None:
                 stationSet = stationSets[0]
 
-                queueCache = mainWindow.stationQueueCache
-                logger.info(queueCache.queue)
-                logger.info(stationSets)
-                if queueCache and not queueCache.CheckQueue(stationSets):
-                    queueCache.UpdateQueue(stationSets)
+            queueCache = mainWindow.stationQueueCache
+            logger.info(queueCache.queue)
+            logger.info(stationSets)
+            if queueCache and not queueCache.CheckQueue(stationSets):
+                queueCache.UpdateQueue(stationSets)
 
-                    TSHTournamentDataProvider.instance.GetStationMatches(
-                        stationSets, mainWindow)
+                TSHTournamentDataProvider.instance.GetStationMatches(
+                    stationSets, mainWindow)
 
         if not stationSet:
             stationSet = {}
