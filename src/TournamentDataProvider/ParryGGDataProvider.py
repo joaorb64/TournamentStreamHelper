@@ -292,6 +292,30 @@ class ParryGGDataProvider(TournamentDataProvider):
         return ""
 
     @staticmethod
+    def _seed_entrant(seed):
+        # Prefer the resolved entrant; fall back to the projected one when a
+        # seed's occupant hasn't been determined yet (e.g. progression-fed
+        # bracket positions). Mirrors start.gg's preview/projected behavior.
+        if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
+            return seed.event_entrant
+        if seed.HasField("projected_event_entrant") and seed.projected_event_entrant.HasField("entrant"):
+            return seed.projected_event_entrant
+        return None
+
+    @classmethod
+    def _team_display_name(cls, seed):
+        # parry's EventEntrant carries an optional team display name; when it's
+        # blank (most cases today) join gamer tags, matching the layouts'
+        # fallback (TSHBracketView.py:138 and e.g. layout/scoreboard_pandastic
+        # /index.js:177).
+        ee = cls._seed_entrant(seed)
+        if ee is None:
+            return ""
+        if ee.name:
+            return ee.name
+        return " / ".join(u.gamer_tag for u in ee.entrant.users)
+
+    @staticmethod
     def _translate_round_name(label):
         # parry's Round.label is a server-computed English string (e.g.
         # "Winners Final", "Grand Final"), same shape as start.gg's
@@ -435,8 +459,9 @@ class ParryGGDataProvider(TournamentDataProvider):
         entrants = []
         for seed in seeds:
             team = []
-            if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
-                for user in seed.event_entrant.entrant.users:
+            ee = self._seed_entrant(seed)
+            if ee is not None:
+                for user in ee.entrant.users:
                     team.append({
                         "prefix": user.sponsor_name,
                         "gamerTag": user.gamer_tag,
@@ -449,14 +474,6 @@ class ParryGGDataProvider(TournamentDataProvider):
                     })
             entrants.append(team)
 
-        # First-user gamerTag for p1_name/p2_name (preserves singles behavior;
-        # team consumers should iterate entrants[i] for full member list)
-        def first_tag(seed):
-            if not seed.HasField("event_entrant") or not seed.event_entrant.HasField("entrant"):
-                return ""
-            users = seed.event_entrant.entrant.users
-            return users[0].gamer_tag if users else ""
-
         return {
             "id": match.id,
             "team1score": int(match.slots[0].score) if len(match.slots) > 0 else 0,
@@ -464,8 +481,8 @@ class ParryGGDataProvider(TournamentDataProvider):
             "round_name": self._translate_round_name(round_label),
             "tournament_phase": phase_name,
             "bracket_type": bracket_type,
-            "p1_name": first_tag(seeds[0]) if len(seeds) > 0 else "",
-            "p2_name": first_tag(seeds[1]) if len(seeds) > 1 else "",
+            "p1_name": self._team_display_name(seeds[0]) if len(seeds) > 0 else "",
+            "p2_name": self._team_display_name(seeds[1]) if len(seeds) > 1 else "",
             "p1_seed": seeds[0].seed if len(seeds) > 0 else "",
             "p2_seed": seeds[1].seed if len(seeds) > 1 else "",
             "stream": self._resolve_stream(match),
@@ -510,13 +527,14 @@ class ParryGGDataProvider(TournamentDataProvider):
         teams = {}
         for team_index, seed in enumerate(seeds):
             team = {
-                "teamName": "",
+                "teamName": self._team_display_name(seed),
                 "losers": False,
                 "seed": seed.seed,
                 "player": {},
             }
-            if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
-                for player_index, user in enumerate(seed.event_entrant.entrant.users):
+            ee = self._seed_entrant(seed)
+            if ee is not None:
+                for player_index, user in enumerate(ee.entrant.users):
                     country_data = TSHCountryHelper.countries.get(user.location_country) or {}
                     state_data = {}
                     if user.location_state:
@@ -1149,11 +1167,19 @@ class ParryGGDataProvider(TournamentDataProvider):
                 return ()
             return tuple(u.id for u in seed.event_entrant.entrant.users)
 
-        slot0_users = slot_user_ids(seeds[0])
-        slot1_users = slot_user_ids(seeds[1])
-        if target_user_id in slot0_users and opponent_user_id in slot1_users:
+        slot0_users = frozenset(slot_user_ids(seeds[0]))
+        slot1_users = frozenset(slot_user_ids(seeds[1]))
+        # Set-equality (not membership) so a doubles match where the two
+        # users happen to face each other across opposing teams isn't
+        # counted as a 1v1 H2H. Using sets keeps the comparison
+        # forward-compatible: lifting target/opponent to multi-user team
+        # frozensets later would let the same check serve team-vs-team H2H
+        # without further changes.
+        target_team = frozenset([target_user_id])
+        opponent_team = frozenset([opponent_user_id])
+        if slot0_users == target_team and slot1_users == opponent_team:
             target_slot, opponent_slot = 0, 1
-        elif target_user_id in slot1_users and opponent_user_id in slot0_users:
+        elif slot1_users == target_team and slot0_users == opponent_team:
             target_slot, opponent_slot = 1, 0
         else:
             return None
@@ -1243,6 +1269,18 @@ class ParryGGDataProvider(TournamentDataProvider):
     def GetPlayerHistoryStandings(self, playerID, playerNumber, gameType, callback, progress_callback=None, cancel_event=None):
         """Recent tournament placements for a player, via UserService.GetUserPlacements.
 
+        Filters out non-singles events (entrant_size != 1) since the consumer
+        in TSHStatsUtil only requests this data when the scoreboard is in
+        1v1 mode.
+
+        To resolve event/tournament metadata we use the same trick as
+        parrygg-web's RecentTournamentResults (parrygg-web/app/components/
+        RecentTournamentResults.tsx + routes/_base-layout.profile.$userId.tsx):
+        a single GetTournaments(filter={user_id}) returns every tournament
+        the user is registered in with each tournament's events embedded,
+        so we build an event_id -> (event, tournament) map in-memory and
+        avoid per-placement RPCs.
+
         Pass-1 (parry-native): uses parry's placements only. Pass 2 will merge
         in start.gg history for users with linked accounts.
         """
@@ -1253,22 +1291,56 @@ class ParryGGDataProvider(TournamentDataProvider):
                 return
 
             self._setup_service("User")
+            self._setup_service("Tournament")
+
+            # One-shot: fetch every tournament the user is registered in
+            # (with embedded events list).
+            event_lookup = {}
+            try:
+                t_req = GetTournamentsRequest()
+                t_req.filter.user_id = user_id
+                t_resp = self.tournament_service.GetTournaments(t_req, metadata=self.metadata, timeout=self._timeout)
+                for tournament in t_resp.tournaments:
+                    for event in tournament.events:
+                        event_lookup[event.id] = (event, tournament)
+            except Exception as e:
+                logger.warning(f"GetPlayerHistoryStandings: failed to fetch user's tournaments: {e}")
+
             req = GetUserPlacementsRequest()
             req.id = user_id
+            # Page over ~50 to ensure we have enough singles results after
+            # filtering out doubles/3v3 events.
+            req.pagination_request.page_size = 50
             resp = self.user_service.GetUserPlacements(req, metadata=self.metadata, timeout=self._timeout)
 
             history = []
             for result in resp.results:
+                if len(history) >= 10:
+                    break
                 if not result.HasField("placement"):
                     continue
+                event_id = result.event_id
+                lookup = event_lookup.get(event_id)
+                if not lookup:
+                    continue
+                event, tournament = lookup
+
+                if event.entrant_size != 1:
+                    continue
+
+                tournament_picture = next(
+                    (img.url for img in tournament.images if img.type == ImageType.IMAGE_TYPE_BANNER),
+                    None,
+                )
+
                 placement = result.placement
                 history.append({
                     "placement": placement.placement,
-                    "event_name": "",       # parry's EntrantResult doesn't carry event_name inline; would need GetEvent per result
-                    "tournament_name": "",  # likewise tournament_name
-                    "tournament_picture": None,
-                    "entrants": 0,
-                    "event_date": 0,
+                    "event_name": event.name,
+                    "tournament_name": tournament.name,
+                    "tournament_picture": tournament_picture,
+                    "entrants": event.entrant_count,
+                    "event_date": event.start_date.seconds,
                 })
 
             logger.info(f"GetPlayerHistoryStandings: user {user_id} -> {len(history)} placements")
@@ -1357,10 +1429,11 @@ class ParryGGDataProvider(TournamentDataProvider):
             entrants = []
             for pool_local_seed, seed in enumerate(seeds_in_bracket, start=1):
                 team = {"players": []}
-                if seed.HasField("event_entrant") and seed.event_entrant.HasField("entrant"):
-                    entrant = seed.event_entrant.entrant
+                ee = self._seed_entrant(seed)
+                if ee is not None:
+                    entrant = ee.entrant
                     if len(entrant.users) > 1:
-                        team["name"] = ""  # parry has no team-display-name field
+                        team["name"] = self._team_display_name(seed)
                     for user in entrant.users:
                         avatar = next(
                             (img.url for img in user.images if img.type == ImageType.IMAGE_TYPE_AVATAR),
