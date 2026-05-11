@@ -125,7 +125,7 @@ class TSHScoreboardStageWidget(QDockWidget):
 
         self.webappLabel = self.findChild(QLabel, "labelIp")
         self.webappLabel.setText(
-            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}'>http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5000)}</a>"))
+            QApplication.translate("app", "Open {0} in a browser to stage strike.").format(f"<a href='http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5500)}'>http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5500)}</a>"))
         self.webappLabel.setOpenExternalLinks(True)
 
         self.labelValidation = self.findChild(QLabel, "labelValidation")
