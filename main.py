@@ -25,8 +25,13 @@ if __name__ == '__main__':
         except NotImplementedError:  # windows...
             pass
 
-        # QApplication.exec() will block until the application is closed.
-        sys.exit(src.App.exec())
+        # To run synchronously, you would do something like the following:
+        # sys.exit(src.App.exec())
+
+        # Since this is a QEventLoop, afaik it will run App.exec() in the background.
+        with loop:
+            loop.run_forever()
+
     except asyncio.exceptions.CancelledError:
         sys.exit(255)
     except RuntimeError:
