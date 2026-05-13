@@ -326,7 +326,7 @@ class TSHAssetDownloader(QObject):
                 return
 
             for f in filesToDownload:
-                filesToDownload[f]["path"] = "https://github.com/parry-gg/StreamHelperAssets/releases/latest/download/" + \
+                filesToDownload[f]["path"] = "https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/" + \
                     filesToDownload[f]["name"]
                 filesToDownload[f]["extractpath"] = "./user_data/games/"+game
 
@@ -356,7 +356,7 @@ class TSHAssetDownloader(QObject):
         assets = None
         try:
             response = requests.get(
-                "https://raw.githubusercontent.com/parry-gg/StreamHelperAssets/main/assets.json")
+                "https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/assets.json")
             assets = orjson.loads(response.text)
         except Exception as e:
             messagebox = QMessageBox()
@@ -369,7 +369,7 @@ class TSHAssetDownloader(QObject):
         try:
             # Try getting logo_small
             response = requests.get(
-                f"https://raw.githubusercontent.com/parry-gg/StreamHelperAssets/main/games/{game_code}/base_files/logo_small.png")
+                f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo_small.png")
             response.raise_for_status()
             data = response.content
             return ([index, data])
@@ -378,7 +378,7 @@ class TSHAssetDownloader(QObject):
             try:
                 # Try getting logo
                 response = requests.get(
-                    f"https://raw.githubusercontent.com/parry-gg/StreamHelperAssets/main/games/{game_code}/base_files/logo.png")
+                    f"https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/{game_code}/base_files/logo.png")
                 response.raise_for_status()
                 data = response.content
                 return ([index, data])
@@ -534,7 +534,7 @@ class TSHAssetDownloader(QObject):
                         continue
                     filesToDownload = list(asset["files"].values())
                     for fileToDownload in filesToDownload:
-                        fileToDownload["path"] = f'https://github.com/parry-gg/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
+                        fileToDownload["path"] = f'https://github.com/joaorb64/StreamHelperAssets/releases/latest/download/{fileToDownload["name"]}'
                         fileToDownload["extractpath"] = f'./user_data/games/{game}'
                     allFilesToDownload.append(filesToDownload)
 
