@@ -656,7 +656,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHTeamPlayer.ui" line="260"/>
         <source>Eliminated</source>
-        <translation type="unfinished"></translation>
+        <translation>Éliminé</translation>
     </message>
     <message>
         <source>DEAD?</source>
