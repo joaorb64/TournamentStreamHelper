@@ -4,18 +4,17 @@ import requests
 from loguru import logger
 
 # ParryGG Imports
-# TODO: Probably won't use all of these.
 from parrygg.services.tournament_service_pb2_grpc import TournamentServiceStub
 from parrygg.services.event_service_pb2_grpc import EventServiceStub
 from parrygg.services.phase_service_pb2_grpc import PhaseServiceStub
 from parrygg.services.bracket_service_pb2_grpc import BracketServiceStub
 from parrygg.services.match_service_pb2_grpc import MatchServiceStub
+from parrygg.services.match_service_pb2_grpc import MatchGameServiceStub
 from parrygg.services.entrant_service_pb2_grpc import EntrantServiceStub
 from parrygg.services.user_service_pb2_grpc import UserServiceStub
 from parrygg.services.game_service_pb2_grpc import GameServiceStub
 from parrygg.services.stream_service_pb2_grpc import StreamServiceStub
 
-# TODO: This is poor practice, will change later.
 from parrygg.services.tournament_service_pb2 import *
 from parrygg.services.event_service_pb2 import *
 from parrygg.services.phase_service_pb2 import *
