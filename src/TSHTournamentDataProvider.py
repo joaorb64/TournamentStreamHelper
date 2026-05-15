@@ -83,6 +83,17 @@ class TSHTournamentDataProvider(QObject):
         elif url is not None and "parry.gg" in url:
             if not SettingsManager.Get("api_keys.parrygg"):
                 logger.error("ParryGG API key not set")
+
+                messagebox = QMessageBox()
+                messagebox.setWindowTitle(
+                    QApplication.translate("app", "Error"))
+                messagebox.setTextFormat(Qt.RichText)
+                messagebox.setText(
+                    QApplication.translate("app", "Parry.gg API key has not been set. Please configure it in Settings > API Keys.") + "<br><br>" +
+                    QApplication.translate("app", "API keys can be created at: ") + 
+                    '<a href="https://parry.gg/api-keys">parry.gg/api-keys</a>')
+                messagebox.exec()
+
                 TSHTournamentDataProvider.instance.provider = None
             else:
                 try:
