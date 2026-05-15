@@ -9,7 +9,7 @@ from parrygg.services.event_service_pb2_grpc import EventServiceStub
 from parrygg.services.phase_service_pb2_grpc import PhaseServiceStub
 from parrygg.services.bracket_service_pb2_grpc import BracketServiceStub
 from parrygg.services.match_service_pb2_grpc import MatchServiceStub
-from parrygg.services.match_service_pb2_grpc import MatchGameServiceStub
+from parrygg.services.match_game_service_pb2_grpc import MatchGameServiceStub
 from parrygg.services.entrant_service_pb2_grpc import EntrantServiceStub
 from parrygg.services.user_service_pb2_grpc import UserServiceStub
 from parrygg.services.game_service_pb2_grpc import GameServiceStub
