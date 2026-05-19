@@ -26,7 +26,7 @@ from parrygg.services.game_service_pb2 import *
 from parrygg.services.stream_service_pb2 import *
 
 from parrygg.models.slug_pb2 import SlugType
-from parrygg.models.bracket_pb2 import BracketType, MatchState
+from parrygg.models.bracket_pb2 import BracketType, MatchState, SlotState
 from parrygg.models.image_pb2 import ImageType
 from parrygg.models.event_pb2 import LocationType
 from parrygg.models.hierarchy_pb2 import PathType
@@ -1466,8 +1466,8 @@ class ParryGGDataProvider(TournamentDataProvider):
                 round_key = str(match.round if match.winners_side else -match.round)
                 sets_by_round.setdefault(round_key, []).append({
                     "score": [
-                        int(match.slots[0].score) if len(match.slots) > 0 else 0,
-                        int(match.slots[1].score) if len(match.slots) > 1 else 0,
+                        int(match.slots[0].score) if len(match.slots) > 0 and match.slots[0].state == SlotState.SLOT_STATE_NUMERIC else -1,
+                        int(match.slots[1].score) if len(match.slots) > 1 and match.slots[1].state == SlotState.SLOT_STATE_NUMERIC else -1,
                     ],
                     "finished": match.state == MatchState.MATCH_STATE_COMPLETED,
                 })
