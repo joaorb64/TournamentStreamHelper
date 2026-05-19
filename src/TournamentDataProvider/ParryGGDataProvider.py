@@ -1463,7 +1463,7 @@ class ParryGGDataProvider(TournamentDataProvider):
             # matching start.gg's convention.
             sets_by_round = {}
             for match in bracket.matches:
-                round_key = str(match.round if match.winners_side else -match.round)
+                round_key = str(match.round if match.winners_side else -match.round - 2)
                 sets_by_round.setdefault(round_key, []).append({
                     "score": [
                         int(match.slots[0].score) if len(match.slots) > 0 and match.slots[0].state == SlotState.SLOT_STATE_NUMERIC else -1,
