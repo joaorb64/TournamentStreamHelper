@@ -1462,8 +1462,13 @@ class ParryGGDataProvider(TournamentDataProvider):
             # Sets keyed by signed round number (positive=winners, negative=losers),
             # matching start.gg's convention.
             sets_by_round = {}
+            
+            # Offset of 2 for brackets with a power of 2 player count, 3 otherwise.
+            n = len(bracket.seeds)
+            losers_offset = 2 if n > 0 and (n & (n - 1)) == 0 else 3
+            
             for match in bracket.matches:
-                round_key = str(match.round if match.winners_side else -match.round - 2)
+                round_key = str(match.round if match.winners_side else -match.round - losers_offset)
                 sets_by_round.setdefault(round_key, []).append({
                     "score": [
                         int(match.slots[0].score) if len(match.slots) > 0 and match.slots[0].state == SlotState.SLOT_STATE_NUMERIC else -1,
