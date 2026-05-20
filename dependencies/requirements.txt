@@ -24,3 +24,8 @@ tqdm==2.2.3
 tzdata
 zstd==1.5.7.3
 pycountry==26.2.16
+cutlet
+unidic-lite
+pypinyin
+koroman==1.0.14
+arabic_buckwalter_transliteration
