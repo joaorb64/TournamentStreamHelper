@@ -7,34 +7,8 @@ import signal
 import sys
 import os
 import asyncio
-from qasync import run, QEventLoop
-from functools import partial
+from qasync import QEventLoop
 os.environ["QT_API"] = "PyQt6"
-
-
-async def main(event_loop):
-    def close_future(future, loop):
-        loop.call_later(10, future.cancel)
-        future.cancel()
-
-    future = asyncio.Future()
-
-    window = src.Window(event_loop)
-    if hasattr(src.App, "aboutToQuit"):
-        getattr(src.App, "aboutToQuit").connect(
-            partial(close_future, future, event_loop))
-
-    try:
-        event_loop.add_signal_handler(signal.SIGINT, lambda: window.close())
-        event_loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
-    except NotImplementedError:  # windows...
-        pass
-
-    await future
-    if isinstance(future.result(), int):
-        return future.result()
-
-    return 0
 
 
 if __name__ == '__main__':
@@ -42,12 +16,24 @@ if __name__ == '__main__':
     multiprocessing.freeze_support()
 
     try:
+        loop = QEventLoop(src.App)
+        asyncio.set_event_loop(loop)
+        window = src.Window(loop)
         try:
-            loop = QEventLoop()
-            asyncio.set_event_loop(loop)
-            sys.exit(loop.run_until_complete(main(loop)))
-        except asyncio.exceptions.CancelledError:
-            sys.exit(0)
+            loop.add_signal_handler(signal.SIGINT, lambda: window.close())
+            loop.add_signal_handler(signal.SIGTERM, lambda: window.close())
+        except NotImplementedError:  # windows...
+            pass
+
+        # To run synchronously, you would do something like the following:
+        # sys.exit(src.App.exec())
+
+        # Since this is a QEventLoop, afaik it will run App.exec() in the background.
+        with loop:
+            loop.run_forever()
+
+    except asyncio.exceptions.CancelledError:
+        sys.exit(255)
     except RuntimeError:
-        sys.exit(0)
+        sys.exit(255)
 

@@ -1,6 +1,6 @@
 export const BACKEND_PORT = process.env.NODE_ENV === 'production'
     ? window.location.port
-    : 5000;
+    : 5500;
 
 export const BASE_URL = `http://${window.location.hostname}:${BACKEND_PORT}`
 
