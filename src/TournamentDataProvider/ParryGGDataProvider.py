@@ -1,7 +1,9 @@
 import grpc
 import traceback
 import requests
+import math
 from loguru import logger
+from collections import deque
 
 # ParryGG Imports
 from parrygg.services.tournament_service_pb2_grpc import TournamentServiceStub
@@ -1463,11 +1465,26 @@ class ParryGGDataProvider(TournamentDataProvider):
             # matching start.gg's convention.
             sets_by_round = {}
             
-            # Offset of 2 for brackets with a power of 2 player count, 3 otherwise.
+            # Offset losers round numbers.
             n = len(bracket.seeds)
-            losers_offset = 2 if n > 0 and (n & (n - 1)) == 0 else 3
-            
-            for match in bracket.matches:
+            real_losers = len(set(m.round for m in bracket.matches if not m.winners_side and not m.grand_finals))
+            total_losers = 2 * math.ceil(math.log2(n))
+            losers_offset = total_losers - real_losers
+
+            # Start queue from last winners side match.
+            matches_by_id = {match.id: match for match in bracket.matches}
+            start_match = max((m for m in bracket.matches if m.winners_side), key=lambda m: m.round)
+            queue = deque([start_match])
+            visited = set()
+
+            bye = {"score": [0, -1], "finished": True,}
+
+            while queue:
+                match = queue.pop()
+                if match.id in visited:
+                    continue
+                visited.add(match.id)
+
                 round_key = str(match.round if match.winners_side else -match.round - losers_offset)
                 sets_by_round.setdefault(round_key, []).append({
                     "score": [
@@ -1476,6 +1493,19 @@ class ParryGGDataProvider(TournamentDataProvider):
                     ],
                     "finished": match.state == MatchState.MATCH_STATE_COMPLETED,
                 })
+
+                if hasattr(match, 'prev_match_id_2') and match.prev_match_id_2:
+                    queue.append(matches_by_id[match.prev_match_id_2])
+
+                    if hasattr(match, 'prev_match_id_1') and match.prev_match_id_1:
+                        queue.append(matches_by_id[match.prev_match_id_1])
+                    else:
+                        sets_by_round.setdefault(str(match.round - 1 if match.winners_side else -match.round - losers_offset + 1), []).append(bye)
+                
+                if not match.winners_side and match.prev_match_id_1 in visited and match.prev_match_id_2 in visited:
+                    sets_by_round.setdefault(str(match.round - 1 if match.winners_side else -match.round - losers_offset + 1), []).append(bye)
+                    sets_by_round.setdefault(str(match.round - 1 if match.winners_side else -match.round - losers_offset + 1), []).append(bye)
+                
             final_data["sets"] = sets_by_round
 
             # Progressions: TSH consumers only read len() to drive the in/out
