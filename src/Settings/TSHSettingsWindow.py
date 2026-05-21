@@ -43,7 +43,7 @@ class TSHSettingsWindow(QDialog):
                 "settings.general", "Webserver Port"),
             "webserver_port",
             "spinbox",
-            5000
+            5500
         ))
 
         generalSettings.append((
