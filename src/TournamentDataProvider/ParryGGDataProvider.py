@@ -728,7 +728,10 @@ class ParryGGDataProvider(TournamentDataProvider):
                             continue
                         if match.HasField("stream_queue_entry"):
                             with_queue_entry += 1
-                        round_label = self._round_label_for_match(match, rounds_by_key)
+                        if bracket.type != BracketType.BRACKET_TYPE_ROUND_ROBIN:
+                            round_label = self._round_label_for_match(match, rounds_by_key)
+                        else:
+                            round_label = "Round Robin"
                         final_data.append(
                             self._build_match_info(match, seeds, phase, bracket, round_label)
                         )
