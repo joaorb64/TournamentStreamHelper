@@ -19,8 +19,7 @@ from ..TournamentDataProvider import TournamentDataProvider
 from .TSHLocaleHelper import TSHLocaleHelper
 import orjson
 from loguru import logger
-import countryflag
-from countryflag.core.exceptions import InvalidCountryError
+import pycountry
 
 
 class TSHCountryHelperSignals(QObject):
@@ -92,9 +91,10 @@ class TSHCountryHelper(QObject):
         }
     
         try:
-            data["emoji"] = countryflag.getflag(TSHCountryHelper.countries[country_code]["code"])
-        except InvalidCountryError:
-            # logger.warning(f'The following country could not be found in the countryflag library: {TSHCountryHelper.countries[country_code]["code"]}')
+            country = pycountry.countries.get(alpha_2=TSHCountryHelper.countries[country_code]["code"])
+            data["emoji"] = country.flag
+        except AttributeError:
+            logger.warning(f'The following country could not be found in the pycountry library: {TSHCountryHelper.countries[country_code]["code"]}')
             data["emoji"] = None
         
         return data

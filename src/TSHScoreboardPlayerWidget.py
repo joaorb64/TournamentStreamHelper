@@ -17,6 +17,7 @@ from .Workers import Worker
 import threading
 from .Helpers.TSHBadWordFilter import TSHBadWordFilter
 from .Helpers.TSHCustomPlayerCompleter import TSHCustomPlayerCompleter
+from .Helpers.TSHLocaleHelper import TSHLocaleHelper
 from loguru import logger
 
 
@@ -269,6 +270,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 self.ExportPlayerId()
 
             self.lastExportedName = merged
+
+            self.SetRomanizedText()
 
     def ExportMergedName(self):
         with self.dataLock:
@@ -632,6 +635,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
             country.lineEdit().setFont(QFont(country.font().family(), 9))
 
             country.currentIndexChanged.connect(self.LoadStates)
+            country.currentIndexChanged.connect(self.SetRomanizedText)
 
             state: QComboBox = self.findChild(QComboBox, "state")
             state.completer().setFilterMode(Qt.MatchFlag.MatchContains)
@@ -1037,3 +1041,17 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 else:
                     c.setCurrentIndex(0)
         StateManager.ReleaseSaving()
+
+    def SetRomanizedText(self):
+        name = self.findChild(QWidget, "name").text()
+        team = self.findChild(QWidget, "team").text()
+        romanized_data = {"name": name, "team": team}
+        country = self.findChild(QComboBox, "country")
+        if country.currentData(Qt.ItemDataRole.UserRole) != None:
+            country_code = country.currentData(Qt.ItemDataRole.UserRole).get("code")
+            if country_code:
+                romanized_data = {
+                    "name": TSHLocaleHelper.RomanizeTextFromCountry(name, country_code),
+                    "team": TSHLocaleHelper.RomanizeTextFromCountry(team, country_code)
+                }
+        StateManager.Set(f"{self.path}.romanized_data", romanized_data)
