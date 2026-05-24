@@ -39,7 +39,8 @@ try:
     contributors_final.extend([
         "@kipferlkipferl",
         "@Luiro_",
-        "@wl_mint"
+        "@wl_mint",
+        "@QQxiaomo"
     ])
 
     with open("assets/contributors.txt", 'w') as out:
