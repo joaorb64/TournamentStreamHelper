@@ -11,6 +11,12 @@ from src.StateManager import StateManager
 from .TSHDictHelper import deep_clone
 from .TSHDirHelper import TSHResolve
 
+# Import romanizers
+import cutlet
+from pypinyin import pinyin
+import koroman
+from arabic_buckwalter_transliteration.transliteration import arabic_to_buckwalter
+
 
 class TSHLocaleHelperSignals(QObject):
     localeChanged = Signal()
@@ -105,6 +111,24 @@ class TSHLocaleHelper(QObject):
 
     def GetCountryContinent(countryCode2: str):
         return TSHLocaleHelper.countryToContinent.get(countryCode2.upper(), "")
+
+    def RomanizeTextFromCountry(text, countryCode2: str):
+        romanized_text = text
+        if romanized_text:
+            languages = TSHLocaleHelper.GetCountrySpokenLanguages(countryCode2)
+            if "ja" in languages:
+                katsu = cutlet.Cutlet()
+                romanized_text = katsu.romaji(text)
+            elif "zh" in languages:
+                pinyin_text = pinyin(text)
+                romanized_text = ""
+                for pinyin_character in pinyin_text:
+                    romanized_text = romanized_text + pinyin_character[0]
+            elif "ko" in languages:
+                romanized_text = koroman.romanize(text)
+            elif "ar" in languages:
+                romanized_text = arabic_to_buckwalter(text)
+        return(romanized_text)
 
     def LoadRoundNames():
         # Load default round names and translation
@@ -210,7 +234,6 @@ class TSHLocaleHelper(QObject):
             except:
                 logger.error(
                     f"Unable to generate match strings for {matchString}")
-
-
+    
 TSHLocaleHelper.LoadLanguages()
 TSHLocaleHelper.LoadCountryToLanguage()
