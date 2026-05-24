@@ -1,0 +1,23 @@
+query UserMainsQuery($userSlug: String!, $videogameId: ID!) {
+	user(slug: $userSlug) {
+		player {
+			id
+			sets(page: 1, perPage: 50, filters: { hideEmpty: true, videogameId: [$videogameId], videogameIds: [$videogameId] }) {
+				nodes {
+					games {
+						selections {
+							entrant {
+								participants {
+									player {
+										id
+									}
+								}
+							}
+							selectionValue
+						}
+					}
+				}
+			}
+		}
+	}
+}

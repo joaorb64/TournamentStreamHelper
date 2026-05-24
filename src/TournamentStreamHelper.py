@@ -133,6 +133,7 @@ from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TournamentDataProvider.StartGGDataProvider import StartGGDataProvider
+from .TournamentDataProvider.ParryGGDataProvider import ParryGGDataProvider
 from .TSHAlertNotification import TSHAlertNotification
 from .TSHPlayerDB import TSHPlayerDB
 from .Workers import *
@@ -930,41 +931,100 @@ class Window(QMainWindow):
             self.gameSelect.setCurrentIndex(0)
             TSHGameAssetManager.instance.selectedGame = {}
 
+    # Pick which (provider_name, user_value) pair to expose. The active
+    # provider always determines which provider's button is shown — even if
+    # its <name>_user setting is empty — so the user sees the right label
+    # for the current tournament and can click the gear to configure it.
+    # If no tournament is loaded, fall back to whichever provider has a user
+    # configured (StartGG preferred for back-compat with prior behavior).
+    @staticmethod
+    def _resolve_user_set_provider():
+        active = TSHTournamentDataProvider.instance.provider if TSHTournamentDataProvider.instance else None
+        active_name = active.name if active else None
+        if active_name in ("StartGG", "ParryGG"):
+            return active_name, SettingsManager.Get(active_name + "_user")
+        for name in ("StartGG", "ParryGG"):
+            user = SettingsManager.Get(name + "_user")
+            if user:
+                return name, user
+        return "StartGG", None
+
     def UpdateUserSetButton(self):
-        if SettingsManager.Get("StartGG_user"):
+        provider_name, user_value = self._resolve_user_set_provider()
+        if provider_name == "ParryGG":
+            label = QApplication.translate("app", "Load tournament and sets from ParryGG user")
+            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/parrygg.png"))
+        else:
+            label = QApplication.translate("app", "Load tournament and sets from StartGG user")
+            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
+        if user_value:
             self.btLoadPlayerSet.setText(
-                QApplication.translate("app", "Load tournament and sets from StartGG user")+" "+QApplication.translate("punctuation", "(")+f"{SettingsManager.Get('StartGG_user')}"+QApplication.translate("punctuation", ")"))
+                label + " "
+                + QApplication.translate("punctuation", "(")
+                + user_value
+                + QApplication.translate("punctuation", ")"))
             self.btLoadPlayerSet.setEnabled(True)
         else:
-            self.btLoadPlayerSet.setText(
-                QApplication.translate("app", "Load tournament and sets from StartGG user"))
+            self.btLoadPlayerSet.setText(label)
             self.btLoadPlayerSet.setEnabled(False)
     
     def UpdateLastSetsButton(self):
-        if TSHTournamentDataProvider.instance and TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.name == "StartGG":
-            self.btPullCompletedSets.setEnabled(True)
+        provider = TSHTournamentDataProvider.instance.provider if TSHTournamentDataProvider.instance else None
+        provider_name = provider.name if provider else None
+
+        # Both providers implement GetCompletedSets — enable for either.
+        self.btPullCompletedSets.setEnabled(provider_name in ("StartGG", "ParryGG"))
+
+        if provider_name == "StartGG":
+            self.btPullCompletedSets.setText(
+                QApplication.translate("app", "Pull Latest Completed Sets from StartGG"))
+            self.btPullCompletedSets.setIcon(QIcon("./assets/icons/startgg.svg"))
+        elif provider_name == "ParryGG":
+            self.btPullCompletedSets.setText(
+                QApplication.translate("app", "Pull Latest Completed Sets from ParryGG"))
+            self.btPullCompletedSets.setIcon(QIcon("./assets/icons/parrygg.png"))
         else:
-            self.btPullCompletedSets.setEnabled(False)
+            self.btPullCompletedSets.setText(
+                QApplication.translate("app", "Pull Latest Completed Sets from StartGG"))
+            self.btPullCompletedSets.setIcon(QIcon("./assets/icons/startgg.svg"))
 
     def LoadUserSetClicked(self):
         self.scoreboard.lastSetSelected = None
-        if SettingsManager.Get("StartGG_user"):
+        provider_name, user_value = self._resolve_user_set_provider()
+        if not user_value:
+            return
+
+        # Construct a placeholder-URL provider so the GetUserMatchId flow can
+        # run before any tournament is selected — the resulting match's
+        # hierarchy provides the real tournament URL via invokeSlot.
+        if provider_name == "StartGG":
             TSHTournamentDataProvider.instance.provider = StartGGDataProvider(
                 "start.gg/",
                 TSHTournamentDataProvider.instance.threadPool,
-                TSHTournamentDataProvider.instance
+                TSHTournamentDataProvider.instance,
             )
-            sb = self.scoreboard.GetScoreboard(1)
-            if sb is not None:
-                TSHTournamentDataProvider.instance.LoadUserSet(
-                    sb, SettingsManager.Get("StartGG_user"))
+        else:  # ParryGG — profile-path URL short-circuits _get_slugs_and_ids
+            TSHTournamentDataProvider.instance.provider = ParryGGDataProvider(
+                "https://parry.gg/profile/_user_lookup",
+                TSHTournamentDataProvider.instance.threadPool,
+                TSHTournamentDataProvider.instance,
+                SettingsManager.Get("api_keys.parrygg"),
+            )
+
+        sb = self.scoreboard.GetScoreboard(1)
+        if sb is not None:
+            TSHTournamentDataProvider.instance.LoadUserSet(sb, user_value)
     
     def LoadCompletedSetsClicked(self, data):
         StateManager.Set("completed_sets", {index+1: set for index, set in enumerate(data)})
 
     def LoadUserSetOptionsClicked(self):
+        provider_name, _ = self._resolve_user_set_provider()
         TSHTournamentDataProvider.instance.SetUserAccount(
-            self.scoreboard, startgg=True)
+            self.scoreboard,
+            startgg=(provider_name == "StartGG"),
+            parrygg=(provider_name == "ParryGG"),
+        )
 
     def closeEvent(self, event):
         logger.info("Shutting down...")

@@ -4,6 +4,7 @@
         "web_score"
     ],
     "supported_providers": [
-        "StartGG"
+        "StartGG",
+        "[BETA] ParryGG"
     ]
 }

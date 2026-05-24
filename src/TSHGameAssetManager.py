@@ -173,6 +173,27 @@ class TSHGameAssetManager(QObject):
             if detect_smashgg_id_match(game, gameid):
                 self.LoadGameAssets(i+1)
                 break
+    
+    def SetGameFromIGDBId(self, igdb_id):
+        def detect_igdb_id_match(game, igdb_id):
+            result = str(game.get("igdb_game_id", "")) == str(igdb_id)
+            if not result:
+                alternates = game.get("alternate_versions", [])
+                alternate_ids = []
+                for alternate in alternates:
+                    if alternate.get("igdb_game_id"):
+                        alternate_ids.append(
+                            str(alternate.get("igdb_game_id")))
+                result = str(igdb_id) in alternate_ids
+            return (result)
+
+        if len(self.games.keys()) == 0:
+            return
+
+        for i, game in enumerate(self.games.values()):
+            if detect_igdb_id_match(game, igdb_id):
+                self.LoadGameAssets(i+1)
+                break
 
     def CopyCSS(self, game):
         # Make dir if doesn't exists

@@ -304,6 +304,7 @@ class WebServerActions(QThread):
                 "name": TSHGameAssetManager.instance.games[key].get("name"),
                 "locale": TSHGameAssetManager.instance.games[key].get("locale"),
                 "smashgg_game_id": TSHGameAssetManager.instance.games[key].get("smashgg_game_id"),
+                "igdb_game_id": TSHGameAssetManager.instance.games[key].get("igdb_game_id"),
                 "has_stages": bool(TSHGameAssetManager.instance.games[key].get("stage_to_codename")),
                 "has_variants": bool(TSHGameAssetManager.instance.games[key].get("variant_to_codename")),
                 "has_colors": bool(TSHGameAssetManager.instance.games[key].get("preset_colors"))
@@ -530,7 +531,9 @@ class WebServerActions(QThread):
             return "OK"
         else:
             validators = [
-                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+")
+                QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
+                
+                QRegularExpression("parry.gg/[^/]+/[^/]+")
             ]
 
             for validator in validators:
@@ -546,6 +549,17 @@ class WebServerActions(QThread):
 
                     # Some URLs in startgg have eventS but the API doesn't work with that format
                     url = url.replace("/events/", "/event/")
+
+            elif "parry.gg" in url:
+                # Remove the "_manage" part of admin urls first
+                url = url.replace("/_manage", "")
+
+                matches = re.match(
+                    "(.*parry.gg/[^/]*/[^/]*)", url)
+
+                if matches:
+                    url = matches.group()
+
 
             SettingsManager.Set("TOURNAMENT_URL", url)
             TSHTournamentDataProvider.instance.signals.tournament_url_update.emit(url)
