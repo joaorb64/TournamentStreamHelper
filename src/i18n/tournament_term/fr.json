@@ -16,7 +16,10 @@
         "first_to": "First to {0}",
         "qualifier": "Match de qualification - {0} {1}",
         "qualifier_winners_indicator": "(W)",
-        "qualifier_losers_indicator": "(L)"
+        "qualifier_losers_indicator": "(L)",
+        "single_elim_final": "Finale",
+        "single_elim_semi_final": "Demi-finale",
+        "single_elim_quarter_final": "Quart de finale"
     },
     "phase": {
         "group_stage": "Poules",
@@ -35,6 +38,11 @@
         "top_n": "Top {0}",
         "exhibition": "Exhibition",
         "freeplay": "Freeplay",
-        "money_match": "Money Match"
+        "money_match": "Money Match",
+        "ladder": "Ladder",
+        "swiss": "Ronde Suisse",
+        "ranked_match": "Match classé",
+        "random_online": "Matchmaking en ligne",
+        "stepladder": "Tournois à échelons"
     }
 }

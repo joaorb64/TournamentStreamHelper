@@ -16,7 +16,10 @@
         "first_to": "First to {0}",
         "qualifier": "{0} Qualifier {1}",
         "qualifier_winners_indicator": "(W)",
-        "qualifier_losers_indicator": "(L)"
+        "qualifier_losers_indicator": "(L)",
+        "single_elim_final": "Final",
+        "single_elim_semi_final": "Semi-Final",
+        "single_elim_quarter_final": "Quarter-Final"
     },
     "phase": {
         "group_stage": "Pools",
@@ -35,6 +38,11 @@
         "top_n": "Top {0}",
         "exhibition": "Exhibition Match",
         "freeplay": "Freeplay",
-        "money_match": "Money Match"
+        "money_match": "Money Match",
+        "ladder": "Ladder",
+        "swiss": "Swiss",
+        "ranked_match": "Ranked Match",
+        "random_online": "Online Matchmaking",
+        "stepladder": "Stepladder"
     }
 }
