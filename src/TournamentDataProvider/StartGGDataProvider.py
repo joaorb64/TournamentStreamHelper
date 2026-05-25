@@ -557,10 +557,13 @@ class StartGGDataProvider(TournamentDataProvider):
             "Winners Quarter-Final": "winners_quarter_final",
             "Losers Final": "losers_final",
             "Losers Semi-Final": "losers_semi_final",
-            "Losers Quarter-Final": "losers_quarter_final"
+            "Losers Quarter-Final": "losers_quarter_final",
+            "Final": "single_elim_final",
+            "Semi-Final": "single_elim_semi_final",
+            "Quarter-Final": "single_elim_quarter_final"
         }
 
-        if name in roundMapping:
+        if name in roundMapping and TSHLocaleHelper.matchNames.get(roundMapping.get(name)):
             return TSHLocaleHelper.matchNames.get(roundMapping.get(name))
 
         try:
