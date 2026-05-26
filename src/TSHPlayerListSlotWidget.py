@@ -136,6 +136,9 @@ class TSHPlayerListSlotWidget(QGroupBox):
         for i, pw in enumerate(self.playerWidgets):
             if data.get("players"):
                 try:
+                    data.get("players")[i]["wins"] = data.get("wins")
+                    data.get("players")[i]["losses"] = data.get("losses")
+                    data.get("players")[i]["winPercentage"] = data.get("winPercentage")
                     pw.SetData(data.get("players")[i])
                 except:
                     pw.Clear()

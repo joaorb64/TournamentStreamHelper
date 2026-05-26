@@ -19,6 +19,9 @@ query SetQuery($id: ID!) {
 				id
 				name
 				initialSeedNum
+				standing {
+					setRecordWithoutByes
+				}
 				participants {
 					id
 					user {

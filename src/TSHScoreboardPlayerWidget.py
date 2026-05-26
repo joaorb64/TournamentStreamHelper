@@ -369,6 +369,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                             f"{w.path}.id")
                         data["seed"] = StateManager.Get(
                             f"{w.path}.seed")
+                        data["wins"] = StateManager.Get(
+                            f"{w.path}.wins")
+                        data["losses"] = StateManager.Get(
+                            f"{w.path}.losses")
+                        data["winPercentage"] = StateManager.Get(
+                            f"{w.path}.winPercentage")
                         data["city"] = StateManager.Get(
                             f"{w.path}.city")
                         tmpData.append(data)
@@ -389,6 +395,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     widget.setChecked(tmpData[i][objName])
                         w.ExportPlayerId(tmpData[i]["id"])
                         StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
+                        StateManager.Set(f"{w.path}.wins", tmpData[i]["wins"])
+                        StateManager.Set(f"{w.path}.losses", tmpData[i]["losses"])
+                        StateManager.Set(f"{w.path}.winPercentage", tmpData[i]["winPercentage"])
                         StateManager.Set(f"{w.path}.city", tmpData[i]["city"])
         finally:
             StateManager.ReleaseSaving()
@@ -924,6 +933,12 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     self.findChild(QSpinBox, "seed").setValue(int(data.get("seed")))
                 else:
                     self.findChild(QSpinBox, "seed").setValue(0)
+            if data.get("wins") is not None:
+                StateManager.Set(f"{self.path}.wins", data.get("wins"))
+            if data.get("losses") is not None:
+                StateManager.Set(f"{self.path}.losses", data.get("losses"))
+            if data.get("winPercentage") is not None:
+                StateManager.Set(f"{self.path}.winPercentage", data.get("winPercentage"))
             if data.get("city"):
                 StateManager.Set(f"{self.path}.city", data.get("city"))
         finally:
@@ -1048,6 +1063,10 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         continue  # only executed if the inner loop DID break
                 else:
                     c.setCurrentIndex(0)
+            
+        StateManager.Unset(f"{self.path}.wins")
+        StateManager.Unset(f"{self.path}.losses")
+        StateManager.Unset(f"{self.path}.winPercentage")
         StateManager.ReleaseSaving()
 
     def SetRomanizedText(self):

@@ -741,6 +741,17 @@ class StartGGDataProvider(TournamentDataProvider):
                     if setData.get(f"p{i+1}_seed"):
                         playerData["seed"] = setData.get(f"p{i+1}_seed")
 
+                    if i == 0:
+                        standings = deep_get(p1.get("entrant", {}), "standing.setRecordWithoutByes", {})
+                        playerData["wins"] = standings.get("wins", '0')
+                        playerData["losses"] = standings.get("losses", '0')
+                        playerData["winPercentage"] = standings.get("winPercentage", 'N/A')
+                    else:
+                        standings = deep_get(p2.get("entrant", {}), "standing.setRecordWithoutByes", {})
+                        playerData["wins"] = standings.get("wins", '0')
+                        playerData["losses"] = standings.get("losses", '0')
+                        playerData["winPercentage"] = standings.get("winPercentage", 'N/A')
+
                     players[i].append(playerData)
 
             setData["entrants"] = players
@@ -1906,6 +1917,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
             for standing in standings:
                 team = {}
+                logger.info(standing)
 
                 participants = deep_get(standing, "entrant.participants")
 
@@ -1913,6 +1925,9 @@ class StartGGDataProvider(TournamentDataProvider):
                     team["name"] = deep_get(standing, "entrant.name")
 
                 team["players"] = []
+                team["wins"] = deep_get(standing, "setRecordWithoutByes.wins", 0)
+                team["losses"] = deep_get(standing, "setRecordWithoutByes.losses", 0)
+                team["winPercentage"] = deep_get(standing, "setRecordWithoutByes.winPercentage", "N/A")
 
                 for entrant in participants:
                     team["players"].append(StartGGDataProvider.ProcessEntrantData(
