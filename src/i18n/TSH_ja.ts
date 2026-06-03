@@ -1461,6 +1461,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="65"/>
+        <location filename="../TournamentStreamHelper.py" line="423"/>
         <source>Crew/Team Battle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1476,39 +1477,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="103"/>
-        <location filename="../TSHTeamBattleWidget.py" line="222"/>
+        <location filename="../TSHTeamBattleWidget.py" line="256"/>
         <source>Lives/Stocks per Player</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="113"/>
+        <location filename="../TSHTeamBattleWidget.py" line="114"/>
         <source>Battle Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="129"/>
+        <location filename="../TSHTeamBattleWidget.py" line="130"/>
         <location filename="../TSHSelectSetWindow.py" line="112"/>
         <source>Phase</source>
         <translation>フェーズ</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="139"/>
+        <location filename="../TSHTeamBattleWidget.py" line="142"/>
         <location filename="../TSHSelectSetWindow.py" line="113"/>
         <source>Match</source>
         <translation>ラウンド</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="161"/>
+        <location filename="../TSHTeamBattleWidget.py" line="166"/>
         <source>Reset Player Mode Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="163"/>
+        <location filename="../TSHTeamBattleWidget.py" line="168"/>
         <source>Reset Battle Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="228"/>
+        <location filename="../TSHTeamBattleWidget.py" line="261"/>
         <source>First To Amount</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1820,12 +1821,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="177"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="178"/>
         <source>STOCKS/LIVES</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="179"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="180"/>
         <source>GAMES WON</source>
         <translation type="unfinished"></translation>
     </message>

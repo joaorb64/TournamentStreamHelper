@@ -1651,6 +1651,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="65"/>
+        <location filename="../TournamentStreamHelper.py" line="423"/>
         <source>Crew/Team Battle</source>
         <translation>Combat en équipe</translation>
     </message>
@@ -1666,39 +1667,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHTeamBattleWidget.py" line="103"/>
-        <location filename="../TSHTeamBattleWidget.py" line="222"/>
+        <location filename="../TSHTeamBattleWidget.py" line="256"/>
         <source>Lives/Stocks per Player</source>
         <translation>Nombre de vies par joueur</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="113"/>
+        <location filename="../TSHTeamBattleWidget.py" line="114"/>
         <source>Battle Mode</source>
         <translation>Mode de combat</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="129"/>
+        <location filename="../TSHTeamBattleWidget.py" line="130"/>
         <location filename="../TSHSelectSetWindow.py" line="112"/>
         <source>Phase</source>
         <translation>Phase</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="139"/>
+        <location filename="../TSHTeamBattleWidget.py" line="142"/>
         <location filename="../TSHSelectSetWindow.py" line="113"/>
         <source>Match</source>
         <translation>Match</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="161"/>
+        <location filename="../TSHTeamBattleWidget.py" line="166"/>
         <source>Reset Player Mode Values</source>
         <translation>Réinitialiser les valeurs joueur</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="163"/>
+        <location filename="../TSHTeamBattleWidget.py" line="168"/>
         <source>Reset Battle Mode</source>
         <translation>Réinitialiser le mode de combat</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="228"/>
+        <location filename="../TSHTeamBattleWidget.py" line="261"/>
         <source>First To Amount</source>
         <translation>Score à atteindre</translation>
     </message>
@@ -1870,12 +1871,12 @@ p, li { white-space: pre-wrap; }
         <translation>Le compte Bluesky n’a pas été correctement configuré</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="177"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="178"/>
         <source>STOCKS/LIVES</source>
         <translation>VIES</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="179"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="180"/>
         <source>GAMES WON</source>
         <translation>JEUX GAGNÉS</translation>
     </message>
