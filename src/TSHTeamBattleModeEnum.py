@@ -4,16 +4,16 @@ from enum import Enum
 # Enum for Selecting Widget Mode (Mainly for dropdown and switch/if statements)
 class TSHTeamBattleModeEnum(Enum):
     # STOCK POOL
-    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X number of stocks
+    # Each player will have an active checkbox, an "eliminated" checkbox, a spinner with X number of stocks
     # remaining (automatically controlled by dynamic spinner in the top bar).
     # As each stock decreases, the system will export the total pool of stocks remaining and total "score".
-    # When a player hits 0 remaining stocks, the system will automatically declare them as "dead" (toggleable).
+    # When a player hits 0 remaining stocks, the system will automatically declare them as "eliminated" (toggleable).
     STOCK_POOL = QApplication.translate("app", "Stock Pool (Smash)")
 
     # FIRST TO
-    # Each player will have an active checkbox, a "dead" checkbox, a spinner with X current score of a player to the "First To" amount.
+    # Each player will have an active checkbox, an "eliminated" checkbox, a spinner with X current score of a player to the "First To" amount.
     # When increasing player score, if the "First To" amount is reached, the system will reset the player's points
-    # and declare the other player "dead" (toggleable).
+    # and declare the other player "eliminated" (toggleable).
     # [Easiest way to do it without needing to handle for other cases, and can be handled through signal calls]
     FIRST_TO = QApplication.translate("app", "First To (First To X Team Individuals)")
 

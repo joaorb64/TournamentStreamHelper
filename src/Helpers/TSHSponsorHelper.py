@@ -4,14 +4,14 @@ from ..StateManager import StateManager
 
 class TSHSponsorHelper:
 
-    def ExportValidSponsors(team: str, path: str):
+    def ExportValidSponsors(sponsor_name: str, path: str):
         sponsor_logo= None
-        cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", team)
+        cleaned_sponsor = re.sub(r"[,/|;:<>\\?*]", "_", sponsor_name)
         if os.path.exists(f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"):
             sponsor_logo = f"./user_data/sponsor_logo/{cleaned_sponsor.upper()}.png"
             StateManager.Unset(f"{path}.sponsor_logos")
         else:
-            split_sponsor = re.split(r"[,/|;: <>\\?*]", team)
+            split_sponsor = re.split(r"[,/|;: <>\\?*]", sponsor_name)
             i: int = 0
             for sponsor in split_sponsor:
                 if os.path.exists(f"./user_data/sponsor_logo/{sponsor.upper()}.png"):

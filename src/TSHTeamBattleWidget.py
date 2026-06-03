@@ -3,40 +3,40 @@ from qtpy.QtWidgets import *
 from qtpy import uic
 from typing import List
 from loguru import logger
+from .SettingsManager import SettingsManager
 from .StateManager import StateManager
 from .TSHTeamBattleModeEnum import TSHTeamBattleModeEnum
 from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
+from .TSHColorButton import TSHColorButton
 from.Helpers.TSHLocaleHelper import TSHLocaleHelper
 
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
-    reset_all_stocks = Signal()
-    reset_everything = Signal()
+    reset_all_stocks       = Signal()
+    reset_everything       = Signal()
     dynamicSpinner_changed = Signal()
 
     # TEAM 1 SIGNALS
-    team1_next_active_player = Signal()
-    team1_stock_up = Signal()
-    team1_stock_down = Signal()
+    team1_next_active_player    = Signal()
+    team1_stock_up              = Signal()
+    team1_stock_down            = Signal()
     team1_active_player_changed = Signal(int)
 
     # TEAM 2 SIGNALS
-    team2_next_active_player = Signal()
-    team2_stock_up = Signal()
-    team2_stock_down = Signal()
+    team2_next_active_player    = Signal()
+    team2_stock_up              = Signal()
+    team2_stock_down            = Signal()
     team2_active_player_changed = Signal(int)
 
 # =====================================================
-# ACTIVE TODOs
+# FUTURE TODOs
 # =====================================================
-# TODO: Finish export for phase and match properly
 # TODO: Handle player spinner reset when a new active player is selected on opposing team in FIRST_TO
 # TODO: Handle triggering "deaths" for the other team when in FIRST_TO and the other team reaches the correct score
 # TODO: Add a setting to be able to set the initial value of a stock pool or a first to match up (quicker setup I guess?)
 # TODO: Track current active players for both teams via index
-# TODO: Calculate and Export Total Score to Output, including remaining stock pool
 # TODO: Add a checkbox to determine if we want to auto track to the next player in line when they "die"
 # =====================================================
 # FOR REMOTE CONTROL
@@ -48,7 +48,7 @@ class TSHTeamBattleSignals(QObject):
 class TSHTeamBattleWidget(QDockWidget):
     battleMode = TSHTeamBattleModeEnum.STOCK_POOL
 
-    playerWidgets: List[TSHTeamPlayerWidget] = []
+    playerWidgets: List[TSHTeamPlayerWidget]      = []
     team1playerWidgets: List[TSHTeamPlayerWidget] = []
     team2playerWidgets: List[TSHTeamPlayerWidget] = []
 
@@ -104,6 +104,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.lifeLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         self.livesNumber = QSpinBox()
         self.livesNumber.valueChanged.connect(self.SetSpinnerForPlayers)
+        self.livesNumber.valueChanged.connect(self.TotalScoreExport)
         lifeColumn.layout().addWidget(self.lifeLabel)
         lifeColumn.layout().addWidget(self.livesNumber)
         row.layout().addWidget(lifeColumn)
@@ -128,27 +129,31 @@ class TSHTeamBattleWidget(QDockWidget):
         phaseRow.setLayout(QHBoxLayout())
         phaseLabel = QLabel(QApplication.translate("app", "Phase"))
         phaseLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        phaseCombo = QComboBox()
-        phaseCombo.setObjectName("phaseCombo")
-        phaseCombo.setEditable(True)
+        self.phaseCombo = QComboBox()
+        self.phaseCombo.setObjectName("phaseCombo")
+        self.phaseCombo.setEditable(True)
+        self.phaseCombo.currentIndexChanged.connect(self.PhaseExport)
+        self.phaseCombo.lineEdit().editingFinished.connect(self.PhaseExport)
         phaseRow.layout().addWidget(phaseLabel)
-        phaseRow.layout().addWidget(phaseCombo)
+        phaseRow.layout().addWidget(self.phaseCombo)
 
         matchRow = QWidget()
         matchRow.setLayout(QHBoxLayout())
         matchLabel = QLabel(QApplication.translate("app", "Match"))
         matchLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        matchCombo = QComboBox()
-        matchCombo.setObjectName("matchCombo")
-        matchCombo.setEditable(True)
+        self.matchCombo = QComboBox()
+        self.matchCombo.setObjectName("matchCombo")
+        self.matchCombo.setEditable(True)
+        self.matchCombo.currentIndexChanged.connect(self.MatchExport)
+        self.matchCombo.lineEdit().editingFinished.connect(self.MatchExport)
         matchRow.layout().addWidget(matchLabel)
-        matchRow.layout().addWidget(matchCombo)
+        matchRow.layout().addWidget(self.matchCombo)
 
-        phaseCombo.addItem("")
-        TSHLocaleHelper.LoadPhaseNamesToWidget(phaseCombo)
+        self.phaseCombo.addItem("")
+        TSHLocaleHelper.LoadPhaseNamesToWidget(self.phaseCombo)
 
-        matchCombo.addItem("")
-        TSHLocaleHelper.LoadMatchNamesToWidget(matchCombo)
+        self.matchCombo.addItem("")
+        TSHLocaleHelper.LoadMatchNamesToWidget(self.matchCombo)
 
         infoColumn.layout().addWidget(phaseRow)
         infoColumn.layout().addWidget(matchRow)
@@ -181,17 +186,46 @@ class TSHTeamBattleWidget(QDockWidget):
         self.team1column.setSizePolicy(
             QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.team1column.findChild(QLineEdit, "teamName").editingFinished.connect(self.Team1SponsorExport)
+        DEFAULT_TEAM1_COLOR = SettingsManager.Get("general.team_1_default_color", "#fe3636")
+        self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR, ignore_same_color=False)
+        self.team1column.findChild(QHBoxLayout, "team_header").layout().insertWidget(0, self.colorButton1)
+        self.colorButton1.colorChanged.connect(
+            lambda color: [
+                StateManager.BlockSaving(),
+                StateManager.Set(f"team_battle.team.{1}.color", color),
+                StateManager.ReleaseSaving()
+            ])
+        self.colorButton1.setColor(DEFAULT_TEAM1_COLOR)
+        self.team1score = QSpinBox()
+        self.team1column.findChild(QHBoxLayout, "team_header").layout().addWidget(self.team1score)
+        self.team1score.valueChanged.connect(self.Team1TotalScoreExport)
+        self.team1score.valueChanged.emit(0)
+        self.widgetArea.layout().addWidget(self.team1column)
+
         self.team2column = uic.loadUi(TSHResolve("src/layout/TSHBattleTeam.ui"))
         self.team2column.setSizePolicy(
             QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.team2column.findChild(QLineEdit, "teamName").editingFinished.connect(self.Team2SponsorExport)
-        self.widgetArea.layout().addWidget(self.team1column)
+        DEFAULT_TEAM2_COLOR = SettingsManager.Get("general.team_2_default_color", "#2e89ff")
+        self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR, ignore_same_color=False)
+        self.team2column.findChild(QHBoxLayout, "team_header").layout().insertWidget(0, self.colorButton2)
+        self.colorButton2.colorChanged.connect(
+            lambda color: [
+                StateManager.BlockSaving(),
+                StateManager.Set(f"team_battle.team.{2}.color", color),
+                StateManager.ReleaseSaving()
+            ])
+        self.colorButton2.setColor(DEFAULT_TEAM2_COLOR)
+        self.team2score = QSpinBox()
+        self.team2column.findChild(QHBoxLayout, "team_header").layout().addWidget(self.team2score)
+        self.team2score.valueChanged.connect(self.Team2TotalScoreExport)
+        self.team2score.valueChanged.emit(0)
         self.widgetArea.layout().addWidget(self.team2column)
 
         self.widget.layout().addWidget(scrollArea)
         
-        # self.team1column.findChild(QSpinBox, "team1Score").valueChanged.connect(self.ExportScoreForTeam1)
-        # self.team2column.findChild(QSpinBox, "team2Score").valueChanged.connect(self.ExportScoreForTeam2)
+        self.team1score.valueChanged.connect(self.Team1TotalScoreExport)
+        self.team2score.valueChanged.connect(self.Team2TotalScoreExport)
 
         self.team1column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam1)
         self.team2column.findChild(QCheckBox, "separateSponsors").toggled.connect(self.ToggleSponsorsForTeam2)
@@ -223,13 +257,12 @@ class TSHTeamBattleWidget(QDockWidget):
             self.livesNumber.setValue(0)
             for pw in self.playerWidgets:
                 pw.SetBattleMode(self.battleMode)
-            return
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
             self.lifeLabel.setText(QApplication.translate("app", "First To Amount"))
             self.livesNumber.setValue(0)
             for pw in self.playerWidgets:
                 pw.SetBattleMode(self.battleMode)
-            return
+        StateManager.Set("team_battle.battle_mode", self.battleMode.name)
     
     def ResetAllStocks(self):
         for pw in self.playerWidgets:
@@ -328,16 +361,19 @@ class TSHTeamBattleWidget(QDockWidget):
                     if int(k) > number:
                         StateManager.Unset(
                             f'team_battle.team.{team}.player.{k}')
+        
+        self.SwitchBattleMode()
+        self.SetSpinnerForPlayers()
 
     # =====================================================
     # NEXT ACTIVE PLAYERS
     # =====================================================
     def Team1NextUp(self):
-        # TODO: Have this jump to the next player when the current player "dies"
+        # TODO: Have this jump to the next player when the current player is "eliminated"
         return
     
     def Team2NextUp(self):
-        # TODO: Have this jump to the next player when the current player "dies"
+        # TODO: Have this jump to the next player when the current player is "eliminated"
         return
 
     # =====================================================
@@ -383,29 +419,37 @@ class TSHTeamBattleWidget(QDockWidget):
     # =====================================================
 
     def Team1SponsorExport(self):
-        path = f"team_battle.team.{1}"
+        path = f"team_battle.team.{1}.sponsor"
         team = self.team1column.findChild(QLineEdit, "teamName").text()
         StateManager.Set(path, team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def Team2SponsorExport(self):
-        path = f"team_battle.team.{2}"
+        path = f"team_battle.team.{2}.sponsor"
         team = self.team2column.findChild(QLineEdit, "teamName").text()
         StateManager.Set(path, team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def PhaseExport(self):
-        return
+        StateManager.Set("team_battle.phase", self.phaseCombo.currentText())
     
     def MatchExport(self):
-        return
+        StateManager.Set("team_battle.match", self.matchCombo.currentText())
     
     def TotalScoreExport(self):
         self.Team1TotalScoreExport()
         self.Team2TotalScoreExport()
     
     def Team1TotalScoreExport(self):
-        return
+        scoreCount = 0
+        for player in self.team1playerWidgets:
+            scoreCount += player.GetSpinnerValue()
+        StateManager.Set("team_battle.team1_spinner-total", scoreCount)
+        StateManager.Set("team_battle.team1_total-score", self.team1score.value())
     
     def Team2TotalScoreExport(self):
-        return
+        scoreCount = 0
+        for player in self.team2playerWidgets:
+            scoreCount += player.GetSpinnerValue()
+        StateManager.Set("team_battle.team2_spinner-total", scoreCount)
+        StateManager.Set("team_battle.team2_total-score", self.team2score.value())

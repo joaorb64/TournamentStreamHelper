@@ -13,6 +13,7 @@ from flask_cors import CORS, cross_origin
 from flask_socketio import SocketIO, emit
 import orjson
 from loguru import logger
+import socket
 
 from .StateManager import StateManager
 from .TSHWebServerActions import WebServerActions, ScoreboardNotAvailable
@@ -716,7 +717,20 @@ class WebServer(QThread):
 
     def run(self):
         try:
+            logger.info(f'Starting TSH Web Server at {self.GetIP()}:{self.port}')
             self.socketio.run(app=self.app, host=self.host_name, port=self.port,
                               debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
         except Exception as e:
             logger.error(traceback.format_exc())
+    
+    def GetIP(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
