@@ -45,7 +45,7 @@
     <number>10</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="team_header">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>

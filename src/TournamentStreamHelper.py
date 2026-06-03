@@ -127,7 +127,7 @@ from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerListWidget import TSHPlayerListWidget
 from .TSHNotesWidget import TSHNotesWidget
 from .TSHCommentaryWidget import TSHCommentaryWidget
-# from .TSHTeamBattleWidget import TSHTeamBattleWidget
+from .TSHTeamBattleWidget import TSHTeamBattleWidget
 from .TSHGameAssetManager import TSHGameAssetManager
 from .TSHBracketWidget import TSHBracketWidget
 from .TSHTournamentInfoWidget import TSHTournamentInfoWidget
@@ -417,13 +417,13 @@ class Window(QMainWindow):
             Qt.DockWidgetArea.BottomDockWidgetArea, tournamentInfo)
         self.dockWidgets.append(tournamentInfo)
 
-        # teamBattle = TSHTeamBattleWidget()
-        # teamBattle.setWindowIcon(QIcon('assets/icons/info.svg'))
-        # teamBattle.setObjectName(
-        #     QApplication.translate("app", "Crew/Team Battle"))
-        # self.addDockWidget(
-        #     Qt.DockWidgetArea.BottomDockWidgetArea, teamBattle)
-        # self.dockWidgets.append(teamBattle)
+        teamBattle = TSHTeamBattleWidget()
+        teamBattle.setWindowIcon(QIcon('assets/icons/info.svg'))
+        teamBattle.setObjectName(
+            QApplication.translate("app", "Crew/Team Battle"))
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea, teamBattle)
+        self.dockWidgets.append(teamBattle)
 
         self.scoreboard = TSHScoreboardManager.instance
         self.scoreboard.setWindowIcon(QIcon('assets/icons/list.svg'))
