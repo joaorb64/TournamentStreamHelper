@@ -19,6 +19,12 @@ i18n.use(LanguageDetector).init({
     fr: {
       translations: require("./locales/fr.json"),
     },
+    "zh-CN": {
+      translations: require("./locales/zh-CN.json"),
+    },
+    "zh-TW": {
+      translations: require("./locales/zh-TW.json"),
+    },
   },
   detection: {
     order: ["querystring", "navigator"],
@@ -30,6 +36,6 @@ i18n.use(LanguageDetector).init({
   interpolation: { escapeValue: false },
 });
 
-i18n.languages = ["en", "pt", "es", "ja", "fr"];
+i18n.languages = ["en", "pt", "es", "ja", "fr", "zh-CN", "zh-TW"];
 
 export default i18n;

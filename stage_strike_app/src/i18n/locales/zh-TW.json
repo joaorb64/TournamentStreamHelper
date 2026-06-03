@@ -19,7 +19,6 @@
     "gentlemans_prompt": "{{gentlemans_pick}}: select a stage",
     "undo": "Undo",
     "redo": "Redo",
-    
     "scoreboard": "Scoreboard",
     "no_set": "No set selected",
     "loading": "Loading...",
@@ -27,8 +26,8 @@
     "sponsor": "Sponsor",
     "tag": "Tag",
     "real_name": "Real Name",
-    "twitter": "Twitter",
-    "pronouns": "Pronouns",
+    "twitter": "\u63a8\u7279\uff08X\uff09",
+    "pronouns": "\u4ee3\u8a5e",
     "country": "Country",
     "state": "State",
     "character": "Character",
