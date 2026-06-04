@@ -1885,12 +1885,10 @@ p, li { white-space: pre-wrap; }
         <translation>Vies restantes (Smash)</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
         <source>Stock Pool (Platformers)</source>
         <translation>Vies restantes (Platformer)</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
         <source>First To (First To X Team Individuals)</source>
         <translation>Score à atteindre (Joueurs individuels)</translation>
     </message>

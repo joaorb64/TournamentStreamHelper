@@ -1754,12 +1754,6 @@ p, li { white-space: pre-wrap; }
         <translation>共享命池（大亂斗）</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
-        <source>Stock Pool (Platformers)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
         <source>First To (First To X Team Individuals)</source>
         <translation>搶X制（隊伍單人累計勝局）</translation>
     </message>
