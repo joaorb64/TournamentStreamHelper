@@ -117,7 +117,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.modeCombo.currentIndexChanged.connect(self.SwitchBattleMode)
 
         for mode in TSHTeamBattleModeEnum:
-            self.modeCombo.addItem(mode.value)
+            self.modeCombo.addItem(mode.translated())
         
         modeColumn.layout().addWidget(modeLabel)
         modeColumn.layout().addWidget(self.modeCombo)
@@ -419,15 +419,15 @@ class TSHTeamBattleWidget(QDockWidget):
     # =====================================================
 
     def Team1SponsorExport(self):
-        path = f"team_battle.team.{1}"
+        path = f"team_battle.team.{1}.sponsor"
         team = self.team1column.findChild(QLineEdit, "teamName").text()
-        StateManager.Set(path + ".sponsor", team)
+        StateManager.Set(path, team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def Team2SponsorExport(self):
-        path = f"team_battle.team.{2}"
+        path = f"team_battle.team.{2}.sponsor"
         team = self.team2column.findChild(QLineEdit, "teamName").text()
-        StateManager.Set(path + ".sponsor", team)
+        StateManager.Set(path, team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def PhaseExport(self):
