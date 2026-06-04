@@ -202,12 +202,12 @@ class DownloadDialog(QDialog):
         self._progress.setRange(0, 0)  # unknown at first (indeterminate)
         self._last_update = datetime.datetime.fromtimestamp(0)
 
-        self._close_button = QPushButton("Close", self)
+        self._close_button = QPushButton(QApplication.translate("app", "Close"), self)
         self._close_button.setEnabled(False)
         self._close_button.clicked.connect(self.close)
 
         # Optional cancel button (no actual cancellation logic wired in yet)
-        self._cancel_button = QPushButton("Cancel", self)
+        self._cancel_button = QPushButton(QApplication.translate("app", "Cancel"), self)
         self._cancel_button.setEnabled(False)  # enable when you wire cancellation
         self._cancel_event: Optional[threading.Event] = None
         self._samples = collections.deque(maxlen=self._MAX_DL_SAMPLES)
