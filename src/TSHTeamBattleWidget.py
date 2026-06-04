@@ -117,7 +117,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.modeCombo.currentIndexChanged.connect(self.SwitchBattleMode)
 
         for mode in TSHTeamBattleModeEnum:
-            self.modeCombo.addItem(mode.value)
+            self.modeCombo.addItem(mode.translated())
         
         modeColumn.layout().addWidget(modeLabel)
         modeColumn.layout().addWidget(self.modeCombo)
