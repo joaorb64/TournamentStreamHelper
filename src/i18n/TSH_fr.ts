@@ -1881,9 +1881,13 @@ p, li { white-space: pre-wrap; }
         <translation>JEUX GAGNÉS</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
         <source>Stock Pool (Smash)</source>
         <translation>Vies restantes (Smash)</translation>
+    </message>
+    <message>
+        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
+        <source>Stock Pool (Platformers)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="18"/>

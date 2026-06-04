@@ -1750,9 +1750,13 @@ p, li { white-space: pre-wrap; }
         <translation>获胜场次</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
         <source>Stock Pool (Smash)</source>
         <translation>共享命池（大乱斗）</translation>
+    </message>
+    <message>
+        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
+        <source>Stock Pool (Platformers)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
