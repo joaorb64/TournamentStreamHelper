@@ -1149,7 +1149,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="1292"/>
         <source>Find File...</source>
-        <translation>Explorer</translation>
+        <translation>Explorer...</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="1304"/>
@@ -1418,7 +1418,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate Thumbnail </source>
-        <translation>Générer la miniature</translation>
+        <translation>Générer la miniature </translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="193"/>
@@ -1576,7 +1576,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="92"/>
         <source>Parry.gg API key has not been set. Please configure it in Settings &gt; API Keys.</source>
-        <translation>La clé API pour ParryGG n&apos;a pas été configurée. Veuillez la configurer via le panneau des Paramètres -&gt; Clés API</translation>
+        <translation>La clé API pour ParryGG n&apos;a pas été configurée. Veuillez la configurer via le panneau des Paramètres -&gt; Clés API.</translation>
     </message>
     <message>
         <location filename="../TSHTournamentDataProvider.py" line="93"/>
