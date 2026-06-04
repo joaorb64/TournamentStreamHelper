@@ -186,7 +186,7 @@ def DownloadLayoutsOnBoot():
         d = DownloadDialog(
             url="https://github.com/TournamentStreamHelper/TournamentStreamHelper-layouts/archive/refs/heads/main.zip",
             filename=None,
-            desc="Layouts",
+            desc=str(QApplication.translate("app", "Layouts")),
             validator=extract_file,
             assume_size=(1024*1024*140)  # ~140MB
         ).exec()

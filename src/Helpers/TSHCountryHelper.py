@@ -64,7 +64,7 @@ class TSHCountryHelper(QObject):
         DownloadDialog(
             url=url,
             filename=str(out_file),
-            desc="Countries file",
+            desc=str(QApplication.translate("app", "Countries file")),
             validator=validate,
         ).exec()
 

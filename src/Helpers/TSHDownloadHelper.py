@@ -190,14 +190,14 @@ class DownloadDialog(QDialog):
         self.validator=validator
         self.assume_size = assume_size
 
-        self.setWindowTitle(QApplication.translate("app", "TSH {0} download").format(desc))
+        self.setWindowTitle(str(QApplication.translate("app", "TSH {0} download")).format(desc))
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         self.worker: Optional[Worker] = None
         self._errored = False
 
         # UI
-        self._label = QLabel(QApplication.translate("app", "Preparing download for {0}...").format(desc), self)
+        self._label = QLabel(str(QApplication.translate("app", "Preparing download for {0}...")).format(desc), self)
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)  # unknown at first (indeterminate)
         self._last_update = datetime.datetime.fromtimestamp(0)
@@ -242,7 +242,7 @@ class DownloadDialog(QDialog):
 
         speed_str = _format_bytes(_DlTimingSample.avg_throughput(self._samples))
         self._label.setText(
-            f"Downloading {self.desc} "
+            str(QApplication.translate("app", "Downloading {0}")).format(self.desc) + "\n" +
             f"{_format_bytes(self._progress.value(), 0)}"
             "/"
             f"{_format_bytes(self._progress.maximum(), 0)}"
@@ -267,7 +267,7 @@ class DownloadDialog(QDialog):
     def on_validating(self):
         # logger.info("dl dialog validating...")
         self._progress.setValue(self._progress.maximum())
-        self._label.setText(f"Finishing up {self.desc} download...")
+        self._label.setText(str(QApplication.translate("app", "Finishing up {0} download...")).format(self.desc))
         self._cancel_button.setEnabled(False)
 
     @Slot()
@@ -305,7 +305,7 @@ class DownloadDialog(QDialog):
 
         self.worker = Worker(worker_fn)
 
-        self._label.setText(f"Downloading {self.desc}...")
+        self._label.setText(str(QApplication.translate("app", "Downloading {0}")).format(self.desc) + str(QApplication.translate("punctuation", "...")))
         self._progress.setRange(0, 0)  # indeterminate until we know total
         self._close_button.setEnabled(False)
 
