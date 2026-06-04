@@ -14,7 +14,6 @@ from loguru import logger
 
 from .Workers import Worker
 
-
 class TSHTournamentDataProviderSignals(QObject):
     tournament_changed = Signal()
     entrants_updated = Signal()
@@ -165,7 +164,7 @@ class TSHTournamentDataProvider(QObject):
         ))
 
         lineEdit = QLineEdit()
-        okButton = QPushButton("OK")
+        okButton = QPushButton(QApplication.translate("app", "OK"))
         validators = [
             QRegularExpression("start.gg/tournament/[^/]+/event[s]?/[^/]+"),
             QRegularExpression("start.gg/admin/tournament/[^/]+/brackets/[^/]+"),
@@ -221,11 +220,15 @@ class TSHTournamentDataProvider(QObject):
         inp.deleteLater()
 
     def SetTwitchUsername(self, window):
-        text, okPressed = QInputDialog.getText(
-            window, QApplication.translate("app", "Set Twitch username"), QApplication.translate("app", "Twitch Username:")+" ", QLineEdit.Normal, "")
-        if okPressed:
-            SettingsManager.Set("twitch_username", text)
-            TSHTournamentDataProvider.instance.signals.twitch_username_updated.emit()
+        input_dialog = QInputDialog(window)
+        input_dialog.setWindowTitle(QApplication.translate("app", "Set Twitch username"))
+        input_dialog.setLabelText(QApplication.translate("app", "Twitch Username:")+" ")
+        input_dialog.setCancelButtonText(QApplication.translate("app", "Cancel"))
+        input_dialog.setOkButtonText(QApplication.translate("app", "OK"))
+
+        if input_dialog.exec_() == QDialog.Accepted:
+            SettingsManager.Set("twitch_username", input_dialog.textValue())
+            TSHTournamentDataProvider.instance.signals.user_updated.emit()
 
     def SetUserAccount(self, window, startgg=False, parrygg=False):
         if (self.provider and self.provider.url and "start.gg" in self.provider.url) or startgg:
@@ -241,11 +244,14 @@ class TSHTournamentDataProvider(QObject):
                 "app", "Invalid tournament data provider"))
             return
 
-        text, okPressed = QInputDialog.getText(
-            window, QApplication.translate("app", "Set player"), window_text, QLineEdit.Normal, "")
+        input_dialog = QInputDialog(window)
+        input_dialog.setWindowTitle(QApplication.translate("app", "Set player"))
+        input_dialog.setLabelText(window_text)
+        input_dialog.setCancelButtonText(QApplication.translate("app", "Cancel"))
+        input_dialog.setOkButtonText(QApplication.translate("app", "OK"))
 
-        if okPressed:
-            SettingsManager.Set(providerName+"_user", text)
+        if input_dialog.exec_() == QDialog.Accepted:
+            SettingsManager.Set(providerName+"_user", input_dialog.textValue())
             TSHTournamentDataProvider.instance.signals.user_updated.emit()
 
     def GetTournamentData(self, initialLoading=False):

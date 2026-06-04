@@ -27,6 +27,7 @@ from packaging.version import parse
 from loguru import logger
 from pathlib import Path
 from glob import glob
+from .Helpers.TSHVersionHelper import add_beta_label
 
 crashpath = Path('./logs/tsh-crash.log').resolve()
 Path.mkdir(crashpath.parent, exist_ok=True)
@@ -185,7 +186,7 @@ def DownloadLayoutsOnBoot():
         d = DownloadDialog(
             url="https://github.com/TournamentStreamHelper/TournamentStreamHelper-layouts/archive/refs/heads/main.zip",
             filename=None,
-            desc="Layouts",
+            desc=str(QApplication.translate("app", "Layouts")),
             validator=extract_file,
             assume_size=(1024*1024*140)  # ~140MB
         ).exec()
@@ -420,7 +421,7 @@ class Window(QMainWindow):
         teamBattle = TSHTeamBattleWidget()
         teamBattle.setWindowIcon(QIcon('assets/icons/info.svg'))
         teamBattle.setObjectName(
-            QApplication.translate("app", "Crew/Team Battle"))
+            add_beta_label(QApplication.translate("app", "Crew/Team Battle"), "team_battle"))
         self.addDockWidget(
             Qt.DockWidgetArea.BottomDockWidgetArea, teamBattle)
         self.dockWidgets.append(teamBattle)

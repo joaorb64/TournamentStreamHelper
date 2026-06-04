@@ -74,7 +74,7 @@ class TSHControllerHelper(QObject):
             DownloadDialog(
                 url,
                 filename=None,
-                desc="Controller files",
+                desc=str(QApplication.translate("app", "Controller files")),
                 validator=extract_file,
                 assume_size=(1024*1024*95) # ~95MB
             ).exec()

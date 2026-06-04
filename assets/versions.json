@@ -1,7 +1,8 @@
 {
     "program": "5.970",
     "beta_features": [
-        "web_score"
+        "web_score",
+        "team_battle"
     ],
     "supported_providers": [
         "StartGG",
