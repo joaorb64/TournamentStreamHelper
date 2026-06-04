@@ -63,3 +63,4 @@ desktop.ini
 assets/controller/*
 assets/*_tmp
 layout_*
+venv
