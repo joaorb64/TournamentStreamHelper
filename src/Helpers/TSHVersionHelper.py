@@ -17,8 +17,11 @@ def get_beta_status(feature):
 
 def add_beta_label(text, feature):
     if get_beta_status(feature):
-        beta_label = "[" + str(QApplication.translate("app", "beta")).upper() + "] "
-        return(beta_label + text)
+        beta_label = str(QApplication.translate("punctuation", "[")) + str(QApplication.translate("app", "beta")).upper() + str(QApplication.translate("punctuation", "]"))
+        if str(QApplication.translate("punctuation", "]")) == "]":
+            return(beta_label + " " + text)
+        else:
+            return(beta_label + text)
     else:
         return(text)
     
