@@ -11,6 +11,7 @@ from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
 from .TSHColorButton import TSHColorButton
 from.Helpers.TSHLocaleHelper import TSHLocaleHelper
+from .Helpers.TSHVersionHelper import add_beta_label
 
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
@@ -62,7 +63,7 @@ class TSHTeamBattleWidget(QDockWidget):
 
         StateManager.Unset("team_battle")
 
-        self.setWindowTitle(QApplication.translate("app", "Crew/Team Battle"))
+        self.setWindowTitle(add_beta_label(QApplication.translate("app", "Crew/Team Battle"), "team_battle"))
         self.setFloating(True)
         self.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.widget = QWidget()
