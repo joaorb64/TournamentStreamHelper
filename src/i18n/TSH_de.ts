@@ -1810,16 +1810,6 @@ p, li { white-space: pre-wrap; }
         <source>GAMES WON</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
-        <source>Stock Pool (Platformers)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
-        <source>First To (First To X Team Individuals)</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>layout_options</name>
