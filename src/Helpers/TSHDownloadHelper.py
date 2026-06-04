@@ -190,14 +190,14 @@ class DownloadDialog(QDialog):
         self.validator=validator
         self.assume_size = assume_size
 
-        self.setWindowTitle(f"TSH {desc} download")
+        self.setWindowTitle(QApplication.translate("app", "TSH {0} download").format(desc))
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
 
         self.worker: Optional[Worker] = None
         self._errored = False
 
         # UI
-        self._label = QLabel(f"Preparing download for {desc}...", self)
+        self._label = QLabel(QApplication.translate("app", "Preparing download for {0}...").format(desc), self)
         self._progress = QProgressBar(self)
         self._progress.setRange(0, 0)  # unknown at first (indeterminate)
         self._last_update = datetime.datetime.fromtimestamp(0)
