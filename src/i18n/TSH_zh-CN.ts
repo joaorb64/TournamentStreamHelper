@@ -1740,12 +1740,12 @@ p, li { white-space: pre-wrap; }
         <translation>比分</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="178"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="183"/>
         <source>STOCKS/LIVES</source>
         <translation>生命数</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="180"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="185"/>
         <source>GAMES WON</source>
         <translation>获胜场次</translation>
     </message>

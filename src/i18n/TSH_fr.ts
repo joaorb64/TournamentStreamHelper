@@ -1871,12 +1871,12 @@ p, li { white-space: pre-wrap; }
         <translation>Le compte Bluesky n’a pas été correctement configuré</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="178"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="183"/>
         <source>STOCKS/LIVES</source>
         <translation>VIES</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="180"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="185"/>
         <source>GAMES WON</source>
         <translation>JEUX GAGNÉS</translation>
     </message>
