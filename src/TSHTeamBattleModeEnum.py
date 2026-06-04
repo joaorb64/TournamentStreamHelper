@@ -8,7 +8,7 @@ class TSHTeamBattleModeEnum(Enum):
     # remaining (automatically controlled by dynamic spinner in the top bar).
     # As each stock decreases, the system will export the total pool of stocks remaining and total "score".
     # When a player hits 0 remaining stocks, the system will automatically declare them as "eliminated" (toggleable).
-    STOCK_POOL = QApplication.translate("app", "Stock Pool (Smash)")
+    STOCK_POOL = QApplication.translate("app", "Stock Pool (Platformers)")
 
     # FIRST TO
     # Each player will have an active checkbox, an "eliminated" checkbox, a spinner with X current score of a player to the "First To" amount.
