@@ -469,7 +469,7 @@ class Window(QMainWindow):
         self.tabifyDockWidget(self.scoreboard, self.stageWidget)
         self.tabifyDockWidget(self.scoreboard, commentary)
         self.tabifyDockWidget(self.scoreboard, tournamentInfo)
-        # self.tabifyDockWidget(self.scoreboard, teamBattle)
+        self.tabifyDockWidget(self.scoreboard, teamBattle)
         if not SettingsManager.Get("general.disable_thumbnail_widget", False):
             self.tabifyDockWidget(self.scoreboard, thumbnailSetting)
         self.tabifyDockWidget(self.scoreboard, playerList)

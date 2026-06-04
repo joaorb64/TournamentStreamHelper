@@ -125,6 +125,11 @@ class TSHTeamPlayerWidget(QGroupBox):
             )
             c.currentIndexChanged.emit(0)
         
+        self.findChild(QCheckBox, "dead").toggled.connect(
+            lambda state, element=c: [
+                self.ExportEliminatedStatus()
+        ])
+        
         self.dynamicSpinner.valueChanged.connect(self.instanceSignals.dynamicSpinner_changed.emit)
         self.dynamicSpinner.valueChanged.connect(self.SpinnerHandling)
 
@@ -184,7 +189,8 @@ class TSHTeamPlayerWidget(QGroupBox):
         if self.battleMode is TSHTeamBattleModeEnum.STOCK_POOL:
             self.dynamicSpinner.setMaximum(value)
         elif self.battleMode is TSHTeamBattleModeEnum.FIRST_TO:
-            self.dynamicSpinner.setMaximum(99)
+            self.dynamicSpinner.setMaximum(value)
+            # self.dynamicSpinner.setMaximum(99)
         self.ResetDynamicSpinner()
     
     # Changes based on battle mode
@@ -214,7 +220,7 @@ class TSHTeamPlayerWidget(QGroupBox):
     
     def SetEliminatedStatus(self, status: bool = False):
         self.findChild(QCheckBox, "dead").setChecked(status)
-        self.ExportDeathStatus()
+        self.ExportEliminatedStatus()
         return
     
     def SpinnerHandling(self):
@@ -264,7 +270,7 @@ class TSHTeamPlayerWidget(QGroupBox):
         StateManager.Set(f"{self.path}.active", self.findChild(QCheckBox, "activePlayer").isChecked())
         return
     
-    def ExportDeathStatus(self):
+    def ExportEliminatedStatus(self):
         StateManager.Set(f"{self.path}.dead", self.findChild(QCheckBox, "dead").isChecked())
         return
     
