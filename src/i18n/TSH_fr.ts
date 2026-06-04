@@ -1887,7 +1887,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="11"/>
         <source>Stock Pool (Platformers)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vies restantes (Platformer)</translation>
     </message>
     <message>
         <location filename="../TSHTeamBattleModeEnum.py" line="18"/>
