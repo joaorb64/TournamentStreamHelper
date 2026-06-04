@@ -419,15 +419,15 @@ class TSHTeamBattleWidget(QDockWidget):
     # =====================================================
 
     def Team1SponsorExport(self):
-        path = f"team_battle.team.{1}.sponsor"
+        path = f"team_battle.team.{1}"
         team = self.team1column.findChild(QLineEdit, "teamName").text()
-        StateManager.Set(path, team)
+        StateManager.Set(path + ".sponsor", team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def Team2SponsorExport(self):
-        path = f"team_battle.team.{2}.sponsor"
+        path = f"team_battle.team.{2}"
         team = self.team2column.findChild(QLineEdit, "teamName").text()
-        StateManager.Set(path, team)
+        StateManager.Set(path + ".sponsor", team)
         TSHSponsorHelper.ExportValidSponsors(team, path)
     
     def PhaseExport(self):
