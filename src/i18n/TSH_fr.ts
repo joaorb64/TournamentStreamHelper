@@ -1351,7 +1351,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardPlayerWidget.py" line="86"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="1023"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="1024"/>
         <source>Save new player</source>
         <translation>Sauvegarder le joueur</translation>
     </message>
@@ -1367,7 +1367,7 @@ p, li { white-space: pre-wrap; }
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="408"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="409"/>
         <location filename="../TSHSelectSetWindow.py" line="114"/>
         <location filename="../TSHSelectSetWindow.py" line="116"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
@@ -1375,7 +1375,7 @@ p, li { white-space: pre-wrap; }
         <translation>Joueur {0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="1020"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="1021"/>
         <source>Update player</source>
         <translation>Mettre à jour le joueur</translation>
     </message>
@@ -1451,7 +1451,7 @@ p, li { white-space: pre-wrap; }
         <translation>Anniversaire</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="596"/>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="597"/>
         <location filename="../TSHScoreboardWidget.py" line="234"/>
         <location filename="../TSHCommentaryWidget.py" line="77"/>
         <source>Controller</source>
