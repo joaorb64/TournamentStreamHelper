@@ -394,6 +394,7 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                 if type(widget) == QCheckBox:
                                     widget.setChecked(tmpData[i][objName])
                         w.ExportPlayerId(tmpData[i]["id"])
+                        StateManager.Set(f"{w.path}.online_avatar", tmpData[i]["online_avatar"])
                         StateManager.Set(f"{w.path}.seed", tmpData[i]["seed"])
                         StateManager.Set(f"{w.path}.wins", tmpData[i]["wins"])
                         StateManager.Set(f"{w.path}.losses", tmpData[i]["losses"])
@@ -1063,7 +1064,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                         continue  # only executed if the inner loop DID break
                 else:
                     c.setCurrentIndex(0)
-            
+        
+        StateManager.Unset(f"{self.path}.online_avatar")
         StateManager.Unset(f"{self.path}.wins")
         StateManager.Unset(f"{self.path}.losses")
         StateManager.Unset(f"{self.path}.winPercentage")
