@@ -598,12 +598,17 @@ class TSHScoreboardWidget(QWidget):
         self.currentStageCombo.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
         _stageContainerLayout.addWidget(self.currentStageCombo)
 
-        self.currentStageCombo.currentIndexChanged.connect(
-            lambda: StateManager.Set(
-                f"score.{self.scoreboardNumber}.stage_strike.selectedStage",
-                self.currentStageCombo.currentData().get("codename") if self.currentStageCombo.currentData() else None
-            )
-        )
+        def _on_current_stage_changed():
+            data = self.currentStageCombo.currentData()
+            codename = data.get("codename") if data else None
+            with StateManager.SaveBlock():
+                StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike.selectedStage", codename)
+                StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike.selectedStageData",
+                                 data if codename else None)
+            curr_game = StateManager.Get(f"score.{self.scoreboardNumber}.stage_strike.currGame", 0)
+            self.individualGameTracker.SetStage(curr_game, codename)
+
+        self.currentStageCombo.currentIndexChanged.connect(_on_current_stage_changed)
 
         StateManager.signals.state_updated.connect(
             lambda changes: self.SyncCurrentStageFromState()

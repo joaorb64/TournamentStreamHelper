@@ -84,6 +84,11 @@ class WebServerActions(QThread):
                     f"p{t}": " / ".join(names)
                 })
 
+            # Country code of the first player on this team (for per-player language)
+            player_1 = StateManager.Get(f"score.1.team.{i+1}.player.1", {}) or {}
+            country = player_1.get("country")
+            data[f"p{t}_country"] = country.get("code") if isinstance(country, dict) else None
+
         # Add set data
         data.update({
             "best_of": StateManager.Get(f"score.1.best_of"),
@@ -600,6 +605,12 @@ class WebServerActions(QThread):
     def get_states(self, countryCode: str):
         return TSHCountryHelper.GetStates(countryCode)
 
+    @gui_thread_sync
     def set_current_stage(self, scoreboard, codename):
-        StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStage", codename)
+        stage_data = StateManager.Get(f"game.stages.{codename}") if codename else None
+        with StateManager.SaveBlock():
+            StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStage", codename)
+            StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStageData", stage_data)
+        curr_game = StateManager.Get(f"score.{scoreboard}.stage_strike.currGame", 0)
+        self._get_scoreboard(scoreboard).individualGameTracker.SetStage(curr_game, codename)
         return "OK"

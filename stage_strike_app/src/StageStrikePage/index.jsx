@@ -7,6 +7,8 @@ import {
   Fab,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { LanguageSelector } from "./LanguageSelector";
+import { languageSettings } from "./languageSettings";
 import i18n from "../i18n/config";
 import { Check } from "@mui/icons-material";
 import i18next from "i18next";
@@ -37,6 +39,7 @@ class StageStrikePage extends Component {
     selectedStage: null,
     lastWinner: -1,
     playerNames: [],
+    playerLanguages: ["en", "en"],
     phase: null,
     match: null,
     bestOf: null,
@@ -151,10 +154,13 @@ class StageStrikePage extends Component {
   }
 
   PlayerWinCount = (playerNum) => {
-    return this.state?.stagesWon?.[0]?.length ?? 0;
+    return this.state?.stagesWon?.[playerNum]?.length ?? 0;
   }
 
   componentDidMount() {
+    this.i18nChangeListener = () => this.forceUpdate();
+    i18n.on('languageChanged', this.i18nChangeListener);
+
     this.socket.on("connect", () => {
       console.log("SocketIO connection established.");
       this.socket.emit("ruleset", {}, () => {console.log("TSH acked ruleset request")});
@@ -175,7 +181,29 @@ class StageStrikePage extends Component {
     })
   }
 
+  // Returns the language to use for the current step.
+  // Shared steps (pre-RPS and stage confirmed/selected) use the global language;
+  // individual turns use the active player's language.
+  currentStepLanguage() {
+    const { currPlayer, playerLanguages, selectedStage } = this.state;
+    if (selectedStage !== null || currPlayer === -1) {
+      return languageSettings.language;
+    }
+    return playerLanguages[currPlayer] || languageSettings.language;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const stepChanged =
+      prevState.currPlayer !== this.state.currPlayer ||
+      (prevState.selectedStage === null) !== (this.state.selectedStage === null);
+
+    if (stepChanged && languageSettings.usePlayerLanguage) {
+      i18n.changeLanguage(this.currentStepLanguage());
+    }
+  }
+
   componentWillUnmount() {
+    i18n.off('languageChanged', this.i18nChangeListener);
     this.socket.close();
   }
 
@@ -184,6 +212,10 @@ class StageStrikePage extends Component {
       playerNames: [
         data.p1 ? data.p1 : i18n.t("p1"),
         data.p2 ? data.p2 : i18n.t("p2"),
+      ],
+      playerLanguages: [
+        languageFromCountry(data.p1_country),
+        languageFromCountry(data.p2_country),
       ],
       ruleset: data.ruleset,
       phase: data.phase,
@@ -222,6 +254,13 @@ class StageStrikePage extends Component {
       : ruleset.neutralStages;
 
     return <>
+      <Box sx={{ position: 'fixed', top: 8, right: 8, zIndex: 9999 }}>
+        <LanguageSelector
+          playerLanguages={this.state.playerLanguages}
+          currPlayer={this.state.currPlayer}
+          selectedStage={this.state.selectedStage}
+        />
+      </Box>
       <Container>
         <Box
           style={{
@@ -248,7 +287,7 @@ class StageStrikePage extends Component {
                 {this.state.phase && `${this.state.phase} / `}
                 {this.state.match && `${this.state.match} / `}
                 {i18n.t("game", { value: this.state.currGame + 1 })}
-                {this.state.bestOf &&
+                {this.state.bestOf > 0 &&
                   ` (${i18n.t("best_of", { value: this.state.bestOf })})`
                 }
               </Typography>
@@ -292,7 +331,7 @@ class StageStrikePage extends Component {
               {activeStages.map((stage) =>
                 <StageCard
                   key={stage.en_name}
-                  stageName={StageName(stage)}
+                  stageName={StageName(stage, this.currentStepLanguage())}
                   stageImage={`${BASE_URL}/${stage.path}`}
                   isSelected={this.state.selectedStage === stage.codename}
                   onClick={() => StageClicked(stage)}
@@ -371,17 +410,37 @@ class StageStrikePage extends Component {
   }
 }
 
-function StageName(stage) {
+// Maps ISO 3166-1 alpha-2 country codes to the language codes used in stage locales.
+const COUNTRY_LANGUAGE = {
+  JP: "ja",
+  KR: "ko",
+  CN: "zh_CN",
+  TW: "zh_TW", HK: "zh_TW", MO: "zh_TW",
+  FR: "fr",    BE: "fr", CH: "fr", LU: "fr", MC: "fr",
+  ES: "es",    MX: "es", AR: "es", CL: "es", CO: "es", PE: "es",
+               VE: "es", EC: "es", BO: "es", PY: "es", UY: "es",
+               GT: "es", HN: "es", SV: "es", NI: "es", CR: "es",
+               PA: "es", DO: "es", CU: "es", PR: "es",
+  PT: "pt-BR", BR: "pt-BR",
+  IT: "it",
+  DE: "de",
+  NL: "nl",    SR: "nl",
+  RU: "ru",
+};
+
+function languageFromCountry(countryCode) {
+  return COUNTRY_LANGUAGE[countryCode] ?? "en";
+}
+
+function StageName(stage, language) {
+  const lang = language ?? i18next.language;
   if (stage.locale) {
-    if (stage.locale.hasOwnProperty(i18next.language)) {
-      return stage.locale[i18next.language.replace("-", "_")];
-    }
-    const shortLang = i18next.language.split("-")[0];
-    if (stage.locale.hasOwnProperty(shortLang)) {
-      return stage.locale[shortLang];
-    }
+    const langKey = lang.replace("-", "_");
+    if (stage.locale.hasOwnProperty(langKey)) return stage.locale[langKey];
+    const short = lang.split(/[-_]/)[0];
+    if (stage.locale.hasOwnProperty(short)) return stage.locale[short];
   }
-  return stage.en_name; // fallback
+  return stage.en_name;
 }
 
 export default StageStrikePage;

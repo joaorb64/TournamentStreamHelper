@@ -27,7 +27,7 @@ export function RpsDialog({playerNames}) {
           sx={{ typography: { xs: "h6", sm: "h5" } }}
           align="center"
         >
-          {i18n.t("rock_paper_scissors")}
+          {"✊🖐️✌️ "}{i18n.t("rock_paper_scissors")}
         </Typography>
         <Grid
           container
@@ -47,7 +47,7 @@ export function RpsDialog({playerNames}) {
               variant="contained"
               onClick={() => ReportRpsWin(0)}
             >
-              {i18n.t("player_won", {
+              {"🏆 "}{i18n.t("player_won", {
                 player: playerNames[0],
               })}
             </Button>
@@ -63,18 +63,12 @@ export function RpsDialog({playerNames}) {
               variant="contained"
               onClick={() => ReportRpsWin(1)}
             >
-              {i18n.t("player_won", {
+              {"🏆 "}{i18n.t("player_won", {
                 player: playerNames[1],
               })}
             </Button>
           </Grid>
         </Grid>
-        <Typography
-          sx={{ typography: { xs: "h6", sm: "h5" } }}
-          align="center"
-        >
-          {i18n.t("randomize")}
-        </Typography>
         <Button
           size={darkTheme.breakpoints.up("md") ? "large" : "small"}
           fontSize={darkTheme.breakpoints.up("md") ? 8 : ""}
@@ -83,7 +77,7 @@ export function RpsDialog({playerNames}) {
           variant="outlined"
           onClick={() => ReportRpsWin(Math.random() > 0.5 ? 1 : 0)}
         >
-          {i18n.t("randomize")}
+          {"🎲 "}{i18n.t("randomize")}
         </Button>
       </Box>
     </DialogContent>

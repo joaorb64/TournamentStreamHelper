@@ -21,7 +21,7 @@ export function NoRulesetError({currPlayer}) {
                     display="flex"
                     flexDirection={"column"}
                 >
-                    <Typography>{i18n.t("no_ruleset_error")}</Typography>
+                    <Typography>{"⚠️ "}{i18n.t("no_ruleset_error")}</Typography>
                 </Box>
             </DialogContent>
         </Dialog>
