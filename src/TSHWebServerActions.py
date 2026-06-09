@@ -260,7 +260,37 @@ class WebServerActions(QThread):
             )
         return "OK"
 
+    def _resolve_character_name(self, name: str) -> str:
+        """Resolve a character identifier to its en_name.
+        Checks codename first, then en_name. Returns the input unchanged if no match."""
+        characters = TSHGameAssetManager.instance.characters
+        for en_name, char_data in characters.items():
+            if char_data.get("codename") == name:
+                return en_name
+        return name
+
+    def _resolve_mains(self, mains):
+        """Resolve character codenames to en_names in a mains structure."""
+        if isinstance(mains, list):
+            return [
+                [self._resolve_character_name(entry[0])] + list(entry[1:])
+                if entry else entry
+                for entry in mains
+            ]
+        if isinstance(mains, dict):
+            return {
+                game: [
+                    [self._resolve_character_name(entry[0])] + list(entry[1:])
+                    if entry else entry
+                    for entry in entries
+                ]
+                for game, entries in mains.items()
+            }
+        return mains
+
     def set_team_data(self, scoreboard, team, player, data):
+        if data and "mains" in data:
+            data = {**data, "mains": self._resolve_mains(data["mains"])}
         sb = self._get_scoreboard(scoreboard)
         sb.signals.ChangeSetData.emit({
             "team": team,
@@ -569,3 +599,7 @@ class WebServerActions(QThread):
     @gui_thread_sync
     def get_states(self, countryCode: str):
         return TSHCountryHelper.GetStates(countryCode)
+
+    def set_current_stage(self, scoreboard, codename):
+        StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStage", codename)
+        return "OK"
