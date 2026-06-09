@@ -1119,7 +1119,6 @@ class TSHGameAssetManager(QObject):
                 item.setData(data, Qt.ItemDataRole.UserRole)
                 self.colorModel.appendRow(item)
 
-            self.colorModel.sort(0)
         except:
             logger.error(traceback.format_exc())
 
