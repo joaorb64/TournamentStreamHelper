@@ -204,7 +204,10 @@ class StageStrikePage extends Component {
 
   componentWillUnmount() {
     i18n.off('languageChanged', this.i18nChangeListener);
-    this.socket.close();
+    this.socket.off("connect");
+    this.socket.off("ruleset");
+    this.socket.off("disconnect");
+    this.socket.off("error");
   }
 
   ProcessRulesetData = (data) => {
