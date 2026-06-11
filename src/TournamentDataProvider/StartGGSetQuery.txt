@@ -67,6 +67,10 @@ query SetQuery($id: ID!) {
 			}
 		}
 		games {
+			orderNum
+			stage {
+				id
+			}
 			selections {
 				entrant {
 					id

@@ -1,4 +1,6 @@
 
+import math
+
 from loguru import logger
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
@@ -13,6 +15,7 @@ from .StateManager import StateManager
 
 class TSHIndividualGameTrackerSignals(QObject):
     stageResultsUpdate = Signal(int, int)
+    syncCharToMain = Signal(int, int, int, object)  # team, player, char_slot, char_data
 
 
 class TSHIndividualGameTracker(QWidget):
@@ -21,6 +24,10 @@ class TSHIndividualGameTracker(QWidget):
 
         self._layout = QVBoxLayout()
         self.signals = TSHIndividualGameTrackerSignals(self)
+        self.players_per_team = 1
+        self.chars_per_player = 1
+        self.best_of = 0
+        self._syncing_chars = False
 
         label = QLabel(
             text=add_beta_label(
@@ -51,7 +58,13 @@ class TSHIndividualGameTracker(QWidget):
                     button.setChecked(False)
 
         stageWidget = QWidget()
+        outerLayout = QVBoxLayout()
+        outerLayout.setContentsMargins(0, 0, 0, 0)
+        outerLayout.setSpacing(2)
+
+        topRow = QWidget()
         stageLayout = QHBoxLayout()
+        stageLayout.setContentsMargins(0, 0, 0, 0)
 
         gameLabel = QLabel()
         gameLabel.setText(QApplication.translate("app", "Game {0}").format(index + 1))
@@ -86,6 +99,7 @@ class TSHIndividualGameTracker(QWidget):
                 StateManager.Set(f"score.{self.scoreboard_number}.stages.{index + 1}.t1_win", stageTeam1Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboard_number}.stages.{index + 1}.t2_win", stageTeam2Check.isChecked()),
                 StateManager.Set(f"score.{self.scoreboard_number}.stages.{index + 1}.tie", stageTieCheck.isChecked()),
+                self._SyncStageToStrike(index, stageMenu.currentData()),
             ]
         )
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{index + 1}.t1_win", False)
@@ -127,11 +141,120 @@ class TSHIndividualGameTracker(QWidget):
         stageLayout.addWidget(stageTieCheck)
         stageLayout.addWidget(stageTeam2Check)
 
-        stageWidget.setLayout(stageLayout)
+        topRow.setLayout(stageLayout)
+        outerLayout.addWidget(topRow)
+
+        charRow = self._CreateCharRow(index)
+        outerLayout.addWidget(charRow)
+
+        stageWidget.setLayout(outerLayout)
         return stageWidget
 
-    def SetStageCount(self, stage_count=5):
-        """Sets the max number of stages in the set"""
+    def _CreateCharRow(self, index):
+        """Creates the per-game character picker row for the given game index."""
+        charRow = QWidget()
+        charRow.setObjectName(f"charRow_{index}")
+        charLayout = QHBoxLayout()
+        charLayout.setContentsMargins(0, 0, 0, 0)
+        charLayout.setSpacing(4)
+
+        has_chars = (
+            TSHGameAssetManager.instance.characterModel.rowCount() > 1
+            and self.players_per_team > 0
+            and self.chars_per_player > 0
+        )
+        charRow.setVisible(has_chars)
+
+        for t in range(2):
+            if t == 1:
+                sep = QFrame()
+                sep.setFrameShape(QFrame.Shape.VLine)
+                sep.setFrameShadow(QFrame.Shadow.Sunken)
+                charLayout.addWidget(sep)
+
+            teamWidget = QWidget()
+            teamLayout = QVBoxLayout()
+            teamLayout.setContentsMargins(0, 0, 0, 0)
+            teamLayout.setSpacing(1)
+
+            for p in range(self.players_per_team):
+                playerContainer = QWidget()
+                playerContainerLayout = QVBoxLayout()
+                playerContainerLayout.setContentsMargins(0, 0, 0, 0)
+                playerContainerLayout.setSpacing(1)
+
+                raw_name = StateManager.Get(
+                    f"score.{self.scoreboard_number}.team.{t+1}.player.{p+1}.mergedName", "") or ""
+                display_name = raw_name.strip() if raw_name.strip() else f"P{p+1}"
+                nameLbl = QLabel(display_name)
+                nameLbl.setObjectName(f"nameLabel_{index}_{t}_{p}")
+                nameLbl.setFont(QFont(nameLbl.font().family(), 8))
+                nameLbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                playerContainerLayout.addWidget(nameLbl)
+
+                playerRow = QWidget()
+                playerLayout = QHBoxLayout()
+                playerLayout.setContentsMargins(0, 0, 0, 0)
+                playerLayout.setSpacing(2)
+
+                for c in range(self.chars_per_player):
+                    combo = QComboBox()
+                    combo.setEditable(True)
+                    combo.setObjectName(f"charCombo_{index}_{t}_{p}_{c}")
+                    combo.setModel(TSHGameAssetManager.instance.characterModel)
+                    combo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+                    combo.completer().setCompletionMode(QCompleter.PopupCompletion)
+                    combo.setIconSize(QSize(24, 24))
+                    combo.setFixedHeight(28)
+                    combo.setMinimumWidth(80)
+                    combo.setFont(QFont(combo.font().family(), 9))
+                    combo.lineEdit().setFont(QFont(combo.font().family(), 9))
+
+                    combo.currentIndexChanged.connect(
+                        lambda _idx, t=t, p=p, c=c, combo=combo: self._OnCharChanged(index, t, p, c, combo)
+                    )
+                    playerLayout.addWidget(combo)
+
+                playerRow.setLayout(playerLayout)
+                playerContainerLayout.addWidget(playerRow)
+                playerContainer.setLayout(playerContainerLayout)
+                teamLayout.addWidget(playerContainer)
+
+            teamWidget.setLayout(teamLayout)
+            charLayout.addWidget(teamWidget)
+
+        charLayout.addStretch()
+        charRow.setLayout(charLayout)
+        return charRow
+
+    def _OnCharChanged(self, game_idx, team, player, char_slot, combo):
+        data = combo.currentData()
+        path = f"score.{self.scoreboard_number}.stages.{game_idx+1}.team.{team+1}.player.{player+1}.character"
+        existing = StateManager.Get(path, {}) or {}
+        if data:
+            existing[char_slot + 1] = data
+        else:
+            existing.pop(char_slot + 1, None)
+        StateManager.Set(path, existing)
+
+        # Sync to main selector if this is the current (last) game
+        if game_idx == len(self.stage_widget_list) - 1 and not self._syncing_chars:
+            self._syncing_chars = True
+            try:
+                self.signals.syncCharToMain.emit(team, player, char_slot, data)
+            finally:
+                self._syncing_chars = False
+
+    def RefreshNameLabel(self, team_0idx, player_0idx, name):
+        """Updates name labels in all game rows for the given team/player."""
+        display = name.strip() if name and name.strip() else f"P{player_0idx + 1}"
+        for game_idx, widget in enumerate(self.stage_widget_list):
+            lbl = widget.findChild(QLabel, f"nameLabel_{game_idx}_{team_0idx}_{player_0idx}")
+            if lbl:
+                lbl.setText(display)
+
+    def SetStageCount(self, stage_count=0):
+        """Resets the game tracker completely and starts with a single row. Called on new set / game asset load."""
 
         self._layout.removeWidget(self.stage_order_list_widget)
         self.stage_widget_list = []
@@ -139,14 +262,62 @@ class TSHIndividualGameTracker(QWidget):
         self.stage_order_list_widget = QWidget()
         self.stage_order_list_widget.setLayout(self.stage_order_list_layout)
         StateManager.Set(f"score.{self.scoreboard_number}.stages", {})
-        if stage_count == 0 or SettingsManager.Get('general.disable_individual_game_tracker', True):
+        self.best_of = stage_count
+        if SettingsManager.Get('general.disable_individual_game_tracker', True):
             self.setVisible(False)
         else:
             self.setVisible(True)
-            for i in range(stage_count):
-                self.stage_widget_list.append(self.CreateStage(i))
-                self.stage_order_list_layout.addWidget(self.stage_widget_list[-1])
+            self._AddGameRow()
         self._layout.addWidget(self.stage_order_list_widget)
+
+    def UpdateBestOf(self, stage_count=0):
+        """Updates the best-of cap without resetting rows. Called when the spinbox changes."""
+        self.best_of = stage_count
+
+    def _AddGameRow(self):
+        """Appends one new game row to the tracker, pre-filled with current set-level characters."""
+        idx = len(self.stage_widget_list)
+        widget = self.CreateStage(idx)
+        self.stage_widget_list.append(widget)
+        self.stage_order_list_layout.addWidget(widget)
+        self._CopySetLevelCharactersToGame(idx)
+
+    def _RemoveLastRow(self):
+        """Removes the last game row and clears its state."""
+        if not self.stage_widget_list:
+            return
+        widget = self.stage_widget_list.pop()
+        self.stage_order_list_layout.removeWidget(widget)
+        widget.deleteLater()
+        idx = len(self.stage_widget_list)  # index of removed row
+        StateManager.Unset(f"score.{self.scoreboard_number}.stages.{idx+1}")
+
+    def _EnsureCorrectRowCount(self):
+        """Trims excess trailing empty rows (keeps exactly 1), then adds one if all rows have results."""
+        if not self.stage_widget_list:
+            return
+
+        # Trim trailing rows with no result, keeping at least 1 empty row at the end
+        while len(self.stage_widget_list) > 1 and self._get_game_winner(len(self.stage_widget_list) - 1) == -1:
+            # Second-to-last row also empty? Remove the last row.
+            if self._get_game_winner(len(self.stage_widget_list) - 2) == -1:
+                self._RemoveLastRow()
+            else:
+                break
+
+        t1_wins = len(self.GetWonStages(0))
+        t2_wins = len(self.GetWonStages(1))
+        wins_needed = math.ceil(self.best_of / 2) if self.best_of > 0 else 999
+        if t1_wins >= wins_needed or t2_wins >= wins_needed:
+            return
+        if self.best_of > 0 and len(self.stage_widget_list) >= self.best_of:
+            return
+        all_have_results = all(
+            self._get_game_winner(i) != -1
+            for i in range(len(self.stage_widget_list))
+        )
+        if all_have_results:
+            self._AddGameRow()
 
     @assert_gui_thread
     def GetFirstEmptyStage(self, start_idx=None) -> int:
@@ -255,6 +426,41 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.t2_win", stageTeam2Check.isChecked())
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.tie", stageTieCheck.isChecked())
 
+        self._CopySetLevelCharactersToGame(current_stage)
+        self._EnsureCorrectRowCount()
+
+    def _CopySetLevelCharactersToGame(self, game_idx):
+        """Copies current set-level character selections into a specific game's tracker slots."""
+        if self._syncing_chars or game_idx >= len(self.stage_widget_list):
+            return
+        self._syncing_chars = True
+        try:
+            self._CopySetLevelCharactersToGameImpl(game_idx)
+        finally:
+            self._syncing_chars = False
+
+    def _CopySetLevelCharactersToGameImpl(self, game_idx):
+        for t in range(2):
+            for p in range(self.players_per_team):
+                char_data = StateManager.Get(
+                    f"score.{self.scoreboard_number}.team.{t+1}.player.{p+1}.character", {}) or {}
+                for c_key, char in char_data.items():
+                    c = int(c_key) - 1
+                    if c >= self.chars_per_player:
+                        continue
+                    combo: QComboBox = self.stage_widget_list[game_idx].findChild(
+                        QComboBox, f"charCombo_{game_idx}_{t}_{p}_{c}")
+                    if combo is None:
+                        continue
+                    codename = char.get("codename") if isinstance(char, dict) else None
+                    if codename:
+                        for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
+                            item_data = TSHGameAssetManager.instance.characterModel.item(row).data(
+                                Qt.ItemDataRole.UserRole)
+                            if item_data and item_data.get("codename") == codename:
+                                combo.setCurrentIndex(row)
+                                break
+
     @assert_gui_thread
     def DecrementScore(self, team=None, original_score=None):
         """ Removes the last reported stage result. Optionally bounded to team. """
@@ -282,6 +488,7 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.t1_win", stageTeam1Check.isChecked())
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.t2_win", stageTeam2Check.isChecked())
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.tie", stageTieCheck.isChecked())
+        self._EnsureCorrectRowCount()
 
     @assert_gui_thread
     def StageResultsChanged(self):
@@ -297,6 +504,7 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.Set(f"score.{self.scoreboard_number}.team.1.score", team_1_score)
         StateManager.Set(f"score.{self.scoreboard_number}.team.2.score", team_2_score)
         self.signals.stageResultsUpdate.emit(team_1_score, team_2_score)
+        self._EnsureCorrectRowCount()
 
     @assert_gui_thread
     def SwapStageResults(self):
@@ -312,22 +520,95 @@ class TSHIndividualGameTracker(QWidget):
             StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.tie", stageTieCheck.isChecked()),
 
 
+    @assert_gui_thread
+    def UpdateCharacterLayout(self, players_per_team, chars_per_player):
+        """Rebuilds only the character picker rows when player/char counts change."""
+        if self.players_per_team == players_per_team and self.chars_per_player == chars_per_player:
+            return
+        self.players_per_team = players_per_team
+        self.chars_per_player = chars_per_player
+        for i, stageWidget in enumerate(self.stage_widget_list):
+            old = stageWidget.findChild(QWidget, f"charRow_{i}")
+            if old:
+                stageWidget.layout().removeWidget(old)
+                old.deleteLater()
+            stageWidget.layout().addWidget(self._CreateCharRow(i))
+
+    @assert_gui_thread
+    def SetPerGameData(self, games_data):
+        """Populates stage, characters, and winner for each game from provider data."""
+        StateManager.BlockSaving()
+        # Expand rows to fit incoming data before iterating
+        while len(self.stage_widget_list) < len(games_data):
+            if self.best_of > 0 and len(self.stage_widget_list) >= self.best_of:
+                break
+            self._AddGameRow()
+        for i, game in enumerate(games_data):
+            if i >= len(self.stage_widget_list):
+                break
+
+            if game.get("stage_codename"):
+                self.SetStage(i, game["stage_codename"])
+
+            winner = game.get("winner")
+            if winner in (1, 2):
+                stageWidget = self.stage_widget_list[i]
+                t1 = stageWidget.findChild(QPushButton, f"stageTeam1Check_{i}")
+                t2 = stageWidget.findChild(QPushButton, f"stageTeam2Check_{i}")
+                tie = stageWidget.findChild(QPushButton, f"stageTieCheck_{i}")
+                if t1 and t2 and tie:
+                    t1.setChecked(winner == 1)
+                    t2.setChecked(winner == 2)
+                    tie.setChecked(False)
+                    StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t1_win", winner == 1)
+                    StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t2_win", winner == 2)
+                    StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.tie", False)
+
+            for t, chars in enumerate([game.get("team1_chars") or [], game.get("team2_chars") or []]):
+                for p, char_data in enumerate(chars):
+                    if char_data is None:
+                        continue
+                    for c in range(self.chars_per_player):
+                        combo: QComboBox = self.stage_widget_list[i].findChild(
+                            QComboBox, f"charCombo_{i}_{t}_{p}_{c}")
+                        if combo is None:
+                            continue
+                        codename = char_data.get("codename") if isinstance(char_data, dict) else None
+                        if codename:
+                            for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
+                                item_data = TSHGameAssetManager.instance.characterModel.item(row).data(
+                                    Qt.ItemDataRole.UserRole)
+                                if item_data and item_data.get("codename") == codename:
+                                    combo.setCurrentIndex(row)
+                                    break
+                        break  # one char per player slot from provider data
+
+        self.StageResultsChanged()
+        StateManager.ReleaseSaving()
+
+    def _SyncStageToStrike(self, game_idx, stage_data):
+        """When the last game row's stage changes, push it to stage_strike.selectedStage."""
+        if game_idx == len(self.stage_widget_list) - 1:
+            codename = stage_data.get("codename") if isinstance(stage_data, dict) else None
+            StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", codename)
+
     def SetStage(self, index=0, stage_codename=None):
         StateManager.BlockSaving()
-        print(f"Setting stage for game {index+1}")
         if self.stage_widget_list:
             target = self.findChild(QComboBox, f"stageMenu_{index}")
+            if target is None:
+                StateManager.ReleaseSaving()
+                return
             if stage_codename:
                 for i in range(1, TSHGameAssetManager.instance.stageModelWithBlank.rowCount()):
                     current_menu_item_data = TSHGameAssetManager.instance.stageModelWithBlank.item(i).data(Qt.ItemDataRole.UserRole)
                     if current_menu_item_data.get("codename") in stage_codename:
-                        print(i, stage_codename)
                         target.setCurrentIndex(i)
                         target.currentIndexChanged.emit(i)
             else:
                 target.setCurrentIndex(0)
                 target.currentIndexChanged.emit(0)
-        
+
         StateManager.ReleaseSaving()
 
     def ResetAllStages(self):

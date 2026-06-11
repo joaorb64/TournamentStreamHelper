@@ -756,6 +756,40 @@ class StartGGDataProvider(TournamentDataProvider):
 
             setData["entrants"] = players
 
+            # Per-game data (stage + characters + winner per game)
+            entrant1_id = str(p1.get("entrant", {}).get("id", "")) if p1.get("entrant") else ""
+            entrant2_id = str(p2.get("entrant", {}).get("id", "")) if p2.get("entrant") else ""
+            raw_games = _set.get("games") or []
+            games_data = []
+            for game in sorted(raw_games, key=lambda g: g.get("orderNum") or 0):
+                entry = {}
+                stage_id = deep_get(game, "stage.id")
+                if stage_id:
+                    stage = TSHGameAssetManager.instance.GetStageFromStartGGId(int(stage_id))
+                    if stage:
+                        entry["stage_codename"] = stage[1].get("codename")
+                winner_id = str(game.get("winnerId") or "")
+                if winner_id == entrant1_id:
+                    entry["winner"] = 1
+                elif winner_id == entrant2_id:
+                    entry["winner"] = 2
+                team1_chars, team2_chars = [], []
+                for sel in (game.get("selections") or []):
+                    sel_entrant_id = str(deep_get(sel, "entrant.id") or "")
+                    char_id = sel.get("selectionValue")
+                    if char_id:
+                        char = TSHGameAssetManager.instance.GetCharacterFromStartGGId(char_id)
+                        char_data = char[1] if char else None
+                        if sel_entrant_id == entrant1_id:
+                            team1_chars.append(char_data)
+                        elif sel_entrant_id == entrant2_id:
+                            team2_chars.append(char_data)
+                entry["team1_chars"] = team1_chars
+                entry["team2_chars"] = team2_chars
+                games_data.append(entry)
+            if games_data:
+                setData["games"] = games_data
+
             return setData
         except Exception as e:
             logger.error(traceback.format_exc())
