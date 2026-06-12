@@ -94,10 +94,10 @@ class TSHStageStrikeLogic():
                 sb_widget = TSHScoreboardManager.instance.GetScoreboard(1)
                 for i in range(1, len(last_known_state.stagesPicked)):
                     sb_widget.individualGameTracker.SetStage(i-1, last_known_state.stagesPicked[i])
-                # Also update the current game's slot with the selected stage
-                if last_known_state.selectedStage:
-                    sb_widget.individualGameTracker.SetStage(
-                        last_known_state.currGame, last_known_state.selectedStage)
+                # Sync the currently selected stage (in-progress game) to the tracker
+                if last_known_state.selectedStage and len(last_known_state.stagesPicked) > 0:
+                    current_game_idx = len(last_known_state.stagesPicked) - 1
+                    sb_widget.individualGameTracker.SetStage(current_game_idx, last_known_state.selectedStage)
             except IndexError as e:
                 logger.warning("Could not find scoreboard 1 when piloting the stage history!")
 

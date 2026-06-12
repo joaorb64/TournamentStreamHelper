@@ -24,6 +24,8 @@ class TSHTeamPlayerWidgetSignals(QObject):
     activeStatus_changed = Signal(int)
     deathStatus_changed = Signal(int)
     toggleDeathTrigger = Signal(bool)
+    nameChanged = Signal(str)
+    characterChanged = Signal()
 
 
 class TSHTeamPlayerWidget(QGroupBox):
@@ -309,6 +311,7 @@ class TSHTeamPlayerWidget(QGroupBox):
 
             StateManager.Set(
                 f"{self.path}.character", characters)
+            self.instanceSignals.characterChanged.emit()
 
             if includeMains:
                 StateManager.Set(
@@ -348,6 +351,7 @@ class TSHTeamPlayerWidget(QGroupBox):
                 f"{self.path}.mergedName", merged)
             StateManager.Set(
                 f"{self.path}.mergedOnlyName", nameOnlyMerged)
+            self.instanceSignals.nameChanged.emit(merged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         with self.dataLock:
