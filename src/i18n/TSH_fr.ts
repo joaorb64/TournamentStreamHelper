@@ -187,7 +187,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="164"/>
         <source>Neutral stages</source>
-        <translation>Stages Neutres</translation>
+        <translation>Stages de départ</translation>
     </message>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="250"/>
@@ -1534,7 +1534,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TSHScoreboardWidget.py" line="583"/>
         <source>CURRENT STAGE</source>
-        <translation type="unfinished"></translation>
+        <translation>STAGE ACTUEL</translation>
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="708"/>
