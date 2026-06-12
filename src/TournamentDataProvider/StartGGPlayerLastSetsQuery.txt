@@ -20,6 +20,14 @@ query PlayerLastSetsQuery($eventSlug: String!, $playerID: ID!) {
 						}
 					}
 				}
+				games {
+					selections {
+						entrant {
+							id
+						}
+						selectionValue
+					}
+				}
 				entrant1Score
 				entrant2Score
 				winnerId

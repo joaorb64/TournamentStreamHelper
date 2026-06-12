@@ -117,10 +117,12 @@ class TSHStatsUtil:
                 "player_seed": set.get("player1_seed"),
                 "player_team": set.get("player1_team"),
                 "player_name": set.get("player1_name"),
+                "player_char": set.get("player_char", {}),
                 "oponent_score": set.get("player2_score"),
                 "oponent_seed": set.get("player2_seed"),
                 "oponent_team": set.get("player2_team"),
-                "oponent_name": set.get("player2_name")
+                "oponent_name": set.get("player2_name"),
+                "oponent_char": set.get("oponent_char", {}),
             })
             i += 1
         StateManager.ReleaseSaving()
