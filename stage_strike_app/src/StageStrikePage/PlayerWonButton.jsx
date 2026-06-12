@@ -26,7 +26,7 @@ export function PlayerWonButton({playerName, color, leftSide}) {
       },
     }}
   >
-    {i18n.t("player_won", {
+    {"🏆 "}{i18n.t("player_won", {
       player: playerName
     })}
   </Fab>

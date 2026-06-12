@@ -998,6 +998,11 @@ class TSHGameAssetManager(QObject):
                 self.threadpool.start(worker)
                 self.threadpool.start(worker_blank)
             self.stageModelWithBlank.sort(0)
+            StateManager.Set("game.stages", {
+                v.get("codename"): v
+                for v in self.stages.values()
+                if v.get("codename")
+            })
         except:
             logger.error(traceback.format_exc())
 

@@ -2,63 +2,35 @@
   "name": "stage_strike_app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/stage_strike_app/build/",
+  "type": "module",
   "dependencies": {
-    "@emotion/react": "^11.4.0",
-    "@emotion/styled": "^11.14.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
     "@mui/system": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.6.2",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "i18next": "^25.5.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "immer": "^10.1.3",
-    "npm": "^10.9.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.1",
-    "react-scripts": "^5.0.1",
     "socket.io-client": "^4.8.1",
-    "typescript": "^5.9.3",
-    "web-vitals": "^5.1.0"
-  },
-  "overrides": {
-    "react-scripts": {
-      "typescript": "^5"
-    }
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@tsconfig/create-react-app": "^2.0.7"
+    "@vitejs/plugin-react": "^4.6.0",
+    "vite": "^6.3.0"
+  },
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   }
 }

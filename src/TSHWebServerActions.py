@@ -84,6 +84,11 @@ class WebServerActions(QThread):
                     f"p{t}": " / ".join(names)
                 })
 
+            # Country code of the first player on this team (for per-player language)
+            player_1 = StateManager.Get(f"score.1.team.{i+1}.player.1", {}) or {}
+            country = player_1.get("country")
+            data[f"p{t}_country"] = country.get("code") if isinstance(country, dict) else None
+
         # Add set data
         data.update({
             "best_of": StateManager.Get(f"score.1.best_of"),
@@ -260,7 +265,37 @@ class WebServerActions(QThread):
             )
         return "OK"
 
+    def _resolve_character_name(self, name: str) -> str:
+        """Resolve a character identifier to its en_name.
+        Checks codename first, then en_name. Returns the input unchanged if no match."""
+        characters = TSHGameAssetManager.instance.characters
+        for en_name, char_data in characters.items():
+            if char_data.get("codename") == name:
+                return en_name
+        return name
+
+    def _resolve_mains(self, mains):
+        """Resolve character codenames to en_names in a mains structure."""
+        if isinstance(mains, list):
+            return [
+                [self._resolve_character_name(entry[0])] + list(entry[1:])
+                if entry else entry
+                for entry in mains
+            ]
+        if isinstance(mains, dict):
+            return {
+                game: [
+                    [self._resolve_character_name(entry[0])] + list(entry[1:])
+                    if entry else entry
+                    for entry in entries
+                ]
+                for game, entries in mains.items()
+            }
+        return mains
+
     def set_team_data(self, scoreboard, team, player, data):
+        if data and "mains" in data:
+            data = {**data, "mains": self._resolve_mains(data["mains"])}
         sb = self._get_scoreboard(scoreboard)
         sb.signals.ChangeSetData.emit({
             "team": team,
@@ -569,3 +604,13 @@ class WebServerActions(QThread):
     @gui_thread_sync
     def get_states(self, countryCode: str):
         return TSHCountryHelper.GetStates(countryCode)
+
+    @gui_thread_sync
+    def set_current_stage(self, scoreboard, codename):
+        stage_data = StateManager.Get(f"game.stages.{codename}") if codename else None
+        with StateManager.SaveBlock():
+            StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStage", codename)
+            StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStageData", stage_data)
+        curr_game = StateManager.Get(f"score.{scoreboard}.stage_strike.currGame", 0)
+        self._get_scoreboard(scoreboard).individualGameTracker.SetStage(curr_game, codename)
+        return "OK"

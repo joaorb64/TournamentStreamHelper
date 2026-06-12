@@ -573,6 +573,53 @@ class TSHScoreboardWidget(QWidget):
         self.scoreColumn.findChild(QComboBox, "match").addItem("")
         TSHLocaleHelper.LoadMatchNamesToWidget(self.scoreColumn.findChild(QComboBox, "match"))
 
+        # Current stage combo box (shown only when the game has stages)
+        self.currentStageContainer = QWidget()
+        _stageContainerLayout = QVBoxLayout()
+        _stageContainerLayout.setContentsMargins(0, 0, 0, 0)
+        _stageContainerLayout.setSpacing(2)
+        self.currentStageContainer.setLayout(_stageContainerLayout)
+
+        _stageLabel = QLabel(QApplication.translate("app", "CURRENT STAGE"))
+        _stageLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        _stageLabel.setFont(QFont(_stageLabel.font().family(), 8, QFont.Weight.Bold))
+        _stageContainerLayout.addWidget(_stageLabel)
+
+        self.currentStageCombo = QComboBox()
+        self.currentStageCombo.setObjectName("current_stage")
+        self.currentStageCombo.setEditable(True)
+        self.currentStageCombo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
+        self.currentStageCombo.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.currentStageCombo.completer().popup().setMinimumWidth(250)
+        self.currentStageCombo.setModel(TSHGameAssetManager.instance.stageModelWithBlank)
+        self.currentStageCombo.setIconSize(QSize(24, 24))
+        self.currentStageCombo.setFixedHeight(32)
+        self.currentStageCombo.setFont(QFont(self.currentStageCombo.font().family(), 9))
+        self.currentStageCombo.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+        _stageContainerLayout.addWidget(self.currentStageCombo)
+
+        def _on_current_stage_changed():
+            data = self.currentStageCombo.currentData()
+            codename = data.get("codename") if data else None
+            with StateManager.SaveBlock():
+                StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike.selectedStage", codename)
+                StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike.selectedStageData",
+                                 data if codename else None)
+            curr_game = StateManager.Get(f"score.{self.scoreboardNumber}.stage_strike.currGame", 0)
+            self.individualGameTracker.SetStage(curr_game, codename)
+
+        self.currentStageCombo.currentIndexChanged.connect(_on_current_stage_changed)
+
+        StateManager.signals.state_updated.connect(
+            lambda changes: self.SyncCurrentStageFromState()
+            if any("stage_strike" in d.get("path", []) for d in changes.get("delta", []))
+            else None
+        )
+        StateManager.signals.state_big_change.connect(self.SyncCurrentStageFromState)
+
+        self.scoreColumn.findChild(QVBoxLayout, "verticalLayout_2").insertWidget(3, self.currentStageContainer)
+        self.currentStageContainer.setVisible(StateManager.Get("game.has_stages", False))
+
         TSHGameAssetManager.instance.signals.onLoad.connect(
             lambda: [
                 self.SetDefaultsFromAssets(),
@@ -580,7 +627,9 @@ class TSHScoreboardWidget(QWidget):
                 self.colorMenu1.setModel(TSHGameAssetManager.instance.colorModel),
                 self.colorMenu2.setModel(TSHGameAssetManager.instance.colorModel),
                 self.colorMenu1.setVisible(StateManager.Get(f"game.has_colors", False)),
-                self.colorMenu2.setVisible(StateManager.Get(f"game.has_colors", False))
+                self.colorMenu2.setVisible(StateManager.Get(f"game.has_colors", False)),
+                self.currentStageCombo.setModel(TSHGameAssetManager.instance.stageModelWithBlank),
+                self.currentStageContainer.setVisible(StateManager.Get("game.has_stages", False))
             ]
         )
 
@@ -1321,6 +1370,21 @@ class TSHScoreboardWidget(QWidget):
                     playerData, False, True, no_mains)
             return True
         return False
+
+    def SyncCurrentStageFromState(self):
+        codename = StateManager.Get(f"score.{self.scoreboardNumber}.stage_strike.selectedStage")
+        model = self.currentStageCombo.model()
+        target_index = 0
+        if codename:
+            for i in range(model.rowCount()):
+                item = model.item(i)
+                data = item.data(Qt.ItemDataRole.UserRole) if item else None
+                if data and data.get("codename") == codename:
+                    target_index = i
+                    break
+        if self.currentStageCombo.currentIndex() != target_index:
+            with QSignalBlocker(self.currentStageCombo):
+                self.currentStageCombo.setCurrentIndex(target_index)
 
     def SetDefaultsFromAssets(self):
         if StateManager.Get(f'game.defaults'):

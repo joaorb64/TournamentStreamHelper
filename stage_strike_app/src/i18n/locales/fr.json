@@ -8,8 +8,10 @@
     "rock_paper_scissors": "Pierre-Feuille-Ciseaux",
     "p1": "Joueur 1",
     "p2": "Joueur 2",
-    "select_a_stage_prompt": "{{player}}, veuillez choisir un stage",
-    "ban_prompt": "{{player}}, veuillez bannir {{val}} stage(s)",
+    "select_a_stage_prompt": "{{player}}, veuillez {{pick}} un stage",
+    "ban_prompt": "{{player}}, veuillez {{ban}} {{val}} stage(s)",
+    "ban_word": "bannir",
+    "pick_word": "choisir",
     "no_ruleset_error": "Aucun règlement selectionné. Veuillez demander à un régisseur ou un TO de sélectionner un règlement.",
     "game": "Manche {{value}}",
     "best_of": "Best of {{value}}",
@@ -41,5 +43,6 @@
     "match": "Match",
     "stream": "Stream",
     "station": "Station",
-    "failed_to_connect": "La connexion à TournamentStreamHelper a échoué"
+    "failed_to_connect": "La connexion à TournamentStreamHelper a échoué",
+    "expand_scoreboard": "Développer le tableau des scores actuel."
 }

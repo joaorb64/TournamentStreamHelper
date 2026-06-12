@@ -1,30 +1,25 @@
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import en from "./locales/en.json";
+import ptBR from "./locales/pt-BR.json";
+import es from "./locales/es.json";
+import ja from "./locales/ja.json";
+import fr from "./locales/fr.json";
+import it from "./locales/it.json";
+import zhCN from "./locales/zh-CN.json";
+import zhTW from "./locales/zh-TW.json";
 
 i18n.use(LanguageDetector).init({
   fallbackLng: ["en"],
   resources: {
-    en: {
-      translations: require("./locales/en.json"),
-    },
-    pt: {
-      translations: require("./locales/pt.json"),
-    },
-    es: {
-      translations: require("./locales/es.json"),
-    },
-    ja: {
-      translations: require("./locales/ja.json"),
-    },
-    fr: {
-      translations: require("./locales/fr.json"),
-    },
-    "zh-CN": {
-      translations: require("./locales/zh-CN.json"),
-    },
-    "zh-TW": {
-      translations: require("./locales/zh-TW.json"),
-    },
+    en:      { translations: en },
+    "pt-BR": { translations: ptBR },
+    es:      { translations: es },
+    ja:      { translations: ja },
+    fr:      { translations: fr },
+    it:      { translations: it },
+    "zh-CN": { translations: zhCN },
+    "zh-TW": { translations: zhTW },
   },
   detection: {
     order: ["querystring", "navigator"],
@@ -32,10 +27,19 @@ i18n.use(LanguageDetector).init({
   },
   ns: ["translations"],
   defaultNS: "translations",
-  debug: true,
+  debug: false,
   interpolation: { escapeValue: false },
 });
 
-i18n.languages = ["en", "pt", "es", "ja", "fr", "zh-CN", "zh-TW"];
+export const SUPPORTED_LANGUAGES = [
+  { code: "en",    label: "EN" },
+  { code: "pt-BR", label: "PT" },
+  { code: "es",    label: "ES" },
+  { code: "ja",    label: "JA" },
+  { code: "fr",    label: "FR" },
+  { code: "it",    label: "IT" },
+  { code: "zh-CN", label: "简中" },
+  { code: "zh-TW", label: "繁中" },
+];
 
 export default i18n;

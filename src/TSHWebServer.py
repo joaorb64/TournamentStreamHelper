@@ -681,6 +681,21 @@ class WebServer(QThread):
         return WebServer.actions.get_states(args.get('countryCode', ''))
 
 
+    # Set the current ingame stage (selectedStage in stage_strike state)
+    @app.post('/scoreboard<scoreboardNumber>-set-current-stage')
+    def set_current_stage(scoreboardNumber):
+        data = request.get_json()
+        return WebServer.actions.set_current_stage(scoreboardNumber, data.get("codename"))
+
+    @socketio.on('set_current_stage')
+    def ws_set_current_stage(message):
+        if isinstance(message, (str, bytes)):
+            data = orjson.loads(message)
+        else:
+            data = message
+        WebServer.ws_emit('set_current_stage', WebServer.actions.set_current_stage(
+            data.get("scoreboardNumber", "1"), data.get("codename")))
+
     @app.route('/')
     @app.route('/scoreboard')
     @app.route('/stage-strike-app')
