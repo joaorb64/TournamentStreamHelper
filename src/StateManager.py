@@ -248,6 +248,11 @@ class StateManager:
                 logger.error(traceback.format_exc())
 
     def CreateFilesDict(path, di):
+        parts = [p for p in path.split("/") if p]
+        state_key = "root" + "".join(f"['{p}']" for p in parts)
+        if any(state_key.startswith(p) for p in StateManager.EXPORT_EXCLUDED_PREFIXES):
+            return
+
         pathdirs = "/".join(path.split("/")[0:-1])
 
         if not os.path.isdir("./out/"+pathdirs):
@@ -314,6 +319,11 @@ class StateManager:
                     file.write(str(di))
 
     def RemoveFilesDict(path, di):
+        parts = [p for p in path.split("/") if p]
+        state_key = "root" + "".join(f"['{p}']" for p in parts)
+        if any(state_key.startswith(p) for p in StateManager.EXPORT_EXCLUDED_PREFIXES):
+            return
+
         pathdirs = "/".join(path.split("/")[0:-1])
 
         if type(di) == dict:
