@@ -291,6 +291,7 @@ class TSHIndividualGameTracker(QWidget):
         widget.deleteLater()
         idx = len(self.stage_widget_list)  # index of removed row
         StateManager.Unset(f"score.{self.scoreboard_number}.stages.{idx+1}")
+        self._SyncLastStageToStrike()
 
     def _EnsureCorrectRowCount(self):
         """Trims excess trailing empty rows (keeps exactly 1), then adds one if all rows have results."""
@@ -586,11 +587,26 @@ class TSHIndividualGameTracker(QWidget):
         self.StageResultsChanged()
         StateManager.ReleaseSaving()
 
+    def _SyncLastStageToStrike(self):
+        """Reads the new last row's stage combo and syncs it to selectedStage/selectedStageData."""
+        if not self.stage_widget_list:
+            with StateManager.SaveBlock():
+                StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", None)
+                StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStageData", None)
+            return
+        last = len(self.stage_widget_list) - 1
+        combo = self.findChild(QComboBox, f"stageMenu_{last}")
+        if combo is not None:
+            self._SyncStageToStrike(last, combo.currentData() or {})
+
     def _SyncStageToStrike(self, game_idx, stage_data):
-        """When the last game row's stage changes, push it to stage_strike.selectedStage."""
+        """When the last game row's stage changes, push it to stage_strike.selectedStage/selectedStageData."""
         if game_idx == len(self.stage_widget_list) - 1:
             codename = stage_data.get("codename") if isinstance(stage_data, dict) else None
-            StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", codename)
+            with StateManager.SaveBlock():
+                StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", codename)
+                StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStageData",
+                                 stage_data if codename else None)
 
     def SetStage(self, index=0, stage_codename=None):
         StateManager.BlockSaving()
