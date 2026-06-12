@@ -790,8 +790,8 @@ p, li { white-space: pre-wrap; }
     <name>app</name>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="932"/>
-        <location filename="../TSHScoreboardWidget.py" line="647"/>
-        <location filename="../TSHScoreboardWidget.py" line="669"/>
+        <location filename="../TSHScoreboardWidget.py" line="696"/>
+        <location filename="../TSHScoreboardWidget.py" line="718"/>
         <location filename="../TournamentStreamHelper.py" line="196"/>
         <location filename="../TournamentStreamHelper.py" line="232"/>
         <location filename="../TournamentStreamHelper.py" line="731"/>
@@ -1413,7 +1413,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHScoreboardWidget.py" line="275"/>
-        <location filename="../TSHScoreboardWidget.py" line="698"/>
+        <location filename="../TSHScoreboardWidget.py" line="747"/>
         <source>Load set</source>
         <translation>加載對局</translation>
     </message>
@@ -1460,52 +1460,57 @@ p, li { white-space: pre-wrap; }
         <translation>單局數據</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="659"/>
+        <location filename="../TSHScoreboardWidget.py" line="583"/>
+        <source>CURRENT STAGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../TSHScoreboardWidget.py" line="708"/>
         <source>TSH - Bluesky</source>
         <translation>TSH-Bluesky</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="665"/>
+        <location filename="../TSHScoreboardWidget.py" line="714"/>
         <source>The post has successfully been sent to account {0}</source>
         <translation>已成功發布至Bluesky賬號{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="685"/>
+        <location filename="../TSHScoreboardWidget.py" line="734"/>
         <source>Load set from {0}</source>
         <translation>從{0}中加載對局</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="891"/>
+        <location filename="../TSHScoreboardWidget.py" line="940"/>
         <source>Auto update (Set)</source>
         <translation>自動更新（對局）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="895"/>
+        <location filename="../TSHScoreboardWidget.py" line="944"/>
         <source>Auto update (Stream [{0}])</source>
         <translation>自動更新（直播【{0}】）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="899"/>
+        <location filename="../TSHScoreboardWidget.py" line="948"/>
         <source>Auto update (Station [{0}])</source>
         <translation>自動更新（賽臺【{0}】）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="902"/>
+        <location filename="../TSHScoreboardWidget.py" line="951"/>
         <source>Auto update (User)</source>
         <translation>自動更新（用戶）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="904"/>
+        <location filename="../TSHScoreboardWidget.py" line="953"/>
         <source>Auto update</source>
         <translation>自動更新</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1015"/>
+        <location filename="../TSHScoreboardWidget.py" line="1064"/>
         <source>Load user set ({0})</source>
         <translation>加載用戶對局（{0}）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1019"/>
+        <location filename="../TSHScoreboardWidget.py" line="1068"/>
         <source>Load user set</source>
         <translation>加載用戶對局</translation>
     </message>
@@ -2398,17 +2403,17 @@ p, li { white-space: pre-wrap; }
     <name>thumb_app</name>
     <message>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
-        <location filename="../TSHScoreboardWidget.py" line="615"/>
+        <location filename="../TSHScoreboardWidget.py" line="664"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH-縮略圖</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="621"/>
+        <location filename="../TSHScoreboardWidget.py" line="670"/>
         <source>The thumbnail has been generated here:</source>
         <translation>縮略圖已生成至此處：</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="622"/>
+        <location filename="../TSHScoreboardWidget.py" line="671"/>
         <source>The video title and description have also been generated.</source>
         <translation>視頻標題和簡介已生成</translation>
     </message>
