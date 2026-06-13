@@ -1,7 +1,9 @@
 import math
+import os
 import platform
 import socket
 import subprocess
+from datetime import datetime
 
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -568,6 +570,11 @@ class TSHScoreboardWidget(QWidget):
         self.scoreColumn.findChild(
             QPushButton, "btResetScore").setIcon(QIcon('assets/icons/undo.svg'))
 
+        self.scoreColumn.findChild(
+            QPushButton, "btExportScore").clicked.connect(self.ExportScore)
+        self.scoreColumn.findChild(
+            QPushButton, "btExportScore").setIcon(QIcon('assets/icons/save.svg'))
+
         # Add default and user tournament phase title files
         self.scoreColumn.findChild(QComboBox, "phase").addItem("")
         TSHLocaleHelper.LoadPhaseNamesToWidget(self.scoreColumn.findChild(QComboBox, "phase"))
@@ -911,6 +918,104 @@ class TSHScoreboardWidget(QWidget):
     def ResetScore(self):
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+
+    def ExportScore(self):
+        import openpyxl
+        from openpyxl.styles import PatternFill, Font
+
+        HEADERS = [
+            "Timestamp", "Phase", "Match",
+            "P1 Sponsor", "P1 Country", "P1 Characters", "P1 Name", "P1 Score",
+            "P2 Score", "P2 Name", "P2 Characters", "P2 Country", "P2 Sponsor",
+        ]
+        # Column ranges for each team (1-based), used for coloring
+        P1_COLS = range(4, 9)   # P1 Sponsor → P1 Score
+        P2_COLS = range(9, 14)  # P2 Score → P2 Characters
+
+        GREEN = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
+        RED   = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+
+        out_path = "./out/score_export.xlsx"
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+
+        if os.path.exists(out_path):
+            wb = openpyxl.load_workbook(out_path)
+            ws = wb.active
+        else:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.append(HEADERS)
+            for cell in ws[1]:
+                cell.font = Font(bold=True)
+
+        def player_fields(widgets):
+            names, sponsors, countries, chars = [], [], [], []
+            for p in widgets:
+                names.append(StateManager.Get(f"{p.path}.name", "") or "")
+                sponsors.append(StateManager.Get(f"{p.path}.team", "") or "")
+                country_data = StateManager.Get(f"{p.path}.country", None)
+                if isinstance(country_data, dict):
+                    countries.append(country_data.get("en_name") or country_data.get("name", ""))
+                else:
+                    countries.append("")
+                characters = StateManager.Get(f"{p.path}.character", {}) or {}
+                char_names = [
+                    v.get("name", "") for v in characters.values()
+                    if isinstance(v, dict) and v.get("name")
+                ]
+                chars.append(", ".join(char_names))
+            sep = " / "
+            return sep.join(sponsors), sep.join(names), sep.join(countries), sep.join(chars)
+
+        phase = StateManager.Get(f"score.{self.scoreboardNumber}.phase", "") or ""
+        match = StateManager.Get(f"score.{self.scoreboardNumber}.match", "") or ""
+        p1_score = StateManager.Get(f"score.{self.scoreboardNumber}.team.1.score", 0)
+        p2_score = StateManager.Get(f"score.{self.scoreboardNumber}.team.2.score", 0)
+
+        p1_sponsor, p1_name, p1_country, p1_chars = player_fields(self.team1playerWidgets)
+        p2_sponsor, p2_name, p2_country, p2_chars = player_fields(self.team2playerWidgets)
+
+        new_row = [
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), phase, match,
+            p1_sponsor, p1_country, p1_chars, p1_name, p1_score,
+            p2_score, p2_name, p2_chars, p2_country, p2_sponsor,
+        ]
+
+        # Skip export if all fields (except timestamp) match the last saved row
+        if ws.max_row > 1:
+            last_row = [ws.cell(row=ws.max_row, column=c).value for c in range(1, len(HEADERS) + 1)]
+            if last_row[1:] == new_row[1:]:
+                msgBox = QMessageBox()
+                msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+                msgBox.setWindowTitle(QApplication.translate("app", "TSH - Export Score"))
+                msgBox.setText(QApplication.translate("app", "No changes since last export. Skipping."))
+                msgBox.setIcon(QMessageBox.Icon.Information)
+                msgBox.exec()
+                return
+
+        ws.append(new_row)
+
+        # Color winner green, loser red
+        row = ws.max_row
+        if p1_score != p2_score:
+            winner_cols, loser_cols = (P1_COLS, P2_COLS) if p1_score > p2_score else (P2_COLS, P1_COLS)
+            for col in winner_cols:
+                ws.cell(row=row, column=col).fill = GREEN
+            for col in loser_cols:
+                ws.cell(row=row, column=col).fill = RED
+
+        wb.save(out_path)
+
+        msgBox = QMessageBox()
+        msgBox.setWindowIcon(QIcon('assets/icons/icon.png'))
+        msgBox.setWindowTitle(QApplication.translate("app", "TSH - Export Score"))
+        msgBox.setText(
+            QApplication.translate("app", "Score exported to {0}").format(
+                os.path.abspath(out_path)
+            )
+        )
+        msgBox.setIcon(QMessageBox.Icon.NoIcon)
+        msgBox.exec()
 
     def AutoUpdate(self, data):
         TSHTournamentDataProvider.instance.GetMatch(
