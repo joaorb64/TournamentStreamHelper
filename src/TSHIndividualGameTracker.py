@@ -237,8 +237,8 @@ class TSHIndividualGameTracker(QWidget):
             existing.pop(char_slot + 1, None)
         StateManager.Set(path, existing)
 
-        # Sync to main selector if this is the current (last) game
-        if game_idx == len(self.stage_widget_list) - 1 and not self._syncing_chars:
+        # Sync to main selector if this is the current game (first without a result)
+        if game_idx == self._GetCurrentGameIdx() and not self._syncing_chars:
             self._syncing_chars = True
             try:
                 self.signals.syncCharToMain.emit(team, player, char_slot, data)
@@ -253,10 +253,19 @@ class TSHIndividualGameTracker(QWidget):
             if lbl:
                 lbl.setText(display)
 
-    def SetStageCount(self, stage_count=0):
-        """Resets the game tracker completely and starts with a single row. Called on new set / game asset load."""
+    def SetStageCount(self, stage_count=0, carry_stage_codename=None):
+        """Resets the game tracker completely. Called on new set / game asset load."""
 
-        self._layout.removeWidget(self.stage_order_list_widget)
+        # If not pre-computed by caller (before score changes), derive it now
+        if carry_stage_codename is None:
+            current_idx = self._GetCurrentGameIdx()
+            saved_stage = StateManager.Get(f"score.{self.scoreboard_number}.stages.{current_idx+1}", {})
+            carry_stage_codename = saved_stage.get("codename") if isinstance(saved_stage, dict) else None
+
+        old = self.stage_order_list_widget
+        self._layout.removeWidget(old)
+        old.setParent(None)
+        old.deleteLater()
         self.stage_widget_list = []
         self.stage_order_list_layout = QVBoxLayout()
         self.stage_order_list_widget = QWidget()
@@ -267,20 +276,34 @@ class TSHIndividualGameTracker(QWidget):
             self.setVisible(False)
         else:
             self.setVisible(True)
-            self._AddGameRow()
+            count = stage_count if stage_count > 0 else 1
+            for i in range(count):
+                self._AddGameRow(copy_chars=(i == 0))
         self._layout.addWidget(self.stage_order_list_widget)
+        if carry_stage_codename and self.isVisible() and self.stage_widget_list:
+            combo: QComboBox = self.stage_widget_list[0].findChild(QComboBox, "stageMenu_0")
+            if combo is not None:
+                model = combo.model()
+                for i in range(1, model.rowCount()):
+                    item_data = model.item(i).data(Qt.ItemDataRole.UserRole)
+                    if isinstance(item_data, dict) and item_data.get("codename") == carry_stage_codename:
+                        combo.setCurrentIndex(i)
+                        break
 
     def UpdateBestOf(self, stage_count=0):
-        """Updates the best-of cap without resetting rows. Called when the spinbox changes."""
+        """Updates the best-of and expands rows to show all games. Called when the spinbox changes."""
         self.best_of = stage_count
+        if self.isVisible():
+            self._EnsureCorrectRowCount()
 
-    def _AddGameRow(self):
-        """Appends one new game row to the tracker, pre-filled with current set-level characters."""
+    def _AddGameRow(self, copy_chars=True):
+        """Appends one new game row to the tracker."""
         idx = len(self.stage_widget_list)
         widget = self.CreateStage(idx)
         self.stage_widget_list.append(widget)
         self.stage_order_list_layout.addWidget(widget)
-        self._CopySetLevelCharactersToGame(idx)
+        if copy_chars:
+            self._CopySetLevelCharactersToGame(idx)
 
     def _RemoveLastRow(self):
         """Removes the last game row and clears its state."""
@@ -293,26 +316,33 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.Unset(f"score.{self.scoreboard_number}.stages.{idx+1}")
         self._SyncLastStageToStrike()
 
+    def _GetCurrentGameIdx(self):
+        """Returns the index of the first game with no result (the 'current' game being played)."""
+        for i in range(len(self.stage_widget_list)):
+            if self._get_game_winner(i) == -1:
+                return i
+        return len(self.stage_widget_list) - 1
+
     def _EnsureCorrectRowCount(self):
-        """Trims excess trailing empty rows (keeps exactly 1), then adds one if all rows have results."""
+        """Maintains the correct number of rows based on best_of and current results."""
         if not self.stage_widget_list:
             return
 
-        # Trim trailing rows with no result, keeping at least 1 empty row at the end
+        if self.best_of > 0:
+            # Always show all best_of rows so stages can be pre-set before the set starts
+            while len(self.stage_widget_list) < self.best_of:
+                self._AddGameRow(copy_chars=False)
+            while len(self.stage_widget_list) > self.best_of:
+                self._RemoveLastRow()
+            return
+
+        # best_of == 0: dynamic behavior — keep exactly 1 trailing empty row
         while len(self.stage_widget_list) > 1 and self._get_game_winner(len(self.stage_widget_list) - 1) == -1:
-            # Second-to-last row also empty? Remove the last row.
             if self._get_game_winner(len(self.stage_widget_list) - 2) == -1:
                 self._RemoveLastRow()
             else:
                 break
 
-        t1_wins = len(self.GetWonStages(0))
-        t2_wins = len(self.GetWonStages(1))
-        wins_needed = math.ceil(self.best_of / 2) if self.best_of > 0 else 999
-        if t1_wins >= wins_needed or t2_wins >= wins_needed:
-            return
-        if self.best_of > 0 and len(self.stage_widget_list) >= self.best_of:
-            return
         all_have_results = all(
             self._get_game_winner(i) != -1
             for i in range(len(self.stage_widget_list))
@@ -588,20 +618,20 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.ReleaseSaving()
 
     def _SyncLastStageToStrike(self):
-        """Reads the new last row's stage combo and syncs it to selectedStage/selectedStageData."""
+        """Reads the current game's stage combo and syncs it to selectedStage/selectedStageData."""
         if not self.stage_widget_list:
             with StateManager.SaveBlock():
                 StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", None)
                 StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStageData", None)
             return
-        last = len(self.stage_widget_list) - 1
-        combo = self.findChild(QComboBox, f"stageMenu_{last}")
+        current = self._GetCurrentGameIdx()
+        combo = self.findChild(QComboBox, f"stageMenu_{current}")
         if combo is not None:
-            self._SyncStageToStrike(last, combo.currentData() or {})
+            self._SyncStageToStrike(current, combo.currentData() or {})
 
     def _SyncStageToStrike(self, game_idx, stage_data):
-        """When the last game row's stage changes, push it to stage_strike.selectedStage/selectedStageData."""
-        if game_idx == len(self.stage_widget_list) - 1:
+        """When the current game row's stage changes, push it to stage_strike.selectedStage/selectedStageData."""
+        if game_idx == self._GetCurrentGameIdx():
             codename = stage_data.get("codename") if isinstance(stage_data, dict) else None
             with StateManager.SaveBlock():
                 StateManager.Set(f"score.{self.scoreboard_number}.stage_strike.selectedStage", codename)

@@ -815,6 +815,9 @@ class Window(QMainWindow):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             TSHAssetDownloader.instance.CheckAssetUpdates
         )
+        TSHGameAssetManager.instance.signals.json_error.connect(
+            lambda title, msg: QMessageBox.critical(self, title, msg)
+        )
         TSHAssetDownloader.instance.signals.AssetUpdates.connect(
             self.OnAssetUpdates
         )
@@ -838,10 +841,13 @@ class Window(QMainWindow):
         moddedContentLayout.addWidget(moddedContentCheckLabel)
         moddedContentLayout.addWidget(self.moddedContentCheck)
 
-        TSHGameAssetManager.instance.signals.onLoad.connect(lambda x=None: [
-            self.moddedContentWidget.setVisible(TSHGameAssetManager.instance.has_modded_content),
-            self.moddedContentCheck.setChecked(StateManager.Get("game").get("mods_active", False))
-        ])
+        def _on_game_load():
+            self.moddedContentWidget.setVisible(TSHGameAssetManager.instance.has_modded_content)
+            # Block stateChanged so setting the checkbox programmatically doesn't trigger a reload
+            with QSignalBlocker(self.moddedContentCheck):
+                self.moddedContentCheck.setChecked(StateManager.Get("game").get("mods_active", False))
+
+        TSHGameAssetManager.instance.signals.onLoad.connect(_on_game_load)
 
         self.moddedContentCheck.stateChanged.connect(lambda x=None: [
             print("Checked: "+ str(self.moddedContentCheck.isChecked())),
@@ -854,8 +860,21 @@ class Window(QMainWindow):
         TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
             lambda x=None: self.moddedContentCheck.setChecked(False))
 
+        self.gameReloadBtn = QPushButton()
+        self.gameReloadBtn.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
+        self.gameReloadBtn.setToolTip(QApplication.translate("app", "Reload game assets"))
+        self.gameReloadBtn.setFixedSize(24, 24)
+        self.gameReloadBtn.clicked.connect(
+            lambda: TSHGameAssetManager.instance.LoadGameAssets(
+                self.gameSelect.currentData(),
+                mods_active=self.moddedContentCheck.isChecked(),
+                mods_reload_mode=True,
+            )
+        )
+
         pre_base_layout.addLayout(base_layout)
         hbox.addWidget(self.gameSelect)
+        hbox.addWidget(self.gameReloadBtn)
         hbox.addWidget(self.moddedContentWidget)
 
         self.scoreboardAmount = QSpinBox()
@@ -900,6 +919,14 @@ class Window(QMainWindow):
 
         splash.finish(self)
         self.show()
+
+        for path_error in [SettingsManager.load_error, StateManager.load_error]:
+            if path_error:
+                QMessageBox.critical(
+                    self,
+                    QApplication.translate("app", "Invalid JSON file"),
+                    path_error,
+                )
 
         TSHCountryHelper.LoadCountries()
         self.settingsWindow.UiMounted()
