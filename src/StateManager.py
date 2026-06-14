@@ -28,6 +28,7 @@ class StateManager:
     signals = StateManagerSignals()
     changedKeys = []
     deltaIndex = 0
+    load_error: "str | None" = None
 
     lock = threading.RLock()
     threads = []
@@ -128,6 +129,7 @@ class StateManager:
                         t.join()
 
     def LoadState():
+        StateManager.load_error = None
         try:
             with open("./out/program_state.json", 'rb') as file:
                 StateManager.state = orjson.loads(file.read())
@@ -136,6 +138,7 @@ class StateManager:
             pass
         except Exception as e:
             logger.error(traceback.format_exc())
+            StateManager.load_error = f"./out/program_state.json\n\n{e}"
             StateManager.state = {}
             StateManager.signals.state_big_change.emit()
             StateManager.SaveState()

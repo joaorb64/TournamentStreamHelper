@@ -520,6 +520,10 @@ class TSHScoreboardWidget(QWidget):
                 StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
                     "first_to").format(math.ceil(value/2)) if value > 0 else ""),
                 self.individualGameTracker.UpdateBestOf(value),
+                self.scoreColumn.findChild(QSpinBox, "score_left").setMaximum(
+                    math.ceil(value / 2) if value > 0 else 999),
+                self.scoreColumn.findChild(QSpinBox, "score_right").setMaximum(
+                    math.ceil(value / 2) if value > 0 else 999),
                 StateManager.ReleaseSaving()
             ]
         )
@@ -600,12 +604,12 @@ class TSHScoreboardWidget(QWidget):
             StateManager.Set(f"score.{self.scoreboardNumber}.team.2.score", team_2_score)
 
     def _onMainCharChanged(self):
-        """Called when a main-scoreboard character selection changes; copies it to the current (last) game row."""
+        """Called when a main-scoreboard character selection changes; copies it to the current game row."""
         if not hasattr(self, "individualGameTracker"):
             return
-        last = len(self.individualGameTracker.stage_widget_list) - 1
-        if last >= 0:
-            self.individualGameTracker._CopySetLevelCharactersToGame(last)
+        current = self.individualGameTracker._GetCurrentGameIdx()
+        if current >= 0:
+            self.individualGameTracker._CopySetLevelCharactersToGame(current)
 
     def _onSyncCharFromGame(self, team, player, char_slot, char_data):
         """Called when the current game row's character changes; pushes it to the main player widget combo."""
@@ -909,8 +913,17 @@ class TSHScoreboardWidget(QWidget):
             StateManager.ReleaseSaving()
 
     def ResetScore(self):
+        # Capture current game's stage before score zeroing clears the win buttons
+        current_idx = self.individualGameTracker._GetCurrentGameIdx()
+        saved_stage = StateManager.Get(f"score.{self.scoreboardNumber}.stages.{current_idx+1}", {})
+        carry_stage = saved_stage.get("codename") if isinstance(saved_stage, dict) else None
+
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
+        self.individualGameTracker.SetStageCount(
+            self.scoreColumn.findChild(QSpinBox, "best_of").value(),
+            carry_stage_codename=carry_stage
+        )
 
     def AutoUpdate(self, data):
         TSHTournamentDataProvider.instance.GetMatch(
