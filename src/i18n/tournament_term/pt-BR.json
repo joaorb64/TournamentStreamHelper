@@ -8,6 +8,7 @@
         "losers_final": "Final da Repescagem",
         "losers_semi_final": "Semifinal da Repescagem",
         "losers_quarter_final": "Quartas de Final da Repescagem",
+        "losers_top8": "Top 8 da Repescagem",
         "winners_round": "Rodada {0}",
         "losers_round": "Repescagem Rodada {0}",
         "round": "Rodada {0}",
@@ -15,7 +16,10 @@
         "first_to": "First to {0}",
         "qualifier": "Classificatória - {0} {1}",
         "qualifier_winners_indicator": "(W)",
-        "qualifier_losers_indicator": "(L)"
+        "qualifier_losers_indicator": "(L)",
+        "single_elim_final": "Final",
+        "single_elim_semi_final": "Semifinal",
+        "single_elim_quarter_final": "Quartas de Final"
     },
     "phase": {
         "group_stage": "Fase de Grupos",
@@ -34,6 +38,11 @@
         "top_n": "Top {0}",
         "exhibition": "Exibição",
         "freeplay": "Freeplay",
-        "money_match": "Money Match"
+        "money_match": "Money Match",
+        "ladder": "Ladder",
+        "swiss": "Suíço",
+        "ranked_match": "Partida Ranqueada",
+        "random_online": "Partida Online",
+        "stepladder": "Stepladder"
     }
 }

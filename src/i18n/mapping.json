@@ -112,10 +112,6 @@
       "Polski",
       "Polish"
     ],
-    "pt-PT": [
-      "Portugu\u00eas (Portugal)",
-      "Portuguese (Portugal)"
-    ],
     "ro-RO": [
       "Rom\u00e2n\u0103",
       "Romanian"
@@ -209,6 +205,10 @@
     "pt-BR": [
       "Portugu\u00eas (Brasil)",
       "Portuguese (Brazil)"
+    ],
+    "pt-PT": [
+      "Portugu\u00eas (Portugal)",
+      "Portuguese (Portugal)"
     ],
     "zh-CN": [
       "\u4e2d\u6587 (\u4e2d\u56fd\u5927\u9646)",

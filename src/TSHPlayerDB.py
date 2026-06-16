@@ -164,11 +164,12 @@ class TSHPlayerDB:
 
             charIcons = {}
 
-            for char in TSHGameAssetManager.instance.stockIcons:
+            stock_icons = {k: dict(v) for k, v in TSHGameAssetManager.instance.stockIcons.items()}
+            for char, skins in stock_icons.items():
                 charIcons[char] = {}
-                for skin in TSHGameAssetManager.instance.stockIcons[char]:
+                for skin, path in skins.items():
                     charIcons[char][skin] = QIcon(QPixmap.fromImage(
-                        QImage(TSHGameAssetManager.instance.stockIcons[char][skin]).scaledToWidth(
+                        QImage(path).scaledToWidth(
                             32, Qt.TransformationMode.SmoothTransformation)))
 
             for player in TSHPlayerDB.database.values():
