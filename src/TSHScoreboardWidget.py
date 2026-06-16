@@ -1163,7 +1163,8 @@ class TSHScoreboardWidget(QWidget):
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):
         StateManager.BlockSaving()
-        self.individualGameTracker.SetStageCount(data.get("bestOf") or 0)
+        if data.get("bestOf") is not None:
+            self.individualGameTracker.SetStageCount(data.get("bestOf") or 0)
 
         StateManager.Set(f"score.{self.scoreboardNumber}.phase_size", data.get("numSeeds"))
         StateManager.Set(f"score.{self.scoreboardNumber}.num_groups", data.get("groupCount"))

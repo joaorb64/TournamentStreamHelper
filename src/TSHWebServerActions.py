@@ -183,18 +183,20 @@ class WebServerActions(QThread):
         self._get_scoreboard(scoreboard_number).signals.ChangeSetData.emit(score)
         return "OK"
 
+    @gui_thread_sync
     def team_scoreup(self, scoreboard, team):
         if str(team) == "1":
-            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(0, 1)
+            self._get_scoreboard(scoreboard).CommandScoreChange(0, 1)
         else:
-            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(1, 1)
+            self._get_scoreboard(scoreboard).CommandScoreChange(1, 1)
         return "OK"
 
+    @gui_thread_sync
     def team_scoredown(self, scoreboard, team):
         if str(team) == "1":
-            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(0, -1)
+            self._get_scoreboard(scoreboard).CommandScoreChange(0, -1)
         else:
-            self._get_scoreboard(scoreboard).signals.CommandScoreChange.emit(1, -1)
+            self._get_scoreboard(scoreboard).CommandScoreChange(1, -1)
         return "OK"
 
     def team_color(self, scoreboard, team, color):
@@ -611,6 +613,9 @@ class WebServerActions(QThread):
         with StateManager.SaveBlock():
             StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStage", codename)
             StateManager.Set(f"score.{scoreboard}.stage_strike.selectedStageData", stage_data)
-        curr_game = StateManager.Get(f"score.{scoreboard}.stage_strike.currGame", 0)
-        self._get_scoreboard(scoreboard).individualGameTracker.SetStage(curr_game, codename)
+        sb = self._get_scoreboard(scoreboard)
+        curr_game = sb.individualGameTracker._GetCurrentGameIdx()
+        if curr_game < 0:
+            curr_game = 0
+        sb.individualGameTracker.SetStage(curr_game, codename)
         return "OK"

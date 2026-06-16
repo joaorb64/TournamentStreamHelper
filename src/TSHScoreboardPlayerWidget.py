@@ -890,8 +890,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                                     break
                         character_element.setCurrentIndex(characterIndex)
                 elif type(data.get("mains")) == dict:
-                    mains = data.get("mains").get(
-                        TSHGameAssetManager.instance.selectedGame.get("codename"), [])
+                    game_codename = TSHGameAssetManager.instance.selectedGame.get("codename")
+                    base_game_dir = TSHGameAssetManager.instance.selectedGame.get("base_game_dir", game_codename)
+                    mains = data.get("mains").get(game_codename) or data.get("mains").get(base_game_dir) or []
 
                     for i, main in enumerate(mains):
                         if i < len(self.character_elements):
