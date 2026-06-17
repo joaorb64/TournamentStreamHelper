@@ -66,7 +66,7 @@ class WebServer(QThread):
         StateManager.signals.state_big_change.connect(WebServer.ws_program_state)
 
         self.host_name = "0.0.0.0"
-        self.port = SettingsManager.Get("general.webserver_port", 5000)
+        self.port = SettingsManager.Get("general.webserver_port", 5500)
 
     @staticmethod
     @app.before_request
