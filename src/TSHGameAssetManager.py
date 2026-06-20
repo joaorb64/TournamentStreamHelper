@@ -1200,6 +1200,8 @@ class TSHGameAssetManager(QObject):
 
     def GetVariantIconPath(self, variant_codename):
         game_codename = self.selectedGame.get("codename")
+        if "__alt_" in game_codename:
+            game_codename = game_codename.split("__alt_")[0]
         icon_path, asset_root_path = "", "./user_data/games"
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
