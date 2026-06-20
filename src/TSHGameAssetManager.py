@@ -566,7 +566,7 @@ class TSHGameAssetManager(QObject):
                         self.parent().has_modded_content = False
                         self.parent().UpdateCharacterModel(self.mods_active)
                         self.parent().UpdateSkinModel()
-                        self.parent().UpdateVariantModel()
+                        self.parent().UpdateVariantModel(self.mods_active)
                         self.parent().UpdateColorModel()
                         self.parent().UpdateStageModel(self.mods_active)
 
@@ -892,7 +892,7 @@ class TSHGameAssetManager(QObject):
                     self.parent.has_modded_content = False
                     self.parent.UpdateCharacterModel(mods_active)
                     self.parent.UpdateSkinModel()
-                    self.parent.UpdateVariantModel()
+                    self.parent.UpdateVariantModel(self.mods_active)
                     self.parent.UpdateColorModel()
                     self.parent.UpdateStageModel(mods_active)
 
@@ -1152,7 +1152,7 @@ class TSHGameAssetManager(QObject):
             logger.error(traceback.format_exc())
 
 
-    def UpdateVariantModel(self):
+    def UpdateVariantModel(self, mods_active=True):
         try:
             self.variantModel = QStandardItemModel()
 
@@ -1169,9 +1169,12 @@ class TSHGameAssetManager(QObject):
                     "name": self.variants[c].get("export_name"),
                     "en_name": c,
                     "display_name": self.variants[c].get("display_name"),
-                    "codename": self.variants[c].get("codename")
+                    "codename": self.variants[c].get("codename"),
+                    "modded": self.characters[c].get("modded", False)
                 }
 
+                if data.get("modded"):
+                    self.has_modded_content = True
                 
                 data["icon_path"] = self.GetVariantIconPath(data["codename"])
                 data["image_size"] = self.GetVariantIconSize(data["codename"])
@@ -1187,7 +1190,11 @@ class TSHGameAssetManager(QObject):
                         f'{self.variants[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
-                self.variantModel.appendRow(item)
+                if (not mods_active) and data.get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
+                else:
+                    self.variantModel.appendRow(item)
 
             self.variantModel.sort(0)
         except:
