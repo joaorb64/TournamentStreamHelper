@@ -84,6 +84,19 @@ class TournamentDataProvider(QObject):
     def GetFutureMatchesList(self, sets: object, progress_callback=None, cancel_event=None):
         pass
 
+    def SupportsSetReporting(self) -> bool:
+        return False
+
+    def ReportSet(self, scoreboard_number: int, is_dq: bool = False) -> dict:
+        return {"success": False, "message": "Set reporting is not supported by this provider."}
+
+    def SupportsStreamAssignment(self) -> bool:
+        return False
+
+    def AssignStream(self, scoreboard_number: int, stream_name: str) -> dict:
+        """Assign a stream to the current set by stream name. Provider resolves set and stream name → ID."""
+        return {"success": False, "message": "Stream assignment is not supported by this provider."}
+
     def EnrichPlayerData(self, playerData):
         # Hook for providers to lazily fill in fields when a player is
         # loaded into a slot (called from TSHScoreboardPlayerWidget.SetData

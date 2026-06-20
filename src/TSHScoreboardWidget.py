@@ -12,6 +12,7 @@ from src.TSHColorButton import TSHColorButton
 from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHVersionHelper import add_beta_label
 from .Helpers.TSHBskyHelper import post_to_bsky
+from .Workers import Worker
 
 from .TSHSelectSetWindow import TSHSelectSetWindow
 from .TSHSelectStationWindow import TSHSelectStationWindow
@@ -24,6 +25,7 @@ from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from .TSHStatsUtil import TSHStatsUtil
 from .TSHHotkeys import TSHHotkeys
 from .TSHPlayerDB import TSHPlayerDB
+from .TSHAppSignals import app_signals
 
 from .thumbnail import main_generate_thumbnail as thumbnail
 from .TSHThumbnailSettingsWidget import *
@@ -156,7 +158,7 @@ class TSHScoreboardWidget(QWidget):
         self.scrollArea.setStyleSheet(
             "QTabWidget::pane { margin: 0px,0px,0px,0px }")
 
-        self.layout().addWidget(self.scrollArea)
+        self.layout().addWidget(self.scrollArea, stretch=1)
 
         topOptions = QWidget()
         topOptions.setLayout(QHBoxLayout())
@@ -181,42 +183,67 @@ class TSHScoreboardWidget(QWidget):
         col.layout().addWidget(self.playerNumber)
         self.playerNumber.valueChanged.connect(self.SetPlayersPerTeam)
 
-        # THUMBNAIL
-        col = QWidget()
-        col.setLayout(QVBoxLayout())
-        col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        topOptions.layout().addWidget(col)
+        # Action buttons row (thumbnail, bluesky, start.gg, visibility)
+        actionRow = QWidget()
+        actionRow.setLayout(QHBoxLayout())
+        actionRow.layout().setContentsMargins(0, 0, 0, 0)
+        actionRow.layout().setSpacing(4)
+        actionRow.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        topOptions.layout().addWidget(actionRow)
 
         if not SettingsManager.Get("general.disable_thumbnail_widget", False):
             self.thumbnailBtn = QPushButton(
                 QApplication.translate("app", "Generate Thumbnail") + " ")
             self.thumbnailBtn.setIcon(QIcon('assets/icons/png_file.svg'))
             self.thumbnailBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-            col.layout().addWidget(self.thumbnailBtn, Qt.AlignmentFlag.AlignRight)
-            # self.thumbnailBtn.setPopupMode(QToolButton.InstantPopup)
             self.thumbnailBtn.clicked.connect(self.GenerateThumbnail)
-        
+            actionRow.layout().addWidget(self.thumbnailBtn)
+
         if SettingsManager.Get("bsky_account.enable_bluesky", True):
             self.bskyBtn = QPushButton(
                 QApplication.translate("app", "Post to Bluesky") + " ")
             self.bskyBtn.setIcon(QIcon('assets/icons/bsky.svg'))
             self.bskyBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-            col.layout().addWidget(self.bskyBtn, Qt.AlignmentFlag.AlignRight)
             self.bskyBtn.clicked.connect(self.PostToBsky)
+            actionRow.layout().addWidget(self.bskyBtn)
 
-        # VISIBILITY
-        col = QWidget()
-        col.setLayout(QVBoxLayout())
-        col.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        col.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        topOptions.layout().addWidget(col)
+        self.reportSetBtn = QPushButton(
+            QApplication.translate("app", "Report Set to Start.gg") + " ")
+        self.reportSetBtn.setIcon(QIcon('assets/icons/list.svg'))
+        self.reportSetBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        self.reportSetBtn.setVisible(False)
+        self.reportSetBtn.clicked.connect(self.ReportSetToStartGG)
+        actionRow.layout().addWidget(self.reportSetBtn)
+
+        self.assignStreamWidget = QWidget()
+        self.assignStreamWidget.setLayout(QHBoxLayout())
+        self.assignStreamWidget.layout().setContentsMargins(0, 0, 0, 0)
+        self.assignStreamWidget.layout().setSpacing(0)
+        self.assignStreamWidget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        self.assignStreamWidget.setVisible(False)
+        actionRow.layout().addWidget(self.assignStreamWidget)
+
+        self.assignStreamBtn = QPushButton(
+            QApplication.translate("app", "Assign to Stream") + " ")
+        self.assignStreamBtn.setIcon(QIcon('assets/icons/station.svg'))
+        self.assignStreamBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        self.assignStreamBtn.setStyleSheet(
+            "QPushButton { border-top-right-radius: 0; border-bottom-right-radius: 0; }")
+        self.assignStreamWidget.layout().addWidget(self.assignStreamBtn)
+        self.assignStreamBtn.clicked.connect(self.AssignStreamToStartGG)
+
+        self.assignStreamInput = QLineEdit()
+        self.assignStreamInput.setPlaceholderText(
+            QApplication.translate("app", "Twitch channel"))
+        self.assignStreamInput.setFixedWidth(130)
+        self.assignStreamInput.setStyleSheet(
+            "QLineEdit { border-top-left-radius: 0; border-bottom-left-radius: 0; }")
+        self.assignStreamWidget.layout().addWidget(self.assignStreamInput)
 
         self.eyeBt = QToolButton()
         self.eyeBt.setIcon(QIcon('assets/icons/eye.svg'))
-        self.eyeBt.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Fixed)
-        col.layout().addWidget(self.eyeBt, Qt.AlignmentFlag.AlignRight)
+        self.eyeBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        actionRow.layout().addWidget(self.eyeBt)
         self.eyeBt.setPopupMode(QToolButton.InstantPopup)
         menu = QMenu()
         self.eyeBt.setMenu(menu)
@@ -252,88 +279,92 @@ class TSHScoreboardWidget(QWidget):
         self.columns.setLayout(QHBoxLayout())
         self.innerWidget.layout().addWidget(self.columns)
 
+        # --- Bottom bar: always visible, outside the scroll area ---
         bottomOptions = QWidget()
         bottomOptions.setLayout(QVBoxLayout())
-        bottomOptions.layout().setContentsMargins(0, 0, 0, 0)
-        bottomOptions.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        bottomOptions.layout().setContentsMargins(4, 2, 4, 2)
+        bottomOptions.layout().setSpacing(2)
+        bottomOptions.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+        self.layout().addWidget(bottomOptions)
 
-        self.innerWidget.layout().addWidget(bottomOptions)
-
+        # Stream URL as first row of bottom bar
         if SettingsManager.Get("bsky_account.enable_bluesky", True):
-            self.streamUrl = QHBoxLayout()
+            streamUrlRow = QHBoxLayout()
             self.streamUrlLabel = QLabel(QApplication.translate("app", "Stream URL") + " ")
-            self.streamUrl.layout().addWidget(self.streamUrlLabel)
+            streamUrlRow.addWidget(self.streamUrlLabel)
             self.streamUrlTextBox = QLineEdit()
-            self.streamUrl.layout().addWidget(self.streamUrlTextBox)
+            streamUrlRow.addWidget(self.streamUrlTextBox)
             self.streamUrlTextBox.editingFinished.connect(
                 lambda element=self.streamUrlTextBox: StateManager.Set(
                     f"score.{self.scoreboardNumber}.stream_url", element.text()))
             self.streamUrlTextBox.editingFinished.emit()
-            bottomOptions.layout().addLayout(self.streamUrl)
+            bottomOptions.layout().addLayout(streamUrlRow)
+
+        # Set-loading buttons row
+        btnRow = QHBoxLayout()
+        btnRow.setSpacing(4)
+        bottomOptions.layout().addLayout(btnRow)
 
         self.btSelectSet = QPushButton(
             QApplication.translate("app", "Load set"))
         self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
         self.btSelectSet.setEnabled(False)
-        bottomOptions.layout().addWidget(self.btSelectSet)
         self.btSelectSet.clicked.connect(self.signals.SetSelection.emit)
+        btnRow.addWidget(self.btSelectSet)
 
-        hbox = QHBoxLayout()
-        bottomOptions.layout().addLayout(hbox)
+        btnRow.addSpacing(10)
 
         self.btLoadStationSet = QPushButton(
-            QApplication.translate("app", "Track sets from a stream or station"))
+            QApplication.translate("app", "Track stream/station"))
         self.btLoadStationSet.setIcon(QIcon("./assets/icons/station.svg"))
-        hbox.addWidget(self.btLoadStationSet)
-        self.btLoadStationSet.clicked.connect(
-            self.signals.StationSelection.emit)
+        self.btLoadStationSet.clicked.connect(self.signals.StationSelection.emit)
+        btnRow.addWidget(self.btLoadStationSet)
 
-        hbox = QHBoxLayout()
-        bottomOptions.layout().addLayout(hbox)
+        if self.scoreboardNumber <= 1 and not SettingsManager.Get("general.hide_track_player", False):
+            btnRow.addSpacing(10)
 
-        if self.scoreboardNumber <= 1 and not SettingsManager.Get("general.hide_track_player", False) :
-            self.btLoadPlayerSet = QPushButton("Load player set")
-            self.btLoadPlayerSet.setIcon(
-                QIcon("./assets/icons/person_search.svg"))
+            self.btLoadPlayerSet = QPushButton(
+                QApplication.translate("app", "Load player set"))
+            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/person_search.svg"))
             self.btLoadPlayerSet.setEnabled(False)
-            self.btLoadPlayerSet.clicked.connect(
-                self.signals.UserSetSelection.emit)
-            hbox.addWidget(self.btLoadPlayerSet)
+            self.btLoadPlayerSet.clicked.connect(self.signals.UserSetSelection.emit)
+            self.btLoadPlayerSet.setStyleSheet(
+                "QPushButton { border-top-right-radius: 0; border-bottom-right-radius: 0; }")
+
+            self.btLoadPlayerSetOptions = QPushButton()
+            self.btLoadPlayerSetOptions.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            self.btLoadPlayerSetOptions.setIcon(QIcon("./assets/icons/settings.svg"))
+            self.btLoadPlayerSetOptions.clicked.connect(self.LoadUserSetOptionsClicked)
+            self.btLoadPlayerSetOptions.setStyleSheet(
+                "QPushButton { border-top-left-radius: 0; border-bottom-left-radius: 0; }")
+
+            playerSetGroup = QWidget()
+            playerSetGroup.setLayout(QHBoxLayout())
+            playerSetGroup.layout().setContentsMargins(0, 0, 0, 0)
+            playerSetGroup.layout().setSpacing(0)
+            playerSetGroup.layout().addWidget(self.btLoadPlayerSet)
+            playerSetGroup.layout().addWidget(self.btLoadPlayerSetOptions)
+            btnRow.addWidget(playerSetGroup)
+
             TSHTournamentDataProvider.instance.signals.user_updated.connect(
                 self.UpdateUserSetButton)
             TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
                 self.UpdateUserSetButton)
 
-            self.btLoadPlayerSetOptions = QPushButton()
-            self.btLoadPlayerSetOptions.setSizePolicy(
-                QSizePolicy.Maximum, QSizePolicy.Maximum)
-            self.btLoadPlayerSetOptions.setIcon(
-                QIcon("./assets/icons/settings.svg"))
-            self.btLoadPlayerSetOptions.clicked.connect(
-                self.LoadUserSetOptionsClicked)
-            hbox.addWidget(self.btLoadPlayerSetOptions)
-
+        # Scoreboard link
         self.remoteScoreboardLabel = QApplication.translate(
                 "app", "Open {0} in a browser to edit the scoreboard remotely."
             ).format(f"<a href='http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5500)}/scoreboard'>http://{self.GetIP()}:{SettingsManager.Get('general.webserver_port', 5500)}/scoreboard</a>")
         self.remoteScoreboardLabel = add_beta_label(self.remoteScoreboardLabel, "web_score")
         self.remoteScoreboardLabel = QLabel(self.remoteScoreboardLabel)
-
         self.remoteScoreboardLabel.setOpenExternalLinks(True)
         bottomOptions.layout().addWidget(self.remoteScoreboardLabel)
 
-        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
-            self.UpdateBottomButtons)
-        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
-
-        self.selectSetWindow = TSHSelectSetWindow(self)
-        self.selectStationWindow = TSHSelectStationWindow(self)
-
+        # Auto-update timer indicator
         self.timerLayout = QWidget()
         self.timerLayout.setLayout(QHBoxLayout())
         self.timerLayout.layout().setContentsMargins(0, 0, 0, 0)
-        self.timerLayout.setSizePolicy(
-            QSizePolicy.Minimum, QSizePolicy.Maximum)
+        self.timerLayout.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
         self.timerLayout.layout().setAlignment(Qt.AlignmentFlag.AlignCenter)
         bottomOptions.layout().addWidget(self.timerLayout)
         self.labelAutoUpdate = QLabel("Auto update")
@@ -347,6 +378,13 @@ class TSHScoreboardWidget(QWidget):
             lambda: self.StopAutoUpdate(clear_variables=True))
         self.timerLayout.layout().addWidget(self.timerCancelBt)
         self.timerLayout.setVisible(False)
+
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateBottomButtons)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.emit()
+
+        self.selectSetWindow = TSHSelectSetWindow(self)
+        self.selectStationWindow = TSHSelectStationWindow(self)
 
         self.team1column = uic.loadUi(TSHResolve("src/layout/TSHScoreboardTeam.ui"))
         self.columns.layout().addWidget(self.team1column)
@@ -390,8 +428,9 @@ class TSHScoreboardWidget(QWidget):
 
         self.team1column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, colorGroup1)
         self.team1column.findChild(QScrollArea).setWidget(QWidget())
-        self.team1column.findChild(
-            QScrollArea).widget().setLayout(QVBoxLayout())
+        _t1_layout = QVBoxLayout()
+        _t1_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.team1column.findChild(QScrollArea).widget().setLayout(_t1_layout)
 
         for c in self.team1column.findChildren(QLineEdit):
             c.editingFinished.connect(
@@ -455,8 +494,9 @@ class TSHScoreboardWidget(QWidget):
         self.team2column.findChild(QHBoxLayout, "horizontalLayout_2").layout().insertWidget(0, colorGroup2)
 
         self.team2column.findChild(QScrollArea).setWidget(QWidget())
-        self.team2column.findChild(
-            QScrollArea).widget().setLayout(QVBoxLayout())
+        _t2_layout = QVBoxLayout()
+        _t2_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.team2column.findChild(QScrollArea).widget().setLayout(_t2_layout)
 
         for c in self.team2column.findChildren(QLineEdit):
             c.editingFinished.connect(
@@ -709,6 +749,62 @@ class TSHScoreboardWidget(QWidget):
                 if os.path.exists(rm_path):
                     os.remove(rm_path)
     
+    def ReportSetToStartGG(self, is_dq=False):
+        provider = TSHTournamentDataProvider.instance.provider
+        if not provider or not provider.SupportsSetReporting():
+            return
+
+        self.reportSetBtn.setEnabled(False)
+        self.reportSetBtn.setText(QApplication.translate("app", "Reporting...") + " ")
+
+        def do_report(progress_callback=None, cancel_event=None):
+            return provider.ReportSet(self.scoreboardNumber, is_dq=is_dq)
+
+        def on_result(result):
+            self.reportSetBtn.setEnabled(True)
+            self.reportSetBtn.setText(QApplication.translate("app", "Report Set to Start.gg") + " ")
+            if result.get("success"):
+                app_signals.status_message.emit(result.get("message", "Set reported successfully!"), False)
+            else:
+                msg = result.get("message", "Failed to report set")
+                logger.warning(f"Report set failed: {msg}")
+                app_signals.status_message.emit(f"Report set failed: {msg}", True)
+
+        worker = Worker(do_report)
+        worker.signals.result.connect(on_result)
+        TSHTournamentDataProvider.instance.threadPool.start(worker)
+
+    def AssignStreamToStartGG(self):
+        provider = TSHTournamentDataProvider.instance.provider
+        if not provider or not provider.SupportsStreamAssignment():
+            return
+
+        stream_name = self.assignStreamInput.text().strip()
+        if not stream_name:
+            app_signals.status_message.emit(QApplication.translate("app", "Enter a Twitch channel name first."), True)
+            return
+
+        self.assignStreamBtn.setEnabled(False)
+        self.assignStreamBtn.setText(QApplication.translate("app", "Assigning...") + " ")
+
+        def do_assign(progress_callback=None, cancel_event=None):
+            return provider.AssignStream(self.scoreboardNumber, stream_name)
+
+        def on_result(result):
+            self.assignStreamBtn.setEnabled(True)
+            self.assignStreamBtn.setText(QApplication.translate("app", "Assign to Stream") + " ")
+            if result.get("success"):
+                logger.info(f"Assign stream: {result.get('message')}")
+                app_signals.status_message.emit(result.get("message", "Set assigned to stream!"), False)
+            else:
+                msg = result.get("message", "Failed to assign stream")
+                logger.warning(f"Assign stream failed: {msg}")
+                app_signals.status_message.emit(f"Assign stream failed: {msg}", True)
+
+        worker = Worker(do_assign)
+        worker.signals.result.connect(on_result)
+        TSHTournamentDataProvider.instance.threadPool.start(worker)
+
     def ToggleElements(self, action: QAction, elements):
         for pw in self.playerWidgets:
             for element in elements:
@@ -733,6 +829,14 @@ class TSHScoreboardWidget(QWidget):
                 QApplication.translate("app", "Load set"))
             self.btSelectSet.setEnabled(False)
             self.btLoadStationSet.setEnabled(False)
+
+        provider = TSHTournamentDataProvider.instance.provider
+        self.reportSetBtn.setVisible(
+            provider is not None and provider.SupportsSetReporting()
+        )
+        self.assignStreamWidget.setVisible(
+            provider is not None and provider.SupportsStreamAssignment()
+        )
 
     def SetCharacterNumber(self, value):
         # logger.info(f"TSHScoreboardWidget#SetCharacterNumber({value})")
@@ -869,6 +973,7 @@ class TSHScoreboardWidget(QWidget):
         for p in self.playerWidgets:
             p.dataLock.acquire()
 
+        self.individualGameTracker._syncing_chars = True
         try:
             for i, p in enumerate(self.team1playerWidgets):
                 p.SwapWith(self.team2playerWidgets[i])
@@ -904,6 +1009,7 @@ class TSHScoreboardWidget(QWidget):
             self.individualGameTracker.SwapStageResults()
             self.teamsSwapped = not self.teamsSwapped
         finally:
+            self.individualGameTracker._syncing_chars = False
             StateManager.Set(
                 f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
 
@@ -1065,6 +1171,8 @@ class TSHScoreboardWidget(QWidget):
     def LoadStationSets(self, station):
         self.lastSetSelected = None
         self.lastStationSelected = station
+        if station and station.get("type") == "stream" and hasattr(self, "assignStreamInput"):
+            self.assignStreamInput.setText(station.get("identifier", ""))
         TSHTournamentDataProvider.instance.LoadStationSets(self)
 
     def LoadStationSetClicked(self):
@@ -1347,6 +1455,10 @@ class TSHScoreboardWidget(QWidget):
             if data.get("top_n"):
                 StateManager.Set(
                     f"score.{self.scoreboardNumber}.top_n", data.get("top_n"))
+
+            if data.get("entrant1_id") is not None:
+                StateManager.Set(f"score.{self.scoreboardNumber}.entrant1_id", data.get("entrant1_id"))
+                StateManager.Set(f"score.{self.scoreboardNumber}.entrant2_id", data.get("entrant2_id"))
         finally:
             StateManager.ReleaseSaving()
 

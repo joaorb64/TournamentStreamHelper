@@ -143,11 +143,22 @@ from .SettingsManager import SettingsManager
 from .Helpers.TSHCountryHelper import TSHCountryHelper
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHScoreboardManager import TSHScoreboardManager
+from .TSHAppSignals import app_signals
 from src.TSHAssetDownloader import TSHAssetDownloader
 from src.TSHAboutWidget import TSHAboutWidget
 from .TSHScoreboardStageWidget import TSHScoreboardStageWidget
 from src.TSHWebServer import WebServer
 # autopep8: on
+
+
+def _lang_flag(code: str) -> str:
+    """Return flag emoji for a BCP-47 locale code like 'en-US' or 'pt-BR'."""
+    parts = code.split("-")
+    country = parts[-1].upper() if len(parts) >= 2 else ""
+    if len(country) != 2:
+        return ""
+    return "".join(chr(0x1F1E6 + ord(c) - ord("A")) for c in country)
+
 
 def DownloadLayoutsOnBoot():
     """
@@ -391,6 +402,9 @@ class Window(QMainWindow):
         self.setCentralWidget(central_widget)
         central_widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
 
+        self.statusBar().setSizeGripEnabled(False)
+        app_signals.status_message.connect(self._show_status)
+
         self.dockWidgets = []
 
         if not SettingsManager.Get("general.disable_thumbnail_widget", False):
@@ -483,40 +497,54 @@ class Window(QMainWindow):
 
         group_box = QWidget()
         group_box.setLayout(QVBoxLayout())
-        group_box.setSizePolicy(
-            QSizePolicy.Minimum, QSizePolicy.Maximum)
+        group_box.layout().setContentsMargins(0, 0, 0, 0)
+        group_box.layout().setSpacing(2)
+        group_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         base_layout.layout().addWidget(group_box)
 
-        # Set tournament
-        hbox = QHBoxLayout()
-        group_box.layout().addLayout(hbox)
+        # Row 1: tournament-related buttons (groups separated by spacing)
+        row1 = QHBoxLayout()
+        row1.setSpacing(2)
+        group_box.layout().addLayout(row1)
+
+        def _connected_group(*widgets):
+            """Wrap widgets in a zero-spacing container and apply flat shared-border styling."""
+            w = QWidget()
+            w.setLayout(QHBoxLayout())
+            w.layout().setContentsMargins(0, 0, 0, 0)
+            w.layout().setSpacing(0)
+            for i, btn in enumerate(widgets):
+                is_first = i == 0
+                is_last = i == len(widgets) - 1
+                radii = []
+                if not is_first:
+                    radii += ["border-top-left-radius: 0", "border-bottom-left-radius: 0"]
+                if not is_last:
+                    radii += ["border-top-right-radius: 0", "border-bottom-right-radius: 0"]
+                if radii:
+                    btn.setStyleSheet(f"{type(btn).__name__} {{ {'; '.join(radii)}; }}")
+                w.layout().addWidget(btn)
+            return w
 
         self.setTournamentBt = QPushButton(
             QApplication.translate("app", "Set tournament"))
-        hbox.addWidget(self.setTournamentBt)
         self.setTournamentBt.clicked.connect(
             lambda bt=None, s=self: TSHTournamentDataProvider.instance.SetStartggEventSlug(s))
 
         self.unsetTournamentBt = QPushButton()
-        self.unsetTournamentBt.setSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.unsetTournamentBt.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.unsetTournamentBt.setIcon(QIcon("./assets/icons/cancel.svg"))
         self.unsetTournamentBt.clicked.connect(lambda: [
             TSHTournamentDataProvider.instance.SetTournament(None)
         ])
-        hbox.addWidget(self.unsetTournamentBt)
+        row1.addWidget(_connected_group(self.setTournamentBt, self.unsetTournamentBt))
 
-        # Follow startgg user
         if not SettingsManager.Get("general.hide_track_player", False):
-            hbox = QHBoxLayout()
-            group_box.layout().addLayout(hbox)
-
+            row1.addSpacing(10)
             self.btLoadPlayerSet = QPushButton(
-                QApplication.translate("app", "Load tournament and sets from StartGG user"))
+                QApplication.translate("app", "Load from StartGG user"))
             self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
             self.btLoadPlayerSet.clicked.connect(self.LoadUserSetClicked)
-            self.btLoadPlayerSet.setIcon(QIcon("./assets/icons/startgg.svg"))
-            hbox.addWidget(self.btLoadPlayerSet)
 
             TSHTournamentDataProvider.instance.signals.user_updated.connect(
                 self.UpdateUserSetButton)
@@ -524,24 +552,19 @@ class Window(QMainWindow):
                 self.UpdateUserSetButton)
 
             self.btLoadPlayerSetOptions = QPushButton()
-            self.btLoadPlayerSetOptions.setSizePolicy(
-                QSizePolicy.Maximum, QSizePolicy.Maximum)
-            self.btLoadPlayerSetOptions.setIcon(
-                QIcon("./assets/icons/settings.svg"))
-            self.btLoadPlayerSetOptions.clicked.connect(
-                self.LoadUserSetOptionsClicked)
-            hbox.addWidget(self.btLoadPlayerSetOptions)
+            self.btLoadPlayerSetOptions.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            self.btLoadPlayerSetOptions.setIcon(QIcon("./assets/icons/settings.svg"))
+            self.btLoadPlayerSetOptions.clicked.connect(self.LoadUserSetOptionsClicked)
+            row1.addWidget(_connected_group(self.btLoadPlayerSet, self.btLoadPlayerSetOptions))
 
             self.UpdateUserSetButton()
-        
-        # Completed Sets Feature
-        hbox = QHBoxLayout()
-        group_box.layout().addLayout(hbox)
+
+        row1.addSpacing(10)
         self.btPullCompletedSets = QPushButton(
-            QApplication.translate("app", "Pull Latest Completed Sets from StartGG"))
+            QApplication.translate("app", "Pull Completed Sets"))
         self.btPullCompletedSets.setIcon(QIcon("./assets/icons/startgg.svg"))
         self.btPullCompletedSets.clicked.connect(TSHTournamentDataProvider.instance.GetCompletedSets)
-        hbox.addWidget(self.btPullCompletedSets)
+        row1.addWidget(self.btPullCompletedSets)
         # label_margin = " "*18
         # label = QLabel(
         #     label_margin + QApplication.translate("app", "Time until Completed Sets refresh:") + " ")
@@ -641,7 +664,7 @@ class Window(QMainWindow):
             QApplication.translate("app", "Program language changed successfully."))
 
         action = languageSelect.addAction(
-            QApplication.translate("app", "System language"))
+            "🌐 " + QApplication.translate("app", "System language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
@@ -651,7 +674,8 @@ class Window(QMainWindow):
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
+            flag = _lang_flag(code)
+            action = languageSelect.addAction(f"{flag} {language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x=None, c=code: [
@@ -672,7 +696,7 @@ class Window(QMainWindow):
             QApplication.translate("app", "Game Asset Language changed successfully."))
 
         action = languageSelect.addAction(
-            QApplication.translate("app", "Same as program language"))
+            "🌐 " + QApplication.translate("app", "Same as program language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
@@ -682,7 +706,8 @@ class Window(QMainWindow):
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
+            flag = _lang_flag(code)
+            action = languageSelect.addAction(f"{flag} {language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x=None, c=code: [
@@ -703,7 +728,7 @@ class Window(QMainWindow):
             QApplication.translate("app", "Tournament term language changed successfully."))
 
         action = languageSelect.addAction(
-            QApplication.translate("app", "Same as program language"))
+            "🌐 " + QApplication.translate("app", "Same as program language"))
         languageSelectGroup.addAction(action)
         action.setCheckable(True)
         action.setChecked(True)
@@ -713,7 +738,8 @@ class Window(QMainWindow):
         ])
 
         for code, language in TSHLocaleHelper.languages.items():
-            action = languageSelect.addAction(f"{language[0]} / {language[1]}")
+            flag = _lang_flag(code)
+            action = languageSelect.addAction(f"{flag} {language[0]} / {language[1]}")
             action.setCheckable(True)
             languageSelectGroup.addAction(action)
             action.triggered.connect(lambda x=None, c=code: [
@@ -792,8 +818,9 @@ class Window(QMainWindow):
         action.setIcon(QIcon('assets/icons/info.svg'))
         action.triggered.connect(lambda: self.aboutWidget.show())
 
-        # Game Select and Scoreboard Count
+        # Row 2: game select and scoreboard count
         hbox = QHBoxLayout()
+        hbox.setSpacing(4)
         group_box.layout().addLayout(hbox)
 
         self.gameSelect = QComboBox()
@@ -806,6 +833,7 @@ class Window(QMainWindow):
         self.gameSelect.model().setParent(proxyModel)
         self.gameSelect.setModel(proxyModel)
         self.gameSelect.setFont(self.font_small)
+        self.gameSelect.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.gameSelect.activated.connect(
             lambda x: TSHGameAssetManager.instance.LoadGameAssets(self.gameSelect.currentData()))
         TSHGameAssetManager.instance.signals.onLoad.connect(
@@ -873,8 +901,18 @@ class Window(QMainWindow):
         )
 
         pre_base_layout.addLayout(base_layout)
-        hbox.addWidget(self.gameSelect)
-        hbox.addWidget(self.gameReloadBtn)
+        self.gameSelect.setStyleSheet(
+            "QComboBox { border-top-right-radius: 0; border-bottom-right-radius: 0; }")
+        self.gameReloadBtn.setStyleSheet(
+            "QPushButton { border-top-left-radius: 0; border-bottom-left-radius: 0; }")
+        gameSelectGroup = QWidget()
+        gameSelectGroup.setLayout(QHBoxLayout())
+        gameSelectGroup.layout().setContentsMargins(0, 0, 0, 0)
+        gameSelectGroup.layout().setSpacing(0)
+        gameSelectGroup.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        gameSelectGroup.layout().addWidget(self.gameSelect)
+        gameSelectGroup.layout().addWidget(self.gameReloadBtn)
+        hbox.addWidget(gameSelectGroup)
         hbox.addWidget(self.moddedContentWidget)
 
         self.scoreboardAmount = QSpinBox()
@@ -900,6 +938,7 @@ class Window(QMainWindow):
             QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
         self.btLoadModifyTabName.clicked.connect(self.ChangeTab)
 
+        hbox.addSpacing(10)
         hbox.addWidget(label)
         hbox.addWidget(self.scoreboardAmount)
         hbox.addWidget(self.btLoadModifyTabName)
@@ -1053,6 +1092,15 @@ class Window(QMainWindow):
             startgg=(provider_name == "StartGG"),
             parrygg=(provider_name == "ParryGG"),
         )
+
+    def _show_status(self, message: str, is_error: bool):
+        bar = self.statusBar()
+        if is_error:
+            bar.setStyleSheet("QStatusBar { color: #ff6b6b; }")
+            bar.showMessage(message)
+        else:
+            bar.setStyleSheet("")
+            bar.showMessage(message, 5000)
 
     def closeEvent(self, event):
         logger.info("Shutting down...")

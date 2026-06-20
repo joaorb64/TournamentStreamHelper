@@ -329,6 +329,20 @@ class TSHSettingsWindow(QDialog):
                 QApplication.translate(
                     "settings.api_keys", "Please note that the API Key will be stored in plain text on your computer")
         ))
+        APIKeySettings.append((
+            QApplication.translate(
+                "settings.api_keys", "Start.gg API Token"),
+            "startgg",
+            "password",
+            "",
+            None,
+            QApplication.translate(
+                "settings.api_keys", "You can get a token from start.gg/admin/profile/developer") + "\n" +
+                QApplication.translate(
+                    "settings.api_keys", "Please note that the API Token will be stored in plain text on your computer") + "\n" +
+                QApplication.translate(
+                    "settings.api_keys", "Required to report set results back to Start.gg")
+        ))
         
         self.add_setting_widget(QApplication.translate(
             "settings", "API Keys"), SettingsWidget("api_keys", APIKeySettings))
