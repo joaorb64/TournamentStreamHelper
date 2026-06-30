@@ -2,7 +2,7 @@ import TextField from "./ScoreboardPage/TextField";
 import i18n from "./i18n/config";
 import React from "react";
 import {Autocomplete, createFilterOptions, InputAdornment} from "@mui/material";
-import {BACKEND_PORT, inlineFlagWidth} from "./env";
+import {BACKEND_PORT, PROTOCOL, inlineFlagWidth} from "./env";
 import {useSelector} from "react-redux";
 
 /**
@@ -28,7 +28,7 @@ export function CountrySelector({
             return null;
         }
 
-        return `http://${window.location.hostname}:${BACKEND_PORT}/assets/country_flag/${c.code.toLowerCase()}.png`
+        return `${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/assets/country_flag/${c.code.toLowerCase()}.png`
     };
 
     const countryDisplayName = (/** TSHCountry */ country) => {

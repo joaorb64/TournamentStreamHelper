@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from "./TextField";
 import {Stack} from "@mui/material";
 import i18n from "i18next";
-import {BACKEND_PORT} from "../env";
+import {BACKEND_PORT, PROTOCOL} from "../env";
 import {NumberInput} from "../NumberInput";
 
 /**
@@ -69,7 +69,7 @@ export default class SetScore extends React.Component {
 
     submitScore = (scoreboardNumber) => {
         return (
-            fetch(`http://${window.location.hostname}:${BACKEND_PORT}/score`,
+            fetch(`${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/score`,
                 {
                     method: 'POST',
                     headers: {'content-type': 'application/json'},
@@ -86,7 +86,7 @@ export default class SetScore extends React.Component {
 
     submitSetInfo = (scoreboardNumber) => {
         return (
-            fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
+            fetch(`${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-set?` + new URLSearchParams({
                 "best-of": this.state.bestOf,
                 "phase": this.state.phase,
                 "match": this.state.match,
