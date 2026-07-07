@@ -58,8 +58,13 @@ class TSHIndividualGameTracker(QWidget):
                     button.setChecked(False)
 
         stageWidget = QWidget()
+        stageWidget.setObjectName(f"gameRow_{index}")
+        stageWidget.setStyleSheet(
+            f"QWidget#gameRow_{index} {{ border: 1px solid palette(mid); border-radius: 4px; }}"
+        )
+        stageWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         outerLayout = QVBoxLayout()
-        outerLayout.setContentsMargins(0, 0, 0, 0)
+        outerLayout.setContentsMargins(6, 4, 6, 4)
         outerLayout.setSpacing(2)
 
         topRow = QWidget()
@@ -87,7 +92,6 @@ class TSHIndividualGameTracker(QWidget):
         stageTeam2Check.setText(QApplication.translate("app", "T{0}").format(2))
         stageTeam2Check.setCheckable(True)
         stageTieCheck = QPushButton()
-        stageTieCheck.setMaximumWidth(40)
         stageTieCheck.setObjectName(f"stageTieCheck_{index}")
         stageTieCheck.setText(QApplication.translate("app", "Tie"))
         stageTieCheck.setCheckable(True)
@@ -268,6 +272,7 @@ class TSHIndividualGameTracker(QWidget):
         old.deleteLater()
         self.stage_widget_list = []
         self.stage_order_list_layout = QVBoxLayout()
+        self.stage_order_list_layout.setSpacing(6)
         self.stage_order_list_widget = QWidget()
         self.stage_order_list_widget.setLayout(self.stage_order_list_layout)
         StateManager.Set(f"score.{self.scoreboard_number}.stages", {})
@@ -521,8 +526,49 @@ class TSHIndividualGameTracker(QWidget):
         StateManager.Set(f"score.{self.scoreboard_number}.stages.{current_stage+1}.tie", stageTieCheck.isChecked())
         self._EnsureCorrectRowCount()
 
+    def _EnforceBestOfLimit(self):
+        """Disable and clear win buttons for games that can't be played (set already decided)."""
+        if self.best_of <= 0:
+            for i, widget in enumerate(self.stage_widget_list):
+                for name in [f"stageTeam1Check_{i}", f"stageTeam2Check_{i}", f"stageTieCheck_{i}"]:
+                    btn = widget.findChild(QPushButton, name)
+                    if btn:
+                        btn.setEnabled(True)
+            return
+
+        wins_needed = (self.best_of // 2) + 1
+        t1_wins = 0
+        t2_wins = 0
+        deciding_game = None
+
+        for i in range(len(self.stage_widget_list)):
+            if t1_wins >= wins_needed or t2_wins >= wins_needed:
+                break
+            w = self._get_game_winner(i)
+            if w == 1:
+                t1_wins += 1
+            elif w == 2:
+                t2_wins += 1
+            if t1_wins >= wins_needed or t2_wins >= wins_needed:
+                deciding_game = i
+
+        for i, widget in enumerate(self.stage_widget_list):
+            locked = deciding_game is not None and i > deciding_game
+            t1_btn = widget.findChild(QPushButton, f"stageTeam1Check_{i}")
+            t2_btn = widget.findChild(QPushButton, f"stageTeam2Check_{i}")
+            tie_btn = widget.findChild(QPushButton, f"stageTieCheck_{i}")
+            for btn in filter(None, [t1_btn, t2_btn, tie_btn]):
+                btn.setEnabled(not locked)
+                if locked and btn.isChecked():
+                    btn.setChecked(False)
+            if locked:
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t1_win", False)
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t2_win", False)
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.tie", False)
+
     @assert_gui_thread
     def StageResultsChanged(self):
+        self._EnforceBestOfLimit()
         team_1_score, team_2_score = 0, 0
         for i in range(len(self.stage_widget_list)):
             stageTeam1Check = self.stage_widget_list[i].findChild(QPushButton, f"stageTeam1Check_{i}")
@@ -539,16 +585,33 @@ class TSHIndividualGameTracker(QWidget):
 
     @assert_gui_thread
     def SwapStageResults(self):
-        for i in range(len(self.stage_widget_list)):
-            stageTeam1Check = self.stage_widget_list[i].findChild(QPushButton, f"stageTeam1Check_{i}")
-            stageTeam2Check = self.stage_widget_list[i].findChild(QPushButton, f"stageTeam2Check_{i}")
-            stageTieCheck = self.stage_widget_list[i].findChild(QPushButton, f"stageTieCheck_{i}")
-            team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
-            stageTeam1Check.setChecked(team_2_old_state)
-            stageTeam2Check.setChecked(team_1_old_state)
-            StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t1_win", stageTeam1Check.isChecked()),
-            StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t2_win", stageTeam2Check.isChecked()),
-            StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.tie", stageTieCheck.isChecked()),
+        old_syncing = self._syncing_chars
+        self._syncing_chars = True
+        try:
+            for i in range(len(self.stage_widget_list)):
+                stageWidget = self.stage_widget_list[i]
+                stageTeam1Check = stageWidget.findChild(QPushButton, f"stageTeam1Check_{i}")
+                stageTeam2Check = stageWidget.findChild(QPushButton, f"stageTeam2Check_{i}")
+                stageTieCheck = stageWidget.findChild(QPushButton, f"stageTieCheck_{i}")
+                team_1_old_state, team_2_old_state = stageTeam1Check.isChecked(), stageTeam2Check.isChecked()
+                stageTeam1Check.setChecked(team_2_old_state)
+                stageTeam2Check.setChecked(team_1_old_state)
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t1_win", stageTeam1Check.isChecked())
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.t2_win", stageTeam2Check.isChecked())
+                StateManager.Set(f"score.{self.scoreboard_number}.stages.{i+1}.tie", stageTieCheck.isChecked())
+
+                for p in range(self.players_per_team):
+                    for c in range(self.chars_per_player):
+                        combo1 = stageWidget.findChild(QComboBox, f"charCombo_{i}_{0}_{p}_{c}")
+                        combo2 = stageWidget.findChild(QComboBox, f"charCombo_{i}_{1}_{p}_{c}")
+                        if combo1 is None or combo2 is None:
+                            continue
+                        idx1, idx2 = combo1.currentIndex(), combo2.currentIndex()
+                        combo1.setCurrentIndex(idx2)
+                        combo2.setCurrentIndex(idx1)
+        finally:
+            self._syncing_chars = old_syncing
+        self._EnforceBestOfLimit()
 
 
     @assert_gui_thread
@@ -615,6 +678,7 @@ class TSHIndividualGameTracker(QWidget):
                         break  # one char per player slot from provider data
 
         self.StageResultsChanged()
+        self._EnforceBestOfLimit()
         StateManager.ReleaseSaving()
 
     def _SyncLastStageToStrike(self):

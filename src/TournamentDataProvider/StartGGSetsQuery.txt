@@ -21,6 +21,7 @@ query EventMatchListQuery($eventSlug: String!, $page: Int = 1, $filters: SetFilt
 				}
 				slots {
 					entrant {
+						id
 						name
 						participants {
 							player {

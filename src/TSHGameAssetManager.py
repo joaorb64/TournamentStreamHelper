@@ -1092,7 +1092,8 @@ class TSHGameAssetManager(QObject):
                     "en_name": c,
                     "display_name": self.characters[c].get("display_name"),
                     "codename": self.characters[c].get("codename"),
-                    "modded": self.characters[c].get("modded", False)
+                    "modded": self.characters[c].get("modded", False),
+                    "startgg_character_id": self.GetStartGGIdFromCodename(c),
                 }
 
                 if self.characters[c].get("display_name") != c:
@@ -1658,6 +1659,20 @@ class TSHGameAssetManager(QObject):
         stage = next((s for s in self.stages.items() if str(
             s[1].get("smashgg_id")) == str(smashgg_id)), None)
         return stage
+
+    def GetStartGGIdFromCodename(self, codename: str):
+        char = self.characters.get(codename)
+        if not char:
+            return None
+        smashgg_name = char.get("smashgg_name")
+        if not smashgg_name:
+            return None
+        current_game_id = str(self.selectedGame.get("smashgg_game_id", "")) if self.selectedGame else ""
+        for startgg_id, sgg_char in self.startgg_id_to_character.items():
+            if sgg_char.get("name") == smashgg_name:
+                if current_game_id and str(sgg_char.get("videogameId", "")) == current_game_id:
+                    return int(startgg_id)
+        return None
 
 
 if not os.path.exists("./user_data/games"):

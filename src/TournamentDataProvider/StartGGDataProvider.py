@@ -759,6 +759,8 @@ class StartGGDataProvider(TournamentDataProvider):
             # Per-game data (stage + characters + winner per game)
             entrant1_id = str(p1.get("entrant", {}).get("id", "")) if p1.get("entrant") else ""
             entrant2_id = str(p2.get("entrant", {}).get("id", "")) if p2.get("entrant") else ""
+            setData["entrant1_id"] = entrant1_id
+            setData["entrant2_id"] = entrant2_id
             raw_games = _set.get("games") or []
             games_data = []
             for game in sorted(raw_games, key=lambda g: g.get("orderNum") or 0):
@@ -2125,6 +2127,169 @@ class StartGGDataProvider(TournamentDataProvider):
                 logger.error(traceback.format_exc())
         self.url = url
         return url
+
+    def _has_api_token(self) -> bool:
+        from ..SettingsManager import SettingsManager
+        return bool(SettingsManager.Get("api_keys.startgg", ""))
+
+    def SupportsSetReporting(self) -> bool:
+        return self._has_api_token()
+
+    def _get_player_names_from_state(self, scoreboard_number: int, team: int) -> list:
+        from ..StateManager import StateManager
+        names = []
+        for p in range(1, 5):
+            name = StateManager.Get(f"score.{scoreboard_number}.team.{team}.player.{p}.mergedOnlyName", "")
+            if name:
+                names.append(name.removesuffix(" [L]").strip())
+        return [n for n in names if n]
+
+    @staticmethod
+    def _name_matches(entrant_name: str, player_names: list) -> bool:
+        e = (entrant_name or "").strip().lower()
+        for tag in player_names:
+            t = (tag or "").strip().lower()
+            if not t:
+                continue
+            if e == t or e.endswith(f"| {t}") or e.endswith(f"|{t}"):
+                return True
+        return False
+
+    def FindSetByPlayerNames(self, names_team1: list, names_team2: list) -> list:
+        """
+        Search open sets for one(s) matching the given player name lists.
+        Returns list of matching parsed set dicts (each has id, entrant1_id, entrant2_id, p1_name, p2_name).
+        """
+        open_sets = self.GetMatches(getFinished=False) or []
+        matches = []
+        for s in open_sets:
+            p1 = (s.get("p1_name") or "").strip()
+            p2 = (s.get("p2_name") or "").strip()
+            if not p1 or not p2:
+                continue
+            if (self._name_matches(p1, names_team1) and self._name_matches(p2, names_team2)) or \
+               (self._name_matches(p1, names_team2) and self._name_matches(p2, names_team1)):
+                matches.append(s)
+        return matches
+
+    def ReportSet(self, scoreboard_number: int, is_dq: bool = False) -> dict:
+        from ..TSHStartGGSetReporter import ReportSet as _report
+        from ..StateManager import StateManager
+
+        set_id = StateManager.Get(f"score.{scoreboard_number}.set_id")
+        entrant1_id = StateManager.Get(f"score.{scoreboard_number}.entrant1_id", "") or ""
+        entrant2_id = StateManager.Get(f"score.{scoreboard_number}.entrant2_id", "") or ""
+
+        if not set_id or not entrant1_id:
+            names_t1 = self._get_player_names_from_state(scoreboard_number, 1)
+            names_t2 = self._get_player_names_from_state(scoreboard_number, 2)
+
+            if not names_t1 or not names_t2:
+                return {
+                    "success": False,
+                    "message": "No set loaded and no player names found in the scoreboard.",
+                    "data": None,
+                }
+
+            logger.info(f"Resolving set by player names: {names_t1} vs {names_t2}")
+            matches = self.FindSetByPlayerNames(names_t1, names_t2)
+
+            if not matches:
+                return {
+                    "success": False,
+                    "message": f"No open set found matching \"{names_t1[0]}\" vs \"{names_t2[0]}\" on Start.gg.\n"
+                               "Check that both players are registered and their set is not already completed.",
+                    "data": None,
+                }
+
+            if len(matches) > 1:
+                lines = "\n".join(f"  • {s.get('p1_name')} vs {s.get('p2_name')}" for s in matches[:5])
+                return {
+                    "success": False,
+                    "message": f"Multiple open sets found for those players — load the specific set first:\n{lines}",
+                    "data": None,
+                }
+
+            found = matches[0]
+            set_id = found.get("id")
+            startgg_e1 = found.get("entrant1_id", "")
+            startgg_e2 = found.get("entrant2_id", "")
+            logger.info(f"Resolved set {set_id}: {found.get('p1_name')} vs {found.get('p2_name')}")
+
+            # Align entrant IDs with the current UI ordering.
+            # _report treats entrant1_id as "the player on UI team 1 when not swapped",
+            # so account for both the Start.gg name ordering and any UI team swap.
+            teams_swapped = StateManager.Get(f"score.{scoreboard_number}.teamsSwapped", False)
+            p1_is_ui_t1 = self._name_matches(found.get("p1_name", ""), names_t1)
+            ui_t1 = startgg_e1 if p1_is_ui_t1 else startgg_e2
+            ui_t2 = startgg_e2 if p1_is_ui_t1 else startgg_e1
+            if not teams_swapped:
+                entrant1_id, entrant2_id = ui_t1, ui_t2
+            else:
+                entrant1_id, entrant2_id = ui_t2, ui_t1
+
+        return _report(scoreboard_number, is_dq, set_id=set_id, entrant1_id=entrant1_id, entrant2_id=entrant2_id)
+
+    def SupportsStreamAssignment(self) -> bool:
+        return self._has_api_token()
+
+    def AssignStream(self, scoreboard_number: int, stream_name: str) -> dict:
+        from ..TSHStartGGSetReporter import AssignStream as _assign
+        from ..StateManager import StateManager
+
+        logger.info(f"AssignStream: stream_name={stream_name!r}")
+
+        # Resolve set ID — from state or by player names
+        set_id = StateManager.Get(f"score.{scoreboard_number}.set_id")
+        if not set_id:
+            names_t1 = self._get_player_names_from_state(scoreboard_number, 1)
+            names_t2 = self._get_player_names_from_state(scoreboard_number, 2)
+            logger.info(f"AssignStream: no set_id in state, resolving by names: {names_t1} vs {names_t2}")
+            if not names_t1 or not names_t2:
+                return {"success": False, "message": "No set loaded and no player names found in the scoreboard.", "data": None}
+
+            matches = self.FindSetByPlayerNames(names_t1, names_t2)
+            logger.info(f"AssignStream: FindSetByPlayerNames found {len(matches)} match(es): {[(s.get('p1_name'), s.get('p2_name'), s.get('id')) for s in matches]}")
+            if not matches:
+                return {
+                    "success": False,
+                    "message": f"No open set found matching \"{names_t1[0]}\" vs \"{names_t2[0]}\" on Start.gg.\n"
+                               "Check that both players are registered and their set is not already completed.",
+                    "data": None,
+                }
+            if len(matches) > 1:
+                lines = "\n".join(f"  • {s.get('p1_name')} vs {s.get('p2_name')}" for s in matches[:5])
+                return {
+                    "success": False,
+                    "message": f"Multiple open sets found for those players — load the specific set first:\n{lines}",
+                    "data": None,
+                }
+            set_id = matches[0].get("id")
+            logger.info(f"AssignStream: resolved set_id={set_id} ({matches[0].get('p1_name')} vs {matches[0].get('p2_name')})")
+        else:
+            logger.info(f"AssignStream: using set_id={set_id} from state")
+
+        # Resolve stream ID by name
+        stations = self.GetStations() or []
+        available_streams = [s for s in stations if s.get("type") == "stream"]
+        logger.info(f"AssignStream: available streams: {[(s.get('identifier'), s.get('id')) for s in available_streams]}")
+
+        stream = next(
+            (s for s in available_streams
+             if str(s.get("identifier", "")).lower() == stream_name.strip().lower()),
+            None
+        )
+        if not stream:
+            logger.warning(f"AssignStream: stream {stream_name!r} not found among {[s.get('identifier') for s in available_streams]}")
+            return {
+                "success": False,
+                "message": f"Stream \"{stream_name}\" not found in this tournament's stream list.\n"
+                           f"Available streams: {', '.join(s.get('identifier', '?') for s in available_streams) or 'none'}",
+                "data": None,
+            }
+
+        logger.info(f"AssignStream: calling assignStream(setId={set_id}, streamId={stream.get('id')})")
+        return _assign(str(set_id), str(stream.get("id")))
 
 sggTdpDir = TSHResolve('src/TournamentDataProvider')
 
