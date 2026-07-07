@@ -13,7 +13,7 @@ import i18n from "../i18n/config";
 import TextField from "./TextField";
 import {alpha} from "@mui/material/styles";
 import {ExpandMore} from "@mui/icons-material";
-import {BACKEND_PORT} from "../env";
+import {BACKEND_PORT, PROTOCOL} from "../env";
 
 
 /**
@@ -50,7 +50,7 @@ export default class UpcomingSets extends React.Component {
             isLoading: true,
         });
 
-        fetch("http://" + window.location.hostname + `:${BACKEND_PORT}/get-sets?_foo=${this.state.showFinished ? "&getFinished=true" : ""}&`)
+        fetch(PROTOCOL + "//" + window.location.hostname + `:${BACKEND_PORT}/get-sets?_foo=${this.state.showFinished ? "&getFinished=true" : ""}&`)
             .then((res) => res.json())
             .then(( /** {Array.<tourney_set>} */ data) => {
                 this.setState({
@@ -69,7 +69,7 @@ export default class UpcomingSets extends React.Component {
         });
 
         fetch(
-            "http://" + window.location.hostname + `:${BACKEND_PORT}/scoreboard1-load-set?set=${this.state.selectedSet?.id}`,
+            PROTOCOL + "//" + window.location.hostname + `:${BACKEND_PORT}/scoreboard1-load-set?set=${this.state.selectedSet?.id}`,
         )
             .then((resp) => {resp.text()})
             .then((respText) => {

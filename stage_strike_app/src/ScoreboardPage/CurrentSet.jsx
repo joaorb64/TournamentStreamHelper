@@ -14,7 +14,7 @@ import SetScore from "./SetScore";
 import Team from "./Team";
 import {ExpandMore} from "@mui/icons-material";
 import {useTheme} from "@mui/material/styles";
-import {BACKEND_PORT} from "../env";
+import {BACKEND_PORT, PROTOCOL} from "../env";
 import {useSelector} from "react-redux";
 import {Grid} from "@mui/system";
 
@@ -50,12 +50,12 @@ export default function CurrentSet({scoreboardNumber}) {
     }
 
     const clearScoreboard = () => {
-        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-clear-all`)
+        fetch(`${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-clear-all`)
             .catch(console.error);
     }
 
     const swapTeams = () => {
-        fetch(`http://${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-swap-teams`)
+        fetch(`${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/scoreboard${scoreboardNumber}-swap-teams`)
             .catch(console.error)
     }
 

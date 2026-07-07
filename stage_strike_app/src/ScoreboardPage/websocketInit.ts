@@ -8,7 +8,7 @@ import {
 } from "../redux/tshState";
 import { tshStore } from "../redux/store";
 import socketConnection from "../websocketConnection";
-import {BACKEND_PORT} from "../env";
+import {BACKEND_PORT, PROTOCOL} from "../env";
 
 let initialized = false;
 
@@ -90,7 +90,7 @@ export default function websocketInit() {
 // Todo, maybe move this to a thunk or something.
 const loadCountriesFile = () => {
     fetch(
-        `http://${window.location.hostname}:${BACKEND_PORT}/assets/data_countries.json`
+        `${PROTOCOL}//${window.location.hostname}:${BACKEND_PORT}/assets/data_countries.json`
     ).then(
         (resp) => resp.json()
     ).then((json) => {
