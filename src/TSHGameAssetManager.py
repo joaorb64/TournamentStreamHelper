@@ -1659,6 +1659,26 @@ class TSHGameAssetManager(QObject):
             s[1].get("smashgg_id")) == str(smashgg_id)), None)
         return stage
 
+    def GetCharacterFromParryGGSlug(self, parrygg_slug: str):
+        # parry.gg identifies a character by a URL-friendly slug (e.g.
+        # "doctor-mario"); the game asset pack stores that slug on each
+        # character as `parrygg_slug`. Mirrors GetCharacterFromStartGGId:
+        # returns the (key, character_dict) tuple or None.
+        if not parrygg_slug:
+            return None
+        character = next((c for c in self.characters.items() if c[1].get(
+            "parrygg_slug") == parrygg_slug), None)
+        if character is None:
+            # Distinguish "no character matched this slug" from "no character
+            # in this game defines parrygg_slug at all" (i.e. the asset pack
+            # predates the parrygg_slug prop) to make tracing easier.
+            with_prop = sum(1 for c in self.characters.values() if c.get("parrygg_slug"))
+            logger.debug(
+                f"GetCharacterFromParryGGSlug: no match for slug '{parrygg_slug}'; "
+                f"{with_prop}/{len(self.characters)} characters in the loaded game define 'parrygg_slug'"
+            )
+        return character
+
 
 if not os.path.exists("./user_data/games"):
     os.makedirs("./user_data/games")
