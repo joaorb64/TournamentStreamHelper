@@ -1,4 +1,4 @@
-import {BACKEND_PORT, BASE_URL} from "../env";
+import {BACKEND_PORT, PROTOCOL, BASE_URL} from "../env";
 
 export function ConfirmClicked() {
     fetch(
@@ -68,7 +68,7 @@ export function Redo() {
 
 export function ReportRpsWin(/** number */ winner) {
   fetch(
-    "http://" +
+    PROTOCOL + "//" +
     window.location.hostname +
     `:${BACKEND_PORT}/stage_strike_rps_win`,
     {

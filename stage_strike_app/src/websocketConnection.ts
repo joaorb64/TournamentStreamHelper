@@ -6,7 +6,7 @@ export class SocketSingleton {
 
     instance(): Socket {
         if (this._instance == null) {
-            this._instance = io(`ws://${window.location.hostname}:${BACKEND_PORT}/`, {
+            this._instance = io(`${window.location.hostname}:${BACKEND_PORT}/`, {
                 transports: ['websocket', 'webtransport'],
                 timeout: 5000,
                 reconnectionDelay: 500,
