@@ -577,8 +577,10 @@ class ParryGGDataProvider(TournamentDataProvider):
                         # start.gg's [player_id, user_id] convention.
                         "id": [user.id, user.id],
                     }
-                    # mains = [character_key, skin]; parry has no skin data
-                    # so default to 0. Mirrors StartGGDataProvider.GetMatch's
+                    # mains = [character_key, skin]. Parry does encode a skin
+                    # color (per-image variant, e.g. {'color': 'yellow'}), but
+                    # we don't map those to TSH skin indices yet, so default the
+                    # skin to 0. Mirrors StartGGDataProvider.GetMatch's
                     # per-player selection shape consumed by the scoreboard.
                     main_key = mains_by_user.get(user.id)
                     if main_key:
