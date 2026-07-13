@@ -1890,8 +1890,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHGameAssetManager.py" line="107"/>
         <location filename="../TSHGameAssetManager.py" line="142"/>
         <location filename="../TSHGameAssetManager.py" line="927"/>
-        <location filename="../TSHGameAssetManager.py" line="1207"/>
-        <location filename="../TSHGameAssetManager.py" line="1230"/>
+        <location filename="../TSHGameAssetManager.py" line="1214"/>
+        <location filename="../TSHGameAssetManager.py" line="1237"/>
         <location filename="../TournamentStreamHelper.py" line="927"/>
         <source>Invalid JSON file</source>
         <translation type="unfinished"></translation>
