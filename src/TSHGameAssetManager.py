@@ -566,7 +566,7 @@ class TSHGameAssetManager(QObject):
                         self.parent().has_modded_content = False
                         self.parent().UpdateCharacterModel(self.mods_active)
                         self.parent().UpdateSkinModel()
-                        self.parent().UpdateVariantModel()
+                        self.parent().UpdateVariantModel(self.mods_active)
                         self.parent().UpdateColorModel()
                         self.parent().UpdateStageModel(self.mods_active)
 
@@ -892,7 +892,7 @@ class TSHGameAssetManager(QObject):
                     self.parent.has_modded_content = False
                     self.parent.UpdateCharacterModel(mods_active)
                     self.parent.UpdateSkinModel()
-                    self.parent.UpdateVariantModel()
+                    self.parent.UpdateVariantModel(mods_active)
                     self.parent.UpdateColorModel()
                     self.parent.UpdateStageModel(mods_active)
 
@@ -1069,8 +1069,6 @@ class TSHGameAssetManager(QObject):
             return (None)
 
     def UpdateCharacterModel(self, mods_active = True):
-        # TODO: Make modded content disabled by default
-        # TODO: Add checkbox on game bar to enable / disable modded content
         try:
             self.characterModel = QStandardItemModel()
 
@@ -1152,7 +1150,7 @@ class TSHGameAssetManager(QObject):
             logger.error(traceback.format_exc())
 
 
-    def UpdateVariantModel(self):
+    def UpdateVariantModel(self, mods_active=True):
         try:
             self.variantModel = QStandardItemModel()
 
@@ -1169,9 +1167,9 @@ class TSHGameAssetManager(QObject):
                     "name": self.variants[c].get("export_name"),
                     "en_name": c,
                     "display_name": self.variants[c].get("display_name"),
-                    "codename": self.variants[c].get("codename")
+                    "codename": self.variants[c].get("codename"),
+                    "modded": self.variants[c].get("modded", False)
                 }
-
                 
                 data["icon_path"] = self.GetVariantIconPath(data["codename"])
                 data["image_size"] = self.GetVariantIconSize(data["codename"])
@@ -1186,8 +1184,15 @@ class TSHGameAssetManager(QObject):
                     item.setData(
                         f'{self.variants[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
 
+                if data.get("modded"):
+                    self.has_modded_content = True
+
                 item.setData(data, Qt.ItemDataRole.UserRole)
-                self.variantModel.appendRow(item)
+                if (not mods_active) and data.get("modded"):
+                    item.setEnabled(False)
+                    item.setSelectable(False)
+                else:
+                    self.variantModel.appendRow(item)
 
             self.variantModel.sort(0)
         except:
@@ -1195,6 +1200,8 @@ class TSHGameAssetManager(QObject):
 
     def GetVariantIconPath(self, variant_codename):
         game_codename = self.selectedGame.get("codename")
+        if "__alt_" in game_codename:
+            game_codename = game_codename.split("__alt_")[0]
         icon_path, asset_root_path = "", "./user_data/games"
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
