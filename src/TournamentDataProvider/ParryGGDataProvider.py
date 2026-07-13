@@ -439,6 +439,108 @@ class ParryGGDataProvider(TournamentDataProvider):
         round_msg = rounds_by_key.get((match.round, match.winners_side))
         return round_msg.label if round_msg else ""
 
+    @staticmethod
+    def _game_winner_slot(match_game):
+        """Return the 0-indexed slot that won a MatchGame, or None if undecided.
+
+        parry's per-game slots carry a score; the higher score wins. A game
+        with no scores yet (all zero / tied) is treated as undecided so an
+        in-progress game doesn't get a spurious winner. (The bundled proto
+        stub has no per-game placement field, so score is the only signal.)
+        """
+        best_slot = None
+        best_score = None
+        for slot in match_game.slots:
+            if best_score is None or slot.score > best_score:
+                best_score = slot.score
+                best_slot = slot.slot
+        # Require a strictly-winning score: all-zero or tied games are undecided.
+        top = [s for s in match_game.slots if s.score == best_score]
+        if best_score and len(top) == 1:
+            return best_slot
+        return None
+
+    def _extract_character_data(self, match):
+        """Derive per-game character/winner data and per-user mains from a
+        parry Match's ``match_games``.
+
+        Returns ``(games_data, mains_by_user)`` where:
+          * ``games_data`` mirrors StartGGDataProvider.ProcessSetData's ``games``
+            list — one entry per game with ``team1_chars``/``team2_chars``
+            (lists of character dicts or None, one per participant) and an
+            optional ``winner`` (1 or 2). Consumed by
+            TSHIndividualGameTracker.SetPerGameData.
+          * ``mains_by_user`` maps ``user_id`` -> character key (en_name) for
+            the character that user played in the most recent game they appear
+            in, used to preselect each player's character on the scoreboard.
+        """
+        games_data = []
+        mains_by_user = {}
+
+        logger.debug(
+            f"_extract_character_data: match {match.id} has {len(match.match_games)} match_game(s)"
+        )
+
+        for match_game in sorted(match.match_games, key=lambda g: g.index):
+            entry = {}
+
+            winner_slot = self._game_winner_slot(match_game)
+            if winner_slot in (0, 1):
+                entry["winner"] = winner_slot + 1
+
+            # Structural breakdown so we can see exactly where the nesting goes
+            # empty: game -> slots -> participants -> characters.
+            logger.debug(
+                f"  game index={match_game.index}: {len(match_game.slots)} slot(s); "
+                f"participants/slot={[len(s.participants) for s in match_game.slots]}; "
+                f"chars/participant={[[len(p.characters) for p in s.participants] for s in match_game.slots]}"
+            )
+
+            chars_by_slot = {0: [], 1: []}
+            for slot in match_game.slots:
+                if slot.slot not in chars_by_slot:
+                    logger.debug(
+                        f"  game {match_game.index}: skipping unexpected slot number {slot.slot}"
+                    )
+                    continue
+                for participant in slot.participants:
+                    slugs = [c.slug for c in participant.characters]
+                    # A participant may list multiple characters (e.g. a
+                    # counterpick mid-game); take the first as their pick for
+                    # this game, matching start.gg's one-selection-per-player
+                    # per-game shape.
+                    char_tuple = None
+                    for character in participant.characters:
+                        char_tuple = TSHGameAssetManager.instance.GetCharacterFromParryGGSlug(
+                            character.slug)
+                        if char_tuple:
+                            break
+                    if slugs and char_tuple is None:
+                        logger.debug(
+                            f"  game {match_game.index} slot {slot.slot} user {participant.user_id}: "
+                            f"parry slug(s) {slugs} did NOT resolve to any character with a matching "
+                            f"'parrygg_slug' in game '{TSHGameAssetManager.instance.selectedGame.get('codename')}'"
+                        )
+                    else:
+                        logger.debug(
+                            f"  game {match_game.index} slot {slot.slot} user {participant.user_id}: "
+                            f"slug(s)={slugs} -> {char_tuple[0] if char_tuple else None}"
+                        )
+                    chars_by_slot[slot.slot].append(char_tuple[1] if char_tuple else None)
+                    # Latest game wins for the per-player main preselection.
+                    if char_tuple and participant.user_id:
+                        mains_by_user[participant.user_id] = char_tuple[0]
+
+            entry["team1_chars"] = chars_by_slot[0]
+            entry["team2_chars"] = chars_by_slot[1]
+            games_data.append(entry)
+
+        logger.debug(
+            f"_extract_character_data: match {match.id} -> {len(games_data)} game(s), "
+            f"mains_by_user={mains_by_user}"
+        )
+        return games_data, mains_by_user
+
     def _build_match_info(self, match, seeds, phase, bracket, round_label):
         """Build the TSH match dict from raw parry pieces.
 
@@ -456,6 +558,8 @@ class ParryGGDataProvider(TournamentDataProvider):
 
         bracket_type = _bracket_type_name(phase.bracket_type) if phase else ""
 
+        games_data, mains_by_user = self._extract_character_data(match)
+
         # Build entrants list (team support: iterate all users)
         entrants = []
         for seed in seeds:
@@ -463,7 +567,7 @@ class ParryGGDataProvider(TournamentDataProvider):
             ee = self._seed_entrant(seed)
             if ee is not None:
                 for user in ee.entrant.users:
-                    team.append({
+                    player = {
                         "prefix": user.sponsor_name,
                         "gamerTag": user.gamer_tag,
                         "name": (user.first_name + " " + user.last_name).strip(),
@@ -472,10 +576,19 @@ class ParryGGDataProvider(TournamentDataProvider):
                         # both elements are user_id; format-aligned with
                         # start.gg's [player_id, user_id] convention.
                         "id": [user.id, user.id],
-                    })
+                    }
+                    # mains = [character_key, skin]. Parry does encode a skin
+                    # color (per-image variant, e.g. {'color': 'yellow'}), but
+                    # we don't map those to TSH skin indices yet, so default the
+                    # skin to 0. Mirrors StartGGDataProvider.GetMatch's
+                    # per-player selection shape consumed by the scoreboard.
+                    main_key = mains_by_user.get(user.id)
+                    if main_key:
+                        player["mains"] = [main_key, 0]
+                    team.append(player)
             entrants.append(team)
 
-        return {
+        result = {
             "id": match.id,
             "team1score": int(match.slots[0].score) if len(match.slots) > 0 else 0,
             "team2score": int(match.slots[1].score) if len(match.slots) > 1 else 0,
@@ -493,6 +606,21 @@ class ParryGGDataProvider(TournamentDataProvider):
             "round": match.round,
             "entrants": entrants if entrants else [[]],
         }
+
+        # Signal the scoreboard to apply the per-player character selections
+        # (parallels start.gg's has_selection_data gate in TSHScoreboardWidget).
+        if mains_by_user:
+            result["has_selection_data"] = True
+        if games_data:
+            result["games"] = games_data
+
+        logger.debug(
+            f"_build_match_info: match {match.id} -> has_selection_data={result.get('has_selection_data')}, "
+            f"games={len(games_data)}, "
+            f"entrant mains={[[p.get('mains') for p in team] for team in entrants]}"
+        )
+
+        return result
 
     def _fetch_future_set(self, match_id):
         """Fetch a single match by ID and convert to TSH future-set format."""
@@ -682,6 +810,19 @@ class ParryGGDataProvider(TournamentDataProvider):
             req.id = setId
             resp = self.match_service.GetMatch(req, metadata=self.metadata, timeout=self._timeout)
             ctx = resp.match
+
+            # Full dump of what MatchService.GetMatch returns for the set the
+            # user actually loaded, so we can see whether parry populates the
+            # per-game participant character selections here at all.
+            try:
+                from google.protobuf.json_format import MessageToDict
+                logger.debug(
+                    f"GetMatch({setId}): raw match_games = "
+                    f"{MessageToDict(ctx.match, preserving_proto_field_name=True).get('match_games')}"
+                )
+            except Exception:
+                logger.debug(f"GetMatch({setId}): failed to dump match proto: {traceback.format_exc()}")
+
             phase_id = self._phase_id_from_hierarchy(ctx.hierarchy)
             phase = self._get_phases().get(phase_id) if phase_id else None
             # MatchContext doesn't carry the bracket struct directly — phase.brackets[i]
