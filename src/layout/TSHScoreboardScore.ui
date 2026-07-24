@@ -216,6 +216,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="btExportScore">
+        <property name="text">
+         <string>EXPORT SCORE</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

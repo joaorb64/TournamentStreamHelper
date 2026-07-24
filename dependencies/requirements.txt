@@ -32,3 +32,4 @@ unidic-lite
 pypinyin
 koroman==1.0.14
 arabic_buckwalter_transliteration
+openpyxl
