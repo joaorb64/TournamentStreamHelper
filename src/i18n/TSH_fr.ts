@@ -1117,7 +1117,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TournamentStreamHelper.py" line="865"/>
         <source>Reload game assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Recharger les ressources du jeu</translation>
     </message>
     <message>
         <location filename="../TournamentStreamHelper.py" line="983"/>
@@ -1960,7 +1960,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../TSHGameAssetManager.py" line="1237"/>
         <location filename="../TournamentStreamHelper.py" line="927"/>
         <source>Invalid JSON file</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier JSON Invalide</translation>
     </message>
 </context>
 <context>
