@@ -193,7 +193,7 @@ class TSHIndividualGameTracker(QWidget):
                 playerContainerLayout.addWidget(nameLbl)
 
                 playerRow = QWidget()
-                playerLayout = QHBoxLayout()
+                playerLayout = QVBoxLayout()
                 playerLayout.setContentsMargins(0, 0, 0, 0)
                 playerLayout.setSpacing(2)
 
