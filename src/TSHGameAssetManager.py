@@ -290,9 +290,9 @@ class TSHGameAssetManager(QObject):
                         for c in self.parent().characters.keys():
                             self.parent().stockIcons[c] = {}
 
+                            pattern = re.compile(f'({assetsObj.get("prefix", "")})({self.parent().characters[c].get("codename")})({assetsObj.get("postfix", "")})([0-9]*)\\.([A-Za-z0-9]+)')
                             filteredFiles = \
-                                [f for f in files if f.startswith(assetsObj.get(
-                                    "prefix", "")+self.parent().characters[c].get("codename")+assetsObj.get("postfix", ""))]
+                                [f for f in files if pattern.match(f)]
 
                             if len(filteredFiles) == 0:
                                 # Store path only — QImage must be created on the main thread
@@ -329,9 +329,9 @@ class TSHGameAssetManager(QObject):
                                 files = sorted(os.listdir(
                                     './user_data/games/'+game+'/'+assetsKey))
 
+                                pattern = re.compile(f'({asset.get("prefix", "")})({self.parent().characters[c].get("codename")})({asset.get("postfix", "")})([0-9]*)\\.([A-Za-z0-9]+)')
                                 filteredFiles = \
-                                    [f for f in files if f.startswith(asset.get(
-                                        "prefix", "")+self.parent().characters[c].get("codename")+asset.get("postfix", ""))]
+                                    [f for f in files if pattern.match(f)]
 
                                 for f in filteredFiles:
                                     numberStart = f.rfind(
@@ -621,9 +621,9 @@ class TSHGameAssetManager(QObject):
                         for c in self.parent.characters.keys():
                             self.parent.stockIcons[c] = {}
 
+                            pattern = re.compile(f'({assetsObj.get("prefix", "")})({self.parent().characters[c].get("codename")})({assetsObj.get("postfix", "")})([0-9]*)\\.([A-Za-z0-9]+)')
                             filteredFiles = \
-                                [f for f in files if f.startswith(assetsObj.get(
-                                    "prefix", "")+self.parent.characters[c].get("codename")+assetsObj.get("postfix", ""))]
+                                [f for f in files if pattern.match(f)]
 
                             if len(filteredFiles) == 0:
                                 # Store path only — QImage must be created on the main thread
@@ -660,9 +660,9 @@ class TSHGameAssetManager(QObject):
                                 files = sorted(os.listdir(
                                     './user_data/games/'+game+'/'+assetsKey))
 
+                                pattern = re.compile(f'({asset.get("prefix", "")})({self.parent().characters[c].get("codename")})({asset.get("postfix", "")})([0-9]*)\\.([A-Za-z0-9]+)')
                                 filteredFiles = \
-                                    [f for f in files if f.startswith(asset.get(
-                                        "prefix", "")+self.parent.characters[c].get("codename")+asset.get("postfix", ""))]
+                                    [f for f in files if pattern.match(f)]
 
                                 for f in filteredFiles:
                                     numberStart = f.rfind(
@@ -1469,14 +1469,15 @@ class TSHGameAssetManager(QObject):
 
                     baseName = asset.get(
                         "prefix", "")+characterCodename+asset.get("postfix", "")
+                    pattern = f"({baseName})([0-9]*)\\.([A-Za-z0-9])"
 
                     skinFileList = [f for f in os.listdir(
-                        assetPath) if f.startswith(baseName)]
+                        assetPath) if re.match(pattern, f)]
 
                     skinFiles = {}
 
                     for f in skinFileList:
-                        skinId = f[len(baseName):].rsplit(".", 1)[0]
+                        skinId = re.search(pattern, f).group(2)
                         if skinId == "":
                             skinId = 0
                         else:
