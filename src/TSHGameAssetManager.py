@@ -19,7 +19,6 @@ import requests
 class TSHGameAssetManagerSignals(QObject):
     onLoad = Signal()
     onLoadAssets = Signal()
-    json_error = Signal(str, str)  # title, detail
 
 
 class TSHGameAssetManager(QObject):
@@ -97,17 +96,9 @@ class TSHGameAssetManager(QObject):
 
                     for game in gameDirs:
                         if os.path.isfile("./user_data/games/"+game+"/base_files/config.json"):
-                            path = f"./user_data/games/{game}/base_files/config.json"
-                            with open(path, "rb") as f:
-                                try:
-                                    self.parent().games[game] = orjson.loads(f.read())
-                                except Exception as e:
-                                    logger.error(f"JSON error in {path}: {e}")
-                                    self.parent().signals.json_error.emit(
-                                        QApplication.translate("app", "Invalid JSON file"),
-                                        f"{path}\n\n{e}",
-                                    )
-                                    continue
+                            with open("./user_data/games/"+game +
+                                      "/base_files/config.json", "rb") as f:
+                                self.parent().games[game] = orjson.loads(f.read())
 
                             # Try logo_small, if it doesn't exist use logo
                             # Store path only — QPixmap/QIcon must be created on the main thread
@@ -131,17 +122,10 @@ class TSHGameAssetManager(QObject):
                                     if os.path.isfile("./user_data/games/"+game+"/"+dir+"/config.json"):
                                         logger.info(
                                             "Found asset config for ["+game+"]["+dir+"]")
-                                        asset_path = f"./user_data/games/{game}/{dir}/config.json"
-                                        with open(asset_path, "rb") as f:
-                                            try:
-                                                self.parent().games[game]["assets"][dir] = \
-                                                    orjson.loads(f.read())
-                                            except Exception as e:
-                                                logger.error(f"JSON error in {asset_path}: {e}")
-                                                self.parent().signals.json_error.emit(
-                                                    QApplication.translate("app", "Invalid JSON file"),
-                                                    f"{asset_path}\n\n{e}",
-                                                )
+                                        with open("./user_data/games/"+game+"/"+dir +
+                                                  "/config.json", "rb") as f:
+                                            self.parent().games[game]["assets"][dir] = \
+                                                orjson.loads(f.read())
                                     else:
                                         logger.warning(
                                             "No config file for "+game+" - "+dir)
@@ -161,21 +145,6 @@ class TSHGameAssetManager(QObject):
                                 if game_name:
                                     self.parent(
                                     ).games[game]["name"] = game_name
-
-                            # Add alternate versions as separate selectable game entries
-                            for alt_idx, alt in enumerate(self.parent().games[game].get("alternate_versions", [])):
-                                alt_key = f"{game}__alt_{alt_idx}"
-                                alt_entry = dict(self.parent().games[game])
-                                alt_entry.update(alt)
-                                alt_entry["base_game_dir"] = game
-                                alt_entry["mods_active_default"] = True
-                                alt_entry["alternate_versions"] = []  # avoid recursive expansion
-                                alt_logo_file = alt.get("logo_path", "")
-                                if alt_logo_file:
-                                    alt_logo_path = f"./user_data/games/{game}/base_files/{alt_logo_file}"
-                                    alt_entry["logo_path"] = alt_logo_path if os.path.isfile(alt_logo_path) \
-                                        else self.parent().games[game].get("logo_path")
-                                self.parent().games[alt_key] = alt_entry
                         else:
                             logger.info("Game config for "+game+" doesn't exist.")
                     # print(self.parent().games)
@@ -185,20 +154,44 @@ class TSHGameAssetManager(QObject):
         gameLoaderThread.start()
 
     def SetGameFromStartGGId(self, gameid):
+        def detect_smashgg_id_match(game, id):
+            result = str(game.get("smashgg_game_id", "")) == str(id)
+            if not result:
+                alternates = game.get("alternate_versions", [])
+                alternates_ids = []
+                for alternate in alternates:
+                    if alternate.get("smashgg_game_id"):
+                        alternates_ids.append(
+                            str(alternate.get("smashgg_game_id")))
+                result = str(id) in alternates_ids
+            return (result)
+
         if len(self.games.keys()) == 0:
             return
 
         for i, game in enumerate(self.games.values()):
-            if str(game.get("smashgg_game_id", "")) == str(gameid):
+            if detect_smashgg_id_match(game, gameid):
                 self.LoadGameAssets(i+1)
                 break
-
+    
     def SetGameFromIGDBId(self, igdb_id):
+        def detect_igdb_id_match(game, igdb_id):
+            result = str(game.get("igdb_game_id", "")) == str(igdb_id)
+            if not result:
+                alternates = game.get("alternate_versions", [])
+                alternate_ids = []
+                for alternate in alternates:
+                    if alternate.get("igdb_game_id"):
+                        alternate_ids.append(
+                            str(alternate.get("igdb_game_id")))
+                result = str(igdb_id) in alternate_ids
+            return (result)
+
         if len(self.games.keys()) == 0:
             return
 
         for i, game in enumerate(self.games.values()):
-            if str(game.get("igdb_game_id", "")) == str(igdb_id):
+            if detect_igdb_id_match(game, igdb_id):
                 self.LoadGameAssets(i+1)
                 break
 
@@ -259,11 +252,6 @@ class TSHGameAssetManager(QObject):
                     else:
                         game = list(self.parent().games.keys())[game-1]
 
-                    _game_meta = self.parent().games.get(game, {})
-                    game_dir = _game_meta.get("base_game_dir", game)
-                    if _game_meta.get("mods_active_default") and not self.mods_active:
-                        self.mods_active = True
-
                     # Game is already loaded
                     if game == self.parent().selectedGame.get("codename") and (not self.mods_reload_mode):
                         self.parent().threadpool.waitForDone()
@@ -271,7 +259,7 @@ class TSHGameAssetManager(QObject):
 
                     logger.info("Changed to game: "+game)
 
-                    self.parent().CopyCSS(game_dir)
+                    self.parent().CopyCSS(game)
 
                     gameObj = self.parent().games.get(game, {})
                     self.parent().selectedGame = gameObj
@@ -295,7 +283,7 @@ class TSHGameAssetManager(QObject):
                         assetsObj = gameObj.get(
                             "assets", {}).get(assetsKey, None)
                         files = sorted(os.listdir(
-                            './user_data/games/'+game_dir+'/'+assetsKey))
+                            './user_data/games/'+game+'/'+assetsKey))
 
                         self.parent().stockIcons = {}
 
@@ -322,7 +310,7 @@ class TSHGameAssetManager(QObject):
                                     pass
                                 # Store path only — QImage must be created on the main thread
                                 self.parent().stockIcons[c][number] = \
-                                    './user_data/games/'+game_dir+'/'+assetsKey+'/'+f
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f
 
                         logger.info("Loaded stock icons")
 
@@ -339,7 +327,7 @@ class TSHGameAssetManager(QObject):
                                 asset = gameObj["assets"][assetsKey]
 
                                 files = sorted(os.listdir(
-                                    './user_data/games/'+game_dir+'/'+assetsKey))
+                                    './user_data/games/'+game+'/'+assetsKey))
 
                                 filteredFiles = \
                                     [f for f in files if f.startswith(asset.get(
@@ -423,10 +411,10 @@ class TSHGameAssetManager(QObject):
                             assetsObj = gameObj.get(
                                 "assets", {}).get(assetsKey)
                             files = sorted(os.listdir(
-                                './user_data/games/'+game_dir+'/'+assetsKey))
+                                './user_data/games/'+game+'/'+assetsKey))
 
                             for stage in self.parent().stages:
-                                self.parent().stages[stage]["path"] = './user_data/games/'+game_dir+'/'+assetsKey+'/'+assetsObj.get(
+                                self.parent().stages[stage]["path"] = './user_data/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
                                     "prefix", "")+self.parent().stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
 
                         for s in self.parent().stages.keys():
@@ -596,18 +584,13 @@ class TSHGameAssetManager(QObject):
                     else:
                         game = list(self.parent.games.keys())[game-1]
 
-                    _game_meta = self.parent.games.get(game, {})
-                    game_dir = _game_meta.get("base_game_dir", game)
-                    if _game_meta.get("mods_active_default") and not mods_active:
-                        mods_active = True
-
                     # Game is already loaded
                     if game == self.parent.selectedGame.get("codename") and (not mods_reload_mode):
                         return
 
                     logger.info("Changed to game: "+game)
 
-                    self.parent.CopyCSS(game_dir)
+                    self.parent.CopyCSS(game)
 
                     gameObj = self.parent.games.get(game, {})
                     self.parent.selectedGame = gameObj
@@ -631,7 +614,7 @@ class TSHGameAssetManager(QObject):
                         assetsObj = gameObj.get(
                             "assets", {}).get(assetsKey, None)
                         files = sorted(os.listdir(
-                            './user_data/games/'+game_dir+'/'+assetsKey))
+                            './user_data/games/'+game+'/'+assetsKey))
 
                         self.parent.stockIcons = {}
 
@@ -658,7 +641,7 @@ class TSHGameAssetManager(QObject):
                                     pass
                                 # Store path only — QImage must be created on the main thread
                                 self.parent.stockIcons[c][number] = \
-                                    './user_data/games/'+game_dir+'/'+assetsKey+'/'+f
+                                    './user_data/games/'+game+'/'+assetsKey+'/'+f
 
                         logger.info("Loaded stock icons")
 
@@ -675,7 +658,7 @@ class TSHGameAssetManager(QObject):
                                 asset = gameObj["assets"][assetsKey]
 
                                 files = sorted(os.listdir(
-                                    './user_data/games/'+game_dir+'/'+assetsKey))
+                                    './user_data/games/'+game+'/'+assetsKey))
 
                                 filteredFiles = \
                                     [f for f in files if f.startswith(asset.get(
@@ -759,10 +742,10 @@ class TSHGameAssetManager(QObject):
                             assetsObj = gameObj.get(
                                 "assets", {}).get(assetsKey)
                             files = sorted(os.listdir(
-                                './user_data/games/'+game_dir+'/'+assetsKey))
+                                './user_data/games/'+game+'/'+assetsKey))
 
                             for stage in self.parent.stages:
-                                self.parent.stages[stage]["path"] = './user_data/games/'+game_dir+'/'+assetsKey+'/'+assetsObj.get(
+                                self.parent.stages[stage]["path"] = './user_data/games/'+game+'/'+assetsKey+'/'+assetsObj.get(
                                     "prefix", "")+self.parent.stages[stage].get("codename", "")+assetsObj.get("postfix", "")+".png"
 
                         for s in self.parent.stages.keys():
@@ -919,15 +902,8 @@ class TSHGameAssetManager(QObject):
             self.assetsLoader.run(mods_active=mods_active, mods_reload_mode=mods_reload_mode)
 
         # Setup startgg character id to character name
-        try:
-            sggcharacters = orjson.loads(open('./assets/characters.json', 'rb').read())
-        except Exception as e:
-            logger.error(f"JSON error in ./assets/characters.json: {e}")
-            self.signals.json_error.emit(
-                QApplication.translate("app", "Invalid JSON file"),
-                f"./assets/characters.json\n\n{e}",
-            )
-            sggcharacters = {}
+        sggcharacters = orjson.loads(
+            open('./assets/characters.json', 'rb').read())
         self.startgg_id_to_character = {}
 
         for c in sggcharacters.get("entities", {}).get("character", []):
@@ -1206,15 +1182,7 @@ class TSHGameAssetManager(QObject):
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
             with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
-                try:
-                    icon_config = orjson.loads(icon_config_file.read())
-                except Exception as e:
-                    logger.error(f"JSON error in {icon_config_path}: {e}")
-                    self.signals.json_error.emit(
-                        QApplication.translate("app", "Invalid JSON file"),
-                        f"{icon_config_path}\n\n{e}",
-                    )
-                    return icon_path
+                icon_config = orjson.loads(icon_config_file.read())
             extensions = ["png", "jpg", "gif", "webp"]
             for extension in extensions:
                 icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.{extension}"
@@ -1222,22 +1190,14 @@ class TSHGameAssetManager(QObject):
                     icon_path = icon_filename
                     break
         return(icon_path)
-
+    
     def GetVariantIconSize(self, variant_codename):
         game_codename = self.selectedGame.get("codename")
         icon_size, asset_root_path = None, "./user_data/games"
         icon_config_path = f"{asset_root_path}/{game_codename}/variant_icon/config.json"
         if os.path.isfile(icon_config_path):
             with open(icon_config_path, "rt", encoding="utf-8") as icon_config_file:
-                try:
-                    icon_config = orjson.loads(icon_config_file.read())
-                except Exception as e:
-                    logger.error(f"JSON error in {icon_config_path}: {e}")
-                    self.signals.json_error.emit(
-                        QApplication.translate("app", "Invalid JSON file"),
-                        f"{icon_config_path}\n\n{e}",
-                    )
-                    return icon_size
+                icon_config = orjson.loads(icon_config_file.read())
             icon_filename = f"{asset_root_path}/{game_codename}/variant_icon/{icon_config.get('prefix')}{variant_codename}{icon_config.get('postfix')}.png"
             if os.path.isfile(icon_filename):
                 icon_size = icon_config.get("image_sizes", {}).get(variant_codename, {}).get("null")

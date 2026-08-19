@@ -502,7 +502,6 @@ class TSHScoreboardWidget(QWidget):
         # Add stage order widget
         self.individualGameTracker = TSHIndividualGameTracker(self.scoreboardNumber)
         self.individualGameTracker.signals.stageResultsUpdate.connect(self.StageResultsToScore)
-        self.individualGameTracker.signals.syncCharToMain.connect(self._onSyncCharFromGame)
         
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
             lambda value: [
@@ -519,16 +518,11 @@ class TSHScoreboardWidget(QWidget):
                     f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
                 StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
                     "first_to").format(math.ceil(value/2)) if value > 0 else ""),
-                self.individualGameTracker.UpdateBestOf(value),
-                self.scoreColumn.findChild(QSpinBox, "score_left").setMaximum(
-                    math.ceil(value / 2) if value > 0 else 999),
-                self.scoreColumn.findChild(QSpinBox, "score_right").setMaximum(
-                    math.ceil(value / 2) if value > 0 else 999),
+                self.individualGameTracker.SetStageCount(value),
                 StateManager.ReleaseSaving()
             ]
         )
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
-        self.individualGameTracker.SetStageCount(0)
 
         self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
             lambda value: [
@@ -582,7 +576,6 @@ class TSHScoreboardWidget(QWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             lambda: [
                 self.SetDefaultsFromAssets(),
-                self.individualGameTracker.SetStageCount(self.scoreColumn.findChild(QSpinBox, "best_of").value()),
                 self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(self.scoreColumn.findChild(QSpinBox, "best_of").value()),
                 self.colorMenu1.setModel(TSHGameAssetManager.instance.colorModel),
                 self.colorMenu2.setModel(TSHGameAssetManager.instance.colorModel),
@@ -602,34 +595,6 @@ class TSHScoreboardWidget(QWidget):
         with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_right")):
             self.scoreColumn.findChild(QSpinBox, "score_right").setValue(team_2_score)
             StateManager.Set(f"score.{self.scoreboardNumber}.team.2.score", team_2_score)
-
-    def _onMainCharChanged(self):
-        """Called when a main-scoreboard character selection changes; copies it to the current game row."""
-        if not hasattr(self, "individualGameTracker"):
-            return
-        current = self.individualGameTracker._GetCurrentGameIdx()
-        if current >= 0:
-            self.individualGameTracker._CopySetLevelCharactersToGame(current)
-
-    def _onSyncCharFromGame(self, team, player, char_slot, char_data):
-        """Called when the current game row's character changes; pushes it to the main player widget combo."""
-        widgets = self.team1playerWidgets if team == 0 else self.team2playerWidgets
-        if player >= len(widgets):
-            return
-        pw = widgets[player]
-        if char_slot >= len(pw.character_elements):
-            return
-        char_combo = pw.character_elements[char_slot][1]
-        if char_data is None:
-            char_combo.setCurrentIndex(0)
-            return
-        codename = char_data.get("codename") if isinstance(char_data, dict) else None
-        if codename:
-            for row in range(TSHGameAssetManager.instance.characterModel.rowCount()):
-                item_data = TSHGameAssetManager.instance.characterModel.item(row).data(Qt.ItemDataRole.UserRole)
-                if item_data and item_data.get("codename") == codename:
-                    char_combo.setCurrentIndex(row)
-                    break
 
     def closeEvent(self, event):
         self.autoUpdateTimer.stop()
@@ -738,9 +703,6 @@ class TSHScoreboardWidget(QWidget):
         # logger.info(f"TSHScoreboardWidget#SetCharacterNumber({value})")
         for pw in self.playerWidgets:
             pw.SetCharactersPerPlayer(value)
-        if hasattr(self, "individualGameTracker"):
-            self.individualGameTracker.UpdateCharacterLayout(
-                self.playerNumber.value(), value)
 
     def SetPlayersPerTeam(self, number):
         # logger.info(f"TSHScoreboardWidget#SetPlayersPerTeam({number})")
@@ -771,13 +733,6 @@ class TSHScoreboardWidget(QWidget):
             p.instanceSignals.player_seed_changed.connect(
                 self.stats.signals.UpsetFactorCalculation.emit)
 
-            _t1_idx = 0
-            _p1_idx = len(self.team1playerWidgets)
-            p.instanceSignals.nameChanged.connect(
-                lambda name, t=_t1_idx, pi=_p1_idx: self.individualGameTracker.RefreshNameLabel(t, pi, name))
-            p.instanceSignals.characterChanged.connect(
-                lambda t=_t1_idx: self._onMainCharChanged())
-
             self.team1playerWidgets.append(p)
 
             p = TSHScoreboardPlayerWidget(
@@ -805,13 +760,6 @@ class TSHScoreboardWidget(QWidget):
                 self.stats.signals.PlayerHistoryStandingsP2Signal.emit)
             p.instanceSignals.player_seed_changed.connect(
                 self.stats.signals.UpsetFactorCalculation.emit)
-
-            _t2_idx = 1
-            _p2_idx = len(self.team2playerWidgets)
-            p.instanceSignals.nameChanged.connect(
-                lambda name, t=_t2_idx, pi=_p2_idx: self.individualGameTracker.RefreshNameLabel(t, pi, name))
-            p.instanceSignals.characterChanged.connect(
-                lambda t=_t2_idx: self._onMainCharChanged())
 
             self.team2playerWidgets.append(p)
 
@@ -857,10 +805,6 @@ class TSHScoreboardWidget(QWidget):
         for x, element in enumerate(self.elements, start=1):
             action: QAction = self.eyeBt.menu().actions()[x]
             self.ToggleElements(action, element[1])
-
-        if hasattr(self, "individualGameTracker"):
-            self.individualGameTracker.UpdateCharacterLayout(
-                number, self.charNumber.value())
 
     def SwapTeams(self):
         StateManager.BlockSaving()
@@ -913,17 +857,8 @@ class TSHScoreboardWidget(QWidget):
             StateManager.ReleaseSaving()
 
     def ResetScore(self):
-        # Capture current game's stage before score zeroing clears the win buttons
-        current_idx = self.individualGameTracker._GetCurrentGameIdx()
-        saved_stage = StateManager.Get(f"score.{self.scoreboardNumber}.stages.{current_idx+1}", {})
-        carry_stage = saved_stage.get("codename") if isinstance(saved_stage, dict) else None
-
         self.scoreColumn.findChild(QSpinBox, "score_left").setValue(0)
         self.scoreColumn.findChild(QSpinBox, "score_right").setValue(0)
-        self.individualGameTracker.SetStageCount(
-            self.scoreColumn.findChild(QSpinBox, "best_of").value(),
-            carry_stage_codename=carry_stage
-        )
 
     def AutoUpdate(self, data):
         TSHTournamentDataProvider.instance.GetMatch(
@@ -1163,8 +1098,6 @@ class TSHScoreboardWidget(QWidget):
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):
         StateManager.BlockSaving()
-        if data.get("bestOf") is not None:
-            self.individualGameTracker.SetStageCount(data.get("bestOf") or 0)
 
         StateManager.Set(f"score.{self.scoreboardNumber}.phase_size", data.get("numSeeds"))
         StateManager.Set(f"score.{self.scoreboardNumber}.num_groups", data.get("groupCount"))
@@ -1330,9 +1263,6 @@ class TSHScoreboardWidget(QWidget):
                 finally:
                     for p in self.playerWidgets:
                         p.dataLock.release()
-
-            if data.get("games"):
-                self.individualGameTracker.SetPerGameData(data.get("games"))
 
             if data.get("stage_strike"):
                 StateManager.Set(f"score.{self.scoreboardNumber}.stage_strike",

@@ -28,8 +28,6 @@ class TSHScoreboardPlayerWidgetSignals(QObject):
     player2Id_changed = Signal()
     player_seed_changed = Signal()
     dataChanged = Signal()
-    nameChanged = Signal(str)
-    characterChanged = Signal()
 
 
 class TSHScoreboardPlayerWidget(QGroupBox):
@@ -251,7 +249,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
 
             StateManager.Set(
                 f"{self.path}.character", characters)
-            self.instanceSignals.characterChanged.emit()
 
             if includeMains:
                 StateManager.Set(
@@ -298,7 +295,6 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                 f"{self.path}.mergedName", merged)
             StateManager.Set(
                 f"{self.path}.mergedOnlyName", nameOnlyMerged)
-            self.instanceSignals.nameChanged.emit(merged)
 
     def ExportPlayerImages(self, onlineAvatar=None):
         with self.dataLock:
