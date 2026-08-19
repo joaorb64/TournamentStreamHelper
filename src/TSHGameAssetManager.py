@@ -548,7 +548,8 @@ class TSHGameAssetManager(QObject):
                             "mods_active": self.mods_active,
                             "has_stages": bool(self.parent().selectedGame.get("stage_to_codename")),
                             "has_variants": bool(self.parent().selectedGame.get("variant_to_codename")),
-                            "has_colors": bool(self.parent().selectedGame.get("preset_colors"))
+                            "has_colors": bool(self.parent().selectedGame.get("preset_colors")),
+                            "igdb_id": self.parent().selectedGame.get("igdb_game_id")
                         })
 
                         self.parent().has_modded_content = False
@@ -869,7 +870,8 @@ class TSHGameAssetManager(QObject):
                         "mods_active": mods_active,
                         "has_stages": bool(self.parent.selectedGame.get("stage_to_codename")),
                         "has_variants": bool(self.parent.selectedGame.get("variant_to_codename")),
-                        "has_colors": bool(self.parent.selectedGame.get("preset_colors"))
+                        "has_colors": bool(self.parent.selectedGame.get("preset_colors")),
+                        "igdb_id": self.parent.selectedGame.get("igdb_game_id")
                     })
 
                     self.parent.has_modded_content = False
@@ -979,8 +981,11 @@ class TSHGameAssetManager(QObject):
                     "display_name") != stage[1].get("en_name") else stage[1].get("display_name"))
                 item_with_blank.setData(stage[1], Qt.ItemDataRole.UserRole)
 
+                availability = stage[1].get("igdb_playable_list", [])
+                igdb_id = self.selectedGame.get("igdb_game_id")
                 if stage[1].get("modded"):
-                    self.has_modded_content = True
+                    if not availability or igdb_id in availability:
+                        self.has_modded_content = True
 
                 if (not mods_active) and stage[1].get("modded"):
                     item.setEnabled(False)
@@ -988,8 +993,14 @@ class TSHGameAssetManager(QObject):
                     item_with_blank.setEnabled(False)
                     item_with_blank.setSelectable(False)
                 else:
-                    self.stageModel.appendRow(item)
-                    self.stageModelWithBlank.appendRow(item_with_blank)
+                    if availability and igdb_id not in availability:
+                        item.setEnabled(False)
+                        item.setSelectable(False)
+                        item_with_blank.setEnabled(False)
+                        item_with_blank.setSelectable(False)
+                    else:
+                        self.stageModel.appendRow(item)
+                        self.stageModelWithBlank.appendRow(item_with_blank)
 
                 worker = Worker(self.LoadStageImage, *[stage[1], item])
                 worker_blank = Worker(self.LoadStageImage, *[stage[1], item_with_blank])
@@ -1075,14 +1086,21 @@ class TSHGameAssetManager(QObject):
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
 
+                availability = self.characters[c].get("igdb_playable_list", [])
+                igdb_id = self.selectedGame.get("igdb_game_id")
                 if data.get("modded"):
-                    self.has_modded_content = True
+                    if not availability or igdb_id in availability:
+                        self.has_modded_content = True
 
                 if (not mods_active) and data.get("modded"):
                     item.setEnabled(False)
                     item.setSelectable(False)
                 else:
-                    self.characterModel.appendRow(item)
+                    if availability and igdb_id not in availability:
+                        item.setEnabled(False)
+                        item.setSelectable(False)
+                    else:
+                        self.characterModel.appendRow(item)
 
             self.characterModel.sort(0)
         except:
@@ -1160,15 +1178,23 @@ class TSHGameAssetManager(QObject):
                     item.setData(
                         f'{self.variants[c].get("display_name")} / {c}', Qt.ItemDataRole.EditRole)
 
+                availability = self.variants[c].get("igdb_playable_list", [])
+                igdb_id = self.selectedGame.get("igdb_game_id")
                 if data.get("modded"):
-                    self.has_modded_content = True
+                    if not availability or igdb_id in availability:
+                        self.has_modded_content = True
 
                 item.setData(data, Qt.ItemDataRole.UserRole)
                 if (not mods_active) and data.get("modded"):
                     item.setEnabled(False)
                     item.setSelectable(False)
                 else:
-                    self.variantModel.appendRow(item)
+                    if availability and igdb_id not in availability:
+                        item.setEnabled(False)
+                        item.setSelectable(False)
+                    else:
+                        self.variantModel.appendRow(item)
+
 
             self.variantModel.sort(0)
         except:
