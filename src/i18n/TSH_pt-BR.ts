@@ -1953,6 +1953,11 @@ p, li { white-space: pre-wrap; }
         <translation>Concluindo download de {0}...</translation>
     </message>
     <message>
+        <location filename="../TSHGameAssetManager.py" line="107"/>
+        <location filename="../TSHGameAssetManager.py" line="142"/>
+        <location filename="../TSHGameAssetManager.py" line="930"/>
+        <location filename="../TSHGameAssetManager.py" line="1241"/>
+        <location filename="../TSHGameAssetManager.py" line="1264"/>
         <source>Invalid JSON file</source>
         <translation>Arquivo JSON inválido</translation>
     </message>

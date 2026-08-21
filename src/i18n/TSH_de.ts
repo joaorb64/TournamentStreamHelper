@@ -1861,6 +1861,15 @@ p, li { white-space: pre-wrap; }
         <source>Finishing up {0} download...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../TSHGameAssetManager.py" line="107"/>
+        <location filename="../TSHGameAssetManager.py" line="142"/>
+        <location filename="../TSHGameAssetManager.py" line="930"/>
+        <location filename="../TSHGameAssetManager.py" line="1241"/>
+        <location filename="../TSHGameAssetManager.py" line="1264"/>
+        <source>Invalid JSON file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>layout_options</name>

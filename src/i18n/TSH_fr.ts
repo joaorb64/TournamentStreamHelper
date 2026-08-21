@@ -1952,6 +1952,11 @@ p, li { white-space: pre-wrap; }
         <translation>Manettes</translation>
     </message>
     <message>
+        <location filename="../TSHGameAssetManager.py" line="107"/>
+        <location filename="../TSHGameAssetManager.py" line="142"/>
+        <location filename="../TSHGameAssetManager.py" line="930"/>
+        <location filename="../TSHGameAssetManager.py" line="1241"/>
+        <location filename="../TSHGameAssetManager.py" line="1264"/>
         <source>Invalid JSON file</source>
         <translation>Fichier JSON Invalide</translation>
     </message>
