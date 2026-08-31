@@ -418,8 +418,12 @@ class TSHBracketView(QGraphicsView):
 
         self.DrawLines()
 
-        StateManager.BlockSaving()
+        with StateManager.SaveBlock():
+            self.ExportBracketState()
 
+    def ExportBracketState(self):
+        # Exports the current bracket to the state. Meant to be called inside a
+        # StateManager.SaveBlock() so the whole bracket lands in a single save.
         data = {}
 
         StateManager.Set("bracket.bracket.progressionsIn",
@@ -458,13 +462,20 @@ class TSHBracketView(QGraphicsView):
                     continue
 
             # Get round name or placeholder name
-            if self.roundNameLabels.get(roundKey):
-                roundName = self.roundNameLabels.get(roundKey).text()
-                if roundName == "":
-                    roundName = self.roundNameLabels.get(
-                        roundKey).placeholderText()
-            else:
-                roundName = ""
+            roundName = ""
+            roundNameLabel = self.roundNameLabels.get(roundKey)
+            if roundNameLabel is not None:
+                try:
+                    roundName = roundNameLabel.text()
+                    if roundName == "":
+                        roundName = roundNameLabel.placeholderText()
+                except RuntimeError:
+                    # The label was destroyed by a bracket rebuild that happened
+                    # while this update was running; skip its name instead of
+                    # aborting the export.
+                    logger.warning(
+                        f"Round name label for round {roundKey} was deleted while exporting")
+                    roundName = ""
 
             # Limited export number cutout
             if int(roundKey) > 0:
@@ -542,8 +553,6 @@ class TSHBracketView(QGraphicsView):
                 }
 
         StateManager.Set("bracket.bracket.rounds", data)
-
-        StateManager.ReleaseSaving()
 
     def DrawLines(self):
         for element in self.bracketLines:

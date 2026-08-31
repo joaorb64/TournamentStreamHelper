@@ -601,8 +601,10 @@ class TSHTeamPlayerWidget(QGroupBox):
         self.CharactersChanged(includeMains=True)
 
     def SwapCharacters(self, index1: int, index2: int):
-        StateManager.BlockSaving()
+        with StateManager.SaveBlock():
+            self.DoSwapCharacters(index1, index2)
 
+    def DoSwapCharacters(self, index1: int, index2: int):
         if index2 > len(self.character_elements)-1:
             index2 = 0
 
@@ -635,8 +637,6 @@ class TSHTeamPlayerWidget(QGroupBox):
         char2[2].setCurrentIndex(tmp[1])
 
         self.CharactersChanged()
-
-        StateManager.ReleaseSaving()
 
     def LoadCountries(self):
         try:
@@ -750,11 +750,14 @@ class TSHTeamPlayerWidget(QGroupBox):
 
     def SetData(self, data, dontLoadFromDB=False, clear=True, no_mains=False):
         self.dataLock.acquire()
-        StateManager.BlockSaving()
 
         logger.debug(f"Setting data for {self.path}: {data}")
 
+        # BlockSaving() lives inside the try so that the finally below always
+        # releases it, even if one of the calls in between raises.
         try:
+            StateManager.BlockSaving()
+
             if clear:
                 self.Clear(no_mains=no_mains)
 
@@ -929,7 +932,10 @@ class TSHTeamPlayerWidget(QGroupBox):
         return prefix+" "+gamerTag if prefix else gamerTag
 
     def Clear(self, no_mains=False):
-        StateManager.BlockSaving()
+        with StateManager.SaveBlock():
+            self.DoClear(no_mains=no_mains)
+
+    def DoClear(self, no_mains=False):
         with self.dataLock:
             for c in self.findChildren(QLineEdit):
                 if c.objectName() != "" and c.objectName() != 'qt_spinbox_lineedit':
@@ -957,4 +963,3 @@ class TSHTeamPlayerWidget(QGroupBox):
                         continue  # only executed if the inner loop DID break
                 else:
                     c.setCurrentIndex(0)
-        StateManager.ReleaseSaving()

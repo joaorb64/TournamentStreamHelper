@@ -39,9 +39,11 @@ class TSHScoreboardManager(QDockWidget):
         self.scoreboardholder = []
 
     def UpdateAmount(self, amount):
-        StateManager.BlockSaving()
-
+        # BlockSaving() lives inside the try so that the finally below always
+        # releases it, even if one of the calls in between raises.
         try:
+            StateManager.BlockSaving()
+
             if amount > len(self.scoreboardholder):
                 logger.info(
                     "Scoreboard Manager - Creating Scoreboard " + str(amount))

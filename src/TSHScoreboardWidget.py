@@ -362,11 +362,8 @@ class TSHScoreboardWidget(QWidget):
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR)
         # self.colorButton1.setText(QApplication.translate("app", "COLOR"))
         self.colorButton1.colorChanged.connect(
-            lambda color: [
-                StateManager.BlockSaving(),
-                StateManager.Set(f"score.{self.scoreboardNumber}.team.1.color", color),
-                StateManager.ReleaseSaving()
-            ])
+            lambda color: StateManager.Set(
+                f"score.{self.scoreboardNumber}.team.1.color", color))
         self.CommandTeamColor(0, DEFAULT_TEAM1_COLOR)
 
         self.colorMenu1 = QComboBox()
@@ -425,11 +422,8 @@ class TSHScoreboardWidget(QWidget):
         DEFAULT_TEAM2_COLOR = SettingsManager.Get("general.team_2_default_color", "#2e89ff")
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR)
         self.colorButton2.colorChanged.connect(
-            lambda color: [
-                StateManager.BlockSaving(),
-                StateManager.Set(f"score.{self.scoreboardNumber}.team.2.color", color),
-                StateManager.ReleaseSaving()
-            ])
+            lambda color: StateManager.Set(
+                f"score.{self.scoreboardNumber}.team.2.color", color))
         # self.colorButton2.setText(QApplication.translate("app", "COLOR"))
         self.CommandTeamColor(1, DEFAULT_TEAM2_COLOR)
 
@@ -504,24 +498,7 @@ class TSHScoreboardWidget(QWidget):
         self.individualGameTracker.signals.stageResultsUpdate.connect(self.StageResultsToScore)
         
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.connect(
-            lambda value: [
-                StateManager.BlockSaving(),
-                StateManager.Set(
-                    f"score.{self.scoreboardNumber}.best_of", value),
-                StateManager.Set(
-                    f"score.{self.scoreboardNumber}.best_of_short_text", f"BO{value}"),
-                StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
-                    "best_of").format(value) if value > 0 else ""),
-                StateManager.Set(
-                    f"score.{self.scoreboardNumber}.first_to", math.ceil(value/2)),
-                StateManager.Set(
-                    f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}"),
-                StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
-                    "first_to").format(math.ceil(value/2)) if value > 0 else ""),
-                self.individualGameTracker.SetStageCount(value),
-                StateManager.ReleaseSaving()
-            ]
-        )
+            self.ExportBestOf)
         self.scoreColumn.findChild(QSpinBox, "best_of").valueChanged.emit(0)
 
         self.scoreColumn.findChild(QSpinBox, "score_left").valueChanged.connect(
@@ -586,6 +563,22 @@ class TSHScoreboardWidget(QWidget):
 
         self.scoreColumn.findChild(QVBoxLayout, "verticalLayout").addWidget(self.individualGameTracker)
 
+
+    def ExportBestOf(self, value):
+        with StateManager.SaveBlock():
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.best_of", value)
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.best_of_short_text", f"BO{value}")
+            StateManager.Set(f"score.{self.scoreboardNumber}.best_of_text", TSHLocaleHelper.matchNames.get(
+                "best_of").format(value) if value > 0 else "")
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.first_to", math.ceil(value/2))
+            StateManager.Set(
+                f"score.{self.scoreboardNumber}.first_to_short_text", f"FT{math.ceil(value/2)}")
+            StateManager.Set(f"score.{self.scoreboardNumber}.first_to_text", TSHLocaleHelper.matchNames.get(
+                "first_to").format(math.ceil(value/2)) if value > 0 else "")
+            self.individualGameTracker.SetStageCount(value)
 
     def StageResultsToScore(self, team_1_score, team_2_score):
         with QSignalBlocker(self.scoreColumn.findChild(QSpinBox, "score_left")):
@@ -807,13 +800,15 @@ class TSHScoreboardWidget(QWidget):
             self.ToggleElements(action, element[1])
 
     def SwapTeams(self):
-        StateManager.BlockSaving()
-
         # Lock all player widgets
         for p in self.playerWidgets:
             p.dataLock.acquire()
 
+        # BlockSaving() lives inside the try so that the finally below always
+        # releases it, even if one of the calls in between raises.
         try:
+            StateManager.BlockSaving()
+
             for i, p in enumerate(self.team1playerWidgets):
                 p.SwapWith(self.team2playerWidgets[i])
 
@@ -870,11 +865,8 @@ class TSHScoreboardWidget(QWidget):
 
         logger.info("STATION SETS LOADED -----------------------------")
         logger.info(data)
-        StateManager.BlockSaving()
 
         StateManager.Set(f"score.{self.scoreboardNumber}.station_queue", data)
-
-        StateManager.ReleaseSaving()
 
     def NewSetSelected(self, data):
         if not SettingsManager.Get("general.disable_autoupdate", False):
@@ -906,9 +898,12 @@ class TSHScoreboardWidget(QWidget):
         # Lock all player widgets
         for p in self.playerWidgets:
             p.dataLock.acquire()
-        StateManager.BlockSaving()
 
+        # BlockSaving() lives inside the try so that the finally below always
+        # releases it, even if one of the calls in between raises.
         try:
+            StateManager.BlockSaving()
+
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
@@ -1079,10 +1074,8 @@ class TSHScoreboardWidget(QWidget):
                 if team == 1:
                     self.colorButton2.setColor(value)
                 if team in (0, 1):
-                    StateManager.BlockSaving()
                     StateManager.Set(
                         f"score.{self.scoreboardNumber}.team.{team + 1}.color", value)
-                    StateManager.ReleaseSaving()
                 
                 # Set in menu if recognized
                 if type(color) is int and force_opponent:
@@ -1097,13 +1090,15 @@ class TSHScoreboardWidget(QWidget):
 
     # Modifies the current set data. Does not check for id, so do not call this with data that may lead to another hbox incident
     def ChangeSetData(self, data):
-        StateManager.BlockSaving()
-
-        StateManager.Set(f"score.{self.scoreboardNumber}.phase_size", data.get("numSeeds"))
-        StateManager.Set(f"score.{self.scoreboardNumber}.num_groups", data.get("groupCount"))
-        StateManager.Set(f"score.{self.scoreboardNumber}.round", data.get("round"))
-
+        # BlockSaving() lives inside the try so that the finally below always
+        # releases it, even if one of the calls in between raises.
         try:
+            StateManager.BlockSaving()
+
+            StateManager.Set(f"score.{self.scoreboardNumber}.phase_size", data.get("numSeeds"))
+            StateManager.Set(f"score.{self.scoreboardNumber}.num_groups", data.get("groupCount"))
+            StateManager.Set(f"score.{self.scoreboardNumber}.round", data.get("round"))
+
             round_name = data.get("round_name")
             if round_name:
                 self.scoreColumn.findChild(

@@ -33,6 +33,14 @@ class StateManager:
     threads = []
     loop = None
 
+    # Timestamp of the last 0 -> 1 transition of saveBlocked, used by the
+    # watchdog to detect a BlockSaving() that never got its ReleaseSaving().
+    saveBlockedSince = None
+
+    # If saving stays blocked for longer than this (seconds) while there are
+    # pending changes, we assume a block was leaked and force a save.
+    DEFAULT_BLOCK_WATCHDOG_SECONDS = 30
+
     # State paths whose subtrees are excluded from the out/ file export.
     # Use this for large lookup tables that are only useful as JSON (e.g. game.stages).
     EXPORT_EXCLUDED_PREFIXES = (
@@ -40,92 +48,189 @@ class StateManager:
     )
 
     @contextlib.contextmanager
-    def SaveBlock():
-        StateManager.BlockSaving()
+    def SaveBlock(watchdog=True):
+        StateManager.BlockSaving(watchdog=watchdog)
         try:
             yield
         finally:
             StateManager.ReleaseSaving()
 
-    def BlockSaving():
-        StateManager.saveBlocked += 1
-        if SettingsManager.Get("general.statemanager_logging", False):
-            logger.debug("Initial Block - Current Blocking Status: " + str(StateManager.saveBlocked))
+    def BlockSaving(watchdog=True):
+        # watchdog=False marks a block that is expected to be long lived (app
+        # startup), so the stuck-block watchdog doesn't fire on it.
+        with StateManager.lock:
+            StateManager.saveBlocked += 1
+            if StateManager.saveBlocked == 1:
+                StateManager.saveBlockedSince = time.time() if watchdog else None
+            if SettingsManager.Get("general.statemanager_logging", False):
+                logger.debug("Initial Block - Current Blocking Status: " + str(StateManager.saveBlocked))
 
     def ReleaseSaving():
-        StateManager.saveBlocked -= 1
-        if SettingsManager.Get("general.statemanager_logging", False):
-            logger.debug("Release Block - Current Blocking Status: " + str(StateManager.saveBlocked))
-        if StateManager.saveBlocked == 0:
+        with StateManager.lock:
+            StateManager.saveBlocked -= 1
+            if SettingsManager.Get("general.statemanager_logging", False):
+                logger.debug("Release Block - Current Blocking Status: " + str(StateManager.saveBlocked))
+
+            # More releases than blocks would leave the counter negative, which
+            # silently disables every future export just like a leaked block.
+            if StateManager.saveBlocked < 0:
+                logger.error(
+                    "StateManager save block counter went negative "
+                    f"({StateManager.saveBlocked}); there is a ReleaseSaving() "
+                    "without a matching BlockSaving(). Resetting to 0.")
+                StateManager.saveBlocked = 0
+
+            if StateManager.saveBlocked == 0:
+                StateManager.saveBlockedSince = None
+                StateManager.SaveState()
+
+    def ResetSaveBlock(reason: str):
+        """Force saving back to an unblocked state and export immediately.
+
+        Used to recover from an unbalanced BlockSaving() (usually an exception
+        thrown between BlockSaving() and ReleaseSaving()), which would
+        otherwise stop every export until the application is restarted.
+        """
+        with StateManager.lock:
+            if StateManager.saveBlocked == 0:
+                return
+            logger.error(
+                f"StateManager saving was stuck blocked ({StateManager.saveBlocked}): "
+                f"{reason}. Forcing a save.")
+            StateManager.saveBlocked = 0
+            StateManager.saveBlockedSince = None
             StateManager.SaveState()
 
+    def CheckSaveBlockWatchdog():
+        """Recover the export if saving has been blocked for too long."""
+        blockedSince = StateManager.saveBlockedSince
+
+        if StateManager.saveBlocked <= 0 or blockedSince is None:
+            return
+
+        timeout = SettingsManager.Get(
+            "general.statemanager_block_timeout",
+            StateManager.DEFAULT_BLOCK_WATCHDOG_SECONDS)
+
+        if timeout <= 0:
+            return
+
+        blockedFor = time.time() - blockedSince
+
+        if blockedFor > timeout:
+            StateManager.ResetSaveBlock(
+                f"saving has been blocked for {blockedFor:.1f}s, which points to a "
+                "BlockSaving() without a matching ReleaseSaving()")
+
     def SaveState():
-        if StateManager.saveBlocked == 0:
-            with StateManager.lock:
-                StateManager.threads = []
+        if StateManager.saveBlocked != 0:
+            return
 
-                def ExportAll(ref_diff):
-                    StateManager.state.update({"timestamp": time.time()})
+        with StateManager.lock:
+            try:
+                StateManager.DoSaveState()
+            except Exception as e:
+                # An export failure must never escape into a caller that is
+                # holding a save block: it would skip that caller's
+                # ReleaseSaving() and disable every future export.
+                logger.error(traceback.format_exc())
+
+    def DoSaveState():
+        StateManager.threads = []
+
+        def EncodeFallback(value):
+            # Without this a single value orjson can't handle would stop
+            # program_state.json from ever being written again.
+            logger.warning(
+                f"State contains a {type(value).__name__} value which isn't JSON "
+                "serializable; exporting it as text")
+            return str(value)
+
+        def ExportAll(ref_diff):
+            try:
+                StateManager.state.update({"timestamp": time.time()})
+                try:
+                    encoded = orjson.dumps(
+                        StateManager.state, default=EncodeFallback,
+                        option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
+
+                    # Write to a temp file then atomically replace, so a concurrent
+                    # reader never sees a truncated file. On Windows the replace can
+                    # fail if the browser has the destination open; fall back to a
+                    # direct write in that case.
+                    tmp_path = "./out/program_state.json.tmp"
+                    with open(tmp_path, 'wb') as file:
+                        file.write(encoded)
                     try:
-                        encoded = orjson.dumps(
-                            StateManager.state, option=orjson.OPT_NON_STR_KEYS | orjson.OPT_INDENT_2)
-
-                        # Write to a temp file then atomically replace, so a concurrent
-                        # reader never sees a truncated file. On Windows the replace can
-                        # fail if the browser has the destination open; fall back to a
-                        # direct write in that case.
-                        tmp_path = "./out/program_state.json.tmp"
-                        with open(tmp_path, 'wb') as file:
+                        os.replace(tmp_path, "./out/program_state.json")
+                    except PermissionError:
+                        os.remove(tmp_path)
+                        with open("./out/program_state.json", 'wb') as file:
                             file.write(encoded)
-                        try:
-                            os.replace(tmp_path, "./out/program_state.json")
-                        except PermissionError:
-                            os.remove(tmp_path)
-                            with open("./out/program_state.json", 'wb') as file:
-                                file.write(encoded)
-                    finally:
-                        StateManager.state.pop("timestamp", None)
+                finally:
+                    StateManager.state.pop("timestamp", None)
 
-                    if not SettingsManager.Get("general.disable_export", False):
-                        StateManager.ExportText(
-                            StateManager.lastSavedState, ref_diff)
-                    StateManager.lastSavedState = deep_clone(
-                        StateManager.state)
+                if not SettingsManager.Get("general.disable_export", False):
+                    StateManager.ExportText(
+                        StateManager.lastSavedState, ref_diff)
+                StateManager.lastSavedState = deep_clone(
+                    StateManager.state)
+            except Exception as e:
+                # This runs in its own thread; without this the traceback would
+                # only reach the thread excepthook.
+                logger.error(traceback.format_exc())
 
-                # logger.debug(StateManager.changedKeys)
+        # logger.debug(StateManager.changedKeys)
 
-                diff = DeepDiff(
-                    StateManager.lastSavedState,
-                    StateManager.state,
-                    exclude_types=[type(None)],
-                    include_paths=list(set(StateManager.changedKeys)),
-                    verbose_level=2, # Necessary to see values of added items.
-                )
+        changedKeys = list(set(StateManager.changedKeys))
+
+        # Cleared up front: a change we cannot diff must not be retried on every
+        # subsequent save, or a single bad key would stall the export for good.
+        StateManager.changedKeys = []
+
+        try:
+            diff = DeepDiff(
+                StateManager.lastSavedState,
+                StateManager.state,
+                exclude_types=[type(None)],
+                include_paths=changedKeys,
+                verbose_level=2, # Necessary to see values of added items.
+            )
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            diff = None
+
+        if diff is not None:
+            try:
                 delta = Delta(diff).to_flat_dicts()
                 # logger.debug(f"State diff length: {diff_count}")
                 if len(delta) > 100:
                     StateManager.deltaIndex += 1
                     StateManager.signals.state_big_change.emit()
                 elif len(delta) > 0:
-                    try:
-                        StateManager.deltaIndex += 1
-                        StateManager.signals.state_updated.emit({
-                            'delta_index': StateManager.deltaIndex,
-                            'delta': Delta(diff).to_flat_dicts()
-                        })
-                    except TypeError:
-                        logger.warning(f"Couldn't serialize diff. Changed Keys: {StateManager.changedKeys}")
+                    StateManager.deltaIndex += 1
+                    StateManager.signals.state_updated.emit({
+                        'delta_index': StateManager.deltaIndex,
+                        'delta': delta
+                    })
+            except TypeError:
+                logger.warning(f"Couldn't serialize diff. Changed Keys: {changedKeys}")
+            except Exception as e:
+                logger.error(traceback.format_exc())
+                # Overlays can still resync from the full state.
+                StateManager.deltaIndex += 1
+                StateManager.signals.state_big_change.emit()
 
-                StateManager.changedKeys = []
+        # When the diff couldn't be computed we still export, so that
+        # program_state.json keeps tracking the live state.
+        if diff is None or len(diff) > 0:
+            exportThread = threading.Thread(
+                target=partial(ExportAll, ref_diff=diff if diff is not None else {}))
+            StateManager.threads.append(exportThread)
+            exportThread.start()
 
-                if len(diff) > 0:
-                    exportThread = threading.Thread(
-                        target=partial(ExportAll, ref_diff=diff))
-                    StateManager.threads.append(exportThread)
-                    exportThread.start()
-
-                    for t in StateManager.threads:
-                        t.join()
+            for t in StateManager.threads:
+                t.join()
 
     def LoadState():
         try:
@@ -159,6 +264,8 @@ class StateManager:
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
                 # StateManager.ExportText(oldState)
+            else:
+                StateManager.CheckSaveBlockWatchdog()
 
     def Unset(key: str):
         # import inspect
@@ -178,6 +285,8 @@ class StateManager:
             if StateManager.saveBlocked == 0:
                 StateManager.SaveState()
                 # StateManager.ExportText(oldState)
+            else:
+                StateManager.CheckSaveBlockWatchdog()
 
     def Get(key: str, default=None):
         return deep_get(StateManager.state, key, default)
