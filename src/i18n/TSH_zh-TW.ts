@@ -142,12 +142,12 @@ p, li { white-space: pre-wrap; }
     <name>Form</name>
     <message>
         <location filename="../layout/TSHScoreboardStage.ui" line="14"/>
-        <location filename="../layout/TSHTeamPlayer.ui" line="25"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
-        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
-        <location filename="../layout/TSHScoreboardScore.ui" line="20"/>
         <location filename="../layout/TSHThumbnailSettings.ui" line="14"/>
+        <location filename="../layout/TSHScoreboardScore.ui" line="20"/>
+        <location filename="../layout/TSHScoreboardPlayer.ui" line="25"/>
         <location filename="../layout/TSHBattleTeam.ui" line="26"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="20"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="25"/>
         <source>Form</source>
         <translation>界面</translation>
     </message>
@@ -167,26 +167,26 @@ p, li { white-space: pre-wrap; }
         <translation>真實姓名</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="141"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="90"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="141"/>
         <source>Region</source>
         <translation>國家</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="165"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="114"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="165"/>
         <source>Country</source>
         <translation>地區</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="194"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="211"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="194"/>
         <source>TWITTER</source>
         <translation>推特（X）</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="212"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="232"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="212"/>
         <source>Handle Only</source>
         <translation>不帶@輸入</translation>
     </message>
@@ -196,32 +196,32 @@ p, li { white-space: pre-wrap; }
         <translation>已淘汰</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="117"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="66"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="117"/>
         <source>LOCATION</source>
         <translation>所在地</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="230"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="326"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="230"/>
         <source>Pronouns</source>
         <translation>代詞</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="89"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="341"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="89"/>
         <source>CHARACTERS</source>
         <translation>角色</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="62"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="170"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="62"/>
         <source>Sponsor</source>
         <translation>贊助商</translation>
     </message>
     <message>
-        <location filename="../layout/TSHTeamPlayer.ui" line="74"/>
         <location filename="../layout/TSHScoreboardPlayer.ui" line="182"/>
+        <location filename="../layout/TSHTeamPlayer.ui" line="74"/>
         <source>GamerTag</source>
         <translation>選手昵稱</translation>
     </message>
@@ -374,8 +374,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../TSHPlayerListSlotWidget.py" line="31"/>
-        <location filename="../layout/TSHScoreboardTeam.ui" line="73"/>
         <location filename="../layout/TSHBattleTeam.ui" line="60"/>
+        <location filename="../layout/TSHScoreboardTeam.ui" line="73"/>
         <source>Team Name</source>
         <translation>隊伍名稱</translation>
     </message>
@@ -789,13 +789,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>app</name>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="640"/>
-        <location filename="../TSHScoreboardWidget.py" line="662"/>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="932"/>
         <location filename="../TournamentStreamHelper.py" line="196"/>
         <location filename="../TournamentStreamHelper.py" line="232"/>
         <location filename="../TournamentStreamHelper.py" line="740"/>
         <location filename="../TournamentStreamHelper.py" line="1136"/>
+        <location filename="../TSHScoreboardWidget.py" line="669"/>
+        <location filename="../TSHScoreboardWidget.py" line="691"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="932"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -805,8 +805,8 @@ p, li { white-space: pre-wrap; }
         <translation>程序即將關閉。</translation>
     </message>
     <message>
-        <location filename="../TSHThumbnailSettingsWidget.py" line="78"/>
         <location filename="../TournamentStreamHelper.py" line="409"/>
+        <location filename="../TSHThumbnailSettingsWidget.py" line="78"/>
         <source>Thumbnail Settings</source>
         <translation>縮略圖設置</translation>
     </message>
@@ -838,14 +838,14 @@ p, li { white-space: pre-wrap; }
         <translation>地圖</translation>
     </message>
     <message>
-        <location filename="../TSHCommentaryWidget.py" line="19"/>
         <location filename="../TournamentStreamHelper.py" line="457"/>
+        <location filename="../TSHCommentaryWidget.py" line="19"/>
         <source>Commentary</source>
         <translation>解說</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="34"/>
         <location filename="../TournamentStreamHelper.py" line="470"/>
+        <location filename="../TSHPlayerListWidget.py" line="34"/>
         <source>Player List</source>
         <translation>選手列表</translation>
     </message>
@@ -1090,9 +1090,9 @@ p, li { white-space: pre-wrap; }
         <translation>更新</translation>
     </message>
     <message>
+        <location filename="../TournamentStreamHelper.py" line="1173"/>
         <location filename="../TSHTournamentDataProvider.py" line="226"/>
         <location filename="../TSHTournamentDataProvider.py" line="250"/>
-        <location filename="../TournamentStreamHelper.py" line="1173"/>
         <location filename="../TSHAssetDownloader.py" line="335"/>
         <location filename="../TSHAssetDownloader.py" line="543"/>
         <location filename="../Helpers/TSHDownloadHelper.py" line="210"/>
@@ -1226,22 +1226,22 @@ p, li { white-space: pre-wrap; }
         <translation>下載失敗：</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <location filename="../TSHBracketWidget.py" line="83"/>
+        <location filename="../TSHPlayerListWidget.py" line="57"/>
         <source>Number of slots</source>
         <translation>選手/隊伍數量</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <location filename="../TSHBracketWidget.py" line="94"/>
+        <location filename="../TSHPlayerListWidget.py" line="66"/>
         <source>Players per slot</source>
         <translation>每個隊伍的選手數量</translation>
     </message>
     <message>
-        <location filename="../TSHPlayerListWidget.py" line="75"/>
-        <location filename="../TSHCommentaryWidget.py" line="52"/>
-        <location filename="../TSHScoreboardWidget.py" line="171"/>
         <location filename="../TSHBracketWidget.py" line="103"/>
+        <location filename="../TSHPlayerListWidget.py" line="75"/>
+        <location filename="../TSHScoreboardWidget.py" line="172"/>
+        <location filename="../TSHCommentaryWidget.py" line="52"/>
         <source>Characters per player</source>
         <translation>每位選手使用的角色數量</translation>
     </message>
@@ -1276,8 +1276,8 @@ p, li { white-space: pre-wrap; }
         <translation>復制文本</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="236"/>
         <location filename="../TSHCommentaryWidget.py" line="78"/>
-        <location filename="../TSHScoreboardWidget.py" line="235"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="65"/>
         <source>Additional information</source>
         <translation>附加信息</translation>
@@ -1294,15 +1294,15 @@ p, li { white-space: pre-wrap; }
         <translation>刪除選手信息</translation>
     </message>
     <message>
-        <location filename="../TSHTeamPlayerWidget.py" line="83"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="112"/>
+        <location filename="../TSHTeamPlayerWidget.py" line="83"/>
         <source>Clear</source>
         <translation>清空</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardPlayerWidget.py" line="409"/>
         <location filename="../TSHSelectSetWindow.py" line="114"/>
         <location filename="../TSHSelectSetWindow.py" line="116"/>
-        <location filename="../TSHScoreboardPlayerWidget.py" line="409"/>
         <location filename="../thumbnail/main_generate_thumbnail.py" line="1183"/>
         <source>Player {0}</source>
         <translation>選手{0}</translation>
@@ -1343,87 +1343,87 @@ p, li { white-space: pre-wrap; }
         <translation>按局數設置禁圖的格式不正確</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="180"/>
+        <location filename="../TSHScoreboardWidget.py" line="181"/>
         <source>Players per team</source>
         <translation>每隊選手數量</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="193"/>
+        <location filename="../TSHScoreboardWidget.py" line="194"/>
         <source>Generate Thumbnail</source>
         <translation>生成縮略圖</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="228"/>
         <location filename="../TSHCommentaryWidget.py" line="70"/>
-        <location filename="../TSHScoreboardWidget.py" line="227"/>
         <source>Real Name</source>
         <translation>真實姓名</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="229"/>
         <location filename="../TSHCommentaryWidget.py" line="71"/>
-        <location filename="../TSHScoreboardWidget.py" line="228"/>
         <source>Twitter</source>
         <translation>推特（X）</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="230"/>
         <location filename="../TSHCommentaryWidget.py" line="72"/>
-        <location filename="../TSHScoreboardWidget.py" line="229"/>
         <source>Seed</source>
         <translation>種子位</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="231"/>
         <location filename="../TSHCommentaryWidget.py" line="73"/>
-        <location filename="../TSHScoreboardWidget.py" line="230"/>
         <source>Birthday</source>
         <translation>生日</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="232"/>
         <location filename="../TSHCommentaryWidget.py" line="74"/>
-        <location filename="../TSHScoreboardWidget.py" line="231"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="233"/>
         <location filename="../TSHCommentaryWidget.py" line="75"/>
-        <location filename="../TSHScoreboardWidget.py" line="232"/>
         <source>Characters</source>
         <translation>角色</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="234"/>
         <location filename="../TSHCommentaryWidget.py" line="76"/>
-        <location filename="../TSHScoreboardWidget.py" line="233"/>
         <source>Pronouns</source>
         <translation>代詞</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="202"/>
+        <location filename="../TSHScoreboardWidget.py" line="203"/>
         <source>Post to Bluesky</source>
         <translation>關聯至Bluesky</translation>
     </message>
     <message>
+        <location filename="../TSHScoreboardWidget.py" line="235"/>
         <location filename="../TSHCommentaryWidget.py" line="77"/>
-        <location filename="../TSHScoreboardWidget.py" line="234"/>
         <location filename="../TSHScoreboardPlayerWidget.py" line="597"/>
         <source>Controller</source>
         <translation>控制器</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="264"/>
+        <location filename="../TSHScoreboardWidget.py" line="265"/>
         <source>Stream URL</source>
         <translation>直播鍊接</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="275"/>
-        <location filename="../TSHScoreboardWidget.py" line="691"/>
+        <location filename="../TSHScoreboardWidget.py" line="276"/>
+        <location filename="../TSHScoreboardWidget.py" line="720"/>
         <source>Load set</source>
         <translation>加載對局</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="285"/>
+        <location filename="../TSHScoreboardWidget.py" line="286"/>
         <source>Track sets from a stream or station</source>
         <translation>自動收錄直播/分臺對局</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="316"/>
+        <location filename="../TSHScoreboardWidget.py" line="317"/>
         <source>Open {0} in a browser to edit the scoreboard remotely.</source>
         <translation>在瀏攬器中打開 {0} 即可遠程控制計分板。</translation>
     </message>
@@ -1433,8 +1433,8 @@ p, li { white-space: pre-wrap; }
         <translation>測試版</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="354"/>
-        <location filename="../TSHScoreboardWidget.py" line="419"/>
+        <location filename="../TSHScoreboardWidget.py" line="355"/>
+        <location filename="../TSHScoreboardWidget.py" line="420"/>
         <source>TEAM {0}</source>
         <translation>{0}P/隊</translation>
     </message>
@@ -1460,52 +1460,52 @@ p, li { white-space: pre-wrap; }
         <translation>單局數據</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="652"/>
+        <location filename="../TSHScoreboardWidget.py" line="681"/>
         <source>TSH - Bluesky</source>
         <translation>TSH-Bluesky</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="658"/>
+        <location filename="../TSHScoreboardWidget.py" line="687"/>
         <source>The post has successfully been sent to account {0}</source>
         <translation>已成功發布至Bluesky賬號{0}</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="678"/>
+        <location filename="../TSHScoreboardWidget.py" line="707"/>
         <source>Load set from {0}</source>
         <translation>從{0}中加載對局</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="883"/>
+        <location filename="../TSHScoreboardWidget.py" line="934"/>
         <source>Auto update (Set)</source>
         <translation>自動更新（對局）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="887"/>
+        <location filename="../TSHScoreboardWidget.py" line="938"/>
         <source>Auto update (Stream [{0}])</source>
         <translation>自動更新（直播【{0}】）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="891"/>
+        <location filename="../TSHScoreboardWidget.py" line="942"/>
         <source>Auto update (Station [{0}])</source>
         <translation>自動更新（賽臺【{0}】）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="894"/>
+        <location filename="../TSHScoreboardWidget.py" line="945"/>
         <source>Auto update (User)</source>
         <translation>自動更新（用戶）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="896"/>
+        <location filename="../TSHScoreboardWidget.py" line="947"/>
         <source>Auto update</source>
         <translation>自動更新</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1010"/>
+        <location filename="../TSHScoreboardWidget.py" line="1061"/>
         <source>Load user set ({0})</source>
         <translation>加載用戶對局（{0}）</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1014"/>
+        <location filename="../TSHScoreboardWidget.py" line="1065"/>
         <source>Load user set</source>
         <translation>加載用戶對局</translation>
     </message>
@@ -1541,8 +1541,8 @@ p, li { white-space: pre-wrap; }
         <translation>賽臺</translation>
     </message>
     <message>
-        <location filename="../TSHTeamBattleWidget.py" line="66"/>
         <location filename="../TournamentStreamHelper.py" line="433"/>
+        <location filename="../TSHTeamBattleWidget.py" line="66"/>
         <source>Crew/Team Battle</source>
         <translation>團體戰</translation>
     </message>
@@ -2406,18 +2406,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>thumb_app</name>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="608"/>
+        <location filename="../TSHScoreboardWidget.py" line="637"/>
         <location filename="../TSHThumbnailSettingsWidget.py" line="930"/>
         <source>TSH - Thumbnail</source>
         <translation>TSH-縮略圖</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="614"/>
+        <location filename="../TSHScoreboardWidget.py" line="643"/>
         <source>The thumbnail has been generated here:</source>
         <translation>縮略圖已生成至此處：</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="615"/>
+        <location filename="../TSHScoreboardWidget.py" line="644"/>
         <source>The video title and description have also been generated.</source>
         <translation>視頻標題和簡介已生成</translation>
     </message>
