@@ -2,6 +2,7 @@ import math
 import platform
 import socket
 import subprocess
+from copy import deepcopy
 
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
@@ -518,12 +519,16 @@ class TSHScoreboardWidget(QWidget):
             QSpinBox, "score_right").valueChanged.emit(0)
 
         self.team1column.findChild(QLineEdit, "teamName").editingFinished.connect(
-            lambda: self.ExportTeamLogo(
-                "1", self.team1column.findChild(QLineEdit, "teamName").text())
+            lambda: [
+                        self.ExportTeamLogo("1", self.team1column.findChild(QLineEdit, "teamName").text()),
+                        self.ExportLosersStatus("1", self.team1column.findChild(QLineEdit, "teamName").text(), self.team1column.findChild(QCheckBox, "losers").isChecked())
+                    ]
         )
         self.team2column.findChild(QLineEdit, "teamName").editingFinished.connect(
-            lambda: self.ExportTeamLogo(
-                "2", self.team2column.findChild(QLineEdit, "teamName").text())
+            lambda: [
+                        self.ExportTeamLogo("2", self.team2column.findChild(QLineEdit, "teamName").text()),
+                        self.ExportLosersStatus("2", self.team2column.findChild(QLineEdit, "teamName").text(), self.team2column.findChild(QCheckBox, "losers").isChecked())
+                    ]
         )
 
         self.teamsSwapped = False
@@ -600,6 +605,30 @@ class TSHScoreboardWidget(QWidget):
         else:
             StateManager.Set(
                 f"score.{self.scoreboardNumber}.team.{team}.logo", None)
+    
+    def ExportLosersStatus(self, team, team_name, is_in_losers):
+        merged_team_name = deepcopy(team_name)
+        if not team_name: # If no manually set team name, add generated team name based on player names
+            players = StateManager.Get(f"score.{self.scoreboardNumber}.team.{team}.player", {})
+            player_names = []
+            players_names_only = []
+            for index in players.keys():
+                if players[index].get("name", ""):
+                    players_names_only.append(players[index].get("name", ""))
+                    if players[index].get("team"):
+                        player_names.append(f'{players[index].get("team", "")} | {players[index].get("name", "")}')
+                    else:
+                        player_names.append(players[index].get("name", ""))
+            if len(player_names) >= 2: # If the team has 2 players or more, only export the names of the players in the team name
+                merged_team_name = " / ".join(players_names_only)
+            else:
+                merged_team_name = " / ".join(player_names)
+        losers_indicator = ""
+        if is_in_losers:
+            losers_indicator = "[L]"
+            merged_team_name = merged_team_name + " " + losers_indicator
+        StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.mergedTeamName", merged_team_name)
+        StateManager.Set(f"score.{self.scoreboardNumber}.team.{team}.losersIndicator", losers_indicator)
 
     def GenerateThumbnail(self, quiet_mode=False, disable_msgbox=False):
         if not disable_msgbox:
@@ -710,7 +739,10 @@ class TSHScoreboardWidget(QWidget):
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team1column.findChild(
-                QCheckBox, "losers").toggled.connect(p.SetLosers)
+                QCheckBox, "losers").toggled.connect(lambda: [
+                                                                p.SetLosers,
+                                                                self.ExportLosersStatus("1", self.team1column.findChild(QLineEdit, "teamName").text(), self.team1column.findChild(QCheckBox, "losers").isChecked())
+                                                             ])
 
             p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
                 self.team1playerWidgets[max(0, self.team1playerWidgets.index(p) - 1)]))
@@ -738,7 +770,10 @@ class TSHScoreboardWidget(QWidget):
                 QScrollArea).widget().layout().addWidget(p)
             p.SetCharactersPerPlayer(self.charNumber.value())
             self.team2column.findChild(
-                QCheckBox, "losers").toggled.connect(p.SetLosers)
+                QCheckBox, "losers").toggled.connect(lambda: [
+                                                                p.SetLosers,
+                                                                self.ExportLosersStatus("2", self.team2column.findChild(QLineEdit, "teamName").text(), self.team2column.findChild(QCheckBox, "losers").isChecked())
+                                                             ])
 
             p.btMoveUp.clicked.connect(lambda index, p=p: p.SwapWith(
                 self.team2playerWidgets[max(0, self.team2playerWidgets.index(p) - 1)]))
@@ -794,6 +829,22 @@ class TSHScoreboardWidget(QWidget):
                 QLineEdit, "teamName").editingFinished.emit()
             self.team1column.findChild(QLabel, "teamLabel").setVisible(True)
             self.team2column.findChild(QLabel, "teamLabel").setVisible(True)
+
+        for p in self.team1playerWidgets:
+            p.findChild(QLineEdit, "name").editingFinished.connect(
+                                                                        lambda: self.ExportLosersStatus("1", self.team1column.findChild(QLineEdit, "teamName").text(), self.team1column.findChild(QCheckBox, "losers").isChecked())
+                                                                    )
+            p.findChild(QLineEdit, "team").editingFinished.connect(
+                                                                        lambda: self.ExportLosersStatus("1", self.team1column.findChild(QLineEdit, "teamName").text(), self.team1column.findChild(QCheckBox, "losers").isChecked())
+                                                                    )
+        
+        for p in self.team2playerWidgets:
+            p.findChild(QLineEdit, "name").editingFinished.connect(
+                                                                        lambda: self.ExportLosersStatus("2", self.team1column.findChild(QLineEdit, "teamName").text(), self.team2column.findChild(QCheckBox, "losers").isChecked())
+                                                                    )
+            p.findChild(QLineEdit, "team").editingFinished.connect(
+                                                                        lambda: self.ExportLosersStatus("2", self.team2column.findChild(QLineEdit, "teamName").text(), self.team2column.findChild(QCheckBox, "losers").isChecked())
+                                                                    )
 
         for x, element in enumerate(self.elements, start=1):
             action: QAction = self.eyeBt.menu().actions()[x]
