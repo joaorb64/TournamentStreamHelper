@@ -313,29 +313,26 @@ class TSHIndividualGameTracker(QWidget):
 
 
     def SetStage(self, index=0, stage_codename=None):
-        StateManager.BlockSaving()
-        print(f"Setting stage for game {index+1}")
-        if self.stage_widget_list:
-            target = self.findChild(QComboBox, f"stageMenu_{index}")
-            if stage_codename:
-                for i in range(1, TSHGameAssetManager.instance.stageModelWithBlank.rowCount()):
-                    current_menu_item_data = TSHGameAssetManager.instance.stageModelWithBlank.item(i).data(Qt.ItemDataRole.UserRole)
-                    if current_menu_item_data.get("codename") in stage_codename:
-                        print(i, stage_codename)
-                        target.setCurrentIndex(i)
-                        target.currentIndexChanged.emit(i)
-            else:
-                target.setCurrentIndex(0)
-                target.currentIndexChanged.emit(0)
-        
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            print(f"Setting stage for game {index+1}")
+            if self.stage_widget_list:
+                target = self.findChild(QComboBox, f"stageMenu_{index}")
+                if stage_codename:
+                    for i in range(1, TSHGameAssetManager.instance.stageModelWithBlank.rowCount()):
+                        current_menu_item_data = TSHGameAssetManager.instance.stageModelWithBlank.item(i).data(Qt.ItemDataRole.UserRole)
+                        if current_menu_item_data.get("codename") in stage_codename:
+                            print(i, stage_codename)
+                            target.setCurrentIndex(i)
+                            target.currentIndexChanged.emit(i)
+                else:
+                    target.setCurrentIndex(0)
+                    target.currentIndexChanged.emit(0)
 
     def ResetAllStages(self):
-        StateManager.BlockSaving()
-        print(f"Reset all stages in the game tracker")
-        if self.stage_widget_list:
-            for index in range(len(self.stage_widget_list)):
-                target = self.findChild(QComboBox, f"stageMenu_{index}")
-                target.setCurrentIndex(0)
-                target.currentIndexChanged.emit(0)
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            print(f"Reset all stages in the game tracker")
+            if self.stage_widget_list:
+                for index in range(len(self.stage_widget_list)):
+                    target = self.findChild(QComboBox, f"stageMenu_{index}")
+                    target.setCurrentIndex(0)
+                    target.currentIndexChanged.emit(0)

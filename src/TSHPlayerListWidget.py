@@ -22,9 +22,11 @@ class TSHPlayerListWidgetSignals(QObject):
 
 class TSHPlayerListWidget(QDockWidget):
     def __init__(self, *args, base="player_list"):
-        StateManager.BlockSaving()
-        super().__init__(*args)
+        with StateManager.SaveBlock():
+            super().__init__(*args)
+            self.SetupUi(base)
 
+    def SetupUi(self, base):
         self.signals = TSHPlayerListWidgetSignals()
 
         self.playerList = TSHPlayerList(base=base)
@@ -116,8 +118,6 @@ class TSHPlayerListWidget(QDockWidget):
         TSHGameAssetManager.instance.signals.onLoad.connect(
             self.SetDefaultsFromAssets
         )
-
-        StateManager.ReleaseSaving()
 
     def LoadFromStandingsClicked(self):
         TSHTournamentDataProvider.instance.GetStandings(

@@ -17,9 +17,11 @@ class TSHPlayerListWidgetSignals(QObject):
 
 class TSHPlayerList(QWidget):
     def __init__(self, *args, base="player_list"):
-        StateManager.BlockSaving()
-        super().__init__(*args)
+        with StateManager.SaveBlock():
+            super().__init__(*args)
+            self.SetupUi(base)
 
+    def SetupUi(self, base):
         self.signals = TSHPlayerListWidgetSignals()
 
         self.base = base
@@ -47,7 +49,6 @@ class TSHPlayerList(QWidget):
         self.layout().addWidget(scrollArea)
 
         StateManager.Set(base, {})
-        StateManager.ReleaseSaving()
 
     def ChildDataChangedEmit(self):
         if not self.childDataChangedLock:
@@ -58,20 +59,30 @@ class TSHPlayerList(QWidget):
             self.slotNumber.value(), self.signals.UpdateData)
 
     def LoadFromStandings(self, data):
-        StateManager.BlockSaving()
-        if len(data) > 0:
-            self.SetSlotNumber(len(data))
-            playerNumber = len(data[0].get("players"))
-            self.SetPlayersPerTeam(playerNumber)
+        data = data or []
 
-            self.childDataChangedLock = True
-            for i, slot in enumerate(self.slotWidgets):
-                slot.SetTeamData(data[i])
-            self.childDataChangedLock = False
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            if len(data) > 0:
+                self.SetSlotNumber(len(data))
+                playerNumber = len(data[0].get("players") or [])
+                self.SetPlayersPerTeam(playerNumber)
+
+                self.childDataChangedLock = True
+                try:
+                    for i, slot in enumerate(self.slotWidgets):
+                        # SetSlotNumber can leave a different amount of slots
+                        # than there is data (e.g. a slot failed to be removed)
+                        if i >= len(data):
+                            break
+                        slot.SetTeamData(data[i])
+                finally:
+                    self.childDataChangedLock = False
 
     def SetSlotNumber(self, number):
-        StateManager.BlockSaving()
+        with StateManager.SaveBlock():
+            self.DoSetSlotNumber(number)
+
+    def DoSetSlotNumber(self, number):
         while len(self.slotWidgets) < number:
             s = TSHPlayerListSlotWidget(
                 len(self.slotWidgets)+1, self, base=self.base)
@@ -98,18 +109,17 @@ class TSHPlayerList(QWidget):
 
         self.signals.DataChanged.emit()
 
-        StateManager.ReleaseSaving()
-
     def SetCharactersPerPlayer(self, value):
         # logger.info("TSHPlayerList#SetCharactersPerPlayer")
         self.charactersPerPlayer = value
-        StateManager.BlockSaving()
-        self.childDataChangedLock = True
-        for s in self.slotWidgets:
-            s.SetCharacterNumber(value)
-        self.childDataChangedLock = False
-        self.signals.DataChanged.emit()
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            self.childDataChangedLock = True
+            try:
+                for s in self.slotWidgets:
+                    s.SetCharacterNumber(value)
+            finally:
+                self.childDataChangedLock = False
+            self.signals.DataChanged.emit()
 
     def SetScoresVisible(self, value):
         for s in self.slotWidgets:
@@ -121,10 +131,11 @@ class TSHPlayerList(QWidget):
     def SetPlayersPerTeam(self, number):
         # logger.info("TSHPlayerList#SetPlayersPerTeam")
         self.playersPerTeam = number
-        StateManager.BlockSaving()
-        self.childDataChangedLock = True
-        for s in self.slotWidgets:
-            s.SetPlayersPerTeam(number)
-        self.childDataChangedLock = False
-        self.signals.DataChanged.emit()
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            self.childDataChangedLock = True
+            try:
+                for s in self.slotWidgets:
+                    s.SetPlayersPerTeam(number)
+            finally:
+                self.childDataChangedLock = False
+            self.signals.DataChanged.emit()

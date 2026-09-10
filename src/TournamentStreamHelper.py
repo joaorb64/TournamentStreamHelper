@@ -318,8 +318,17 @@ class Window(QMainWindow):
         super().__init__()
 
         StateManager.loop = loop
-        StateManager.BlockSaving()
 
+        # Startup is expected to hold the block for a long time, so it opts out
+        # of the stuck-block watchdog.
+        with StateManager.SaveBlock(watchdog=False):
+            self.SetupUi()
+
+        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
+            self.ToggleTopOption)
+        StateManager.Unset("completed_sets")
+
+    def SetupUi(self):
         TSHLocaleHelper.LoadLocale()
         TSHLocaleHelper.LoadRoundNames()
         self.LoadTheme()
@@ -913,12 +922,6 @@ class Window(QMainWindow):
             self.webserver.ws_playerdb
         )
         TSHPlayerDB.LoadDB()
-
-        StateManager.ReleaseSaving()
-
-        TSHScoreboardManager.instance.signals.ScoreboardAmountChanged.connect(
-            self.ToggleTopOption)
-        StateManager.Unset("completed_sets")
 
     def SetGame(self, mods_active = False):
         index = next((i for i in range(self.gameSelect.model().rowCount()) if self.gameSelect.itemText(i) == TSHGameAssetManager.instance.selectedGame.get(

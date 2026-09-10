@@ -75,33 +75,8 @@ class TSHPlayerListSlotWidget(QGroupBox):
     def SetPlayersPerTeam(self, number):
         # logger.info(f"TSHPlayerListSlotWidget#SetPlayersPerTeam({number})")
         if number != len(self.playerWidgets):
-            StateManager.BlockSaving()
-            while len(self.playerWidgets) < number:
-                p = TSHScoreboardPlayerWidget(
-                    index=len(self.playerWidgets)+1, teamNumber=1, path=f'{self.base}.slot.{self.index}.player.{len(self.playerWidgets)+1}')
-                self.playerWidgets.append(p)
-                self.list.layout().addWidget(p)
-
-                p.SetCharactersPerPlayer(self.playerList.charactersPerPlayer)
-
-                index = len(self.playerWidgets)-1
-
-                p.btMoveUp.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
-                    self.playerWidgets[max(0, self.playerWidgets.index(p) - 1)]))
-                p.btMoveDown.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
-                    self.playerWidgets[min(len(self.playerWidgets) - 1, self.playerWidgets.index(p) + 1)]))
-
-                p.instanceSignals.dataChanged.connect(
-                    self.ChildDataChangedEmit)
-
-            while len(self.playerWidgets) > number:
-                p = self.playerWidgets[-1]
-                p.setParent(None)
-                self.playerWidgets.remove(p)
-                StateManager.Unset(p.path)
-                p.deleteLater()
-
-            StateManager.ReleaseSaving()
+            with StateManager.SaveBlock():
+                self.DoSetPlayersPerTeam(number)
 
         # if number > 1:
         #     self.team1column.findChild(QLineEdit, "teamName").setVisible(True)
@@ -112,52 +87,84 @@ class TSHPlayerListSlotWidget(QGroupBox):
         #     self.team2column.findChild(QLineEdit, "teamName").setVisible(False)
         #     self.team2column.findChild(QLineEdit, "teamName").setText("")
 
+    def DoSetPlayersPerTeam(self, number):
+        while len(self.playerWidgets) < number:
+            p = TSHScoreboardPlayerWidget(
+                index=len(self.playerWidgets)+1, teamNumber=1, path=f'{self.base}.slot.{self.index}.player.{len(self.playerWidgets)+1}')
+            self.playerWidgets.append(p)
+            self.list.layout().addWidget(p)
+
+            p.SetCharactersPerPlayer(self.playerList.charactersPerPlayer)
+
+            index = len(self.playerWidgets)-1
+
+            p.btMoveUp.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
+                self.playerWidgets[max(0, self.playerWidgets.index(p) - 1)]))
+            p.btMoveDown.clicked.connect(lambda x=None, index=index, p=p: p.SwapWith(
+                self.playerWidgets[min(len(self.playerWidgets) - 1, self.playerWidgets.index(p) + 1)]))
+
+            p.instanceSignals.dataChanged.connect(
+                self.ChildDataChangedEmit)
+
+        while len(self.playerWidgets) > number:
+            p = self.playerWidgets[-1]
+            p.setParent(None)
+            self.playerWidgets.remove(p)
+            StateManager.Unset(p.path)
+            p.deleteLater()
+
     def ChildDataChangedEmit(self):
         if not self.childDataChangedLock:
             self.signals.dataChanged.emit()
 
     def SetCharacterNumber(self, value):
         # logger.info(f"TSHPlayerListSlotWidget#SetCharacterNumber({value})")
-        StateManager.BlockSaving()
-        for pw in self.playerWidgets:
-            pw.SetCharactersPerPlayer(value)
-        StateManager.ReleaseSaving()
+        with StateManager.SaveBlock():
+            for pw in self.playerWidgets:
+                pw.SetCharactersPerPlayer(value)
 
     def SetTeamData(self, data):
-        StateManager.BlockSaving()
-        self.childDataChangedLock = True
-        if (data.get("name")):
-            self.slotName.setText(data.get("name"))
-            self.slotName.editingFinished.emit()
-        else:
-            self.slotName.setText("")
-            self.slotName.editingFinished.emit()
-            
-        StateManager.Set(f"{self.base}.slot.{self.index}.wins", data.get("wins"))
-        StateManager.Set(f"{self.base}.slot.{self.index}.loses", data.get("losses"))
-        StateManager.Set(f"{self.base}.slot.{self.index}.winPercentage", data.get("winPercentage"))
+        data = data or {}
 
-        for i, pw in enumerate(self.playerWidgets):
-            if data.get("players"):
-                try:
-                    data.get("players")[i]["wins"] = data.get("wins")
-                    data.get("players")[i]["losses"] = data.get("losses")
-                    data.get("players")[i]["winPercentage"] = data.get("winPercentage")
-                    pw.SetData(data.get("players")[i])
-                except:
-                    pw.Clear()
-                    logger.error(traceback.format_exc())
-            else:
-                pw.Clear()
-        StateManager.ReleaseSaving()
-        self.childDataChangedLock = False
+        try:
+            with StateManager.SaveBlock():
+                self.childDataChangedLock = True
+
+                if (data.get("name")):
+                    self.slotName.setText(data.get("name"))
+                    self.slotName.editingFinished.emit()
+                else:
+                    self.slotName.setText("")
+                    self.slotName.editingFinished.emit()
+
+                StateManager.Set(f"{self.base}.slot.{self.index}.wins", data.get("wins"))
+                StateManager.Set(f"{self.base}.slot.{self.index}.loses", data.get("losses"))
+                StateManager.Set(f"{self.base}.slot.{self.index}.winPercentage", data.get("winPercentage"))
+
+                for i, pw in enumerate(self.playerWidgets):
+                    if data.get("players"):
+                        try:
+                            data.get("players")[i]["wins"] = data.get("wins")
+                            data.get("players")[i]["losses"] = data.get("losses")
+                            data.get("players")[i]["winPercentage"] = data.get("winPercentage")
+                            pw.SetData(data.get("players")[i])
+                        except:
+                            pw.Clear()
+                            logger.error(traceback.format_exc())
+                    else:
+                        pw.Clear()
+        finally:
+            self.childDataChangedLock = False
+
         self.signals.dataChanged.emit()
 
     def Clear(self):
-        StateManager.BlockSaving()
-        self.childDataChangedLock = True
-        for i, pw in enumerate(self.playerWidgets):
-            pw.Clear()
-        self.childDataChangedLock = False
-        StateManager.ReleaseSaving()
+        try:
+            with StateManager.SaveBlock():
+                self.childDataChangedLock = True
+                for i, pw in enumerate(self.playerWidgets):
+                    pw.Clear()
+        finally:
+            self.childDataChangedLock = False
+
         self.signals.dataChanged.emit()

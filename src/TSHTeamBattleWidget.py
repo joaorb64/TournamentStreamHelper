@@ -191,11 +191,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.colorButton1 = TSHColorButton(color=DEFAULT_TEAM1_COLOR, ignore_same_color=False)
         self.team1column.findChild(QHBoxLayout, "team_header").layout().insertWidget(0, self.colorButton1)
         self.colorButton1.colorChanged.connect(
-            lambda color: [
-                StateManager.BlockSaving(),
-                StateManager.Set(f"team_battle.team.{1}.color", color),
-                StateManager.ReleaseSaving()
-            ])
+            lambda color: StateManager.Set(f"team_battle.team.{1}.color", color))
         self.colorButton1.setColor(DEFAULT_TEAM1_COLOR)
         self.team1score = QSpinBox()
         self.team1column.findChild(QHBoxLayout, "team_header").layout().addWidget(self.team1score)
@@ -211,11 +207,7 @@ class TSHTeamBattleWidget(QDockWidget):
         self.colorButton2 = TSHColorButton(color=DEFAULT_TEAM2_COLOR, ignore_same_color=False)
         self.team2column.findChild(QHBoxLayout, "team_header").layout().insertWidget(0, self.colorButton2)
         self.colorButton2.colorChanged.connect(
-            lambda color: [
-                StateManager.BlockSaving(),
-                StateManager.Set(f"team_battle.team.{2}.color", color),
-                StateManager.ReleaseSaving()
-            ])
+            lambda color: StateManager.Set(f"team_battle.team.{2}.color", color))
         self.colorButton2.setColor(DEFAULT_TEAM2_COLOR)
         self.team2score = QSpinBox()
         self.team2column.findChild(QHBoxLayout, "team_header").layout().addWidget(self.team2score)
