@@ -13,6 +13,7 @@ from .TSHGameAssetManager import TSHGameAssetManager
 from .Helpers.TSHControllerHelper import TSHControllerHelper
 from .TSHPlayerDB import TSHPlayerDB
 from .TSHTournamentDataProvider import TSHTournamentDataProvider
+from .SettingsManager import SettingsManager
 from .Helpers.TSHDirHelper import TSHResolve
 from .Workers import Worker
 import threading
@@ -773,6 +774,8 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     if tag == dbTag:
                         self.SetData(item, dontLoadFromDB=True,
                                      clear=False, no_mains=no_mains)
+                        if SettingsManager.Get("general.disable_overwrite", False):
+                            data = data | item
                         break
 
             # Provider-side lazy enrichment (e.g. parry → mains from a
