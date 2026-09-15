@@ -56,7 +56,7 @@ query TournamentPhaseGroupQuery($id: ID!, $videogameId: ID) {
 				}
 			}
 		}
-		sets(page: 1, perPage: 9999, filters: {showByes: true, hideEmpty: false}, sortType: CALL_ORDER){
+		sets(page: 1, perPage: 999, filters: {showByes: true, hideEmpty: false}, sortType: CALL_ORDER){
 			nodes {
 				id
 				round
