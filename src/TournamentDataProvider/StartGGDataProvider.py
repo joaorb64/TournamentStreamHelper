@@ -1606,7 +1606,7 @@ class StartGGDataProvider(TournamentDataProvider):
 
             for _id1, _id2, inverted in [[id1, id2, False], [id2, id1, True]]:
                 workers = []
-                for i in range(5):
+                for i in range(10):
                     worker = Worker(self.GetRecentSetsWorker, **{
                         "id1": _id1,
                         "id2": _id2,
