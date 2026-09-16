@@ -463,7 +463,7 @@ class StartGGDataProvider(TournamentDataProvider):
                             },
                             "eventSlug": self.url.split("start.gg/")[1],
                             "page": page,
-                            "perPage": 64
+                            "perPage": 32
                         },
                         "query": StartGGDataProvider.SetsQuery
                     }
