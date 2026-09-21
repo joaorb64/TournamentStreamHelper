@@ -76,21 +76,17 @@ class TSHTeamPlayerWidget(QGroupBox):
 
         self.character_elements = []
 
-        bottom_buttons_layout = QHBoxLayout()
-        bottom_buttons_layout.setSpacing(4)
-        self.layout().addLayout(bottom_buttons_layout, 99, 0, 1, 3)
-
-        self.clear_bt = QPushButton(QApplication.translate("app", "Clear"))
-        self.clear_bt.setFont(QFont(self.clear_bt.font().family(), 9))
-        # self.clear_bt.setFont(self.parent.font_small)
-        self.clear_bt.setIcon(QIcon('assets/icons/undo.svg'))
-        bottom_buttons_layout.addWidget(self.clear_bt)
-        self.clear_bt.clicked.connect(self.Clear)
-        self.clear_bt.setMinimumWidth(1)
-
-        # Move up/down
+        # Clear and Move up/down
         titleContainer = self.findChild(QHBoxLayout, "titleContainer")
         titleContainer.setSpacing(4)
+
+        self.clear_bt = QPushButton()
+        self.clear_bt.setFixedSize(24, 24)
+        self.clear_bt.setIcon(QIcon('assets/icons/undo.svg'))
+        self.clear_bt.setToolTip(QApplication.translate("app", "Clear"))
+        self.clear_bt.clicked.connect(self.Clear)
+        titleContainer.addWidget(self.clear_bt)
+
         self.btMoveUp = QPushButton()
         self.btMoveUp.setFixedSize(24, 24)
         self.btMoveUp.setIcon(QIcon("./assets/icons/arrow_up.svg"))
@@ -128,6 +124,11 @@ class TSHTeamPlayerWidget(QGroupBox):
         self.findChild(QCheckBox, "dead").toggled.connect(
             lambda state, element=c: [
                 self.ExportEliminatedStatus()
+        ])
+
+        self.findChild(QCheckBox, "activePlayer").toggled.connect(
+            lambda state: [
+                self.ExportActiveStatus()
         ])
         
         self.dynamicSpinner.valueChanged.connect(self.instanceSignals.dynamicSpinner_changed.emit)
@@ -402,6 +403,10 @@ class TSHTeamPlayerWidget(QGroupBox):
                                 data[widget.objectName()] = widget.currentIndex()
                             if type(widget) == QPlainTextEdit:
                                 data[widget.objectName()] = widget.toPlainText()
+                            if type(widget) == QCheckBox:
+                                data[widget.objectName()] = widget.isChecked()
+                            if type(widget) == QSpinBox:
+                                data[widget.objectName()] = widget.value()
                         data["online_avatar"] = StateManager.Get(
                             f"{w.path}.online_avatar")
                         data["id"] = StateManager.Get(
@@ -422,10 +427,16 @@ class TSHTeamPlayerWidget(QGroupBox):
                                     widget.setCurrentIndex(tmpData[i][objName])
                                 if type(widget) == QPlainTextEdit:
                                     widget.setPlainText(tmpData[i][objName])
+                                if type(widget) == QCheckBox:
+                                    widget.setChecked(tmpData[i][objName])
+                                if type(widget) == QSpinBox:
+                                    widget.setValue(tmpData[i][objName])
                         QCoreApplication.processEvents()
                         w.ExportPlayerImages(tmpData[i]["online_avatar"])
                         # w.ExportPlayerId(tmpData[i]["id"])
                         StateManager.Set(f"{w.path}.city", tmpData[i]["city"])
+                        w.ExportActiveStatus()
+                        w.ExportEliminatedStatus()
         finally:
             StateManager.ReleaseSaving()
 
