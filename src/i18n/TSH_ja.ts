@@ -1741,12 +1741,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1061"/>
+        <location filename="../TSHScoreboardWidget.py" line="1064"/>
         <source>Load user set ({0})</source>
         <translation>ユーザーの対戦データ({0})をロードする</translation>
     </message>
     <message>
-        <location filename="../TSHScoreboardWidget.py" line="1065"/>
+        <location filename="../TSHScoreboardWidget.py" line="1068"/>
         <source>Load user set</source>
         <translation>ユーザーの対戦データをロードする</translation>
     </message>
@@ -2157,27 +2157,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="162"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="170"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="196"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="204"/>
         <source>Hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="274"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="282"/>
         <source>Default Display Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="315"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="323"/>
         <source>Bluesky</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="333"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="341"/>
         <source>API Keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2191,17 +2191,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.api_keys</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="321"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="329"/>
         <source>ParryGG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="327"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="335"/>
         <source>You can get an API Key from parry.gg/api-keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="329"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="337"/>
         <source>Please note that the API Key will be stored in plain text on your computer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2209,37 +2209,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.bsky</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="280"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="288"/>
         <source>Enable Bluesky Features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="287"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="295"/>
         <source>Host server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="294"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="302"/>
         <source>Bluesky Handle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="301"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="309"/>
         <source>Application Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="307"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="315"/>
         <source>You can get an app password by going into your Bluesky settings -&gt; Privacy &amp; Security</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="309"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="317"/>
         <source>Please note that said app password will be stored in plain text on your computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="311"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="319"/>
         <source>Do not use your regular account password!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2263,7 +2263,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_controller_file_downloading</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="130"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="138"/>
         <source>Disables attempting to download the controllers file (takes effect on next restart)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2271,7 +2271,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_country_file_downloading</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="122"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="130"/>
         <source>Disables attempting to download the country and states file (takes effect on next restart)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2279,7 +2279,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_export</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="106"/>
         <source>Disable TSH file exporting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2287,7 +2287,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_individual_game_tracker</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="139"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="147"/>
         <source>Disables the individual game tracker (takes effect on next restart)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2295,7 +2295,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_overwrite</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="106"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="114"/>
         <source>Do not override existing values in the local player database (takes effect on next restart)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2303,7 +2303,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.disable_scoreupdate</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="98"/>
         <source>Disable automatic score updating for the scoreboard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2313,6 +2313,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Settings/TSHSettingsWindow.py" line="74"/>
         <source>Disables the Thumbnail Widget from starting (takes effect on next restart)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>settings.force_no_mains_on_new_set_loads</name>
+    <message>
+        <location filename="../Settings/TSHSettingsWindow.py" line="90"/>
+        <source>Do not update character data when a set is loaded</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2337,7 +2345,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.hide_track_player</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="114"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="122"/>
         <source>Hide the StartGG player tracking functionality from TSH (takes effect on next restart)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2345,52 +2353,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.hotkeys</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="176"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="184"/>
         <source>Load set</source>
         <translation type="unfinished">対戦データをロードする</translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="177"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="185"/>
         <source>Team 1 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="178"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="186"/>
         <source>Team 1 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="179"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="187"/>
         <source>Team 2 score up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="180"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="188"/>
         <source>Team 2 score down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="181"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="189"/>
         <source>Reset scores</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="182"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="190"/>
         <source>Swap teams</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="183"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="191"/>
         <source>Refresh bracket phase groups</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="184"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="192"/>
         <source>Toggle bracket limit export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="169"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="177"/>
         <source>Enable hotkeys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2398,7 +2406,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_additional</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="267"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="275"/>
         <source>Show Additional Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2406,7 +2414,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_birthday</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="227"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="235"/>
         <source>Show Birthday</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2414,7 +2422,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_characters</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="243"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="251"/>
         <source>Show Characters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2422,7 +2430,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_controller</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="259"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="267"/>
         <source>Show Controller</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2430,7 +2438,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_location</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="235"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="243"/>
         <source>Show Location</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2438,7 +2446,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_name</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="203"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="211"/>
         <source>Show Real Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2446,7 +2454,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_pronouns</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="251"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="259"/>
         <source>Show Pronouns</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2454,7 +2462,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_seed</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="219"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="227"/>
         <source>Show Seed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2462,7 +2470,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.show_social</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="211"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="219"/>
         <source>Show Social Media</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2470,7 +2478,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.team_1_default_color</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="147"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="155"/>
         <source>Default Color of Team 1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2478,7 +2486,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>settings.team_2_default_color</name>
     <message>
-        <location filename="../Settings/TSHSettingsWindow.py" line="155"/>
+        <location filename="../Settings/TSHSettingsWindow.py" line="163"/>
         <source>Default Color of Team 2</source>
         <translation type="unfinished"></translation>
     </message>
