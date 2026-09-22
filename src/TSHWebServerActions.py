@@ -505,6 +505,8 @@ class WebServerActions(QThread):
 
     @gui_thread_sync
     def load_set(self, scoreboard, set=None, no_mains=False):
+        if no_mains is False:
+            no_mains = SettingsManager.Get("general.force_no_mains_on_new_set_loads", False)
         if set is not None:
             if not isinstance(set, str):
                 set = '0'

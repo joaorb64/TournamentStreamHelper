@@ -958,12 +958,15 @@ class TSHScoreboardWidget(QWidget):
             TSHTournamentDataProvider.instance.GetStreamQueue()
 
             if data.get("id") != None and data.get("id") != self.lastSetSelected:
+                no_mains = data.get("no_mains")
+                if no_mains is None:
+                    no_mains = SettingsManager.Get("general.force_no_mains_on_new_set_loads", False)
+
                 # Clear previous scores
                 # Important because when we receive scores as 0 we don't update based on that
                 # Otherwise an offline set which is only updated after it's complete would reset the score
                 # all the time since it would be 0-0 until then
-                self.CommandClearAll(no_mains=data.get(
-                    "no_mains") if data.get("no_mains") != None else False)
+                self.CommandClearAll(no_mains=no_mains)
                 self.ClearScore()
 
                 # A new set was loaded
@@ -996,7 +999,7 @@ class TSHScoreboardWidget(QWidget):
                             f"score.{self.scoreboardNumber}.teamsSwapped", self.teamsSwapped)
 
                 TSHTournamentDataProvider.instance.GetMatch(
-                    self, data["id"], overwrite=True, no_mains=data.get("no_mains") if data.get("no_mains") != None else False)
+                    self, data["id"], overwrite=True, no_mains=no_mains)
 
             if not SettingsManager.Get("general.disable_autoupdate", False):
                 self.autoUpdateTimer.timeout.connect(

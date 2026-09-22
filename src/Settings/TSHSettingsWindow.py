@@ -88,6 +88,14 @@ class TSHSettingsWindow(QDialog):
 
         generalSettings.append((
             QApplication.translate(
+                "settings.force_no_mains_on_new_set_loads", "Do not update character data when a set is loaded"),
+            "force_no_mains_on_new_set_loads",
+            "checkbox",
+            False
+        ))
+
+        generalSettings.append((
+            QApplication.translate(
                 "settings.disable_scoreupdate", "Disable automatic score updating for the scoreboard"),
             "disable_scoreupdate",
             "checkbox",
