@@ -1,6 +1,6 @@
 query TournamentStandingsQuery($eventSlug: String!, $playerNumber: Int!) {
 	event(slug: $eventSlug) {
-		standings(query: {page: 1, perPage: $playerNumber}) {
+		standings(query: {page: $playerNumber, perPage: 1}) {
 			nodes {
 				setRecordWithoutByes
 				entrant {

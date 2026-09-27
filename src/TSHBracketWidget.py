@@ -315,7 +315,20 @@ class TSHBracketWidget(QDockWidget):
             reconnectDataChanged = False
 
         try:
-            logger.info("Phase Group Data: " + str(phaseGroupData))
+            # logger.info("Phase Group Data: " + str(phaseGroupData))
+
+            entrants = phaseGroupData.get("entrants") or []
+            sets = phaseGroupData.get("sets") or {}
+
+            # A partial fetch (e.g. one of the paginated StartGG requests
+            # coming back empty/erroring) leaves entrants and sets out of
+            # sync. Building the bracket from a mismatched pair crashes with
+            # an IndexError once real set data is dropped into a bracket
+            # sized for the wrong number of entrants, so bail out instead.
+            if not entrants and sets:
+                logger.warning(
+                    "Phase group fetch looks partial (no entrants but sets present); skipping bracket rebuild")
+                return
 
             if phaseGroupData.get("progressionsIn", {}) != None:
                 self.progressionsIn.setValue(
@@ -340,8 +353,6 @@ class TSHBracketWidget(QDockWidget):
 
             # Make sure progressions are exported
             QGuiApplication.processEvents()
-
-            entrants = phaseGroupData.get("entrants") or []
 
             self.playerList.LoadFromStandings(entrants)
 

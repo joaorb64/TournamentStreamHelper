@@ -157,17 +157,13 @@ class Bracket():
                         logger.error(traceback.format_exc())
                     try:
                         if abs(roundNum) % 4 == 0:
-                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(
-                                int(len(round)/2)+j) % len(round)]
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)+j) % len(round)]
                         elif abs(roundNum) % 4 == 1:
-                            _set.loseNext = self.rounds[str(
-                                -int(2*(roundNum)))][j]
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][j]
                         elif abs(roundNum) % 4 == 2:
-                            _set.loseNext = self.rounds[str(
-                                -int(2*(roundNum)))][(-1-j) % len(round)]
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(-1-j) % len(round)]
                         elif abs(roundNum) % 4 == 3:
-                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(
-                                int(len(round)/2)-1-j) % len(round)]
+                            _set.loseNext = self.rounds[str(-int(2*(roundNum)))][(int(len(round)/2)-1-j) % len(round)]
 
                         targetIdL = 0
 
