@@ -155,6 +155,9 @@ class TSHPlayerListWidget(QDockWidget):
                 playerNumber = len(data[0].get("players"))
                 self.playerList.SetPlayersPerTeam(playerNumber)
 
+                self.slotNumber.setValue(len(data))
+                self.slotNumber.valueChanged.emit(len(data))
+
                 for i, slot in enumerate(self.playerList.slotWidgets):
                     try:
                         slot.SetTeamData(data[i])

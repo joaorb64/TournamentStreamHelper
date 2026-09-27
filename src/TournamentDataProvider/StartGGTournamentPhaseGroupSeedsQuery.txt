@@ -1,0 +1,51 @@
+query TournamentPhaseGroupSeedsQuery($id: ID!, $page: Int!, $perPage: Int!) {
+	phaseGroup(id: $id) {
+		seedMap
+		seeds(query: {page: $page, perPage: $perPage}) {
+			pageInfo {
+				totalPages
+			}
+			nodes {
+				seedNum
+				progressionSource {
+					originPhaseGroup {
+						id
+					}
+				}
+				entrant {
+					id
+					name
+					participants {
+						player {
+							id
+							gamerTag
+							prefix
+							name
+						}
+						user {
+							id
+							slug
+							prefix
+							name
+							genderPronoun
+							location {
+								country
+								state
+								city
+							}
+							authorizations(types: [TWITTER]) {
+								externalUsername
+							}
+							images(type: "profile") {
+								url
+							}
+						}
+					}
+				}
+			}
+		}
+		progressionsOut {
+			id
+		}
+	}
+}

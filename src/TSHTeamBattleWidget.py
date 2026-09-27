@@ -183,10 +183,10 @@ class TSHTeamBattleWidget(QDockWidget):
         menu.addSection(QApplication.translate("app", "Players"))
 
         self.elements = [
-            [QApplication.translate("app", "Twitter"),                ["twitter", "twitterLabel"],           "show_social"],
-            [QApplication.translate("app", "Location"),               ["locationLabel", "state", "country"], "show_location"],
-            [QApplication.translate("app", "Characters"),             ["characters"],                        "show_characters"],
-            [QApplication.translate("app", "Pronouns"),               ["pronoun"],                           "show_pronouns"],
+            [QApplication.translate("app", "Twitter"),    ["twitter", "twitterLabel"],           "show_social"],
+            [QApplication.translate("app", "Location"),   ["locationLabel", "state", "country"], "show_location"],
+            [QApplication.translate("app", "Characters"), ["characters"],                        "show_characters"],
+            [QApplication.translate("app", "Pronouns"),   ["pronoun"],                           "show_pronouns"],
         ]
         for element in self.elements:
             action: QAction = self.eyeBt.menu().addAction(element[0])
@@ -336,6 +336,7 @@ class TSHTeamBattleWidget(QDockWidget):
             self.ApplyVisibility(p)
             
             self.signals.dynamicSpinner_changed.connect(p.instanceSignals.dynamicSpinner_changed)
+            p.instanceSignals.dynamicSpinner_changed.connect(self.TotalScoreExport)
 
             index = len(self.team1playerWidgets)
 
@@ -361,6 +362,7 @@ class TSHTeamBattleWidget(QDockWidget):
             self.ApplyVisibility(p)
             
             self.signals.dynamicSpinner_changed.connect(p.instanceSignals.dynamicSpinner_changed)
+            p.instanceSignals.dynamicSpinner_changed.connect(self.TotalScoreExport)
 
             index = len(self.team2playerWidgets)
 
@@ -396,6 +398,15 @@ class TSHTeamBattleWidget(QDockWidget):
         self.SwitchBattleMode()
         self.SetSpinnerForPlayers()
 
+    def ApplyVisibility(self, pw):
+        if hasattr(self, "elements"):
+            for element in self.elements:
+                visible = SettingsManager.Get(f"display_options.{element[2]}", True)
+                for el in element[1]:
+                    w = pw.findChild(QWidget, el)
+                    if w:
+                        w.setVisible(visible)
+
     # =====================================================
     # NEXT ACTIVE PLAYERS
     # =====================================================
@@ -413,15 +424,6 @@ class TSHTeamBattleWidget(QDockWidget):
                 w = pw.findChild(QWidget, element)
                 if w:
                     w.setVisible(action.isChecked())
-
-    def ApplyVisibility(self, pw):
-        if hasattr(self, "elements"):
-            for element in self.elements:
-                visible = SettingsManager.Get(f"display_options.{element[2]}", True)
-                for el in element[1]:
-                    w = pw.findChild(QWidget, el)
-                    if w:
-                        w.setVisible(visible)
 
     # =====================================================
     # TEAM 1 STOCK CONTROL

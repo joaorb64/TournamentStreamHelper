@@ -34,7 +34,8 @@ class StartGGDataProvider(TournamentDataProvider):
     StreamQueueQuery = None
     TournamentDataQuery = None
     TournamentPhasesQuery = None
-    TournamentPhaseGroupQuery = None
+    TournamentPhaseGroupSeedsQuery = None
+    TournamentPhaseGroupSetsQuery = None
     TournamentStandingsQuery = None
     UserSetQuery = None
     UserMainsQuery = None
@@ -45,6 +46,7 @@ class StartGGDataProvider(TournamentDataProvider):
     def __init__(self, url, threadpool, tshTdp) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "StartGG"
+        self._mains_cache = {}
 
     # Queries the provided URL until a proper 200 status code has been provided back
     #
@@ -193,32 +195,127 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return phases
 
+    def _FetchPhaseGroupSeeds(self, id, progress_callback=None, cancel_event=None):
+        seeds = []
+        seedMap = None
+        progressionsOut = None
+        page = 1
+        totalPages = 1
+
+        while page <= totalPages and (cancel_event is None or not cancel_event.is_set()):
+            seedsData = self.QueryRequests(
+                "https://www.start.gg/api/-/gql",
+                type=requests.post,
+                jsonParams={
+                    "operationName": "TournamentPhaseGroupSeedsQuery",
+                    "variables": {
+                        "id": id,
+                        "page": page,
+                        "perPage": 100
+                    },
+                    "query": StartGGDataProvider.TournamentPhaseGroupSeedsQuery
+                }
+            )
+
+            if seedsData.get("errors"):
+                logger.error(
+                    f"TournamentPhaseGroupSeedsQuery errors (page {page}): {seedsData.get('errors')}")
+
+            if deep_get(seedsData, "data.phaseGroup") is None:
+                logger.warning(
+                    f"TournamentPhaseGroupSeedsQuery returned no phaseGroup for id {id} (page {page}): {seedsData}")
+
+            if page == 1:
+                seedMap = deep_get(seedsData, "data.phaseGroup.seedMap.1")
+                progressionsOut = deep_get(
+                    seedsData, "data.phaseGroup.progressionsOut")
+
+            seeds.extend(
+                deep_get(seedsData, "data.phaseGroup.seeds.nodes", []))
+
+            totalPages = deep_get(
+                seedsData, "data.phaseGroup.seeds.pageInfo.totalPages", 1)
+            page += 1
+
+        return {"seeds": seeds, "seedMap": seedMap, "progressionsOut": progressionsOut}
+
+    def _FetchPhaseGroupSets(self, id, progress_callback=None, cancel_event=None):
+        sets = []
+        page = 1
+        totalPages = 1
+
+        while page <= totalPages and (cancel_event is None or not cancel_event.is_set()):
+            setsData = self.QueryRequests(
+                "https://www.start.gg/api/-/gql",
+                type=requests.post,
+                jsonParams={
+                    "operationName": "TournamentPhaseGroupSetsQuery",
+                    "variables": {
+                        "id": id,
+                        "page": page,
+                        "perPage": 200
+                    },
+                    "query": StartGGDataProvider.TournamentPhaseGroupSetsQuery
+                }
+            )
+
+            if setsData.get("errors"):
+                logger.error(
+                    f"TournamentPhaseGroupSetsQuery errors (page {page}): {setsData.get('errors')}")
+
+            if deep_get(setsData, "data.phaseGroup") is None:
+                logger.warning(
+                    f"TournamentPhaseGroupSetsQuery returned no phaseGroup for id {id} (page {page}): {setsData}")
+
+            sets.extend(
+                deep_get(setsData, "data.phaseGroup.sets.nodes", []))
+
+            totalPages = deep_get(
+                setsData, "data.phaseGroup.sets.pageInfo.totalPages", 1)
+            page += 1
+
+        return {"sets": sets}
+
+    def _FetchOldPhaseGroupData(self, id, progress_callback=None, cancel_event=None):
+        return self.QueryRequests(
+            f"https://api.smash.gg/phase_group/{id}",
+            type=requests.get
+        )
+
     def GetTournamentPhaseGroup(self, id, progress_callback=None, cancel_event=None):
         finalData = {}
 
         try:
-            data = self.QueryRequests(
-                "https://www.start.gg/api/-/gql",
-                type=requests.post,
-                jsonParams={
-                    "operationName": "TournamentPhaseGroupQuery",
-                    "variables": {
-                        "id": id,
-                        "videogameId": TSHGameAssetManager.instance.selectedGame.get("smashgg_game_id")
-                    },
-                    "query": StartGGDataProvider.TournamentPhaseGroupQuery
-                }
-            )
+            # Seeds, sets, and the legacy REST payload are independent of
+            # each other, so fetch them concurrently rather than one after
+            # another. Splitting the seeds/sets queries apart (to stay under
+            # StartGG's 1000-object GraphQL complexity cap) turned one
+            # request into several, and running them sequentially made the
+            # whole fetch noticeably slower than the old single-request
+            # version.
+            fetchSeeds = Worker(self._FetchPhaseGroupSeeds, **{"id": id})
+            fetchSets = Worker(self._FetchPhaseGroupSets, **{"id": id})
+            fetchOld = Worker(self._FetchOldPhaseGroupData, **{"id": id})
 
-            oldData = self.QueryRequests(
-                f"https://api.smash.gg/phase_group/{id}",
-                type=requests.get
-            )
+            self.threadpool.start(fetchSeeds)
+            self.threadpool.start(fetchSets)
+            self.threadpool.start(fetchOld)
 
-            seeds = deep_get(data, "data.phaseGroup.seeds.nodes", [])
+            Worker.wait_for_all(
+                [fetchSeeds, fetchSets, fetchOld], self._request_timeout_secs * 20)
+
+            seedsResult = fetchSeeds.result if fetchSeeds.completed else {}
+            setsResult = fetchSets.result if fetchSets.completed else {}
+            oldData = fetchOld.result if fetchOld.completed else {}
+
+            seeds = (seedsResult or {}).get("seeds", [])
+            seedMap = (seedsResult or {}).get("seedMap")
+            progressionsOut = (seedsResult or {}).get("progressionsOut")
+            sets = (setsResult or {}).get("sets", [])
+
+            logger.info(oldData)
+
             seeds.sort(key=lambda s: s.get("seedNum"))
-
-            seedMap: list = deep_get(data, "data.phaseGroup.seedMap.1")
 
             if seedMap:
                 seedMap = [s if s != "bye" else -1 for s in seedMap]
@@ -243,8 +340,6 @@ class StartGGDataProvider(TournamentDataProvider):
                 teams.append(team)
 
             finalData["entrants"] = teams
-
-            sets = deep_get(data, "data.phaseGroup.sets.nodes", [])
 
             # Preview IDs cannot be sorted normally
             # They follow the format: preview_2004442_1_5
@@ -317,8 +412,7 @@ class StartGGDataProvider(TournamentDataProvider):
                         finalData["sets"][str(
                             round+shift)] = finalData["sets"].pop(roundKey)
 
-            finalData["progressionsOut"] = deep_get(
-                data, "data.phaseGroup.progressionsOut")
+            finalData["progressionsOut"] = progressionsOut
 
             # StartGG gives us 2 sets for GFs, we want that divided into 2 rounds
             if finalData["progressionsOut"] == None or len(finalData["progressionsOut"]) == 0:
@@ -1875,6 +1969,9 @@ class StartGGDataProvider(TournamentDataProvider):
                 user.get("id")
             ]
 
+            if user.get("slug"):
+                playerData["startgg_user_slug"] = user.get("slug")
+
             if user.get("authorizations"):
                 if len(user.get("authorizations", [])) > 0:
                     playerData["twitter"] = user.get("authorizations", [])[
@@ -1937,6 +2034,29 @@ class StartGGDataProvider(TournamentDataProvider):
 
         return (playerData)
 
+    def EnrichPlayerData(self, playerData):
+        # Lazy mains fill for entrants loaded via GetTournamentPhaseGroup.
+        # That query no longer embeds the per-entrant sets->games->selections
+        # lookup (it single-handedly pushed StartGG's GraphQL complexity
+        # budget over the 1000-object cap on larger brackets), so mains are
+        # fetched here per-player instead, same as ParryGGDataProvider does
+        # for linked accounts.
+        if not playerData or playerData.get("mains"):
+            return playerData
+        slug = playerData.get("startgg_user_slug")
+        if not slug:
+            return playerData
+        selected = TSHGameAssetManager.instance.selectedGame or {}
+        videogameId = selected.get("smashgg_game_id")
+        if not videogameId:
+            return playerData
+        if slug not in self._mains_cache:
+            self._mains_cache[slug] = self.GetUserMains(slug, videogameId)
+        mains = self._mains_cache[slug]
+        if mains:
+            playerData["mains"] = mains
+        return playerData
+
     def GetUserMains(self, slug, videogameId):
         # Per-user mains lookup (no other code path fetches mains for a
         # user in isolation — see ProcessEntrantData/GetMatch which only
@@ -1974,21 +2094,33 @@ class StartGGDataProvider(TournamentDataProvider):
 
     def GetStandings(self, playerNumber, progress_callback, cancel_event):
         try:
-            data = self.QueryRequests(
-                "https://www.start.gg/api/-/gql",
-                type=requests.post,
-                jsonParams={
-                    "operationName": "TournamentStandingsQuery",
-                    "variables": {
-                        "playerNumber": playerNumber,
-                        "eventSlug": self.url.split("start.gg/")[1]
-                    },
-                    "query": StartGGDataProvider.TournamentStandingsQuery
-                }
+            eventSlug = self.url.split("start.gg/")[1]
 
-            )
+            standings = []
 
-            standings = deep_get(data, "data.event.standings.nodes", [])
+            for page in range(1, playerNumber+1):
+                if cancel_event is not None and cancel_event.is_set():
+                    break
+
+                data = self.QueryRequests(
+                    "https://www.start.gg/api/-/gql",
+                    type=requests.post,
+                    jsonParams={
+                        "operationName": "TournamentStandingsQuery",
+                        "variables": {
+                            "playerNumber": page,
+                            "eventSlug": eventSlug
+                        },
+                        "query": StartGGDataProvider.TournamentStandingsQuery
+                    }
+                )
+
+                newStandings = deep_get(
+                    data, "data.event.standings.nodes", [])
+                standings.extend(newStandings)
+
+                if progress_callback:
+                    progress_callback(page, playerNumber)
 
             teams = []
 
@@ -2112,7 +2244,8 @@ StartGGDataProvider.StreamQueueQuery = readQueryFile(sggTdpDir, "StreamQueue")
 StartGGDataProvider.StreamSetsQuery = readQueryFile(sggTdpDir, "StreamSets")
 StartGGDataProvider.TournamentDataQuery = readQueryFile(sggTdpDir, "TournamentData")
 StartGGDataProvider.TournamentPhasesQuery = readQueryFile(sggTdpDir, "TournamentPhases")
-StartGGDataProvider.TournamentPhaseGroupQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroup")
+StartGGDataProvider.TournamentPhaseGroupSeedsQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroupSeeds")
+StartGGDataProvider.TournamentPhaseGroupSetsQuery = readQueryFile(sggTdpDir, "TournamentPhaseGroupSets")
 StartGGDataProvider.TournamentStandingsQuery = readQueryFile(sggTdpDir, "TournamentStandings")
 StartGGDataProvider.UserSetQuery = readQueryFile(sggTdpDir, "UserSet")
 StartGGDataProvider.UserMainsQuery = readQueryFile(sggTdpDir, "UserMains")

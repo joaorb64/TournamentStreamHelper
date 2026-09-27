@@ -1,0 +1,20 @@
+query TournamentPhaseGroupSetsQuery($id: ID!, $page: Int!, $perPage: Int!) {
+	phaseGroup(id: $id) {
+		sets(page: $page, perPage: $perPage, filters: {showByes: true, hideEmpty: false}, sortType: CALL_ORDER) {
+			pageInfo {
+				totalPages
+			}
+			nodes {
+				id
+				round
+				identifier
+				entrant1Score
+				entrant2Score
+				state
+				slots {
+					prereqType
+				}
+			}
+		}
+	}
+}
