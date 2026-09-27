@@ -313,8 +313,6 @@ class StartGGDataProvider(TournamentDataProvider):
             progressionsOut = (seedsResult or {}).get("progressionsOut")
             sets = (setsResult or {}).get("sets", [])
 
-            logger.info(oldData)
-
             seeds.sort(key=lambda s: s.get("seedNum"))
 
             if seedMap:
