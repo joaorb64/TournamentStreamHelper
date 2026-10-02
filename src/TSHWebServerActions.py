@@ -498,8 +498,32 @@ class WebServerActions(QThread):
 
     @gui_thread_sync
     def update_bracket(self):
-        id = TSHTournamentDataProvider.instance.provider.GetTournamentPhases()[0].get("groups")[0].get("id")
-        data = TSHTournamentDataProvider.instance.provider.GetTournamentPhaseGroup(id)
+        phase_name = StateManager.Get("bracket.phase")
+        group_name = StateManager.Get("bracket.phaseGroup")
+        
+        if phase_name == None or phase_name == "":
+            id = TSHTournamentDataProvider.instance.provider.GetTournamentPhases()[0].get("groups")[0].get("id") # retaining old functionality just in case someone needs it
+            data = TSHTournamentDataProvider.instance.provider.GetTournamentPhaseGroup(id)
+            TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
+            return "OK"
+
+        for phase in TSHTournamentDataProvider.instance.provider.GetTournamentPhases():
+            if phase.get("name") == phase_name:
+                selected_phase = phase
+                break
+
+        groups = selected_phase.get("groups")
+        if len(groups) == 1:
+            selected_group = groups[0] # oddly enough phases with only one group can end up with '' as the phase group 
+        else: 
+            for group in groups:
+                if group.get("name") == group_name:
+                    selected_group = group
+                    break
+
+        phase_group_id = selected_group.get("id")
+
+        data = TSHTournamentDataProvider.instance.provider.GetTournamentPhaseGroup(phase_group_id)
         TSHTournamentDataProvider.instance.signals.tournament_phasegroup_updated.emit(data)
         return "OK"
 
