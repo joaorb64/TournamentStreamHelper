@@ -1,4 +1,5 @@
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import re
 import requests
 import os
@@ -51,10 +52,11 @@ class StartGGDataProvider(TournamentDataProvider):
     # Queries the provided URL until a proper 200 status code has been provided back
     #
     # This should work fine in theory unless an API restriction is added
-    def QueryRequests(self, url=None, type=None, headers={}, jsonParams=None, params=None):
+    def QueryRequests(self, url=None, type=None, headers=None, jsonParams=None, params=None):
         try:
             requestCode = 0
             data = None
+            headers = dict(headers or {})
             headers.update({
                 "client-version": "20",
                 "Content-Type": "application/json",
@@ -527,57 +529,67 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             return {}
 
+    def _FetchMatchesPage(self, states, page, cancel_event=None):
+        if cancel_event is not None and cancel_event.is_set():
+            return {}
+        return self.QueryRequests(
+            "https://www.start.gg/api/-/gql",
+            type=requests.post,
+            jsonParams={
+                "operationName": "EventMatchListQuery",
+                "variables": {
+                    "filters": {
+                        "state": states,
+                        "hideEmpty": True
+                    },
+                    "eventSlug": self.url.split("start.gg/")[1],
+                    "page": page,
+                    "perPage": 32
+                },
+                "query": StartGGDataProvider.SetsQuery
+            }
+        )
+
     def GetMatches(self, getFinished=False, progress_callback=None, cancel_event=None):
+        final_data = []
         try:
-            logger.info("Get matches", getFinished)
+            logger.info(f"Get matches (getFinished={getFinished})")
             states = [1, 6, 2]
 
             if getFinished:
                 states.append(3)
 
-            final_data = []
-
-            page = 1
-            totalPages = 1
-
             logger.info("Fetching sets")
 
-            while page <= totalPages and (cancel_event is None or not cancel_event.is_set()):
-                data = self.QueryRequests(
-                    "https://www.start.gg/api/-/gql",
-                    type=requests.post,
-                    jsonParams={
-                        "operationName": "EventMatchListQuery",
-                        "variables": {
-                            "filters": {
-                                "state": states,
-                                "hideEmpty": True
-                            },
-                            "eventSlug": self.url.split("start.gg/")[1],
-                            "page": page,
-                            "perPage": 32
-                        },
-                        "query": StartGGDataProvider.SetsQuery
+            firstPage = self._FetchMatchesPage(states, 1, cancel_event)
+            totalPages = deep_get(
+                firstPage, "data.event.sets.pageInfo.totalPages", 1)
+
+            pagesDone = 1
+            if progress_callback:
+                progress_callback(pagesDone, totalPages)
+            logger.info(f"Fetching sets... {pagesDone}/{totalPages}")
+
+            pages = {1: firstPage}
+            if totalPages > 1:
+                # Keep the worker count low so start.gg doesn't start rate limiting us
+                with ThreadPoolExecutor(max_workers=6) as executor:
+                    futures = {
+                        executor.submit(self._FetchMatchesPage, states, p, cancel_event): p
+                        for p in range(2, totalPages + 1)
                     }
-                )
+                    for future in as_completed(futures):
+                        pages[futures[future]] = future.result()
+                        pagesDone += 1
+                        if progress_callback:
+                            progress_callback(pagesDone, totalPages)
+                        logger.info(
+                            f"Fetching sets... {pagesDone}/{totalPages}")
 
-                totalPages = deep_get(
-                    data, "data.event.sets.pageInfo.totalPages", 1)
-
-                sets = deep_get(data, "data.event.sets.nodes", [])
-                newSets = []
-
-                for _set in sets:
-                    parsed = self.ParseMatchDataNewApi(_set)
-                    final_data.append(parsed)
-                    newSets.append(parsed)
-
-                if progress_callback:
-                    logger.info(f"progress_callback: {page}, {totalPages}")
-                    progress_callback(page, totalPages)
-
-                logger.info(f"Fetching sets... {page}/{totalPages}")
-                page += 1
+            # Parse in page order so the result matches the old sequential order
+            for p in sorted(pages):
+                for _set in deep_get(pages[p], "data.event.sets.nodes", []) or []:
+                    final_data.append(self.ParseMatchDataNewApi(_set))
             return (final_data)
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -1871,50 +1883,58 @@ class StartGGDataProvider(TournamentDataProvider):
             logger.error(traceback.format_exc())
             return []
 
+    def _FetchEntrantsPage(self, eventSlug, gameId, page):
+        return self.QueryRequests(
+            "https://www.start.gg/api/-/gql",
+            type=requests.post,
+            jsonParams={
+                "operationName": "EventEntrantsListQuery",
+                "variables": {
+                    "eventSlug": eventSlug,
+                    "videogameId": gameId,
+                    "page": page,
+                },
+                "query": StartGGDataProvider.EntrantsQuery
+            }
+        )
+
     def GetEntrantsWorker(self, eventSlug, gameId, progress_callback, cancel_event):
         try:
-            page = 1
-            totalPages = 1
-            # final_data = QStandardItemModel()
+            logger.info("Starting Entrant Import")
+            firstPage = self._FetchEntrantsPage(eventSlug, gameId, 1)
+            totalPages = deep_get(
+                firstPage, "data.event.entrants.pageInfo.totalPages", 0)
+            logger.info(f"Entrant pages: {totalPages}")
+
+            # Page 1 tells us how many pages there are; fetch the rest in
+            # parallel. executor.map keeps results in page order.
+            pages = [firstPage]
+            if totalPages > 1:
+                # Keep the worker count low so start.gg doesn't start rate limiting us
+                with ThreadPoolExecutor(max_workers=6) as executor:
+                    pages.extend(executor.map(
+                        lambda p: self._FetchEntrantsPage(eventSlug, gameId, p),
+                        range(2, totalPages + 1)
+                    ))
+
+            if cancel_event is not None and cancel_event.is_set():
+                return
+
             players = []
-
-            while page <= totalPages:
-                logger.info(str(page) + "/" + str(totalPages))
-                data = self.QueryRequests(
-                    "https://www.start.gg/api/-/gql",
-                    type=requests.post,
-                    jsonParams={
-                        "operationName": "EventEntrantsListQuery",
-                        "variables": {
-                            "eventSlug": eventSlug,
-                            "videogameId": gameId,
-                            "page": page,
-                        },
-                        "query": StartGGDataProvider.EntrantsQuery
-                    }
-                )
-
-                totalPages = deep_get(
-                    data, "data.event.entrants.pageInfo.totalPages", 0)
-
-                entrants = deep_get(data, "data.event.entrants.nodes", [])
-                logger.info("Entrants: " + str(len(entrants)))
-
-                for i, team in enumerate(entrants):
-                    for j, entrant in enumerate(team.get("participants", [])):
+            for data in pages:
+                for team in deep_get(data, "data.event.entrants.nodes", []) or []:
+                    seed = team.get("initialSeedNum", 0)
+                    for entrant in team.get("participants", []) or []:
                         playerData = StartGGDataProvider.ProcessEntrantData(
                             entrant)
-                        playerData["seed"] = team.get("initialSeedNum", 0)
-                        self.player_seeds[playerData["id"]
-                                          [0]] = playerData["seed"]
+                        playerData["seed"] = seed
+                        self.player_seeds[playerData["id"][0]] = seed
                         players.append(playerData)
 
-                TSHPlayerDB.AddPlayers(players)
-                players = []
-
-                page += 1
+            logger.info(f"Entrants processed: {len(players)}")
+            TSHPlayerDB.AddPlayers(players)
         except Exception as e:
-            logger.error(f"{type(e).__name__}: {e}")
+            logger.error(traceback.format_exc())
 
     def ProcessEntrantData(entrant, setData=[]):
         player = entrant.get("player")
