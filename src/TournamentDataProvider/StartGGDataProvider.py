@@ -1672,6 +1672,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     continue
                 if not set.get("placement"):
                     continue
+                if not set.get("entrant"):
+                    continue
 
                 event = deep_get(set, "entrant.event", [])
                 tournament = deep_get(event, "tournament", [])
@@ -1697,6 +1699,7 @@ class StartGGDataProvider(TournamentDataProvider):
             callback.emit({"playerNumber": playerNumber,
                           "history_sets": set_data})
         except Exception as e:
+            logger.error(traceback.format_exc())
             callback.emit({"playerNumber": playerNumber, "history_sets": []})
 
     def GetRecentSets(self, id1, id2, videogame, callback, requestTime, progress_callback, cancel_event):
