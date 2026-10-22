@@ -11,11 +11,15 @@ from .Helpers.TSHDirHelper import TSHResolve
 from .Helpers.TSHSponsorHelper import TSHSponsorHelper
 from .TSHTeamPlayerWidget import TSHTeamPlayerWidget
 from .TSHColorButton import TSHColorButton
+from .TSHSelectSetWindow import TSHSelectSetWindow
+from .TSHTournamentDataProvider import TSHTournamentDataProvider
 from.Helpers.TSHLocaleHelper import TSHLocaleHelper
 from .Helpers.TSHVersionHelper import add_beta_label
 
 class TSHTeamBattleSignals(QObject):
     # GENERAL SIGNALS
+    NewSetSelected         = Signal(object)
+    UpdateSetData          = Signal(object)
     reset_all_stocks       = Signal()
     reset_everything       = Signal()
     dynamicSpinner_changed = Signal()
@@ -61,6 +65,9 @@ class TSHTeamBattleWidget(QDockWidget):
         super().__init__(*args)
         logger.info("BATTLE START")
         self.signals = TSHTeamBattleSignals()
+        self.signals.NewSetSelected.connect(self.NewSetSelected)
+        self.signals.UpdateSetData.connect(self.UpdateSetData)
+        self.lastSetSelected = None
 
         StateManager.Unset("team_battle")
 
@@ -116,6 +123,13 @@ class TSHTeamBattleWidget(QDockWidget):
         resetEverything = QPushButton(QApplication.translate("app", "Reset Battle Mode"))
         resetEverything.setFixedHeight(24)
         resetEverything.clicked.connect(self.ResetEverything)
+
+        self.btSelectSet = QPushButton(QApplication.translate("app", "Load set"))
+        self.btSelectSet.setIcon(QIcon("./assets/icons/list.svg"))
+        self.btSelectSet.setEnabled(False)
+        self.btSelectSet.clicked.connect(self.LoadSetClicked)
+        TSHTournamentDataProvider.instance.signals.tournament_changed.connect(
+            self.UpdateLoadSetButton)
 
         # Top toolbar row
         row = QWidget()
@@ -202,6 +216,7 @@ class TSHTeamBattleWidget(QDockWidget):
         actionsLayout.addWidget(resetValues, 0, 0)
         actionsLayout.addWidget(self.eyeBt, 0, 1, 2, 1, Qt.AlignmentFlag.AlignVCenter)
         actionsLayout.addWidget(resetEverything, 1, 0)
+        actionsLayout.addWidget(self.btSelectSet, 2, 0, 1, 2)
 
         rowLayout.addWidget(actionsCol)
         rowLayout.addStretch()
@@ -270,10 +285,116 @@ class TSHTeamBattleWidget(QDockWidget):
         self.playerNumber.setValue(1)
         self.characterNumber.setValue(1)
         self.livesNumber.setValue(0)
+        self.selectSetWindow = TSHSelectSetWindow(self)
+        self.UpdateLoadSetButton()
 
     # =====================================================
     # GENERAL CONTROL METHODS
     # =====================================================
+    def LoadSetClicked(self):
+        self.selectSetWindow.LoadSets()
+        self.selectSetWindow.show()
+
+    def UpdateLoadSetButton(self):
+        if TSHTournamentDataProvider.instance.provider and TSHTournamentDataProvider.instance.provider.url:
+            self.btSelectSet.setText(
+                QApplication.translate("app", "Load set from {0}").format(TSHTournamentDataProvider.instance.provider.url))
+            self.btSelectSet.setEnabled(True)
+
+    def NewSetSelected(self, data):
+        if data.get("id") != None and data.get("id") != self.lastSetSelected:
+            no_mains = data.get("no_mains")
+            if no_mains is None:
+                no_mains = SettingsManager.Get("general.force_no_mains_on_new_set_loads", False)
+
+            # A new set was loaded
+            self.lastSetSelected = data.get("id")
+
+            TSHTournamentDataProvider.instance.GetMatch(
+                self, data["id"], overwrite=True, no_mains=no_mains)
+
+    def UpdateSetData(self, data):
+        # Do not update the scoreboard on empty data
+        if data is None or len(data) == 0 or data.get("id") == None:
+            return
+
+        # If you switched sets and it was still finishing an async update call
+        # Avoid loading data from the previous set
+        if str(data.get("id")) != str(self.lastSetSelected):
+            return
+
+        with StateManager.SaveBlock():
+            no_mains = data.get("no_mains") if data.get("no_mains") is not None else False
+
+            if data.get("entrants"):
+                self.playerNumber.setValue(
+                    len(max(data.get("entrants"), key=lambda x: len(x))))
+
+                # Lock all player widgets
+                for p in self.playerWidgets:
+                    p.dataLock.acquire()
+
+                try:
+                    for t, team in enumerate(data.get("entrants")):
+                        teamInstances = [self.team1playerWidgets,
+                                         self.team2playerWidgets]
+                        if t >= len(teamInstances):
+                            logger.warning(f"Entrant team index {t} out of range (max {len(teamInstances)})")
+                            break
+
+                        teamInstance = teamInstances[t]
+
+                        if len(team) > 1:
+                            teamColumns = [self.team1column, self.team2column]
+                            teamNames = [
+                                data.get("p1_name"), data.get("p2_name")]
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").setText(teamNames[t])
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").editingFinished.emit()
+                        else:
+                            teamColumns = [self.team1column, self.team2column]
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").setText("")
+                            teamColumns[t].findChild(
+                                QLineEdit, "teamName").editingFinished.emit()
+
+                        for p, player in enumerate(team):
+                            if p >= len(teamInstance):
+                                logger.warning(f"Player index {p} out of range for team {t+1} (max {len(teamInstance)})")
+                                break
+                            teamInstance[p].SetData(player, False, True, data.get(
+                                "no_mains") if data.get("no_mains") != None else False)
+                            if data.get("has_selection_data") and data.get("no_mains") != True:
+                                player = {
+                                    "mains": player.get("mains")
+                                }
+                                teamInstance[p].SetData(player, True, False)
+
+                        for p in teamInstance[len(team):]:
+                            p.Clear(no_mains=no_mains)
+                except Exception as e:
+                    logger.error(f"Error while setting entrants: {e}")
+                finally:
+                    for p in self.playerWidgets:
+                        p.dataLock.release()
+            else:
+                for p in self.playerWidgets:
+                    p.dataLock.acquire()
+                try:
+                    for p in self.playerWidgets:
+                        p.Clear(no_mains=no_mains)
+                except Exception as e:
+                    logger.error(f"Error while setting entrants: {e}")
+                finally:
+                    for p in self.playerWidgets:
+                        p.dataLock.release()
+
+            self.phaseCombo.setCurrentText(data.get("tournament_phase") or "")
+            self.matchCombo.setCurrentText(data.get("round_name") or "")
+            self.PhaseExport()
+            self.MatchExport()
+
     def SwitchBattleMode(self):
         # TODO: Do above with player widgets as well to make sure information displayed is accurate.
         self.battleMode = TSHTeamBattleModeEnum.MatchToMode(self.modeCombo.currentText())
