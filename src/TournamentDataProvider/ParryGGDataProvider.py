@@ -967,13 +967,16 @@ class ParryGGDataProvider(TournamentDataProvider):
             req = GetStreamQueueRequest()
             req.stream_id = stream_id
             resp = self.stream_service.GetStreamQueue(req, metadata=self.metadata, timeout=self._timeout)
-            on_stream_entries = [
-                e for e in resp.entries
-                if e.status == StreamQueueEntryStatus.STREAM_QUEUE_ENTRY_STATUS_ONSTREAM and e.match_id
-            ]
-            if slot >= len(on_stream_entries):
+            on_stream_at_slot_entry = next(
+                (
+                    e for e in resp.entries
+                    if e.status == StreamQueueEntryStatus.STREAM_QUEUE_ENTRY_STATUS_ONSTREAM and e.match_id and e.position == slot
+                ),
+                None,
+            )
+            if (on_stream_at_slot_entry is None):
                 return None
-            return self._fetch_future_set(on_stream_entries[slot].match_id)
+            return self._fetch_future_set(on_stream_at_slot_entry.match_id)
         except Exception as e:
             logger.error(f"Error in GetStreamMatchId: {traceback.format_exc()}")
             return None
