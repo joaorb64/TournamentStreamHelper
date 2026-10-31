@@ -344,7 +344,7 @@ class TSHTournamentDataProvider(QObject):
         if stationSets is not None and len(stationSets) > 0:
             # Station mode: use queue head as the active set when no
             # stream-mode set was loaded above.
-            if stationSet is None:
+            if stationSet is None and mainWindow.lastStationSelected.get("type") != "stream":
                 stationSet = stationSets[0]
 
             queueCache = mainWindow.stationQueueCache
