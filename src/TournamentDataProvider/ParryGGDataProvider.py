@@ -804,6 +804,9 @@ class ParryGGDataProvider(TournamentDataProvider):
         return tournament_info
     
     def GetMatch(self, setId, progress_callback=None, cancel_event=None):
+        if setId is None:
+            logger.debug("Skipping GetMatch: no match selected")
+            return {}
         self._setup_service("Match")
         try:
             req = GetMatchRequest()
