@@ -42,10 +42,6 @@ class StartGGDataProvider(TournamentDataProvider):
     UserMainsQuery = None
     _request_timeout_secs = 20.0
 
-    # Start.gg location country strings often follow Google Places / Geocoding
-    # English country long_names, which can differ from the English `name` in
-    # countries-states-cities-database (used by TSHCountryHelper). Map those
-    # Start.gg names to ISO2 codes before falling back to an exact DB match.
     STARTGG_COUNTRY_NAME_ALIASES = {
         "Hong Kong": "HK",
     }
