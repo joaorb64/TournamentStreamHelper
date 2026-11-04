@@ -42,12 +42,60 @@ class StartGGDataProvider(TournamentDataProvider):
     UserMainsQuery = None
     _request_timeout_secs = 20.0
 
+    # Start.gg location country strings often follow Google Places / Geocoding
+    # English country long_names, which can differ from the English `name` in
+    # countries-states-cities-database (used by TSHCountryHelper). Map those
+    # Start.gg names to ISO2 codes before falling back to an exact DB match.
+    STARTGG_COUNTRY_NAME_ALIASES = {
+        "Hong Kong": "HK",
+    }
+
     player_seeds = {}
 
     def __init__(self, url, threadpool, tshTdp) -> None:
         super().__init__(url, threadpool, tshTdp)
         self.name = "StartGG"
         self._mains_cache = {}
+
+    @staticmethod
+    def ResolveCountryCode(country_name):
+        """Map a Start.gg location.country string to an ISO2 country code."""
+        if not country_name:
+            return None
+
+        alias_code = StartGGDataProvider.STARTGG_COUNTRY_NAME_ALIASES.get(
+            country_name)
+        if alias_code and alias_code in TSHCountryHelper.countries:
+            return alias_code
+
+        for country in TSHCountryHelper.countries.values():
+            if country_name == country.get("en_name"):
+                return country.get("code")
+
+        return None
+
+    @staticmethod
+    def ApplyStartGGLocation(playerData, location):
+        """Fill country/state/city on playerData from a Start.gg location object."""
+        if not location:
+            return
+
+        country_name = location.get("country")
+        if country_name:
+            country_code = StartGGDataProvider.ResolveCountryCode(country_name)
+            if country_code:
+                playerData["country_code"] = country_code
+
+        if location.get("state"):
+            playerData["state_code"] = location.get("state")
+        elif location.get("city") and playerData.get("country_code"):
+            state_code = TSHCountryHelper.FindState(
+                playerData["country_code"], location.get("city"))
+            if state_code:
+                playerData["state_code"] = state_code
+
+        if location.get("city"):
+            playerData["city"] = location.get("city")
 
     # Queries the provided URL until a proper 200 status code has been provided back
     #
@@ -803,28 +851,8 @@ class StartGGDataProvider(TournamentDataProvider):
                             ]
 
                         if user.get("location"):
-                            # Country to country code
-                            if user.get("location").get("country"):
-                                for country in TSHCountryHelper.countries.values():
-                                    if user.get("location").get("country") == country.get("en_name"):
-                                        playerData["country_code"] = country.get(
-                                            "code")
-                                        break
-
-                            # State -- direct
-                            if user.get("location").get("state"):
-                                stateCode = user.get(
-                                    "location").get("state")
-                                if stateCode:
-                                    playerData["state_code"] = user.get(
-                                        "location").get("state")
-                            # State -- from city
-                            elif user.get("location").get("city") and playerData.get("country_code"):
-                                stateCode = TSHCountryHelper.FindState(
-                                    playerData["country_code"], user.get("location").get("city"))
-                                if stateCode:
-                                    playerData["state_code"] = stateCode
-                            if user.get("location").get("city"): playerData["city"] = user.get("location").get("city")
+                            StartGGDataProvider.ApplyStartGGLocation(
+                                playerData, user.get("location"))
 
                         if playerData.get("startggMain"):
                             main = TSHGameAssetManager.instance.GetCharacterFromStartGGId(
@@ -2007,27 +2035,8 @@ class StartGGDataProvider(TournamentDataProvider):
                     0].get("url")
 
             if user.get("location"):
-                # Country to country code
-                if user.get("location").get("country"):
-                    for country in TSHCountryHelper.countries.values():
-                        if user.get("location").get("country") == country.get("en_name"):
-                            playerData["country_code"] = country.get(
-                                "code")
-                            break
-
-                # State -- direct
-                if user.get("location").get("state"):
-                    stateCode = user.get(
-                        "location").get("state")
-                    if stateCode:
-                        playerData["state_code"] = user.get(
-                            "location").get("state")
-                # State -- from city
-                elif user.get("location").get("city"):
-                    stateCode = TSHCountryHelper.FindState(
-                        playerData.get("country_code", None), user.get("location", {}).get("city", None))
-                    if stateCode:
-                        playerData["state_code"] = stateCode
+                StartGGDataProvider.ApplyStartGGLocation(
+                    playerData, user.get("location"))
 
             if playerData.get("startggMains"):
                 if TSHGameAssetManager.instance.selectedGame:
