@@ -241,6 +241,9 @@ class TSHScoreboardPlayerWidget(QGroupBox):
                     data["assets"] = {}
 
                 data["skin"] = color.currentIndex()
+                if color.currentData():
+                    data["skin_name"] = color.currentData().get("skin_name", "")
+                    data["en_skin_name"] = color.currentData().get("en_skin_name", "")
                 if variant.currentData():
                     data["variant"] = variant.currentData()
                 else:
